@@ -48,9 +48,12 @@ class ContentTypeListType {
             use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
-        use Zikula\Common\Content\AbstractContentFormType;
-        use Zikula\Common\Content\ContentTypeInterface;
-        «IF !targets('3.0')»
+        «IF targets('3.0')»
+            use Zikula\ExtensionsModule\ModuleInterface\Content\AbstractContentFormType;
+            use Zikula\ExtensionsModule\ModuleInterface\Content\ContentTypeInterface;
+        «ELSE»
+            use Zikula\Common\Content\AbstractContentFormType;
+            use Zikula\Common\Content\ContentTypeInterface;
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         «IF hasCategorisableEntities»
@@ -173,6 +176,9 @@ class ContentTypeListType {
                 'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.size > 1»,«ENDIF»
                 «IF getAllEntities.size > 1»
                     'attr' => [
+                        «IF targets('3.0')»
+                            /** @Ignore */
+                        «ENDIF»
                         'title' => $helpText
                     ],
                     «IF targets('3.0')»
@@ -299,6 +305,9 @@ class ContentTypeListType {
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Amount:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'attr' => [
                     'maxlength' => 2,
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
                     'title' => $helpText
                 ],
                 «IF targets('3.0')»
@@ -333,7 +342,10 @@ class ContentTypeListType {
                 'required' => false,
                 'attr' => [
                     'maxlength' => 80,
-                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': ' . $exampleTemplate
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
+                    'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': ' . $exampleTemplate
                 ],
                 «IF targets('3.0')»
                     /** @Ignore */
@@ -355,7 +367,10 @@ class ContentTypeListType {
                 'required' => false,
                 'attr' => [
                     'maxlength' => 255,
-                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
+                    'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
                 ],
                 «IF targets('3.0')»
                     /** @Ignore */

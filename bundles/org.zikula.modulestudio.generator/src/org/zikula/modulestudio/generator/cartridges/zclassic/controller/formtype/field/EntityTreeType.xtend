@@ -22,7 +22,11 @@ class EntityTreeType {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\OptionsResolver\Options;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Zikula\Core\Doctrine\EntityAccess;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        «ELSE»
+            use Zikula\Core\Doctrine\EntityAccess;
+        «ENDIF»
         use «appNamespace»\Helper\EntityDisplayHelper;
 
         /**

@@ -68,7 +68,7 @@ class Newsletter {
          */
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+            return $this->container->get('translator«IF !targets('3.0')».default«ENDIF»')->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
         }
 
         /**
@@ -80,7 +80,7 @@ class Newsletter {
          */
         public function getDisplayName()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->«IF targets('3.0')»trans«ELSE»__«ENDIF»('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
+            return $this->container->get('translator«IF !targets('3.0')».default«ENDIF»')->«IF targets('3.0')»trans«ELSE»__«ENDIF»('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
         }
 
         /**
@@ -92,7 +92,7 @@ class Newsletter {
          */
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»)->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
+            return $this->container->get('translator«IF !targets('3.0')».default«ENDIF»')->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
         }
 
         /**
@@ -117,12 +117,12 @@ class Newsletter {
          */
         public function getParameters()«IF targets('3.0')»: array«ENDIF»
         {
-            $translator = $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»);
+            $translator = $this->container->get('translator«IF !targets('3.0')».default«ENDIF»');
 
             $objectTypes = [];
             if ($this->pluginAvailable()) {
                 «FOR entity : getAllEntities»
-                    $objectTypes['«entity.name.formatForCode»'] = ['name' => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»')];
+                    $objectTypes['«entity.name.formatForCode»'] = ['name' => $translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF targets('3.0') && !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)];
                 «ENDFOR»
             }
 

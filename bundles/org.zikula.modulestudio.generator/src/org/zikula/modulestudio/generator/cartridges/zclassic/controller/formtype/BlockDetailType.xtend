@@ -42,8 +42,7 @@ class BlockDetailType {
         «IF targets('3.0')»
             use Translation\Extractor\Annotation\Ignore;
             use Translation\Extractor\Annotation\Translate;
-        «ENDIF»
-        «IF !targets('3.0')»
+        «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
@@ -188,7 +187,10 @@ class BlockDetailType {
                     'required' => false,
                     'attr' => [
                         'maxlength' => 80,
-                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig'
+                        «IF targets('3.0')»
+                            /** @Ignore */
+                        «ENDIF»
+                        'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig'
                     ],
                     «IF targets('3.0')»
                         /** @Ignore */

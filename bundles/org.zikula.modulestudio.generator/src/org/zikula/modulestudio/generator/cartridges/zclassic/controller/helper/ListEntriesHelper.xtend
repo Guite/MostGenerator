@@ -31,10 +31,11 @@ class ListEntriesHelper {
 
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
 
         /**
          * Helper base class for list field entries related methods.
@@ -274,31 +275,31 @@ class ListEntriesHelper {
             $states = [];
             «IF name == 'workflowState'»
                 «val visibleStates = items.filter[value != 'initial' && value != 'deleted']»
-                «FOR item : visibleStates»«item.entryInfo(application)»«ENDFOR»
-                «FOR item : visibleStates»«item.entryInfoNegative(application)»«ENDFOR»
+                «FOR item : visibleStates»«item.entryInfo(application, '')»«ENDFOR»
+                «FOR item : visibleStates»«item.entryInfoNegative(application, '')»«ENDFOR»
             «ELSE»
-                «FOR item : items»«item.entryInfo(application)»«ENDFOR»
+                «FOR item : items»«item.entryInfo(application, if (null !== varContainer) 'config' else entity.name.formatForCode)»«ENDFOR»
             «ENDIF»
 
             return $states;
         }
     '''
 
-    def private entryInfo(ListFieldItem it, Application app) '''
+    def private entryInfo(ListFieldItem it, Application app, String domain) '''
         $states[] = [
             'value'   => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«name.toFirstUpper.replace("'", "")»'),
-            'title'   => «IF null !== documentation && !documentation.empty»$this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
+            'text'    => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«name.toFirstUpper.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'title'   => «IF null !== documentation && !documentation.empty»$this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«documentation.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
             'image'   => '«IF null !== image && !image.empty»«image»«ENDIF»',
             'default' => «^default.displayBool»
         ];
     '''
 
-    def private entryInfoNegative(ListFieldItem it, Application app) '''
+    def private entryInfoNegative(ListFieldItem it, Application app, String domain) '''
         $states[] = [
             'value'   => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All except «name.toFirstLower.replace("'", "")»'),
-            'title'   => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
+            'text'    => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All except «name.toFirstLower.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'title'   => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
             'image'   => '',
             'default' => false
         ];

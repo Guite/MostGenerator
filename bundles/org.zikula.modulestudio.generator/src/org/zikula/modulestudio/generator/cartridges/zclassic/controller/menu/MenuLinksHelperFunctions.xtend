@@ -28,6 +28,9 @@ class MenuLinksHelperFunctions {
                     ])
                         ->setAttribute('icon', 'fas fa-wrench')
                         ->setLinkAttribute('title', «translate('Manage settings for this application')»)
+                        «IF !isSystemModule»
+                            ->setExtra('translation_domain', 'config')
+                        «ENDIF»
                     ;
                 «ELSE»
                     $links[] = [
@@ -52,6 +55,9 @@ class MenuLinksHelperFunctions {
                     'routeParameters' => ['tpl' => 'tree']«ENDIF*/»
                 ])
                     ->setLinkAttribute('title', «application.translate(nameMultiple.formatForDisplayCapital + ' list')»)
+                    «IF !application.isSystemModule»
+                        ->setExtra('translation_domain', '«name.formatForCode»')
+                    «ENDIF»
                 ;
             «ELSE»
                 $links[] = [

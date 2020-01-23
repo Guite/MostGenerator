@@ -63,7 +63,7 @@ class BlockDetail {
         «ENDIF»
         public function getType()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
+            return $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
         }
 
         «display»

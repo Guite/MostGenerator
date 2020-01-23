@@ -33,15 +33,17 @@ class ArchiveHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            use Zikula\Bundle\CoreBundle\RouteUrl;
         «ENDIF»
         «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
         «ENDIF»
         «IF !targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Core\Doctrine\EntityAccess;
+            use Zikula\Core\RouteUrl;
         «ENDIF»
-        use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\Core\RouteUrl;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasHookSubscribers»
             use «appNamespace»\Helper\HookHelper;

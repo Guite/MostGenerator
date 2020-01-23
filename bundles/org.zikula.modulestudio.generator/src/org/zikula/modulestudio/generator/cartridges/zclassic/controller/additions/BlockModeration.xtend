@@ -56,7 +56,7 @@ class BlockModeration {
         «ENDIF»
         public function getType()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» moderation', '«appName.formatForDB»');
+            return $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» moderation'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
         }
 
         «display»
@@ -112,7 +112,7 @@ class BlockModeration {
 
             // set a block title
             if (empty($properties['title'])) {
-                $properties['title'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Moderation', '«appName.formatForDB»');
+                $properties['title'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Moderation'«IF targets('3.0')», '«appName.formatForDB»'«ENDIF»);
             }
 
             return $this->renderView($template, [«/*'properties' => $properties, */»'moderationObjects' => $amounts]);

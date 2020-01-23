@@ -41,6 +41,9 @@ class Delete {
                 {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         {% block title «IF app.targets('3.0')»'Delete «name.formatForDisplay»'|trans«ELSE»__('Delete «name.formatForDisplay»')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}
@@ -74,7 +77,7 @@ class Delete {
                     {% endif %}
                 «ENDIF»
                 <fieldset>
-                    <legend>«IF app.targets('3.0')»{% trans %}Confirmation prompt{% endtrans %}«ELSE»{{ __('Confirmation prompt') }}«ENDIF»</legend>
+                    <legend>«IF app.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Confirmation prompt{% endtrans %}«ELSE»{{ __('Confirmation prompt') }}«ENDIF»</legend>
                     <div class="form-group«IF application.targets('3.0')» row«ENDIF»">
                         <div class="«IF application.targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
                             {{ form_widget(deleteForm.delete) }}

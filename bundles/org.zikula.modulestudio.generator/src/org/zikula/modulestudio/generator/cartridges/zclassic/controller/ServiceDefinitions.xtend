@@ -124,7 +124,11 @@ class ServiceDefinitions {
         «IF generateListContentType || needsDetailContentType»
 
             _instanceof:
-                Zikula\Common\Content\ContentTypeInterface:
+                «IF targets('3.0')»
+                    Zikula\ExtensionsModule\ModuleInterface\Content\ContentTypeInterface:
+                «ELSE»
+                    Zikula\Common\Content\ContentTypeInterface:
+                «ENDIF»
                     bind:
                         $permissionHelper: '@?Zikula\ContentModule\Helper\PermissionHelper'
             «/*IF needsDetailContentType»

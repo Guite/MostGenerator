@@ -50,9 +50,17 @@ class ModuleFile {
 
     def private moduleBaseImpl(Application it) '''
         «IF isSystemModule»
-            use Zikula\Bundle\CoreBundle\Bundle\AbstractCoreModule;
+            «IF targets('3.0')»
+                use Zikula\ExtensionsModule\AbstractCoreModule;
+            «ELSE»
+                use Zikula\Bundle\CoreBundle\Bundle\AbstractCoreModule;
+            «ENDIF»
         «ELSE»
-            use Zikula\Core\AbstractModule;
+            «IF targets('3.0')»
+                use Zikula\ExtensionsModule\AbstractModule;
+            «ELSE»
+                use Zikula\Core\AbstractModule;
+            «ENDIF»
         «ENDIF»
 
         /**

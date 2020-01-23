@@ -162,17 +162,24 @@ class FormHandler {
             use Symfony\Contracts\Translation\TranslatorInterface;
         «ENDIF»
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            «IF hasHookSubscribers»
+                use Zikula\Bundle\CoreBundle\RouteUrl;
+            «ENDIF»
+            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
+        «ENDIF»
         «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
         «ENDIF»
         «IF !targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
-        «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\Core\Doctrine\EntityAccess;
-        «IF hasHookSubscribers»
-            use Zikula\Core\RouteUrl;
+            use Zikula\Common\Translator\TranslatorTrait;
+            use Zikula\Core\Doctrine\EntityAccess;
+            «IF hasHookSubscribers»
+                use Zikula\Core\RouteUrl;
+            «ENDIF»
         «ENDIF»
         «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
@@ -1352,7 +1359,7 @@ class FormHandler {
         «IF ownerPermission»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF app.targets('3.0')»
-                use Zikula\Core\Doctrine\EntityAccess;
+                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             «ENDIF»
         «ENDIF»
         «IF ownerPermission || !fields.filter(UserField).filter[!nullable].empty»
@@ -1437,7 +1444,11 @@ class FormHandler {
                 if ($request->hasSession() && ($session = $request->getSession())) {
                     $session->getFlashBag()->add(
                         'error',
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'«IF !app.targets('3.0')»)«ENDIF»
+                        $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»(
+                            'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'«IF app.targets('3.0') && !app.isSystemModule»,
+                            [],
+                            '«name.formatForCode»'«ENDIF»
+                        )
                     );
                 }
                 $logArgs = [
@@ -1569,9 +1580,9 @@ class FormHandler {
                 «ENDIF»
                 case 'submit':
                     if ('create' === $this->templateParameters['mode']) {
-                        $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» created.');
+                        $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» created.'«IF app.targets('3.0') && !app.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
                     } else {
-                        $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» updated.');
+                        $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» updated.'«IF app.targets('3.0') && !app.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
                     }
                     «IF EntityWorkflowType.NONE !== workflow»
                         if ('waiting' === $this->entityRef->getWorkflowState()) {
@@ -1580,10 +1591,10 @@ class FormHandler {
                     «ENDIF»
                     break;
                 case 'delete':
-                    $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» deleted.');
+                    $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» deleted.'«IF app.targets('3.0') && !app.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
                     break;
                 default:
-                    $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» updated.');
+                    $message = $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Done! «name.formatForDisplayCapital» updated.'«IF app.targets('3.0') && !app.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
                     break;
             }
 

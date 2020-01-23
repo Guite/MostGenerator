@@ -44,15 +44,21 @@ class ControllerHelper {
         «ENDIF»
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
+                use Zikula\Bundle\CoreBundle\RouteUrl;
+            «ENDIF»
+            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
         «IF hasViewActions»
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
-        «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
-            use Zikula\Core\RouteUrl;
+        «IF !targets('3.0')»
+            «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
+                use Zikula\Core\RouteUrl;
+            «ENDIF»
         «ENDIF»
         «IF hasViewActions»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;

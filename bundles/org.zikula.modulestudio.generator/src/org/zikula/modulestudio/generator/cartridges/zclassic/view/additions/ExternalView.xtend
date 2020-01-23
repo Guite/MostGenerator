@@ -46,13 +46,16 @@ class ExternalView {
             if (!targets('2.0')) {
                 // content type editing is not ready for Twig yet
                 fileName = 'select.tpl'
-                fsa.generateFile(templatePath + fileName, entity.selectTemplate(it))
+                fsa.generateFile(templatePath + fileName, entity.selectTemplateLegacy(it))
             }
         }
     }
 
     def private displayTemplate(Entity it, Application app) '''
         {# purpose of this template: Display one certain «name.formatForDisplay» within an external context #}
+        «IF app.targets('3.0') && !app.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         «IF hasImageFieldsEntity»
             {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
             {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
@@ -150,6 +153,9 @@ class ExternalView {
 
     def private itemInfoTemplate(Entity it, Application app) '''
         {# purpose of this template: Display item information for previewing from other modules #}
+        «IF app.targets('3.0') && !app.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         <dl id="«name.formatForCode»{{ «name.formatForCode».getKey() }}">
         <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}</dt>
         «IF hasImageFieldsEntity»
@@ -173,6 +179,9 @@ class ExternalView {
             {% extends '@«app.appName»/raw.html.twig' %}
         «ELSE»
             {% extends '«app.appName»::raw.html.twig' %}
+        «ENDIF»
+        «IF app.targets('3.0') && !app.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         {% block title «IF app.targets('3.0')»'Search and select «name.formatForDisplay»'|trans«ELSE»__('Search and select «name.formatForDisplay»')«ENDIF» %}
         {% block content %}
@@ -346,7 +355,7 @@ class ExternalView {
         «ENDIF»
     '''
 
-    def private selectTemplate(Entity it, Application app) '''
+    def private selectTemplateLegacy(Entity it, Application app) '''
         {* Purpose of this template: Display a popup selector for Forms and Content integration *}
         {assign var='baseID' value='«name.formatForCode»'}
         <div id="itemSelectorInfo" class="«IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-base-id="{$baseID}" data-selected-id="{$selectedId|default:0}"></div>

@@ -43,8 +43,11 @@ class FormAwareProviderInnerForms {
         use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
         use Symfony\Component\Form\Extension\Core\Type\TextType;
         use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF !app.targets('3.0')»
+        «IF app.targets('3.0')»
+            «IF !app.isSystemModule»
+                use Symfony\Component\OptionsResolver\OptionsResolver;
+            «ENDIF»
+        «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
@@ -96,6 +99,15 @@ class FormAwareProviderInnerForms {
             {
                 return '«app.appName.formatForDB»_hook_«action.formatForDB»«name.formatForDB»';
             }
+            «IF app.targets('3.0') && !app.isSystemModule»
+
+                public function configureOptions(OptionsResolver $resolver)
+                {
+                    $resolver->setDefaults([
+                        'translation_domain' => 'hooks'
+                    ]);
+                }
+            «ENDIF»
         }
     '''
 

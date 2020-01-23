@@ -41,10 +41,11 @@ class ContentTypeDetailType {
         «IF targets('3.0')»
             use Translation\Extractor\Annotation\Ignore;
             use Translation\Extractor\Annotation\Translate;
-        «ENDIF»
-        use Zikula\Common\Content\AbstractContentFormType;
-        use Zikula\Common\Content\ContentTypeInterface;
-        «IF !targets('3.0')»
+            use Zikula\ExtensionsModule\ModuleInterface\Content\AbstractContentFormType;
+            use Zikula\ExtensionsModule\ModuleInterface\Content\ContentTypeInterface;
+        «ELSE»
+            use Zikula\Common\Content\AbstractContentFormType;
+            use Zikula\Common\Content\ContentTypeInterface;
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -206,7 +207,10 @@ class ContentTypeDetailType {
                     'required' => false,
                     'attr' => [
                         'maxlength' => 80,
-                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig'
+                        «IF targets('3.0')»
+                            /** @Ignore */
+                        «ENDIF»
+                        'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig'
                     ],
                     «IF targets('3.0')»
                         /** @Ignore */

@@ -32,6 +32,9 @@ class ViewQuickNavForm {
 
     def private quickNavForm(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view filter form #}
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         {% if permissionHelper.mayUseQuickNav('«name.formatForCode»') %}
             {% form_theme quickNavForm with [
                 'bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF»_layout.html.twig'

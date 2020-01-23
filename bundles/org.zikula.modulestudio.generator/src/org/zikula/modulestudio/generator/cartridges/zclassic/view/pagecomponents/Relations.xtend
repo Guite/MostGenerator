@@ -38,6 +38,9 @@ class Relations {
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
         {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay»«IF uiHooksProvider != HookProviderMode.DISABLED» or hook assignments«ENDIF» #}
+        «IF app.targets('3.0') && !app.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         «IF many && uiHooksProvider != HookProviderMode.DISABLED»
             {#
                 You can use the context variable to check for the context of this list:
@@ -53,7 +56,7 @@ class Relations {
         «ENDIF»
         «IF many && uiHooksProvider != HookProviderMode.DISABLED»
             {% if context != 'display' %}
-                <h3>«IF app.targets('3.0')»{% trans %}Assigned «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Assigned «nameMultiple.formatForDisplay»', '«app.appName.toLowerCase»') }}«ENDIF»</h3>
+                <h3>«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'hooks'«ENDIF» %}Assigned «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Assigned «nameMultiple.formatForDisplay»', '«app.appName.toLowerCase»') }}«ENDIF»</h3>
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/custom.css'), 120) }}
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
@@ -179,9 +182,9 @@ class Relations {
         «val otherEntity = (if (!useTarget) source else target) as Entity»
         «val many = isManySideDisplay(useTarget)»
         {% if routeArea == 'admin' %}
-            <h4>«IF application.targets('3.0')»{% trans %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»</h4>
+            <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from '«otherEntity.name.formatForCode»'«ENDIF» %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»</h4>
         {% else %}
-            <h3>«IF application.targets('3.0')»{% trans %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»</h3>
+            <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from '«otherEntity.name.formatForCode»'«ENDIF» %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»</h3>
         {% endif %}
 
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
@@ -198,7 +201,7 @@ class Relations {
                 {% set mayManage = permissionHelper.hasComponentPermission('«otherEntity.name.formatForCode»', constant('ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF otherEntity.workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
                 {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
                     <p class="managelink">
-                        {% set createTitle = «IF application.targets('3.0')»'Create «otherEntity.name.formatForDisplay»'|trans«ELSE»__('Create «otherEntity.name.formatForDisplay»')«ENDIF» %}
+                        {% set createTitle = «IF application.targets('3.0')»'Create «otherEntity.name.formatForDisplay»'|trans«IF !application.isSystemModule»({}, '«otherEntity.name.formatForCode»')«ENDIF»«ELSE»__('Create «otherEntity.name.formatForDisplay»')«ENDIF» %}
                         <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».get«IF relatedEntity.hasSluggableFields && relatedEntity.slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ createTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-plus"></i> {{ createTitle }}</a>
                     </p>
                 {% endif %}

@@ -23,12 +23,12 @@ class MenuViews {
 
     def private markup(Entity it, String context, String idSuffix) '''
         «IF application.useStyle(context, ItemActionsStyle.BUTTON_GROUP)»
-            <div class="btn-group«IF context == 'view'»-vertical«ENDIF» btn-group-sm item-actions" role="group" aria-label="«IF application.targets('3.0')»{% trans %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»">
+            <div class="btn-group«IF context == 'view'»-vertical«ENDIF» btn-group-sm item-actions" role="group" aria-label="«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»">
                 «application.renderItemActionsMenu(context)»
             </div>
         «ELSEIF application.useStyle(context, ItemActionsStyle.DROPDOWN)»
             <div class="dropdown item-actions">
-                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF» dropdown-toggle"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-tasks"></i>«IF context == 'display'» «IF application.targets('3.0')»{% trans %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»«ENDIF»«IF !application.targets('3.0')» <span class="caret"></span>«ENDIF»</a>
+                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF» dropdown-toggle"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-tasks"></i>«IF context == 'display'» «IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»«ENDIF»«IF !application.targets('3.0')» <span class="caret"></span>«ENDIF»</a>
                 «application.renderItemActionsMenu(context)»
             </div>
         «ELSE»

@@ -30,7 +30,9 @@ class Installer {
         namespace «appNamespace»\Base;
 
         use Exception;
-        use Zikula\Core\AbstractExtensionInstaller;
+        «IF !targets('3.0')»
+            use Zikula\Core\AbstractExtensionInstaller;
+        «ENDIF»
         «IF hasCategorisableEntities»
             «IF targets('3.0')»
                 use Zikula\CategoriesModule\Api\CategoryPermissionApi;
@@ -41,11 +43,12 @@ class Installer {
                 use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
             «ENDIF»
         «ENDIF»
-        «IF hasUploads || hasCategorisableEntities»
-            «IF targets('3.0')»
-                «IF hasUploads»
-                    use Zikula\ExtensionsModule\Api\VariableApi;
-                «ENDIF»
+        «IF targets('3.0')»
+            «IF hasUploads»
+                use Zikula\ExtensionsModule\Api\VariableApi;
+            «ENDIF»
+            use Zikula\ExtensionsModule\Installer\AbstractExtensionInstaller;
+            «IF hasUploads || hasCategorisableEntities»
                 use Zikula\UsersModule\Api\CurrentUserApi;
             «ENDIF»
         «ENDIF»
@@ -301,7 +304,8 @@ class Installer {
                     'status',
                     $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                         'The upload directories at "%path%" can be removed manually.',
-                        ['%path%' => $uploadPath]
+                        ['%path%' => $uploadPath]«IF targets('3.0') && !isSystemModule»,
+                        'config'«ENDIF»
                     )
                 );
             «ENDIF»

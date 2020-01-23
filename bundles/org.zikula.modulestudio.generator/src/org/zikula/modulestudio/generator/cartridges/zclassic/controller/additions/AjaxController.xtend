@@ -84,7 +84,11 @@ class AjaxController {
         «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
-        use Zikula\Core\Controller\AbstractController;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
+        «ELSE»
+            use Zikula\Core\Controller\AbstractController;
+        «ENDIF»
         «commonSystemImports»
         «IF hasUiHooksProviders»
             use «appNamespace»\Entity\HookAssignmentEntity;
@@ -388,7 +392,10 @@ class AjaxController {
                 «IF hasImageFields»
                     $itemTitleStripped = str_replace('"', '', $itemTitle);
                 «ENDIF»
-                $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName]) ? $item[$descriptionFieldName] : '';//$this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No description yet.')
+                $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])
+                    ? $item[$descriptionFieldName]
+                    : '' //$this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No description yet.')
+                ;
                 if (!empty($itemDescription)) {
                     $itemDescription = strip_tags($itemDescription);
                     $descriptionLength = 50;

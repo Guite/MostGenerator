@@ -228,7 +228,8 @@ class ImageHelper {
                 'warning',
                 $this->translator->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                     'The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.',
-                    ['%directory%' => $cachePath]
+                    ['%directory%' => $cachePath]«IF targets('3.0') && !isSystemModule»,
+                    'config'«ENDIF»
                 )
             );
         }

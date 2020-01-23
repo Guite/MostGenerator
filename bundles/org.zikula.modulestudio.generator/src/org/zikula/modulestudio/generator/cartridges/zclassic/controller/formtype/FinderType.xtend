@@ -174,7 +174,8 @@ class FinderType {
                 $resolver
                     ->setDefaults([
                         'object_type' => '«app.leadingEntity.name.formatForCode»',
-                        'editor_name' => 'ckeditor'
+                        'editor_name' => 'ckeditor'«IF app.targets('3.0') && !app.isSystemModule»,
+                        'translation_domain' => '«name.formatForCode»'«ENDIF»
                     ])
                     ->setRequired(['object_type', 'editor_name'])
                     ->setAllowedTypes('object_type', 'string')

@@ -24,7 +24,11 @@ class ConfigController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use Zikula\Core\Controller\AbstractController;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
+        «ELSE»
+            use Zikula\Core\Controller\AbstractController;
+        «ENDIF»
         «IF targets('3.0')»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
             use «appNamespace»\AppSettings;
@@ -104,7 +108,7 @@ class ConfigController {
                 $appSettings = $form->getData();
                 $appSettings->save();
 
-                $this->addFlash('status', «IF !targets('3.0')»$this->__(«ENDIF»'Done! Configuration updated.'«IF !targets('3.0')»)«ENDIF»);
+                $this->addFlash('status', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Done! Configuration updated.'«IF targets('3.0') && !isSystemModule», [], 'config'«ENDIF»));
                 «IF targets('3.0')»
                     $userName = $currentUserApi->get('uname');
                     $logger->notice(

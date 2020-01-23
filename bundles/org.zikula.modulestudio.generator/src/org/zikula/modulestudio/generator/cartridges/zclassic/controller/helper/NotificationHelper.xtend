@@ -34,11 +34,14 @@ class NotificationHelper {
         «ENDIF»
         use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «IF !targets('3.0')»
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
+        «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
+            use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\GroupsModule\Constant as GroupsConstant;
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;

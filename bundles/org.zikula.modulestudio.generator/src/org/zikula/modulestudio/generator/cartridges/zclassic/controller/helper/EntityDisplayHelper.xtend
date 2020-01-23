@@ -45,10 +45,11 @@ class EntityDisplayHelper {
         «ENDIF»
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
-        use Zikula\Core\Doctrine\EntityAccess;
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
@@ -158,11 +159,15 @@ class EntityDisplayHelper {
         protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital»Entity $entity)«IF application.targets('3.0')»: string«ENDIF»
         {
             «IF displayPatternParts.length < 2»«/* no field references, just pass to translator */»
-                return $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«getUsedDisplayPattern.formatForCodeCapital»');
+                return $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«getUsedDisplayPattern.formatForCodeCapital»'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
             «ELSE»
-                return $this->translator->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«getUsedDisplayPattern.replaceAll('#', '%')»', [
-                    «displayPatternArguments»
-                ]);
+                return $this->translator->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
+                    '«getUsedDisplayPattern.replaceAll('#', '%')»',
+                    [
+                        «displayPatternArguments»
+                    ]«IF application.targets('3.0') && !application.isSystemModule»,
+                    '«name.formatForCode»'«ENDIF»
+                );
             «ENDIF»
         }
     '''

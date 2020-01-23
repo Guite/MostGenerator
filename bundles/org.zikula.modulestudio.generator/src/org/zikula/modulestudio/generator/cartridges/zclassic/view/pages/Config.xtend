@@ -34,6 +34,9 @@ class Config {
         {# purpose of this template: module configuration page #}
         «IF targets('3.0')»
             {% extends '@«appName»/adminBase.html.twig' %}
+            «IF !isSystemModule»
+                {% trans_default_domain 'config' %}
+            «ENDIF»
         «ELSE»
             {% extends '«appName»::adminBase.html.twig' %}
         «ENDIF»

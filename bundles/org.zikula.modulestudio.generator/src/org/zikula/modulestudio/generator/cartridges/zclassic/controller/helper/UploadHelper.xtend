@@ -44,11 +44,13 @@ class UploadHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
+            use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
@@ -857,7 +859,8 @@ class UploadHelper {
                             'error',
                             $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                                 'The upload directory "%path%" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.',
-                                ['%path%' => $exception->getPath()]
+                                ['%path%' => $exception->getPath()]«IF targets('3.0') && !isSystemModule»,
+                                'config'«ENDIF»
                             )
                         );
                     }
@@ -882,7 +885,8 @@ class UploadHelper {
                             'warning',
                             $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                                 'Warning! The upload directory at "%path%" exists but is not writable by the webserver.',
-                                ['%path%' => $exception->getPath()]
+                                ['%path%' => $exception->getPath()]«IF targets('3.0') && !isSystemModule»,
+                                'config'«ENDIF»
                             )
                         );
                     }
@@ -913,7 +917,8 @@ class UploadHelper {
                             'error',
                             $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                                 'An error occured during creation of the .htaccess file in directory "%path%".',
-                                ['%path%' => $exception->getPath()]
+                                ['%path%' => $exception->getPath()]«IF targets('3.0') && !isSystemModule»,
+                                'config'«ENDIF»
                             )
                         );
                     }

@@ -51,6 +51,9 @@ class ViewMap {
                 {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         «IF application.targets('3.0')»
              {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
          «ELSE»

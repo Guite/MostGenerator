@@ -47,11 +47,14 @@ class History {
                 {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
+        «IF app.targets('3.0') && !app.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         «IF !app.targets('3.0')»
             {% import _self as helper %}
         «ENDIF»
         {% macro outputSimpleValue(input) %}
-            {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|«IF app.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('long', 'medium') : input|default(«IF app.targets('3.0')»'an empty value'|trans«ELSE»__('an empty value')«ENDIF») }}
+            {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|«IF app.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('long', 'medium') : input|default(«IF app.targets('3.0')»'an empty value'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('an empty value')«ENDIF») }}
         {% endmacro %}
         {% macro outputArray(input«IF hasTranslatableFields», keysAreLanguages«ENDIF») %}
             «IF !app.targets('3.0')»
@@ -64,7 +67,7 @@ class History {
             </ul>
         {% endmacro %}
         «IF app.targets('3.0')»
-            {% block title isDiffView == true ? 'Compare versions of %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) : '«name.formatForDisplayCapital» change history for %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) %}
+            {% block title isDiffView == true ? 'Compare versions of %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}«IF !app.isSystemModule», 'messages'«ENDIF») : '«name.formatForDisplayCapital» change history for %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) %}
         «ELSE»
             {% block title isDiffView == true ? __f('Compare versions of %entityTitle%', {'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) : __f('«name.formatForDisplayCapital» change history for %entityTitle%', {'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) %}
         «ENDIF»
@@ -94,7 +97,7 @@ class History {
                     «historyTable»
                 </div>
                 <p>
-                    <button id="compareButton" type="submit" value="compare" class="btn btn-primary" disabled="disabled"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-arrows«IF app.targets('3.0')»-alt«ENDIF»-h"></i> «IF app.targets('3.0')»{% trans %}Compare selected versions{% endtrans %}«ELSE»{{ __('Compare selected versions') }}«ENDIF»</button>
+                    <button id="compareButton" type="submit" value="compare" class="btn btn-primary" disabled="disabled"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-arrows«IF app.targets('3.0')»-alt«ENDIF»-h"></i> «IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Compare selected versions{% endtrans %}«ELSE»{{ __('Compare selected versions') }}«ENDIF»</button>
                 </p>
             </form>
         {% endblock %}
@@ -108,9 +111,9 @@ class History {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th id="hFieldName" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans %}Field name{% endtrans %}«ELSE»{{ __('Field name') }}«ENDIF»</th>
-                            <th id="hMinVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans with {'%version%': minVersion} %}Version %version%{% endtrans %}«ELSE»{{ __f('Version %version%', {'%version%': minVersion}) }}«ENDIF»</th>
-                            <th id="hMaxVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans with {'%version%': maxVersion} %}Version %version%{% endtrans %}«ELSE»{{ __f('Version %version%', {'%version%': maxVersion}) }}«ENDIF»</th>
+                            <th id="hFieldName" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Field name{% endtrans %}«ELSE»{{ __('Field name') }}«ENDIF»</th>
+                            <th id="hMinVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans with {'%version%': minVersion}«IF !app.isSystemModule» from 'messages'«ENDIF» %}Version %version%{% endtrans %}«ELSE»{{ __f('Version %version%', {'%version%': minVersion}) }}«ENDIF»</th>
+                            <th id="hMaxVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans with {'%version%': maxVersion}«IF !app.isSystemModule» from 'messages'«ENDIF» %}Version %version%{% endtrans %}«ELSE»{{ __f('Version %version%', {'%version%': maxVersion}) }}«ENDIF»</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -128,7 +131,7 @@ class History {
                                                 {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
                                         {% else %}
-                                            «IF app.targets('3.0')»{% trans %}an empty collection{% endtrans %}«ELSE»{{ __('an empty collection') }}«ENDIF»
+                                            «IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}an empty collection{% endtrans %}«ELSE»{{ __('an empty collection') }}«ENDIF»
                                         {% endif %}
                                     {% else %}
                                         {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputSimpleValue(values.old) }}
@@ -143,7 +146,7 @@ class History {
                                                 {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
                                         {% else %}
-                                            «IF app.targets('3.0')»{% trans %}an empty collection{% endtrans %}«ELSE»{{ __('an empty collection') }}«ENDIF»
+                                            «IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}an empty collection{% endtrans %}«ELSE»{{ __('an empty collection') }}«ENDIF»
                                         {% endif %}
                                     {% else %}
                                         {{ «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputSimpleValue(values.new) }}
@@ -171,13 +174,13 @@ class History {
             </colgroup>
             <thead>
                 <tr>
-                    <th id="hSelect" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted«IF !app.targets('3.0')» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans %}Select{% endtrans %}«ELSE»{{ __('Select') }}«ENDIF»</th>
-                    <th id="hVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted«IF !app.targets('3.0')» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans %}Version{% endtrans %}«ELSE»{{ __('Version') }}«ENDIF»</th>
-                    <th id="hDate" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans %}Date{% endtrans %}«ELSE»{{ __('Date') }}«ENDIF»</th>
-                    <th id="hUser" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans %}User{% endtrans %}«ELSE»{{ __('User') }}«ENDIF»</th>
-                    <th id="hOperation" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted" colspan="2">«IF app.targets('3.0')»{% trans %}Operation{% endtrans %}«ELSE»{{ __('Operation') }}«ENDIF»</th>
-                    <th id="hChanges" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans %}Changes{% endtrans %}«ELSE»{{ __('Changes') }}«ENDIF»</th>
-                    <th id="hActions" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
+                    <th id="hSelect" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted«IF !app.targets('3.0')» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Select{% endtrans %}«ELSE»{{ __('Select') }}«ENDIF»</th>
+                    <th id="hVersion" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted«IF !app.targets('3.0')» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Version{% endtrans %}«ELSE»{{ __('Version') }}«ENDIF»</th>
+                    <th id="hDate" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Date{% endtrans %}«ELSE»{{ __('Date') }}«ENDIF»</th>
+                    <th id="hUser" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}User{% endtrans %}«ELSE»{{ __('User') }}«ENDIF»</th>
+                    <th id="hOperation" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted" colspan="2">«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Operation{% endtrans %}«ELSE»{{ __('Operation') }}«ENDIF»</th>
+                    <th id="hChanges" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Changes{% endtrans %}«ELSE»{{ __('Changes') }}«ENDIF»</th>
+                    <th id="hActions" scope="col" class="«IF !app.targets('2.0')»z-order-«ENDIF»unsorted">«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
                 </tr>
             </thead>
             <tbody>
@@ -186,7 +189,7 @@ class History {
                         <td headers="hSelect hVersion{{ logEntry.version|e('html_attr') }}" class="text-center">
                             <input type="checkbox" name="versions[]" value="{{ logEntry.version }}" class="«app.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
-                        <th id="hVersion{{ logEntry.version|e('html_attr') }}" headers="hVersion" scope="row" class="text-center">{{ logEntry.version }}{% if loop.first %} («IF app.targets('3.0')»{% trans %}latest{% endtrans %}«ELSE»{{ __('latest') }}«ENDIF»){% endif %}</td>
+                        <th id="hVersion{{ logEntry.version|e('html_attr') }}" headers="hVersion" scope="row" class="text-center">{{ logEntry.version }}{% if loop.first %} («IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}latest{% endtrans %}«ELSE»{{ __('latest') }}«ENDIF»){% endif %}</td>
                         <td headers="hDate hVersion{{ logEntry.version|e('html_attr') }}">
                             {{ logEntry.loggedAt|«IF app.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('long', 'medium') }}
                         </td>
@@ -197,11 +200,11 @@ class History {
                         </td>
                         <td headers="hOperation hVersion{{ logEntry.version|e('html_attr') }}">
                             {% if logEntry.action == constant('Gedmo\\Loggable\\LoggableListener::ACTION_CREATE') %}
-                                «IF app.targets('3.0')»{% trans %}Created{% endtrans %}«ELSE»{{ __('Created') }}«ENDIF»
+                                «IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Created{% endtrans %}«ELSE»{{ __('Created') }}«ENDIF»
                             {% elseif logEntry.action == constant('Gedmo\\Loggable\\LoggableListener::ACTION_UPDATE') %}
-                                «IF app.targets('3.0')»{% trans %}Updated{% endtrans %}«ELSE»{{ __('Updated') }}«ENDIF»
+                                «IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Updated{% endtrans %}«ELSE»{{ __('Updated') }}«ENDIF»
                             {% elseif logEntry.action == constant('Gedmo\\Loggable\\LoggableListener::ACTION_REMOVE') %}
-                                «IF app.targets('3.0')»{% trans %}Removed{% endtrans %}«ELSE»{{ __('Removed') }}«ENDIF»
+                                «IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Removed{% endtrans %}«ELSE»{{ __('Removed') }}«ENDIF»
                             {% endif %}
                         </td>
                         <td headers="hOperation hVersion{{ logEntry.version|e('html_attr') }}">
@@ -211,7 +214,7 @@ class History {
                             {% if logEntry.data is not empty %}
                                 <a role="button" data-toggle="collapse" href="#changes{{ logEntry.version }}" aria-expanded="false" aria-controls="changes{{ logEntry.version }}">
                                     «IF app.targets('3.0')»
-                                        {{ '{0} No fields updated|{1} One field updated|]1,Inf[ %count% fields updated'|trans({'%count%': logEntry.data|length}«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF») }}
+                                        {{ '{0} No fields updated|{1} One field updated|]1,Inf[ %count% fields updated'|trans({'%count%': logEntry.data|length}«IF !app.isSystemModule», 'messages'«ENDIF») }}
                                     «ELSE»
                                         {{ '{0} No fields updated|{1} One field updated|]1,Inf[ %amount% fields updated'|transchoice(logEntry.data|length, {'%amount%': logEntry.data|length}«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF») }}
                                     «ENDIF»
@@ -224,13 +227,13 @@ class History {
                                                     <li>
                                                     {% if field in ['createdBy', 'updatedBy'] and value.uid is defined %}
                                                         «IF app.targets('3.0')»
-                                                            {{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': userAvatar(value.uid, {rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()})|raw }}
+                                                            {{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': userAvatar(value.uid, {rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()}«IF !app.isSystemModule», 'messages'«ENDIF»)|raw }}
                                                         «ELSE»
                                                             {{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': userAvatar(value.uid, {rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()})|raw }}
                                                         «ENDIF»
                                                     {% else %}
                                                         «IF app.targets('3.0')»
-                                                            {{ '%field% set to:'|trans({'%field%': field|humanize}) }}
+                                                            {{ '%field% set to:'|trans({'%field%': field|humanize}«IF !app.isSystemModule», 'messages'«ENDIF») }}
                                                         «ELSE»
                                                             {{ __f('%field% set to:', {'%field%': field|humanize}) }}
                                                         «ENDIF»
@@ -239,14 +242,14 @@ class History {
                                                     </li>
                                                 {% else %}
                                                     «IF app.targets('3.0')»
-                                                        <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': 'an empty collection'|trans})|raw }}</li>
+                                                        <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': 'an empty collection'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»}«IF !app.isSystemModule», 'messages'«ENDIF»)|raw }}</li>
                                                     «ELSE»
                                                         <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': __('an empty collection')})|raw }}</li>
                                                     «ENDIF»
                                                 {% endif %}
                                             {% else %}
                                                 «IF app.targets('3.0')»
-                                                    <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputSimpleValue(value)})|raw }}</li>
+                                                    <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputSimpleValue(value)}«IF !app.isSystemModule», 'messages'«ENDIF»)|raw }}</li>
                                                 «ELSE»
                                                     <li>{{ __f('%field% set to <em>%value%</em>', {'%field%': field|humanize, '%value%': «IF app.targets('3.0')»_self«ELSE»helper«ENDIF».outputSimpleValue(value)})|raw }}</li>
                                                 «ENDIF»
@@ -255,16 +258,16 @@ class History {
                                     </ul>
                                 </div>
                             {% else %}
-                                «IF app.targets('3.0')»{% trans %}None{% endtrans %}«ELSE»{{ __('None') }}«ENDIF»
+                                «IF app.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}None{% endtrans %}«ELSE»{{ __('None') }}«ENDIF»
                             {% endif %}
                         </td>
                         <td headers="hActions hVersion{{ logEntry.version|e('html_attr') }}" class="actions«IF !app.targets('3.0')» nowrap«ENDIF»">
                             «IF hasDisplayAction»
-                                {% set linkTitle = «IF app.targets('3.0')»'Preview version %version%'|trans({'%version%': logEntry.version})«ELSE»__f('Preview version %version%', {'%version%': logEntry.version})«ENDIF» %}
-                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ «IF app.targets('3.0')»'version'|trans«ELSE»__('version')«ENDIF» ~ ' ' ~ logEntry.version }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-id-card«IF !app.targets('3.0')»-o«ENDIF»"></i></a>
+                                {% set linkTitle = «IF app.targets('3.0')»'Preview version %version%'|trans({'%version%': logEntry.version}«IF !app.isSystemModule», 'messages'«ENDIF»)«ELSE»__f('Preview version %version%', {'%version%': logEntry.version})«ENDIF» %}
+                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window «IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ «IF app.targets('3.0')»'version'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('version')«ENDIF» ~ ' ' ~ logEntry.version }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-id-card«IF !app.targets('3.0')»-o«ENDIF»"></i></a>
                             «ENDIF»
                             {% if not loop.first %}
-                                {% set linkTitle = «IF app.targets('3.0')»'Revert to version %version%'|trans({ '%version%': logEntry.version })«ELSE»__f('Revert to version %version%', { '%version%': logEntry.version })«ENDIF» %}
+                                {% set linkTitle = «IF app.targets('3.0')»'Revert to version %version%'|trans({'%version%': logEntry.version}«IF !app.isSystemModule», 'messages'«ENDIF»)«ELSE»__f('Revert to version %version%', { '%version%': logEntry.version })«ENDIF» %}
                                 <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-history"></i></a>
                             {% endif %}
                         </td>
@@ -278,7 +281,7 @@ class History {
         «IF hasViewAction || hasDisplayAction»
             <p>
                 {% if isDiffView == true %}
-                    {% set linkTitle = «IF application.targets('3.0')»'Back to history'|trans«ELSE»__('Back to history')«ENDIF» %}
+                    {% set linkTitle = «IF application.targets('3.0')»'Back to history'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Back to history')«ENDIF» %}
                     <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields && slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-history"></i> {{ linkTitle }}</a>
                 {% else %}
                     «IF hasViewAction»
@@ -287,7 +290,7 @@ class History {
                     «ENDIF»
                 {% endif %}
                 «IF hasDisplayAction»
-                    {% set linkTitle = «IF application.targets('3.0')»'Back to detail view'|trans«ELSE»__('Back to detail view')«ENDIF» %}
+                    {% set linkTitle = «IF application.targets('3.0')»'Back to detail view'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Back to detail view')«ENDIF» %}
                     <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-eye"></i> {{ linkTitle }}</a>
                 «ENDIF»
             </p>

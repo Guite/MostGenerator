@@ -133,6 +133,9 @@ class ItemActions {
                     )
                     «app.addLinkClass('danger')»
                     «app.addIcon('trash-o')»
+                    «IF app.targets('3.0') && !app.isSystemModule»
+                        ->setExtra('translation_domain', '«name.formatForCode»')
+                    «ENDIF»
                 ;
             }
         «ENDIF»
@@ -146,6 +149,9 @@ class ItemActions {
                 ])
                     «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                     «app.addIcon('reply')»
+                    «IF app.targets('3.0') && !app.isSystemModule»
+                        ->setExtra('translation_domain', '«name.formatForCode»')
+                    «ENDIF»
                 ;
             }
         «ENDIF»
@@ -173,6 +179,9 @@ class ItemActions {
                             ])
                                 «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                                 «app.addIcon('plus')»
+                                «IF app.targets('3.0') && !app.isSystemModule»
+                                    ->setExtra('translation_domain', '«name.formatForCode»')
+                                «ENDIF»
                             ;
                         }
                     «ELSE»
@@ -182,6 +191,9 @@ class ItemActions {
                         ])
                             «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                             «app.addIcon('plus')»
+                            «IF app.targets('3.0') && !app.isSystemModule»
+                                ->setExtra('translation_domain', '«name.formatForCode»')
+                            «ENDIF»
                         ;
                     «ENDIF»
                 }
@@ -201,6 +213,9 @@ class ItemActions {
                 )
                 «application.addLinkClass(if (application.targets('3.0')) 'secondary' else 'default')»
                 «application.addIcon(if (application.targets('3.0')) 'edit' else 'pencil-square-o')»
+                «IF application.targets('3.0') && !application.isSystemModule»
+                    ->setExtra('translation_domain', '«name.formatForCode»')
+                «ENDIF»
             ;
         «ENDIF»
         $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Reuse'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
@@ -212,7 +227,10 @@ class ItemActions {
                 «IF !application.targets('3.0')»$this->__(«ENDIF»'Reuse for new «name.formatForDisplay»'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF»
             )
             «application.addLinkClass(if (application.targets('3.0')) 'secondary' else 'default')»
-            «application.addIcon('files-o')»
+            «application.addIcon(if (application.targets('3.0')) 'copy' else 'files-o')»
+            «IF application.targets('3.0') && !application.isSystemModule»
+                ->setExtra('translation_domain', '«name.formatForCode»')
+            «ENDIF»
         ;
         «IF tree != EntityTreeType.NONE»
             if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
@@ -226,6 +244,9 @@ class ItemActions {
                     )
                     «application.addLinkClass(if (application.targets('3.0')) 'secondary' else 'default')»
                     «application.addIcon('child')»
+                    «IF application.targets('3.0') && !application.isSystemModule»
+                        ->setExtra('translation_domain', '«name.formatForCode»')
+                    «ENDIF»
                 ;
             }
         «ENDIF»

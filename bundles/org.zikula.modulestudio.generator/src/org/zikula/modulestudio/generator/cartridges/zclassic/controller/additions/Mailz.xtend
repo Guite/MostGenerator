@@ -57,7 +57,7 @@ class Mailz {
          */
         public function getPlugins(array $args = [])«IF targets('3.0')»: array«ENDIF»
         {
-            $translator = $this->container->get(«IF targets('3.0')»Translator::class«ELSE»'translator.default'«ENDIF»);
+            $translator = $this->container->get('translator«IF !targets('3.0')».default«ENDIF»');
 
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
             $plugins = [];
@@ -133,7 +133,9 @@ class Mailz {
                 'items' => $entities
             ];
 
-            $templateParameters = $this->container->get('«appService».controller_helper')->addTemplateParameters($objectType, $templateParameters, 'mailz', []);
+            $templateParameters = $this->container->get('«appService».controller_helper')
+                ->addTemplateParameters($objectType, $templateParameters, 'mailz', [])
+            ;
 
             return $this->container->get('twig')->render(
                 '@«appName»/Mailz/itemlist_' . $objectType . $templateType . '.twig',

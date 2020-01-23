@@ -75,7 +75,11 @@ class HookAssignmentEntity {
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Mapping\Annotation as Gedmo;
         use Symfony\Component\Validator\Constraints as Assert;
-        use Zikula\Core\Doctrine\EntityAccess;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        «ELSE»
+            use Zikula\Core\Doctrine\EntityAccess;
+        «ENDIF»
 
         /**
          * Entity base class for hooked object assignments.

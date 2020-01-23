@@ -25,38 +25,44 @@ class MailzView {
         var entityTemplate = ''
         for (entity : getAllEntities) {
             entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.text' + templateExtension
-            fsa.generateFile(entityTemplate, entity.textTemplate(it))
+            fsa.generateFile(entityTemplate, entity.textTemplate)
 
             entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '.html' + templateExtension
-            fsa.generateFile(entityTemplate, entity.htmlTemplate(it))
+            fsa.generateFile(entityTemplate, entity.htmlTemplate)
         }
     }
 
-    def private textTemplate(Entity it, Application app) '''
+    def private textTemplate(Entity it) '''
         {# purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings #}
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         {% for «name.formatForCode» in items %}
         «mailzEntryText»
         -----
         {% else %}
-        «IF app.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»
+        «IF application.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»
         {% endfor %}
     '''
 
-    def private htmlTemplate(Entity it, Application app) '''
+    def private htmlTemplate(Entity it) '''
         {# purpose of this template: Display «nameMultiple.formatForDisplay» in html mailings #}
-        «IF app.generateListContentType»{#«ENDIF»
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
+        «IF application.generateListContentType»{#«ENDIF»
         <ul>
         {% for «name.formatForCode» in items %}
             <li>
                 «mailzEntryHtml»
             </li>
         {% else %}
-            <li>«IF app.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»</li>
+            <li>«IF application.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»</li>
         {% endfor %}
         </ul>
-        «IF app.generateListContentType»#}
+        «IF application.generateListContentType»#}
 
-        {{ include('@«app.appName»/ContentType/itemlist_«name.formatForCode»_display_description.html.twig') }}«ENDIF»
+        {{ include('@«application.appName»/ContentType/itemlist_«name.formatForCode»_display_description.html.twig') }}«ENDIF»
     '''
 
     def private mailzEntryText(Entity it) '''

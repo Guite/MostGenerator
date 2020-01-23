@@ -27,13 +27,14 @@ class CategoryHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «ENDIF»
         use Zikula\CategoriesModule\Api\ApiInterface\CategoryPermissionApiInterface;
         use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
         «IF !targets('3.0')»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
-        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
         /**

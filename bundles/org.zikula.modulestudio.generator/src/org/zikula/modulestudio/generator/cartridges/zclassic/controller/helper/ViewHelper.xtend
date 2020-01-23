@@ -32,8 +32,10 @@ class ViewHelper {
         use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
         «IF targets('3.0')»
             use Twig\Loader\LoaderInterface;
+            use Zikula\Bundle\CoreBundle\Response\PlainResponse;
+        «ELSE»
+            use Zikula\Core\Response\PlainResponse;
         «ENDIF»
-        use Zikula\Core\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\ThemeModule\Engine\AssetFilter;
         «IF generatePdfSupport»

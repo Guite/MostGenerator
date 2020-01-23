@@ -41,6 +41,9 @@ class HookProviderView {
     def private formAwareEditTemplate(Entity it) '''
         {# purpose of this template: inner edit form included via form aware hooks #}
         {# should include as little formatting as possible #}
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain 'hooks' %}
+        «ENDIF»
         {% for element in form.«application.appName.formatForDB»_hook_edit«name.formatForDB» %}
             {{ form_row(element) }}
         {% endfor %}
@@ -49,6 +52,9 @@ class HookProviderView {
     def private formAwareDeleteTemplate(Entity it) '''
         {# purpose of this template: inner delete form included via form aware hooks #}
         {# should include as little formatting as possible #}
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain 'hooks' %}
+        «ENDIF»
         {% for element in form.«application.appName.formatForDB»_hook_delete«name.formatForDB» %}
             {{ form_row(element) }}
         {% endfor %}

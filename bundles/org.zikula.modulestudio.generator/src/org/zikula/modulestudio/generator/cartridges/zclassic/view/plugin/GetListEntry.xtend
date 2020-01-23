@@ -39,7 +39,7 @@ class GetListEntry {
             if ((empty($value) && '0' !== $value) || empty($objectType) || empty($fieldName)) {
                 return $value;
             }
-            «IF !isSystemModule»
+            «IF !isSystemModule && !targets('3.0')»
 
                 $this->translator->setDomain('«appName.formatForDB»');
             «ENDIF»

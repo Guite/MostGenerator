@@ -313,7 +313,8 @@ class QuickNavigationType {
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver->setDefaults([
-                    'csrf_protection' => false
+                    'csrf_protection' => false«IF app.targets('3.0') && !app.isSystemModule»,
+                    'translation_domain' => '«name.formatForCode»'«ENDIF»
                 ]);
             }
         }

@@ -176,6 +176,9 @@ class BlockListType {
                 'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.size > 1»,«ENDIF»
                 «IF getAllEntities.size > 1»
                     'attr' => [
+                        «IF targets('3.0')»
+                            /** @Ignore */
+                        «ENDIF»
                         'title' => $helpText
                     ],
                     «IF targets('3.0')»
@@ -308,6 +311,9 @@ class BlockListType {
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Amount:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'attr' => [
                     'maxlength' => 2,
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
                     'title' => $helpText
                 ],
                 «IF targets('3.0')»
@@ -345,7 +351,10 @@ class BlockListType {
                 'required' => false,
                 'attr' => [
                     'maxlength' => 80,
-                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': ' . $exampleTemplate
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
+                    'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': ' . $exampleTemplate
                 ],
                 «IF targets('3.0')»
                     /** @Ignore */
@@ -367,7 +376,10 @@ class BlockListType {
                 'required' => false,
                 'attr' => [
                     'maxlength' => 255,
-                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
+                    'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
                 ],
                 «IF targets('3.0')»
                     /** @Ignore */

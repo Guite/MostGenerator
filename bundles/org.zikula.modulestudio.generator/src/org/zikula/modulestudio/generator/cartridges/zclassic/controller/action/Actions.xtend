@@ -43,7 +43,13 @@ class Actions {
                 $«name.formatForCode» = «IF app.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
             }
             if (null === $«name.formatForCode») {
-                throw new NotFoundHttpException($this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('No such «name.formatForDisplay» found.'));
+                throw new NotFoundHttpException(
+                    $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                        'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
+                        [],
+                        '«name.formatForCode»'«ENDIF»
+                    )
+                );
             }
 
         «ENDIF»
@@ -324,7 +330,14 @@ class Actions {
             break;
         }
         if (!$deleteAllowed) {
-            $this->addFlash('error', «IF !application.targets('3.0')»$this->__(«ENDIF»'Error! It is not allowed to delete this «name.formatForDisplay».'«IF !application.targets('3.0')»)«ENDIF»);
+            $this->addFlash(
+                'error',
+                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                    'Error! It is not allowed to delete this «name.formatForDisplay».'«IF application.targets('3.0') && !application.isSystemModule»,
+                    [],
+                    '«name.formatForCode»'«ENDIF»
+                )
+            );
             $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
 
             return $this->redirectToRoute($redirectRoute);
@@ -400,7 +413,14 @@ class Actions {
         // execute the workflow action
         $success = $workflowHelper->executeAction($«name.formatForCode», $deleteActionId);
         if ($success) {
-            $this->addFlash('status', «IF !application.targets('3.0')»$this->__(«ENDIF»'Done! Item deleted.'«IF !application.targets('3.0')»)«ENDIF»);
+            $this->addFlash(
+                'status',
+                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                    'Done! «name.formatForDisplayCapital» deleted.'«IF application.targets('3.0') && !application.isSystemModule»,
+                    [],
+                    '«name.formatForCode»'«ENDIF»
+                )
+            );
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
         }
         «IF !skipHookSubscribers»

@@ -36,7 +36,11 @@ class PermissionHelper {
             use Doctrine\Common\Collections\ArrayCollection;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\Core\Doctrine\EntityAccess;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        «ELSE»
+            use Zikula\Core\Doctrine\EntityAccess;
+        «ENDIF»
         «IF hasLoggable»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»

@@ -99,6 +99,8 @@ class HookHelper {
         use Symfony\Component\Form\FormInterface;
         «IF targets('3.0')»
             use Symfony\Contracts\EventDispatcher\Event;
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            use Zikula\Bundle\CoreBundle\UrlInterface;
         «ENDIF»
         use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
         use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
@@ -107,8 +109,10 @@ class HookHelper {
         use Zikula\Bundle\HookBundle\Hook\ProcessHook;
         use Zikula\Bundle\HookBundle\Hook\ValidationHook;
         use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
-        use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\Core\UrlInterface;
+        «IF !targets('3.0')»
+            use Zikula\Core\Doctrine\EntityAccess;
+            use Zikula\Core\UrlInterface;
+        «ENDIF»
 
         /**
          * Helper base class for hook related methods.
@@ -404,7 +408,7 @@ class HookHelper {
                 $hook->setData(
                     $hook->getData()
                     . '<p>'
-                    . $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is a dummy addition by a generated filter provider.')
+                    . $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is a dummy addition by a generated filter provider.'«IF targets('3.0') && !isSystemModule», [], 'hooks'«ENDIF»)
                     . '</p>'
                 );
             }
@@ -875,7 +879,7 @@ class HookHelper {
 
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«group.formatForDisplayCapital» «category.formatForDisplay» «type»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«group.formatForDisplayCapital» «category.formatForDisplay» «type»'«IF targets('3.0') && !isSystemModule», [], 'hooks'«ENDIF»);
         }
         «IF targets('3.0')»
 

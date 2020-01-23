@@ -14,7 +14,7 @@ class CommonExample {
             * The current request's type: `MASTER_REQUEST` or `SUB_REQUEST`.
             * If a listener should only be active for the master request,
             * be sure to check that at the beginning of your method.
-            *     `if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
+            *     `if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
             *         return;
             *     }`
             *

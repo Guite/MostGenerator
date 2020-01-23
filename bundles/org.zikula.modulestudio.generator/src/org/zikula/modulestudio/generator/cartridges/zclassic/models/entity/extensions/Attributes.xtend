@@ -88,7 +88,11 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassImports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
-        use Zikula\Core\Doctrine\Entity\«extensionBaseClass»;
+        «IF application.targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Doctrine\Entity\«extensionBaseClass»;
+        «ELSE»
+            use Zikula\Core\Doctrine\Entity\«extensionBaseClass»;
+        «ENDIF»
         use «entityClassName('', false)»;
     '''
 

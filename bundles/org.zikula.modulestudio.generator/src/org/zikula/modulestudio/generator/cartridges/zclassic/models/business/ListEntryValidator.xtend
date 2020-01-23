@@ -93,10 +93,11 @@ class ListEntryValidator {
         use Symfony\Component\Validator\ConstraintValidator;
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
         use «appNamespace»\Helper\ListEntriesHelper;
 
         /**

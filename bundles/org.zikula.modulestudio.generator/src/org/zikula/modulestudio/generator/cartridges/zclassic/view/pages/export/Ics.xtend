@@ -37,6 +37,9 @@ class Ics {
     def private icsDisplay(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display ics view #}
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         BEGIN:VCALENDAR
         VERSION:2.0
         PRODID:{{ app.request.schemeAndHttpHost }}

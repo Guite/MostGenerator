@@ -37,7 +37,11 @@ class ContentTypeDetail {
 
         use Symfony\Component\HttpKernel\Controller\ControllerReference;
         use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
-        use Zikula\Common\Content\AbstractContentType;
+        «IF targets('3.0')»
+            use Zikula\ExtensionsModule\ModuleInterface\Content\AbstractContentType;
+        «ELSE»
+            use Zikula\Common\Content\AbstractContentType;
+        «ENDIF»
         use «appNamespace»\ContentType\Form\Type\ItemType as FormType;
         use «appNamespace»\Helper\ControllerHelper;
 
@@ -86,12 +90,12 @@ class ContentTypeDetail {
 
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
         }
 
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display or link a single «name.formatForDisplay» object.', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display or link a single «name.formatForDisplay» object.'«IF targets('3.0')», '«appName.formatForDB»'«ENDIF»);
         }
 
         public function getDefaultData()«IF targets('3.0')»: array«ENDIF»
@@ -143,7 +147,7 @@ class ContentTypeDetail {
         public function displayEditing()«IF targets('3.0')»: string«ENDIF»
         {
             if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
-                return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No item selected.', '«appName.formatForDB»');
+                return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No item selected.'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
             }
 
             return parent::displayEditing();

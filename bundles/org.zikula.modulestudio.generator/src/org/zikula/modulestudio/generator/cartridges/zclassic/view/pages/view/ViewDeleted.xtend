@@ -44,6 +44,9 @@ class ViewDeleted {
                 {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         {% block title «IF application.targets('3.0')»'Deleted «nameMultiple.formatForDisplay»'|trans«ELSE»__('Deleted «nameMultiple.formatForDisplay»')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}
@@ -60,7 +63,7 @@ class ViewDeleted {
         {% endblock %}
         {% block page_nav_links %}
             <p>
-                {% set linkTitle = «IF application.targets('3.0')»'Back to overview'|trans«ELSE»__('Back to overview')«ENDIF» %}
+                {% set linkTitle = «IF application.targets('3.0')»'Back to overview'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Back to overview')«ENDIF» %}
                 <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-reply"></i> {{ linkTitle }}</a>
             </p>
         {% endblock %}
@@ -77,11 +80,11 @@ class ViewDeleted {
                 </colgroup>
                 <thead>
                     <tr>
-                        <th id="hId" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted«IF !application.targets('3.0')» z-w02«ENDIF»">«IF application.targets('3.0')»{% trans %}ID{% endtrans %}«ELSE»{{ __('ID') }}«ENDIF»</th>
-                        <th id="hTitle" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">«IF application.targets('3.0')»{% trans %}Title{% endtrans %}«ELSE»{{ __('Title') }}«ENDIF»</th>
-                        <th id="hDate" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">«IF application.targets('3.0')»{% trans %}Date{% endtrans %}«ELSE»{{ __('Date') }}«ENDIF»</th>
-                        <th id="hUser" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">«IF application.targets('3.0')»{% trans %}User{% endtrans %}«ELSE»{{ __('User') }}«ENDIF»</th>
-                        <th id="hActions" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">«IF application.targets('3.0')»{% trans %}Action{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
+                        <th id="hId" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted«IF !application.targets('3.0')» z-w02«ENDIF»">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}ID{% endtrans %}«ELSE»{{ __('ID') }}«ENDIF»</th>
+                        <th id="hTitle" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Title{% endtrans %}«ELSE»{{ __('Title') }}«ENDIF»</th>
+                        <th id="hDate" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Date{% endtrans %}«ELSE»{{ __('Date') }}«ENDIF»</th>
+                        <th id="hUser" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}User{% endtrans %}«ELSE»{{ __('User') }}«ENDIF»</th>
+                        <th id="hActions" scope="col" class="«IF !application.targets('2.0')»z-order-«ENDIF»unsorted">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Action{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
                     </tr>
                 </thead>
                 <tbody>

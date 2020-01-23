@@ -84,6 +84,9 @@ class ViewTable {
                 {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         «IF application.targets('3.0')»
             {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
         «ELSE»
@@ -173,18 +176,18 @@ class ViewTable {
                         </th>
                     {% endif %}
                     «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsStart" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
+                        <th id="hItemActionsStart" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
                     «ENDIF»
                     «IF hasSortableFields»
                         {% if activateSortable %}
-                            <th id="hSortable" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans %}Sorting{% endtrans %}«ELSE»{{ __('Sorting') }}«ENDIF»</th>
+                            <th id="hSortable" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Sorting{% endtrans %}«ELSE»{{ __('Sorting') }}«ENDIF»</th>
                         {% endif %}
                     «ENDIF»
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
                     «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsEnd" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
+                        <th id="hItemActionsEnd" scope="col" class="«IF !app.targets('3.0')»«IF !app.targets('2.0')»z-order-unsorted«ENDIF» z-w02«ENDIF»">«IF app.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}«ELSE»{{ __('Actions') }}«ENDIF»</th>
                     «ENDIF»
                 </tr>
                 </thead>
@@ -212,7 +215,7 @@ class ViewTable {
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <td headers="hSortable" class="text-center«IF !application.targets('3.0')» z-w02«ENDIF»">
-                            <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-arrows«IF application.targets('3.0')»-alt«ENDIF» sort-handle pointer" title="{{ «IF application.targets('3.0')»'Drag to reorder'|trans«ELSE»__('Drag to reorder')«ENDIF»|e('html_attr') }}"></i>
+                            <i class="fa«IF application.targets('3.0')»s«ENDIF» fa-arrows«IF application.targets('3.0')»-alt«ENDIF» sort-handle pointer" title="{{ «IF application.targets('3.0')»'Drag to reorder'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Drag to reorder')«ENDIF»|e('html_attr') }}"></i>
                         </td>
                     {% endif %}
                 «ENDIF»
@@ -285,30 +288,30 @@ class ViewTable {
         <label for="«appName.toFirstLower»Action" class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3 «IF application.targets('3.0')»col-form«ELSE»control«ENDIF»-label">«IF application.targets('3.0')»{% trans %}With selected «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('With selected «nameMultiple.formatForDisplay»') }}«ENDIF»</label>
         <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-6">
             <select id="«appName.toFirstLower»Action" name="action" class="form-control «IF application.targets('3.0')»form-control«ELSE»input«ENDIF»-sm">
-                <option value="">«IF application.targets('3.0')»{% trans %}Choose action{% endtrans %}«ELSE»{{ __('Choose action') }}«ENDIF»</option>
+                <option value="">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Choose action{% endtrans %}«ELSE»{{ __('Choose action') }}«ENDIF»</option>
                 «IF workflow != EntityWorkflowType.NONE»
                     «IF workflow == EntityWorkflowType.ENTERPRISE»
-                        <option value="accept" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Accept')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Accept')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Accept{% endtrans %}«ELSE»{{ __('Accept') }}«ENDIF»</option>
+                        <option value="accept" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Accept')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Accept')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Accept{% endtrans %}«ELSE»{{ __('Accept') }}«ENDIF»</option>
                         «IF ownerPermission»
-                            <option value="reject" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Reject')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Reject')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Reject{% endtrans %}«ELSE»{{ __('Reject') }}«ENDIF»</option>
+                            <option value="reject" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Reject')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Reject')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Reject{% endtrans %}«ELSE»{{ __('Reject') }}«ENDIF»</option>
                         «ENDIF»
-                        <option value="demote" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Demote')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Demote')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Demote{% endtrans %}«ELSE»{{ __('Demote') }}«ENDIF»</option>
+                        <option value="demote" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Demote')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Demote')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Demote{% endtrans %}«ELSE»{{ __('Demote') }}«ENDIF»</option>
                     «ENDIF»
-                    <option value="approve" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Approve')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Approve')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Approve{% endtrans %}«ELSE»{{ __('Approve') }}«ENDIF»</option>
+                    <option value="approve" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Approve')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Approve')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Approve{% endtrans %}«ELSE»{{ __('Approve') }}«ENDIF»</option>
                 «ENDIF»
                 «IF hasTray»
-                    <option value="publish" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Publish')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Publish')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Publish{% endtrans %}«ELSE»{{ __('Publish') }}«ENDIF»</option>
-                    <option value="unpublish" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Unpublish')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Unpublish')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Unpublish{% endtrans %}«ELSE»{{ __('Unpublish') }}«ENDIF»</option>
+                    <option value="publish" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Publish')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Publish')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Publish{% endtrans %}«ELSE»{{ __('Publish') }}«ENDIF»</option>
+                    <option value="unpublish" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Unpublish')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Unpublish')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Unpublish{% endtrans %}«ELSE»{{ __('Unpublish') }}«ENDIF»</option>
                 «ENDIF»
                 «IF hasArchive»
-                    <option value="archive" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Archive')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Archive')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Archive{% endtrans %}«ELSE»{{ __('Archive') }}«ENDIF»</option>
-                    <option value="unarchive" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Unarchive')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Unarchive')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Unarchive{% endtrans %}«ELSE»{{ __('Unarchive') }}«ENDIF»</option>
+                    <option value="archive" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Archive')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Archive')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Archive{% endtrans %}«ELSE»{{ __('Archive') }}«ENDIF»</option>
+                    <option value="unarchive" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Unarchive')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Unarchive')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Unarchive{% endtrans %}«ELSE»{{ __('Unarchive') }}«ENDIF»</option>
                 «ENDIF»
-                <option value="delete" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Delete')»'|trans«ELSE»__('«getWorkflowActionDescription(workflow, 'Delete')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Delete{% endtrans %}«ELSE»{{ __('Delete') }}«ENDIF»</option>
+                <option value="delete" title="{{ «IF application.targets('3.0')»'«getWorkflowActionDescription(workflow, 'Delete')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('«getWorkflowActionDescription(workflow, 'Delete')»')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Delete{% endtrans %}«ELSE»{{ __('Delete') }}«ENDIF»</option>
             </select>
         </div>
         <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
-            <input type="submit" value="{{ «IF application.targets('3.0')»'Submit'|trans«ELSE»__('Submit')«ENDIF»|e('html_attr') }}" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»default«ENDIF» btn-sm" />
+            <input type="submit" value="{{ «IF application.targets('3.0')»'Submit'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Submit')«ENDIF»|e('html_attr') }}" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»default«ENDIF» btn-sm" />
         </div>
     '''
 
@@ -343,7 +346,7 @@ class ViewTable {
     '''
 
     def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        <a href="{{ sort.«fieldName».url }}" title="{{ «IF entity.application.targets('3.0')»'Sort by %fieldName%'|trans({'%fieldName%': '«label.formatForDisplay»'})«ELSE»__f('Sort by %s', {'%s': '«label.formatForDisplay»'})«ENDIF»|e('html_attr') }}" class="{{ sort.«fieldName».class }}">«IF entity.application.targets('3.0')»{% trans %}«label.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«label.formatForDisplayCapital»') }}«ENDIF»</a>
+        <a href="{{ sort.«fieldName».url }}" title="{{ «IF entity.application.targets('3.0')»'Sort by %fieldName%'|trans({'%fieldName%': '«label.formatForDisplay»'}«IF !entity.application.isSystemModule», 'messages'«ENDIF»)«ELSE»__f('Sort by %s', {'%s': '«label.formatForDisplay»'})«ENDIF»|e('html_attr') }}" class="{{ sort.«fieldName».class }}">«IF entity.application.targets('3.0')»{% trans %}«label.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«label.formatForDisplayCapital»') }}«ENDIF»</a>
     '''
 
     def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''
@@ -376,7 +379,7 @@ class ViewTable {
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF #['name', 'title'].contains(name)»
             «IF entity instanceof Entity && (entity as Entity).hasDisplayAction»
-                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ «IF application.targets('3.0')»'View detail page'|trans«ELSE»__('View detail page')«ENDIF»|e('html_attr') }}">«displayLeadingEntry»</a>
+                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ «IF application.targets('3.0')»'View detail page'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('View detail page')«ENDIF»|e('html_attr') }}">«displayLeadingEntry»</a>
             «ELSE»
                 «displayLeadingEntry»
             «ENDIF»
@@ -403,10 +406,10 @@ class ViewTable {
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDisplayAction»
                 {% «IF application.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ «IF application.targets('3.0')»'Open quick view window'|trans«ELSE»__('Open quick view window')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ «IF application.targets('3.0')»'Open quick view window'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Open quick view window')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
             «ENDIF»
         {% else %}
-            «IF application.targets('3.0')»{% trans %}Not set{% endtrans %}«ELSE»{{ __('Not set.') }}«ENDIF»
+            «IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Not set{% endtrans %}«ELSE»{{ __('Not set.') }}«ENDIF»
         {% endif %}
     '''
 

@@ -1,8 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.NamedObject
+import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -21,9 +23,9 @@ class ViewPagesHelper {
         «IF null !== documentation && !documentation.empty»
             «IF app.targets('3.0')»
                 «IF !documentation.containedTwigVariables.empty»
-                    <p class="alert alert-info">{% trans with {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»} %}«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»{% endtrans %}</p>
+                    <p class="alert alert-info">{% trans with {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»{% endtrans %}</p>
                 «ELSE»
-                    <p class="alert alert-info">{% trans %}«documentation.replace('\'', '\\\'')»{% endtrans %}</p>
+                    <p class="alert alert-info">{% trans«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'')»{% endtrans %}</p>
                 «ENDIF»
             «ELSE»
                 «IF !documentation.containedTwigVariables.empty»

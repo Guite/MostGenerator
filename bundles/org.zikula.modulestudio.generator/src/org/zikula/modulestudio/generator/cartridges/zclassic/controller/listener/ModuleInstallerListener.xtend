@@ -49,12 +49,12 @@ class ModuleInstallerListener {
         public static function getSubscribedEvents()
         {
             return [
-                CoreEvents::MODULE_INSTALL     => ['moduleInstalled', 5],
-                CoreEvents::MODULE_POSTINSTALL => ['modulePostInstalled', 5],
-                CoreEvents::MODULE_UPGRADE     => ['moduleUpgraded', 5],
-                CoreEvents::MODULE_ENABLE      => ['moduleEnabled', 5],
-                CoreEvents::MODULE_DISABLE     => ['moduleDisabled', 5],
-                CoreEvents::MODULE_REMOVE      => ['moduleRemoved', 5]
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_INSTALL     => ['moduleInstalled', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_POSTINSTALL => ['modulePostInstalled', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_UPGRADE     => ['moduleUpgraded', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_ENABLE      => ['moduleEnabled', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_DISABLE     => ['moduleDisabled', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_REMOVE      => ['moduleRemoved', 5]
             ];
         }
 

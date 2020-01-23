@@ -110,7 +110,7 @@ class BlockList {
         «ENDIF»
         public function getType()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
+            return $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
         }
 
         «display»
@@ -330,7 +330,7 @@ class BlockList {
 
             // set a block title
             if (empty($properties['title'])) {
-                $properties['title'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
+                $properties['title'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
             }
 
             $template = $this->getDisplayTemplate($properties);

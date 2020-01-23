@@ -102,8 +102,13 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractInstallerListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Core\CoreEvents;
-            use Zikula\Core\Event\ModuleStateEvent;
+            «IF targets('3.0')»
+                use Zikula\ExtensionsModule\Event\ModuleStateEvent;
+                use Zikula\ExtensionsModule\ExtensionEvents;
+            «ELSE»
+                use Zikula\Core\CoreEvents;
+                use Zikula\Core\Event\ModuleStateEvent;
+            «ENDIF»
             «IF hasUiHooksProviders»
                 use «appNamespace»\Entity\Factory\EntityFactory;
             «ENDIF»
@@ -175,7 +180,11 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractModuleDispatchListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
         «ENDIF»
 
         /**
@@ -198,7 +207,11 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractMailerListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
             use Zikula\MailerModule\MailerEvents;
         «ENDIF»
 
@@ -247,7 +260,11 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserLoginListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
             use Zikula\UsersModule\AccessEvents;
         «ENDIF»
 
@@ -271,7 +288,11 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserLogoutListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
             use Zikula\UsersModule\AccessEvents;
         «ENDIF»
 
@@ -305,7 +326,11 @@ class Listeners {
                     use Zikula\Common\Translator\TranslatorInterface;
                 «ENDIF»
             «ENDIF»
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
             «IF hasUserVariables»
                 use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
             «ENDIF»
@@ -341,7 +366,11 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserRegistrationListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
             use Zikula\UsersModule\RegistrationEvents;
         «ENDIF»
 
@@ -365,7 +394,11 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUsersListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
             use Zikula\UsersModule\UserEvents;
         «ENDIF»
 
@@ -389,7 +422,11 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractGroupListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
             use Zikula\GroupsModule\GroupEvents;
         «ENDIF»
 
@@ -418,10 +455,19 @@ class Listeners {
                 use Symfony\Component\HttpFoundation\RequestStack;
             «ENDIF»
             «IF needsApproval && generatePendingContentSupport»
-                use Zikula\Common\Collection\Collectible\PendingContentCollectible;
-                use Zikula\Common\Collection\Container;
+                «IF targets('3.0')»
+                    use Zikula\Bundle\CoreBundle\Collection\Collectible\PendingContentCollectible;
+                    use Zikula\Bundle\CoreBundle\Collection\Container;
+                «ELSE»
+                    use Zikula\Common\Collection\Collectible\PendingContentCollectible;
+                    use Zikula\Common\Collection\Container;
+                «ENDIF»
             «ENDIF»
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
             «IF needsApproval && generatePendingContentSupport»
                 use «appNamespace»\Helper\WorkflowHelper;
             «ENDIF»
@@ -454,7 +500,11 @@ class Listeners {
             use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Component\HttpKernel\Event\GetResponseEvent;
             use Symfony\Component\HttpKernel\KernelEvents;
-            use Zikula\Core\Event\GenericEvent;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+            «ELSE»
+                use Zikula\Core\Event\GenericEvent;
+            «ENDIF»
         «ENDIF»
 
         /**
@@ -480,7 +530,11 @@ class Listeners {
         «ELSE»
             use Gedmo\Loggable\LoggableListener as BaseListener;
             use Gedmo\Loggable\Mapping\Event\LoggableAdapter;
-            use Zikula\Core\Doctrine\EntityAccess;
+            «IF targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            «ELSE»
+                use Zikula\Core\Doctrine\EntityAccess;
+            «ENDIF»
             use «appNamespace»\Helper\EntityDisplayHelper;
             use «appNamespace»\Helper\LoggableHelper;
         «ENDIF»
@@ -512,8 +566,10 @@ class Listeners {
                     use Symfony\Component\Workflow\TransitionBlocker;
                     use Symfony\Contracts\Translation\TranslatorInterface;
                 «ENDIF»
+                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            «ELSE»
+                use Zikula\Core\Doctrine\EntityAccess;
             «ENDIF»
-            use Zikula\Core\Doctrine\EntityAccess;
             use «appNamespace»\Entity\Factory\EntityFactory;
             use «appNamespace»\Helper\PermissionHelper;
             «IF needsApproval»

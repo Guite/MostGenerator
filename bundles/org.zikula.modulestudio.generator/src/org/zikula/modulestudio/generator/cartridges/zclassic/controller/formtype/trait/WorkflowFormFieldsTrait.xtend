@@ -61,6 +61,9 @@ class WorkflowFormFieldsTrait {
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Additional remarks'«IF !targets('3.0')»)«ENDIF»,
                 'label_attr' => [
                     'class' => 'tooltips',
+                    «IF targets('3.0')»
+                        /** @Ignore */
+                    «ENDIF»
                     'title' => $helpText
                 ],
                 'attr' => [

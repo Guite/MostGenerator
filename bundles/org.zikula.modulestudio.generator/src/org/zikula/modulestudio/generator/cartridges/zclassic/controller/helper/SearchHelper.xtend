@@ -33,11 +33,13 @@ class SearchHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\RouteUrl;
+            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
+            use Zikula\Core\RouteUrl;
         «ENDIF»
-        use Zikula\Common\Translator\TranslatorTrait;
-        use Zikula\Core\RouteUrl;
         use Zikula\SearchModule\Entity\SearchResultEntity;
         use Zikula\SearchModule\SearchableInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -120,7 +122,7 @@ class SearchHelper {
                 «FOR entity : entitiesWithStrings»
                     '«appName.toFirstLower»«entity.nameMultiple.formatForCodeCapital»' => [
                         'value' => '«entity.name.formatForCode»',
-                        'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule»«IF targets('3.0')», []«ENDIF», '«appName.formatForDB»'«ENDIF»)
+                        'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule»«IF targets('3.0')», [], '«entity.name.formatForCode»'«ELSE», '«appName.formatForDB»'«ENDIF»«ENDIF»)
                     ]«IF entity != entitiesWithStrings.last»,«ENDIF»
                 «ENDFOR»
             ];

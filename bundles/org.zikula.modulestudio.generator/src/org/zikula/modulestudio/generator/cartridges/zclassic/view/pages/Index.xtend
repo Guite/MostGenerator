@@ -43,6 +43,9 @@ class Index {
                 {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
             «ENDIF»
         «ENDIF»
+        «IF application.targets('3.0') && !application.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         {% block title «IF application.targets('3.0')»'«nameMultiple.formatForDisplayCapital»'|trans«ELSE»__('«nameMultiple.formatForDisplayCapital»')«ENDIF» %}
         «IF !application.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'home' %}

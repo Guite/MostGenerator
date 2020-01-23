@@ -35,7 +35,11 @@ class ContentTypeList {
     def private contentTypeBaseClass(Application it) '''
         namespace «appNamespace»\ContentType\Base;
 
-        use Zikula\Common\Content\AbstractContentType;
+        «IF targets('3.0')»
+            use Zikula\ExtensionsModule\ModuleInterface\Content\AbstractContentType;
+        «ELSE»
+            use Zikula\Common\Content\AbstractContentType;
+        «ENDIF»
         use «appNamespace»\ContentType\Form\Type\ItemListType as FormType;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasCategorisableEntities»
@@ -124,12 +128,12 @@ class ContentTypeList {
 
         public function getTitle()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
         }
 
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display a list of «name.formatForDisplay» objects.', «IF targets('3.0')»[], «ENDIF»'«appName.formatForDB»');
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display a list of «name.formatForDisplay» objects.'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
         }
 
         public function getDefaultData()«IF targets('3.0')»: array«ENDIF»

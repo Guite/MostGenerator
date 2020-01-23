@@ -112,6 +112,9 @@ class ExtensionMenu {
                                         'routeParameters' => $routeParameters
                                     ])
                                         ->setAttribute('icon', 'fas fa-list-alt')
+                                        «IF !isSystemModule»
+                                            ->setExtra('translation_domain', '«entity.name.formatForCode»')
+                                        «ENDIF»
                                     ;
                                 }
                             }

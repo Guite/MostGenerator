@@ -20,7 +20,11 @@ class AutoCompletionRelationTransformer {
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\Form\Exception\TransformationFailedException;
-        use Zikula\Core\Doctrine\EntityAccess;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        «ELSE»
+            use Zikula\Core\Doctrine\EntityAccess;
+        «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**

@@ -51,6 +51,9 @@ class Layout {
 
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
+        «IF targets('3.0') && !isSystemModule»
+            {% trans_default_domain 'messages' %}
+        «ENDIF»
         {% block header %}
             «IF hasGeographical && hasEditActions && !targets('3.0')»
                 {% if 'edit' in app.request.get('_route') %}
@@ -126,6 +129,9 @@ class Layout {
         «ELSE»
             {% extends '«appName»::base.html.twig' %}
         «ENDIF»
+        «IF targets('3.0') && !isSystemModule»
+            {% trans_default_domain 'messages' %}
+        «ENDIF»
         {% block header %}
             {% if not app.request.query.getBoolean('raw', false) %}
                 {{ adminHeader() }}
@@ -149,6 +155,9 @@ class Layout {
             {% extends '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
         «ELSE»
             {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
+        «ENDIF»
+        «IF targets('3.0') && !isSystemModule»
+            {% trans_default_domain 'messages' %}
         «ENDIF»
         «IF !getAllEntities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
 
@@ -285,7 +294,10 @@ class Layout {
     }
 
     def rawPageImpl(Application it) '''
-        {# purpose of this template: Display pages without the theme #}
+        {# purpose of this template: display pages without the theme #}
+        «IF targets('3.0') && !isSystemModule»
+            {% trans_default_domain 'messages' %}
+        «ENDIF»
         <!DOCTYPE html>
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
@@ -349,6 +361,10 @@ class Layout {
     }
 
     def private pdfHeaderImpl(Application it) '''
+        {# purpose of this template: export pages to PDF #}
+        «IF targets('3.0') && !isSystemModule»
+            {% trans_default_domain 'messages' %}
+        «ENDIF»
         <!DOCTYPE html>
         <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="auto">
         <head>

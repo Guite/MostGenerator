@@ -106,7 +106,13 @@ class LoggableHistory {
 
     def private loggableHistoryBaseImpl(Entity it) '''
         if (empty(«IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»)) {
-            throw new NotFoundHttpException($this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('No such «name.formatForDisplay» found.'));
+            throw new NotFoundHttpException(
+                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                    'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
+                    [],
+                    '«name.formatForCode»'«ENDIF»
+                )
+            );
         }
 
         «IF !application.targets('3.0')»
@@ -114,7 +120,13 @@ class LoggableHistory {
         «ENDIF»
         $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
         if (null === $«name.formatForCode») {
-            throw new NotFoundHttpException($this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('No such «name.formatForDisplay» found.'));
+            throw new NotFoundHttpException(
+                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                    'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
+                    [],
+                    '«name.formatForCode»'«ENDIF»
+                )
+            );
         }
 
         «IF !application.targets('3.0')»
@@ -154,7 +166,8 @@ class LoggableHistory {
                         'status',
                         $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
                             'Done! Reverted «name.formatForDisplay» to version %version%.',
-                            ['%version%' => $revertToVersion]
+                            ['%version%' => $revertToVersion]«IF application.targets('3.0') && !application.isSystemModule»,
+                            '«name.formatForCode»'«ENDIF»
                         )
                     );
                 } else {
@@ -162,7 +175,8 @@ class LoggableHistory {
                         'error',
                         $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
                             'Error! Reverting «name.formatForDisplay» to version %version% failed.',
-                            ['%version%' => $revertToVersion]
+                            ['%version%' => $revertToVersion]«IF application.targets('3.0') && !application.isSystemModule»,
+                            '«name.formatForCode»'«ENDIF»
                         )
                     );
                 }

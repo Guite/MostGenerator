@@ -91,6 +91,9 @@ class ViewActions {
                         'routeParameters' => ['deleted' => 1]
                     ])
                         ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»')
+                        «IF app.targets('3.0') && !app.isSystemModule»
+                            ->setExtra('translation_domain', '«name.formatForCode»')
+                        «ENDIF»
                     ;
                 }
             «ENDIF»
@@ -110,6 +113,9 @@ class ViewActions {
                     'route' => $routePrefix . $routeArea . 'edit'
                 ])
                     ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-plus')
+                    «IF application.targets('3.0') && !application.isSystemModule»
+                        ->setExtra('translation_domain', '«name.formatForCode»')
+                    «ENDIF»
                 ;
             }
         }

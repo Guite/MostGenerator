@@ -23,7 +23,11 @@ class Tag {
         use IntlDateFormatter;
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-        use Zikula\Core\UrlInterface;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\UrlInterface;
+        «ELSE»
+            use Zikula\Core\UrlInterface;
+        «ENDIF»
         use Zikula\TagModule\AbstractTaggedObjectMeta;
 
         /**

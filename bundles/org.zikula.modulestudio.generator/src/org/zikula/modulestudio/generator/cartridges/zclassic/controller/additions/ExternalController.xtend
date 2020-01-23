@@ -51,7 +51,11 @@ class ExternalController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use Zikula\Core\Controller\AbstractController;
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
+        «ELSE»
+            use Zikula\Core\Controller\AbstractController;
+        «ENDIF»
         «commonSystemImports»
         «commonAppImports»
 

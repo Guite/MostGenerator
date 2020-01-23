@@ -175,12 +175,24 @@ class ControllerLayer {
             use Zikula\Component\SortableColumns\Column;
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
-        use Zikula\Core\Controller\AbstractController;
+        «IF app.targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
+        «ELSE»
+            use Zikula\Core\Controller\AbstractController;
+        «ENDIF»
         «IF hasEditAction && app.needsInlineEditing»
-            use Zikula\Core\Response\PlainResponse;
+            «IF app.targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Response\PlainResponse;
+            «ELSE»
+                use Zikula\Core\Response\PlainResponse;
+            «ENDIF»
         «ENDIF»
         «IF hasViewAction && hasDisplayAction && !skipHookSubscribers»
-            use Zikula\Core\RouteUrl;
+            «IF app.targets('3.0')»
+                use Zikula\Bundle\CoreBundle\RouteUrl;
+            «ELSE»
+                use Zikula\Core\RouteUrl;
+            «ENDIF»
         «ENDIF»
         «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;

@@ -330,6 +330,9 @@ class EditEntityType {
                     ->setDefaults([
                         // define class for underlying data (required for embedding forms)
                         'data_class' => «name.formatForCodeCapital»Entity::class,
+                        «IF app.targets('3.0') && !app.isSystemModule»
+                            'translation_domain' => '«name.formatForCode»',
+                        «ENDIF»
                         'empty_data' => function (FormInterface $form) {
                             return $this->entityFactory->create«name.formatForCodeCapital»();
                         },
@@ -498,6 +501,9 @@ class EditEntityType {
                     'maxlength' => «slugLength»,
                     «IF slugUnique»
                         'class' => 'validate-unique',
+                    «ENDIF»
+                    «IF app.targets('3.0')»
+                        /** @Ignore */
                     «ENDIF»
                     'title' => $helpText
                 ],

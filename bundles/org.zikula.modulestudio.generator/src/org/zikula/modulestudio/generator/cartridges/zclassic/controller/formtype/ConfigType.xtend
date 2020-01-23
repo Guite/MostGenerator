@@ -145,7 +145,8 @@ class ConfigType {
             {
                 $resolver->setDefaults([
                     // define class for underlying data
-                    'data_class' => AppSettings::class,
+                    'data_class' => AppSettings::class«IF targets('3.0') && !isSystemModule»,
+                    'translation_domain' => 'config'«ENDIF»
                 ]);
             }
         }

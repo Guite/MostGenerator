@@ -209,12 +209,12 @@ class WorkflowEventsListener {
         «IF needsApproval»
 
             $workflowShortName = 'none';
-            if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'])) {
+            if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'], true)) {
                 $workflowShortName = 'standard';
-            } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'])) {
+            } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'], true)) {
                 $workflowShortName = 'enterprise';
             }
-            if ('none' != $workflowShortName) {
+            if ('none' !== $workflowShortName) {
                 $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
             }
         «ENDIF»
@@ -255,7 +255,7 @@ class WorkflowEventsListener {
             }
         «ENDIF»
         «/*not used atm $targetState = $event->getTransition()->getTos()[0];*/»
-        $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'])«ELSE»false«ENDIF»;
+        $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'], true)«ELSE»false«ENDIF»;
 
         switch ($transitionName) {
             case 'defer':
@@ -278,7 +278,7 @@ class WorkflowEventsListener {
                 break;
             case 'delete':
                 «IF !getAllEntities.filter[ownerPermission].empty»
-                    $permissionLevel = in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\', \'')»']) ? ACCESS_EDIT : ACCESS_DELETE;
+                    $permissionLevel = in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\', \'')»'], true) ? ACCESS_EDIT : ACCESS_DELETE;
                 «ELSE»
                     $permissionLevel = ACCESS_DELETE;
                 «ENDIF»
@@ -304,7 +304,7 @@ class WorkflowEventsListener {
                                     «IF targets('3.0')»
                                         $event->addTransitionBlocker(
                                             new TransitionBlocker(
-                                                $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!')
+                                                $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
                                             )
                                         );
                                     «ELSE»
@@ -316,7 +316,7 @@ class WorkflowEventsListener {
                                     «IF targets('3.0')»
                                         $event->addTransitionBlocker(
                                             new TransitionBlocker(
-                                                $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!')
+                                                $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
                                             )
                                         );
                                     «ELSE»

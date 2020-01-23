@@ -108,7 +108,7 @@ class MultiHook {
                     if (!$permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_READ)) {
                         $cache[$nid] = '';
                     } else {
-                        $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', '«app.appName.formatForDB»') . '">' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»') . '</a>';
+                        $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', «IF app.targets('3.0') && !app.isSystemModule»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF») . '">' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0') && !app.isSystemModule»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF») . '</a>';
                     }
 
                     return $cache[$nid];
@@ -128,7 +128,7 @@ class MultiHook {
                 $repository = $container->get('«app.appService».entity_factory')->getRepository('«name.formatForCode»');
                 $entity = $repository->selectById($entityId, false);
                 if (null === $entity) {
-                    $cache[$nid] = '<em>' . $translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId], '«app.appName.formatForDB»') . '</em>';
+                    $cache[$nid] = '<em>' . $translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId], «IF app.targets('3.0') && !app.isSystemModule»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF») . '</em>';
 
                     return $cache[$nid];
                 }
@@ -187,7 +187,7 @@ class MultiHook {
         use Symfony\Component\Routing\RouterInterface;
         «IF app.targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Common\MultiHook\NeedleInterface;
+            use Zikula\ExtensionsModule\ModuleInterface\MultiHook\NeedleInterface;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»

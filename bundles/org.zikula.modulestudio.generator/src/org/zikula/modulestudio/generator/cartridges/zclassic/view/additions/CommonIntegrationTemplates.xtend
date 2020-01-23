@@ -36,6 +36,9 @@ class CommonIntegrationTemplates {
 
     def private displayDescTemplate(Entity it, Application app) '''
         {# purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
+        «IF app.targets('3.0') && !app.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         <dl>
             {% for «name.formatForCode» in items %}
                 <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}</dt>
@@ -63,6 +66,9 @@ class CommonIntegrationTemplates {
 
     def private displayTemplate(Entity it, Application app) '''
         {# purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
+        «IF app.targets('3.0') && !app.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
+        «ENDIF»
         {% for «name.formatForCode» in items %}
             <h3>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}</h3>
             «IF hasDisplayAction»

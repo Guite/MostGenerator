@@ -34,10 +34,14 @@ class WorkflowHelper {
         use Symfony\Component\Workflow\Registry;
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            «IF needsApproval»
+                use Translation\Extractor\Annotation\Desc;
+            «ENDIF»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
-        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\ListEntriesHelper;
@@ -492,13 +496,11 @@ class WorkflowHelper {
         {
             $amounts = [];
 
-            «val entitiesStandard = getEntitiesForWorkflow(EntityWorkflowType::STANDARD)»
-            «val entitiesEnterprise = getEntitiesForWorkflow(EntityWorkflowType::ENTERPRISE)»
-            «val entitiesNotNone = entitiesStandard + entitiesEnterprise»
-            «IF entitiesNotNone.empty»
+            «IF !needsApproval»
                 // nothing required here as no entities use enhanced workflows including approval actions
             «ELSE»
-
+                «val entitiesStandard = getEntitiesForWorkflow(EntityWorkflowType::STANDARD)»
+                «val entitiesEnterprise = getEntitiesForWorkflow(EntityWorkflowType::ENTERPRISE)»
                 // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
                 $state = 'waiting';
                 «FOR entity : entitiesStandard»
@@ -528,15 +530,16 @@ class WorkflowHelper {
             if (0 < $amount) {
                 $amounts[] = [
                     'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
-                    'description' => $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForCodeCapital» pending «requiredAction»'),
+                    'description' => $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForCodeCapital» pending «requiredAction»'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»),
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
                     «IF application.targets('3.0')»
+                        /** @Desc("{count, plural,\n  one   {One «name.formatForDisplay» is waiting for «requiredAction».}\n  other {# «nameMultiple.formatForDisplay» are waiting for «requiredAction».}\n}") */
                         'message' => $this->translator->trans(
-                            'One «name.formatForDisplay» is waiting for «requiredAction».|%count% «nameMultiple.formatForDisplay» are waiting for «requiredAction».',
+                            'plural_n.«nameMultiple.formatForDB».waiting_for_«requiredAction»'
                             ['%count%' => $amount]«IF !application.isSystemModule»,
-                            '«application.appName.formatForDB»'«ENDIF»
+                            '«name.formatForCode»'«ENDIF»
                         )
                     «ELSE»
                         'message' => $this->translator->transChoice(

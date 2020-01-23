@@ -163,7 +163,11 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF isBase»
-            use Zikula\Core\Doctrine\EntityAccess;
+            «IF application.targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            «ELSE»
+                use Zikula\Core\Doctrine\EntityAccess;
+            «ENDIF»
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
