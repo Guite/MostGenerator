@@ -18,7 +18,7 @@ class Routing {
      * Entry point for Routing YAML file.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        fsa.generateFile(getResourcesPath + 'config/routing.yml', routingConfig)
+        fsa.generateFile(getResourcesPath + 'config/routing' + (if (targets('3.0')) '.yaml' else '.yml'), routingConfig)
     }
 
     def private routingConfig(Application it) '''

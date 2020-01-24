@@ -57,7 +57,7 @@ class Definition {
         this.states = getRequiredStateList(app, wfType)
         this.collectTransitions
 
-        val fileName = wfType.textualName + '.yml'
+        val fileName = wfType.textualName + (if (app.targets('3.0')) '.yaml' else '.yml')
         fsa.generateFile(outputPath + fileName, workflowDefinition)
     }
 

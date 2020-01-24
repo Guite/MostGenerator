@@ -31,7 +31,7 @@ class DependencyInjection {
             public function load(array $configs, ContainerBuilder $container)
             {
                 $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../Resources/config'));
-                $loader->load('services.yml');
+                $loader->load('services.«IF targets('3.0')»yaml«ELSE»yml«ENDIF»');
             }
         }
     '''

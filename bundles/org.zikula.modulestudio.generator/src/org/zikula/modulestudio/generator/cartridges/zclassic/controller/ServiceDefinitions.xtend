@@ -41,7 +41,7 @@ class ServiceDefinitions {
     Boolean needsDetailContentType
 
     def private generateServiceFile(Application it, String fileName, CharSequence content) {
-        val definitionFilePath = getResourcesPath + 'config/' + fileName + '.yml'
+        val definitionFilePath = getResourcesPath + 'config/' + fileName + (if (targets('3.0')) '.yaml' else '.yml')
         fsa.generateFile(definitionFilePath, content)
     }
 
