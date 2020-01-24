@@ -95,7 +95,7 @@ class ContentTypeDetail {
 
         public function getDescription()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display or link a single «name.formatForDisplay» object.'«IF targets('3.0')», '«appName.formatForDB»'«ENDIF»);
+            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display or link a single «name.formatForDisplay» object.'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
         }
 
         public function getDefaultData()«IF targets('3.0')»: array«ENDIF»
