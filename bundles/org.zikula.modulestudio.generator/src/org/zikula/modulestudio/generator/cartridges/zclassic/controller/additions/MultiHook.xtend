@@ -92,7 +92,7 @@ class MultiHook {
             }
 
             if (!$container->get('kernel')->isBundle('«app.appName»')) {
-                $cache[$nid] = '<em>' . htmlspecialchars($translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»('Module "%moduleName%" is not available.', ['%moduleName%' => '«app.appName»'], '«app.appName.formatForDB»')) . '</em>';
+                $cache[$nid] = '<em>' . htmlspecialchars($translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»('Module "%moduleName%" is not available.', ['%moduleName%' => '«app.appName»']«IF !app.targets('3.0')», '«app.appName.formatForDB»'«ENDIF»)) . '</em>';
 
                 return $cache[$nid];
             }
@@ -108,7 +108,7 @@ class MultiHook {
                     if (!$permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_READ)) {
                         $cache[$nid] = '';
                     } else {
-                        $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', «IF app.targets('3.0') && !app.isSystemModule»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF») . '">' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0') && !app.isSystemModule»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF») . '</a>';
+                        $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', [], UrlGeneratorInterface::ABSOLUTE_URL) . '" title="' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', «IF app.targets('3.0') && !app.isSystemModule»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF») . '">' . $translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»'«IF !app.targets('3.0')», '«app.appName.formatForDB»'«ENDIF») . '</a>';
                     }
 
                     return $cache[$nid];
@@ -128,7 +128,7 @@ class MultiHook {
                 $repository = $container->get('«app.appService».entity_factory')->getRepository('«name.formatForCode»');
                 $entity = $repository->selectById($entityId, false);
                 if (null === $entity) {
-                    $cache[$nid] = '<em>' . $translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId], «IF app.targets('3.0') && !app.isSystemModule»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF») . '</em>';
+                    $cache[$nid] = '<em>' . $translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»('«name.formatForDisplayCapital» with id %id% could not be found', ['%id%' => $entityId]«IF !app.targets('3.0')», '«app.appName.formatForDB»'«ENDIF») . '</em>';
 
                     return $cache[$nid];
                 }
@@ -283,12 +283,12 @@ class MultiHook {
 
         public function getTitle()«IF app.targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
+            return $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF»);
         }
 
         public function getDescription()«IF app.targets('3.0')»: string«ENDIF»
         {
-            return $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Links to «IF hasViewAction»the list of «nameMultiple.formatForDisplay»«ENDIF»«IF hasDisplayAction»«IF hasViewAction» and «ENDIF»specific «nameMultiple.formatForDisplay»«ENDIF».', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
+            return $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Links to «IF hasViewAction»the list of «nameMultiple.formatForDisplay»«ENDIF»«IF hasDisplayAction»«IF hasViewAction» and «ENDIF»specific «nameMultiple.formatForDisplay»«ENDIF».', «IF app.targets('3.0')»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF»);
         }
 
         public function getUsageInfo()«IF app.targets('3.0')»: string«ENDIF»
@@ -347,8 +347,8 @@ class MultiHook {
                             [],
                             UrlGeneratorInterface::ABSOLUTE_URL
                         );
-                        $linkTitle = $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
-                        $linkText = $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], «ENDIF»'«app.appName.formatForDB»');
+                        $linkTitle = $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('View «nameMultiple.formatForDisplay»', «IF app.targets('3.0')»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF»);
+                        $linkText = $this->translator->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForDisplayCapital»', «IF app.targets('3.0')»[], '«name.formatForCode»'«ELSE»'«app.appName.formatForDB»'«ENDIF»);
                         $cache[$needleId] = '<a href="' . $route . '" title="' . $linkTitle . '">' . $linkText . '</a>';
                     }
 
@@ -370,7 +370,7 @@ class MultiHook {
                     $notFoundMessage = $this->translator->«IF app.targets('3.0')»trans«ELSE»__f«ENDIF»(
                         '«name.formatForDisplayCapital» with id %id% could not be found',
                         ['%id%' => $entityId],
-                        '«app.appName.formatForDB»'
+                        '«IF app.targets('3.0')»«name.formatForCode»«ELSE»«app.appName.formatForDB»«ENDIF»'
                     );
                     $cache[$needleId] = '<em>' . $notFoundMessage . '</em>';
 
