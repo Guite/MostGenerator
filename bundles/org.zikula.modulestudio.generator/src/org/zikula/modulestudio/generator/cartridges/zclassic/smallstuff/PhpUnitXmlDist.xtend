@@ -28,7 +28,7 @@ class PhpUnitXmlDist {
                  verbose="true"
         >
             <php>
-                <server name="KERNEL_CLASS" value="ZikulaKernel" />
+                <server name="KERNEL_CLASS" value="«IF !targets('3.0')»Zikula«ENDIF»Kernel" />
             </php>
             <testsuites>
                 <testsuite name="«appName» Test Suite">
