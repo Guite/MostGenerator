@@ -179,7 +179,7 @@ class ThirdPartyListener {
         public function getEditorHelpers(EditorHelperEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             // install assets for Scribite plugins
-            $targetDir = 'web/modules/«vendorAndName.toLowerCase»';
+            $targetDir = '«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»';
             if (!$this->filesystem->exists($targetDir)) {
                 $moduleDirectory = str_replace('Listener/Base', '', __DIR__);
                 if (is_dir($originDir = $moduleDirectory . 'Resources/public')) {
@@ -243,7 +243,7 @@ class ThirdPartyListener {
          */
         protected function getPathToModuleWebAssets()«IF targets('3.0')»: string«ENDIF»
         {
-            return $this->requestStack->getCurrentRequest()->getBasePath() . '/web/modules/«vendorAndName.toLowerCase»/';
+            return $this->requestStack->getCurrentRequest()->getBasePath() . '«IF !targets('3.0')»/web«ENDIF»/modules/«vendorAndName.toLowerCase»/';
         }
     '''
 }

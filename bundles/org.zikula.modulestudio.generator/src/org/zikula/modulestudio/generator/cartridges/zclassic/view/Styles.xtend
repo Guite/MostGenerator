@@ -149,7 +149,7 @@ class Styles {
             }
 
             .ui-autocomplete-loading {
-                background: white url("../../../../../../web/«IF targets('2.0')»modules/zikulausers«ELSE»bundles/core«ENDIF»/images/ajax/indicator_arrows.gif") right center no-repeat;
+                background: white url("../../../../../../«IF targets('3.0')»public«ELSE»web«ENDIF»/«IF targets('2.0')»modules/zikulausers«ELSE»bundles/core«ENDIF»/images/ajax/indicator_arrows.gif") right center no-repeat;
             }
 
             .ui-autocomplete .suggestion {

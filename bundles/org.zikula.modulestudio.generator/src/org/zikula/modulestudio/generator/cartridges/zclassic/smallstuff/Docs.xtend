@@ -95,9 +95,9 @@ class Docs {
         «ENDIF»
         2. Initialize and activate «appName» in the extensions administration.
         «IF hasUploads»
-            3. Move or copy the directory `Resources/userdata/«appName»/` to `/«IF targets('2.0')»web/uploads«ELSE»userdata«ENDIF»/«appName»/`.
+            3. Move or copy the directory `Resources/userdata/«appName»/` to `/«IF targets('2.0')»«IF targets('3.0')»public«ELSE»web«ENDIF»/uploads«ELSE»userdata«ENDIF»/«appName»/`.
                Note this step is optional as the install process can create these folders, too.
-            4. Make the directory `/«IF targets('2.0')»web/uploads«ELSE»userdata«ENDIF»/«appName»/` writable including all sub folders.
+            4. Make the directory `/«IF targets('2.0')»«IF targets('3.0')»public«ELSE»web«ENDIF»/uploads«ELSE»userdata«ENDIF»/«appName»/` writable including all sub folders.
         «ENDIF»
 
         For questions and other remarks visit our homepage «url».

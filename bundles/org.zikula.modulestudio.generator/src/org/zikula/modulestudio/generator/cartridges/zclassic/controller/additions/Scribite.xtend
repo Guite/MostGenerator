@@ -91,7 +91,7 @@ class Scribite {
                 button = jQuery('button[value=«appName.toLowerCase»]');
 
                 button
-                    .css('background', 'url(' + Zikula.Config.baseURL + Zikula.Config.baseURI + '/web/modules/«vendorAndName.toLowerCase»/images/admin.png) no-repeat center center transparent')
+                    .css('background', 'url(' + Zikula.Config.baseURL + Zikula.Config.baseURI + '/«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»/images/admin.png) no-repeat center center transparent')
                     .css('background-size', '16px 16px')
                     .attr('title', '«name.formatForDisplayCapital»')
                 ;
@@ -119,7 +119,7 @@ class Scribite {
                     context.memo('button.«appName.toLowerCase»', function () {
                         // create button
                         var button = ui.button({
-                            contents: '<img src="' + Zikula.Config.baseURL + Zikula.Config.baseURI + '/web/modules/«vendorAndName.toLowerCase»/images/admin.png' + '" alt="«name.formatForDisplayCapital»" width="16" height="16" />',
+                            contents: '<img src="' + Zikula.Config.baseURL + Zikula.Config.baseURI + '/«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»/images/admin.png' + '" alt="«name.formatForDisplayCapital»" width="16" height="16" />',
                             tooltip: '«name.formatForDisplayCapital»',
                             click: function () {
                                 «appName»FinderOpenPopup(context, 'summernote');
@@ -148,7 +148,7 @@ class Scribite {
         tinymce.PluginManager.add('«appName.formatForDB»', function(editor, url) {
             var icon;
 
-            icon = Zikula.Config.baseURL + Zikula.Config.baseURI + '/web/modules/«vendorAndName.toLowerCase»/images/admin.png';
+            icon = Zikula.Config.baseURL + Zikula.Config.baseURI + '/«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»/images/admin.png';
 
             editor.addButton('«appName.formatForDB»', {
                 //text: '«name.formatForDisplayCapital»',

@@ -216,7 +216,7 @@ class ImageHelper {
          */
         protected function checkIfImagineCacheDirectoryExists()«IF targets('3.0')»: void«ENDIF»
         {
-            $cachePath = 'web/imagine/cache';
+            $cachePath = '«IF targets('3.0')»public«ELSE»web«ENDIF»/imagine/cache';
             if (file_exists($cachePath)) {
                 return;
             }
