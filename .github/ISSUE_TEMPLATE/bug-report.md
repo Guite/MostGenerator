@@ -21,7 +21,6 @@ assignees: 'Guite'
 
 [NOTE]: # ( Tell us what you expected to happen )
 
-
 ## Current Behavior
 
 [NOTE]: # ( Tell us what actually happens )
@@ -31,7 +30,6 @@ assignees: 'Guite'
 ## Possible Solution
 
 [NOTE]: # ( Not required, but suggest a fix/reason for the bug )
-
 
 ## Steps to Reproduce
 
