@@ -246,10 +246,22 @@ class Entities {
         «ENDIF»
         «IF hasUploadFieldsEntity»
 
-            /**
-             * @var string Path to upload base folder
-             */
-            protected $_uploadBasePath = '';
+            «IF application.targets('3.0')»
+                /**
+                 * @var string Relative path to upload base folder
+                 */
+                protected $_uploadBasePathRelative = '';
+
+                /**
+                 * @var string Absolute path to upload base folder
+                 */
+                protected $_uploadBasePathAbsolute = '';
+            «ELSE»
+                /**
+                 * @var string Path to upload base folder
+                 */
+                protected $_uploadBasePath = '';
+            «ENDIF»
 
             /**
              * @var string Base URL to upload files
@@ -274,7 +286,12 @@ class Entities {
     def private accessors(DataObject it) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, application.targets('3.0'), '', '')»
         «IF hasUploadFieldsEntity»
-            «fh.getterAndSetterMethods(it, '_uploadBasePath', 'string', false, false, application.targets('3.0'), '', '')»
+            «IF application.targets('3.0')»
+                «fh.getterAndSetterMethods(it, '_uploadBasePathRelative', 'string', false, false, application.targets('3.0'), '', '')»
+                «fh.getterAndSetterMethods(it, '_uploadBasePathAbsolute', 'string', false, false, application.targets('3.0'), '', '')»
+            «ELSE»
+                «fh.getterAndSetterMethods(it, '_uploadBasePath', 'string', false, false, application.targets('3.0'), '', '')»
+            «ENDIF»
             «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, false, application.targets('3.0'), '', '')»
         «ENDIF»
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»

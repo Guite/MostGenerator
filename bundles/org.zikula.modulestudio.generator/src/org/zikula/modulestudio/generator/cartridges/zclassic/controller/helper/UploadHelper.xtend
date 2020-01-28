@@ -45,6 +45,7 @@ class UploadHelper {
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
             use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
             use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
@@ -66,6 +67,13 @@ class UploadHelper {
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
+        «IF targets('3.0')»
+            /**
+             * @var ZikulaHttpKernelInterface
+             */
+            protected $kernel;
+
+        «ENDIF»
         /**
          * @var Filesystem
          */
@@ -112,6 +120,9 @@ class UploadHelper {
         protected $forbiddenFileTypes;
 
         public function __construct(
+            «IF targets('3.0')»
+                ZikulaHttpKernelInterface $kernel,
+            «ENDIF»
             TranslatorInterface $translator,
             Filesystem $filesystem,
             RequestStack $requestStack,
@@ -120,6 +131,9 @@ class UploadHelper {
             VariableApiInterface $variableApi,
             «IF targets('3.0')»string «ENDIF»$dataDirectory
         ) {
+            «IF targets('3.0')»
+                $this->kernel = $kernel;
+            «ENDIF»
             $this->setTranslator($translator);
             $this->filesystem = $filesystem;
             $this->requestStack = $requestStack;
@@ -212,7 +226,7 @@ class UploadHelper {
 
             // retrieve the final file name
             try {
-                $basePath = $this->getFileBaseFolder($objectType, $fieldName);
+                $basePath = «IF targets('3.0')»$this->kernel->getProjectDir() . '/' . «ENDIF»$this->getFileBaseFolder($objectType, $fieldName);
             } catch (Exception $exception) {
                 if (null !== $flashBag) {
                     $flashBag->add('error', $exception->getMessage());
@@ -843,7 +857,7 @@ class UploadHelper {
          */
         protected function checkAndCreateUploadFolder(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName, «IF targets('3.0')»string «ENDIF»$allowedExtensions = '')«IF targets('3.0')»: bool«ENDIF»
         {
-            $uploadPath = $this->getFileBaseFolder($objectType, $fieldName, true);
+            $uploadPath = «IF targets('3.0')»$this->kernel->getProjectDir() . '/' . «ENDIF»$this->getFileBaseFolder($objectType, $fieldName, true);
 
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;

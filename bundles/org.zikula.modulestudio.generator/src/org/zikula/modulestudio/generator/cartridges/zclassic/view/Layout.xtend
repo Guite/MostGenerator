@@ -231,7 +231,7 @@ class Layout {
                             «IF targets('3.0')»{% trans %}Current file{% endtrans %}«ELSE»{{ __('Current file') }}«ENDIF»:
                             <a href="{{ file_url }}" title="{{ «IF targets('3.0')»'Open file'|trans«ELSE»__('Open file')«ENDIF»|e('html_attr') }}"{% if file_meta.isImage %} class="image-link"{% endif %}>
                             {% if file_meta.isImage %}
-                                <img src="{{ file_path|imagine_filter('zkroot', thumb_runtime_options) }}" alt="{{ edited_entity|«appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumb_runtime_options.thumbnail.size[0] }}" height="{{ thumb_runtime_options.thumbnail.size[1] }}" class="img-thumbnail" />
+                                <img src="{{ file_path«IF targets('3.0')»|«appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', thumb_runtime_options) }}" alt="{{ edited_entity|«appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumb_runtime_options.thumbnail.size[0] }}" height="{{ thumb_runtime_options.thumbnail.size[1] }}" class="img-thumbnail" />
                             {% else %}
                                 «IF targets('3.0')»{% trans %}Download{% endtrans %}«ELSE»{{ __('Download') }}«ENDIF» ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
                             {% endif %}

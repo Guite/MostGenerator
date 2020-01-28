@@ -54,6 +54,9 @@ class LifecycleListener {
         «ELSE»
             use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        «ENDIF»
         «IF targets('3.0') && hasLoggable»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
@@ -80,6 +83,13 @@ class LifecycleListener {
         {
             use ContainerAwareTrait;
 
+        «IF targets('3.0')»
+            /**
+             * @var ZikulaHttpKernelInterface
+             */
+            protected $kernel;
+
+        «ENDIF»
             /**
              * @var EventDispatcherInterface
              */
@@ -91,10 +101,16 @@ class LifecycleListener {
             protected $logger;
 
             public function __construct(
+            «IF targets('3.0')»
+                ZikulaHttpKernelInterface $kernel,
+            «ENDIF»
                 ContainerInterface $container,
                 EventDispatcherInterface $eventDispatcher,
                 LoggerInterface $logger
             ) {
+            «IF targets('3.0')»
+                $this->kernel = $kernel;
+            «ENDIF»
                 $this->setContainer($container);
                 $this->eventDispatcher = $eventDispatcher;
                 $this->logger = $logger;

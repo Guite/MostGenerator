@@ -172,7 +172,7 @@ class SimpleFields {
             <a href="{{ «realName»Url }}" title="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"{% if «realName»Meta.isImage %} class="image-link"{% endif %}>
             {% if «realName»Meta.isImage %}
                 {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
-                <img src="«IF application.generatePdfSupport»{% if app.request.requestFormat == 'pdf' %}{{ «realName».getPathname() }}{% else %}«ENDIF»{{ «realName».getPathname()|imagine_filter('zkroot', thumbOptions) }}«IF application.generatePdfSupport»{% endif %}«ENDIF»" alt="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
+                <img src="«IF application.generatePdfSupport»{% if app.request.requestFormat == 'pdf' %}{{ «realName».getPathname() }}{% else %}«ENDIF»{{ «realName».getPathname()«IF application.targets('3.0')»|«application.appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', thumbOptions) }}«IF application.generatePdfSupport»{% endif %}«ENDIF»" alt="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
             {% else %}
                 «IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Download{% endtrans %}«ELSE»{{ __('Download') }}«ENDIF» ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
             {% endif %}

@@ -28,9 +28,18 @@ class ImageHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Imagine\Image\ImageInterface;
+        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
+            «IF targets('3.0')»
+                use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+            «ENDIF»
+            use Symfony\Component\Filesystem\Filesystem;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
+                use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+            «ENDIF»
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
@@ -46,6 +55,13 @@ class ImageHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
+        «IF targets('3.0') && (hasImageFields || !getUploadVariables.filter[isImageField].empty)»
+            /**
+             * @var ZikulaHttpKernelInterface
+             */
+            protected $kernel;
+
+        «ENDIF»
         /**
          * @var TranslatorInterface
          */
@@ -69,10 +85,16 @@ class ImageHelper {
         protected $name;
 
         public function __construct(
+            «IF targets('3.0') && (hasImageFields || !getUploadVariables.filter[isImageField].empty)»
+                ZikulaHttpKernelInterface $kernel,
+            «ENDIF»
             TranslatorInterface $translator,
             RequestStack $requestStack,
             VariableApiInterface $variableApi
         ) {
+            «IF targets('3.0') && (hasImageFields || !getUploadVariables.filter[isImageField].empty)»
+                $this->kernel = $kernel;
+            «ENDIF»
             $this->translator = $translator;
             $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
@@ -216,19 +238,35 @@ class ImageHelper {
          */
         protected function checkIfImagineCacheDirectoryExists()«IF targets('3.0')»: void«ENDIF»
         {
-            $cachePath = '«IF targets('3.0')»public«ELSE»web«ENDIF»/imagine/cache';
-            if (file_exists($cachePath)) {
+            $cacheDirectory = «IF targets('3.0')»$this->kernel->getProjectDir() . «ENDIF»'«IF targets('3.0')»/public/media«ELSE»web/imagine«ENDIF»/cache';
+            $fs = new Filesystem();
+            if ($fs->exists($cacheDirectory)) {
                 return;
             }
-            if (!$this->requestStack->getCurrentRequest()->hasSession()) {
-                return;
-            }
-            $session = $this->requestStack->getCurrentRequest()->getSession();
+            «IF targets('3.0')»
+                try {
+                    $parentDirectory = mb_substr($cacheDirectory, 0, -6);
+                    if (!$fs->exists($parentDirectory)) {
+                        $fs->mkdir($parentDirectory);
+                    }
+                    $fs->mkdir($cacheDirectory);
+                } catch (IOExceptionInterface $exception) {
+                    «warningAboutCacheDirectory»
+                }
+            «ELSE»
+                «warningAboutCacheDirectory»
+            «ENDIF»
+        }
+    '''
+
+    def private warningAboutCacheDirectory(Application it) '''
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request->hasSession() && $session = $request->getSession()) {
             $session->getFlashBag()->add(
                 'warning',
                 $this->translator->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
                     'The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.',
-                    ['%directory%' => $cachePath]«IF targets('3.0') && !isSystemModule»,
+                    ['%directory%' => $cacheDirectory]«IF targets('3.0') && !isSystemModule»,
                     'config'«ENDIF»
                 )
             );

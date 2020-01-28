@@ -220,14 +220,18 @@ class Property {
             }
 
             $fileName = $this->«name.formatForCode»FileName;
-            if (!empty($fileName) && !$this->_uploadBasePath) {
+            if (!empty($fileName) && !$this->_uploadBasePath«IF application.targets('3.0')»Relative«ENDIF») {
                 throw new RuntimeException('Invalid upload base path in ' . get_class($this) . '#get«name.formatForCodeCapital»().');
             }
 
-            $filePath = $this->_uploadBasePath . '«subFolderPathSegment»/' . $fileName;
+            $filePath = $this->_uploadBasePath«IF application.targets('3.0')»Absolute«ENDIF» . '«subFolderPathSegment»/' . $fileName;
             if (!empty($fileName) && file_exists($filePath)) {
                 $this->«name.formatForCode» = new File($filePath);
-                $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $filePath);
+                «IF application.targets('3.0')»
+                    $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $this->_uploadBasePathRelative . '«subFolderPathSegment»/' . $fileName);
+                «ELSE»
+                    $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $filePath);
+                «ENDIF»
             } else {
                 $this->set«name.formatForCodeCapital»FileName('');
                 $this->set«name.formatForCodeCapital»Url('');

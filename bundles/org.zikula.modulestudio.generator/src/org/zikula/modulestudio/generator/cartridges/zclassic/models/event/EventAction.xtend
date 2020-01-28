@@ -29,8 +29,15 @@ class EventAction {
                 $request = $this->container->get('request_stack')->getCurrentRequest();
                 $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
 
-                «entityVar»->set_uploadBasePath($uploadHelper->getFileBaseFolder(«entityVar»->get_objectType()));
-                «entityVar»->set_uploadBaseUrl($baseUrl);
+                «IF targets('3.0')»
+                    $uploadBaseDirectory = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType());
+                    «entityVar»->set_uploadBasePathRelative($uploadBaseDirectory);
+                    «entityVar»->set_uploadBasePathAbsolute($this->kernel->getProjectDir() . '/' . $uploadBaseDirectory);
+                    «entityVar»->set_uploadBaseUrl(str_replace('/public', '', $baseUrl));«/* avoid "public/public" in URL */»
+                «ELSE»
+                    «entityVar»->set_uploadBasePath($uploadHelper->getFileBaseFolder(«entityVar»->get_objectType()));
+                    «entityVar»->set_uploadBaseUrl($baseUrl);
+                «ENDIF»
 
                 // determine meta data if it does not exist
                 foreach ($uploadFields as $fieldName) {
@@ -43,7 +50,7 @@ class EventAction {
                     }
                     $basePath = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
                     $fileName = «entityVar»[$fieldName . 'FileName'];
-                    $filePath = $basePath . $fileName;
+                    $filePath = «IF targets('3.0')»$this->kernel->getProjectDir() . '/' . «ENDIF»$basePath . $fileName;
                     if (!file_exists($filePath)) {
                         continue;
                     }

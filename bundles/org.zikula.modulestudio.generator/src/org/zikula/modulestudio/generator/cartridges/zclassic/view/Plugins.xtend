@@ -97,6 +97,9 @@ class Plugins {
         «ENDIF»
         «IF targets('3.0')»
             use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            «IF hasUploads»
+                use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+            «ENDIF»
             use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
@@ -132,6 +135,13 @@ class Plugins {
         «val appNameLower = appName.toLowerCase»
         use TranslatorTrait;
 
+        «IF targets('3.0') && hasUploads»
+            /**
+             * @var ZikulaHttpKernelInterface
+             */
+            protected $kernel;
+
+        «ENDIF»
         «IF hasTrees»
             /**
              * @var RouterInterface
@@ -190,6 +200,9 @@ class Plugins {
 
         «ENDIF»
         public function __construct(
+            «IF targets('3.0') && hasUploads»
+                ZikulaHttpKernelInterface $kernel,
+            «ENDIF»
             TranslatorInterface $translator«IF hasTrees»,
             RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates»,
             RequestStack $requestStack«ENDIF»,
@@ -203,6 +216,9 @@ class Plugins {
             LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
             MenuBuilder $menuBuilder«ENDIF»
         ) {
+            «IF targets('3.0') && hasUploads»
+                $this->kernel = $kernel;
+            «ENDIF»
             $this->setTranslator($translator);
             «IF hasTrees»
                 $this->router = $router;
@@ -271,6 +287,9 @@ class Plugins {
                 «ENDIF»
                 «IF hasUploads»
                     new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_fileSize', [$this, 'getFileSize'], ['is_safe' => ['html']]),
+                    «IF targets('3.0')»
+                        new TwigFilter('«appNameLower»_relativePath', [$this, 'getRelativePath']),
+                    «ENDIF»
                 «ENDIF»
                 «IF hasListFields»
                     new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_listEntry', [$this, 'getListEntry']),
@@ -384,6 +403,18 @@ class Plugins {
                 }
 
                 return $description;
+            }
+        «ENDIF»
+        «IF targets('3.0') && hasUploads»
+
+            /**
+             * The «appName.formatForDB»__relativePath filter returns the relative web path to a file.
+             * Example:
+             *     {{ myPerson.image.getPathname()|«appName.formatForDB»_relativePath }}
+             */
+            public function getRelativePath(string $absolutePath): string
+            {
+                return str_replace($this->kernel->getProjectDir() . '/public', '', $absolutePath);
             }
         «ENDIF»
 
