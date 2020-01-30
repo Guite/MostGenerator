@@ -27,9 +27,11 @@ class PhpUnitXmlDist {
                  beStrictAboutTodoAnnotatedTests="true"
                  verbose="true"
         >
+            «IF !targets('3.0')»
             <php>
-                <server name="KERNEL_CLASS" value="«IF !targets('3.0')»Zikula«ENDIF»Kernel" />
+                <server name="KERNEL_CLASS" value="ZikulaKernel" />
             </php>
+            «ENDIF»
             <testsuites>
                 <testsuite name="«appName» Test Suite">
                     <directory>./Tests</directory>
