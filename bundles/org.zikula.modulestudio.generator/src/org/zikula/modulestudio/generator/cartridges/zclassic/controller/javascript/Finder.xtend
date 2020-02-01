@@ -97,7 +97,7 @@ class Finder {
             «ENDIF»
             jQuery('select').not("[id$='pasteAs']").change(«objName».finder.onParamChanged);
             «/*jQuery('.btn-success').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');*/»
-            jQuery('.btn-default').click(«objName».finder.handleCancel);
+            jQuery('.btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF»').click(«objName».finder.handleCancel);
 
             var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer a');
             selectedItems.bind('click keypress', function (event) {
