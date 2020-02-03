@@ -513,12 +513,14 @@ class TechStructureFields {
             if (percentage) result += 'Repräsentiert einen Prozentwert.'
             if (range) result += 'Repräsentiert einen Bereich.'
             if (version) result += 'Speichert die Version der Entität.'
+            if (counter) result += 'Agiert als Zähler.'
         } else {
             if (sortablePosition) result += 'Stores the position for the Sortable extension.'
             if (null !== aggregateFor && !aggregateFor.empty) result += 'Aggregates a 1:n relation (' + aggregateFor + ').'
             if (percentage) result += 'Represents a percentage value.'
             if (range) result += 'Represents a range.'
             if (version) result += 'Stores the entity version.'
+            if (counter) result += 'Acts as a counter.'
         }
         result
     }
