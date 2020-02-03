@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatI
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetListEntry
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.IncreaseCounter
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ModerationObjects
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectState
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectTypeSelector
@@ -64,6 +65,9 @@ class Plugins {
         «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
             use DateInterval;
         «ENDIF»
+        «IF !getEntitiesWithCounterFields.empty»
+            use Doctrine\DBAL\Driver\Connection;
+        «ENDIF»
         «IF hasLoggable»
             use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
         «ENDIF»
@@ -71,7 +75,7 @@ class Plugins {
             use Knp\Menu\Matcher\Matcher;
             use Knp\Menu\Renderer\ListRenderer;
         «ENDIF»
-        «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+        «IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «IF hasCountryFields»
@@ -142,6 +146,13 @@ class Plugins {
             protected $kernel;
 
         «ENDIF»
+        «IF !getEntitiesWithCounterFields.empty»
+            /**
+             * @var Connection
+             */
+            protected $databaseConnection;
+
+        «ENDIF»
         «IF hasTrees»
             /**
              * @var RouterInterface
@@ -149,7 +160,7 @@ class Plugins {
             protected $router;
 
         «ENDIF»
-        «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+        «IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»
             /**
              * @var RequestStack
              */
@@ -203,8 +214,9 @@ class Plugins {
             «IF targets('3.0') && hasUploads»
                 ZikulaHttpKernelInterface $kernel,
             «ENDIF»
-            TranslatorInterface $translator«IF hasTrees»,
-            RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates»,
+            TranslatorInterface $translator«IF !getEntitiesWithCounterFields.empty»,
+            Connection $connection«ENDIF»«IF hasTrees»,
+            RouterInterface $router«ENDIF»«IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»,
             RequestStack $requestStack«ENDIF»,
             VariableApiInterface $variableApi,
             «IF hasTrees»
@@ -220,10 +232,13 @@ class Plugins {
                 $this->kernel = $kernel;
             «ENDIF»
             $this->setTranslator($translator);
+            «IF !getEntitiesWithCounterFields.empty»
+                $this->databaseConnection = $connection;
+            «ENDIF»
             «IF hasTrees»
                 $this->router = $router;
             «ENDIF»
-            «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+            «IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»
                 $this->requestStack = $requestStack;
             «ENDIF»
             $this->variableApi = $variableApi;
@@ -263,6 +278,9 @@ class Plugins {
                 «ENDIF»
                 «IF generateModerationPanel && needsApproval»
                     new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_moderationObjects', [$this, 'getModerationObjects']),
+                «ENDIF»
+                «IF !getEntitiesWithCounterFields.empty»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_increaseCounter', [$this, 'increaseCounter']),
                 «ENDIF»
                 new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
                 new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_templateSelector', [$this, 'getTemplateSelector'])
@@ -489,6 +507,9 @@ class Plugins {
         }
         if (generateModerationPanel && needsApproval) {
             result += new ModerationObjects().generate(it)
+        }
+        if (!getEntitiesWithCounterFields.empty) {
+            result += new IncreaseCounter().generate(it)
         }
         if (generateIcsTemplates && hasEntitiesWithIcsTemplates) {
             result += new FormatIcalText().generate(it)

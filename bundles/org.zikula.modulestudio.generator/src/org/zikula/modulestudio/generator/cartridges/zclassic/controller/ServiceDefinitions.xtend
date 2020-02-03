@@ -1178,7 +1178,7 @@ class ServiceDefinitions {
                 «IF hasTrees»
                     - "@router"
                 «ENDIF»
-                «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+                «IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»
                     - "@request_stack"
                 «ENDIF»
                 - "@zikula_extensions_module.api.variable"

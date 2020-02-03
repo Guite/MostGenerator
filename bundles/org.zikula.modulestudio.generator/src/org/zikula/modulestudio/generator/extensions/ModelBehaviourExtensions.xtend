@@ -188,6 +188,27 @@ class ModelBehaviourExtensions {
     }
 
     /**
+     * Returns a list of all entities with at least one counter field.
+     */
+    def getEntitiesWithCounterFields(Application it) {
+        getAllEntities.filter[hasCounterFieldsEntity]
+    }
+
+    /**
+     * Checks whether the entity contains at least one counter field.
+     */
+    def hasCounterFieldsEntity(Entity it) {
+        !getCounterFields.empty
+    }
+
+    /**
+     * Returns a list of all integer fields with the counter flag enabled.
+     */
+    def getCounterFields(Entity it) {
+        getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[counter]].flatten
+    }
+
+    /**
      * Checks whether the entity contains at least one field with the blameable extension enabled.
      */
     def hasBlameableFields(Entity it) {
@@ -228,8 +249,6 @@ class ModelBehaviourExtensions {
     def getArchivingEntities(Application it) {
         getAllEntities.filter[hasArchive && hasEndDateField]
     }
-
-
 
     /**
      * Checks whether the entity supports ics templates.
