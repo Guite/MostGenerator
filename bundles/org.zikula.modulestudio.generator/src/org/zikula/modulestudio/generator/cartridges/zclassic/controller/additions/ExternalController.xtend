@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -13,6 +14,7 @@ class ExternalController {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -271,6 +273,13 @@ class ExternalController {
             return new RedirectResponse($redirectUrl);
         }
 
+        $formData = $request->query->get('«appName.formatForDB»_' . strtolower($objectType) . 'finder', []);
+        «IF hasTranslatable»
+            if (isset($formData['language'])) {
+                $this->get('stof_doctrine_extensions.listener.translatable')->setTranslatableLocale($formData['language']);
+            }
+        «ENDIF»
+
         if (!«IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->hasComponentPermission($objectType, ACCESS_COMMENT)) {
             throw new AccessDeniedException();
         }
@@ -310,7 +319,8 @@ class ExternalController {
             'objectType' => $objectType,
             'sort' => $sort,
             'sortdir' => $sdir,
-            'currentPage' => $currentPage«IF hasImageFields»,«ENDIF»
+            'currentPage' => $currentPage,
+            'language' => isset($formData['language']) ? $formData['language'] : $request->getLocale()«IF hasImageFields»,«ENDIF»
             «IF hasImageFields»
                 'onlyImages' => false,
                 'imageField' => ''

@@ -48,10 +48,12 @@ class FinderType {
         use «nsSymfonyFormType»SearchType;
         use «nsSymfonyFormType»SubmitType;
         use Symfony\Component\Form\FormBuilderInterface;
+        use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         «IF app.targets('3.0')»
             use Translation\Extractor\Annotation\Ignore;
         «ENDIF»
+        use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «IF categorisable»
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
@@ -59,6 +61,7 @@ class FinderType {
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
+        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «IF app.needsFeatureActivationHelper»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -72,6 +75,16 @@ class FinderType {
                 use TranslatorTrait;
 
             «ENDIF»
+            /**
+             * @var RequestStack
+             */
+            protected $requestStack;
+
+            /**
+             * @var VariableApiInterface
+             */
+            protected $variableApi;
+
             «IF app.needsFeatureActivationHelper»
                 /**
                  * @var FeatureActivationHelper
@@ -81,16 +94,20 @@ class FinderType {
             «ENDIF»
             «IF !app.targets('3.0') || app.needsFeatureActivationHelper»
                 public function __construct(
+                    
                     «IF !app.targets('3.0')»
-                        TranslatorInterface $translator«IF app.needsFeatureActivationHelper»,«ENDIF»
+                        TranslatorInterface $translator
                     «ENDIF»
-                    «IF app.needsFeatureActivationHelper»
-                        FeatureActivationHelper $featureActivationHelper
+                    RequestStack $requestStack,
+                    VariableApiInterface $variableApi«IF app.needsFeatureActivationHelper»,
+                    FeatureActivationHelper $featureActivationHelper
                     «ENDIF»
                 ) {
                     «IF !app.targets('3.0')»
                         $this->setTranslator($translator);
                     «ENDIF»
+                    $this->requestStack = $requestStack;
+                    $this->variableApi = $variableApi;
                     «IF app.needsFeatureActivationHelper»
                         $this->featureActivationHelper = $featureActivationHelper;
                     «ENDIF»
@@ -113,6 +130,9 @@ class FinderType {
                     ])
                 ;
 
+                if ($this->variableApi->getSystemVar('multilingual')) {
+                    $this->addLanguageField($builder, $options);
+                }
                 «IF categorisable»
                     if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $options['object_type'])) {
                         $this->addCategoriesField($builder, $options);
@@ -147,6 +167,8 @@ class FinderType {
                     ])
                 ;
             }
+
+            «addLanguageField»
 
             «IF categorisable»
                 «addCategoriesField»
@@ -183,6 +205,22 @@ class FinderType {
                     ->setAllowedValues('editor_name', ['ckeditor', 'quill', 'summernote', 'tinymce'])
                 ;
             }
+        }
+    '''
+
+    def private addLanguageField(Entity it) '''
+        /**
+         * Adds a language field.
+         */
+        public function addLanguageField(FormBuilderInterface $builder, array $options = [])
+        {
+            $builder->add('language', LocaleType::class, [
+                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Language':'«IF !app.targets('3.0')»)«ENDIF»,
+                'data' => $this->requestStack->getCurrentRequest()->getLocale(),
+                'empty_data' => null,
+                'multiple' => false,
+                'expanded' => false
+            ]);
         }
     '''
 

@@ -762,6 +762,8 @@ class ServiceDefinitions {
                     class: «nsBase»Finder\«entity.name.formatForCodeCapital»FinderType
                     arguments:
                         - "@translator.default"
+                        - "@request_stack"
+                        - "@zikula_extensions_module.api.variable"
                         «IF needsFeatureActivationHelper»
                             - "@«modPrefix».feature_activation_helper"
                         «ENDIF»
