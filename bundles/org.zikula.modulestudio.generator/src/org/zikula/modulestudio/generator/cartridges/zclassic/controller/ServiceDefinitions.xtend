@@ -1175,6 +1175,9 @@ class ServiceDefinitions {
             class: «nsBase»TwigExtension
             arguments:
                 - "@translator.default"
+                «IF !getEntitiesWithCounterFields.empty»
+                    - "@doctrine.dbal.default_connection"
+                «ENDIF»
                 «IF hasTrees»
                     - "@router"
                 «ENDIF»
