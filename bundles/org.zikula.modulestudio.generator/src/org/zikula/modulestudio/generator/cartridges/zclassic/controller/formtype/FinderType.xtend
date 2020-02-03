@@ -215,7 +215,7 @@ class FinderType {
         public function addLanguageField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('language', LocaleType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Language':'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Language:'«IF !app.targets('3.0')»)«ENDIF»,
                 'data' => $this->requestStack->getCurrentRequest()->getLocale(),
                 'empty_data' => null,
                 'multiple' => false,

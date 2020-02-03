@@ -309,8 +309,10 @@ class ExternalView {
                                     «ENDIF»
                                 </a>
                                 {% set displayParameters = {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)»}|merge({'_locale': language|default(app.locale)}) %}
-                                <input type="hidden" id="path{{ itemId }}" value="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display', displayParameters) }}" />
-                                <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_display', displayParameters) }}" />
+                                «IF hasDisplayAction»
+                                    <input type="hidden" id="path{{ itemId }}" value="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display', displayParameters) }}" />
+                                    <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_display', displayParameters) }}" />
+                                «ENDIF»
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" />
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
                                 «IF hasImageFieldsEntity»
