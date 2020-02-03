@@ -102,7 +102,11 @@ class NamingExtensions {
         if (isSystemModule) {
             'system/' + name.formatForCodeCapital + 'Module'
         } else {
-            'modules/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
+            if (targets('3.0')) {
+                'extensions/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
+            } else {
+                'modules/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
+            }
         }
     }
 
