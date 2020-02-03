@@ -146,7 +146,7 @@ class ExternalView {
         <dl class="category-list">
         {% for propName, catMapping in «name.formatForCode».categories %}
             <dt>{{ propName }}</dt>
-            <dd>{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}</dd>
+            <dd>{{ catMapping.category.«IF application.targets('3.0')»displayName«ELSE»display_name«ENDIF»[app.request.locale]|default(catMapping.category.name) }}</dd>
         {% endfor %}
         </dl>
     '''
