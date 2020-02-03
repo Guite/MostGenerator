@@ -49,112 +49,112 @@ class ModuleInstallerListener {
         public static function getSubscribedEvents()
         {
             return [
-                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_INSTALL     => ['moduleInstalled', 5],
-                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_POSTINSTALL => ['modulePostInstalled', 5],
-                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_UPGRADE     => ['moduleUpgraded', 5],
-                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_ENABLE      => ['moduleEnabled', 5],
-                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_DISABLE     => ['moduleDisabled', 5],
-                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::MODULE_REMOVE      => ['moduleRemoved', 5]
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::«IF targets('3.0')»EXTENSION«ELSE»MODULE«ENDIF»_INSTALL     => ['«IF targets('3.0')»extension«ELSE»module«ENDIF»Installed', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::«IF targets('3.0')»EXTENSION«ELSE»MODULE«ENDIF»_POSTINSTALL => ['«IF targets('3.0')»extension«ELSE»module«ENDIF»PostInstalled', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::«IF targets('3.0')»EXTENSION«ELSE»MODULE«ENDIF»_UPGRADE     => ['«IF targets('3.0')»extension«ELSE»module«ENDIF»Upgraded', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::«IF targets('3.0')»EXTENSION«ELSE»MODULE«ENDIF»_ENABLE      => ['«IF targets('3.0')»extension«ELSE»module«ENDIF»Enabled', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::«IF targets('3.0')»EXTENSION«ELSE»MODULE«ENDIF»_DISABLE     => ['«IF targets('3.0')»extension«ELSE»module«ENDIF»Disabled', 5],
+                «IF targets('3.0')»ExtensionEvents«ELSE»CoreEvents«ENDIF»::«IF targets('3.0')»EXTENSION«ELSE»MODULE«ENDIF»_REMOVE      => ['«IF targets('3.0')»extension«ELSE»module«ENDIF»Removed', 5]
             ];
         }
 
         /**
-         * Listener for the `module.install` event.
+         * Listener for the `«IF targets('3.0')»extension«ELSE»module«ENDIF».install` event.
          *
-         * Called after a module has been successfully installed.
-         * The event allows accessing the module bundle and the extension
-         * information array using `$event->getModule()` and `$event->getModInfo()`.
+         * Called after a«IF targets('3.0')»n extension«ELSE» module«ENDIF» has been successfully installed.
+         * The event allows accessing the «IF targets('3.0')»extension«ELSE»module«ENDIF» bundle and the extension
+         * information array using `$event->get«IF targets('3.0')»Extension«ELSE»Module«ENDIF»()` and `$event->get«IF targets('3.0')»Info«ELSE»ModInfo«ENDIF»()`.
          *
          «commonExample.generalEventProperties(it, false)»
          */
-        public function moduleInstalled(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function «IF targets('3.0')»extension«ELSE»module«ENDIF»Installed(«IF targets('3.0')»Extension«ELSE»Module«ENDIF»StateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
         /**
-         * Listener for the `module.postinstall` event.
+         * Listener for the `«IF targets('3.0')»extension«ELSE»module«ENDIF».postinstall` event.
          *
-         * Called after a module has been installed (on reload of the extensions view).
-         * The event allows accessing the module bundle and the extension
-         * information array using `$event->getModule()` and `$event->getModInfo()`.
+         * Called after a«IF targets('3.0')»n extension«ELSE» module«ENDIF» has been installed (on reload of the extensions view).
+         * The event allows accessing the «IF targets('3.0')»extension«ELSE»module«ENDIF» bundle and the extension
+         * information array using `$event->get«IF targets('3.0')»Extension«ELSE»Module«ENDIF»()` and `$event->get«IF targets('3.0')»Info«ELSE»ModInfo«ENDIF»()`.
          *
          «commonExample.generalEventProperties(it, false)»
          */
-        public function modulePostInstalled(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function «IF targets('3.0')»extension«ELSE»module«ENDIF»PostInstalled(«IF targets('3.0')»Extension«ELSE»Module«ENDIF»StateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             «IF amountOfExampleRows > 0»
-                $module = $event->getModule();
-                if (null === $module) {
+                $«IF targets('3.0')»extension«ELSE»module«ENDIF» = $event->get«IF targets('3.0')»Extension«ELSE»Module«ENDIF»();
+                if (null === $«IF targets('3.0')»extension«ELSE»module«ENDIF») {
                     return;
                 }
 
-                if ('«appName»' === $module->getName()) {
+                if ('«appName»' === $«IF targets('3.0')»extension«ELSE»module«ENDIF»->getName()) {
                     $this->exampleDataHelper->createDefaultData();
                 }
             «ENDIF»
         }
 
         /**
-         * Listener for the `module.upgrade` event.
+         * Listener for the `«IF targets('3.0')»extension«ELSE»module«ENDIF».upgrade` event.
          *
-         * Called after a module has been successfully upgraded.
-         * The event allows accessing the module bundle and the extension
-         * information array using `$event->getModule()` and `$event->getModInfo()`.
+         * Called after a«IF targets('3.0')»n extension«ELSE» module«ENDIF» has been successfully upgraded.
+         * The event allows accessing the «IF targets('3.0')»extension«ELSE»module«ENDIF» bundle and the extension
+         * information array using `$event->get«IF targets('3.0')»Extension«ELSE»Module«ENDIF»()` and `$event->get«IF targets('3.0')»Info«ELSE»ModInfo«ENDIF»()`.
          *
          «commonExample.generalEventProperties(it, false)»
          */
-        public function moduleUpgraded(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function «IF targets('3.0')»extension«ELSE»module«ENDIF»Upgraded(«IF targets('3.0')»Extension«ELSE»Module«ENDIF»StateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
         /**
-         * Listener for the `module.enable` event.
+         * Listener for the `«IF targets('3.0')»extension«ELSE»module«ENDIF».enable` event.
          *
-         * Called after a module has been successfully enabled.
-         * The event allows accessing the module bundle and the extension
-         * information array using `$event->getModule()` and `$event->getModInfo()`.
+         * Called after a«IF targets('3.0')»n extension«ELSE» module«ENDIF» has been successfully enabled.
+         * The event allows accessing the «IF targets('3.0')»extension«ELSE»module«ENDIF» bundle and the extension
+         * information array using `$event->get«IF targets('3.0')»Extension«ELSE»Module«ENDIF»()` and `$event->get«IF targets('3.0')»Info«ELSE»ModInfo«ENDIF»()`.
          *
          «commonExample.generalEventProperties(it, false)»
          */
-        public function moduleEnabled(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function «IF targets('3.0')»extension«ELSE»module«ENDIF»Enabled(«IF targets('3.0')»Extension«ELSE»Module«ENDIF»StateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
         /**
-         * Listener for the `module.disable` event.
+         * Listener for the `«IF targets('3.0')»extension«ELSE»module«ENDIF».disable` event.
          *
-         * Called after a module has been successfully disabled.
+         * Called after a«IF targets('3.0')»n extension«ELSE» module«ENDIF» has been successfully disabled.
          * The event allows accessing the module bundle and the extension
-         * information array using `$event->getModule()` and `$event->getModInfo()`.
+         * information array using `$event->get«IF targets('3.0')»Extension«ELSE»Module«ENDIF»()` and `$event->get«IF targets('3.0')»Info«ELSE»ModInfo«ENDIF»()`.
          *
          «commonExample.generalEventProperties(it, false)»
          */
-        public function moduleDisabled(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function «IF targets('3.0')»extension«ELSE»module«ENDIF»Disabled(«IF targets('3.0')»Extension«ELSE»Module«ENDIF»StateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
         /**
-         * Listener for the `module.remove` event.
+         * Listener for the `«IF targets('3.0')»extension«ELSE»module«ENDIF».remove` event.
          *
-         * Called after a module has been successfully removed.
+         * Called after a«IF targets('3.0')»n extension«ELSE» module«ENDIF» has been successfully removed.
          * The event allows accessing the module bundle and the extension
-         * information array using `$event->getModule()` and `$event->getModInfo()`.
+         * information array using `$event->get«IF targets('3.0')»Extension«ELSE»Module«ENDIF»()` and `$event->get«IF targets('3.0')»Info«ELSE»ModInfo«ENDIF»()`.
          *
          «commonExample.generalEventProperties(it, false)»
          */
-        public function moduleRemoved(ModuleStateEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function «IF targets('3.0')»extension«ELSE»module«ENDIF»Removed(«IF targets('3.0')»Extension«ELSE»Module«ENDIF»StateEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             «IF hasUiHooksProviders»
-                $module = $event->getModule();
-                if (null === $module || '«appName»' === $module->getName()) {
+                $«IF targets('3.0')»extension«ELSE»module«ENDIF» = $event->get«IF targets('3.0')»Extension«ELSE»Module«ENDIF»();
+                if (null === $«IF targets('3.0')»extension«ELSE»module«ENDIF» || '«appName»' === $«IF targets('3.0')»extension«ELSE»module«ENDIF»->getName()) {
                     return;
                 }
 
-                // delete any existing hook assignments for the removed module
+                // delete any existing hook assignments for the removed «IF targets('3.0')»extension«ELSE»module«ENDIF»
                 $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                 $qb->delete('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
-                   ->where('tbl.subscriberOwner = :moduleName')
-                   ->setParameter('moduleName', $module->getName());
+                   ->where('tbl.subscriberOwner = :«IF targets('3.0')»extension«ELSE»module«ENDIF»Name')
+                   ->setParameter('«IF targets('3.0')»extension«ELSE»module«ENDIF»Name', $«IF targets('3.0')»extension«ELSE»module«ENDIF»->getName());
 
                 $query = $qb->getQuery();
                 $query->execute();

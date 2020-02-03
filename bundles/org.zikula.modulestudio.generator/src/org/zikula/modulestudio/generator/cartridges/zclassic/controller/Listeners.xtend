@@ -103,7 +103,7 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
-                use Zikula\ExtensionsModule\Event\ModuleStateEvent;
+                use Zikula\ExtensionsModule\Event\ExtensionStateEvent;
                 use Zikula\ExtensionsModule\ExtensionEvents;
             «ELSE»
                 use Zikula\Core\CoreEvents;
@@ -118,7 +118,7 @@ class Listeners {
         «ENDIF»
 
         /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for module installer events.
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for «IF targets('3.0')»extension«ELSE»module«ENDIF» installer events.
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»InstallerListener«IF !isBase» extends AbstractInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
