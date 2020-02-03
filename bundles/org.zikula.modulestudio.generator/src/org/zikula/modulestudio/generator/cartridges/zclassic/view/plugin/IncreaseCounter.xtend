@@ -30,11 +30,11 @@ class IncreaseCounter {
             // check against session to see if user was already counted
             $request = $this->requestStack->getCurrentRequest();
             $doCount = true;
-            if (null !== $request) {
-                if ($request->getSession()->has('«appName»Read' . $objectType . $entityId)) {
+            if (null !== $request && $request->hasSession && $session = $request->getSession()) {
+                if ($session->has('«appName»Read' . $objectType . $entityId)) {
                     $doCount = false;
                 } else {
-                    $request->getSession()->set('«appName»Read' . $objectType . $entityId, 1);
+                    $session->set('«appName»Read' . $objectType . $entityId, 1);
                 }
             }
             if (!$doCount) {
