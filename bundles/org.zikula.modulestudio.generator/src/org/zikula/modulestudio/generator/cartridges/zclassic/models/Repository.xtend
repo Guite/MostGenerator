@@ -2,12 +2,15 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CalculatedField
+import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -38,6 +41,9 @@ class Repository {
     FileHelper fh
     Application app
 
+    Iterable<? extends JoinRelationship> sortRelationsIn
+    Iterable<? extends JoinRelationship> sortRelationsOut
+
     /**
      * Entry point for Doctrine repository classes.
      */
@@ -60,6 +66,9 @@ class Repository {
         ('Generating repository classes for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         val repositoryPath = 'Entity/Repository/'
         var fileSuffix = 'Repository'
+
+        sortRelationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]
+        sortRelationsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]
 
         var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
         val content = if (!isInheriting) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
@@ -167,8 +176,7 @@ class Repository {
             public function getAllowedSortingFields()«IF app.targets('3.0')»: array«ENDIF»
             {
                 return [
-                    «FOR field : getSortingFields»«field.singleSortingField»«ENDFOR»
-                    «extensionSortingFields»
+                    «sortingCriteria»
                 ];
             }
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, app.targets('3.0'), '', '')»
@@ -240,8 +248,7 @@ class Repository {
                 $parentFields = parent::getAllowedSortingFields();
 
                 $additionalFields = [
-                    «FOR field : getSortingFields»«field.singleSortingField»«ENDFOR»
-                    «extensionSortingFields»
+                    «sortingCriteria»
                 ];
 
                 return array_unique(array_merge($parentFields, $additionalFields));
@@ -805,6 +812,25 @@ class Repository {
                 $useJoins = false;
             }
 
+            «IF !sortRelationsIn.empty || !sortRelationsOut.empty»
+                if (true !== $useJoins) {
+                    $orderByField = $orderBy;
+                    if (false !== mb_strpos($orderByField, ' ')) {
+                        [$orderByField, $direction] = explode(' ', $orderByField, 2);
+                    }
+                    if (
+                        «IF !sortRelationsIn.empty»
+                            in_array($orderByField, ['«sortRelationsIn.map[getRelationAliasName(false).formatForCode].join('\', \'')»'], true)
+                        «ENDIF»
+                        «IF !sortRelationsOut.empty»
+                            «IF !sortRelationsIn.empty»|| «ENDIF»in_array($orderByField, ['«sortRelationsOut.map[getRelationAliasName(true).formatForCode].join('\', \'')»'], true)
+                        «ENDIF»
+                    ) {
+                        $useJoins = true;
+                    }
+                }
+
+            «ENDIF»
             if (true === $useJoins) {
                 $selection .= $this->addJoinsToSelection();
             }
@@ -865,6 +891,10 @@ class Repository {
                 return $qb;
             }
 
+            «IF !sortRelationsIn.empty || !sortRelationsOut.empty»
+                $orderBy = $this->resolveOrderByForRelation($orderBy);
+
+            «ENDIF»
             // add order by clause
             if (false === strpos($orderBy, '.')) {
                 $orderBy = 'tbl.' . $orderBy;
@@ -890,7 +920,58 @@ class Repository {
 
             return $qb;
         }
+        «IF !sortRelationsIn.empty || !sortRelationsOut.empty»
+
+            /**
+             * Resolves a given order by field to the corresponding relationship expression.
+             «IF !application.targets('3.0')»
+             *
+             * @param string $orderBy
+             *
+             * @return string
+             «ENDIF»
+             */
+            protected function resolveOrderByForRelation(«IF application.targets('3.0')»string «ENDIF»$orderBy)«IF application.targets('3.0')»: string«ENDIF»
+            {
+                if (false !== mb_strpos($orderBy, ' ')) {
+                    [$orderBy, $direction] = explode(' ', $orderBy, 2);
+                } else {
+                    $direction = 'ASC';
+                }
+
+                switch ($orderBy) {
+                    «FOR relation : sortRelationsIn»
+                        «relation.orderByExpression(false)»
+                    «ENDFOR»
+                    «FOR relation : sortRelationsOut»
+                        «relation.orderByExpression(true)»
+                    «ENDFOR»
+                }
+
+                return $orderBy . ' ' . $direction;
+            }
+        «ENDIF»
     '''
+
+    def private orderByExpression(JoinRelationship it, Boolean useTarget) '''
+        case '«getRelationAliasName(useTarget).formatForCode»':
+            $orderBy = 'tbl«getRelationAliasName(useTarget).formatForCodeCapital».«(if (useTarget) target else source).orderByFieldNameForRelatedEntity»';
+            break;
+    '''
+
+    def private orderByFieldNameForRelatedEntity(DataObject it) {
+        if (it instanceof Entity) {
+            for (patternPart : displayPatternParts) {
+                /* check if patternPart equals a field name */
+                var matchedFields = fields.filter[name == patternPart]
+                if ((!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))) {
+                    return patternPart.formatForCode
+                }
+            }
+        }
+
+        'id'
+    }
 
     def private getQueryFromBuilder(Entity it) '''
         /**
@@ -921,7 +1002,18 @@ class Repository {
         }
     '''
 
-    def private singleSortingField(Field it) {
+    def private sortingCriteria(DataObject it) '''
+        «FOR field : getSortingFields»«field.sortingCriteria»«ENDFOR»
+        «val relationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
+        «val relationsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
+        «FOR relation : relationsIn»«relation.sortingCriteria(false)»«ENDFOR»
+        «FOR relation : relationsOut»«relation.sortingCriteria(true)»«ENDFOR»
+        «IF it instanceof Entity»
+            «extensionSortingFields»
+        «ENDIF»
+    '''
+
+    def private sortingCriteria(Field it) {
         switch it {
             DerivedField : {
                 val joins = if (null !== entity) entity.incoming.filter(JoinRelationship).filter[e|formatForDB(e.getSourceFields.head) == name.formatForDB] else #[]
@@ -937,6 +1029,10 @@ class Repository {
                      '''
         }
     }
+
+    def private sortingCriteria(JoinRelationship it, Boolean useTarget) '''
+        '«getRelationAliasName(useTarget).formatForCode»',
+    '''
 
     def private extensionSortingFields(Entity it) '''
         «IF geographical»

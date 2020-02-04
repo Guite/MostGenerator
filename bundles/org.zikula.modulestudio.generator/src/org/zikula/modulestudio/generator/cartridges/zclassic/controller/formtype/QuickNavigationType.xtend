@@ -7,6 +7,8 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UserField
@@ -490,11 +492,19 @@ class QuickNavigationType {
                     'attr' => [
                         'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
                     ],
-                    'choices' =>             [
+                    'choices' => [
+                        «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
+                        «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
                         «FOR field : getSortingFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                                «IF !app.targets('3.0')»$this->__(«ENDIF»'«field.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                                «IF !app.targets('3.0')»$this->__(«ENDIF»'«field.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«field.name.formatForCode»'«IF !listItemsIn.empty || !listItemsOut.empty || standardFields || field != getDerivedFields.last»,«ENDIF»
                             «ENDIF»
+                        «ENDFOR»
+                        «FOR relation : listItemsIn»
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'«relation.getRelationAliasName(false).formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«relation.getRelationAliasName(false)»'«IF !listItemsOut.empty || standardFields || relation != listItemsIn.last»,«ENDIF»
+                        «ENDFOR»
+                        «FOR relation : listItemsOut»
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'«relation.getRelationAliasName(true).formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«relation.getRelationAliasName(true)»'«IF standardFields || relation != listItemsOut.last»,«ENDIF»
                         «ENDFOR»
                         «IF standardFields»
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Creation date'«IF !app.targets('3.0')»)«ENDIF» => 'createdDate',
