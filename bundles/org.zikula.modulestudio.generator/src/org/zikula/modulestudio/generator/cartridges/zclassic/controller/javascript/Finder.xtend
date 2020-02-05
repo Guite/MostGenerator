@@ -154,35 +154,35 @@ class Finder {
             pasteMode = jQuery("[id$='pasteAs']").first().val();
 
             // item ID
-            if (pasteMode === '3') {
+            if ('3' === pasteMode) {
                 return '' + itemId;
             }
 
             // relative link to detail page
-            if (pasteMode === '1') {
-                return mode === 'url' ? itemPath : '<a href="' + itemPath + '" title="' + itemDescription + '">' + itemTitle + '</a>';
+            if ('1' === pasteMode) {
+                return 'url' === mode ? itemPath : '<a href="' + itemPath + '" title="' + itemDescription + '">' + itemTitle + '</a>';
             }
             // absolute url to detail page
-            if (pasteMode === '2') {
-                return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemDescription + '">' + itemTitle + '</a>';
+            if ('2' === pasteMode) {
+                return 'url' === mode ? itemUrl : '<a href="' + itemUrl + '" title="' + itemDescription + '">' + itemTitle + '</a>';
             }
             «IF hasImageFields»
 
-                if (pasteMode === '6') {
+                if ('6' === pasteMode) {
                     // relative link to image file
-                    return mode === 'url' ? imagePath : '<a href="' + imagePath + '" title="' + itemDescription + '">' + itemTitle + '</a>';
+                    return 'url' === mode ? imagePath : '<a href="' + imagePath + '" title="' + itemDescription + '">' + itemTitle + '</a>';
                 }
-                if (pasteMode === '7') {
+                if ('7' === pasteMode) {
                     // image tag
                     return '<img src="' + imagePath + '" alt="' + itemTitle + '" width="300" />';
                 }
-                if (pasteMode === '8') {
+                if ('8' === pasteMode) {
                     // image tag with relative link to detail page
-                    return mode === 'url' ? itemPath : '<a href="' + itemPath + '" title="' + itemTitle + '"><img src="' + imagePath + '" alt="' + itemTitle + '" width="300" /></a>';
+                    return 'url' === mode ? itemPath : '<a href="' + itemPath + '" title="' + itemTitle + '"><img src="' + imagePath + '" alt="' + itemTitle + '" width="300" /></a>';
                 }
-                if (pasteMode === '9') {
+                if ('9' === pasteMode) {
                     // image tag with absolute url to detail page
-                    return mode === 'url' ? itemUrl : '<a href="' + itemUrl + '" title="' + itemTitle + '"><img src="' + imagePath + '" alt="' + itemTitle + '" width="300" /></a>';
+                    return 'url' === mode ? itemUrl : '<a href="' + itemUrl + '" title="' + itemTitle + '"><img src="' + imagePath + '" alt="' + itemTitle + '" width="300" /></a>';
                 }
 
             «ENDIF»
@@ -207,8 +207,12 @@ class Finder {
                 }
             } else if ('summernote' === editor) {
                 if (null !== window.opener.current«appName»Editor) {
-                    html = jQuery(html).get(0);
-                    window.opener.current«appName»Editor.invoke('insertNode', html);
+                    if ('3' === jQuery("[id$='pasteAs']").first().val()) {
+                        window.opener.currentZikulaContentModuleEditor.invoke('insertText', html);
+                    } else {
+                        html = jQuery(html).get(0);
+                        window.opener.current«appName»Editor.invoke('insertNode', html);
+                    }
                 }
             } else if ('tinymce' === editor) {
                 window.opener.current«appName»Editor.insertContent(html);
