@@ -44,6 +44,9 @@ class ControllerHelper {
         «ENDIF»
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            «IF hasViewActions»
+                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            «ENDIF»
             «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
                 use Zikula\Bundle\CoreBundle\RouteUrl;
             «ENDIF»
@@ -56,6 +59,9 @@ class ControllerHelper {
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
         «IF !targets('3.0')»
+            «IF hasViewActions»
+                use Zikula\Core\Doctrine\EntityAccess;
+            «ENDIF»
             «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
                 use Zikula\Core\RouteUrl;
             «ENDIF»
@@ -385,6 +391,18 @@ class ControllerHelper {
                 $contextArgs
             );
 
+            $urlParameters = $templateParameters;
+            foreach ($urlParameters as $parameterName => $parameterValue) {
+                if (
+                    false === stripos($parameterName, 'thumbRuntimeOptions')
+                    && false === stripos($parameterName, 'featureActivationHelper')
+                    && false === stripos($parameterName, 'permissionHelper')
+                ) {
+                    continue;
+                }
+                unset($urlParameters[$parameterName]);
+            }
+
             $quickNavFormType = '«appNamespace»\Form\Type\QuickNavigation\\'
                 . ucfirst($objectType) . 'QuickNavType'
             ;
@@ -398,6 +416,7 @@ class ControllerHelper {
                     }
                     if (in_array($fieldName, ['all', 'own', 'num'], true)) {
                         $templateParameters[$fieldName] = $fieldValue;
+                        $urlParameters[$fieldName] = $fieldValue;
                     } elseif ('sort' === $fieldName && !empty($fieldValue)) {
                         $sort = $fieldValue;
                     } elseif ('sortdir' === $fieldName && !empty($fieldValue)) {
@@ -407,30 +426,23 @@ class ControllerHelper {
                         && false === stripos($fieldName, 'featureActivationHelper')
                         && false === stripos($fieldName, 'permissionHelper')
                     ) {
-                        // set filter as query argument, fetched inside repository
+                        // set filter as query argument, fetched inside CollectionFilterHelper
+                        if ($fieldValue instanceof EntityAccess) {
+                            $fieldValue = $fieldValue->getKey();
+                        }
                         «IF hasUserFields»
                             if ($fieldValue instanceof UserEntity) {
                                 $fieldValue = $fieldValue->getUid();
                             }
                         «ENDIF»
                         $request->query->set($fieldName, $fieldValue);
+                        $urlParameters[$fieldName] = $fieldValue;
                     }
                 }
             }
             $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
             $resultsPerPage = $templateParameters['num'];
             $request->query->set('own', $templateParameters['own']);
-
-            $urlParameters = $templateParameters;
-            foreach ($urlParameters as $parameterName => $parameterValue) {
-                if (
-                    false === stripos($parameterName, 'thumbRuntimeOptions')
-                    && false === stripos($parameterName, 'featureActivationHelper')
-                ) {
-                    continue;
-                }
-                unset($urlParameters[$parameterName]);
-            }
 «/*
             $sort = $sortableColumns->getSortColumn()->getName();
             $sortdir = $sortableColumns->getSortDirection();*/»
