@@ -427,15 +427,15 @@ class ControllerHelper {
                         && false === stripos($fieldName, 'permissionHelper')
                     ) {
                         // set filter as query argument, fetched inside CollectionFilterHelper
-                        if ($fieldValue instanceof EntityAccess) {
-                            $fieldValue = $fieldValue->getKey();
-                        }
                         «IF hasUserFields»
                             if ($fieldValue instanceof UserEntity) {
                                 $fieldValue = $fieldValue->getUid();
                             }
                         «ENDIF»
                         $request->query->set($fieldName, $fieldValue);
+                        if ($fieldValue instanceof EntityAccess) {
+                            $fieldValue = $fieldValue->getKey();
+                        }
                         $urlParameters[$fieldName] = $fieldValue;
                     }
                 }
