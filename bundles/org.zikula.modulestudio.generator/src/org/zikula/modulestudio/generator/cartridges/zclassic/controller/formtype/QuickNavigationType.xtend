@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
@@ -54,10 +55,7 @@ class QuickNavigationType {
     def private quickNavTypeBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\QuickNavigation\Base;
 
-        «IF !incomingRelations.empty»
-            use Doctrine\ORM\EntityRepository;
-        «ENDIF»
-        «IF !incomingRelations.empty || !fields.filter(UserField).empty»
+        «IF !fields.filter(UserField).empty»
             use Symfony\Bridge\Doctrine\Form\Type\EntityType;
         «ENDIF»
         use Symfony\Component\Form\AbstractType;
@@ -103,6 +101,9 @@ class QuickNavigationType {
         «IF !fields.filter(UserField).empty»
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
+        «IF !incomingRelations.empty»
+            use «app.appNamespace»\Entity\Factory\EntityFactory;
+        «ENDIF»
         «IF !fields.filter(ListField).filter[multiple].empty»
             use «app.appNamespace»\Form\Type\Field\MultiListType;
         «ENDIF»
@@ -114,6 +115,9 @@ class QuickNavigationType {
         «ENDIF»
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;
+        «ENDIF»
+        «IF !incomingRelations.empty»
+            use «app.appNamespace»\Helper\PermissionHelper;
         «ENDIF»
 
         /**
@@ -130,6 +134,16 @@ class QuickNavigationType {
                  * @var RequestStack
                  */
                 protected $requestStack;
+
+                /**
+                 * @var EntityFactory
+                 */
+                protected $entityFactory;
+
+                /**
+                 * @var PermissionHelper
+                 */
+                protected $permissionHelper;
 
                 /**
                  * @var EntityDisplayHelper
@@ -162,6 +176,8 @@ class QuickNavigationType {
                 «IF !app.targets('3.0')»
                     TranslatorInterface $translator«IF !incomingRelations.empty»,
                     RequestStack $requestStack,
+                    EntityFactory $entityFactory,
+                    PermissionHelper $permissionHelper,
                     EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF hasListFieldsEntity»,
                     ListEntriesHelper $listHelper«ENDIF»«IF hasLocaleFieldsEntity»,
                     LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
@@ -169,6 +185,8 @@ class QuickNavigationType {
                 «ELSE»
                     «IF !incomingRelations.empty»
                         RequestStack $requestStack,
+                        EntityFactory $entityFactory,
+                        PermissionHelper $permissionHelper,
                         EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
                     «ENDIF»
                     «IF hasListFieldsEntity»
@@ -187,6 +205,8 @@ class QuickNavigationType {
                 «ENDIF»
                 «IF !incomingRelations.empty»
                     $this->requestStack = $requestStack;
+                    $this->entityFactory = $entityFactory;
+                    $this->permissionHelper = $permissionHelper;
                     $this->entityDisplayHelper = $entityDisplayHelper;
                 «ENDIF»
                 «IF hasListFieldsEntity»
@@ -360,11 +380,11 @@ class QuickNavigationType {
                 $mainSearchTerm = $request->query->get('q');
                 $request->query->remove('q');
             }
-
+            $entityDisplayHelper = $this->entityDisplayHelper;
             «FOR relation : incomingRelations»
                 «relation.fieldImpl»
-            «ENDFOR»
 
+            «ENDFOR»
             if ('' !== $mainSearchTerm) {
                 // readd current search argument
                 $request->query->set('q', $mainSearchTerm);
@@ -643,18 +663,26 @@ class QuickNavigationType {
 
     def private dispatch fieldImpl(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
-        $queryBuilder = function (EntityRepository $er) {
-            // select without joins
-            return $er->getListQueryBuilder('', '', false);
-        };
-        $entityDisplayHelper = $this->entityDisplayHelper;
-        $choiceLabelClosure = function ($entity) use ($entityDisplayHelper) {
-            return $entityDisplayHelper->getFormattedTitle($entity);
-        };
-        $builder->add('«sourceAliasName.formatForCode»', EntityType::class, [
-            'class' => '«app.appName»:«source.name.formatForCodeCapital»Entity',
-            'choice_label' => $choiceLabelClosure,
-            'query_builder' => $queryBuilder,
+        $objectType = '«source.name.formatForCode»';
+        // select without joins
+        $entities = $this->entityFactory->getRepository($objectType)->selectWhere('', '', false);
+        $permLevel = «source.getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createViewAction)»;
+
+        $entities = $this->permissionHelper->filterCollection(
+            $objectType,
+            $entities,
+            $permLevel
+        );
+        $choices = [];
+        foreach ($entities as $entity) {
+            $choices[$entity->getId()] = $entity;
+        }
+
+        $builder->add('«sourceAliasName.formatForCode»', ChoiceType::class, [
+            'choices' => «IF app.targets('3.0')»/** @Ignore */«ENDIF»$choices,
+            'choice_label' => function ($entity) use ($entityDisplayHelper) {
+                return $entityDisplayHelper->getFormattedTitle($entity);
+            },
             'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»,
             'required' => false,
             'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«sourceAliasName.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF»,

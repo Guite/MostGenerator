@@ -96,18 +96,6 @@ class Actions {
         «actionImplBody(it, action)»
     '''
 
-    def private getPermissionAccessLevel(Entity it, Action action) {
-        switch action {
-            MainAction: 'ACCESS_OVERVIEW'
-            ViewAction: 'ACCESS_READ'
-            DisplayAction: 'ACCESS_READ'
-            EditAction: if (workflow != EntityWorkflowType.NONE) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
-            DeleteAction: 'ACCESS_DELETE'
-            CustomAction: 'ACCESS_OVERVIEW'
-            default: 'ACCESS_ADMIN'
-        }
-    }
-
     def private dispatch actionImplBody(Entity it, Action action) {
     }
 

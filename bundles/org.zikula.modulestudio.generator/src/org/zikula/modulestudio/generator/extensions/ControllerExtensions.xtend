@@ -3,11 +3,13 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
+import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MainAction
@@ -102,6 +104,18 @@ class ControllerExtensions {
         }
 
         return actions.head.name.formatForDB
+    }
+
+    def getPermissionAccessLevel(DataObject it, Action action) {
+        switch action {
+            MainAction: 'ACCESS_OVERVIEW'
+            ViewAction: 'ACCESS_READ'
+            DisplayAction: 'ACCESS_READ'
+            EditAction: if (it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
+            DeleteAction: 'ACCESS_DELETE'
+            CustomAction: 'ACCESS_OVERVIEW'
+            default: 'ACCESS_ADMIN'
+        }
     }
 
     /**

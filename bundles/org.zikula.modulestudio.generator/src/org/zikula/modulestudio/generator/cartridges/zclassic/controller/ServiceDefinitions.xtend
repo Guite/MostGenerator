@@ -626,6 +626,8 @@ class ServiceDefinitions {
                         - "@translator.default"
                         «IF !entity.getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity].empty»
                             - "@request_stack"
+                            - "@«modPrefix».entity_factory"
+                            - "@«modPrefix».permission_helper"
                             - "@«modPrefix».entity_display_helper"
                         «ENDIF»
                         «IF entity.hasListFieldsEntity»

@@ -248,8 +248,8 @@ class CollectionFilterHelper {
                 $parameters['catId'] = $request->query->get('catId', '');
                 $parameters['catIdList'] = $this->categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
             «ENDIF»
-            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
-                «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
+            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity].empty»
+                «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
                     $parameters['«sourceAliasName»'] = $request->query->get('«sourceAliasName»', 0);
                 «ENDFOR»
