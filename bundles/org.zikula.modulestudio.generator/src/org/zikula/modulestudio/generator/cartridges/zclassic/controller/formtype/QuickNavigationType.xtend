@@ -35,6 +35,7 @@ class QuickNavigationType {
     Application app
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
     Iterable<JoinRelationship> incomingRelations
+    Iterable<JoinRelationship> outgoingRelations
 
     /**
      * Entry point for quick navigation form type.
@@ -45,7 +46,8 @@ class QuickNavigationType {
         }
         app = it
         for (entity : getAllEntities.filter[hasViewAction]) {
-            incomingRelations = entity.getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]
+            incomingRelations = entity.getBidirectionalIncomingJoinRelations.filter[source instanceof Entity]
+            outgoingRelations = entity.getOutgoingJoinRelations.filter[target instanceof Entity]
             fsa.generateClassPair('Form/Type/QuickNavigation/' + entity.name.formatForCodeCapital + 'QuickNavType.php',
                 entity.quickNavTypeBaseImpl, entity.quickNavTypeImpl
             )
@@ -78,7 +80,7 @@ class QuickNavigationType {
             use «nsSymfonyFormType»TimezoneType;
         «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
-        «IF !incomingRelations.empty»
+        «IF !incomingRelations.empty || !outgoingRelations.empty»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -101,13 +103,13 @@ class QuickNavigationType {
         «IF !fields.filter(UserField).empty»
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
-        «IF !incomingRelations.empty»
+        «IF !incomingRelations.empty || !outgoingRelations.empty»
             use «app.appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
         «IF !fields.filter(ListField).filter[multiple].empty»
             use «app.appNamespace»\Form\Type\Field\MultiListType;
         «ENDIF»
-        «IF !incomingRelations.empty»
+        «IF !incomingRelations.empty || !outgoingRelations.empty»
             use «app.appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
         «IF app.needsFeatureActivationHelper»
@@ -116,7 +118,7 @@ class QuickNavigationType {
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
-        «IF !incomingRelations.empty»
+        «IF !incomingRelations.empty || !outgoingRelations.empty»
             use «app.appNamespace»\Helper\PermissionHelper;
         «ENDIF»
 
@@ -129,7 +131,7 @@ class QuickNavigationType {
                 use TranslatorTrait;
 
             «ENDIF»
-            «IF !incomingRelations.empty»
+            «IF !incomingRelations.empty || !outgoingRelations.empty»
                 /**
                  * @var RequestStack
                  */
@@ -174,7 +176,7 @@ class QuickNavigationType {
             «ENDIF»
             public function __construct(
                 «IF !app.targets('3.0')»
-                    TranslatorInterface $translator«IF !incomingRelations.empty»,
+                    TranslatorInterface $translator«IF !incomingRelations.empty || !outgoingRelations.empty»,
                     RequestStack $requestStack,
                     EntityFactory $entityFactory,
                     PermissionHelper $permissionHelper,
@@ -183,17 +185,17 @@ class QuickNavigationType {
                     LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
                     FeatureActivationHelper $featureActivationHelper«ENDIF»
                 «ELSE»
-                    «IF !incomingRelations.empty»
+                    «IF !incomingRelations.empty || !outgoingRelations.empty»
                         RequestStack $requestStack,
                         EntityFactory $entityFactory,
                         PermissionHelper $permissionHelper,
                         EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
                     «ENDIF»
                     «IF hasListFieldsEntity»
-                        ListEntriesHelper $listHelper«IF incomingRelations.empty && (hasLocaleFieldsEntity || app.needsFeatureActivationHelper)»,«ENDIF»
+                        ListEntriesHelper $listHelper«IF hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
                     «ENDIF»
                     «IF hasLocaleFieldsEntity»
-                        LocaleApiInterface $localeApi«IF incomingRelations.empty && app.needsFeatureActivationHelper»,«ENDIF»
+                        LocaleApiInterface $localeApi«IF app.needsFeatureActivationHelper»,«ENDIF»
                     «ENDIF»
                     «IF app.needsFeatureActivationHelper»
                         FeatureActivationHelper $featureActivationHelper
@@ -203,7 +205,7 @@ class QuickNavigationType {
                 «IF !app.targets('3.0')»
                     $this->setTranslator($translator);
                 «ENDIF»
-                «IF !incomingRelations.empty»
+                «IF !incomingRelations.empty || !outgoingRelations.empty»
                     $this->requestStack = $requestStack;
                     $this->entityFactory = $entityFactory;
                     $this->permissionHelper = $permissionHelper;
@@ -240,6 +242,9 @@ class QuickNavigationType {
                 «ENDIF»
                 «IF !incomingRelations.empty»
                     $this->addIncomingRelationshipFields($builder, $options);
+                «ENDIF»
+                «IF !outgoingRelations.empty»
+                    $this->addOutgoingRelationshipFields($builder, $options);
                 «ENDIF»
                 «IF hasListFieldsEntity»
                     $this->addListFields($builder, $options);
@@ -283,7 +288,11 @@ class QuickNavigationType {
 
             «ENDIF»
             «IF !incomingRelations.empty»
-                «addIncomingRelationshipFields»
+                «addRelationshipFields('incoming')»
+
+            «ENDIF»
+            «IF !outgoingRelations.empty»
+                «addRelationshipFields('outgoing')»
 
             «ENDIF»
             «IF hasListFieldsEntity»
@@ -367,11 +376,11 @@ class QuickNavigationType {
         }
     '''
 
-    def private addIncomingRelationshipFields(Entity it) '''
+    def private addRelationshipFields(Entity it, String mode) '''
         /**
-         * Adds fields for incoming relationships.
+         * Adds fields for «mode» relationships.
          */
-        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function add«mode.toFirstUpper»RelationshipFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
         {
             $mainSearchTerm = '';
             $request = $this->requestStack->getCurrentRequest();
@@ -381,8 +390,8 @@ class QuickNavigationType {
                 $request->query->remove('q');
             }
             $entityDisplayHelper = $this->entityDisplayHelper;
-            «FOR relation : incomingRelations»
-                «relation.fieldImpl»
+            «FOR relation : (if (mode == 'incoming') incomingRelations else outgoingRelations)»
+                «relation.relationImpl(mode == 'outgoing')»
 
             «ENDFOR»
             if ('' !== $mainSearchTerm) {
@@ -604,7 +613,7 @@ class QuickNavigationType {
         }
     '''
 
-    def private dispatch fieldImpl(DerivedField it) '''
+    def private fieldImpl(DerivedField it) '''
         $builder->add('«name.formatForCode»', «IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»MultiList«ELSEIF it instanceof UserField»Entity«ELSE»«fieldType»«ENDIF»Type::class, [
             'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«IF name == 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'«IF !app.targets('3.0')»)«ENDIF»,
             'attr' => [
@@ -661,12 +670,12 @@ class QuickNavigationType {
         «ENDIF»
     '''
 
-    def private dispatch fieldImpl(JoinRelationship it) '''
-        «val sourceAliasName = getRelationAliasName(false)»
-        $objectType = '«source.name.formatForCode»';
+    def private relationImpl(JoinRelationship it, Boolean useTarget) '''
+        «val sourceAliasName = getRelationAliasName(useTarget)»
+        $objectType = '«(if (useTarget) target else source).name.formatForCode»';
         // select without joins
         $entities = $this->entityFactory->getRepository($objectType)->selectWhere('', '', false);
-        $permLevel = «source.getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createViewAction)»;
+        $permLevel = «(if (useTarget) target else source).getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createViewAction)»;
 
         $entities = $this->permissionHelper->filterCollection(
             $objectType,

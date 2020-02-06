@@ -77,10 +77,16 @@ class ViewQuickNavForm {
         «IF categorisable»
             «categoriesFields»
         «ENDIF»
-        «val incomingRelations = getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]»
+        «val incomingRelations = getBidirectionalIncomingJoinRelations.filter[source instanceof Entity]»
         «IF !incomingRelations.empty»
             «FOR relation : incomingRelations»
-                «relation.formField»
+                «relation.formField(false)»
+            «ENDFOR»
+        «ENDIF»
+        «val outgoingRelations = getOutgoingJoinRelations.filter[source instanceof Entity]»
+        «IF !outgoingRelations.empty»
+            «FOR relation : outgoingRelations»
+                «relation.formField(true)»
             «ENDFOR»
         «ENDIF»
         «IF hasListFieldsEntity»
@@ -154,7 +160,7 @@ class ViewQuickNavForm {
         {% endif %}
     '''
 
-    def private dispatch formField(DerivedField it) '''
+    def private formField(DerivedField it) '''
         «val fieldName = name.formatForCode»
         {% if «fieldName»Filter is defined and «fieldName»Filter != true %}
             <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
@@ -165,13 +171,13 @@ class ViewQuickNavForm {
         {% endif %}
     '''
 
-    def private dispatch formField(JoinRelationship it) '''
-        «val sourceAliasName = getRelationAliasName(false)»
-        {% if «sourceAliasName»Filter is defined and «sourceAliasName»Filter != true %}
+    def private formField(JoinRelationship it, Boolean useTarget) '''
+        «val aliasName = getRelationAliasName(useTarget)»
+        {% if «aliasName»Filter is defined and «aliasName»Filter != true %}
             <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
         {% endif %}
-            {{ form_row(quickNavForm.«sourceAliasName») }}
-        {% if «sourceAliasName»Filter is defined and «sourceAliasName»Filter != true %}
+            {{ form_row(quickNavForm.«aliasName») }}
+        {% if «aliasName»Filter is defined and «aliasName»Filter != true %}
             </div>
         {% endif %}
     '''

@@ -68,7 +68,7 @@ class Redirect {
                 $codes[] = 'adminDisplay';
             «ENDIF»
 
-            «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
+            «FOR incomingRelation : getBidirectionalIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
                 «val sourceEntity = incomingRelation.source as Entity»
                 «IF sourceEntity.name != it.name»
                     «IF sourceEntity.hasViewAction»
@@ -230,7 +230,7 @@ class Redirect {
 
                         return $this->getDefaultReturnUrl($args);
                 «ENDIF»
-                «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
+                «FOR incomingRelation : getBidirectionalIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
                     «val sourceEntity = incomingRelation.source as Entity»
                     «IF sourceEntity.name != it.name»
                         «IF sourceEntity.hasViewAction»

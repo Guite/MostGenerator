@@ -110,26 +110,13 @@ class ModelJoinExtensions {
     }
 
     /**
-     * Returns a list of all incoming join relations which are either one2one or one2many.
-     */
-    def getIncomingJoinRelationsWithOneSource(DataObject it) {
-        incoming.filter(OneToOneRelationship) + incoming.filter(OneToManyRelationship)
-    }
-    /**
      * Returns a list of all incoming bidirectional join relations which are either one2one or one2many.
      */
     def getBidirectionalIncomingJoinRelationsWithOneSource(DataObject it) {
         incoming.filter(OneToOneRelationship).filter[bidirectional]
             + incoming.filter(OneToManyRelationship).filter[bidirectional]
     }
-    
-    /**
-     * Returns a list of all incoming join relations which are either one2one, one2many or many2one.
-     */
-    def getIncomingJoinRelationsWithoutManyToMany(DataObject it) {
-        getIncomingJoinRelationsWithOneSource + incoming.filter(ManyToOneRelationship)
-    }
-    
+
     /**
      * Returns a list of all incoming bidirectional join relations (excluding inheritance) 
      * which have the many cardinality on the source side and cascade persist active.
@@ -221,7 +208,6 @@ class ModelJoinExtensions {
     def hasCollections(DataObject it) {
         !getCollections.empty
     }
-
 
     /**
      * Returns unified name for relation fields. If we have id or fooid the function returns foo_id.

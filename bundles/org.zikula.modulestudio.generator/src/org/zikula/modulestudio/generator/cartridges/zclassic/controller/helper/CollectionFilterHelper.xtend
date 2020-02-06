@@ -248,10 +248,16 @@ class CollectionFilterHelper {
                 $parameters['catId'] = $request->query->get('catId', '');
                 $parameters['catIdList'] = $this->categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
             «ENDIF»
-            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity].empty»
-                «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]»
+            «IF !getBidirectionalIncomingJoinRelations.filter[source instanceof Entity].empty»
+                «FOR relation: getBidirectionalIncomingJoinRelations.filter[source instanceof Entity]»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
                     $parameters['«sourceAliasName»'] = $request->query->get('«sourceAliasName»', 0);
+                «ENDFOR»
+            «ENDIF»
+            «IF !getOutgoingJoinRelations.filter[target instanceof Entity].empty»
+                «FOR relation: getOutgoingJoinRelations.filter[target instanceof Entity]»
+                    «val targetAliasName = relation.getRelationAliasName(true)»
+                    $parameters['«targetAliasName»'] = $request->query->get('«targetAliasName»', 0);
                 «ENDFOR»
             «ENDIF»
             «IF hasListFieldsEntity»
@@ -349,13 +355,35 @@ class CollectionFilterHelper {
                     continue;
                 }
                 «IF hasBooleanFieldsEntity»
-                    if (in_array($k, [«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
+                    if (in_array($k, ['«getBooleanFieldsEntity.map[name.formatForCode].join('\', \'')»'], true)) {
                         // boolean filter
                         if ('no' === $v) {
                             $qb->andWhere('tbl.' . $k . ' = 0');
                         } elseif ('yes' === $v || '1' === $v) {
                             $qb->andWhere('tbl.' . $k . ' = 1');
                         }
+                        continue;
+                    }
+                «ENDIF»
+                «IF !getBidirectionalIncomingJoinRelations.filter[source instanceof Entity].filter[isManySide(false)].empty»
+                    if (in_array($k, ['«getBidirectionalIncomingJoinRelations.filter[source instanceof Entity].filter[isManySide(false)].map[getRelationAliasName(false)].join('\', \'')»']) && !empty($v)) {
+                        // multi-valued source of incoming relation (many2many)
+                        $qb->andWhere(
+                            $qb->expr()->isMemberOf(':' . $k, 'tbl.' . $k)
+                        )
+                            ->setParameter($k, $v)
+                        ;
+                        continue;
+                    }
+                «ENDIF»
+                «IF !getOutgoingJoinRelations.filter[source instanceof Entity].filter[isManySide(true)].empty»
+                    if (in_array($k, ['«getOutgoingJoinRelations.filter[source instanceof Entity].filter[isManySide(true)].map[getRelationAliasName(true)].join('\', \'')»']) && !empty($v)) {
+                        // multi-valued target of outgoing relation (one2many or many2many)
+                        $qb->andWhere(
+                            $qb->expr()->isMemberOf(':' . $k, 'tbl.' . $k)
+                        )
+                            ->setParameter($k, $v)
+                        ;
                         continue;
                     }
                 «ENDIF»

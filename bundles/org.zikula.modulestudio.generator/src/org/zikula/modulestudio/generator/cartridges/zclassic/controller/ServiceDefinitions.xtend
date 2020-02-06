@@ -624,7 +624,8 @@ class ServiceDefinitions {
                     class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
                     arguments:
                         - "@translator.default"
-                        «IF !entity.getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity].empty»
+                        «IF !entity.getBidirectionalIncomingJoinRelations.filter[source instanceof Entity].empty
+                         || !entity.getOutgoingJoinRelations.filter[target instanceof Entity].empty»
                             - "@request_stack"
                             - "@«modPrefix».entity_factory"
                             - "@«modPrefix».permission_helper"
