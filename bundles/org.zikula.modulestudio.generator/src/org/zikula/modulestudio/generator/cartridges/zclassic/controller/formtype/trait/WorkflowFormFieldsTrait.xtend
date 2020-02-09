@@ -30,7 +30,7 @@ class WorkflowFormFieldsTrait {
         «ENDIF»
 
         /**
-         * Workflow form fields trait implementation class.
+         * Workflow form fields trait.
          */
         trait WorkflowFormFieldsTrait
         {

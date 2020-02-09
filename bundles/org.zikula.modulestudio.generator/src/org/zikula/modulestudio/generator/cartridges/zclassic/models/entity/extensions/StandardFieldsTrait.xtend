@@ -34,7 +34,7 @@ class StandardFieldsTrait {
         use Zikula\UsersModule\Entity\UserEntity;
 
         /**
-         * «IF isLoggable»Loggable s«ELSE»S«ENDIF»tandard fields trait implementation class.
+         * «IF isLoggable»Loggable s«ELSE»S«ENDIF»tandard fields trait.
          */
         trait «IF isLoggable»Loggable«ENDIF»StandardFieldsTrait
         {

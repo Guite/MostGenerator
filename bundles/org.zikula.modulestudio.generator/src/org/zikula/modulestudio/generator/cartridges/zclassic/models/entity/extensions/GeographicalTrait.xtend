@@ -29,7 +29,7 @@ class GeographicalTrait {
         use Symfony\Component\Validator\Constraints as Assert;
 
         /**
-         * «IF isLoggable»Loggable g«ELSE»G«ENDIF»eographical trait implementation class.
+         * «IF isLoggable»Loggable g«ELSE»G«ENDIF»eographical trait.
          */
         trait «IF isLoggable»Loggable«ENDIF»GeographicalTrait
         {
