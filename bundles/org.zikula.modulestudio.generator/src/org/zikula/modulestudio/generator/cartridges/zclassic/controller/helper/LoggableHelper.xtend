@@ -486,7 +486,7 @@ class LoggableHelper {
          */
         protected function translateActionDescriptionInternal(«IF targets('3.0')»string «ENDIF»$text = '', array $parameters = [])«IF targets('3.0')»: string«ENDIF»
         {
-            «IF !isSystemModule»
+            «IF !isSystemModule && !targets('3.0')»
                 $this->translator->setDomain('«appName.formatForDB»');
             «ENDIF»
             $actionTranslated = '';
