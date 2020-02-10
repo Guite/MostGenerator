@@ -147,6 +147,10 @@ class ServiceDefinitions {
         «ENDIF»
         «IF hasUploads»
 
+            «appNamespace»\«name.formatForCodeCapital»ModuleInstaller:
+                arguments:
+                    $dataDirectory: '%datadir%'
+
             # public because EntityLifecycleListener accesses this using container
             «appNamespace»\Helper\UploadHelper:
                 public: true

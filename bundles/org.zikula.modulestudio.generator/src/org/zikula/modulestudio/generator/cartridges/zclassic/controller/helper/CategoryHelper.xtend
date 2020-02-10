@@ -80,7 +80,7 @@ class CategoryHelper {
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
-            LoggerInterface $logger«IF targets('3.0')» = null«ENDIF»,
+            LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi,
             CategoryRegistryRepositoryInterface $categoryRegistryRepository,
             CategoryPermissionApiInterface $categoryPermissionApi

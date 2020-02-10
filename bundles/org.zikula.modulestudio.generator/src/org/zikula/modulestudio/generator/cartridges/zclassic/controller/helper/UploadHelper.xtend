@@ -100,7 +100,7 @@ class UploadHelper {
         protected $moduleVars;
 
         /**
-         * @var String
+         * @var string
          */
         protected $dataDirectory;
 
@@ -126,7 +126,7 @@ class UploadHelper {
             TranslatorInterface $translator,
             Filesystem $filesystem,
             RequestStack $requestStack,
-            LoggerInterface $logger«IF targets('3.0')» = null«ENDIF»,
+            LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi,
             VariableApiInterface $variableApi,
             «IF targets('3.0')»string «ENDIF»$dataDirectory
