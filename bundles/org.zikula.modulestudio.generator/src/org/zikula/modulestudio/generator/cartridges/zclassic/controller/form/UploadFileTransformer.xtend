@@ -23,6 +23,7 @@ class UploadFileTransformer {
         use Symfony\Component\HttpFoundation\File\UploadedFile;
         «IF targets('3.0')»
             use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ELSE»
             use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
@@ -35,6 +36,13 @@ class UploadFileTransformer {
          */
         abstract class AbstractUploadFileTransformer implements DataTransformerInterface
         {
+            «IF targets('3.0')»
+                /**
+                 * @var ZikulaHttpKernelInterface
+                 */
+                protected $kernel;
+
+            «ENDIF»
             /**
              * @var EntityAccess
              */
@@ -58,11 +66,17 @@ class UploadFileTransformer {
             «ENDIF»
 
             public function __construct(
+                «IF targets('3.0')»
+                    ZikulaHttpKernelInterface $kernel,
+                «ENDIF»
                 EntityAccess $entity,
                 UploadHelper $uploadHelper,
                 $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»,
                 $customName = false«ENDIF»
             ) {
+                «IF targets('3.0')»
+                    $this->kernel = $kernel;
+                «ENDIF»
                 $this->entity = $entity;
                 $this->uploadHelper = $uploadHelper;
                 $this->fieldName = $fieldName;
@@ -151,7 +165,7 @@ class UploadFileTransformer {
                 $metaData = [];
                 if ('' !== $uploadResult['fileName']) {
                     $result = $this->uploadHelper->getFileBaseFolder($objectType, $fieldName) . $uploadResult['fileName'];
-                    $result = null !== $result ? new File($result) : $result;
+                    $result = null !== $result ? new File(«IF targets('3.0')»$this->kernel->getProjectDir() . '/' . «ENDIF»$result) : $result;
                     $metaData = $uploadResult['metaData'];
                 }
 

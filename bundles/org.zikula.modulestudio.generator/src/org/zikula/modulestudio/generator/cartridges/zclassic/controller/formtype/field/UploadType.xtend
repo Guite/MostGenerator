@@ -33,7 +33,9 @@ class UploadType {
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
-        «IF !targets('3.0')»
+        «IF targets('3.0')»
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         use «appNamespace»\Form\DataTransformer\UploadFileTransformer;
@@ -45,13 +47,18 @@ class UploadType {
          */
         abstract class AbstractUploadType extends AbstractType
         {
-            «IF !targets('3.0')»
+            «IF targets('3.0')»
+                /**
+                 * @var ZikulaHttpKernelInterface
+                 */
+                protected $kernel;
+            «ELSE»
                 /**
                  * @var TranslatorInterface
                  */
                 protected $translator;
-
             «ENDIF»
+
             /**
              * @var ImageHelper
              */
@@ -73,13 +80,17 @@ class UploadType {
             protected $entity = null;
 
             public function __construct(
-                «IF !targets('3.0')»
+                «IF targets('3.0')»
+                    ZikulaHttpKernelInterface $kernel,
+                «ELSE»
                     TranslatorInterface $translator,
                 «ENDIF»
                 ImageHelper $imageHelper,
                 UploadHelper $uploadHelper
             ) {
-                «IF !targets('3.0')»
+                «IF targets('3.0')»
+                    $this->kernel = $kernel;
+                «ELSE»
                     $this->translator = $translator;
                 «ENDIF»
                 $this->imageHelper = $imageHelper;
@@ -104,7 +115,7 @@ class UploadType {
                 $fileOptions['attr']['class'] = 'validate-upload';
 
                 $builder->add($fieldName, FileType::class, $fileOptions);
-                $uploadFileTransformer = new UploadFileTransformer($this->entity, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
+                $uploadFileTransformer = new UploadFileTransformer(«IF targets('3.0')»$this->kernel, «ENDIF»$this->entity, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
                 $builder->addModelTransformer($uploadFileTransformer);
 
                 if ($options['allow_deletion'] && !$options['required']) {
