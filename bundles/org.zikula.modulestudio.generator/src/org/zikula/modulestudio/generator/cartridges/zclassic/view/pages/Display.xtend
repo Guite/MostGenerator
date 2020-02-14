@@ -226,7 +226,9 @@ class Display {
 
     def private fieldSection(Entity it, Boolean withHeading) '''
         «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
-            «new MenuViews().itemActions(it, 'display', 'Start')»
+            {% if not isQuickView %}
+                «new MenuViews().itemActions(it, 'display', 'Start')»
+            {% endif %}
         «ENDIF»
         «IF withHeading»
             <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}«ELSE»{{ __('Fields') }}«ENDIF»</h3>
@@ -374,7 +376,9 @@ class Display {
             {{ block('display_hooks') }}
         «ENDIF»
         «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.displayActionsPosition)»
-            «new MenuViews().itemActions(it, 'display', 'End')»
+            {% if not isQuickView %}
+                «new MenuViews().itemActions(it, 'display', 'End')»
+            {% endif %}
         «ENDIF»
     '''
 
