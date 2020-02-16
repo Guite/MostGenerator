@@ -108,7 +108,7 @@ class ConfigController {
                 $appSettings = $form->getData();
                 $appSettings->save();
 
-                $this->addFlash('status', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Done! Configuration updated.'«IF targets('3.0') && !isSystemModule», [], 'config'«ENDIF»));
+                $this->addFlash('status', «IF targets('3.0') && isSystemModule»'Done! Configuration updated.'«ELSE»$this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Done! Configuration updated.'«IF targets('3.0') && !isSystemModule», [], 'config'«ENDIF»)«ENDIF»);
                 «IF targets('3.0')»
                     $userName = $currentUserApi->get('uname');
                     $logger->notice(
