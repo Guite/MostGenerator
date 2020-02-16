@@ -44,11 +44,15 @@ class Actions {
             }
             if (null === $«name.formatForCode») {
                 throw new NotFoundHttpException(
-                    $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                        'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
-                        [],
-                        '«name.formatForCode»'«ENDIF»
-                    )
+                    «IF application.targets('3.0') && application.isSystemModule»
+                        'No such «name.formatForDisplay» found.'
+                    «ELSE»
+                        $this->__(
+                            'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
+                            [],
+                            '«name.formatForCode»'«ENDIF»
+                        )
+                    «ENDIF»
                 );
             }
 
@@ -403,11 +407,15 @@ class Actions {
         if ($success) {
             $this->addFlash(
                 'status',
-                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                    'Done! «name.formatForDisplayCapital» deleted.'«IF application.targets('3.0') && !application.isSystemModule»,
-                    [],
-                    '«name.formatForCode»'«ENDIF»
-                )
+                «IF application.targets('3.0') && application.isSystemModule»
+                    'Done! «name.formatForDisplayCapital» deleted.'
+                «ELSE»
+                    $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                        'Done! «name.formatForDisplayCapital» deleted.'«IF application.targets('3.0') && !application.isSystemModule»,
+                        [],
+                        '«name.formatForCode»'«ENDIF»
+                    )
+                «ENDIF»
             );
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
         }

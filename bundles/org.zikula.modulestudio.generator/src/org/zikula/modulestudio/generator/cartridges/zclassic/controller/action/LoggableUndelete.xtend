@@ -164,11 +164,15 @@ class LoggableUndelete {
             $loggableHelper->undelete($«name.formatForCode»);
             $this->addFlash(
                 'status',
-                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                    'Done! «name.formatForDisplayCapital» undeleted.'«IF application.targets('3.0') && !application.isSystemModule»,
-                    [],
-                    '«name.formatForCode»'«ENDIF»
-                )
+                «IF application.targets('3.0') && application.isSystemModule»
+                    'Done! «name.formatForDisplayCapital» undeleted.'
+                «ELSE»
+                    $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                        'Done! «name.formatForDisplayCapital» undeleted.'«IF application.targets('3.0') && !application.isSystemModule»,
+                        [],
+                        '«name.formatForCode»'«ENDIF»
+                    )
+                «ENDIF»
             );
         } catch (Exception $exception) {
             $this->addFlash(

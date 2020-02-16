@@ -160,10 +160,10 @@ class FormHandler {
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «ENDIF»
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             «IF hasHookSubscribers»
                 use Zikula\Bundle\CoreBundle\RouteUrl;
             «ENDIF»
@@ -1444,11 +1444,15 @@ class FormHandler {
                 if ($request->hasSession() && ($session = $request->getSession())) {
                     $session->getFlashBag()->add(
                         'error',
-                        $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»(
-                            'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'«IF app.targets('3.0') && !app.isSystemModule»,
-                            [],
-                            '«name.formatForCode»'«ENDIF»
-                        )
+                        «IF app.targets('3.0') && app.isSystemModule»
+                            'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'
+                        «ELSE»
+                            $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»(
+                                'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'«IF app.targets('3.0') && !app.isSystemModule»,
+                                [],
+                                '«name.formatForCode»'«ENDIF»
+                            )
+                        «ENDIF»
                     );
                 }
                 $logArgs = [

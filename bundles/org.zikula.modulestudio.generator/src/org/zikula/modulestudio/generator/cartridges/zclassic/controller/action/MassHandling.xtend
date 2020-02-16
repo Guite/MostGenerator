@@ -180,11 +180,15 @@ class MassHandling {
             if ('delete' === $action) {
                 $this->addFlash(
                     'status',
-                    $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                        'Done! «name.formatForDisplayCapital» deleted.'«IF application.targets('3.0') && !application.isSystemModule»,
-                        [],
-                        '«name.formatForCode»'«ENDIF»
-                    )
+                    «IF application.targets('3.0') && application.isSystemModule»
+                        'Done! «name.formatForDisplayCapital» deleted.'
+                    «ELSE»
+                        $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                            'Done! «name.formatForDisplayCapital» deleted.'«IF application.targets('3.0') && !application.isSystemModule»,
+                            [],
+                            '«name.formatForCode»'«ENDIF»
+                        )
+                    «ENDIF»
                 );
                 $logger->notice(
                     '{app}: User {user} deleted the {entity} with id {id}.',
@@ -198,11 +202,15 @@ class MassHandling {
             } else {
                 $this->addFlash(
                     'status',
-                    $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                        'Done! «name.formatForDisplayCapital» updated.'«IF application.targets('3.0') && !application.isSystemModule»,
-                        [],
-                        '«name.formatForCode»'«ENDIF»
-                    )
+                    «IF application.targets('3.0') && application.isSystemModule»
+                        'Done! «name.formatForDisplayCapital» updated.'
+                    «ELSE»
+                        $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
+                            'Done! «name.formatForDisplayCapital» updated.'«IF application.targets('3.0') && !application.isSystemModule»,
+                            [],
+                            '«name.formatForCode»'«ENDIF»
+                        )
+                    «ENDIF»
                 );
                 $logger->notice(
                     '{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.',

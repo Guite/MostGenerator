@@ -162,6 +162,9 @@ class ControllerLayer {
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        «IF app.targets('3.0')»
+            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
+        «ENDIF»
         «IF hasDeleteAction»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType;
         «ENDIF»
@@ -175,9 +178,7 @@ class ControllerLayer {
             use Zikula\Component\SortableColumns\Column;
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
-        «IF app.targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
-        «ELSE»
+        «IF !app.targets('3.0')»
             use Zikula\Core\Controller\AbstractController;
         «ENDIF»
         «IF hasEditAction && app.needsInlineEditing»
