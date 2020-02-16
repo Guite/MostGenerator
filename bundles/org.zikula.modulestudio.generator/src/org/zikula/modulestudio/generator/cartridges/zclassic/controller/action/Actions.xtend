@@ -47,7 +47,7 @@ class Actions {
                     «IF application.targets('3.0') && application.isSystemModule»
                         'No such «name.formatForDisplay» found.'
                     «ELSE»
-                        $this->__(
+                        $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
                             'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
                             [],
                             '«name.formatForCode»'«ENDIF»
