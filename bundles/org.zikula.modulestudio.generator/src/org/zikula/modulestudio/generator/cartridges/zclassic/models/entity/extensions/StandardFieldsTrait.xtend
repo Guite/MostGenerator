@@ -60,7 +60,7 @@ class StandardFieldsTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\DateTime()
+         * @Assert\Type("\DateTimeInterface")
          * @var DateTimeInterface $createdDate
          */
         protected $createdDate;
@@ -82,7 +82,7 @@ class StandardFieldsTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\DateTime()
+         * @Assert\Type("\DateTimeInterface")
          * @var DateTimeInterface $updatedDate
          */
         protected $updatedDate;

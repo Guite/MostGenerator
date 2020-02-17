@@ -92,6 +92,7 @@ class ListEntryValidator {
         use Symfony\Component\Validator\Constraint;
         use Symfony\Component\Validator\ConstraintValidator;
         «IF targets('3.0')»
+            use Symfony\Component\Validator\Exception\UnexpectedTypeException;
             use Symfony\Contracts\Translation\TranslatorInterface;
             use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «ELSE»
@@ -99,6 +100,9 @@ class ListEntryValidator {
             use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
         use «appNamespace»\Helper\ListEntriesHelper;
+        «IF targets('3.0')»
+            use «appNamespace»\Validator\Constraints\ListEntry;
+        «ENDIF»
 
         /**
          * List entry validator.
@@ -124,6 +128,11 @@ class ListEntryValidator {
 
             public function validate($value, Constraint $constraint)
             {
+                «IF targets('3.0')»
+                    if (!$constraint instanceof ListEntry) {
+                        throw new UnexpectedTypeException($constraint, ListEntry::class);
+                    }
+                «ENDIF»
                 if (null === $value) {
                     return;
                 }
