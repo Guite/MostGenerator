@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout sources from component repository
-      uses: actions/checkout@v2-beta
+      uses: actions/checkout@v2
 
     - name: Checkout additional sources from product repository
-      uses: actions/checkout@v2-beta
+      uses: actions/checkout@v2
       with:
         repository: Guite/MostProduct
         token: ${{ secrets.ACCESS_MOST_PRODUCT }}
