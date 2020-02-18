@@ -29,13 +29,16 @@ class AuthenticationMethod {
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
         «IF targets('3.0')»
+            use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
             use Symfony\Contracts\Translation\TranslatorInterface;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersModule\AuthenticationMethodInterface\«IF authenticationMethod == AuthMethodType.LOCAL»Non«ENDIF»ReEntrantAuthenticationMethodInterface;
-        use Zikula\ZAuthModule\Api\ApiInterface\PasswordApiInterface;
+        «IF !targets('3.0')»
+            use Zikula\ZAuthModule\Api\ApiInterface\PasswordApiInterface;
+        «ENDIF»
         «IF authenticationMethod == AuthMethodType.LOCAL»
             use Zikula\ZAuthModule\Form\Type\RegistrationType;
             use Zikula\ZAuthModule\Form\Type\UnameLoginType;
@@ -75,9 +78,9 @@ class AuthenticationMethod {
             protected $variableApi;
 
             /**
-             * @var PasswordApiInterface
+             * @var «IF targets('3.0')»EncoderFactoryInterface«ELSE»PasswordApiInterface«ENDIF»
              */
-            protected $passwordApi;
+            protected «IF targets('3.0')»$encoderFactory«ELSE»$passwordApi«ENDIF»;
 
             public function __construct(
                 TranslatorInterface $translator,
@@ -87,7 +90,7 @@ class AuthenticationMethod {
                 «ENDIF»
                 EntityFactory $entityFactory,
                 VariableApiInterface $variableApi,
-                PasswordApiInterface $passwordApi)
+                «IF targets('3.0')»EncoderFactoryInterface $encoderFactory«ELSE»PasswordApiInterface $passwordApi«ENDIF»)
             {
                 $this->translator = $translator;
                 $this->requestStack = $requestStack;
@@ -96,7 +99,11 @@ class AuthenticationMethod {
                 «ENDIF»
                 $this->entityFactory = $entityFactory;
                 $this->variableApi = $variableApi;
-                $this->passwordApi = $passwordApi;
+                «IF targets('3.0')»
+                    $this->encoderFactory = $encoderFactory;
+                «ELSE»
+                    $this->passwordApi = $passwordApi;
+                «ENDIF»
             }
 
             «authMethodBaseImplCommon»
