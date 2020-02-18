@@ -65,7 +65,7 @@ jobs:
     - name: Deploy repository
       uses: SamKirkland/FTP-Deploy-Action@master
       with:
-        ftp-server: ftp://${{ secrets.FTP_SERVER }}/components/generator
+        ftp-server: ftp://${{ secrets.FTP_SERVER }}/components/generator/
         ftp-username: ${{ secrets.FTP_USERNAME }}
         ftp-password: ${{ secrets.FTP_PASSWORD }}
         local-dir: deploy/repo
