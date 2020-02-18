@@ -69,7 +69,7 @@ jobs:
         #ftp-username: ${{ secrets.FTP_USERNAME }}
         #ftp-password: ${{ secrets.FTP_PASSWORD }}
         #local-dir: deploy/repo
-      uses: SamKirkland/FTP-Deploy-Action@v2
+      uses: SamKirkland/FTP-Deploy-Action@2.0.0
       env:
         FTP_SERVER: ${{ secrets.FTP_SERVER }}
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
