@@ -16,40 +16,66 @@ class Tests {
     def generate(Application it, IMostFileSystemAccess fsa) {
         var testsPath = getAppTestsPath
 
-        var fileName = 'bootstrap.php'
-        fsa.generateFile(testsPath + fileName, bootstrapImpl)
+        var fileName = 'Unit/StackTest.php'
+        fsa.generateFile(testsPath + fileName, stackUnitTest)
 
-        fileName = 'AllTests.php'
-        fsa.generateFile(testsPath + fileName, testSuiteImpl)
+        fileName = 'Integration/StackTest.php'
+        fsa.generateFile(testsPath + fileName, stackIntegrationTest)
     }
 
-    def private bootstrapImpl(Application it) '''
-        error_reporting(E_ALL | E_STRICT);
-        require_once 'PHPUnit/TextUI/TestRunner.php';
+    def private stackUnitTest(Application it) '''
+        use PHPUnit\Framework\TestCase;
+        
+        class «appName»_Unit_StackTest extends TestCase
+        {
+            public function testPushAndPop()
+            {
+                $stack = array();
+                $this->assertEquals(0, count($stack));
+         
+                array_push($stack, 'foo');
+                $this->assertEquals('foo', $stack[count($stack)-1]);
+                $this->assertEquals(1, count($stack));
+         
+                $this->assertEquals('foo', array_pop($stack));
+                $this->assertEquals(0, count($stack));
+            }
+        }
     '''
 
-    def private testSuiteImpl(Application it) '''
-        if (!defined('PHPUnit_MAIN_METHOD')) {
-            define('PHPUnit_MAIN_METHOD', 'AllTests::main');
-        }
-
-        require_once __DIR__ . '/bootstrap.php';
-
-        class AllTests
+    def private stackIntegrationTest(Application it) '''
+        use PHPUnit\Framework\TestCase;
+        
+        class «appName»_Integration_StackTest extends TestCase
         {
-            public static function main()«IF targets('3.0')»: void«ENDIF»
+            public function testEmpty()
             {
-                PHPUnit_TextUI_TestRunner::run(self::suite());
+                $stack = array();
+                $this->assertEmpty($stack);
+         
+                return $stack;
             }
-
-            public static function suite()«IF targets('3.0')»: PHPUnit_Framework_TestSuite«ENDIF»
+         
+            /**
+             * @depends testEmpty
+             */
+            public function testPush(array $stack)
             {
-                return new PHPUnit_Framework_TestSuite('«appName» - All Tests');
+                array_push($stack, 'foo');
+                $this->assertEquals('foo', $stack[count($stack)-1]);
+                $this->assertNotEmpty($stack);
+         
+                return $stack;
             }
-        }
-
-        if (PHPUnit_MAIN_METHOD === 'AllTests::main') {
-            AllTests::main();
+         
+            /**
+             * @depends testPush
+             */
+            public function testPop(array $stack)
+            {
+                $this->assertEquals('foo', array_pop($stack));
+                $this->assertEmpty($stack);
+            }
         }
    '''
 }

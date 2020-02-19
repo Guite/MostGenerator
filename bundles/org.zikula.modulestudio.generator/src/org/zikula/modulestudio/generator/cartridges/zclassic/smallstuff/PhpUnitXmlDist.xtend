@@ -28,15 +28,15 @@ class PhpUnitXmlDist {
                  verbose="true"
         >
             «IF !targets('3.0')»
-            <php>
-                <server name="KERNEL_CLASS" value="ZikulaKernel" />
-            </php>
+                <php>
+                    <server name="KERNEL_CLASS" value="ZikulaKernel" />
+                </php>
             «ENDIF»
             <testsuites>
                 <testsuite name="«appName» Test Suite">
                     <directory>./Tests</directory>
                     <exclude>./Tests/Entity/*/Repository</exclude>
-                    <exclude>./vendor</exclude>
+                    <exclude>./vendor/</exclude>
                 </testsuite>
             </testsuites>
             <filter>
