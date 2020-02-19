@@ -951,9 +951,13 @@ class FormHandler {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
+            «IF hasTranslatable || hasHookSubscribers»
 
-            $action = $args['commandName'];
-            $isRegularAction = 'delete' !== $action;
+                $action = $args['commandName'];
+                «IF hasTranslatable»
+                    $isRegularAction = 'delete' !== $action;
+                «ENDIF»
+            «ENDIF»
 
             $this->fetchInputData();
             «IF !getTranslatableEntities.filter[loggable].empty»

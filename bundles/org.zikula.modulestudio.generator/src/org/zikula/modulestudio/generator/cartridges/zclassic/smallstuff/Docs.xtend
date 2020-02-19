@@ -26,9 +26,13 @@ class Docs {
         fsa.generateFile(fileName, Changelog)
 
         fileName = 'README.md'
-        fsa.generateFile(fileName, ReadmeMarkup)
+        fsa.generateFile(fileName, Readme)
 
         val docPath = getAppDocPath
+        if (targets('3.0')) {
+            fsa.generateFile(docPath + 'help/en/' + fileName, Readme)
+        }
+
         fileName = 'credits.md'
         fsa.generateFile(docPath + fileName, Credits)
 
@@ -140,7 +144,7 @@ class Docs {
         «IF url != ""»<«url»>«/*«ELSE»«msUrl»*/»«ENDIF»
     '''
 
-    def ReadmeMarkup(Application it) '''
+    def Readme(Application it) '''
         # «appName» «version»
 
         «appDescription»
