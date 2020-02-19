@@ -483,21 +483,21 @@ class SharedFormTypeFields {
             messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
         }
         if (role == StringRole.BIC) {
-            messages += '''$this->__f('Note: this value must be a valid BIC (Business Identifier Code).')'''
+            messages += '''$this->__('Note: this value must be a valid BIC (Business Identifier Code).')'''
         } else if (role == StringRole.CREDIT_CARD) {
-            messages += '''$this->__f('Note: this value must be a valid credit card number.')'''
+            messages += '''$this->__('Note: this value must be a valid credit card number.')'''
         } else if (role == StringRole.IBAN) {
-            messages += '''$this->__f('Note: this value must be a valid IBAN (International Bank Account Number).')'''
+            messages += '''$this->__('Note: this value must be a valid IBAN (International Bank Account Number).')'''
         } else if (isbn != StringIsbnStyle.NONE) {
-            messages += '''$this->__f('Note: this value must be a valid ISBN (International Standard Book Number).«isbn.isbnMessage»')'''
+            messages += '''$this->__('Note: this value must be a valid ISBN (International Standard Book Number).«isbn.isbnMessage»')'''
         } else if (issn != StringIssnStyle.NONE) {
-            messages += '''$this->__f('Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»')'''
+            messages += '''$this->__('Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»')'''
         } else if (ipAddress != IpAddressScope.NONE) {
-            messages += '''$this->__f('Note: this value must be a valid IP address.«ipAddress.scopeMessage»')'''
+            messages += '''$this->__('Note: this value must be a valid IP address.«ipAddress.scopeMessage»')'''
         //} else if (role == StringRole.PHONE_NUMBER) {
-        //    messages += '''$this->__f('Note: this value must be a valid telephone number.')'''
+        //    messages += '''$this->__('Note: this value must be a valid telephone number.')'''
         } else if (role == StringRole.UUID) {
-            messages += '''$this->__f('Note: this value must be a valid UUID (Universally Unique Identifier).')'''
+            messages += '''$this->__('Note: this value must be a valid UUID (Universally Unique Identifier).')'''
         }
 
         messages
