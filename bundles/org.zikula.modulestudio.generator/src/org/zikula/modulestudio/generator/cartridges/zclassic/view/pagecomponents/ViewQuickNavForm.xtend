@@ -35,6 +35,20 @@ class ViewQuickNavForm {
         «IF application.targets('3.0') && !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
+        «IF !application.targets('3.0')»
+            {% import _self as helper %}
+        «ENDIF»
+        {% macro renderQuickNavEntry(quickNavForm, fieldName, isVisible) %}
+            {% if attribute(quickNavForm, fieldName) is defined and attribute(quickNavForm, fieldName) is not null %}
+                {% if not isVisible %}
+                    <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
+                {% endif %}
+                    {{ form_row(attribute(quickNavForm, fieldName)) }}
+                {% if not isVisible %}
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endmacro %}
         {% if permissionHelper.mayUseQuickNav('«name.formatForCode»') %}
             {% form_theme quickNavForm with [
                 'bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF»_layout.html.twig'
@@ -59,11 +73,14 @@ class ViewQuickNavForm {
 
     def private formContent(Entity it) '''
         <h3>«IF application.targets('3.0')»{% trans %}Quick navigation{% endtrans %}«ELSE»{{ __('Quick navigation') }}«ENDIF»</h3>
+        «IF categorisable»
+            {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+        «ENDIF»
         «formFields»
         {{ form_widget(quickNavForm.updateview) }}
         <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'view', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="«IF application.targets('3.0')»{% trans %}Back to default view{% endtrans %}«ELSE»{{ __('Back to default view') }}«ENDIF»" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»default«ENDIF» btn-sm">«IF application.targets('3.0')»{% trans %}Reset{% endtrans %}«ELSE»{{ __('Reset') }}«ENDIF»</a>
         «IF categorisable»
-            {% if categoriesEnabled %}
+            {% if categoriesEnabled and quickNavForm.categories is defined and quickNavForm.categories is not null %}
                 {% if categoryFilter is defined and categoryFilter != true %}
                 {% else %}
                         </div>
@@ -125,13 +142,7 @@ class ViewQuickNavForm {
             «ENDFOR»
         «ENDIF»
         «IF hasAbstractStringFieldsEntity»
-            {% if searchFilter is defined and searchFilter != true %}
-                <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
-            {% endif %}
-                {{ form_row(quickNavForm.q) }}
-            {% if searchFilter is defined and searchFilter != true %}
-                </div>
-            {% endif %}
+            {{ «IF application.targets('3.0')»_self«ELSE»helper«ENDIF».renderQuickNavEntry(quickNavForm, 'q', searchFilter is not defined or searchFilter == true) }}
         «ENDIF»
         «sortingAndPageSize»
         «IF hasBooleanFieldsEntity»
@@ -142,8 +153,7 @@ class ViewQuickNavForm {
     '''
 
     def private categoriesFields(Entity it) '''
-        {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-        {% if categoriesEnabled %}
+        {% if categoriesEnabled and quickNavForm.categories is defined and quickNavForm.categories is not null %}
             {% if categoryFilter is defined and categoryFilter != true %}
                 <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
             {% else %}
@@ -162,41 +172,27 @@ class ViewQuickNavForm {
 
     def private formField(DerivedField it) '''
         «val fieldName = name.formatForCode»
-        {% if «fieldName»Filter is defined and «fieldName»Filter != true %}
-            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
-        {% endif %}
-            {{ form_row(quickNavForm.«fieldName») }}
-        {% if «fieldName»Filter is defined and «fieldName»Filter != true %}
-            </div>
-        {% endif %}
+        {{ «IF application.targets('3.0')»_self«ELSE»helper«ENDIF».renderQuickNavEntry(quickNavForm, '«fieldName»', «fieldName»Filter is not defined or «fieldName»Filter == true) }}
     '''
 
     def private formField(JoinRelationship it, Boolean useTarget) '''
         «val aliasName = getRelationAliasName(useTarget)»
-        {% if «aliasName»Filter is defined and «aliasName»Filter != true %}
-            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
-        {% endif %}
-            {{ form_row(quickNavForm.«aliasName») }}
-        {% if «aliasName»Filter is defined and «aliasName»Filter != true %}
-            </div>
-        {% endif %}
+        {{ «IF application.targets('3.0')»_self«ELSE»helper«ENDIF».renderQuickNavEntry(quickNavForm, '«aliasName»', «aliasName»Filter is not defined or «aliasName»Filter == true) }}
     '''
 
     def private sortingAndPageSize(Entity it) '''
-        {% if sorting is defined and sorting != true %}
-            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
+        {% if quickNavForm.sort is defined and quickNavForm.sort is not null %}
+            {% if sorting is defined and sorting != true %}
+                <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
+            {% endif %}
+                {{ form_row(quickNavForm.sort) }}
+                {% if quickNavForm.sortdir is defined and quickNavForm.sortdir is not null %}
+                    {{ form_row(quickNavForm.sortdir) }}
+                {% endif %}
+            {% if sorting is defined and sorting != true %}
+                </div>
+            {% endif %}
         {% endif %}
-            {{ form_row(quickNavForm.sort) }}
-            {{ form_row(quickNavForm.sortdir) }}
-        {% if sorting is defined and sorting != true %}
-            </div>
-        {% endif %}
-        {% if pageSizeSelector is defined and pageSizeSelector != true %}
-            <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
-        {% endif %}
-            {{ form_row(quickNavForm.num) }}
-        {% if pageSizeSelector is defined and pageSizeSelector != true %}
-            </div>
-        {% endif %}
+        {{ «IF application.targets('3.0')»_self«ELSE»helper«ENDIF».renderQuickNavEntry(quickNavForm, 'num', pageSizeSelector is not defined or pageSizeSelector == true) }}
     '''
 }
