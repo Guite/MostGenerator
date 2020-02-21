@@ -252,12 +252,18 @@ class CollectionFilterHelper {
                 «FOR relation: getBidirectionalIncomingJoinRelations.filter[source instanceof Entity]»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
                     $parameters['«sourceAliasName»'] = $request->query->get('«sourceAliasName»', 0);
+                    if (is_object($parameters['«sourceAliasName»'])) {
+                        $parameters['«sourceAliasName»'] = $parameters['«sourceAliasName»']->getId();
+                    }
                 «ENDFOR»
             «ENDIF»
             «IF !getOutgoingJoinRelations.filter[target instanceof Entity].empty»
                 «FOR relation: getOutgoingJoinRelations.filter[target instanceof Entity]»
                     «val targetAliasName = relation.getRelationAliasName(true)»
                     $parameters['«targetAliasName»'] = $request->query->get('«targetAliasName»', 0);
+                    if (is_object($parameters['«targetAliasName»'])) {
+                        $parameters['«targetAliasName»'] = $parameters['«targetAliasName»']->getId();
+                    }
                 «ENDFOR»
             «ENDIF»
             «IF hasListFieldsEntity»
@@ -394,6 +400,7 @@ class CollectionFilterHelper {
 
                 // field filter
                 if ((!is_numeric($v) && '' !== $v) || (is_numeric($v) && 0 < $v)) {
+                    $v = (string)$v;
                     if ('workflowState' === $k && 0 === strpos($v, '!')) {
                         $qb->andWhere('tbl.' . $k . ' != :' . $k)
                            ->setParameter($k, substr($v, 1));
