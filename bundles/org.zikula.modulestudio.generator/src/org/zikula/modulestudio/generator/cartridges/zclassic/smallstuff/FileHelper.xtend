@@ -52,7 +52,7 @@ class FileHelper {
          * @return «IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF»
          */
         «ENDIF»
-        public function get«name.formatForCodeCapital»()«IF skipTypeHint»/*«ENDIF»«IF useHint»: «IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«ENDIF»«IF skipTypeHint»*/«ENDIF»
+        public function get«name.formatForCodeCapital»()«IF useHint»«IF skipTypeHint»/*«ENDIF»: «IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF skipTypeHint»*/«ENDIF»«ENDIF»
         {
             return «IF type == 'float'&& #['latitude', 'longitude'].contains(name)»(float)«ENDIF»$this->«name»;
         }
@@ -69,7 +69,7 @@ class FileHelper {
          * @return void
          */
         «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF useHint»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «ENDIF»«IF skipTypeHint»*/«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: void«ENDIF»
+        public function set«name.formatForCodeCapital»(«IF useHint»«IF skipTypeHint»/*«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «IF skipTypeHint»*/«ENDIF»«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: void«ENDIF»
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
