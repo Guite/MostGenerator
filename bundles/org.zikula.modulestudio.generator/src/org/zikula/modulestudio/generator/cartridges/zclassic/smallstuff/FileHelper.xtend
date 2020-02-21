@@ -52,7 +52,7 @@ class FileHelper {
          * @return «IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF»
          */
         «ENDIF»
-        public function get«name.formatForCodeCapital»()«IF it instanceof IntegerField && (it as IntegerField).isUserGroupSelector»/*«ENDIF»«IF useHint»: «IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«ENDIF»«IF it instanceof IntegerField && (it as IntegerField).isUserGroupSelector»*/«ENDIF»
+        public function get«name.formatForCodeCapital»()«IF skipTypeHint»/*«ENDIF»«IF useHint»: «IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«ENDIF»«IF skipTypeHint»*/«ENDIF»
         {
             return «IF type == 'float'&& #['latitude', 'longitude'].contains(name)»(float)«ENDIF»$this->«name»;
         }
@@ -69,7 +69,7 @@ class FileHelper {
          * @return void
          */
         «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF it instanceof IntegerField && (it as IntegerField).isUserGroupSelector»/*«ENDIF»«IF useHint»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «ENDIF»«IF it instanceof IntegerField && (it as IntegerField).isUserGroupSelector»*/«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: void«ENDIF»
+        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF useHint»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «ENDIF»«IF skipTypeHint»*/«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: void«ENDIF»
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
@@ -78,6 +78,10 @@ class FileHelper {
             «ENDIF»
         }
     '''
+
+    def private skipTypeHint(Object it) {
+        (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) || (it instanceof UserField)
+    }
 
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
         «IF type == 'float'»

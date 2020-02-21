@@ -74,7 +74,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}{% set linkTitle = «IF application.targets('3.0')»'Send private message to %userName%'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»({'%userName%': «realName».uname})«ELSE»__f('Send private message to %userName%', {'%userName%': «realName».uname})«ENDIF» %}<a href="{{ sendMessageUrl }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-envelope«IF !application.targets('3.0')»-o«ENDIF»"></i></a>{% endif %}{% endif %}
+                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}{% set linkTitle = «IF application.targets('3.0')»'Send private message to %userName%'|trans({'%userName%': «realName».uname}«IF !application.isSystemModule», 'messages'«ENDIF»)«ELSE»__f('Send private message to %userName%', {'%userName%': «realName».uname})«ENDIF» %}<a href="{{ sendMessageUrl }}" title="{{ linkTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-envelope«IF !application.targets('3.0')»-o«ENDIF»"></i></a>{% endif %}{% endif %}
                 <span class="avatar">{{ userAvatar(«realName».uid, {rating: 'g'}) }}</span>
             «IF page == 'display'»
                 {% else %}

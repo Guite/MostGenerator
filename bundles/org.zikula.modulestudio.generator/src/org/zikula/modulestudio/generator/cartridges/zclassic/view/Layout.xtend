@@ -277,7 +277,7 @@ class Layout {
                         <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
                         <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="{{ multiple ? '1' : '0' }}" />
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
-                        <button type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa«IF targets('3.0')»s«ENDIF» fa-times"></i> {{ __('Cancel') }}</button>
+                        <button type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa«IF targets('3.0')»s«ENDIF» fa-times"></i> «IF targets('3.0')»{% trans %}Cancel{% endtrans %}«ELSE»{{ __('Cancel') }}«ENDIF»</button>
                         {% if create_url != '' %}
                             <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa«IF targets('3.0')»s«ENDIF» fa-plus"></i> «IF targets('3.0')»{% trans %}Create{% endtrans %}«ELSE»{{ __('Create') }}«ENDIF»</a>
                         {% endif %}

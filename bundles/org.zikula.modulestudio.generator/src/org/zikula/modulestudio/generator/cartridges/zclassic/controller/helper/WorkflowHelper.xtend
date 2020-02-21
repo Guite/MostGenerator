@@ -537,7 +537,7 @@ class WorkflowHelper {
                     «IF application.targets('3.0')»
                         /** @Desc("{count, plural,\n  one   {One «name.formatForDisplay» is waiting for «requiredAction».}\n  other {# «nameMultiple.formatForDisplay» are waiting for «requiredAction».}\n}") */
                         'message' => $this->translator->trans(
-                            'plural_n.«nameMultiple.formatForDB».waiting_for_«requiredAction»'
+                            'plural_n.«nameMultiple.formatForDB».waiting_for_«requiredAction»',
                             ['%count%' => $amount]«IF !application.isSystemModule»,
                             '«name.formatForCode»'«ENDIF»
                         )
