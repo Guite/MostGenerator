@@ -88,6 +88,9 @@ class ComposerFile {
                 "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«appName»",
                 "displayname": "«name.formatForDisplayCapital»",
                 "url": "«name.formatForDB»",
+                «IF targets('3.0')»
+                    "icon": "fas fa-database",
+                «ENDIF»
                 "capabilities": {
                     «generateCapabilities»
                 },
@@ -125,12 +128,11 @@ class ComposerFile {
     '''
 
     def private generateCapabilities(Application it) '''
+        "admin": {
+            "route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"
+        },
         "user": {
             "route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»"
-        },
-        "admin": {
-            "route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"«IF targets('3.0')»,
-            "icon": "fas fa-database"«ENDIF»
         }«IF hasExtraCapabilities»,«ENDIF»
         «IF hasCategorisableEntities»
             "categorizable": {
