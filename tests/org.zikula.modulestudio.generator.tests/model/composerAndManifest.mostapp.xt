@@ -36,8 +36,12 @@ XPECT generated file composer.json ---
             "displayname": "Simple test",
             "url": "simpletest",
             "capabilities": {
-                "user": {"route": "acmesimpletestmodule_article_index"},
-                "admin": {"route": "acmesimpletestmodule_article_adminindex"}
+                "admin": {
+                    "route": "acmesimpletestmodule_article_adminindex"
+                },
+                "user": {
+                    "route": "acmesimpletestmodule_article_index"
+                }
             },
             "securityschema": {
                 "AcmeSimpleTestModule::": "::",
