@@ -120,6 +120,14 @@ class LoggableUndelete {
             );
         }
 
+        «IF !application.targets('3.0')»
+            $permissionHelper = $this->get('«application.appService».permission_helper');
+        «ENDIF»
+        $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
+        if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
+            throw new AccessDeniedException();
+        }
+
         «IF hasDisplayAction»
             $preview = $request->query->getInt('preview');
             if (1 === $preview) {
