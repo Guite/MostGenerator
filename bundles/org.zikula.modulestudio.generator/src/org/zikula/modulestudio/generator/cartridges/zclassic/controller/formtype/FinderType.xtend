@@ -96,7 +96,7 @@ class FinderType {
                 public function __construct(
                     
                     «IF !app.targets('3.0')»
-                        TranslatorInterface $translator
+                        TranslatorInterface $translator,
                     «ENDIF»
                     RequestStack $requestStack,
                     VariableApiInterface $variableApi«IF app.needsFeatureActivationHelper»,
