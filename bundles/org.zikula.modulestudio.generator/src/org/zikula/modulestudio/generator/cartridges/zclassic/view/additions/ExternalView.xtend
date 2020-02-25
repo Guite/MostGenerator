@@ -308,7 +308,7 @@ class ExternalView {
                                         {{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}
                                     «ENDIF»
                                 </a>
-                                {% set displayParameters = {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)»}|merge({'_locale': language|default(app.locale)}) %}
+                                {% set displayParameters = {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)»}|merge({'_locale': language|default(app.request.locale)}) %}
                                 «IF hasDisplayAction»
                                     <input type="hidden" id="path{{ itemId }}" value="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display', displayParameters) }}" />
                                     <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_display', displayParameters) }}" />
