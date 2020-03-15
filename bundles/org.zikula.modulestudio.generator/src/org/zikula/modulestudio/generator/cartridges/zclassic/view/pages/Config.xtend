@@ -51,7 +51,7 @@ class Config {
                     «ELSE»
                         'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                     «ENDIF»
-                ] %}
+                ]«IF targets('3.0')» only«ENDIF» %}
                 {{ form_start(form) }}
                 <div class="zikula-bootstrap-tab-container">
                     <ul class="nav nav-tabs" role="tablist">

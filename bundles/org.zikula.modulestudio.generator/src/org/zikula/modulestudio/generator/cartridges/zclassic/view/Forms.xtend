@@ -115,7 +115,7 @@ class Forms {
             «ELSE»
                 'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
             «ENDIF»
-        ] %}
+        ]«IF app.targets('3.0')» only«ENDIF» %}
         {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm', class: '«app.vendorAndName.toLowerCase»-edit-form'}}) }}
         «IF useGroupingTabs('edit')»
             <div class="zikula-bootstrap-tab-container">

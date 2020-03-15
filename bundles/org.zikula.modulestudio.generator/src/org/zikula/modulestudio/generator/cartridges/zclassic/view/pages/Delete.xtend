@@ -63,7 +63,7 @@ class Delete {
                     «ELSE»
                         'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                     «ENDIF»
-                ] %}
+                ]«IF app.targets('3.0')» only«ENDIF» %}
                 {{ form_start(deleteForm) }}
                 {{ form_errors(deleteForm) }}
 

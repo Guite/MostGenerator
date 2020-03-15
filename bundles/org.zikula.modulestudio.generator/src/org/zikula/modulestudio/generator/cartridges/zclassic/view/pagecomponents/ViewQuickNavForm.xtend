@@ -52,7 +52,7 @@ class ViewQuickNavForm {
         {% if permissionHelper.mayUseQuickNav('«name.formatForCode»') %}
             {% form_theme quickNavForm with [
                 'bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF»_layout.html.twig'
-            ] %}
+            ]«IF application.targets('3.0')» only«ENDIF» %}
             {{ form_start(quickNavForm, {attr: {id: '«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm', class: '«application.appName.toLowerCase»-quicknav «IF application.targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»', role: 'navigation'}}) }}
             {{ form_errors(quickNavForm) }}
             <a href="#collapse«name.formatForCodeCapital»QuickNav" role="button" data-toggle="collapse" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»default«ENDIF»" aria-expanded="false" aria-controls="collapse«name.formatForCodeCapital»QuickNav">
