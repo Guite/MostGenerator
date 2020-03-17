@@ -257,7 +257,7 @@ class UploadHelper {
             $result['metaData'] = $this->readMetaDataForFile($fileName, $destinationFilePath);
 
             $isImage = in_array($extension, $this->imageFileTypes, true);
-            if ($isImage) {
+            if ($isImage && 'gif' !== $extension) {
                 // fix wrong orientation and shrink too large image if needed
                 @ini_set('memory_limit', '1G');
                 $imagine = new Imagine();
