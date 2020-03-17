@@ -373,7 +373,7 @@ class ExternalController {
         if ('' !== $searchTerm) {
             $qb = $this->«IF targets('3.0')»$collectionFilterHelper«ELSE»get('«appService».collection_filter_helper')«ENDIF»->addSearchFilter($objectType, $qb, $searchTerm);
         }
-        $query = $repository->getQueryFromBuilder($qb);
+        $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
         list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
 
