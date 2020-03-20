@@ -816,11 +816,7 @@ class Repository {
                 if (true !== $useJoins) {
                     $orderByField = $orderBy;
                     if (false !== mb_strpos($orderByField, ' ')) {
-                        «IF app.targets('3.0')»
-                            [$orderByField, $direction] = explode(' ', $orderByField, 2);
-                        «ELSE»
-                            list($orderByField, $direction) = explode(' ', $orderByField, 2);
-                        «ENDIF»
+                        list($orderByField, $direction) = explode(' ', $orderByField, 2);
                     }
                     if (
                         «IF !sortRelationsIn.empty»
@@ -938,11 +934,7 @@ class Repository {
             protected function resolveOrderByForRelation(«IF application.targets('3.0')»string «ENDIF»$orderBy)«IF application.targets('3.0')»: string«ENDIF»
             {
                 if (false !== mb_strpos($orderBy, ' ')) {
-                    «IF app.targets('3.0')»
-                        [$orderBy, $direction] = explode(' ', $orderBy, 2);
-                    «ELSE»
-                        list($orderBy, $direction) = explode(' ', $orderBy, 2);
-                    «ENDIF»
+                    list($orderBy, $direction) = explode(' ', $orderBy, 2);
                 } else {
                     $direction = 'ASC';
                 }
