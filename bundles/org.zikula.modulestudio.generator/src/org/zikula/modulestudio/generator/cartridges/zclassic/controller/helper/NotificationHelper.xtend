@@ -241,7 +241,7 @@ class NotificationHelper {
                         '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForCodeCapital»'«IF entity != entitiesWithWorkflow.last»,«ENDIF»
                     «ENDFOR»
                 ];
-                $modVarSuffix = $modVarSuffixes[$this->entity['_objectType']];
+                $modVarSuffix = $modVarSuffixes[$this->entity->get_objectType()];
 
                 $moderatorGroupId = $this->variableApi->get(
                     '«appName»',
@@ -325,7 +325,7 @@ class NotificationHelper {
          */
         protected function sendMails()«IF targets('3.0')»: bool«ENDIF»
         {
-            $objectType = $this->entity['_objectType'];
+            $objectType = $this->entity->get_objectType();
             $siteName = $this->variableApi->getSystemVar('sitename');
             $adminMail = $this->variableApi->getSystemVar('adminmail');
 
@@ -458,6 +458,7 @@ class NotificationHelper {
                 'name' => $this->entityDisplayHelper->getFormattedTitle($this->entity),
                 'newState' => $stateInfo['text'],
                 'remarks' => $remarks,
+                'editor' => $this->getEditorName(),
                 'displayUrl' => $displayUrl,
                 'editUrl' => $editUrl
             ];
@@ -473,6 +474,26 @@ class NotificationHelper {
         protected function usesDesignatedEntityFields()«IF targets('3.0')»: bool«ENDIF»
         {
             return 0 === strpos($this->recipientType, 'field-');
+        }
+
+        /**
+         * Determines name of editor for the given entity.
+         «IF !targets('3.0')»
+         *
+         * @return string
+         «ENDIF»
+         */
+        protected function getEditorName()«IF targets('3.0')»: string«ENDIF»
+        {
+            «IF !hasStandardFieldEntities»
+                return '';
+            «ELSE»
+                if (!in_array($this->entity->get_objectType(), ['«standardFieldEntities.map[name.formatForCode].join('\', \'')»'], true)) {
+                    return '';
+                }
+            «ENDIF»
+
+            return $this->entity->getUpdatedBy()->getUname();
         }
     '''
 
