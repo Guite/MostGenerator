@@ -491,9 +491,9 @@ class NotificationHelper {
                 if (!in_array($this->entity->get_objectType(), ['«standardFieldEntities.map[name.formatForCode].join('\', \'')»'], true)) {
                     return '';
                 }
-            «ENDIF»
 
-            return $this->entity->getUpdatedBy()->getUname();
+                return $this->entity->getUpdatedBy()->getUname();
+            «ENDIF»
         }
     '''
 
