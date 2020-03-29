@@ -25,8 +25,16 @@ class NotificationHelper {
     def private notificationHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Swift_Message;
+        «IF !targets('3.0')»
+            use Swift_Message;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
+        «IF targets('3.0')»
+            use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+            use Symfony\Component\Mailer\MailerInterface;
+            use Symfony\Component\Mime\Address;
+            use Symfony\Component\Mime\Email;
+        «ENDIF»
         use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
         «IF targets('3.0')»
@@ -45,7 +53,9 @@ class NotificationHelper {
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\GroupsModule\Constant as GroupsConstant;
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
-        use Zikula\MailerModule\Api\ApiInterface\MailerApiInterface;
+        «IF !targets('3.0')»
+            use Zikula\MailerModule\Api\ApiInterface\MailerApiInterface;
+        «ENDIF»
         use Zikula\UsersModule\Constant as UsersConstant;
         use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         use Zikula\UsersModule\Entity\UserEntity;
@@ -90,7 +100,7 @@ class NotificationHelper {
         protected $twig;
 
         /**
-         * @var MailerApiInterface
+         * @var «IF targets('3.0')»MailerInterface«ELSE»MailerApiInterface«ENDIF»
          */
         protected $mailer;
 
@@ -156,7 +166,7 @@ class NotificationHelper {
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
             «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
-            MailerApiInterface $mailerApi,
+            «IF targets('3.0')»MailerInterface $mailer«ELSE»MailerApiInterface $mailerApi«ENDIF»,
             GroupRepositoryInterface $groupRepository,
             UserRepositoryInterface $userRepository,
             EntityDisplayHelper $entityDisplayHelper,
@@ -168,7 +178,7 @@ class NotificationHelper {
             $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
             $this->twig = $twig;
-            $this->mailerApi = $mailerApi;
+            $this->mailer = «IF targets('3.0')»$mailer«ELSE»$mailerApi«ENDIF»;
             $this->groupRepository = $groupRepository;
             $this->userRepository = $userRepository;
             $this->entityDisplayHelper = $entityDisplayHelper;
@@ -341,6 +351,38 @@ class NotificationHelper {
             $subject = $this->getMailSubject();
 
             // send one mail per recipient
+            «IF targets('3.0')»
+            try {
+                foreach ($this->recipients as $recipient) {
+                    if (!isset($recipient['name']) || !$recipient['name']) {
+                        continue;
+                    }
+                    if (!isset($recipient['email']) || !$recipient['email']) {
+                        continue;
+                    }
+    
+                    $body = $this->twig->render('@«appName»/' . $template, [
+                        'recipient' => $recipient,
+                        'mailData' => $mailData
+                    ]);
+                    $altBody = '';
+                    $html = true;
+
+                    $email = (new Email())
+                        ->from(new Address($adminMail, $siteName))
+                        ->to(new Address($recipient['email'], $recipient['name']))
+                        ->subject($subject)
+                        ->html($body)
+                    ;    
+    
+                    $this->mailer->send($email);
+                }
+            } catch (TransportExceptionInterface $exception) {
+                return false;
+            }
+
+            return true;
+            «ELSE»
             $totalResult = true;
             foreach ($this->recipients as $recipient) {
                 if (!isset($recipient['name']) || !$recipient['name']) {
@@ -358,19 +400,16 @@ class NotificationHelper {
                 $html = true;
 
                 // create new message instance
-                «IF targets('3.0')»
-                    $message = new Swift_Message();
-                «ELSE»
-                    /** @var Swift_Message */
-                    $message = Swift_Message::newInstance();
-                «ENDIF»
+                /** @var Swift_Message */
+                $message = Swift_Message::newInstance();
                 $message->setFrom([$adminMail => $siteName]);
                 $message->setTo([$recipient['email'] => $recipient['name']]);
 
-                $totalResult = $totalResult && $this->mailerApi->sendMessage($message, $subject, $body, $altBody, $html);
+                $totalResult = $totalResult && $this->mailer->sendMessage($message, $subject, $body, $altBody, $html);
             }
 
             return $totalResult;
+            «ENDIF»
         }
 
         /**

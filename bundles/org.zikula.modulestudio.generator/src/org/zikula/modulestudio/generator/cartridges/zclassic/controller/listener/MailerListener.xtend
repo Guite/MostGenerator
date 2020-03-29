@@ -13,6 +13,23 @@ class MailerListener {
         public static function getSubscribedEvents()
         {
             return [
+                MessageEvent::class => ['onMessageSend', 5]
+            ];
+        }
+
+        /**
+         * Listener for the `MessageEvent` event.
+         * Allows the transformation of a Message and the Envelope before the email is sent.
+         */
+        public function onMessageSend(MessageEvent $event): void
+        {
+        }
+    '''
+
+    def generateLegacy(Application it) '''
+        public static function getSubscribedEvents()
+        {
+            return [
                 MailerEvents::SEND_MESSAGE_START   => ['sendMessageStart', 5],
                 MailerEvents::SEND_MESSAGE_PERFORM => ['sendMessagePerform', 5],
                 MailerEvents::SEND_MESSAGE_SUCCESS => ['sendMessageSuccess', 5],

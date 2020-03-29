@@ -208,11 +208,11 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+                use Symfony\Component\Mailer\Event\MessageEvent;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
+                use Zikula\MailerModule\MailerEvents;
             «ENDIF»
-            use Zikula\MailerModule\MailerEvents;
         «ENDIF»
 
         /**
@@ -221,7 +221,11 @@ class Listeners {
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»MailerListener«IF !isBase» extends AbstractMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new MailerListener().generate(it)»
+                «IF targets('3.0')»
+                    «new MailerListener().generate(it)»
+                «ELSE»
+                    «new MailerListener().generateLegacy(it)»
+                «ENDIF»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
