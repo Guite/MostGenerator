@@ -67,6 +67,7 @@ class WorkflowFormFieldsTrait {
                     'title' => $helpText
                 ],
                 'attr' => [
+                    'class' => 'noeditor',
                     «IF targets('3.0')»
                         /** @Ignore */
                     «ENDIF»
