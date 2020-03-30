@@ -19,7 +19,11 @@ class UserRegistrationListener {
                 RegistrationEvents::REGISTRATION_FAILED         => ['failed', 5],
                 RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
                 RegistrationEvents::UPDATE_REGISTRATION         => ['update', 5],
-                RegistrationEvents::DELETE_REGISTRATION         => ['delete', 5],
+                «IF targets('3.0')»
+                    DeletedRegistrationEvent::class                 => ['delete', 5],
+                «ELSE»
+                    RegistrationEvents::DELETE_REGISTRATION         => ['delete', 5],
+                «ENDIF»
                 RegistrationEvents::FORCE_REGISTRATION_APPROVAL => ['forceApproval', 5]
             ];
         }
@@ -184,7 +188,11 @@ class UserRegistrationListener {
         }
 
         /**
+         «IF targets('3.0')»
+         * Listener for the `Zikula\UsersModule\Event\DeletedRegistrationEvent` event.
+         «ELSE»
          * Listener for the `user.registration.delete` event.
+         «ENDIF»
          *
          * Occurs after a registration record is deleted. This could occur as a result of the administrator deleting
          * the record through the approval/denial process, or it could happen because the registration request expired.
@@ -193,8 +201,15 @@ class UserRegistrationListener {
          * used for UI-level actions such as redirects. The subject of the event is set to the Uid being deleted.
          *
          «commonExample.generalEventProperties(it, false)»
+         «IF targets('3.0')»
+         *
+         * You can also access the user and date in the event.
+         *
+         * The user:
+         *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ENDIF»
          */
-        public function delete(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function delete(«IF targets('3.0')»DeletedRegistrationEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
