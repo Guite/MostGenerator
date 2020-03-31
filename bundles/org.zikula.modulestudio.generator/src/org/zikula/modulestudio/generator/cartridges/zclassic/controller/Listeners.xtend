@@ -372,6 +372,7 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
                 use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+                use Zikula\UsersModule\Event\CreateActiveUserEvent;
                 use Zikula\UsersModule\Event\DeletedRegistrationEvent;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;

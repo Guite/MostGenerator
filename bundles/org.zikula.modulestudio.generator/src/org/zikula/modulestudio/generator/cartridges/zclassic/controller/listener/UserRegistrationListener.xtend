@@ -14,7 +14,11 @@ class UserRegistrationListener {
         {
             return [
                 RegistrationEvents::REGISTRATION_STARTED        => ['started', 5],
-                RegistrationEvents::FULL_USER_CREATE_VETO       => ['createVeto', 5],
+                «IF targets('3.0')»
+                    CreateActiveUserEvent::class                    => ['createVeto', 5],
+                «ELSE»
+                    RegistrationEvents::FULL_USER_CREATE_VETO       => ['createVeto', 5],
+                «ENDIF»
                 RegistrationEvents::REGISTRATION_SUCCEEDED      => ['succeeded', 5],
                 RegistrationEvents::REGISTRATION_FAILED         => ['failed', 5],
                 RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
@@ -40,11 +44,17 @@ class UserRegistrationListener {
         }
 
         /**
+         «IF targets('3.0')»
+         * Listener for the `Zikula\UsersModule\Event\CreateActiveUserEvent` event.
+         «ELSE»
          * Listener for the `full.user.create.veto` event.
+         «ENDIF»
          *
          * Occurs when the Registration process is determining whether to create a 'registration' or a 'full user'.
          *
+         «IF !targets('3.0')»
          * The subject of the event is the UserEntity. There are no arguments or data.
+         «ENDIF»
          * If the User hasn't been persisted, then there will be no Uid.
          *
          * A handler that needs to veto a registration should call `stopPropagation()`. This will prevent other handlers
@@ -61,8 +71,15 @@ class UserRegistrationListener {
          * to effect change of any kind with regard to the entity.
          *
          «commonExample.generalEventProperties(it, false)»
+         «IF targets('3.0')»
+         *
+         * You can also access the user and date in the event.
+         *
+         * The user:
+         *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ENDIF»
          */
-        public function createVeto(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function createVeto(«IF targets('3.0')»CreateActiveUserEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
