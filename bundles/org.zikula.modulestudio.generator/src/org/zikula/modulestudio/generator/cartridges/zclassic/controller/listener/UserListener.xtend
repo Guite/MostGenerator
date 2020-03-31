@@ -87,7 +87,7 @@ class UserListener {
 
         /**
          «IF targets('3.0')»
-         * Listener for ActiveUserPostCreatedEvent::class.
+         * Listener for the `Zikula\UsersModule\Event\ActiveUserPostCreatedEvent` event.
          «ELSE»
          * Listener for the `user.account.create` event.
          «ENDIF»

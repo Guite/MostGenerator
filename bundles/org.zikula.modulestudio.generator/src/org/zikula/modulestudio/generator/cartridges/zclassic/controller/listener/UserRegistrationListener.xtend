@@ -91,7 +91,7 @@ class UserRegistrationListener {
          * Listener for the `module.users.ui.registration.succeeded` event.
          *
          * Occurs after a user has successfully registered a new account in the system. It will follow either
-         * a `user.registration.create` event, or a `user.account.create` event, depending on the result of the
+         * a `«IF targets('3.0')»Zikula\UsersModule\Event\RegistrationPostCreatedEvent«ELSE»user.registration.create«ENDIF»` event, or a `user.account.create` event, depending on the result of the
          * registration process, the information provided by the user, and several configuration options set in
          * the Users module. The resultant record might be a fully activated user record, or it might be a
          * registration record pending approval, e-mail verification, or both.
@@ -179,7 +179,11 @@ class UserRegistrationListener {
         }
 
         /**
+         «IF targets('3.0')»
+         * Listener for the `Zikula\UsersModule\Event\RegistrationPostCreatedEvent` event.
+         «ELSE»
          * Listener for the `user.registration.create` event.
+         «ENDIF»
          *
          * Occurs after a registration record is created, either through the normal user registration process,
          * or through the administration panel for the Users module. This event will not fire if the result of the
