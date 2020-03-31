@@ -75,14 +75,22 @@ class UserListener {
         public static function getSubscribedEvents()
         {
             return [
-                UserEvents::CREATE_ACCOUNT => ['create', 5],
+                «IF targets('3.0')»
+                    ActiveUserPostCreatedEvent::class => ['create', 5],
+                «ELSE»
+                    UserEvents::CREATE_ACCOUNT => ['create', 5],
+                «ENDIF»
                 UserEvents::UPDATE_ACCOUNT => ['update', 5],
                 UserEvents::DELETE_ACCOUNT => ['delete', 5]
             ];
         }
 
         /**
+         «IF targets('3.0')»
+         * Listener for ActiveUserPostCreatedEvent::class.
+         «ELSE»
          * Listener for the `user.account.create` event.
+         «ENDIF»
          *
          * Occurs after a user account is created. All handlers are notified.
          * It does not apply to creation of a pending registration.
@@ -91,8 +99,15 @@ class UserListener {
          * The subject of the event is set to the user record that was created.
          *
          «commonExample.generalEventProperties(it, false)»
+         «IF targets('3.0')»
+         *
+         * You can also access the user and date in the event.
+         *
+         * The user:
+         *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ENDIF»
          */
-        public function create(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function create(«IF targets('3.0')»ActiveUserPostCreatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 

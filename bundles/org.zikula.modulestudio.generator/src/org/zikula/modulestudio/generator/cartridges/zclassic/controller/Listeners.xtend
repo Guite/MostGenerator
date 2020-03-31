@@ -344,6 +344,9 @@ class Listeners {
             «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
                 use Zikula\UsersModule\Constant as UsersConstant;
             «ENDIF»
+            «IF targets('3.0')»
+                use Zikula\UsersModule\Event\ActiveUserPostCreatedEvent;
+            «ENDIF»
             use Zikula\UsersModule\UserEvents;
             «IF hasStandardFieldEntities || hasUserFields»
                 use «appNamespace»\Entity\Factory\EntityFactory;
@@ -372,8 +375,9 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
                 use Zikula\Bundle\CoreBundle\Event\GenericEvent;
-                use Zikula\UsersModule\Event\CreateActiveUserEvent;
-                use Zikula\UsersModule\Event\DeletedRegistrationEvent;
+                use Zikula\UsersModule\Event\ActiveUserPreCreatedEvent;
+                use Zikula\UsersModule\Event\RegistrationPostCreatedEvent;
+                use Zikula\UsersModule\Event\RegistrationPostDeletedEvent;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
             «ENDIF»

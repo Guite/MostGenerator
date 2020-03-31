@@ -15,16 +15,20 @@ class UserRegistrationListener {
             return [
                 RegistrationEvents::REGISTRATION_STARTED        => ['started', 5],
                 «IF targets('3.0')»
-                    CreateActiveUserEvent::class                    => ['createVeto', 5],
+                    ActiveUserPreCreatedEvent::class                => ['createVeto', 5],
                 «ELSE»
                     RegistrationEvents::FULL_USER_CREATE_VETO       => ['createVeto', 5],
                 «ENDIF»
                 RegistrationEvents::REGISTRATION_SUCCEEDED      => ['succeeded', 5],
                 RegistrationEvents::REGISTRATION_FAILED         => ['failed', 5],
-                RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
+                «IF targets('3.0')»
+                    RegistrationPostCreatedEvent::class             => ['create', 5],
+                «ELSE»
+                    RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
+                «ENDIF»
                 RegistrationEvents::UPDATE_REGISTRATION         => ['update', 5],
                 «IF targets('3.0')»
-                    DeletedRegistrationEvent::class                 => ['delete', 5],
+                    RegistrationPostDeletedEvent::class             => ['delete', 5],
                 «ELSE»
                     RegistrationEvents::DELETE_REGISTRATION         => ['delete', 5],
                 «ENDIF»
@@ -45,7 +49,7 @@ class UserRegistrationListener {
 
         /**
          «IF targets('3.0')»
-         * Listener for the `Zikula\UsersModule\Event\CreateActiveUserEvent` event.
+         * Listener for the `Zikula\UsersModule\Event\ActiveUserPreCreatedEvent` event.
          «ELSE»
          * Listener for the `full.user.create.veto` event.
          «ENDIF»
@@ -79,7 +83,7 @@ class UserRegistrationListener {
          *     `echo 'UID: ' . $event->getUser()->getUid();`
          «ENDIF»
          */
-        public function createVeto(«IF targets('3.0')»CreateActiveUserEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
+        public function createVeto(«IF targets('3.0')»ActiveUserPreCreatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
@@ -206,7 +210,7 @@ class UserRegistrationListener {
 
         /**
          «IF targets('3.0')»
-         * Listener for the `Zikula\UsersModule\Event\DeletedRegistrationEvent` event.
+         * Listener for the `Zikula\UsersModule\Event\RegistrationPostDeletedEvent` event.
          «ELSE»
          * Listener for the `user.registration.delete` event.
          «ENDIF»
@@ -226,7 +230,7 @@ class UserRegistrationListener {
          *     `echo 'UID: ' . $event->getUser()->getUid();`
          «ENDIF»
          */
-        public function delete(«IF targets('3.0')»DeletedRegistrationEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
+        public function delete(«IF targets('3.0')»RegistrationPostDeletedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
