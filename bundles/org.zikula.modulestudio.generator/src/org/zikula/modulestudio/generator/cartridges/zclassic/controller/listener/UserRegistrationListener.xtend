@@ -80,13 +80,14 @@ class UserRegistrationListener {
          * Because this event will not necessarily notify ALL listeners (if propagation is stopped) it CANNOT be relied upon
          * to effect change of any kind with regard to the entity.
          *
-         «commonExample.generalEventProperties(it, false)»
          «IF targets('3.0')»
          *
-         * You can also access the user and date in the event.
+         * You can access the user and date in the event.
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ELSE»
+         «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
         public function createVeto(«IF targets('3.0')»ActiveUserPreCreatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
@@ -201,13 +202,14 @@ class UserRegistrationListener {
          * have changed the `'redirectUrl'`.
          «ENDIF»
          *
-         «commonExample.generalEventProperties(it, false)»
          «IF targets('3.0')»
          *
-         * You can also access the user and date in the event.
+         * You can access the user and date in the event.
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ELSE»
+         «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
         public function succeeded(«IF targets('3.0')»RegistrationPostSuccessEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
@@ -225,7 +227,7 @@ class UserRegistrationListener {
              * `'redirecturl'` will initially contain an empty string. This can be modified to change where the user
              * is redirected following the failed login.
              *
-             * __The `'redirecturl'` argument__ controls where the user will be directed following a failed log-in attempt.
+             * The `'redirecturl'` argument__ controls where the user will be directed following a failed log-in attempt.
              * Initially, it will be an empty string, indicating that the user will be redirected to the home page.
              *
              * If a `'redirecturl'` is specified by any entity intercepting and processing the `user.login.failed` event, then
@@ -252,18 +254,19 @@ class UserRegistrationListener {
          *
          * Occurs after a registration record is created, either through the normal user registration process,
          * or through the administration panel for the Users module. This event will not fire if the result of the
-         * registration process is a full user record. Instead, a `user.account.create` event will fire.
+         * registration process is a full user record. Instead, an «IF targets('3.0')»`ActiveUserPostCreatedEvent`«ELSE»`user.account.create` event«ENDIF» will fire.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the UserEntity that was created.
-         * This event occurs before the $authenticationMethod->register() method is called.
+         * This event occurs before the `$authenticationMethod->register()` method is called.
          *
-         «commonExample.generalEventProperties(it, false)»
          «IF targets('3.0')»
          *
-         * You can also access the user and date in the event.
+         * You can access the user and date in the event.
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ELSE»
+         «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
         public function create(«IF targets('3.0')»RegistrationPostCreatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
@@ -282,13 +285,14 @@ class UserRegistrationListener {
          * The subject of the event is set to the UserEntity, with the updated values. The event data contains the
          * original UserEntity in an array `['oldValue' => $originalUser]`.
          *
-         «commonExample.generalEventProperties(it, false)»
          «IF targets('3.0')»
          *
-         * You can also access the user and date in the event.
+         * You can access the user and date in the event.
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ELSE»
+         «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
         public function update(«IF targets('3.0')»RegistrationPostUpdatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
@@ -305,16 +309,17 @@ class UserRegistrationListener {
          * Occurs after a registration record is deleted. This could occur as a result of the administrator deleting
          * the record through the approval/denial process, or it could happen because the registration request expired.
          * This event will not fire if a registration record is converted to a full user account record. Instead,
-         * a `user.account.create` event will fire. This is a storage-level event, not a UI event. It should not be
+         * an «IF targets('3.0')»`ActiveUserPostCreatedEvent`«ELSE»`user.account.create` event«ENDIF» will fire. This is a storage-level event, not a UI event. It should not be
          * used for UI-level actions such as redirects. The subject of the event is set to the Uid being deleted.
          *
-         «commonExample.generalEventProperties(it, false)»
          «IF targets('3.0')»
          *
-         * You can also access the user and date in the event.
+         * You can access the user and date in the event.
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ELSE»
+         «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
         public function delete(«IF targets('3.0')»RegistrationPostDeletedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»

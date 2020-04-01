@@ -100,13 +100,14 @@ class UserListener {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that was created.
          *
-         «commonExample.generalEventProperties(it, false)»
          «IF targets('3.0')»
          *
-         * You can also access the user and date in the event.
+         * You can access the user and date in the event.
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ELSE»
+         «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
         public function create(«IF targets('3.0')»ActiveUserPostCreatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
@@ -131,13 +132,14 @@ class UserListener {
          * The subject of the event is set to the user record, with the updated values.
          «ENDIF»
          *
-         «commonExample.generalEventProperties(it, false)»
          «IF targets('3.0')»
          *
-         * You can also access the user and date in the event.
+         * You can access the user and date in the event.
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ELSE»
+         «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
         public function update(«IF targets('3.0')»ActiveUserPostUpdatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
@@ -154,13 +156,14 @@ class UserListener {
          * Occurs after the deletion of a user account.«IF !targets('3.0')» Subject is $userId.«ENDIF»
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          *
-         «commonExample.generalEventProperties(it, false)»
          «IF targets('3.0')»
          *
-         * You can also access the user and date in the event.
+         * You can access the user and date in the event.
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ELSE»
+         «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
         public function delete(«IF targets('3.0')»ActiveUserPostDeletedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
