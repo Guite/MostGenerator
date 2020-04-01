@@ -294,6 +294,7 @@ class Repository {
         «IF app.targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
             use Zikula\Bundle\CoreBundle\Doctrine\Paginator;
+            use Zikula\Bundle\CoreBundle\Doctrine\PaginatorInterface;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
@@ -577,7 +578,7 @@ class Repository {
          *                       (optional) (default=false)
          «ENDIF»
          *
-         * @return «IF application.targets('3.0')»Paginator«ELSE»array Retrieved collection and the amount of total records affected«ENDIF»
+         * @return «IF application.targets('3.0')»PaginatorInterface«ELSE»array Retrieved collection and the amount of total records affected«ENDIF»
          */
         public function selectWherePaginated«IF application.targets('3.0')»(
             string $where = '',
@@ -586,7 +587,7 @@ class Repository {
             int $resultsPerPage = 25,
             bool $useJoins = true,
             bool $slimMode = false
-        ): Paginator {«ELSE»(
+        ): PaginatorInterface {«ELSE»(
             $where = '',
             $orderBy = '',
             $currentPage = 1,
@@ -665,7 +666,7 @@ class Repository {
          «ENDIF»
          *
          «IF application.targets('3.0')»
-         * @return Paginator|array Paginator (for paginated queries) or retrieved collection
+         * @return PaginatorInterface|array Paginator (for paginated queries) or retrieved collection
          «ELSE»
          * @return array Retrieved collection and (for paginated queries) the amount of total records affected
          «ENDIF»
