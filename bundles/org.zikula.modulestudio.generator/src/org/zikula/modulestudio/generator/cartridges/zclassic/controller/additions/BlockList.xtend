@@ -234,131 +234,135 @@ class BlockList {
     def private display(Application it) '''
         public function display(array $properties = [])«IF targets('3.0')»: string«ENDIF»
         {
-            // only show block content if the user has the required permissions
-            if (!$this->hasPermission('«appName»:ItemListBlock:', $properties['title'] . '::', ACCESS_OVERVIEW)) {
-                return '';
-            }
-
-            «IF hasCategorisableEntities»
-                «initListOfCategorisableEntities»
-
-            «ENDIF»
-            // set default values for all params which are not properly set
-            $defaults = $this->getDefaults();
-            $properties = array_merge($defaults, $properties);
-
-            «IF targets('3.0')»
-                $contextArgs = ['name' => 'list'];
-                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block', $contextArgs);
-                if (
-                    !isset($properties['objectType'])
-                    || !in_array($properties['objectType'], $allowedObjectTypes, true)
-                ) {
-                    $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
-                }
-            «ELSE»
-                $controllerHelper = $this->get('«appService».controller_helper');
-                $contextArgs = ['name' => 'list'];
-                if (
-                    !isset($properties['objectType'])
-                    || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs), true)
-                ) {
-                    $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
-                }
-            «ENDIF»
-
-            $objectType = $properties['objectType'];
-            «IF hasCategorisableEntities»
-
-                «IF !targets('3.0')»
-                    $featureActivationHelper = $this->get('«appService».feature_activation_helper');
-                «ENDIF»
-                $hasCategories = in_array($objectType, $this->categorisableObjectTypes, true)
-                    && $«IF targets('3.0')»this->«ENDIF»featureActivationHelper->isEnabled(
-                        FeatureActivationHelper::CATEGORIES,
-                        $properties['objectType']
-                    )
-                ;
-                if ($hasCategories) {
-                    $categoryProperties = $this->resolveCategoryIds($properties);
-                }
-            «ENDIF»
-
-            «IF targets('3.0')»
-                $repository = $this->entityFactory->getRepository($objectType);
-
-                // create query
-                $orderBy = $this->modelHelper->resolveSortParameter($objectType, $properties['sorting']);
-            «ELSE»
-                $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
-
-                // create query
-                $orderBy = $this->get('«appService».model_helper')->resolveSortParameter($objectType, $properties['sorting']);
-            «ENDIF»
-            $qb = $repository->getListQueryBuilder($properties['filter'], $orderBy);
-            «IF hasCategorisableEntities»
-
-                if ($hasCategories) {
-                    «IF targets('3.0')»
-                        // apply category filters
-                        if (is_array($properties['categories']) && count($properties['categories']) > 0) {
-                            $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
-                        }
-                    «ELSE»
-                        $categoryHelper = $this->get('«appService».category_helper');
-                        // apply category filters
-                        if (is_array($properties['categories']) && count($properties['categories']) > 0) {
-                            $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
-                        }
-                    «ENDIF»
-                }
-            «ENDIF»
-
-            // get objects from database
-            $currentPage = 1;
-            $resultsPerPage = $properties['amount'];
-            «IF targets('3.0')»
-                $paginator = $repository->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
-                $entities = $paginator->getResults();
-            «ELSE»
-                $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-                try {
-                    list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
-                } catch (Exception $exception) {
-                    $entities = [];
-                    $objectCount = 0;
-                }
-            «ENDIF»
-    
-            // filter by permissions
-            $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_READ);
-
-            // set a block title
-            if (empty($properties['title'])) {
-                $properties['title'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
-            }
-
-            $template = $this->getDisplayTemplate($properties);
-
-            $templateParameters = [
-                'vars' => $properties,
-                'objectType' => $objectType,
-                'items' => $entities
-            ];
-            «IF hasCategorisableEntities»
-                if ($hasCategories) {
-                    $templateParameters['properties'] = $categoryProperties;
-                }
-            «ENDIF»
-
-            $templateParameters = $this->«IF targets('3.0')»controllerHelper«ELSE»get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
-                $properties['objectType'],
-                $templateParameters,
-                'block'
-            );
-
-            return $this->renderView($template, $templateParameters);
+            «displayImpl»
         }
+    '''
+
+    def private displayImpl(Application it) '''
+        // only show block content if the user has the required permissions
+        if (!$this->hasPermission('«appName»:ItemListBlock:', $properties['title'] . '::', ACCESS_OVERVIEW)) {
+            return '';
+        }
+
+        «IF hasCategorisableEntities»
+            «initListOfCategorisableEntities»
+
+        «ENDIF»
+        // set default values for all params which are not properly set
+        $defaults = $this->getDefaults();
+        $properties = array_merge($defaults, $properties);
+
+        «IF targets('3.0')»
+            $contextArgs = ['name' => 'list'];
+            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block', $contextArgs);
+            if (
+                !isset($properties['objectType'])
+                || !in_array($properties['objectType'], $allowedObjectTypes, true)
+            ) {
+                $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
+            }
+        «ELSE»
+            $controllerHelper = $this->get('«appService».controller_helper');
+            $contextArgs = ['name' => 'list'];
+            if (
+                !isset($properties['objectType'])
+                || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs), true)
+            ) {
+                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
+            }
+        «ENDIF»
+
+        $objectType = $properties['objectType'];
+        «IF hasCategorisableEntities»
+
+            «IF !targets('3.0')»
+                $featureActivationHelper = $this->get('«appService».feature_activation_helper');
+            «ENDIF»
+            $hasCategories = in_array($objectType, $this->categorisableObjectTypes, true)
+                && $«IF targets('3.0')»this->«ENDIF»featureActivationHelper->isEnabled(
+                    FeatureActivationHelper::CATEGORIES,
+                    $properties['objectType']
+                )
+            ;
+            if ($hasCategories) {
+                $categoryProperties = $this->resolveCategoryIds($properties);
+            }
+        «ENDIF»
+
+        «IF targets('3.0')»
+            $repository = $this->entityFactory->getRepository($objectType);
+
+            // create query
+            $orderBy = $this->modelHelper->resolveSortParameter($objectType, $properties['sorting']);
+        «ELSE»
+            $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
+
+            // create query
+            $orderBy = $this->get('«appService».model_helper')->resolveSortParameter($objectType, $properties['sorting']);
+        «ENDIF»
+        $qb = $repository->getListQueryBuilder($properties['filter'], $orderBy);
+        «IF hasCategorisableEntities»
+
+            if ($hasCategories) {
+                «IF targets('3.0')»
+                    // apply category filters
+                    if (is_array($properties['categories']) && count($properties['categories']) > 0) {
+                        $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
+                    }
+                «ELSE»
+                    $categoryHelper = $this->get('«appService».category_helper');
+                    // apply category filters
+                    if (is_array($properties['categories']) && count($properties['categories']) > 0) {
+                        $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
+                    }
+                «ENDIF»
+            }
+        «ENDIF»
+
+        // get objects from database
+        $currentPage = 1;
+        $resultsPerPage = $properties['amount'];
+        «IF targets('3.0')»
+            $paginator = $repository->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
+            $entities = $paginator->getResults();
+        «ELSE»
+            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            try {
+                list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
+            } catch (Exception $exception) {
+                $entities = [];
+                $objectCount = 0;
+            }
+        «ENDIF»
+
+        // filter by permissions
+        $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_READ);
+
+        // set a block title
+        if (empty($properties['title'])) {
+            $properties['title'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
+        }
+
+        $template = $this->getDisplayTemplate($properties);
+
+        $templateParameters = [
+            'vars' => $properties,
+            'objectType' => $objectType,
+            'items' => $entities
+        ];
+        «IF hasCategorisableEntities»
+            if ($hasCategories) {
+                $templateParameters['properties'] = $categoryProperties;
+            }
+        «ENDIF»
+
+        $templateParameters = $this->«IF targets('3.0')»controllerHelper«ELSE»get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+            $properties['objectType'],
+            $templateParameters,
+            'block'
+        );
+
+        return $this->renderView($template, $templateParameters);
     '''
 
     def private getDisplayTemplate(Application it) '''
