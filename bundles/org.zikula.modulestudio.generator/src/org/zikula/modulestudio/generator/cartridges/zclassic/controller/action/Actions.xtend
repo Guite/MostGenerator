@@ -137,7 +137,11 @@ class Actions {
 
         $request->query->set('sort', $sort);
         $request->query->set('sortdir', $sortdir);
-        $request->query->set('pos', $pos);
+        «IF app.targets('3.0')»
+            $request->query->set('page', $page);
+        «ELSE»
+            $request->query->set('pos', $pos);
+        «ENDIF»
 
         «IF !app.targets('3.0')»
             /** @var RouterInterface $router */

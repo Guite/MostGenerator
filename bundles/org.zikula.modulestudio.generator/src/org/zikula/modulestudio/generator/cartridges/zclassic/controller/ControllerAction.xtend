@@ -180,7 +180,7 @@ class ControllerAction {
             «ENDIF»
             string $sort,
             string $sortdir,
-            int $pos,
+            int $page,
             int $num«IF internalMethod»,
             bool $isAdmin = false«ENDIF»
         «ELSE»
@@ -203,7 +203,7 @@ class ControllerAction {
                 $loggableHelper,«ENDIF»
                 $sort,
                 $sortdir,
-                $pos,
+                $page,
                 $num,
                 «isAdmin.displayBool»
             '''

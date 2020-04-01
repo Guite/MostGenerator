@@ -205,7 +205,6 @@ class Repository {
             «getCountQuery»
 
             «selectCount»
-
             «new Tree().generate(it, app)»
 
             «detectUniqueState»
@@ -277,7 +276,9 @@ class Repository {
         «IF hasPessimisticReadLock || hasPessimisticWriteLock»
             use Doctrine\DBAL\LockMode;
         «ENDIF»
-        use Doctrine\ORM\Tools\Pagination\Paginator;
+        «IF !app.targets('3.0')»
+            use Doctrine\ORM\Tools\Pagination\Paginator;
+        «ENDIF»
         «IF tree == EntityTreeType.NONE && hasSortableFields»
             use Gedmo\Sortable\Entity\Repository\SortableRepository;
         «ENDIF»
@@ -292,6 +293,7 @@ class Repository {
         use Psr\Log\LoggerInterface;
         «IF app.targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Doctrine\Paginator;
         «ELSE»
             use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
@@ -515,49 +517,53 @@ class Repository {
         ) {«ENDIF»
             $qb = $this->getListQueryBuilder($where, $orderBy, $useJoins, $slimMode);
 
-            $query = $this->getQueryFromBuilder($qb);
+            «IF application.targets('3.0')»
+                return $this->retrieveCollectionResult($qb);
+            «ELSE»
+                $query = $this->getQueryFromBuilder($qb);
 
-            return $this->retrieveCollectionResult($query);
+                return $this->retrieveCollectionResult($query);
+            «ENDIF»
         }
     '''
 
     def private selectWherePaginated(Entity it) '''
-        /**
-         * Returns query builder instance for retrieving a list of objects with a given
-         * where clause and pagination parameters.
-         «IF !application.targets('3.0')»
-         *
-         * @param QueryBuilder $qb Query builder to be enhanced
-         * @param int $currentPage Where to start selection
-         * @param int $resultsPerPage Amount of items to select
-         *
-         * @return Query Created query instance
-         «ENDIF»
-         */
-        public function getSelectWherePaginatedQuery«IF application.targets('3.0')»(
-            QueryBuilder $qb,
-            int $currentPage = 1,
-            int $resultsPerPage = 25
-        ): Query {«ELSE»(
-            QueryBuilder $qb,
-            $currentPage = 1,
-            $resultsPerPage = 25
-        ) {«ENDIF»
-            if (1 > $currentPage) {
-                $currentPage = 1;
+        «IF !application.targets('3.0')»
+            /**
+             * Returns query builder instance for retrieving a list of objects with a given
+             * where clause and pagination parameters.
+             *
+             * @param QueryBuilder $qb Query builder to be enhanced
+             * @param int $currentPage Where to start selection
+             * @param int $resultsPerPage Amount of items to select
+             *
+             * @return Query Created query instance
+             */
+            public function getSelectWherePaginatedQuery«IF application.targets('3.0')»(
+                QueryBuilder $qb,
+                int $currentPage = 1,
+                int $resultsPerPage = 25
+            ): Query {«ELSE»(
+                QueryBuilder $qb,
+                $currentPage = 1,
+                $resultsPerPage = 25
+            ) {«ENDIF»
+                if (1 > $currentPage) {
+                    $currentPage = 1;
+                }
+                if (1 > $resultsPerPage) {
+                    $resultsPerPage = 25;
+                }
+                $query = $this->getQueryFromBuilder($qb);
+                $offset = ($currentPage - 1) * $resultsPerPage;
+
+                $query->setFirstResult($offset)
+                      ->setMaxResults($resultsPerPage);
+
+                return $query;
             }
-            if (1 > $resultsPerPage) {
-                $resultsPerPage = 25;
-            }
-            $query = $this->getQueryFromBuilder($qb);
-            $offset = ($currentPage - 1) * $resultsPerPage;
 
-            $query->setFirstResult($offset)
-                  ->setMaxResults($resultsPerPage);
-
-            return $query;
-        }
-
+        «ENDIF»
         /**
          * Selects a list of objects with a given where clause and pagination parameters.
          «IF !application.targets('3.0')»
@@ -571,7 +577,7 @@ class Repository {
          *                       (optional) (default=false)
          «ENDIF»
          *
-         * @return array Retrieved collection and the amount of total records affected
+         * @return «IF application.targets('3.0')»Paginator«ELSE»array Retrieved collection and the amount of total records affected«ENDIF»
          */
         public function selectWherePaginated«IF application.targets('3.0')»(
             string $where = '',
@@ -580,7 +586,7 @@ class Repository {
             int $resultsPerPage = 25,
             bool $useJoins = true,
             bool $slimMode = false
-        ): array {«ELSE»(
+        ): Paginator {«ELSE»(
             $where = '',
             $orderBy = '',
             $currentPage = 1,
@@ -589,9 +595,14 @@ class Repository {
             $slimMode = false
         ) {«ENDIF»
             $qb = $this->getListQueryBuilder($where, $orderBy, $useJoins, $slimMode);
-            $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            «IF application.targets('3.0')»
 
-            return $this->retrieveCollectionResult($query, true);
+                return $this->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
+            «ELSE»
+                $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+
+                return $this->retrieveCollectionResult($query, true);
+            «ENDIF»
         }
     '''
 
@@ -634,9 +645,13 @@ class Repository {
                 $qb = $this->collectionFilterHelper->addSearchFilter('«name.formatForCode»', $qb, $fragment);
             }
 
-            $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            «IF application.targets('3.0')»
+                return $this->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
+            «ELSE»
+                $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
-            return $this->retrieveCollectionResult($query, true);
+                return $this->retrieveCollectionResult($query, true);
+            «ENDIF»
         }
     '''
 
@@ -649,34 +664,57 @@ class Repository {
          * @param bool $isPaginated Whether the given query uses a paginator or not (optional) (default=false)
          «ENDIF»
          *
+         «IF application.targets('3.0')»
+         * @return Paginator|array Paginator (for paginated queries) or retrieved collection
+         «ELSE»
          * @return array Retrieved collection and (for paginated queries) the amount of total records affected
+         «ENDIF»
          */
-        public function retrieveCollectionResult(Query $query, «IF application.targets('3.0')»bool «ENDIF»$isPaginated = false)«IF application.targets('3.0')»: array«ENDIF»
-        {
-            $count = 0;
-            if (!$isPaginated) {
-                $result = $query->getResult();
-            } else {
-                «IF categorisable || !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
-                    $paginator = new Paginator($query, true);
-                «ELSE»
-                    $paginator = new Paginator($query, false);
-                «ENDIF»
-                «IF hasTranslatableFields»
-                    if (true === $this->translationsEnabled) {
-                        $paginator->setUseOutputWalkers(true);
-                    }
-                «ENDIF»
+        public function retrieveCollectionResult(
+            «IF application.targets('3.0')»
+                QueryBuilder $qb,
+                bool $isPaginated = false,
+                int $currentPage = 1,
+                int $resultsPerPage = 25
+            «ELSE»
+                Query $query,
+                $isPaginated = false
+            «ENDIF»
+        ) {
+            «IF application.targets('3.0')»
+                if (!$isPaginated) {
+                    $query = $this->getQueryFromBuilder($qb);
 
-                $count = count($paginator);
-                $result = $paginator;
-            }
+                    return $query->getResult();
+                }
 
-            if (!$isPaginated) {
-                return $result;
-            }
+                return (new Paginator($qb, $resultsPerPage))->paginate($currentPage);
+            «ELSE»
+                $count = 0;
+                if (!$isPaginated) {
+                    $result = $query->getResult();
+                } else {
+                    «IF categorisable || !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
+                        $paginator = new Paginator($query, true);
+                    «ELSE»
+                        $paginator = new Paginator($query, false);
+                    «ENDIF»
+                    «IF hasTranslatableFields»
+                        if (true === $this->translationsEnabled) {
+                            $paginator->setUseOutputWalkers(true);
+                        }
+                    «ENDIF»
 
-            return [$result, $count];
+                    $count = count($paginator);
+                    $result = $paginator;
+                }
+
+                if (!$isPaginated) {
+                    return $result;
+                }
+
+                return [$result, $count];
+            «ENDIF»
         }
     '''
 

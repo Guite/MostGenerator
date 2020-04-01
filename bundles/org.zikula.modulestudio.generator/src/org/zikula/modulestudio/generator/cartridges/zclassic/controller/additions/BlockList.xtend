@@ -317,14 +317,19 @@ class BlockList {
             // get objects from database
             $currentPage = 1;
             $resultsPerPage = $properties['amount'];
-            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            try {
-                list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
-            } catch (Exception $exception) {
-                $entities = [];
-                $objectCount = 0;
-            }
-
+            «IF targets('3.0')»
+                $paginator = $repository->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
+                $entities = $paginator->getResults();
+            «ELSE»
+                $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+                try {
+                    list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
+                } catch (Exception $exception) {
+                    $entities = [];
+                    $objectCount = 0;
+                }
+            «ENDIF»
+    
             // filter by permissions
             $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_READ);
 

@@ -230,7 +230,11 @@ class ExternalView {
                         «ENDIF»
                     «ENDIF»
                     <div>
-                        {{ pager({display: 'page', rowcount: pager.numitems, limit: pager.itemsperpage, posvar: 'pos', maxpages: 10, route: '«app.appName.formatForDB»_external_finder'}) }}
+                        «IF app.targets('3.0')»
+                            {{ include(paginator.template) }}
+                        «ELSE»
+                            {{ pager({display: 'page', rowcount: pager.numitems, limit: pager.itemsperpage, posvar: 'pos', maxpages: 10, route: '«app.appName.formatForDB»_external_finder'}) }}
+                        «ENDIF»
                     </div>
                     <div class="form-group«IF app.targets('3.0')» row«ENDIF»">
                         <div class="«IF app.targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">

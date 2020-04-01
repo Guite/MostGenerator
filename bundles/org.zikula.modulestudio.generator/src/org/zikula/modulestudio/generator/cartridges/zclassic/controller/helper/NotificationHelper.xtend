@@ -190,6 +190,24 @@ class NotificationHelper {
             «setTranslatorMethod»
         «ENDIF»
 
+        «process»
+
+        «collectRecipients»
+
+        «addRecipient»
+
+        «sendMails»
+
+        «getMailSubject»
+
+        «prepareEmailData»
+
+        «usesDesignatedEntityFields»
+
+        «getEditorName»
+    '''
+
+    def private process(Application it) '''
         /**
          * Sends a mail to either an item's creator or a group of moderators.
          «IF !targets('3.0')»
@@ -234,7 +252,9 @@ class NotificationHelper {
 
             return $result;
         }
+    '''
 
+    def private collectRecipients(Application it) '''
         /**
          * Collects the recipients.
          *
@@ -283,7 +303,9 @@ class NotificationHelper {
                 $this->addRecipient($this->userRepository->find(UsersConstant::USER_ID_ADMIN));
             }
         }
+    '''
 
+    def private addRecipient(Application it) '''
         /**
          * Collects data for building the recipients array.
          «IF !targets('3.0')»
@@ -325,7 +347,9 @@ class NotificationHelper {
                 'email' => $user->getEmail()
             ];
         }
+    '''
 
+    def private sendMails(Application it) '''
         /**
          * Performs the actual mailing.
          «IF !targets('3.0')»
@@ -352,38 +376,15 @@ class NotificationHelper {
 
             // send one mail per recipient
             «IF targets('3.0')»
-            try {
-                foreach ($this->recipients as $recipient) {
-                    if (!isset($recipient['name']) || !$recipient['name']) {
-                        continue;
-                    }
-                    if (!isset($recipient['email']) || !$recipient['email']) {
-                        continue;
-                    }
-    
-                    $body = $this->twig->render('@«appName»/' . $template, [
-                        'recipient' => $recipient,
-                        'mailData' => $mailData
-                    ]);
-                    $altBody = '';
-                    $html = true;
-
-                    $email = (new Email())
-                        ->from(new Address($adminMail, $siteName))
-                        ->to(new Address($recipient['email'], $recipient['name']))
-                        ->subject($subject)
-                        ->html($body)
-                    ;    
-    
-                    $this->mailer->send($email);
-                }
-            } catch (TransportExceptionInterface $exception) {
-                return false;
-            }
-
-            return true;
+                «sendMailsProcessing»
             «ELSE»
-            $totalResult = true;
+                «sendMailsProcessingLegacy»
+            «ENDIF»
+        }
+    '''
+
+    def private sendMailsProcessing(Application it) '''
+        try {
             foreach ($this->recipients as $recipient) {
                 if (!isset($recipient['name']) || !$recipient['name']) {
                     continue;
@@ -399,19 +400,52 @@ class NotificationHelper {
                 $altBody = '';
                 $html = true;
 
-                // create new message instance
-                /** @var Swift_Message */
-                $message = Swift_Message::newInstance();
-                $message->setFrom([$adminMail => $siteName]);
-                $message->setTo([$recipient['email'] => $recipient['name']]);
+                $email = (new Email())
+                    ->from(new Address($adminMail, $siteName))
+                    ->to(new Address($recipient['email'], $recipient['name']))
+                    ->subject($subject)
+                    ->html($body)
+                ;    
 
-                $totalResult = $totalResult && $this->mailer->sendMessage($message, $subject, $body, $altBody, $html);
+                $this->mailer->send($email);
             }
-
-            return $totalResult;
-            «ENDIF»
+        } catch (TransportExceptionInterface $exception) {
+            return false;
         }
 
+        return true;
+    '''
+
+    def private sendMailsProcessingLegacy(Application it) '''
+        $totalResult = true;
+        foreach ($this->recipients as $recipient) {
+            if (!isset($recipient['name']) || !$recipient['name']) {
+                continue;
+            }
+            if (!isset($recipient['email']) || !$recipient['email']) {
+                continue;
+            }
+
+            $body = $this->twig->render('@«appName»/' . $template, [
+                'recipient' => $recipient,
+                'mailData' => $mailData
+            ]);
+            $altBody = '';
+            $html = true;
+
+            // create new message instance
+            /** @var Swift_Message */
+            $message = Swift_Message::newInstance();
+            $message->setFrom([$adminMail => $siteName]);
+            $message->setTo([$recipient['email'] => $recipient['name']]);
+
+            $totalResult = $totalResult && $this->mailer->sendMessage($message, $subject, $body, $altBody, $html);
+        }
+
+        return $totalResult;
+    '''
+
+    def private getMailSubject(Application it) '''
         /**
          * Returns the subject used for the emails to be sent.
          «IF !targets('3.0')»
@@ -455,7 +489,9 @@ class NotificationHelper {
 
             return $mailSubject;
         }
+    '''
 
+    def private prepareEmailData(Application it) '''
         /**
          * Collects data used by the email templates.
          «IF !targets('3.0')»
@@ -502,7 +538,9 @@ class NotificationHelper {
                 'editUrl' => $editUrl
             ];
         }
+    '''
 
+    def private usesDesignatedEntityFields(Application it) '''
         /**
          * Checks whether a special notification type is used or not.
          «IF !targets('3.0')»
@@ -514,7 +552,9 @@ class NotificationHelper {
         {
             return 0 === strpos($this->recipientType, 'field-');
         }
+    '''
 
+    def private getEditorName(Application it) '''
         /**
          * Determines name of editor for the given entity.
          «IF !targets('3.0')»

@@ -13,6 +13,7 @@ import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Annotations {
@@ -20,6 +21,7 @@ class Annotations {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
     Application app
@@ -61,9 +63,9 @@ class Annotations {
 
     def private dispatch actionRoute(ViewAction it, Entity entity, Boolean isAdmin) '''
          «' '»*
-         «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{pos}/{num}.{_format}",
-         «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "pos" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»"},
-         «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 10, "_format" = "html"},
+         «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{«IF app.targets('3.0')»page«ELSE»pos«ENDIF»}/{num}.{_format}",
+         «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "«IF app.targets('3.0')»page«ELSE»pos«ENDIF»" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»"},
+         «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "«IF app.targets('3.0')»page«ELSE»pos«ENDIF»" = 1, "num" = 10, "_format" = "html"},
          «' '»*        methods = {"GET"}
          «' '»* )
     '''

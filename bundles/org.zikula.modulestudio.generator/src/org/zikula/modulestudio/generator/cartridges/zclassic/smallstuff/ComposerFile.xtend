@@ -39,7 +39,7 @@ class ComposerFile {
         "name": "«vendor.formatForDB»/«name.formatForDB»-module",
         "version": "«version»",
         "description": "«appDescription»",
-        "type": "zikula-module",
+        "type": "zikula-«IF targets('3.0') && isSystemModule»system-«ENDIF»module",
         "license": "«licenseSPDX»",
         "authors": [
             {

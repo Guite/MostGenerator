@@ -64,11 +64,12 @@ class ViewMap {
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view «appName.toLowerCase»-map">
-                «new ViewPagesHelper().commonHeader(it)»
+                «(new ViewPagesHelper).commonHeader(it)»
                 {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig', {«IF !hasVisibleWorkflow»workflowStateFilter: false, «ENDIF»sorting: false, pageSizeSelector: false}) }}{# see template file for available options #}
 
                 <div id="mapContainer" style="height: 800px">
                 </div>
+                «(new ViewPagesHelper).pagerCall(it)»
                 «IF !skipHookSubscribers»
 
                     {{ block('display_hooks') }}
@@ -118,7 +119,7 @@ class ViewMap {
             {% endset %}
             {{ pageAddAsset('footer', customScript) }}
         {% endblock %}
-        «new ViewPagesHelper().callDisplayHooks(it)»
+        «(new ViewPagesHelper).callDisplayHooks(it)»
     '''
 
     def private getMapImageField(Entity it) {

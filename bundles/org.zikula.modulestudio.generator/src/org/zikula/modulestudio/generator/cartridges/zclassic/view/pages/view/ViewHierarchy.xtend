@@ -64,7 +64,7 @@ class ViewHierarchy {
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
-                «new ViewPagesHelper().commonHeader(it)»
+                «(new ViewPagesHelper).commonHeader(it)»
                 {% for rootId, treeNodes in trees %}
                     {{ include('@«appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewTreeItems.html.twig', {rootId: rootId, items: treeNodes}) }}
                 {% else %}
@@ -78,7 +78,7 @@ class ViewHierarchy {
                 «ENDIF»
             </div>
         {% endblock %}
-        «new ViewPagesHelper().callDisplayHooks(it)»
+        «(new ViewPagesHelper).callDisplayHooks(it)»
         {% block footer %}
             {{ parent() }}
             {{ pageAddAsset('stylesheet', asset('jstree/dist/themes/default/style.min.css')) }}

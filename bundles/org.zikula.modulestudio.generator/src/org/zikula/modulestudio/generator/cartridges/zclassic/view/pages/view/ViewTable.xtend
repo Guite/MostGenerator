@@ -97,7 +97,7 @@ class ViewTable {
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
-                «new ViewPagesHelper().commonHeader(it)»
+                «(new ViewPagesHelper).commonHeader(it)»
                 {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig'«IF !hasVisibleWorkflow», {workflowStateFilter: false}«ENDIF») }}{# see template file for available options #}
 
                 «viewForm»
@@ -107,7 +107,7 @@ class ViewTable {
                 «ENDIF»
             </div>
         {% endblock %}
-        «new ViewPagesHelper().callDisplayHooks(it)»
+        «(new ViewPagesHelper).callDisplayHooks(it)»
     '''
 
     def private viewForm(Entity it) '''
@@ -118,7 +118,7 @@ class ViewTable {
             {% endif %}
         «ENDIF»
             «viewItemList»
-            «pagerCall»
+            «(new ViewPagesHelper).pagerCall(it)»
         «IF listType == LIST_TYPE_TABLE»
             {% if routeArea == 'admin' %}
                     «massActionFields»
@@ -261,13 +261,6 @@ class ViewTable {
             </table>
             </div>
         «ENDIF»
-    '''
-
-    def private pagerCall(Entity it) '''
-
-        {% if all != 1 and pager|default %}
-            {{ pager({rowcount: pager.amountOfItems, limit: pager.itemsPerPage, display: 'page', route: '«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view'}) }}
-        {% endif %}
     '''
 
     def private massActionFields(Entity it) '''

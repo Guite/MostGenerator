@@ -213,9 +213,9 @@ class ExternalController {
          «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
-         *        requirements = {"editor" = "ckeditor|quill|summernote|tinymce", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
-         *        defaults = {"sort" = "dummy«/* will be replaced by default field */»", "sortdir" = "asc", "pos" = 1, "num" = 0},
+         * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{«IF targets('3.0')»page«ELSE»pos«ENDIF»}/{num}",
+         *        requirements = {"editor" = "ckeditor|quill|summernote|tinymce", "sortdir" = "asc|desc", "«IF targets('3.0')»page«ELSE»pos«ENDIF»" = "\d+", "num" = "\d+"},
+         *        defaults = {"sort" = "dummy«/* will be replaced by default field */»", "sortdir" = "asc", "«IF targets('3.0')»page«ELSE»pos«ENDIF»" = 1, "num" = 0},
          *        methods = {"GET"},
          *        options={"expose"=true}
          * )
@@ -239,7 +239,7 @@ class ExternalController {
                 string $editor,
                 string $sort,
                 string $sortdir,
-                int $pos = 1,
+                int $page = 1,
                 int $num = 0
             ): Response'''
         else '''
@@ -304,9 +304,11 @@ class ExternalController {
         if ('asc' !== $sdir && 'desc' !== $sdir) {
             $sdir = 'asc';
         }
+        «IF !targets('3.0')»
 
-        // the current offset which is used to calculate the pagination
-        $currentPage = «IF !targets('3.0')»(int)«ENDIF»$pos;
+            // the current offset which is used to calculate the pagination
+            $currentPage = (int)$pos;
+        «ENDIF»
 
         // the number of items displayed on a page for pagination
         $resultsPerPage = «IF !targets('3.0')»(int)«ENDIF»$num;
@@ -319,7 +321,7 @@ class ExternalController {
             'objectType' => $objectType,
             'sort' => $sort,
             'sortdir' => $sdir,
-            'currentPage' => $currentPage,
+            'currentPage' => «IF targets('3.0')»$page«ELSE»$currentPage«ENDIF»,
             'language' => isset($formData['language']) ? $formData['language'] : $request->getLocale()«IF hasImageFields»,«ENDIF»
             «IF hasImageFields»
                 'onlyImages' => false,
@@ -342,7 +344,7 @@ class ExternalController {
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
             $templateParameters = array_merge($templateParameters, $formData);
-            $currentPage = $formData['currentPage'];
+            «IF targets('3.0')»$page«ELSE»$currentPage«ENDIF» = $formData['currentPage'];
             $resultsPerPage = $formData['num'];
             $sort = $formData['sort'];
             $sdir = $formData['sortdir'];
@@ -373,9 +375,18 @@ class ExternalController {
         if ('' !== $searchTerm) {
             $qb = $this->«IF targets('3.0')»$collectionFilterHelper«ELSE»get('«appService».collection_filter_helper')«ENDIF»->addSearchFilter($objectType, $qb, $searchTerm);
         }
-        $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
-        list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
+        «IF targets('3.0')»
+            $paginator = $repository->retrieveCollectionResult($qb, true, $page, $resultsPerPage);
+            $paginator->setRoute('«appName.formatForDB»_external_finder');
+            $paginator->setRouteParameters($formData);
+
+            $templateParameters['paginator'] = $paginator;
+            $entities = $paginator->getResults();
+        «ELSE»
+            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
+        «ENDIF»
 
         // filter by permissions
         $entities = «IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_READ);
@@ -392,13 +403,13 @@ class ExternalController {
         );
 
         $templateParameters['activatedObjectTypes'] = $activatedObjectTypes;
-
-        $templateParameters['pager'] = [
-            'numitems' => $objectCount,
-            'itemsperpage' => $resultsPerPage
-        ];
-
         «IF !targets('3.0')»
+
+            $templateParameters['pager'] = [
+                'numitems' => $objectCount,
+                'itemsperpage' => $resultsPerPage
+            ];
+
             $viewHelper = $this->get('«appService».view_helper');
         «ENDIF»
         $request->query->set('raw', true);
@@ -476,7 +487,7 @@ class ExternalController {
                     $editor,
                     $sort,
                     $sortdir,
-                    $pos,
+                    $page,
                     $num
                 );
             «ELSE»

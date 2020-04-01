@@ -676,6 +676,8 @@ class TechStructureFields {
                 return if (language == 'de') 'Repräsentiert einen Zeitintervall.' else 'Represents an interval of time.'
             case IBAN:
                 return if (language == 'de') 'Repräsentiert eine IBAN (internationale Bankkontonummer).' else 'Represents an IBAN (international bank account number).'
+            case ICON:
+                return if (language == 'de') 'Repräsentiert ein Font Awesome Icon.' else 'Represents a Font Awesome icon.'
             case LANGUAGE:
                 return if (language == 'de') 'Repräsentiert einen Unicode-Sprachcode.' else 'Represents an Unicode language identifier.'
             case LOCALE:

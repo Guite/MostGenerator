@@ -358,7 +358,7 @@ class ControllerHelper {
             $showOnlyOwnEntriesSetting = $showOnlyOwnEntriesSetting ? 1 : 0;
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $routeName = $request->get('_route');
-                $isAdminArea = false !== strpos($routeName, '«appName.toLowerCase»_' . strtolower($objectType) . '_admin');
+                $isAdminArea = 'admin' === $templateParameters['routeArea'];
                 if (!$isAdminArea && in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'], true)) {
                     $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', $objectType . 'PrivateMode', false);
                     if (true === $showOnlyOwnEntries) {
@@ -457,22 +457,36 @@ class ControllerHelper {
                 $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir, «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»);
             } else {
                 // the current offset which is used to calculate the pagination
-                $currentPage = $request->query->getInt('pos', 1);
+                $currentPage = $request->query->getInt('«IF targets('3.0')»page«ELSE»pos«ENDIF»', 1);
 
                 // retrieve item list with pagination
-                list($entities, $objectCount) = $repository->selectWherePaginated(
-                    $where,
-                    $sort . ' ' . $sortdir,
-                    $currentPage,
-                    $resultsPerPage,
-                    «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
-                );
+                «IF targets('3.0')»
+                    $paginator = $repository->selectWherePaginated(
+                        $where,
+                        $sort . ' ' . $sortdir,
+                        $currentPage,
+                        $resultsPerPage,
+                        «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
+                    );
+                    $paginator->setRoute('«appName.formatForDB»_' . strtolower($objectType) . '_' . $templateParameters['routeArea'] . 'view');
+                    $paginator->setRouteParameters($urlParameters);
 
-                $templateParameters['currentPage'] = $currentPage;
-                $templateParameters['pager'] = [
-                    'amountOfItems' => $objectCount,
-                    'itemsPerPage' => $resultsPerPage
-                ];
+                    $templateParameters['paginator'] = $paginator;
+                    $entities = $paginator->getResults();
+                «ELSE»
+                    list($entities, $objectCount) = $repository->selectWherePaginated(
+                        $where,
+                        $sort . ' ' . $sortdir,
+                        $currentPage,
+                        $resultsPerPage,
+                        «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
+                    );
+
+                    $templateParameters['pager'] = [
+                        'amountOfItems' => $objectCount,
+                        'itemsPerPage' => $resultsPerPage
+                    ];
+                «ENDIF»
             }
 
             $templateParameters['sort'] = $sort;

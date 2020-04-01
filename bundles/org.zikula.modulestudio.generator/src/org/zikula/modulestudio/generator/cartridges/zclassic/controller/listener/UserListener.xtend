@@ -77,17 +77,19 @@ class UserListener {
             return [
                 «IF targets('3.0')»
                     ActiveUserPostCreatedEvent::class => ['create', 5],
+                    ActiveUserPostUpdatedEvent::class => ['update', 5],
+                    ActiveUserPostDeletedEvent::class => ['delete', 5]
                 «ELSE»
                     UserEvents::CREATE_ACCOUNT => ['create', 5],
+                    UserEvents::UPDATE_ACCOUNT => ['update', 5],
+                    UserEvents::DELETE_ACCOUNT => ['delete', 5]
                 «ENDIF»
-                UserEvents::UPDATE_ACCOUNT => ['update', 5],
-                UserEvents::DELETE_ACCOUNT => ['delete', 5]
             ];
         }
 
         /**
          «IF targets('3.0')»
-         * Listener for the `Zikula\UsersModule\Event\ActiveUserPostCreatedEvent` event.
+         * Listener for the `ActiveUserPostCreatedEvent`.
          «ELSE»
          * Listener for the `user.account.create` event.
          «ENDIF»
@@ -112,36 +114,68 @@ class UserListener {
         }
 
         /**
+         «IF targets('3.0')»
+         * Listener for the `ActiveUserPostUpdatedEvent`.
+         «ELSE»
          * Listener for the `user.account.update` event.
+         «ENDIF»
          *
          * Occurs after a user is updated. All handlers are notified.
+         «IF !targets('3.0')»
          * The full updated user record is available as the subject.
+         «ENDIF»
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
+         «IF targets('3.0')»
+         * The User property is the *new* data. The oldUser property is the *old* data.
+         «ELSE»
          * The subject of the event is set to the user record, with the updated values.
+         «ENDIF»
          *
          «commonExample.generalEventProperties(it, false)»
+         «IF targets('3.0')»
+         *
+         * You can also access the user and date in the event.
+         *
+         * The user:
+         *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ENDIF»
          */
-        public function update(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function update(«IF targets('3.0')»ActiveUserPostUpdatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
         /**
+         «IF targets('3.0')»
+         * Listener for the `ActiveUserPostDeletedEvent`.
+         «ELSE»
          * Listener for the `user.account.delete` event.
+         «ENDIF»
          *
-         * Occurs after the deletion of a user account. Subject is $userId.
+         * Occurs after the deletion of a user account.«IF !targets('3.0')» Subject is $userId.«ENDIF»
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          *
          «commonExample.generalEventProperties(it, false)»
+         «IF targets('3.0')»
+         *
+         * You can also access the user and date in the event.
+         *
+         * The user:
+         *     `echo 'UID: ' . $event->getUser()->getUid();`
+         «ENDIF»
          */
-        public function delete(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function delete(«IF targets('3.0')»ActiveUserPostDeletedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
             «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
-                $userId = (int) $event->getSubject();
-
+                «IF targets('3.0')»
+                    $userId = $event->getUser()->getUid();
+                «ELSE»
+                    $userId = (int) $event->getSubject();
+                «ENDIF»
                 «IF hasStandardFieldEntities || hasUserFields»
                     «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
                 «IF hasUserVariables»
+
                     «FOR userField : getAllVariables.filter(UserField)»
                         «userField.onAccountDeletionHandler»
                     «ENDFOR»

@@ -330,9 +330,7 @@ class Listeners {
                     use Zikula\Common\Translator\TranslatorInterface;
                 «ENDIF»
             «ENDIF»
-            «IF targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
-            «ELSE»
+            «IF !targets('3.0')»
                 use Zikula\Core\Event\GenericEvent;
             «ENDIF»
             «IF hasUserVariables»
@@ -346,8 +344,11 @@ class Listeners {
             «ENDIF»
             «IF targets('3.0')»
                 use Zikula\UsersModule\Event\ActiveUserPostCreatedEvent;
+                use Zikula\UsersModule\Event\ActiveUserPostDeletedEvent;
+                use Zikula\UsersModule\Event\ActiveUserPostUpdatedEvent;
+            «ELSE»
+                use Zikula\UsersModule\UserEvents;
             «ENDIF»
-            use Zikula\UsersModule\UserEvents;
             «IF hasStandardFieldEntities || hasUserFields»
                 use «appNamespace»\Entity\Factory\EntityFactory;
             «ENDIF»
@@ -374,14 +375,17 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
                 use Zikula\UsersModule\Event\ActiveUserPreCreatedEvent;
+                use Zikula\UsersModule\Event\RegistrationPostApprovedEvent;
                 use Zikula\UsersModule\Event\RegistrationPostCreatedEvent;
                 use Zikula\UsersModule\Event\RegistrationPostDeletedEvent;
+                use Zikula\UsersModule\Event\RegistrationPostSuccessEvent;
+                use Zikula\UsersModule\Event\RegistrationPostUpdatedEvent;
+                use Zikula\UsersModule\Event\RegistrationPreCreatedEvent;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
+                use Zikula\UsersModule\RegistrationEvents;
             «ENDIF»
-            use Zikula\UsersModule\RegistrationEvents;
         «ENDIF»
 
         /**

@@ -215,13 +215,8 @@ class ContentTypeList {
             // get objects from database
             $currentPage = 1;
             $resultsPerPage = isset($this->data['amount']) ? $this->data['amount'] : 1;
-            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            try {
-                list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
-            } catch (\Exception $exception) {
-                $entities = [];
-                $objectCount = 0;
-            }
+            $paginator = $repository->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
+            $entities = $paginator->getResults();
 
             // filter by permissions
             $entities = $this->modulePermissionHelper->filterCollection($objectType, $entities, ACCESS_READ);

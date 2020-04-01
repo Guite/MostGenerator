@@ -38,6 +38,17 @@ class ViewPagesHelper {
         «ENDIF»
     '''
 
+    def pagerCall(Entity it) '''
+
+        {% if all != 1«IF !application.targets('3.0')» and pager|default«ENDIF» %}
+            «IF application.targets('3.0')»
+                {{ include(paginator.template) }}
+            «ELSE»
+                {{ pager({rowcount: pager.amountOfItems, limit: pager.itemsPerPage, display: 'page', route: '«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view'}) }}
+            «ENDIF»
+        {% endif %}
+    '''
+
     def callDisplayHooks(Entity it) '''
         «IF !skipHookSubscribers»
             {% block display_hooks %}
