@@ -94,15 +94,17 @@ class UserRegistrationListener {
         }
 
         /**
+         «IF targets('3.0')»
          * Listener for the `RegistrationPostSuccessEvent`.
          *
-         «IF targets('3.0')»
          * Occurs after a user has successfully registered a new account in the system. It will follow either a
          * `RegistrationPostCreatedEvent`, or a `ActiveUserPostCreatedEvent`, depending on the result of the registration process,
          * the information provided by the user, and several configuration options set in the Users module. The resultant record
          * might be a fully activated user record, or it might be a registration record pending approval, e-mail
          * verification, or both.
          «ELSE»
+         * Listener for the `module.users.ui.registration.succeeded` event.
+         *
          * Occurs after a user has successfully registered a new account in the system. It will follow either
          * a `user.registration.create` event, or a `user.account.create` event, depending on the result of the
          * registration process, the information provided by the user, and several configuration options set in
