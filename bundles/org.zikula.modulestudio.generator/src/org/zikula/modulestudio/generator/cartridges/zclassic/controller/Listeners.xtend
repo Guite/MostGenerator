@@ -273,7 +273,7 @@ class Listeners {
             «ENDIF»
             use Zikula\UsersModule\AccessEvents;
             «IF targets('3.0')»
-                use Zikula\UsersModule\Event\UserPreSuccessfulLoginEvent;
+                use Zikula\UsersModule\Event\UserPreSuccessLoginEvent;
             «ENDIF»
         «ENDIF»
 

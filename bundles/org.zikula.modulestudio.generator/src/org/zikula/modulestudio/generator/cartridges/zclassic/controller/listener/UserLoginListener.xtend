@@ -14,7 +14,7 @@ class UserLoginListener {
         {
             return [
                 «IF targets('3.0')»
-                    UserPreSuccessfulLoginEvent::class => ['veto', 5],
+                    UserPreSuccessLoginEvent::class => ['veto', 5],
                 «ELSE»
                     AccessEvents::LOGIN_STARTED => ['started', 5],
                     AccessEvents::LOGIN_VETO    => ['veto', 5],
@@ -50,7 +50,7 @@ class UserLoginListener {
         «ENDIF»
 
         /**
-         * Listener for the «IF targets('3.0')»`UserPreSuccessfulLoginEvent`«ELSE»`module.users.ui.login.veto` event«ENDIF».
+         * Listener for the «IF targets('3.0')»`UserPreSuccessLoginEvent`«ELSE»`module.users.ui.login.veto` event«ENDIF».
          *
          «IF targets('3.0')»
          * Occurs immediately prior to a log-in that is expected to succeed. (All prerequisites for a
@@ -103,7 +103,7 @@ class UserLoginListener {
          «commonExample.generalEventProperties(it, false)»
          «ENDIF»
          */
-        public function veto(«IF targets('3.0')»UserPreSuccessfulLoginEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
+        public function veto(«IF targets('3.0')»UserPreSuccessLoginEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
         }
 
