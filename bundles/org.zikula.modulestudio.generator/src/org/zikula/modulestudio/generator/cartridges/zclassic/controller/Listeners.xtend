@@ -272,6 +272,9 @@ class Listeners {
                 use Zikula\Core\Event\GenericEvent;
             «ENDIF»
             use Zikula\UsersModule\AccessEvents;
+            «IF targets('3.0')»
+                use Zikula\UsersModule\Event\UserPreSuccessfulLoginEvent;
+            «ENDIF»
         «ENDIF»
 
         /**
@@ -383,7 +386,6 @@ class Listeners {
                 use Zikula\UsersModule\Event\RegistrationPostDeletedEvent;
                 use Zikula\UsersModule\Event\RegistrationPostSuccessEvent;
                 use Zikula\UsersModule\Event\RegistrationPostUpdatedEvent;
-                use Zikula\UsersModule\Event\RegistrationPreCreatedEvent;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
                 use Zikula\UsersModule\RegistrationEvents;

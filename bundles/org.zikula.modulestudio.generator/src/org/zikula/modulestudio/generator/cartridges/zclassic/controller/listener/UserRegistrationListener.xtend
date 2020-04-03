@@ -14,7 +14,6 @@ class UserRegistrationListener {
         {
             return [
                 «IF targets('3.0')»
-                    RegistrationPreCreatedEvent::class   => ['started', 5],
                     ActiveUserPreCreatedEvent::class     => ['createVeto', 5],
                     RegistrationPostSuccessEvent::class  => ['succeeded', 5],
                     RegistrationPostCreatedEvent::class  => ['create', 5],
@@ -33,25 +32,19 @@ class UserRegistrationListener {
                 «ENDIF»
             ];
         }
+        «IF !targets('3.0')»
 
-        /**
-         «IF targets('3.0')»
-         * Listener for the `RegistrationPreCreatedEvent`.
-         «ELSE»
-         * Listener for the `module.users.ui.registration.started` event.
-         «ENDIF»
-         *
-         * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
-         *
-         «commonExample.generalEventProperties(it, false)»
-         «IF targets('3.0')»
-         *
-         * There is no content to the event. It is simply an alert.
-         «ENDIF»
-         */
-        public function started(«IF targets('3.0')»RegistrationPreCreatedEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
-        {
-        }
+            /**
+             * Listener for the `module.users.ui.registration.started` event.
+             *
+             * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
+             *
+             «commonExample.generalEventProperties(it, false)»
+             */
+            public function started(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
+            {
+            }
+        «ENDIF»
 
         /**
          «IF targets('3.0')»
@@ -117,8 +110,8 @@ class UserRegistrationListener {
          * then the system's next step (without any interaction from the user) will be the log-in process. All the customary
          * events that might fire during the log-in process could be fired at this point, including (but not limited to)
          «IF targets('3.0')»
-         * `user.login.veto` (which might result in the user having to perform some action in order to proceed with the
-         * log-in process), `user.login.succeeded`, and/or `user.login.failed`.
+         * `Zikula\UsersModule\Event\UserPreSuccessfulLoginEvent` (which might result in the user having to perform some action
+         * in order to proceed with the log-in process), `user.login.succeeded`, and/or `user.login.failed`.
          *
          * The `redirectUrl` property controls where the user will be directed at the end of the registration process.
          * Initially, it will be blank, indicating that the default action should be taken. The default action depends on two
