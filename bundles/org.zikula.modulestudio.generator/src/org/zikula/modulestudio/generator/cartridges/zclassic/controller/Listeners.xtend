@@ -75,7 +75,9 @@ class Listeners {
         listenerFile('UserLogout', listenersUserLogoutFile)
         listenerFile('User', listenersUserFile)
         listenerFile('UserRegistration', listenersUserRegistrationFile)
-        listenerFile('Users', listenersUsersFile)
+        if (!targets('3.0')) {
+            listenerFile('Users', listenersUsersFile)
+        }
         listenerFile('Group', listenersGroupFile)
 
         if (needsThirdPartyListener) {

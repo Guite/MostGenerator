@@ -9,6 +9,7 @@ class UsersListener {
 
     CommonExample commonExample = new CommonExample()
 
+    // NOT NEEDED FOR 3.0
     def generate(Application it) '''
         public static function getSubscribedEvents()
         {
