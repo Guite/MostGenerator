@@ -47,6 +47,7 @@ class EditFunctions {
             «initRelationHandling»
         «ENDIF»
 
+        «onLoad»
     '''
 
     def private resetUploadField(Application it) '''
@@ -189,4 +190,23 @@ class EditFunctions {
             «ENDIF»
         }
 	'''
+
+    def private onLoad(Application it) '''
+        «IF needsInlineEditing || needsAutoCompletion»
+        jQuery(document).ready(function () {
+            if (jQuery('.relation-editing-definition').length > 0) {
+                jQuery('.relation-editing-definition').each(function (index) {
+                    «vendorAndName»InitRelationHandling(
+                        jQuery(this).data('object-type'),
+                        jQuery(this).data('alias'),
+                        jQuery(this).data('prefix'),
+                        '1' == jQuery(this).data('include-editing'),
+                        jQuery(this).data('input-type'),
+                        jQuery(this).data('create-url')
+                    );
+                });
+            }
+        });
+        «ENDIF»
+    '''
 }

@@ -190,9 +190,28 @@ class GeoFunctions {
         }
 
         /**
+         * Collects marker data for the current map.
+         */
+        function collectMarkers() {
+            var markerData = [];
+
+            jQuery('.map-marker-definition').each(function (index) {
+                markerData.push({
+                    latitude: jQuery(this).data('latitude'),
+                    longitude: jQuery(this).data('longitude'),
+                    title: jQuery(this).data('title'),
+                    image: jQuery(this).data('image'),
+                    detailUrl: jQuery(this).data('detail-url')
+                });
+            });
+
+            return markerData;
+        }
+
+        /**
          * Adds markers to the current map.
          */
-        function addMarkers() {
+        function addMarkers(markerData) {
             entityMarkers.clearLayers();
             labelMarkers.clearLayers();
 
@@ -220,7 +239,7 @@ class GeoFunctions {
         /**
          * Initialises geographical view features.
          */
-        function «vendorAndName»InitGeographicalView(parameters, isEditMode) {
+        function «vendorAndName»InitGeographicalView(parameters) {
             // create map and focus on DACH by default
             map = L.map('mapContainer').setView([49.210, 11.997], 5);
 
@@ -232,7 +251,7 @@ class GeoFunctions {
             entityMarkers = L.featureGroup();
             labelMarkers = L.featureGroup().addTo(map);
 
-            addMarkers();
+            addMarkers(collectMarkers());
 
             map.on('zoomend', handleViewMapZoom);
         }
@@ -254,7 +273,7 @@ class GeoFunctions {
             };
 
             if (infoElem.data('context') == 'view') {
-                «vendorAndName»InitGeographicalView(parameters, false);
+                «vendorAndName»InitGeographicalView(parameters);
             }
         });
     '''

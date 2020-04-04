@@ -41,11 +41,13 @@ class ContentTypeListView {
 
         {{ form_row(form.template) }}
 
-        <div id="customTemplateArea" data-switch="zikulacontentmodule_contentitem[contentData][template]" data-switch-value="custom"»>
+        <div id="customTemplateArea">
             {{ form_row(form.customTemplate) }}
         </div>
 
         {{ form_row(form.filter) }}
+
+        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».ContentType.List.Edit.js')) }}
     '''
 
     def private editLegacyTemplate(Application it) '''
@@ -153,7 +155,7 @@ class ContentTypeListView {
             </div>
         </div>
 
-        <div id="customTemplateArea" class="form-group«IF targets('3.0')» row«ENDIF»"{* data-switch="«appName.toFirstLower»Template" data-switch-value="custom"*}>
+        <div id="customTemplateArea" class="form-group«IF targets('3.0')» row«ENDIF»">
             {gt text='Custom template' domain='«appName.formatForDB»' assign='customTemplateLabel'}
             {formlabel for='«appName.toFirstLower»CustomTemplate' text=$customTemplateLabel«editLabelClass»}
             <div class="col-«IF targets('3.0')»md«ELSE»sm«ENDIF»-9">

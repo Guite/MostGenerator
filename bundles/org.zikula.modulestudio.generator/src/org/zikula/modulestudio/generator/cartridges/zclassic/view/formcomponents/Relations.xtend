@@ -229,7 +229,6 @@ class Relations {
         «val outgoingJoins = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0 && getEditStageCode(false) < 3]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
-                var «app.vendorAndName»InlineEditHandlers = [];
                 var «app.vendorAndName»EditHandler = null;
             «ENDIF»
             «FOR relation : incomingJoins»«relation.initJs(it, true, insideLoader)»«ENDFOR»

@@ -27,6 +27,8 @@ class InlineEditing {
     def private generate(Application it) '''
         'use strict';
 
+        var «vendorAndName»InlineEditHandlers = [];
+
         «createInlineEditingWindowInstance»
 
         «initInlineEditingWindow»
@@ -374,6 +376,19 @@ class InlineEditing {
 
     def private onLoad(Application it) '''
         jQuery(document).ready(function () {
+            if (jQuery('.inline-editing-definition').length > 0) {
+                jQuery('.inline-editing-definition').each(function (index) {
+                    var editHandler = {
+                        alias: jQuery(this).data('alias'),
+                        prefix: jQuery(this).data('prefix'),
+                        moduleName: jQuery(this).data('module-name'),
+                        objectType: jQuery(this).data('object-type'),
+                        inputType: jQuery(this).data('input-type'),
+                        windowInstanceId: null
+                    };
+                    «vendorAndName»InlineEditHandlers.push(editHandler);
+                });
+            }
             if (jQuery('#inlineRedirectParameters').length > 0) {
                 var redirectParams = jQuery('#inlineRedirectParameters');
                 «vendorAndName»CloseWindowFromInside(

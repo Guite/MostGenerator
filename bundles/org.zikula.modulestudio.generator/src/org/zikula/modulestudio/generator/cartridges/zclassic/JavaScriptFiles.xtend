@@ -68,8 +68,8 @@ class JavaScriptFiles {
             new TreeFunctions().generate(it, fsa)
         }
         new Validation().generate(it, fsa)
-        if (generateListContentType && !targets('2.0')) {
-            new ContentTypeListJs().generateLegacy(it, fsa)
+        if (generateListContentType) {
+            new ContentTypeListJs().generate(it, fsa)
         }
         if (generatePoweredByBacklinksIntoFooterTemplates) {
             new BacklinkIntegrator().generate(it, fsa)

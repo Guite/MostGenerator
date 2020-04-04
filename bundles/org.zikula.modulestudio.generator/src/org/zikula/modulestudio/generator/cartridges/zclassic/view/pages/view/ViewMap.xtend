@@ -74,6 +74,9 @@ class ViewMap {
 
                     {{ block('display_hooks') }}
                 «ENDIF»
+                {% for «name.formatForCode» in items«IF application.targets('3.0')»|filter(i => i.latitude|default != 0 and i.longitude|default != 0)«ELSE» if «name.formatForCode».latitude|default != 0 and «name.formatForCode».longitude|default != 0«ENDIF» %}
+                    <div class="map-marker-definition" data-latitude="{{ «name.formatForCode».latitude|e('html_attr') }}" data-longitude="{{ «name.formatForCode».longitude|e('html_attr') }}" data-title="{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('html_attr') }}" data-image="«IF null !== getMapImageField»{% if «name.formatForCode».«getMapImageField.name.formatForCode» is not empty and «name.formatForCode».«getMapImageField.name.formatForCode»Meta|default %}{{ «name.formatForCode».«getMapImageField.name.formatForCode»Url|e('html_attr') }}{% endif %}«ENDIF»" data-detail-url="«IF hasDisplayAction»{{ path('«appName.formatForDB»_«name.formatForCode»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)»)|e('html_attr') }}«ENDIF»"></div>
+                {% endfor %}
             </div>
         {% endblock %}
         {% block footer %}
@@ -83,16 +86,6 @@ class ViewMap {
             {% set customScript %}
                 <script>
                 /* <![CDATA[ */
-                    var markerData = [];
-                    {% for «name.formatForCode» in items if «name.formatForCode».latitude|default != 0 and «name.formatForCode».longitude|default != 0 %}
-                        markerData.push({
-                            latitude: '{{ «name.formatForCode».latitude|e('js') }}',
-                            longitude: '{{ «name.formatForCode».longitude|e('js') }}',
-                            title: '{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('js') }}'«IF null !== getMapImageField»,
-                            image: '{% if «name.formatForCode».«getMapImageField.name.formatForCode» is not empty and «name.formatForCode».«getMapImageField.name.formatForCode»Meta|default %}{{ «name.formatForCode».«getMapImageField.name.formatForCode»Url|e('js') }}{% endif %}'«ENDIF»«IF hasDisplayAction»,
-                            detailUrl: '{{ path('«appName.formatForDB»_«name.formatForCode»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)»)|e('js') }}'«ENDIF»
-                        });
-                    {% endfor %}
                     ( function($) {
                         $(document).ready(function() {
                             $('.«appName.formatForDB»-quicknav').removeClass('«IF application.targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»');
