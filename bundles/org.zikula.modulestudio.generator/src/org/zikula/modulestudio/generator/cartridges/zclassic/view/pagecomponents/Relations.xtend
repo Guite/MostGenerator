@@ -150,8 +150,7 @@ class Relations {
                             <noscript><p>«IF app.targets('3.0')»{% trans %}This function requires JavaScript activated!{% endtrans %}«ELSE»{{ __('This function requires JavaScript activated!') }}«ENDIF»</p></noscript>
                         </div>
                     </div>
-                    <div class="inline-editing-definition" data-alias="{{ idPrefix|e('html_attr') }}" data-prefix="{{ idPrefix|e('html_attr') }}SelectorDoNew" data-module-name="«app.appName»" data-object-type="«name.formatForCode»" data-input-type="autocomplete"></div>
-                    <div class="relation-editing-definition" data-object-type="«name.formatForCode»" data-alias="{{ idPrefix|e('html_attr') }}" data-prefix="{{ idPrefix|e('html_attr') }}SelectorDoNew" data-include-editing="«IF hasEditAction»1«ELSE»0«ENDIF»" data-input-type="autocomplete" data-create-url="«IF hasEditAction»{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit')|e('html_attr') }}«ENDIF»"></div>
+                    <div class="relation-editing-definition" data-object-type="«name.formatForCode»" data-alias="{{ idPrefix|e('html_attr') }}" data-prefix="{{ idPrefix|e('html_attr') }}SelectorDoNew" data-inline-prefix="{{ idPrefix|e('html_attr') }}SelectorDoNew" data-module-name="«app.appName»" data-include-editing="«IF hasEditAction»1«ELSE»0«ENDIF»" data-input-type="autocomplete" data-create-url="«IF hasEditAction»{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit')|e('html_attr') }}«ENDIF»"></div>
                 {% endif %}
             «ENDIF»
         «ENDIF»

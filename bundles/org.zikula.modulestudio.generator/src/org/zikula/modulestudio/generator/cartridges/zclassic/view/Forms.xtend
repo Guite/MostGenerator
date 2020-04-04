@@ -103,7 +103,7 @@ class Forms {
             «IF app.needsAutoCompletion»
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
             «ENDIF»
-            «formTemplateJS»
+            «jsDefinitions»
         {% endblock %}
     '''
 
@@ -281,35 +281,18 @@ class Forms {
         «ENDIF»
     '''
 
-    def private formTemplateJS(Entity it) '''
+    def private jsDefinitions(Entity it) '''
         «IF geographical»
             «includeLeaflet('edit', name.formatForDB)»
         «ENDIF»
-        {% set formInitScript %}
-            <script>
-            /* <![CDATA[ */
-                «jsInitImpl»
-            /* ]]> */
-            </script>
-        {% endset %}
-        {{ pageAddAsset('footer', formInitScript) }}
-    '''
-
-    def private jsInitImpl(Entity it) '''
-        «new Relations(fsa, app, false).initJs(it, false)»
-
-        ( function($) {
-            $(document).ready(function() {
-                «new Relations(fsa, app, false).initJs(it, true)»
-                «app.vendorAndName»InitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ «name.formatForDB».«primaryKey.name.formatForCode» }}{% endif %}');
-                «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
-                «IF standardFields»
-                    {% if form.moderationSpecificCreator is defined %}
-                        initUserLiveSearch('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator');
-                    {% endif %}
-                «ENDIF»
-            });
-        })(jQuery);
+        <div id="formEditingDefinition" data-mode="{{ mode|e('html_attr') }}" data-entityid="{% if mode != 'create' %}{{ «name.formatForDB».«primaryKey.name.formatForCode»|e('html_attr') }}{% endif %}"></div>
+        «FOR field : getDerivedFields»«field.jsDefinition»«ENDFOR»
+        «IF standardFields»
+            {% if form.moderationSpecificCreator is defined %}
+                <div class="field-editing-definition" data-field-type="user" data-field-name="«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator"></div>
+            {% endif %}
+        «ENDIF»
+        «new Relations(fsa, app, false).jsInitDefinitions(it)»
     '''
 
     def private fieldWrapper(DerivedField it, String subElem) '''

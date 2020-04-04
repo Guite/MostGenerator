@@ -33,38 +33,26 @@ class SharedFormElements {
         «ENDIF»
     '''
 
-    def additionalInitScript(Field it) {
+    def jsDefinition(Field it) {
+        val containerName = if (null !== entity) entity.name.formatForCode.toLowerCase else 'appsettings'
         switch it {
-            UploadField: additionalInitScriptUpload
-            UserField: additionalInitScriptUser
-            DatetimeField: additionalInitScriptCalendar
+            UserField: jsDefinitionUser(containerName)
+            DatetimeField: jsDefinitionCalendar(containerName)
+            UploadField: jsDefinitionUpload(containerName)
         }
     }
 
-    def private additionalInitScriptUpload(UploadField it) '''
-        «IF null !== entity»
-            «application.vendorAndName»InitUploadField('«application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»_«name.formatForCode»');
-        «ELSE»
-            «application.vendorAndName»InitUploadField('«application.appName.toLowerCase»_appsettings_«name.formatForCode»_«name.formatForCode»');
-        «ENDIF»
+    def private jsDefinitionUser(UserField it, String containerName) '''
+        <div class="field-editing-definition" data-field-type="user" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»"></div>
     '''
 
-    def private additionalInitScriptUser(UserField it) '''
-        «IF null !== entity»
-            initUserLiveSearch('«application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»');
-        «ELSE»
-            initUserLiveSearch('«application.appName.toLowerCase»_appsettings_«name.formatForCode»');
-        «ENDIF»
-    '''
-
-    def private additionalInitScriptCalendar(DatetimeField it) '''
+    def private jsDefinitionCalendar(DatetimeField it, String containerName) '''
         «IF !mandatory»
-            «IF null !== entity»
-                «application.vendorAndName»InitDateField('«application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»');
-            «ELSE»
-                «application.vendorAndName»InitDateField('«application.appName.toLowerCase»_appsettings_«name.formatForCode»');
-            «ENDIF»
+            <div class="field-editing-definition" data-field-type="date" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»"></div>
         «ENDIF»
     '''
 
+    def private jsDefinitionUpload(UploadField it, String containerName) '''
+        <div class="field-editing-definition" data-field-type="upload" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»_«name.formatForCode»"></div>
+    '''
 }

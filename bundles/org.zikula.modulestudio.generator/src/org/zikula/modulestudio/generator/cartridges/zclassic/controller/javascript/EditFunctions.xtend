@@ -196,6 +196,17 @@ class EditFunctions {
         jQuery(document).ready(function () {
             if (jQuery('.relation-editing-definition').length > 0) {
                 jQuery('.relation-editing-definition').each(function (index) {
+                    «IF needsInlineEditing»
+                        var editHandler = {
+                            alias: jQuery(this).data('alias'),
+                            prefix: jQuery(this).data('inline-prefix'),
+                            moduleName: jQuery(this).data('module-name'),
+                            objectType: jQuery(this).data('object-type'),
+                            inputType: jQuery(this).data('input-type'),
+                            windowInstanceId: null
+                        };
+                        «vendorAndName»InlineEditHandlers.push(editHandler);
+                    «ENDIF»
                     «vendorAndName»InitRelationHandling(
                         jQuery(this).data('object-type'),
                         jQuery(this).data('alias'),
@@ -205,6 +216,20 @@ class EditFunctions {
                         jQuery(this).data('create-url')
                     );
                 });
+            }
+            if (jQuery('.field-editing-definition').length > 0) {
+                jQuery('.field-editing-definition').each(function (index) {
+                    if ('user' === jQuery(this).data('field-type')) {
+                        initUserLiveSearch(jQuery(this).data('field-name'));
+                    } else if ('date' === jQuery(this).data('field-type')) {
+                        «vendorAndName»InitDateField(jQuery(this).data('field-name'));
+                    } else if ('upload' === jQuery(this).data('field-type')) {
+                        «vendorAndName»InitUploadField(jQuery(this).data('field-name'));
+                    }
+                });
+            }
+            if (jQuery('#formEditingDefinition').length > 0) {
+                «vendorAndName»InitEditForm(jQuery('#formEditingDefinition').data('mode'), jQuery('#formEditingDefinition').data('entityid'));
             }
         });
         «ENDIF»

@@ -224,19 +224,16 @@ class Relations {
         </ul>
     '''
 
-    def initJs(Entity it, Boolean insideLoader) '''
+    def jsInitDefinitions(Entity it) '''
         «val incomingJoins = getEditableJoinRelations(true).filter[getEditStageCode(true) > 0 && getEditStageCode(true) < 3]»
         «val outgoingJoins = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0 && getEditStageCode(false) < 3]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
-            «IF !insideLoader»
-                var «app.vendorAndName»EditHandler = null;
-            «ENDIF»
-            «FOR relation : incomingJoins»«relation.initJs(it, true, insideLoader)»«ENDFOR»
-            «FOR relation : outgoingJoins»«relation.initJs(it, false, insideLoader)»«ENDFOR»
+            «FOR relation : incomingJoins»«relation.jsInitDefinition(it, true)»«ENDFOR»
+            «FOR relation : outgoingJoins»«relation.jsInitDefinition(it, false)»«ENDFOR»
         «ENDIF»
     '''
 
-    def private initJs(JoinRelationship it, Entity targetEntity, Boolean incoming, Boolean insideLoader) {
+    def private jsInitDefinition(JoinRelationship it, Entity targetEntity, Boolean incoming) {
         val useTarget = !incoming
         val stageCode = getEditStageCode(incoming)
         if (stageCode < 1 || (!usesAutoCompletion(useTarget) && stageCode < 2)) {
@@ -246,19 +243,8 @@ class Relations {
         val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital
         val uniqueNameForJs = getUniqueRelationNameForJs(targetEntity, relationAliasName)
         val linkEntity = if (targetEntity == target) source else target
-        if (!insideLoader) '''
-            «app.vendorAndName»EditHandler = {
-                alias: '«relationAliasName.toFirstLower»',
-                prefix: '«uniqueNameForJs»SelectorDoNew',
-                moduleName: '«linkEntity.application.appName»',
-                objectType: '«linkEntity.name.formatForCode»',
-                inputType: '«getFieldTypeForInlineEditing(incoming)»',
-                windowInstanceId: null
-            };
-            «app.vendorAndName»InlineEditHandlers.push(«app.vendorAndName»EditHandler);
         '''
-        else '''
-            «app.vendorAndName»InitRelationHandling('«linkEntity.name.formatForCode»', '«relationAliasName.toFirstLower»', '«uniqueNameForJs»', «(stageCode > 1).displayBool», '«getFieldTypeForInlineEditing(incoming)»', '{{ path('«app.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'edit') }}');
+            <div class="relation-editing-definition" data-object-type="«linkEntity.name.formatForCode»" data-alias="«relationAliasName.toFirstLower»" data-prefix="«uniqueNameForJs»" data-inline-prefix="«uniqueNameForJs»SelectorDoNew" data-module-name="«linkEntity.application.appName»" data-include-editing="«IF stageCode > 1»1«ELSE»0«ENDIF»" data-input-type="«getFieldTypeForInlineEditing(incoming)»" data-create-url="{{ path('«app.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'edit')|e('html_attr') }}"></div>
         '''
     }
 

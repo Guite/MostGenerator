@@ -107,7 +107,7 @@ class Config {
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Validation.js'), 98) }}
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».EditFunctions.js'), 99) }}
-            «formTemplateJS»
+            «jsDefinitions»
         {% endblock %}
     '''
 
@@ -183,26 +183,11 @@ class Config {
         </fieldset>
     '''
 
-    def private formTemplateJS(Application it) '''
-        {% set formInitScript %}
-            <script>
-            /* <![CDATA[ */
-                «jsInitImpl»
-            /* ]]> */
-            </script>
-        {% endset %}
-        {{ pageAddAsset('footer', formInitScript) }}
-    '''
-
-    def private jsInitImpl(Application it) '''
-        ( function($) {
-            $(document).ready(function() {
-                «vendorAndName»InitEditForm('edit', '1');
-                «FOR varContainer : getSortedVariableContainers»
-                    «FOR field : varContainer.fields»«field.additionalInitScript»«ENDFOR»
-                «ENDFOR»
-            });
-        })(jQuery);
+    def private jsDefinitions(Application it) '''
+        <div id="formEditingDefinition" data-mode="edit" data-entityid="1"></div>
+        «FOR varContainer : getSortedVariableContainers»
+            «FOR field : varContainer.fields»«field.jsDefinition»«ENDFOR»
+        «ENDFOR»
     '''
 
     def private isImageArea(Variables it) {
