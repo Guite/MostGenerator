@@ -67,7 +67,7 @@ class ViewMap {
                 «(new ViewPagesHelper).commonHeader(it)»
                 {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig', {«IF !hasVisibleWorkflow»workflowStateFilter: false, «ENDIF»sorting: false, pageSizeSelector: false}) }}{# see template file for available options #}
 
-                <div id="mapContainer" style="height: 800px">
+                <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
                 </div>
                 «(new ViewPagesHelper).pagerCall(it)»
                 «IF !skipHookSubscribers»
@@ -80,19 +80,6 @@ class ViewMap {
             {{ parent() }}
             «includeLeaflet('view', name.formatForCode)»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».ViewMap.js')) }}
-            {% set customStyle %}
-                <style>
-                    .detail-marker {
-                        width: auto !important;
-                        height: auto !important;
-                        background-color: #f5f5f5;
-                        border: 1px solid #666;
-                        padding: 15px 10px 10px;
-                        border-radius: 4px;
-                    }
-                </style>
-            {% endset %}
-            {{ pageAddAsset('header', customStyle) }}
             {% set customScript %}
                 <script>
                 /* <![CDATA[ */

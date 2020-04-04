@@ -39,6 +39,16 @@ class Styles {
             fileName = 'finder.css'
             fsa.generateFile(getAppCssPath + fileName, finderStyles)
         }
+
+        if (generatePdfSupport) {
+            fileName = 'pdf.css'
+            fsa.generateFile(getAppCssPath + fileName, pdfStyles)
+        }
+
+        if (generateTechnicalDocumentation) {
+            fileName = 'techdocs.css'
+            fsa.generateFile(getAppCssPath + fileName, techDocsStyles)
+        }
     }
 
     def private appStyles(Application it) '''
@@ -73,6 +83,19 @@ class Styles {
             div.«cssPrefix»-mapcontainer {
                 height: 400px;
             }
+            «IF hasViewActions»
+                «cssPrefix»-view.«cssPrefix»-map div.«cssPrefix»-mapcontainer {
+                    height: 800px;
+                }
+                «cssPrefix»-view.«cssPrefix»-map .detail-marker {
+                    width: auto !important;
+                    height: auto !important;
+                    background-color: #f5f5f5;
+                    border: 1px solid #666;
+                    padding: 15px 10px 10px;
+                    border-radius: 4px;
+                }
+            «ENDIF»
 
         «ENDIF»
         «IF hasTrees»
@@ -326,6 +349,34 @@ class Styles {
         .«cssPrefix»-finderform fieldset legend {
             background-color: #fff;
             border: none;
+        }
+    '''
+
+    def private pdfStyles(Application it) '''
+        @page {
+            margin: 1cm 2cm 1cm 1cm;
+        }
+        img {
+            border-width: 0;
+            vertical-align: top;
+        }
+    '''
+
+    def private techDocsStyles(Application it) '''
+        body {
+            padding-bottom: 80px;
+        }
+        h2 {
+            margin-top: 80px;
+        }
+        h3 {
+            margin-top: 50px;
+        }
+        table {
+            width: 100%;
+        }
+        th, td {
+            vertical-align: top;
         }
     '''
 }
