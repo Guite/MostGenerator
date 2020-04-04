@@ -218,16 +218,11 @@ class Events {
 
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
-        «IF targets('3.0')»
-            use Symfony\Contracts\EventDispatcher\Event;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\Event;
-        «ENDIF»
 
         /**
          * Event base class for extending «actionType» actions menu.
          */
-        class AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent extends Event
+        class AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent
         {
             /**
              * @var FactoryInterface.
@@ -297,17 +292,12 @@ class Events {
     def private filterEventBaseClass(Entity it) '''
         namespace «app.appNamespace»\Event\Base;
 
-        «IF app.targets('3.0')»
-            use Symfony\Contracts\EventDispatcher\Event;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\Event;
-        «ENDIF»
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
 
         /**
          * Event base class for filtering «name.formatForDisplay» processing.
          */
-        class AbstractFilter«name.formatForCodeCapital»Event extends Event
+        class AbstractFilter«name.formatForCodeCapital»Event
         {
             /**
              * @var «name.formatForCodeCapital»Entity Reference to treated entity instance.

@@ -105,8 +105,12 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
-                use Zikula\ExtensionsModule\Event\ExtensionStateEvent;
-                use Zikula\ExtensionsModule\ExtensionEvents;
+                use Zikula\ExtensionsModule\Event\ExtensionPostCacheRebuildEvent;
+                use Zikula\ExtensionsModule\Event\ExtensionPostDisabledEvent;
+                use Zikula\ExtensionsModule\Event\ExtensionPostEnabledEvent;
+                use Zikula\ExtensionsModule\Event\ExtensionPostInstallEvent;
+                use Zikula\ExtensionsModule\Event\ExtensionPostRemoveEvent;
+                use Zikula\ExtensionsModule\Event\ExtensionPostUpgradeEvent;
             «ELSE»
                 use Zikula\Core\CoreEvents;
                 use Zikula\Core\Event\ModuleStateEvent;

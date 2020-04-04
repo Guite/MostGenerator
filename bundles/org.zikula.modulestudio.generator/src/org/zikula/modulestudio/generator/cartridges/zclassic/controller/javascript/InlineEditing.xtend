@@ -41,6 +41,7 @@ class InlineEditing {
 
         «closeWindowFromInside»
 
+        «onLoad»
     '''
 
     def private createInlineEditingWindowInstance(Application it) '''
@@ -369,5 +370,19 @@ class InlineEditing {
                 }
             });
         }
+    '''
+
+    def private onLoad(Application it) '''
+        jQuery(document).ready(function () {
+            if (jQuery('#inlineRedirectParameters').length > 0) {
+                var redirectParams = jQuery('#inlineRedirectParameters');
+                «vendorAndName»CloseWindowFromInside(
+                    redirectParams.data('idprefix'),
+                    redirectParams.data('itemid'),
+                    redirectParams.data('title'),
+                    redirectParams.data('searchterm')
+                );
+            }
+        });
     '''
 }

@@ -79,7 +79,8 @@ class HookAssignment {
         jQuery(document).ready(function () {
             jQuery('.detach-«appName.formatForDB»-object')
                 .click(«vendorAndName»DetachHookObject)
-                .removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                .removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»')
+            ;
         });
     '''
 }

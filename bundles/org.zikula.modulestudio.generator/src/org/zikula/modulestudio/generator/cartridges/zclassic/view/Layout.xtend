@@ -91,21 +91,7 @@ class Layout {
     def private commonFooter(Application it) '''
         «IF generatePoweredByBacklinksIntoFooterTemplates»
             «new FileHelper(it).msWeblink»
-            {% set customScript %}
-                <script>
-                /* <![CDATA[ */
-                    ( function($) {
-                        $(document).ready(function() {
-                            if ($('#poweredBy').length > 0) {
-                                $('#poweredBy').html($('#poweredBy').html() + ' «IF targets('3.0')»{% trans %}and{% endtrans %}«ELSE»{{ __('and') }}«ENDIF» ').append($('#poweredByMost a'));
-                                $('#poweredByMost').remove();
-                            }
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
-            {% endset %}
-            {{ pageAddAsset('footer', customScript) }}
+            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Backlink.Integration.js')) }}
         «ENDIF»
         {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
         «IF needsJQueryUI»
@@ -314,12 +300,14 @@ class Layout {
             {% block content %}{% endblock %}
             {% block footer %}
                 «commonFooter»
-                <script>
-                    /* <![CDATA[ */
-                        if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                        Zikula.Config = {'entrypoint': '{{ getSystemVar('entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.schemeAndHttpHost ~ '/' }}', 'baseURI': '{{ app.request.basePath }}'};
-                    /* ]]> */
-                </script>
+                «IF !targets('3.0')»
+                    <script>
+                        /* <![CDATA[ */
+                            if (typeof(Zikula) == 'undefined') {var Zikula = {};}
+                            Zikula.Config = {'entrypoint': '{{ getSystemVar('entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.schemeAndHttpHost ~ '/' }}', 'baseURI': '{{ app.request.basePath }}'};
+                        /* ]]> */
+                    </script>
+                «ENDIF»
                 «IF (hasEditActions || needsConfig) && !targets('3.0')»
                     {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}
                         {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
@@ -338,18 +326,7 @@ class Layout {
     '''
 
     def private rawJsInit(Application it) '''
-        {% set customScript %}
-            <script>
-            /* <![CDATA[ */
-                ( function($) {
-                    $(document).ready(function() {
-                        $('.dropdown-toggle').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
-                    });
-                })(jQuery);
-            /* ]]> */
-            </script>
-        {% endset %}
-        {{ pageAddAsset('footer', customScript) }}
+        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».RawPage.js')) }}
     '''
 
     def pdfHeaderFile(Application it) {

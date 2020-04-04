@@ -3,7 +3,9 @@ package org.zikula.modulestudio.generator.cartridges.zclassic
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.AutoCompletion
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.BacklinkIntegrator
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ConfigFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ContentTypeListJs
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
@@ -12,6 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HookAssignment
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.InlineEditing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ItemSelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.RawPageFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -65,5 +68,14 @@ class JavaScriptFiles {
             new TreeFunctions().generate(it, fsa)
         }
         new Validation().generate(it, fsa)
+        if (generateListContentType && !targets('2.0')) {
+            new ContentTypeListJs().generateLegacy(it, fsa)
+        }
+        if (generatePoweredByBacklinksIntoFooterTemplates) {
+            new BacklinkIntegrator().generate(it, fsa)
+        }
+        if (generateExternalControllerAndFinder || !joinRelations.empty) {
+            new RawPageFunctions().generate(it, fsa)
+        }
     }
 }

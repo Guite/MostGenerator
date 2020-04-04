@@ -374,22 +374,13 @@ class Forms {
         <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="auto">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            </head>
+            <body>
+                <div id="inlineRedirectParameters" data-idprefix="{{ idPrefix|e('html_attr') }}" {% if commandName in ['submit', 'create', 'approve'] %}data-itemid="{{ itemId }}" data-title="{{ formattedTitle|default('')|e('html_attr') }}" data-searchterm="{{ searchTerm|default('')|e('html_attr') }}"{% else %}data-itemid="0" data-title="" data-searchterm=""{% endif %}></div>
                 <script src="{{ asset('jquery/jquery.min.js') }}"></script>
                 «IF needsInlineEditing»
                     <script src="{{ zasset('@«appName»:js/«appName».InlineEditing.js') }}"></script>
                 «ENDIF»
-            </head>
-            <body>
-                <script>
-                /* <![CDATA[ */
-                    // close window from parent document
-                    ( function($) {
-                        $(document).ready(function() {
-                            «vendorAndName»CloseWindowFromInside('{{ idPrefix|e('js') }}', {% if commandName in ['submit', 'create', 'approve'] %}{{ itemId }}, '{{ formattedTitle|default('')|e('js') }}', '{{ searchTerm|default('')|e('js') }}'{% else %}0, '', ''{% endif %});
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
             </body>
         </html>
     '''
