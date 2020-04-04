@@ -243,7 +243,9 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
             use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
-            use Zikula\ThemeModule\ThemeEvents;
+            «IF !targets('3.0')»
+                use Zikula\ThemeModule\ThemeEvents;
+            «ENDIF»
         «ENDIF»
 
         /**
@@ -267,13 +269,12 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+                use Zikula\UsersModule\Event\UserPostLoginFailureEvent;
+                use Zikula\UsersModule\Event\UserPostLoginSuccessEvent;
+                use Zikula\UsersModule\Event\UserPreLoginSuccessEvent;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
-            «ENDIF»
-            use Zikula\UsersModule\AccessEvents;
-            «IF targets('3.0')»
-                use Zikula\UsersModule\Event\UserPreSuccessLoginEvent;
+                use Zikula\UsersModule\AccessEvents;
             «ENDIF»
         «ENDIF»
 
@@ -298,11 +299,11 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+                use Zikula\UsersModule\Event\UserPostLogoutSuccessEvent;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
+                use Zikula\UsersModule\AccessEvents;
             «ENDIF»
-            use Zikula\UsersModule\AccessEvents;
         «ENDIF»
 
         /**
@@ -441,11 +442,18 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+                use Zikula\GroupsModule\Event\GroupApplicationPostCreatedEvent;
+                use Zikula\GroupsModule\Event\GroupApplicationPostProcessedEvent;
+                use Zikula\GroupsModule\Event\GroupPostCreatedEvent;
+                use Zikula\GroupsModule\Event\GroupPostDeletedEvent;
+                use Zikula\GroupsModule\Event\GroupPostUpdatedEvent;
+                use Zikula\GroupsModule\Event\GroupPostUserAddedEvent;
+                use Zikula\GroupsModule\Event\GroupPostUserRemovedEvent;
+                use Zikula\GroupsModule\Event\GroupPreDeletedEvent;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
+                use Zikula\GroupsModule\GroupEvents;
             «ENDIF»
-            use Zikula\GroupsModule\GroupEvents;
         «ENDIF»
 
         /**
