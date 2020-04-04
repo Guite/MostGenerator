@@ -83,21 +83,6 @@ class ViewMap {
             {{ parent() }}
             «includeLeaflet('view', name.formatForCode)»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».ViewMap.js')) }}
-            {% set customScript %}
-                <script>
-                /* <![CDATA[ */
-                    ( function($) {
-                        $(document).ready(function() {
-                            $('.«appName.formatForDB»-quicknav').removeClass('«IF application.targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»');
-                            $('.«appName.formatForDB»-quicknav input, .«appName.formatForDB»-quicknav select')
-                                .css('width', '100%')
-                            ;
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
-            {% endset %}
-            {{ pageAddAsset('footer', customScript) }}
         {% endblock %}
         «(new ViewPagesHelper).callDisplayHooks(it)»
     '''

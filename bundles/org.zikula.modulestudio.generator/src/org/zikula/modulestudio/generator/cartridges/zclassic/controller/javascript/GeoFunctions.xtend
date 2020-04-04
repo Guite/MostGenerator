@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -10,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class GeoFunctions {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -274,6 +276,11 @@ class GeoFunctions {
 
             if (infoElem.data('context') == 'view') {
                 «vendorAndName»InitGeographicalView(parameters);
+
+                jQuery('.«appName.formatForDB»-quicknav').removeClass('«IF targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»');
+                jQuery('.«appName.formatForDB»-quicknav input, .«appName.formatForDB»-quicknav select')
+                    .css('width', '100%')
+                ;
             }
         });
     '''
