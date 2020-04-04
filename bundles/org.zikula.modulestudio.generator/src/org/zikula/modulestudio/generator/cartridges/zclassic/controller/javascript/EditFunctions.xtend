@@ -192,31 +192,32 @@ class EditFunctions {
 	'''
 
     def private onLoad(Application it) '''
-        «IF needsInlineEditing || needsAutoCompletion»
         jQuery(document).ready(function () {
-            if (jQuery('.relation-editing-definition').length > 0) {
-                jQuery('.relation-editing-definition').each(function (index) {
-                    «IF needsInlineEditing»
-                        var editHandler = {
-                            alias: jQuery(this).data('alias'),
-                            prefix: jQuery(this).data('inline-prefix'),
-                            moduleName: jQuery(this).data('module-name'),
-                            objectType: jQuery(this).data('object-type'),
-                            inputType: jQuery(this).data('input-type'),
-                            windowInstanceId: null
-                        };
-                        «vendorAndName»InlineEditHandlers.push(editHandler);
-                    «ENDIF»
-                    «vendorAndName»InitRelationHandling(
-                        jQuery(this).data('object-type'),
-                        jQuery(this).data('alias'),
-                        jQuery(this).data('prefix'),
-                        '1' == jQuery(this).data('include-editing'),
-                        jQuery(this).data('input-type'),
-                        jQuery(this).data('create-url')
-                    );
-                });
-            }
+            «IF needsInlineEditing || needsAutoCompletion»
+                if (jQuery('.relation-editing-definition').length > 0) {
+                    jQuery('.relation-editing-definition').each(function (index) {
+                        «IF needsInlineEditing»
+                            var editHandler = {
+                                alias: jQuery(this).data('alias'),
+                                prefix: jQuery(this).data('inline-prefix'),
+                                moduleName: jQuery(this).data('module-name'),
+                                objectType: jQuery(this).data('object-type'),
+                                inputType: jQuery(this).data('input-type'),
+                                windowInstanceId: null
+                            };
+                            «vendorAndName»InlineEditHandlers.push(editHandler);
+                        «ENDIF»
+                        «vendorAndName»InitRelationHandling(
+                            jQuery(this).data('object-type'),
+                            jQuery(this).data('alias'),
+                            jQuery(this).data('prefix'),
+                            '1' == jQuery(this).data('include-editing'),
+                            jQuery(this).data('input-type'),
+                            jQuery(this).data('create-url')
+                        );
+                    });
+                }
+            «ENDIF»
             if (jQuery('.field-editing-definition').length > 0) {
                 jQuery('.field-editing-definition').each(function (index) {
                     if ('user' === jQuery(this).data('field-type')) {
@@ -232,6 +233,5 @@ class EditFunctions {
                 «vendorAndName»InitEditForm(jQuery('#formEditingDefinition').data('mode'), jQuery('#formEditingDefinition').data('entityid'));
             }
         });
-        «ENDIF»
     '''
 }
