@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.FormTypeChoicesListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.GroupListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.IpTraceListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.KernelListener
@@ -66,6 +67,9 @@ class Listeners {
     }
 
     def private generateListenerClasses(Application it) {
+        if (targets('3.0')) {
+            listenerFile('FormTypeChoices', formTypeChoicesFile)
+        }
         listenerFile('Installer', listenersInstallerFile)
         listenerFile('Kernel', listenersKernelFile)
         listenerFile('ModuleDispatch', listenersModuleDispatchFile)
@@ -96,6 +100,30 @@ class Listeners {
         var filePath = listenerPath + (if (isBase) 'Abstract' else '') + name + listenerSuffix
         fsa.generateFile(filePath, content)
     }
+
+    // 3.0 only
+    def private formTypeChoicesFile(Application it) '''
+        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+
+        «IF !isBase»
+            use «appNamespace»\Listener\Base\AbstractFormTypeChoicesListener;
+        «ELSE»
+            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            use Zikula\Bundle\FormExtensionBundle\Event\FormTypeChoiceEvent;
+        «ENDIF»
+
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for injecting custom dynamic form types.
+         */
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»FormTypeChoicesListener«IF !isBase» extends AbstractFormTypeChoicesListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        {
+            «IF isBase»
+                «new FormTypeChoicesListener().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
+        }
+    '''
 
     def private listenersInstallerFile(Application it) '''
         namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -486,7 +514,8 @@ class Listeners {
             «ENDIF»
             «IF needsApproval && generatePendingContentSupport»
                 «IF targets('3.0')»
-                    use Zikula\Bundle\CoreBundle\Collection\Collectible\PendingContentCollectible;
+                    use Zikula\BlocksModule\Collectible\PendingContentCollectible;
+                    use Zikula\BlocksModule\Event\PendingContentEvent;
                     use Zikula\Bundle\CoreBundle\Collection\Container;
                 «ELSE»
                     use Zikula\Common\Collection\Collectible\PendingContentCollectible;

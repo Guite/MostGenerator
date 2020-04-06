@@ -53,7 +53,11 @@ class ThirdPartyListener {
         {
             return [
                 «IF needsApproval && generatePendingContentSupport»
-                    'get.pending_content'                     => ['pendingContentListener', 5],
+                    «IF targets('3.0')»
+                        PendingContentEvent::class                => ['pendingContentListener', 5],
+                    «ELSE»
+                        'get.pending_content'                     => ['pendingContentListener', 5],
+                    «ENDIF»
                 «ENDIF»
                 «IF !targets('2.0') && (generateListContentType || needsDetailContentType)»
                     'module.content.gettypes'                 => ['contentGetTypes', 5],
@@ -93,12 +97,14 @@ class ThirdPartyListener {
 
     def private pendingContentListener(Application it) '''
         /**
-         * Listener for the `get.pending_content` event which collects information from modules
+         * Listener for the «IF targets('3.0')»`PendingContentEvent`«ELSE»`get.pending_content` event«ENDIF» which collects information from «IF targets('3.0')»extensions«ELSE»modules«ENDIF»
          * about pending content items waiting for approval.
+         «IF !targets('3.0')»
          *
          «commonExample.generalEventProperties(it, false)»
+         «ENDIF»
          */
-        public function pendingContentListener(GenericEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function pendingContentListener(«IF targets('3.0')»PendingContentEvent«ELSE»GenericEvent«ENDIF» $event)«IF targets('3.0')»: void«ENDIF»
         {
             «pendingContentListenerImpl»
         }
