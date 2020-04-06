@@ -136,7 +136,7 @@ class ModuleInstallerListener {
         }
 
         /**
-        «IF targets('3.0')»
+         «IF targets('3.0')»
          * Listener for the `ExtensionPostEnabledEvent`.
          *
          * Occurs when an extension has been enabled after it was previously disabled.
