@@ -95,7 +95,7 @@ class Emails {
             <p>{% trans with {'%recipient%': recipient.name} %}Hello %recipient%{% endtrans %},</p>
 
             «IF standardFields»
-                <p>{% trans with {'%entity%': mailData.name, '%editor%': mailData.editor} %}%editor% changed his «name.formatForDisplay» "%entity%".{% endtrans %}</p>
+                <p>{% trans with {'%entity%': mailData.name, '%editor%': mailData.editor} %}%editor% changed a «name.formatForDisplay» "%entity%".{% endtrans %}</p>
             «ELSE»
                 <p>{% trans with {'%entity%': mailData.name} %}A user changed his «name.formatForDisplay» "%entity%".{% endtrans %}</p>
             «ENDIF»
@@ -120,7 +120,7 @@ class Emails {
             <p>{{ __f('Hello %recipient%', {'%recipient%': recipient.name}) }},</p>
 
             «IF standardFields»
-                <p>{{ __f('%editor% changed his «name.formatForDisplay» "%entity%".', {'%entity%': mailData.name, '%editor%': mailData.editor}) }}</p>
+                <p>{{ __f('%editor% changed a «name.formatForDisplay» "%entity%".', {'%entity%': mailData.name, '%editor%': mailData.editor}) }}</p>
             «ELSE»
                 <p>{{ __f('A user changed his «name.formatForDisplay» "%entity%".', {'%entity%': mailData.name}) }}</p>
             «ENDIF»
