@@ -90,7 +90,7 @@ class DateTimeExtensions {
      * Determines the start date field of a data object if there is one.
      */
     def dispatch getStartDateField(DataObject it) {
-        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[startDate]].flatten
+        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[startDate && components != DateTimeComponents.TIME]].flatten
         if (!datetimeFields.empty) {
             return datetimeFields.head
         }
@@ -100,7 +100,7 @@ class DateTimeExtensions {
      * Determines the end date field of a data object if there is one.
      */
     def dispatch getEndDateField(DataObject it) {
-        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[endDate]].flatten
+        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[endDate && components != DateTimeComponents.TIME]].flatten
         if (!datetimeFields.empty) {
             return datetimeFields.head
         }
