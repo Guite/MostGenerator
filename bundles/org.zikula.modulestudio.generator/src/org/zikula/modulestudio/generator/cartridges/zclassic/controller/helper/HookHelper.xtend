@@ -246,7 +246,7 @@ class HookHelper {
          * @return Event
          «ENDIF»
          */
-        public function dispatchHooks(«IF targets('3.0')»string «ENDIF»$eventName, Hook $hook)«IF targets('3.0')»: Event«ENDIF»
+        public function dispatchHooks(«IF targets('3.0')»string «ENDIF»$eventName, Hook $hook)
         {
             return $this->hookDispatcher->dispatch($eventName, $hook);
         }

@@ -347,7 +347,7 @@ class LifecycleListener {
              * @return Event The created event instance
              «ENDIF»
              */
-            protected function createFilterEvent(EntityAccess $entity)«IF targets('3.0')»: Event«ENDIF»
+            protected function createFilterEvent(EntityAccess $entity)
             {
                 $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst($entity->get_objectType()) . 'Event';
 
