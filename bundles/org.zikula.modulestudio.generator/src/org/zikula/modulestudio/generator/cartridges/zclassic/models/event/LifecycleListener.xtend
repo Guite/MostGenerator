@@ -49,7 +49,6 @@ class LifecycleListener {
         «ENDIF»
         use Symfony\«IF targets('3.0')»Contracts«ELSE»Component«ENDIF»\EventDispatcher\EventDispatcherInterface;
         «IF targets('3.0')»
-            use Symfony\Contracts\EventDispatcher\Event;
             use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «ELSE»
             use Zikula\Core\Doctrine\EntityAccess;

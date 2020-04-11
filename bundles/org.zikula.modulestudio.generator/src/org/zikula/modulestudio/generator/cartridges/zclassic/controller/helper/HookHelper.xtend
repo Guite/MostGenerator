@@ -98,7 +98,6 @@ class HookHelper {
         «ENDIF»
         use Symfony\Component\Form\FormInterface;
         «IF targets('3.0')»
-            use Symfony\Contracts\EventDispatcher\Event;
             use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             use Zikula\Bundle\CoreBundle\UrlInterface;
         «ENDIF»
