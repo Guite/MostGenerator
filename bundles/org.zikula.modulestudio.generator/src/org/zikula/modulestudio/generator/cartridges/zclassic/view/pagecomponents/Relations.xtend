@@ -60,7 +60,7 @@ class Relations {
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
                 {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/custom.css'), 120) }}
                 {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-                {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js'«IF app.targets('3.0')», constant('Zikula\\ThemeModule\\Engine\\AssetBag::WEIGHT_JQUERY_UI')«ENDIF»)) }}
+                {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')«IF app.targets('3.0')», constant('Zikula\\ThemeModule\\Engine\\AssetBag::WEIGHT_JQUERY_UI')«ENDIF») }}
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js'), 99) }}
                 {% if context == 'hookDisplayView' and hasEditPermission %}
                     {% set entityNameTranslated = «IF app.targets('3.0')»'«name.formatForDisplay»'|trans«ELSE»__('«name.formatForDisplay»', '«app.appName.toLowerCase»')«ENDIF» %}
