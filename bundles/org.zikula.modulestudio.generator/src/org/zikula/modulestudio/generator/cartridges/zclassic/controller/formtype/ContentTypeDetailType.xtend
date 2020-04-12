@@ -41,8 +41,8 @@ class ContentTypeDetailType {
         «IF targets('3.0')»
             use Translation\Extractor\Annotation\Ignore;
             use Translation\Extractor\Annotation\Translate;
-            use Zikula\ExtensionsModule\ModuleInterface\Content\AbstractContentFormType;
             use Zikula\ExtensionsModule\ModuleInterface\Content\ContentTypeInterface;
+            use Zikula\ExtensionsModule\ModuleInterface\Content\Form\Type\AbstractContentFormType;
         «ELSE»
             use Zikula\Common\Content\AbstractContentFormType;
             use Zikula\Common\Content\ContentTypeInterface;

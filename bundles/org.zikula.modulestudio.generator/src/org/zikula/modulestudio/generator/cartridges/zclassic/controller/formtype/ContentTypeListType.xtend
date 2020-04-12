@@ -49,8 +49,8 @@ class ContentTypeListType {
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
         «IF targets('3.0')»
-            use Zikula\ExtensionsModule\ModuleInterface\Content\AbstractContentFormType;
             use Zikula\ExtensionsModule\ModuleInterface\Content\ContentTypeInterface;
+            use Zikula\ExtensionsModule\ModuleInterface\Content\Form\Type\AbstractContentFormType;
         «ELSE»
             use Zikula\Common\Content\AbstractContentFormType;
             use Zikula\Common\Content\ContentTypeInterface;
