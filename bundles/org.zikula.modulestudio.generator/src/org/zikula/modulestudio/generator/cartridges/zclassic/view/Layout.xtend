@@ -96,7 +96,7 @@ class Layout {
         {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
         «IF needsJQueryUI»
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-            {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')) }}
+            {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js'«IF targets('3.0')», constant('Zikula\\ThemeModule\\Engine\\AssetBag::WEIGHT_JQUERY_UI'«ENDIF»)) }}
         «ENDIF»
         «IF hasImageFields»
             {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
