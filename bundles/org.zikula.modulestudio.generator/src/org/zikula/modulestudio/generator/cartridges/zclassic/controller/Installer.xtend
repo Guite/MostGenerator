@@ -196,7 +196,7 @@ class Installer {
                     ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
                 );
 
-                return false;
+                throw $exception;
             }
             «IF !variables.empty»
 
@@ -298,8 +298,6 @@ class Installer {
                     '{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $exception->getMessage()]
                 );
-
-                return false;
             }
         «ENDIF»
     '''
@@ -328,7 +326,7 @@ class Installer {
                             ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
                         );
 
-                        return false;
+                        throw $exception;
                     }
             }
             «IF !targets('2.0') && hasHookSubscribers»
@@ -359,7 +357,7 @@ class Installer {
                     ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
                 );
 
-                return false;
+                throw $exception;
             }
             «IF !variables.empty»
 
