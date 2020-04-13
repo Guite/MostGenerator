@@ -130,8 +130,8 @@ class Factory {
             «ENDFOR»
 
             «getIdField»
-            «fh.getterAndSetterMethods(it, 'entityManager', 'EntityManagerInterface', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'entityInitialiser', 'EntityInitialiser', false, true, true, '', '')»
+            «fh.getterMethod(it, 'entityManager', 'EntityManagerInterface', false, true, true && targets('3.0'))»
+            «fh.getterMethod(it, 'entityInitialiser', 'EntityInitialiser', false, true, true && targets('3.0'))»
         }
     '''
 
