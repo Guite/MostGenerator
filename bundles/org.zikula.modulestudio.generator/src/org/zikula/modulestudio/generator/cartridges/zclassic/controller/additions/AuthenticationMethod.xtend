@@ -154,7 +154,7 @@ class AuthenticationMethod {
     '''
 
     def private authMethodBaseImplRemote(Application it) '''
-        public function getId()«IF targets('3.0')»: string«ENDIF»
+        public function getId()
         {
             return null;
         }
@@ -235,7 +235,7 @@ class AuthenticationMethod {
     '''
 
     def private authMethodImplRemote(Application it) '''
-        public function getId()«IF targets('3.0')»: string«ENDIF»
+        public function getId()
         {
             // @todo replace by your own logic
             return parent::getId();
