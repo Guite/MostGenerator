@@ -45,9 +45,18 @@ class MenuBuilder {
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
         use «appNamespace»\«name.formatForCodeCapital»Events;
-        use «appNamespace»\Event\ConfigureItemActionsMenuEvent;
-        «IF hasViewActions»
-            use «appNamespace»\Event\ConfigureViewActionsMenuEvent;
+        «IF targets('3.0')»
+            use «appNamespace»\Event\ItemActionsMenuPostConfigurationEvent;
+            use «appNamespace»\Event\ItemActionsMenuPreConfigurationEvent;
+            «IF hasViewActions»
+                use «appNamespace»\Event\ViewActionsMenuPostConfigurationEvent;
+                use «appNamespace»\Event\ViewActionsMenuPreConfigurationEvent;
+            «ENDIF»
+        «ELSE»
+            use «appNamespace»\Event\ConfigureItemActionsMenuEvent;
+            «IF hasViewActions»
+                use «appNamespace»\Event\ConfigureViewActionsMenuEvent;
+            «ENDIF»
         «ENDIF»
         «IF hasDisplayActions»
             use «appNamespace»\Helper\EntityDisplayHelper;
@@ -219,8 +228,7 @@ class MenuBuilder {
 
             «IF targets('3.0')»
                 $this->eventDispatcher->dispatch(
-                    new Configure«actionType.toFirstUpper»ActionsMenuEvent($this->factory, $menu, $options),
-                    «name.formatForCodeCapital»Events::MENU_«actionType.toUpperCase»ACTIONS_PRE_CONFIGURE
+                    new «actionType.toFirstUpper»ActionsMenuPreConfigurationEvent($this->factory, $menu, $options)
                 );
             «ELSE»
                 $this->eventDispatcher->dispatch(
@@ -237,8 +245,7 @@ class MenuBuilder {
 
             «IF targets('3.0')»
                 $this->eventDispatcher->dispatch(
-                    new Configure«actionType.toFirstUpper»ActionsMenuEvent($this->factory, $menu, $options),
-                    «name.formatForCodeCapital»Events::MENU_«actionType.toUpperCase»ACTIONS_POST_CONFIGURE
+                    new «actionType.toFirstUpper»ActionsMenuPostConfigurationEvent($this->factory, $menu, $options)
                 );
             «ELSE»
                 $this->eventDispatcher->dispatch(

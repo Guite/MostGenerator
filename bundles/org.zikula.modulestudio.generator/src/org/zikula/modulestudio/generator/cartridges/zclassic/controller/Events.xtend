@@ -26,21 +26,49 @@ class Events {
     def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
 
-        fsa.generateClassPair(name.formatForCodeCapital + 'Events.php', eventDefinitionsBaseClass, eventDefinitionsImpl)
-
-        fsa.generateClassPair('Event/ConfigureItemActionsMenuEvent.php', menuEventBaseClass('item'), menuEventImpl('item'))
-        if (hasViewActions) {
-            fsa.generateClassPair('Event/ConfigureViewActionsMenuEvent.php', menuEventBaseClass('view'), menuEventImpl('view'))
+        if (!app.targets('3.0')) {
+            fsa.generateClassPair(name.formatForCodeCapital + 'Events.php', eventDefinitionsBaseClassLegacy, eventDefinitionsImplLegacy)
         }
 
+        if (app.targets('3.0')) {
+            fsa.generateClassPair('Event/ItemActionsMenuPreConfigurationEvent.php', menuEventBaseClass('item', 'pre'), menuEventImpl('item', 'pre'))
+            fsa.generateClassPair('Event/ItemActionsMenuPostConfigurationEvent.php', menuEventBaseClass('item', 'post'), menuEventImpl('item', 'post'))
+            if (hasViewActions) {
+                fsa.generateClassPair('Event/ViewActionsMenuPreConfigurationEvent.php', menuEventBaseClass('view', 'pre'), menuEventImpl('view', 'pre'))
+                fsa.generateClassPair('Event/ViewActionsMenuPostConfigurationEvent.php', menuEventBaseClass('view', 'post'), menuEventImpl('view', 'post'))
+            }
+        } else {
+            fsa.generateClassPair('Event/ConfigureItemActionsMenuEvent.php', menuEventBaseClass('item', ''), menuEventImpl('item', ''))
+            if (hasViewActions) {
+                fsa.generateClassPair('Event/ConfigureViewActionsMenuEvent.php', menuEventBaseClass('view', ''), menuEventImpl('view', ''))
+            }
+        }
+
+        val suffixes = #[
+            'PostLoad',
+            'PrePersist',
+            'PostPersist',
+            'PreRemove',
+            'PostRemove',
+            'PreUpdate',
+            'PostUpdate'
+        ]
         for (entity : getAllEntities) {
-            fsa.generateClassPair('Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
-                entity.filterEventBaseClass, entity.filterEventImpl
-            )
+            if (targets('3.0')) {
+                for (suffix : suffixes) {
+                    fsa.generateClassPair('Event/' + entity.name.formatForCodeCapital + suffix + 'Event.php',
+                        entity.filterEventBaseClass(suffix), entity.filterEventImpl(suffix)
+                    )
+                }
+            } else {
+                fsa.generateClassPair('Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
+                    entity.filterEventBaseClass(''), entity.filterEventImpl('')
+                )
+            }
         }
     }
 
-    def private eventDefinitionsBaseClass(Application it) '''
+    def private eventDefinitionsBaseClassLegacy(Application it) '''
         namespace «appNamespace»\Base;
 
         use «app.appNamespace»\Listener\EntityLifecycleListener;
@@ -51,14 +79,16 @@ class Events {
          */
         abstract class Abstract«name.formatForCodeCapital»Events
         {
-            «menuEventDefinitions»
+            «IF !app.targets('3.0')»
+                «menuEventDefinitionsLegacy»
+            «ENDIF»
             «FOR entity : getAllEntities»
-                «entity.eventDefinitions»
+                «entity.eventDefinitionsLegacy»
             «ENDFOR»
         }
     '''
 
-    def private menuEventDefinitions(Application it) '''
+    def private menuEventDefinitionsLegacy(Application it) '''
         /**
          * The «appName.formatForDB».itemactionsmenu_pre_configure event is thrown before the item actions
          * menu is built in the menu builder.
@@ -110,7 +140,7 @@ class Events {
         «ENDIF»
     '''
 
-    def private eventDefinitions(Entity it) '''
+    def private eventDefinitionsLegacy(Entity it) '''
         «val constPrefix = name.formatForDB.toUpperCase»
         «val entityEventPrefix = app.appName.formatForDB + '.' + name.formatForDB»
 
@@ -199,7 +229,7 @@ class Events {
         «IF app.targets('3.0')»public «ENDIF»const «constPrefix»_POST_UPDATE = '«entityEventPrefix»_post_update';
     '''
 
-    def private eventDefinitionsImpl(Application it) '''
+    def private eventDefinitionsImplLegacy(Application it) '''
         namespace «appNamespace»;
 
         use «appNamespace»\Base\Abstract«name.formatForCodeCapital»Events;
@@ -213,7 +243,7 @@ class Events {
         }
     '''
 
-    def private menuEventBaseClass(Application it, String actionType) '''
+    def private menuEventBaseClass(Application it, String actionType, String eventTimeType) '''
         namespace «app.appNamespace»\Event\Base;
 
         use Knp\Menu\FactoryInterface;
@@ -225,7 +255,11 @@ class Events {
         /**
          * Event base class for extending «actionType» actions menu.
          */
-        class AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent«IF !targets('3.0')» extends Event«ENDIF»
+        «IF app.targets('3.0')»
+            abstract class Abstract«actionType.toFirstUpper»ActionsMenu«eventTimeType.toFirstUpper»ConfigurationEvent
+        «ELSE»
+            class AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent extends Event
+        «ENDIF»
         {
             /**
              * @var FactoryInterface.
@@ -278,21 +312,25 @@ class Events {
         }
     '''
 
-    def private menuEventImpl(Application it, String actionType) '''
+    def private menuEventImpl(Application it, String actionType, String eventTimeType) '''
         namespace «app.appNamespace»\Event;
 
-        use «app.appNamespace»\Event\Base\AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent;
+        use «app.appNamespace»\Event\Base\«IF app.targets('3.0')»Abstract«actionType.toFirstUpper»ActionsMenu«eventTimeType.toFirstUpper»ConfigurationEvent«ELSE»AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent«ENDIF»;
 
         /**
          * Event implementation class for extending «actionType» actions menu.
          */
-        class Configure«actionType.toFirstUpper»ActionsMenuEvent extends AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent
+        «IF app.targets('3.0')»
+            class «actionType.toFirstUpper»ActionsMenu«eventTimeType.toFirstUpper»ConfigurationEvent extends Abstract«actionType.toFirstUpper»ActionsMenu«eventTimeType.toFirstUpper»ConfigurationEvent
+        «ELSE»
+            class Configure«actionType.toFirstUpper»ActionsMenuEvent extends AbstractConfigure«actionType.toFirstUpper»ActionsMenuEvent
+        «ENDIF»
         {
             // feel free to extend the event class here
         }
     '''
 
-    def private filterEventBaseClass(Entity it) '''
+    def private filterEventBaseClass(Entity it, String classSuffix) '''
         namespace «app.appNamespace»\Event\Base;
 
         use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
@@ -303,7 +341,7 @@ class Events {
         /**
          * Event base class for filtering «name.formatForDisplay» processing.
          */
-        class AbstractFilter«name.formatForCodeCapital»Event«IF !application.targets('3.0')» extends Event«ENDIF»
+        class Abstract«IF !app.targets('3.0')»Filter«ENDIF»«name.formatForCodeCapital»«classSuffix»Event«IF !application.targets('3.0')» extends Event«ENDIF»
         {
             /**
              * @var «name.formatForCodeCapital»Entity Reference to treated entity instance.
@@ -339,7 +377,7 @@ class Events {
         }
     '''
 
-    def private filterEventImpl(Entity it) '''
+    def private filterEventImpl(Entity it, String classSuffix) '''
         namespace «app.appNamespace»\Event;
 
         use «app.appNamespace»\Event\Base\AbstractFilter«name.formatForCodeCapital»Event;
@@ -347,7 +385,7 @@ class Events {
         /**
          * Event implementation class for filtering «name.formatForDisplay» processing.
          */
-        class Filter«name.formatForCodeCapital»Event extends AbstractFilter«name.formatForCodeCapital»Event
+        class «IF !app.targets('3.0')»Filter«ENDIF»«name.formatForCodeCapital»«classSuffix»Event extends Abstract«IF !app.targets('3.0')»Filter«ENDIF»«name.formatForCodeCapital»«classSuffix»Event
         {
             // feel free to extend the event class here
         }

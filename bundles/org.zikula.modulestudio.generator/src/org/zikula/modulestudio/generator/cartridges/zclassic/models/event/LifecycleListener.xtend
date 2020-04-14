@@ -346,9 +346,9 @@ class LifecycleListener {
              * @return Event The created event instance
              «ENDIF»
              */
-            protected function createFilterEvent(EntityAccess $entity)
+            protected function createFilterEvent(EntityAccess $entity«IF targets('3.0')», string $classSuffix = ''«ENDIF»)
             {
-                $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst($entity->get_objectType()) . 'Event';
+                $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\«IF !targets('3.0')»Filter«ENDIF»' . ucfirst($entity->get_objectType()) . «IF targets('3.0')»$classSuffix . «ENDIF»'Event';
 
                 return new $filterEventClass($entity);
             }
