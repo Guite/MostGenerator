@@ -61,6 +61,7 @@ class ExtensionMenu {
                  * @var CurrentUserApiInterface
                  */
                 protected $currentUserApi;
+
             «ENDIF»
             /**
              * @var ControllerHelper
