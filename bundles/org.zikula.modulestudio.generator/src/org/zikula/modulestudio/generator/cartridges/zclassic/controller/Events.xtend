@@ -262,7 +262,7 @@ class Events {
         «ENDIF»
         {
             /**
-             * @var FactoryInterface.
+             * @var FactoryInterface
              */
             protected $factory;
 
@@ -394,7 +394,7 @@ class Events {
     def private filterEventImpl(Entity it, String classSuffix) '''
         namespace «app.appNamespace»\Event;
 
-        use «app.appNamespace»\Event\Base\AbstractFilter«name.formatForCodeCapital»Event;
+        use «app.appNamespace»\Event\Base\Abstract«IF !app.targets('3.0')»Filter«ENDIF»«name.formatForCodeCapital»«classSuffix»Event;
 
         /**
          * Event implementation class for filtering «name.formatForDisplay» processing.
