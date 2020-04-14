@@ -203,6 +203,7 @@ class EventAction {
         // create the filter event and dispatch it
         $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
         $event = $this->createFilterEvent(«entityVar»«IF targets('3.0')», 'PreUpdate'«ENDIF»);
+        $event->setEntityChangeSet($args->getEntityChangeSet());
         «IF targets('3.0')»
             $this->eventDispatcher->dispatch($event);
         «ELSE»

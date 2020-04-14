@@ -347,16 +347,20 @@ class Events {
              * @var «name.formatForCodeCapital»Entity Reference to treated entity instance.
              */
             protected $«name.formatForCode»;
+            «IF !app.targets('3.0') || classSuffix == 'PreUpdate'»
 
-            /**
-             * @var array Entity change set for preUpdate events.
-             */
-            protected $entityChangeSet = [];
+                /**
+                 * @var array Entity change set for preUpdate events.
+                 */
+                protected $entityChangeSet = [];
+            «ENDIF»
 
-            public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode», array $entityChangeSet = [])
+            public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode»«IF !app.targets('3.0') || classSuffix == 'PreUpdate'», array $entityChangeSet = []«ENDIF»)
             {
                 $this->«name.formatForCode» = $«name.formatForCode»;
-                $this->entityChangeSet = $entityChangeSet;
+                «IF !app.targets('3.0') || classSuffix == 'PreUpdate'»
+                    $this->entityChangeSet = $entityChangeSet;
+                «ENDIF»
             }
 
             /**
@@ -366,14 +370,24 @@ class Events {
             {
                 return $this->«name.formatForCode»;
             }
+            «IF !app.targets('3.0') || classSuffix == 'PreUpdate'»
 
-            /**
-             * @return array Entity change set
-             */
-            public function getEntityChangeSet()«IF app.targets('3.0')»: array«ENDIF»
-            {
-                return $this->entityChangeSet;
-            }
+                /**
+                 * @return array Entity change set
+                 */
+                public function getEntityChangeSet()«IF app.targets('3.0')»: array«ENDIF»
+                {
+                    return $this->entityChangeSet;
+                }
+
+                /**
+                 * @param array $changeSet Entity change set
+                 */
+                public function setEntityChangeSet(array $changeSet = [])«IF app.targets('3.0')»: void«ENDIF»
+                {
+                    $this->entityChangeSet = $changeSet;
+                }
+            «ENDIF»
         }
     '''
 
