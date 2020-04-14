@@ -35,6 +35,9 @@ class ExtensionMenu {
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         use Zikula\MenuModule\ExtensionMenu\ExtensionMenuInterface;
+        «IF generateAccountApi»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
         use «appNamespace»\Helper\PermissionHelper;
 
@@ -54,6 +57,10 @@ class ExtensionMenu {
                  */
                 protected $variableApi;
 
+                /**
+                 * @var CurrentUserApiInterface
+                 */
+                private $currentUser;
             «ENDIF»
             /**
              * @var ControllerHelper
@@ -69,6 +76,7 @@ class ExtensionMenu {
                 FactoryInterface $factory,
                 «IF generateAccountApi»
                     VariableApiInterface $variableApi,
+                    CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
                 ControllerHelper $controllerHelper,
                 PermissionHelper $permissionHelper
@@ -76,6 +84,7 @@ class ExtensionMenu {
                 $this->factory = $factory;
                 «IF generateAccountApi»
                     $this->variableApi = $variableApi;
+                    $this->currentUserApi = $currentUserApi;
                 «ENDIF»
                 $this->controllerHelper = $controllerHelper;
                 $this->permissionHelper = $permissionHelper;
@@ -92,6 +101,9 @@ class ExtensionMenu {
 
                 if (self::TYPE_ACCOUNT === $type) {
                     «IF generateAccountApi»
+                        if (!$this->currentUserApi->isLoggedIn()) {
+                            return null;
+                        }
                         if (!$this->permissionHelper->hasPermission(ACCESS_OVERVIEW)) {
                             return null;
                         }
