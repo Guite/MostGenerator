@@ -41,6 +41,9 @@ class Installer {
             use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Contracts\Translation\TranslatorInterface;
             use Zikula\Bundle\CoreBundle\Doctrine\Helper\SchemaHelper;
+            «IF hasUploads»
+                use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+            «ENDIF»
         «ENDIF»
         «IF !targets('3.0')»
             use Zikula\Core\AbstractExtensionInstaller;
@@ -137,7 +140,8 @@ class Installer {
                 RequestStack $requestStack,
                 TranslatorInterface $translator,
                 VariableApiInterface $variableApi,
-                LoggerInterface $logger«IF hasUploads || hasCategorisableEntities»,
+                LoggerInterface $logger«IF hasUploads»,
+                ZikulaHttpKernelInterface $kernel«ENDIF»«IF hasUploads || hasCategorisableEntities»,
                 CurrentUserApiInterface $currentUserApi«ENDIF»«IF hasCategorisableEntities»,
                 CategoryRepositoryInterface $categoryRepository,
                 CategoryRegistryRepositoryInterface $categoryRegistryRepository,
@@ -148,6 +152,9 @@ class Installer {
             ) {
                 parent::__construct($extension, $managerRegistry, $schemaTool, $requestStack, $translator, $variableApi);
                 $this->logger = $logger;
+                «IF hasUploads»
+                    $this->kernel = $kernel;
+                «ENDIF»
                 «IF hasUploads || hasCategorisableEntities»
                     $this->currentUserApi = $currentUserApi;
                 «ENDIF»
@@ -271,6 +278,7 @@ class Installer {
             try {
                 «IF targets('3.0')»
                     $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
+                        $this->kernel,
                         $this->getTranslator(),
                         $this->filesystem,
                         $this->requestStack,
