@@ -208,7 +208,7 @@ class Installer {
                 // add default entry for category registry (property named Main)
                 «IF targets('3.0')»
                     $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
-                        $this->translator,
+                        $this->getTranslator(),
                         $this->requestStack,
                         $this->logger,
                         $this->currentUserApi,
@@ -271,7 +271,7 @@ class Installer {
             try {
                 «IF targets('3.0')»
                     $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
-                        $this->translator,
+                        $this->getTranslator(),
                         $this->filesystem,
                         $this->requestStack,
                         $this->logger,
