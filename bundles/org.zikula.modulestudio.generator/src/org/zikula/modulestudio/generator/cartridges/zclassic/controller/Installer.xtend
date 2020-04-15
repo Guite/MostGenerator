@@ -276,7 +276,7 @@ class Installer {
                         $this->requestStack,
                         $this->logger,
                         $this->currentUserApi,
-                        $this->variableApi,
+                        $this->getVariableApi(),
                         $this->dataDirectory
                     );
                 «ELSE»
