@@ -234,8 +234,8 @@ class Property {
                 «ENDIF»
             } else {
                 $this->set«name.formatForCodeCapital»FileName('');
-                $this->set«name.formatForCodeCapital»Url('');
-                $this->set«name.formatForCodeCapital»Meta([]);
+                $this->set«name.formatForCodeCapital»Url('');«/* disabled to avoid persisting empty meta array after fresh upload
+                $this->set«name.formatForCodeCapital»Meta([]);*/»
             }
 
             return $this->«name.formatForCode»;
