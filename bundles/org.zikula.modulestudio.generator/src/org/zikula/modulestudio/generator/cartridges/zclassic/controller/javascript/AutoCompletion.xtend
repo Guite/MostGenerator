@@ -204,8 +204,8 @@ class AutoCompletion {
             // clear values and ensure starting state
             «vendorAndName»ResetAutoCompletion(idPrefix);
 
-            jQuery.each(«vendorAndName»InlineEditHandlers, function (key, editHandler) {
-                if (editHandler.prefix !== (idPrefix + 'SelectorDoNew') || editHandler.inputType !== 'autocomplete') {
+            jQuery('.relation-editing-definition').each(function (index) {
+                if (jQuery(this).data('prefix') !== (idPrefix + 'SelectorDoNew') || jQuery(this).data('input-type') !== 'autocomplete') {
                     return;
                 }
 
@@ -227,7 +227,7 @@ class AutoCompletion {
                             acUrlArgs.exclude = jQuery('#' + idPrefix).val();
                         }
 
-                        jQuery.getJSON(Routing.generate(editHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function (data) {
+                        jQuery.getJSON(Routing.generate(jQuery(this).data('module-name').toLowerCase() + '_ajax_getitemlistautocompletion', acUrlArgs), function (data) {
                             response(data);
                         });
                     },
