@@ -118,21 +118,25 @@ class Layout {
         «IF targets('3.0') && !isSystemModule»
             {% trans_default_domain 'messages' %}
         «ENDIF»
-        {% block header %}
-            {% if not app.request.query.getBoolean('raw', false) %}
-                {{ adminHeader() }}
-            {% endif %}
-            {{ parent() }}
-        {% endblock %}
+        «IF !targets('3.0')»
+            {% block header %}
+                {% if not app.request.query.getBoolean('raw', false) %}
+                    {{ adminHeader() }}
+                {% endif %}
+                {{ parent() }}
+            {% endblock %}
+        «ENDIF»
         {% block appTitle %}{# empty on purpose #}{% endblock %}
         {% block titleArea %}
             <h3><i class="fa«IF targets('3.0')»s«ENDIF» fa-{% block admin_page_icon %}{% endblock %}"></i> {% block title %}{% endblock %}</h3>
         {% endblock %}
-        {% block footer %}
-            {% if not app.request.query.getBoolean('raw', false) %}
-                {{ adminFooter() }}
-            {% endif %}
-        {% endblock %}
+        «IF !targets('3.0')»
+            {% block footer %}
+                {% if not app.request.query.getBoolean('raw', false) %}
+                    {{ adminFooter() }}
+                {% endif %}
+            {% endblock %}
+        «ENDIF»
     '''
 
     def formBaseTemplate(Application it) '''
