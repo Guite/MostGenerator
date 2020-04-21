@@ -458,6 +458,7 @@ class ControllerHelper {
             } else {
                 // the current offset which is used to calculate the pagination
                 $currentPage = $request->query->getInt('«IF targets('3.0')»page«ELSE»pos«ENDIF»', 1);
+                $templateParameters['currentPage'] = $currentPage;
 
                 // retrieve item list with pagination
                 «IF targets('3.0')»
