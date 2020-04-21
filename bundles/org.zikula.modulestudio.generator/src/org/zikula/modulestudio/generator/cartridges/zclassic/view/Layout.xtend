@@ -289,7 +289,7 @@ class Layout {
         <!DOCTYPE html>
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
-            <title>{{ block('pageTitle')|default(block('title')) }}</title>
+            <title>{{ block('pageTitle') is defined ? block('pageTitle') : block('title') }}</title>
         </head>
         <body>
             «IF generateExternalControllerAndFinder»
