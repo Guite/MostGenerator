@@ -47,6 +47,9 @@ class Layout {
 
         fileName = 'Form/bootstrap_' + (if (targets('3.0')) '4' else '3') + templateExtension
         fsa.generateFile(templatePath + fileName, formBaseTemplate)
+
+        fileName = 'raw.html.twig'
+        fsa.generateFile(templatePath + fileName, rawPageImpl)
     }
 
     def baseTemplate(Application it) '''
@@ -277,11 +280,6 @@ class Layout {
             {% endblock %}
         «ENDIF»
     '''
-
-    def rawPageFile(Application it) {
-        val fileName = 'raw.html.twig'
-        fsa.generateFile(getViewPath + fileName, rawPageImpl)
-    }
 
     def rawPageImpl(Application it) '''
         {# purpose of this template: display pages without the theme #}

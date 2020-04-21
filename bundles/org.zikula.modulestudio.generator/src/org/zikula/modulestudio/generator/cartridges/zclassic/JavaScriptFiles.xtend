@@ -74,8 +74,6 @@ class JavaScriptFiles {
         if (generatePoweredByBacklinksIntoFooterTemplates) {
             new BacklinkIntegrator().generate(it, fsa)
         }
-        if (generateExternalControllerAndFinder || !joinRelations.empty) {
-            new RawPageFunctions().generate(it, fsa)
-        }
+        new RawPageFunctions().generate(it, fsa)
     }
 }

@@ -86,9 +86,6 @@ class Views {
         if (hasFormAwareHookProviders || hasUiHooksProviders) {
             new HookProviderView().generate(it, fsa)
         }
-        if (generateExternalControllerAndFinder || !joinRelations.empty) {
-            layoutHelper.rawPageFile(it)
-        }
         if (generatePdfSupport) {
             layoutHelper.pdfHeaderFile(it)
         }
