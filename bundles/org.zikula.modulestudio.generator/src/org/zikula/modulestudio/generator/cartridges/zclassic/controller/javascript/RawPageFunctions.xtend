@@ -11,9 +11,6 @@ class RawPageFunctions {
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!generatePoweredByBacklinksIntoFooterTemplates) {
-            return
-        }
         'Generating JavaScript for raw pages'.printIfNotTesting(fsa)
         val fileName = appName + '.RawPage.js'
         fsa.generateFile(getAppJsPath + fileName, generate)
