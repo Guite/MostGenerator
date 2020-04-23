@@ -162,6 +162,9 @@ class UserListener {
          *
          * The user:
          *     `echo 'UID: ' . $event->getUser()->getUid();`
+         *
+         * Check if user is really deleted or "ghosted":
+         *     `if ($event->isFullDeletion())`
          «ELSE»
          «commonExample.generalEventProperties(it, false)»
          «ENDIF»
@@ -170,6 +173,10 @@ class UserListener {
         {
             «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
                 «IF targets('3.0')»
+                    if (!$event->isFullDeletion()) {
+                        return;
+                    }
+
                     $userId = $event->getUser()->getUid();
                 «ELSE»
                     $userId = (int) $event->getSubject();
