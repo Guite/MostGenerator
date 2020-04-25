@@ -25,7 +25,9 @@ class NotificationHelper {
     def private notificationHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF !targets('3.0')»
+        «IF targets('3.0')»
+            use Psr\Log\LoggerInterface;
+        «ELSE»
             use Swift_Message;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
@@ -103,6 +105,18 @@ class NotificationHelper {
          * @var «IF targets('3.0')»MailerInterface«ELSE»MailerApiInterface«ENDIF»
          */
         protected $mailer;
+        «IF targets('3.0')»
+
+            /**
+             * @var LoggerInterface
+             */
+            protected $mailLogger;
+
+            /**
+             * @var bool
+             */
+            protected $mailLoggingEnabled;
+        «ENDIF»
 
         /**
          * @var GroupRepositoryInterface
@@ -167,6 +181,9 @@ class NotificationHelper {
             VariableApiInterface $variableApi,
             «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
             «IF targets('3.0')»MailerInterface $mailer«ELSE»MailerApiInterface $mailerApi«ENDIF»,
+            «IF targets('3.0')»
+                LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
+            «ENDIF»
             GroupRepositoryInterface $groupRepository,
             UserRepositoryInterface $userRepository,
             EntityDisplayHelper $entityDisplayHelper,
@@ -179,6 +196,10 @@ class NotificationHelper {
             $this->variableApi = $variableApi;
             $this->twig = $twig;
             $this->mailer = «IF targets('3.0')»$mailer«ELSE»$mailerApi«ENDIF»;
+            «IF targets('3.0')»
+                $this->mailLogger = $mailLogger;
+                $this->mailLoggingEnabled = $variableApi->get('ZikulaMailerModule', 'enableLogging', false);
+            «ENDIF»
             $this->groupRepository = $groupRepository;
             $this->userRepository = $userRepository;
             $this->entityDisplayHelper = $entityDisplayHelper;
@@ -397,8 +418,6 @@ class NotificationHelper {
                     'recipient' => $recipient,
                     'mailData' => $mailData
                 ]);
-                $altBody = '';
-                $html = true;
 
                 $email = (new Email())
                     ->from(new Address($adminMail, $siteName))
@@ -408,8 +427,18 @@ class NotificationHelper {
                 ;    
 
                 $this->mailer->send($email);
+
+                if ($this->mailLoggingEnabled) {
+                    $this->mailLogger->info(sprintf('Email sent to %s', $recipient['email']), [
+                        'in' => __METHOD__
+                    ]);
+                }
             }
         } catch (TransportExceptionInterface $exception) {
+            $this->mailLogger->error($exception->getMessage(), [
+                'in' => __METHOD__
+            ]);
+
             return false;
         }
 
