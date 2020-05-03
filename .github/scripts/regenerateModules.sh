@@ -8,6 +8,7 @@ PROJECTS=(
     "zikula-modules/MultiHook"
     "zikula-modules/Multisites"
     "zikula-modules/News"
+    "zikula-modules/Ratings"
 )
 
 # loop through projects
