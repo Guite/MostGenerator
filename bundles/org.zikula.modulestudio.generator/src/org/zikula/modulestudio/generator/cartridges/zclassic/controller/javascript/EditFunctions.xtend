@@ -137,7 +137,7 @@ class EditFunctions {
 
                 if (jQuery('#moderationFieldsSection').length > 0) {
                     jQuery('#moderationFieldsContent').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
-                    jQuery('#moderationFieldsSection legend').addClass('pointer').click(function (event) {
+                    jQuery('#moderationFieldsSection legend').«IF targets('3.0')»css({cursor: 'pointer'})«ELSE»addClass('pointer')«ENDIF».click(function (event) {
                         if (jQuery('#moderationFieldsContent').hasClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»')) {
                             jQuery('#moderationFieldsContent').removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
                             jQuery(this).find('i').removeClass('fa-expand').addClass('fa-compress');
