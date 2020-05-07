@@ -74,9 +74,9 @@ class StandardFields {
             <dd class="avatar">{{ userAvatar(obj.updatedBy.uid, {rating: 'g'}) }}</dd>
             <dd>
                 «IF targets('3.0')»
-                    {{ 'Updated by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedDate|format_datetime('medium', 'short')})|raw }}
+                    {{ 'Last update by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedDate|format_datetime('medium', 'short')})|raw }}
                 «ELSE»
-                    {{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
+                    {{ __f('Last update by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
                 «ENDIF»
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.updatedBy.uid|messageSendLink(urlOnly=true) %}
@@ -121,11 +121,11 @@ class StandardFields {
         {% endif %}
         {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
             «IF targets('3.0')»
-                <li>{% trans with {'%user%': obj.updatedBy.uname} %}Updated by %user%{% endtrans %}</li>
-                <li>{% trans with {'%date%': obj.updatedDate|format_datetime('medium', 'short')} %}Updated on %date%{% endtrans %}</li>
+                <li>{% trans with {'%user%': obj.updatedBy.uname} %}Last update by %user%{% endtrans %}</li>
+                <li>{% trans with {'%date%': obj.updatedDate|format_datetime('medium', 'short')} %}Last update on %date%{% endtrans %}</li>
             «ELSE»
-                <li>{{ __f('Updated by %user', {'%user': obj.updatedBy.uname}) }}</li>
-                <li>{{ __f('Updated on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
+                <li>{{ __f('Last update by %user', {'%user': obj.updatedBy.uname}) }}</li>
+                <li>{{ __f('Last update on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
             «ENDIF»
         {% endif %}
         «FOR entity : getLoggableEntities»
