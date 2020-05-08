@@ -373,7 +373,7 @@ class Repository {
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
             $qb = $this->addIdListFilter($idList, $qb);
 
-            if (!$slimMode && null !== $this->collectionFilterHelper) {
+            if (null !== $this->collectionFilterHelper) {
                 $qb = $this->collectionFilterHelper->applyDefaultFilters('«name.formatForCode»', $qb);
             }
 
@@ -425,7 +425,7 @@ class Repository {
                 $qb = $this->addExclusion($qb, [$excludeId]);
             }
 
-            if (!$slimMode && null !== $this->collectionFilterHelper) {
+            if (null !== $this->collectionFilterHelper) {
                 $qb = $this->collectionFilterHelper->applyDefaultFilters('«name.formatForCode»', $qb);
             }
 
@@ -485,7 +485,7 @@ class Repository {
             $slimMode = false
         ) {«ENDIF»
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
-            if (!$slimMode && null !== $this->collectionFilterHelper) {
+            if (null !== $this->collectionFilterHelper) {
                 $qb = $this->collectionFilterHelper->addCommonViewFilters('«name.formatForCode»', $qb);
             }
 
