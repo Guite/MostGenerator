@@ -209,7 +209,7 @@ class SharedFormTypeFields {
             «val useCustomSwitch = it instanceof BooleanField && application.targets('3.0')»
             «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
             $builder->add('«name.formatForCode»', «formType»Type::class, [
-                'label' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«name.formatForDisplayCapital»:'«IF !application.targets('3.0')»)«ENDIF»,
+                'label' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«label»:'«IF !application.targets('3.0')»)«ENDIF»,
                 «IF null !== documentation && !documentation.empty»
                     'label_attr' => [
                         'class' => 'tooltips«IF useCustomSwitch» switch-custom«ELSEIF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-«IF application.targets('3.0')»custom«ELSE»inline«ENDIF»«ENDIF»',
@@ -261,6 +261,37 @@ class SharedFormTypeFields {
             ]);
         «ENDIF»
     '''
+
+    def private label(DerivedField it) {
+        if (null !== varContainer) {
+            // avoid unneeded translation messages that are only different because of entity and field names
+            if (documentation == 'Whether to enable shrinking huge images to maximum dimensions. Stores downscaled version of the original image.') {
+                'Enable shrinking'
+            } else if (documentation == 'The maximum image width in pixels.') {
+                'Shrink width'
+            } else if (documentation == 'The maximum image height in pixels.') {
+                'Shrink height'
+            } else if (documentation == 'Thumbnail mode (inset or outbound).') {
+                'Thumbnail mode'
+            } else if (documentation == 'Thumbnail width on view pages in pixels.') {
+                'Thumbnail width list'
+            } else if (documentation == 'Thumbnail height on view pages in pixels.') {
+                'Thumbnail height list'
+            } else if (documentation == 'Thumbnail width on display pages in pixels.') {
+                'Thumbnail width detail'
+            } else if (documentation == 'Thumbnail height on display pages in pixels.') {
+                'Thumbnail height detail'
+            } else if (documentation == 'Thumbnail width on edit pages in pixels.') {
+                'Thumbnail width edit'
+            } else if (documentation == 'Thumbnail height on edit pages in pixels.') {
+                'Thumbnail height edit'
+            } else {
+                '''«name.formatForDisplayCapital»'''
+            }
+        } else {
+            '''«name.formatForDisplayCapital»'''
+        }
+    }
 
     def private helpAttribute(DerivedField it) {
         val messages = if (application.targets('3.0')) helpMessages else helpMessagesLegacy
