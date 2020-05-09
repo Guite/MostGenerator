@@ -258,11 +258,11 @@ class PermissionHelper {
             public function filterCollection($objectType, $entities, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: array«ENDIF»
             {
                 $filteredEntities = [];
-                foreach ($entities as $«name.formatForCode») {
-                    if (!$this->hasEntityPermission($«name.formatForCode», $permissionLevel, $userId)) {
+                foreach ($entities as $entity) {
+                    if (!$this->hasEntityPermission($entity, $permissionLevel, $userId)) {
                         continue;
                     }
-                    $filteredEntities[] = $«name.formatForCode»;
+                    $filteredEntities[] = $entity;
                 }
 
                 return $filteredEntities;

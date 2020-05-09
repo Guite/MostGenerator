@@ -246,7 +246,9 @@ class WorkflowEventsListener {
             return;
         }
 
-        $objectType = $entity->get_objectType();
+        «IF needsApproval || !getAllEntities.filter[ownerPermission].empty || (!getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty)»
+            $objectType = $entity->get_objectType();
+        «ENDIF»
         $permissionLevel = ACCESS_READ;
         $transitionName = $event->getTransition()->getName();
         «IF !targets('2.0')»
