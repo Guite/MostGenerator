@@ -112,13 +112,15 @@ class ContentTypeDetail {
         {
             $data = parent::getData();
 
-            $contextArgs = ['name' => 'detail'];
-            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('contentType', $contextArgs);
+            «IF !isSystemModule»
+                $contextArgs = ['name' => 'detail'];
+            «ENDIF»
+            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('contentType'«IF !isSystemModule», $contextArgs«ENDIF»);
             if (
                 !isset($data['objectType'])
                 || !in_array($data['objectType'], $allowedObjectTypes, true)
             ) {
-                $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
+                $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType'«IF !isSystemModule», $contextArgs«ENDIF»);
                 $this->data = $data;
             }
 
@@ -280,9 +282,11 @@ class ContentTypeDetail {
         {
             $controllerHelper = $this->container->get('«appService».controller_helper');
 
-            $contextArgs = ['name' => 'detail'];
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $contextArgs))) {
-                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $contextArgs);
+            «IF !isSystemModule»
+                $contextArgs = ['name' => 'detail'];
+            «ENDIF»
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType'«IF !isSystemModule», $contextArgs«ENDIF»))) {
+                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType'«IF !isSystemModule», $contextArgs«ENDIF»);
             }
 
             $this->objectType = $data['objectType'];

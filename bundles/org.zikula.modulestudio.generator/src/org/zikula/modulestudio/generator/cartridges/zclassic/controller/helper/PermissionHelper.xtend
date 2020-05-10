@@ -249,13 +249,17 @@ class PermissionHelper {
             /**
              * Filters a given collection of entities based on different permission checks.
              *
-             * @param array|ArrayCollection $entities The given list of entities
              «IF !targets('3.0')»
+             «IF !isSystemModule»
+             * @param string $objectType
+             «ENDIF»
+             * @param array|ArrayCollection $entities The given list of entities
+             * @param int $userId
              *
              * @return array The filtered list of entities
              «ENDIF»
              */
-            public function filterCollection($objectType, $entities, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: array«ENDIF»
+            public function filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: array«ENDIF»
             {
                 $filteredEntities = [];
                 foreach ($entities as $entity) {

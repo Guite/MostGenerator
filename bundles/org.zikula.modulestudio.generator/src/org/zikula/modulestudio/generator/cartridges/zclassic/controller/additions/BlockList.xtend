@@ -253,22 +253,26 @@ class BlockList {
         $properties = array_merge($defaults, $properties);
 
         «IF targets('3.0')»
-            $contextArgs = ['name' => 'list'];
-            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block', $contextArgs);
+            «IF !isSystemModule»
+                $contextArgs = ['name' => 'list'];
+            «ENDIF»
+            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»);
             if (
                 !isset($properties['objectType'])
                 || !in_array($properties['objectType'], $allowedObjectTypes, true)
             ) {
-                $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
+                $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
             }
         «ELSE»
             $controllerHelper = $this->get('«appService».controller_helper');
-            $contextArgs = ['name' => 'list'];
+            «IF !isSystemModule»
+                $contextArgs = ['name' => 'list'];
+            «ENDIF»
             if (
                 !isset($properties['objectType'])
-                || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs), true)
+                || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»), true)
             ) {
-                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
+                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
             }
         «ENDIF»
 
@@ -306,13 +310,13 @@ class BlockList {
             if ($hasCategories) {
                 «IF targets('3.0')»
                     // apply category filters
-                    if (is_array($properties['categories']) && count($properties['categories']) > 0) {
+                    if (is_array($properties['categories']) && 0 < count($properties['categories'])) {
                         $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
                     }
                 «ELSE»
                     $categoryHelper = $this->get('«appService».category_helper');
                     // apply category filters
-                    if (is_array($properties['categories']) && count($properties['categories']) > 0) {
+                    if (is_array($properties['categories']) && 0 < count($properties['categories'])) {
                         $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
                     }
                 «ENDIF»
@@ -336,7 +340,7 @@ class BlockList {
         «ENDIF»
 
         // filter by permissions
-        $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_READ);
+        $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
 
         // set a block title
         if (empty($properties['title'])) {

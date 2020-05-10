@@ -128,8 +128,8 @@ class SearchHelper {
             ];
 
             $allowedTypes = $this->controllerHelper->getObjectTypes(
-                'helper',
-                ['helper' => 'search', 'action' => 'getSearchTypes']
+                'helper'«IF !isSystemModule»,
+                ['helper' => 'search', 'action' => 'getSearchTypes']«ENDIF»
             );
             $allowedSearchTypes = [];
             foreach ($searchTypes as $searchType => $typeInfo) {

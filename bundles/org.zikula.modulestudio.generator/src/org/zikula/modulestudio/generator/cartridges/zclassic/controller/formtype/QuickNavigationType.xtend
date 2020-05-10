@@ -678,7 +678,9 @@ class QuickNavigationType {
         $permLevel = «(if (useTarget) target else source).getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createViewAction)»;
 
         $entities = $this->permissionHelper->filterCollection(
-            $objectType,
+            «IF !app.isSystemModule»
+                $objectType,
+            «ENDIF»
             $entities,
             $permLevel
         );

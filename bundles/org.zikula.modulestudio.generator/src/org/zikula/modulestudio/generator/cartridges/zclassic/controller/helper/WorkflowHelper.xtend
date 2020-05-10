@@ -219,7 +219,7 @@ class WorkflowHelper {
                 $actionId = $action->getName();
                 $actions[$actionId] = [
                     'id' => $actionId,
-                    'title' => $this->getTitleForAction($currentState, $actionId),
+                    'title' => $this->getTitleForAction(«IF !isSystemModule»$currentState, «ENDIF»$actionId),
                     'buttonClass' => $this->getButtonClassForAction($actionId)
                 ];
             }
@@ -231,13 +231,15 @@ class WorkflowHelper {
          * Returns a translatable title for a certain action.
          «IF !targets('3.0')»
          *
+         «IF !isSystemModule»
          * @param string $currentState Current state of the entity
+         «ENDIF»
          * @param string $actionId Id of the treated action
          *
          * @return string The action title
          «ENDIF»
          */
-        protected function getTitleForAction(«IF targets('3.0')»string «ENDIF»$currentState, «IF targets('3.0')»string «ENDIF»$actionId)«IF targets('3.0')»: string«ENDIF»
+        protected function getTitleForAction(«IF !isSystemModule»«IF targets('3.0')»string «ENDIF»$currentState, «ENDIF»«IF targets('3.0')»string «ENDIF»$actionId)«IF targets('3.0')»: string«ENDIF»
         {
             $title = '';
             switch ($actionId) {

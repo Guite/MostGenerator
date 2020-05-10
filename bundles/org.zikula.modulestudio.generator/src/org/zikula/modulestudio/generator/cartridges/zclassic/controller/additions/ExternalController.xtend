@@ -134,9 +134,11 @@ class ExternalController {
         «IF !targets('3.0')»
             $controllerHelper = $this->get('«appService».controller_helper');
         «ENDIF»
-        $contextArgs = ['controller' => 'external', 'action' => 'display'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
+        «IF !isSystemModule»
+            $contextArgs = ['controller' => 'external', 'action' => 'display'];
+        «ENDIF»
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
         }
 
         «IF !targets('3.0')»
@@ -389,7 +391,7 @@ class ExternalController {
         «ENDIF»
 
         // filter by permissions
-        $entities = «IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection($objectType, $entities, ACCESS_READ);
+        $entities = «IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
 
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();

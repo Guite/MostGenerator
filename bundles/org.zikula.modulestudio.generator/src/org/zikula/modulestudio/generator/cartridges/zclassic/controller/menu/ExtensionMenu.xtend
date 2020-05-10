@@ -93,8 +93,10 @@ class ExtensionMenu {
 
             public function get(string $type = self::TYPE_ADMIN): ?ItemInterface
             {
-                $contextArgs = ['api' => 'extensionMenu', 'action' => 'get'];
-                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api', $contextArgs);
+                «IF !isSystemModule»
+                    $contextArgs = ['api' => 'extensionMenu', 'action' => 'get'];
+                «ENDIF»
+                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api'«IF !isSystemModule», $contextArgs«ENDIF»);
         
                 $permLevel = self::TYPE_ADMIN === $type ? ACCESS_ADMIN : ACCESS_READ;
 
@@ -230,8 +232,10 @@ class ExtensionMenu {
              */
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {
-                $contextArgs = ['api' => 'linkContainer', 'action' => 'getLinks'];
-                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api', $contextArgs);
+                «IF !isSystemModule»
+                    $contextArgs = ['api' => 'linkContainer', 'action' => 'getLinks'];
+                «ENDIF»
+                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api'«IF !isSystemModule», $contextArgs«ENDIF»);
         
                 $permLevel = LinkContainerInterface::TYPE_ADMIN === $type ? ACCESS_ADMIN : ACCESS_READ;
 

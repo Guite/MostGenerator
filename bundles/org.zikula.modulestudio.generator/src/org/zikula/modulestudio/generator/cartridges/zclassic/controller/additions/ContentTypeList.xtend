@@ -152,13 +152,15 @@ class ContentTypeList {
         {
             $data = parent::getData();
 
-            $contextArgs = ['name' => 'list'];
-            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('contentType', $contextArgs);
+            «IF !isSystemModule»
+                $contextArgs = ['name' => 'list'];
+            «ENDIF»
+            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('contentType'«IF !isSystemModule», $contextArgs«ENDIF»);
             if (
                 !isset($data['objectType'])
                 || !in_array($data['objectType'], $allowedObjectTypes, true)
             ) {
-                $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType', $contextArgs);
+                $data['objectType'] = $this->controllerHelper->getDefaultObjectType('contentType'«IF !isSystemModule», $contextArgs«ENDIF»);
             }
 
             if (!isset($data['template'])) {
@@ -229,7 +231,7 @@ class ContentTypeList {
             «ENDIF»
 
             // filter by permissions
-            $entities = $this->modulePermissionHelper->filterCollection($objectType, $entities, ACCESS_READ);
+            $entities = $this->modulePermissionHelper->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
 
             $data = $this->data;
             $data['items'] = $entities;
@@ -473,9 +475,11 @@ class ContentTypeList {
         {
             $controllerHelper = $this->container->get('«appService».controller_helper');
 
-            $contextArgs = ['name' => 'list'];
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $contextArgs))) {
-                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $contextArgs);
+            «IF !isSystemModule»
+                $contextArgs = ['name' => 'list'];
+            «ENDIF»
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType'«IF !isSystemModule», $contextArgs«ENDIF»))) {
+                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType'«IF !isSystemModule», $contextArgs«ENDIF»);
             }
 
             $this->objectType = $data['objectType'];
@@ -577,7 +581,7 @@ class ContentTypeList {
             }
 
             // filter by permissions
-            $entities = $this->container->get('«appService».permission_helper')->filterCollection($objectType, $entities, ACCESS_READ);
+            $entities = $this->container->get('«appService».permission_helper')->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
 
             $data = [
                 'objectType' => $this->objectType,

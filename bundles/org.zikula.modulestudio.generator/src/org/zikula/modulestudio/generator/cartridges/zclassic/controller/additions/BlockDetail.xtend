@@ -125,22 +125,26 @@ class BlockDetail {
             }
 
             «IF targets('3.0')»
-                $contextArgs = ['name' => 'detail'];
-                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block', $contextArgs);
+                «IF !isSystemModule»
+                    $contextArgs = ['name' => 'detail'];
+                «ENDIF»
+                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»);
                 if (
                     !isset($properties['objectType'])
                     || !in_array($properties['objectType'], $allowedObjectTypes, true)
                 ) {
-                    $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block', $contextArgs);
+                    $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
                 }
             «ELSE»
                 $controllerHelper = $this->get('«appService».controller_helper');
-                $contextArgs = ['name' => 'detail'];
+                «IF !isSystemModule»
+                    $contextArgs = ['name' => 'detail'];
+                «ENDIF»
                 if (
                     !isset($properties['objectType'])
-                    || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $contextArgs), true)
+                    || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»), true)
                 ) {
-                    $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $contextArgs);
+                    $properties['objectType'] = $controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
                 }
             «ENDIF»
 

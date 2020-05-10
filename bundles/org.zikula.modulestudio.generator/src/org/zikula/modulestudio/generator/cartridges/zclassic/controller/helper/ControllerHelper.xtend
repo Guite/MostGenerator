@@ -260,12 +260,14 @@ class ControllerHelper {
          *
          * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler,
          *                        block, contentType, mailz)
+         «IF !isSystemModule»
          * @param array $args Additional arguments
+         «ENDIF»
          «ENDIF»
          *
          * @return string[] List of allowed object types
          */
-        public function getObjectTypes(«IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
+        public function getObjectTypes(«IF targets('3.0')»string «ENDIF»$context = ''«IF !isSystemModule», array $args = []«ENDIF»)«IF targets('3.0')»: array«ENDIF»
         {
             $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
             if (!in_array($context, $allowedContexts, true)) {
@@ -288,12 +290,14 @@ class ControllerHelper {
          *
          * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler,
          *                        block, contentType, mailz)
+         «IF !isSystemModule»
          * @param array $args Additional arguments
+         «ENDIF»
          *
          * @return string The name of the default object type
          «ENDIF»
          */
-        public function getDefaultObjectType(«IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: string«ENDIF»
+        public function getDefaultObjectType(«IF targets('3.0')»string «ENDIF»$context = ''«IF !isSystemModule», array $args = []«ENDIF»)«IF targets('3.0')»: string«ENDIF»
         {
             $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
             if (!in_array($context, $allowedContexts, true)) {
@@ -327,7 +331,7 @@ class ControllerHelper {
             «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'view'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
                 throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
 
@@ -565,7 +569,7 @@ class ControllerHelper {
             «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
                 throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
             «IF hasHookSubscribers»
@@ -648,7 +652,7 @@ class ControllerHelper {
             array $templateParameters = []
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
                 throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
 
@@ -676,7 +680,7 @@ class ControllerHelper {
             «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
                 throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
 
@@ -718,7 +722,7 @@ class ControllerHelper {
                 if (in_array($args['action'], ['index', 'view'])) {
                     $parameters = array_merge(
                         $parameters,
-                        $this->collectionFilterHelper->getViewQuickNavParameters($objectType, $context, $args)
+                        $this->collectionFilterHelper->getViewQuickNavParameters($objectType«IF !isSystemModule», $context, $args«ENDIF»)
                     );
                 }
                 «IF !getUploadEntities.empty»

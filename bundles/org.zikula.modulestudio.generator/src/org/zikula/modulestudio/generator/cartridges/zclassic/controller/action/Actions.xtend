@@ -175,7 +175,9 @@ class Actions {
 
         // filter by permissions
         $templateParameters['items'] = $permissionHelper->filterCollection(
-            $objectType,
+            «IF !app.isSystemModule»
+                $objectType,
+            «ENDIF»
             $templateParameters['items'],
             $permLevel
         );

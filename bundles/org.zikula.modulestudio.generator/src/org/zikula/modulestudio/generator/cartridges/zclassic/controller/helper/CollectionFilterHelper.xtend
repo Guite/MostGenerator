@@ -138,21 +138,25 @@ class CollectionFilterHelper {
          «IF !targets('3.0')»
          *
          * @param string $objectType Name of treated entity type
+         «IF !isSystemModule»
          * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
          * @param array $args Additional arguments
+         «ENDIF»
          *
          * @return array List of template variables to be assigned
          «ENDIF»
          */
-        public function getViewQuickNavParameters(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
+        public function getViewQuickNavParameters(«IF targets('3.0')»string «ENDIF»$objectType = ''«IF !isSystemModule», «IF targets('3.0')»string «ENDIF»$context = '', array $args = []«ENDIF»)«IF targets('3.0')»: array«ENDIF»
         {
-            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'], true)) {
-                $context = 'controllerAction';
-            }
+            «IF !isSystemModule»
+                if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'], true)) {
+                    $context = 'controllerAction';
+                }
 
+            «ENDIF»
             «FOR entity : getAllEntities»
                 if ('«entity.name.formatForCode»' === $objectType) {
-                    return $this->getViewQuickNavParametersFor«entity.name.formatForCodeCapital»($context, $args);
+                    return $this->getViewQuickNavParametersFor«entity.name.formatForCodeCapital»(«IF !isSystemModule»$context, $args«ENDIF»);
                 }
             «ENDFOR»
 
@@ -228,7 +232,7 @@ class CollectionFilterHelper {
     def private getViewQuickNavParameters(Entity it) '''
         /**
          * Returns an array of additional template variables for view quick navigation forms.
-         «IF !application.targets('3.0')»
+         «IF !application.targets('3.0') && !application.isSystemModule»
          *
          * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
          * @param array $args Additional arguments
@@ -236,7 +240,7 @@ class CollectionFilterHelper {
          * @return array List of template variables to be assigned
          «ENDIF»
          */
-        protected function getViewQuickNavParametersFor«name.formatForCodeCapital»(«IF application.targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF application.targets('3.0')»: array«ENDIF»
+        protected function getViewQuickNavParametersFor«name.formatForCodeCapital»(«IF !application.isSystemModule»«IF application.targets('3.0')»string «ENDIF»$context = '', array $args = []«ENDIF»)«IF application.targets('3.0')»: array«ENDIF»
         {
             $parameters = [];
             $request = $this->requestStack->getCurrentRequest();
