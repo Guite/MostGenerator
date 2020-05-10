@@ -212,7 +212,9 @@ class WorkflowHelper {
         {
             $workflow = $this->workflowRegistry->get($entity);
             $wfActions = $workflow->getEnabledTransitions($entity);
-            $currentState = $entity->getWorkflowState();
+            «IF !isSystemModule»
+                $currentState = $entity->getWorkflowState();
+            «ENDIF»
 
             $actions = [];
             foreach ($wfActions as $action) {
