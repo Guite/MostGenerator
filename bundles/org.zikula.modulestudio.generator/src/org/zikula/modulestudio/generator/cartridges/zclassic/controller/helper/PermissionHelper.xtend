@@ -254,6 +254,7 @@ class PermissionHelper {
              * @param string $objectType
              «ENDIF»
              * @param array|ArrayCollection $entities The given list of entities
+             * @param int $permissionLevel
              * @param int $userId
              *
              * @return array The filtered list of entities
