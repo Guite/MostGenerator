@@ -288,8 +288,8 @@ class WorkflowEventsListener {
         }
 
         if (!$this->permissionHelper->hasEntityPermission($entity, $permissionLevel)) {
-            // no permission for this transition, so disallow it«IF targets('3.0')» (without a reason)«ENDIF»
-            $event->setBlocked(true);
+            // no permission for this transition, so disallow it
+            $event->setBlocked(true«IF targets('3.0')», $this->translator->trans('No permission for this action.')«ENDIF»);
 
             return;
         }
@@ -306,12 +306,11 @@ class WorkflowEventsListener {
                                     «IF targets('3.0')»
                                         $event->addTransitionBlocker(
                                             new TransitionBlocker(
-                                                $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
+                                                $this->translator->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
                                             )
                                         );
-                                    «ELSE»
-                                        $isBlocked = true;
                                     «ENDIF»
+                                    $isBlocked = true;
                                 }
                             «ELSE»
                                 if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
@@ -321,9 +320,8 @@ class WorkflowEventsListener {
                                                 $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
                                             )
                                         );
-                                    «ELSE»
-                                        $isBlocked = true;
                                     «ENDIF»
+                                    $isBlocked = true;
                                 }
                             «ENDIF»
                         «ENDFOR»

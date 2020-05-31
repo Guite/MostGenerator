@@ -1137,11 +1137,14 @@ class SharedFormTypeFields {
             'with_seconds' => true
         «ENDIF»
         «IF application.targets('3.0')»
-            «IF role == StringRole.COUNTRY»
+            «IF role == StringRole.COLOUR»
+                'html5' => true
+            «ELSEIF role == StringRole.COUNTRY»
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
             «ELSEIF role == StringRole.CURRENCY»
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
             «ELSEIF role == StringRole.LANGUAGE»
+                'choice_self_translation' => true,
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
             «ELSEIF role == StringRole.LOCALE»
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
