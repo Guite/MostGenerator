@@ -37,7 +37,9 @@ class ViewHelper {
             use Zikula\Core\Response\PlainResponse;
         «ENDIF»
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        use Zikula\ThemeModule\Engine\AssetFilter;
+        «IF !targets('3.0')»
+            use Zikula\ThemeModule\Engine\AssetFilter;
+        «ENDIF»
         «IF generatePdfSupport»
             use Zikula\ThemeModule\Engine\ParameterBag;
         «ENDIF»
@@ -74,11 +76,13 @@ class ViewHelper {
          */
         protected $variableApi;
 
-        /**
-         * @var AssetFilter
-         */
-        protected $assetFilter;
+        «IF !targets('3.0')»
+            /**
+             * @var AssetFilter
+             */
+            protected $assetFilter;
 
+        «ENDIF»
         «IF generatePdfSupport»
             /**
              * @var ParameterBag
@@ -101,7 +105,9 @@ class ViewHelper {
             «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF» $twigLoader,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
-            AssetFilter $assetFilter,
+            «IF !targets('3.0')»
+                AssetFilter $assetFilter,
+            «ENDIF»
             «IF generatePdfSupport»
                 ParameterBag $pageVars,
             «ENDIF»
@@ -112,7 +118,9 @@ class ViewHelper {
             $this->twigLoader = $twigLoader;
             $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
-            $this->assetFilter = $assetFilter;
+            «IF !targets('3.0')»
+                $this->assetFilter = $assetFilter;
+            «ENDIF»
             «IF generatePdfSupport»
                 $this->pageVars = $pageVars;
             «ENDIF»
@@ -123,8 +131,10 @@ class ViewHelper {
         «getViewTemplate»
 
         «processTemplate»
+        «IF !targets('3.0')»
 
-        «injectAssetsIntoRawOutput»
+            «injectAssetsIntoRawOutput»
+        «ENDIF»
 
         «determineExtension»
 
@@ -231,7 +241,9 @@ class ViewHelper {
                         $output = chr(255) . chr(254) . mb_convert_encoding($output, 'UTF-16LE', 'UTF-8');
                     }
                 «ENDIF»
-                $output = $this->injectAssetsIntoRawOutput($output);
+                «IF !targets('3.0')»
+                    $output = $this->injectAssetsIntoRawOutput($output);
+                «ENDIF»
 
                 $response = new PlainResponse($output);
             } else {

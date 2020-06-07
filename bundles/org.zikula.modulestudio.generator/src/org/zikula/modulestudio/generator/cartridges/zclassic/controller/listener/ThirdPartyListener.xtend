@@ -211,12 +211,26 @@ class ThirdPartyListener {
             // install assets for Scribite plugins
             «IF targets('3.0')»
                 $projectDir = $this->kernel->getProjectDir();
-                $targetDir = $projectDir . '/public/modules/zikulacontent/scribite';
+                $resourcesDir = str_replace('Listener/Base', '', __DIR__) . 'Resources/public/';
+                $targetDir = $projectDir . '/public/modules/«vendorAndName.toLowerCase»/scribite';
 
                 if (!$this->filesystem->exists($targetDir)) {
-                    $originDir = str_replace('Listener/Base', '', __DIR__) . 'Resources/public/scribite';
+                    $originDir = $resourcesDir . 'scribite';
                     if (is_dir($originDir)) {
                         $this->filesystem->symlink($originDir, $targetDir, true);
+                    }
+                }
+
+                $commonEditorAssets = [
+                    'images/admin.png',
+                    'js/«appName».Finder.js'
+                ];
+
+                foreach ($commonEditorAssets as $assetRelativePath) {
+                    $assetPath = str_replace('scribite', $assetRelativePath, $targetDir);
+                    if (!$this->filesystem->exists($assetPath)) {
+                        $origin = $resourcesDir . $assetRelativePath;
+                        $this->filesystem->symlink($origin, $assetPath, true);
                     }
                 }
             «ELSE»

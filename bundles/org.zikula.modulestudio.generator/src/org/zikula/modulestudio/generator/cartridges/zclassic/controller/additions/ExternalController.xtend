@@ -32,6 +32,7 @@ class ExternalController {
         «IF targets('3.0')»
             use Symfony\Component\Routing\RouterInterface;
             use Zikula\ThemeModule\Engine\Asset;
+            use Zikula\ThemeModule\Engine\AssetBag;
         «ENDIF»
     '''
 
@@ -236,6 +237,7 @@ class ExternalController {
                 CollectionFilterHelper $collectionFilterHelper,
                 ListEntriesHelper $listEntriesHelper,
                 ViewHelper $viewHelper,
+                AssetBag $cssAssetBag,
                 Asset $assetHelper,
                 string $objectType,
                 string $editor,
@@ -292,8 +294,8 @@ class ExternalController {
 
         «IF !targets('3.0')»
             $assetHelper = $this->get('zikula_core.common.theme.asset_helper');
+            $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
         «ENDIF»
-        $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
         $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
         $cssAssetBag->add([$assetHelper->resolve('@«appName»:css/custom.css') => 120]);
 
@@ -484,6 +486,7 @@ class ExternalController {
                     $collectionFilterHelper,
                     $listEntriesHelper,
                     $viewHelper,
+                    $cssAssetBag,
                     $assetHelper,
                     $objectType,
                     $editor,

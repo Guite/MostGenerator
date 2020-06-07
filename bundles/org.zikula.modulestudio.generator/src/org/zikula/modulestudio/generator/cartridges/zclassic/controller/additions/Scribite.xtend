@@ -146,22 +146,33 @@ class Scribite {
          * @param {string} url Absolute URL to where the plugin is located
          */
         tinymce.PluginManager.add('«appName.formatForDB»', function(editor, url) {
-            var icon;
+            «IF !targets('3.0')»
+                var icon;
 
-            icon = Zikula.Config.baseURL + Zikula.Config.baseURI + '/«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»/images/admin.png';
+                icon = Zikula.Config.baseURL + Zikula.Config.baseURI + '/«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»/images/admin.png';
 
-            editor.addButton('«appName.formatForDB»', {
-                //text: '«name.formatForDisplayCapital»',
-                image: icon,
-                onclick: function() {
+            «ENDIF»
+            editor«IF targets('3.0')».ui.registry«ENDIF».addButton('«appName.formatForDB»', {
+                «IF targets('3.0')»
+                    icon: 'link',
+                    tooltip: '«name.formatForDisplayCapital»',
+                «ELSE»
+                    //text: '«name.formatForDisplayCapital»',
+                    image: icon,
+                «ENDIF»
+                «IF targets('3.0')»onAction«ELSE»onclick«ENDIF»: function() {
                     «appName»FinderOpenPopup(editor, 'tinymce');
                 }
             });
-            editor.addMenuItem('«appName.formatForDB»', {
+            editor«IF targets('3.0')».ui.registry«ENDIF».addMenuItem('«appName.formatForDB»', {
                 text: '«name.formatForDisplayCapital»',
-                context: 'tools',
-                image: icon,
-                onclick: function() {
+                «IF targets('3.0')»
+                    icon: 'link',
+                «ELSE»
+                    context: 'tools',
+                    image: icon,
+                «ENDIF»
+                «IF targets('3.0')»onAction«ELSE»onclick«ENDIF»: function() {
                     «appName»FinderOpenPopup(editor, 'tinymce');
                 }
             });

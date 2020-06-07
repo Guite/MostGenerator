@@ -273,9 +273,15 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractThemeListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            «IF targets('3.0')»
+                use Symfony\Component\HttpKernel\Event\ResponseEvent;
+                use Symfony\Component\HttpKernel\KernelEvents;
+            «ENDIF»
             use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
             use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
-            «IF !targets('3.0')»
+            «IF targets('3.0')»
+                use Zikula\ThemeModule\Engine\AssetFilter;
+            «ELSE»
                 use Zikula\ThemeModule\ThemeEvents;
             «ENDIF»
         «ENDIF»
