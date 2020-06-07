@@ -524,6 +524,9 @@ class Listeners {
             «ENDIF»
             «IF targets('3.0')»
                 use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+                «IF generateScribitePlugins»
+                    use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+                «ENDIF»
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
             «ENDIF»

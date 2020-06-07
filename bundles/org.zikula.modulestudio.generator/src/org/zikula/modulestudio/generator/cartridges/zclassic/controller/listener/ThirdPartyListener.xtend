@@ -17,6 +17,13 @@ class ThirdPartyListener {
 
     def generate(Application it) '''
         «IF generateScribitePlugins»
+            «IF targets('3.0')»
+                /**
+                 * @var ZikulaHttpKernelInterface
+                 */
+                protected $kernel;
+
+            «ENDIF»
             /**
              * @var Filesystem
              */
@@ -36,9 +43,22 @@ class ThirdPartyListener {
 
         «ENDIF»
         «IF generateScribitePlugins || (needsApproval && generatePendingContentSupport)»
-            public function __construct(«IF generateScribitePlugins»Filesystem $filesystem, RequestStack $requestStack«ENDIF»«IF needsApproval && generatePendingContentSupport»«IF generateScribitePlugins», «ENDIF»WorkflowHelper $workflowHelper«ENDIF»)
-            {
+            public function __construct(
                 «IF generateScribitePlugins»
+                    «IF targets('3.0')»
+                        ZikulaHttpKernelInterface $kernel,
+                    «ENDIF»
+                    Filesystem $filesystem,
+                    RequestStack $requestStack«IF needsApproval && generatePendingContentSupport», «ENDIF»
+                «ENDIF»
+                «IF needsApproval && generatePendingContentSupport»
+                    WorkflowHelper $workflowHelper
+                «ENDIF»
+            ) {
+                «IF generateScribitePlugins»
+                    «IF targets('3.0')»
+                        $this->kernel = $kernel;
+                    «ENDIF»
                     $this->filesystem = $filesystem;
                     $this->requestStack = $requestStack;
                 «ENDIF»
@@ -63,7 +83,11 @@ class ThirdPartyListener {
                     'module.content.gettypes'                 => ['contentGetTypes', 5],
                 «ENDIF»
                 «IF generateScribitePlugins»
+                    «IF targets('3.0')»
+                    EditorHelperEvent::class                  => ['getEditorHelpers', 5],
+                    «ELSE»
                     'module.scribite.editorhelpers'           => ['getEditorHelpers', 5],
+                    «ENDIF»
                     'moduleplugin.ckeditor.externalplugins'   => ['getCKEditorPlugins', 5],
                     'moduleplugin.quill.externalplugins'      => ['getQuillPlugins', 5],
                     'moduleplugin.summernote.externalplugins' => ['getSummernotePlugins', 5],
@@ -175,7 +199,7 @@ class ThirdPartyListener {
 
     def private getEditorHelpers(Application it) '''
         /**
-         * Listener for the `module.scribite.editorhelpers` event.
+         * Listener for the «IF targets('3.0')»`EditorHelperEvent`«ELSE»`module.scribite.editorhelpers` event«ENDIF».
          *
          * This occurs when Scribite adds pagevars to the editor page.
          * «appName» will use this to add a javascript helper to add custom items.
@@ -185,13 +209,25 @@ class ThirdPartyListener {
         public function getEditorHelpers(EditorHelperEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
             // install assets for Scribite plugins
-            $targetDir = '«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»';
-            if (!$this->filesystem->exists($targetDir)) {
-                $moduleDirectory = str_replace('Listener/Base', '', __DIR__);
-                if (is_dir($originDir = $moduleDirectory . 'Resources/public')) {
-                    $this->filesystem->symlink($originDir, $targetDir, true);
+            «IF targets('3.0')»
+                $projectDir = $this->kernel->getProjectDir();
+                $targetDir = $projectDir . '/public/modules/zikulacontent/scribite';
+
+                if (!$this->filesystem->exists($targetDir)) {
+                    $originDir = str_replace('Listener/Base', '', __DIR__) . 'Resources/public/scribite';
+                    if (is_dir($originDir)) {
+                        $this->filesystem->symlink($originDir, $targetDir, true);
+                    }
                 }
-            }
+            «ELSE»
+                $targetDir = 'web/modules/«vendorAndName.toLowerCase»';
+                if (!$this->filesystem->exists($targetDir)) {
+                    $moduleDirectory = str_replace('Listener/Base', '', __DIR__);
+                    if (is_dir($originDir = $moduleDirectory . 'Resources/public')) {
+                        $this->filesystem->symlink($originDir, $targetDir, true);
+                    }
+                }
+            «ENDIF»
 
             $event->getHelperCollection()->add(
                 [
