@@ -17,11 +17,8 @@ class WorkflowEventsListener {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it) '''
-        «IF targets('3.0') && !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
+        «IF targets('3.0')»
+            use TranslatorTrait;
 
         «ENDIF»
         /**
@@ -42,15 +39,15 @@ class WorkflowEventsListener {
         «ENDIF»
 
         public function __construct(
-            «IF targets('3.0') && !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+            «IF targets('3.0')»
                 TranslatorInterface $translator,
             «ENDIF»
             EntityFactory $entityFactory,
             PermissionHelper $permissionHelper«IF needsApproval»,
             NotificationHelper $notificationHelper«ENDIF»
         ) {
-            «IF targets('3.0') && !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
-                $this->translator = $translator;
+            «IF targets('3.0')»
+                $this->setTranslator($translator);
             «ENDIF»
             $this->entityFactory = $entityFactory;
             $this->permissionHelper = $permissionHelper;
@@ -289,7 +286,7 @@ class WorkflowEventsListener {
 
         if (!$this->permissionHelper->hasEntityPermission($entity, $permissionLevel)) {
             // no permission for this transition, so disallow it
-            $event->setBlocked(true«IF targets('3.0')», $this->translator->trans('No permission for this action.')«ENDIF»);
+            $event->setBlocked(true«IF targets('3.0')», $this->trans('No permission for this action.')«ENDIF»);
 
             return;
         }
@@ -306,7 +303,7 @@ class WorkflowEventsListener {
                                     «IF targets('3.0')»
                                         $event->addTransitionBlocker(
                                             new TransitionBlocker(
-                                                $this->translator->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
+                                                $this->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
                                             )
                                         );
                                     «ENDIF»
@@ -317,7 +314,7 @@ class WorkflowEventsListener {
                                     «IF targets('3.0')»
                                         $event->addTransitionBlocker(
                                             new TransitionBlocker(
-                                                $this->translator->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
+                                                $this->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»)
                                             )
                                         );
                                     «ENDIF»

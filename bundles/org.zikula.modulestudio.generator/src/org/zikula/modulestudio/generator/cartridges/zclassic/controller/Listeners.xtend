@@ -632,9 +632,10 @@ class Listeners {
             «IF targets('3.0')»
                 «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
                     use Symfony\Component\Workflow\TransitionBlocker;
-                    use Symfony\Contracts\Translation\TranslatorInterface;
                 «ENDIF»
+                use Symfony\Contracts\Translation\TranslatorInterface;
                 use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+                use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
             «ELSE»
                 use Zikula\Core\Doctrine\EntityAccess;
             «ENDIF»
