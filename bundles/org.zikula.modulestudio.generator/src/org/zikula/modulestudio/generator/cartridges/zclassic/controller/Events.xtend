@@ -341,7 +341,7 @@ class Events {
         /**
          * Event base class for filtering «name.formatForDisplay» processing.
          */
-        class Abstract«IF !app.targets('3.0')»Filter«ENDIF»«name.formatForCodeCapital»«classSuffix»Event«IF !application.targets('3.0')» extends Event«ENDIF»
+        «IF application.targets('3.0')»abstract «ENDIF»class Abstract«IF !app.targets('3.0')»Filter«ENDIF»«name.formatForCodeCapital»«classSuffix»Event«IF !application.targets('3.0')» extends Event«ENDIF»
         {
             /**
              * @var «name.formatForCodeCapital»Entity Reference to treated entity instance.
