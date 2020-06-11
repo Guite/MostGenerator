@@ -378,7 +378,7 @@ class Installer {
                 «IF !targets('3.0')»
                     $registryRepository = $this->container->get('zikula_categories_module.category_registry_repository');
                 «ENDIF»
-                $registries = $«IF targets('3.0')»this->«ENDIF»registryRepository->findBy(['modname' => '«appName»']);
+                $registries = $«IF targets('3.0')»this->categoryRegistryRepository«ELSE»registryRepository«ENDIF»->findBy(['modname' => '«appName»']);
                 foreach ($registries as $registry) {
                     $this->entityManager->remove($registry);
                 }
