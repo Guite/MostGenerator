@@ -1146,9 +1146,9 @@ class SharedFormTypeFields {
             «ELSEIF role == StringRole.LANGUAGE»
                 'choice_self_translation' => true,
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
-            «ELSEIF role == StringRole.LOCALE»
+            «/*ELSEIF role == StringRole.LOCALE»
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
-            «ELSEIF role == StringRole.TIME_ZONE»
+            */»«ELSEIF role == StringRole.TIME_ZONE»
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
                 'intl' => true
             «ELSEIF role == StringRole.WEEK»
