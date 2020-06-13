@@ -20,7 +20,7 @@ class ViewPagesHelper {
     '''
 
     def docsWithVariables(NamedObject it, Application app) '''
-        «IF null !== documentation && !documentation.empty»
+        «IF null !== documentation && !documentation.replaceAll('\\s+', '').empty»
             «IF app.targets('3.0')»
                 «IF !documentation.containedTwigVariables.empty»
                     <p class="alert alert-info">{% trans with {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»{% endtrans %}</p>
