@@ -239,7 +239,7 @@ class ViewTable {
                 <dt>
             «ELSEIF listType == LIST_TYPE_TABLE»
                 <tr class="«IF application.targets('3.0')»table-info«ELSE»z-{{ routeArea == 'admin' ? 'admin' : 'data' }}tableempty«ENDIF»">
-                «'    '»<td«IF !application.targets('3.0')» class="text-left"«ENDIF» colspan="{% if routeArea == 'admin' %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}"«IF application.targets('3.0')» class="text-center"«ENDIF»>
+                «'    '»<td«IF !application.targets('3.0')» class="text-left"«ENDIF» colspan="{% if routeArea == 'admin' %}«IF hasSortableFields»{% if activateSortable %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1 + 1)»{% else %}«ENDIF»«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»«IF hasSortableFields»{% endif %}«ENDIF»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}"«IF application.targets('3.0')» class="text-center"«ENDIF»>
             «ENDIF»
             «IF application.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
