@@ -47,6 +47,9 @@ class CollectionFilterHelper {
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
+        «IF hasUserFields»
+            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+        «ENDIF»
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
@@ -77,6 +80,13 @@ class CollectionFilterHelper {
              * @var CurrentUserApiInterface
              */
             protected $currentUserApi;
+        «ENDIF»
+        «IF hasUserFields»
+
+            /**
+             * @var UserRepositoryInterface
+             */
+            protected $userRepository;
         «ENDIF»
         «IF hasCategorisableEntities»
 
@@ -111,6 +121,9 @@ class CollectionFilterHelper {
             «IF hasStandardFieldEntities»
                 CurrentUserApiInterface $currentUserApi,
             «ENDIF»
+            «IF hasUserFields»
+                UserRepositoryInterface $userRepository,
+            «ENDIF»
             «IF hasCategorisableEntities»
                 CategoryHelper $categoryHelper,
             «ENDIF»
@@ -120,6 +133,9 @@ class CollectionFilterHelper {
             $this->permissionHelper = $permissionHelper;
             «IF hasStandardFieldEntities»
                 $this->currentUserApi = $currentUserApi;
+            «ENDIF»
+            «IF hasUserFields»
+                $this->userRepository = $userRepository;
             «ENDIF»
             «IF hasCategorisableEntities»
                 $this->categoryHelper = $categoryHelper;
@@ -247,6 +263,13 @@ class CollectionFilterHelper {
             if (null === $request) {
                 return $parameters;
             }
+            «IF hasUserFieldsEntity»
+
+                «FOR field : getUserFieldsEntity»
+                    «val fieldName = field.name.formatForCode»
+                    $«fieldName» = $request->query->getInt('«fieldName»', 0);
+                «ENDFOR»
+            «ENDIF»
 
             «IF categorisable»
                 $parameters['catId'] = $request->query->get('catId', '');
@@ -279,7 +302,7 @@ class CollectionFilterHelper {
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $request->query->getInt('«fieldName»', 0);
+                    $parameters['«fieldName»'] = 0 < $«fieldName» ? $this->userRepository->find($«fieldName») : null;
                 «ENDFOR»
             «ENDIF»
             «IF hasCountryFieldsEntity»

@@ -849,6 +849,9 @@ class ServiceDefinitions {
                 «IF hasStandardFieldEntities»
                     - "@zikula_users_module.current_user"
                 «ENDIF»
+                «IF hasUserFields»
+                    - "@zikula_users_module.user_repository"
+                «ENDIF»
                 «IF hasCategorisableEntities»
                     - "@«modPrefix».category_helper"
                 «ENDIF»

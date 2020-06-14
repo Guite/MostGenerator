@@ -723,18 +723,6 @@ class HookHelper {
                 }
 
                 /**
-                 * Returns the area name used by this provider.
-                 «IF !application.targets('3.0')»
-                 *
-                 * @return string
-                 «ENDIF»
-                 */
-                protected function getAreaName()«IF application.targets('3.0')»: string«ENDIF»
-                {
-                    return 'provider.«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
-                }
-
-                /**
                  * Returns the entity for hook assignment data.
                  «IF !application.targets('3.0')»
                  *
@@ -880,9 +868,16 @@ class HookHelper {
         {
             return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«group.formatForDisplayCapital» «category.formatForDisplay» «type»'«IF targets('3.0') && !isSystemModule», [], 'hooks'«ENDIF»);
         }
-        «IF targets('3.0')»
+        «IF type == 'provider'»
 
-            public function getAreaName(): string
+            /**
+             * Returns the area name used by this provider.
+             «IF !targets('3.0')»
+             *
+             * @return string
+             «ENDIF»
+             */
+            public function getAreaName()«IF targets('3.0')»: string«ENDIF»
             {
                 return '«type».«appName.formatForDB».«IF category == 'FilterHooks'»filter_hooks«ELSEIF category == 'FormAware'»form_aware_hook«ELSEIF category == 'UiHooks'»ui_hooks«ENDIF».«areaSuffix»';
             }

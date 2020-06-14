@@ -1175,7 +1175,7 @@ class AjaxController {
         if (targets('3.0')) '''
             public function attachHookObjectAction(
                 Request $request,
-                EntityRepository $entityRepository
+                EntityFactory $entityFactory
             ): JsonResponse'''
         else '''
             public function attachHookObjectAction(
@@ -1187,8 +1187,8 @@ class AjaxController {
         if (targets('3.0')) '''
             public function detachHookObjectAction(
                 Request $request,
-                EntityRepository $entityRepository
-            )_ JsonResponse'''
+                EntityFactory $entityFactory
+            ): JsonResponse'''
         else '''
             public function detachHookObjectAction(
                 Request $request
@@ -1408,7 +1408,7 @@ class AjaxController {
             «IF targets('3.0')»
                 return parent::attachHookObjectAction(
                     $request,
-                    $entityRepository
+                    $entityFactory
                 );
             «ELSE»
                 return parent::attachHookObjectAction($request);
@@ -1422,7 +1422,7 @@ class AjaxController {
             «IF targets('3.0')»
                 return parent::detachHookObjectAction(
                     $request,
-                    $entityRepository
+                    $entityFactory
                 );
             «ELSE»
                 return parent::detachHookObjectAction($request);
