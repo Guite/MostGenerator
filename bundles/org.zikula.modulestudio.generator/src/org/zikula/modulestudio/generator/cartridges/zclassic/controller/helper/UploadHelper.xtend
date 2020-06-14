@@ -585,7 +585,7 @@ class UploadHelper {
             $fileName = $file->getClientOriginalName();
             $fileNameParts = explode('.', $fileName);
             $extension = null !== $file->guessExtension() ? $file->guessExtension() : $file->guessClientExtension();
-            if (in_array($extension, ['bin', 'mpga'])) {
+            if (in_array($extension, ['bin', 'mpga'], true)) {
                 // fallback to given extension for mp3
                 $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
             }
