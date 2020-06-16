@@ -804,7 +804,7 @@ class FormHandler {
             $templateId = $request->query->getInt('astemplate');
             $entity = null;
 
-            if ($templateId > 0) {
+            if (0 < $templateId) {
                 // reuse existing entity
                 $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateId);
                 if (null === $entityT) {
@@ -819,7 +819,7 @@ class FormHandler {
                 «IF hasTrees»
                     if (in_array($this->objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»'], true)) {
                         $parentId = $request->query->getInt('parent');
-                        if ($parentId > 0) {
+                        if (0 < $parentId) {
                             $parentEntity = $this->entityFactory->getRepository($this->objectType)->selectById($parentId);
                             if (null !== $parentEntity) {
                                 $entity->setParent($parentEntity);

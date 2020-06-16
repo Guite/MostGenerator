@@ -165,8 +165,9 @@ class EntityInitialiser {
     '''
 
     def private setDefaultValue(DatetimeField it) {
-        if (it.defaultValue !== null && !it.defaultValue.empty && it.defaultValue.length > 0) {
-            if ('now' != it.defaultValue) {
+        val hasDefaultValue = it.defaultValue !== null && !it.defaultValue.empty && it.defaultValue.length > 0
+        if (it.mandatory || hasDefaultValue) {
+            if (hasDefaultValue && 'now' != it.defaultValue) {
                 '''$entity->set«name.formatForCodeCapital»(new DateTime«IF immutable»Immutable«ENDIF»('«it.defaultValue»'));'''
             } else {
                 '''$entity->set«name.formatForCodeCapital»(DateTime«IF immutable»Immutable«ENDIF»::createFromFormat('«defaultFormat»', «defaultValueForNow»));'''
