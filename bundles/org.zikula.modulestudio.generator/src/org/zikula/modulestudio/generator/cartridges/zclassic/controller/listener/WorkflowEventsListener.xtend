@@ -85,7 +85,7 @@ class WorkflowEventsListener {
          «IF targets('3.0')»
          * Example with providing a reason:
          *     `$event->addTransitionBlocker(
-         *         new TransitionBlocker('You can not this because that.', 0)
+         *         new TransitionBlocker('You can not this because that.', '0')
          *     );`
          «ENDIF»
          */
@@ -304,7 +304,7 @@ class WorkflowEventsListener {
                                         $event->addTransitionBlocker(
                                             new TransitionBlocker(
                                                 $this->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
-                                                0
+                                                '0'
                                             )
                                         );
                                     «ENDIF»
@@ -316,7 +316,7 @@ class WorkflowEventsListener {
                                         $event->addTransitionBlocker(
                                             new TransitionBlocker(
                                                 $this->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
-                                                0
+                                                '0'
                                             )
                                         );
                                     «ENDIF»
