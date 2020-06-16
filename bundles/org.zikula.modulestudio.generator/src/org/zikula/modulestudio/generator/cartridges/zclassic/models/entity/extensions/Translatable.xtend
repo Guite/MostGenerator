@@ -63,9 +63,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
-        «IF primaryKey instanceof AbstractIntegerField»
-            use Doctrine\ORM\Mapping as ORM;
-        «ENDIF»
+        use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Translatable\Entity\MappedSuperclass\«extensionBaseClass»;
     '''
 
