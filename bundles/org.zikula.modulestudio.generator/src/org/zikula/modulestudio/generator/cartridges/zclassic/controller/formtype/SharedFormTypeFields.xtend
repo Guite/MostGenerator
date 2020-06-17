@@ -1195,7 +1195,7 @@ class SharedFormTypeFields {
         'accept' => '.' . implode(',.', $this->uploadHelper->getAllowedFileExtensions('«IF null !== entity»«entity.name.formatForCode»«ELSE»«varContainer.name.formatForCode»«ENDIF»', '«name.formatForCode»')),
     '''
     def private dispatch requiredOption(UploadField it) '''
-        'required' => «mandatory.displayBool» && $options['mode'] == 'create',
+        'required' => «mandatory.displayBool» && 'create' === $options['mode'],
     '''
     def private dispatch additionalOptions(UploadField it) '''
         'entity' => $options['entity'],
