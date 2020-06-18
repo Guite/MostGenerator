@@ -31,9 +31,13 @@ class EventAction {
 
                 «IF targets('3.0')»
                     $uploadBaseDirectory = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType());
-                    «entityVar»->set_uploadBasePathRelative($uploadBaseDirectory);
+                    if ('/public' !== mb_substr($uploadBaseDirectory, -7)) {
+                        «entityVar»->set_uploadBasePathRelative(mb_substr($uploadBaseDirectory, 7));
+                    } else {
+                        «entityVar»->set_uploadBasePathRelative($uploadBaseDirectory);
+                    }
                     «entityVar»->set_uploadBasePathAbsolute($this->kernel->getProjectDir() . '/' . $uploadBaseDirectory);
-                    «entityVar»->set_uploadBaseUrl(str_replace('/public', '', $baseUrl));«/* avoid "public/public" in URL */»
+                    «entityVar»->set_uploadBaseUrl($baseUrl));
                 «ELSE»
                     «entityVar»->set_uploadBasePath($uploadHelper->getFileBaseFolder(«entityVar»->get_objectType()));
                     «entityVar»->set_uploadBaseUrl($baseUrl);
