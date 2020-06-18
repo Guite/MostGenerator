@@ -37,11 +37,10 @@ class EventAction {
                         «entityVar»->set_uploadBasePathRelative($uploadBaseDirectory);
                     }
                     «entityVar»->set_uploadBasePathAbsolute($this->kernel->getProjectDir() . '/' . $uploadBaseDirectory);
-                    «entityVar»->set_uploadBaseUrl($baseUrl));
                 «ELSE»
                     «entityVar»->set_uploadBasePath($uploadHelper->getFileBaseFolder(«entityVar»->get_objectType()));
-                    «entityVar»->set_uploadBaseUrl($baseUrl);
                 «ENDIF»
+                «entityVar»->set_uploadBaseUrl($baseUrl);
 
                 // determine meta data if it does not exist
                 foreach ($uploadFields as $fieldName) {
