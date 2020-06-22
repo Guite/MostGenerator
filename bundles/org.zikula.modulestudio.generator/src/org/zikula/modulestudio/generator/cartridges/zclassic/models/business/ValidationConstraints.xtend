@@ -177,6 +177,8 @@ class ValidationConstraints {
             «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD"«IF application.targets('3.0')», "UATP"«ENDIF», "VISA"})
         «ELSEIF role == StringRole.CURRENCY»
             «' '»* @Assert\Currency
+        «ELSEIF role == StringRole.HOSTNAME && application.targets('3.0')»
+            «' '»* @Assert\Hostname
         «ELSEIF role == StringRole.IBAN»
             «' '»* @Assert\Iban
         «ELSEIF role == StringRole.LANGUAGE»

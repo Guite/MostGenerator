@@ -265,9 +265,17 @@ application "SimpleNews" {
                     length 20
                     role DATE_INTERVAL
                 },
+                string "str762" {
+                    length 50
+                    role HOSTNAME
+                },
                 string "str77" {
                     length 50
                     role IBAN
+                },
+                string "str772" {
+                    length 50
+                    role ICON
                 },
                 string "str78" {
                     length 10
@@ -292,6 +300,10 @@ application "SimpleNews" {
                 string "str713" {
                     length 50
                     role UUID
+                },
+                string "str714" {
+                    length 50
+                    role WEEK
                 },
                 string "str81" {
                     ipTraceable NONE
