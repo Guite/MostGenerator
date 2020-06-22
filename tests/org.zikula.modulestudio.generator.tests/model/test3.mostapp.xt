@@ -10,8 +10,8 @@ XPECT files ---
     .gitignore
     composer.json
     zikula.manifest.json
-    Helper/ArchiveHelper.php
-    Helper/Base/AbstractArchiveHelper.php
+    Helper/ExpiryHelper.php
+    Helper/Base/AbstractExpiryHelper.php
 --- */
 
 application "SimpleNews" targets ZK30 {
