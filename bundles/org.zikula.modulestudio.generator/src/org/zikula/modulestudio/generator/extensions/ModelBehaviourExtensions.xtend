@@ -237,6 +237,13 @@ class ModelBehaviourExtensions {
     }
 
     /**
+     * Checks whether the application provides automatic archiving or deletion.
+     */
+    def hasAutomaticExpiryHandling(Application it) {
+        hasAutomaticArchiving || hasAutomaticExpiryDeletion
+    }
+
+    /**
      * Checks whether the application provides automatic archiving.
      */
     def hasAutomaticArchiving(Application it) {
@@ -248,6 +255,20 @@ class ModelBehaviourExtensions {
      */
     def getArchivingEntities(Application it) {
         getAllEntities.filter[hasArchive && hasEndDateField]
+    }
+
+    /**
+     * Checks whether the application provides automatic deletion.
+     */
+    def hasAutomaticExpiryDeletion(Application it) {
+        !getExpiryDeletionEntities.empty
+    }
+
+    /**
+     * Returns a list of all entities supporting automatic deletion.
+     */
+    def getExpiryDeletionEntities(Application it) {
+        getAllEntities.filter[deleteExpired && hasEndDateField]
     }
 
     /**

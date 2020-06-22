@@ -2,12 +2,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ArchiveHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.CategoryHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.CollectionFilterHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ControllerHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.EntityDisplayHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ExampleDataHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ExpiryHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.FeatureActivationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.HookHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ImageHelper
@@ -37,8 +37,8 @@ class HelperServices {
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         new PermissionHelper().generate(it, fsa)
-        if (hasAutomaticArchiving) {
-            new ArchiveHelper().generate(it, fsa)
+        if (hasAutomaticExpiryHandling) {
+            new ExpiryHelper().generate(it, fsa)
         }
         if (hasCategorisableEntities) {
             new CategoryHelper().generate(it, fsa)

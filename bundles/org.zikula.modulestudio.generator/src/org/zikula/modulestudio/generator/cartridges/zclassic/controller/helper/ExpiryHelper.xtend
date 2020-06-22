@@ -10,7 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ArchiveHelper {
+class ExpiryHelper {
 
     extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
@@ -20,11 +20,11 @@ class ArchiveHelper {
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        'Generating helper class for automatic archiving'.printIfNotTesting(fsa)
-        fsa.generateClassPair('Helper/ArchiveHelper.php', archiveHelperBaseClass, archiveHelperImpl)
+        'Generating helper class for automatic expiry handling'.printIfNotTesting(fsa)
+        fsa.generateClassPair('Helper/ExpiryHelper.php', expiryHelperBaseClass, expiryHelperImpl)
     }
 
-    def private archiveHelperBaseClass(Application it) '''
+    def private expiryHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
         use Doctrine\DBAL\Exception\TableNotFoundException;
@@ -52,9 +52,9 @@ class ArchiveHelper {
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
-         * Archive helper base class.
+         * Expiry helper base class.
          */
-        abstract class AbstractArchiveHelper
+        abstract class AbstractExpiryHelper
         {
             «helperBaseImpl»
         }
@@ -119,35 +119,49 @@ class ArchiveHelper {
         }
 
         /**
-         * Moves obsolete data into the archive.
+         * Handles obsolete data bv either moving into the archive or deleting.
          «IF !targets('3.0')»
          *
          * @param int $probabilityPercent Execution probability
          «ENDIF»
          */
-        public function archiveObsoleteObjects(«IF targets('3.0')»int «ENDIF»$probabilityPercent = 75)«IF targets('3.0')»: void«ENDIF»
+        public function handleObsoleteObjects(«IF targets('3.0')»int «ENDIF»$probabilityPercent = 75)«IF targets('3.0')»: void«ENDIF»
         {
             $randProbability = «IF targets('3.0')»random_int«ELSE»mt_rand«ENDIF»(1, 100);
             if ($randProbability < $probabilityPercent) {
                 return;
             }
 
-            if (!$this->permissionHelper->hasPermission(ACCESS_EDIT)) {
-                // abort if current user has no permission for executing the archive workflow action
-                return;
-            }
-            «FOR entity : getArchivingEntities»
-
-                // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
-                $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
-                $this->logger->notice('{app}: Automatic archiving for the {entity} entity started.', $logArgs);
-                $this->archive«entity.nameMultiple.formatForCodeCapital»();
-                $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
-            «ENDFOR»
+            «IF hasAutomaticArchiving»
+                if ($this->permissionHelper->hasPermission(ACCESS_EDIT)) {
+                    «FOR entity : getArchivingEntities»
+                        // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
+                        $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
+                        $this->logger->notice('{app}: Automatic archiving for the {entity} entity started.', $logArgs);
+                        $this->archive«entity.nameMultiple.formatForCodeCapital»();
+                        $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
+                    «ENDFOR»
+                }
+            «ENDIF»
+            «IF hasAutomaticExpiryDeletion»
+                if ($this->permissionHelper->hasPermission(ACCESS_DELETE)) {
+                    «FOR entity : getArchivingEntities»
+                        // perform deletion for expired «entity.nameMultiple.formatForDisplay»
+                        $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
+                        $this->logger->notice('{app}: Automatic deletion for the {entity} entity started.', $logArgs);
+                        $this->delete«entity.nameMultiple.formatForCodeCapital»();
+                        $this->logger->notice('{app}: Automatic deletion for the {entity} entity completed.', $logArgs);
+                    «ENDFOR»
+                }
+            «ENDIF»
         }
         «FOR entity : getArchivingEntities»
 
             «entity.archiveObjects»
+        «ENDFOR»
+        «FOR entity : getExpiryDeletionEntities»
+
+            «entity.deleteObjects»
         «ENDFOR»
 
         «helperMethods»
@@ -168,16 +182,38 @@ class ArchiveHelper {
                 $today = «endField.defaultValueForNow» . ' 00:00:00';
             «ENDIF»
 
-            $affectedEntities = $this->getObjectsToBeArchived('«name.formatForCode»', '«endField.name.formatForCode»', $today);
+            $affectedEntities = $this->getExpiredObjects('«name.formatForCode»', '«endField.name.formatForCode»', $today);
             foreach ($affectedEntities as $entity) {
                 $this->archiveSingleObject($entity);
             }
         }
     '''
 
+    def private deleteObjects(Entity it) '''
+        /**
+         * Deletes «nameMultiple.formatForDisplay» which reached their end date.
+         *
+         * @throws RuntimeException Thrown if workflow action execution fails
+         */
+        protected function delete«nameMultiple.formatForCodeCapital»()«IF application.targets('3.0')»: void«ENDIF»
+        {
+            «val endField = getEndDateField»
+            «IF endField.isDateTimeField»
+                $today = «endField.defaultValueForNow»;
+            «ELSEIF endField.isDateField»
+                $today = «endField.defaultValueForNow» . ' 00:00:00';
+            «ENDIF»
+
+            $affectedEntities = $this->getExpiredObjects('«name.formatForCode»', '«endField.name.formatForCode»', $today);
+            foreach ($affectedEntities as $entity) {
+                $this->deleteSingleObject($entity);
+            }
+        }
+    '''
+
     def private helperMethods(Application it) '''
         /**
-         * Returns the list of entities which should be archived.
+         * Returns the list of expired entities.
          *
          «IF !targets('3.0')»
          * @param string $objectType Name of treated entity type
@@ -187,13 +223,13 @@ class ArchiveHelper {
          *
          * @return array List of affected entities
          */
-        protected function getObjectsToBeArchived(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$endField = '', $endDate = '')
+        protected function getExpiredObjects(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$endField = '', $endDate = '')
         {
             $repository = $this->entityFactory->getRepository($objectType);
             $qb = $repository->genericBaseQuery('', '', false);
 
-            /*$qb->andWhere('tbl.workflowState != :archivedState')
-               ->setParameter('archivedState', 'archived');*/
+            «/*$qb->andWhere('tbl.workflowState != :archivedState')
+               ->setParameter('archivedState', 'archived');*/»
             $qb->andWhere('tbl.workflowState = :approvedState')
                ->setParameter('approvedState', 'approved');
 
@@ -209,24 +245,61 @@ class ArchiveHelper {
                 return [];
             }
         }
+        «IF hasAutomaticArchiving»
+
+            /**
+             * Archives a single entity.
+             «IF !targets('3.0')»
+             *
+             * @param EntityAccess $entity The given entity instance
+             *
+             * @return bool True if everything worked successfully, false otherwise
+             «ENDIF»
+             */
+            protected function archiveSingleObject(«IF targets('3.0')»EntityAccess «ENDIF»$entity)«IF targets('3.0')»: bool«ENDIF»
+            {
+                return $this->handleSingleObject($entity, 'archive');
+            }
+        «ENDIF»
+        «IF hasAutomaticExpiryDeletion»
+
+            /**
+             * Deletes a single entity.
+             «IF !targets('3.0')»
+             *
+             * @param EntityAccess $entity The given entity instance
+             *
+             * @return bool True if everything worked successfully, false otherwise
+             «ENDIF»
+             */
+            protected function deleteSingleObject(«IF targets('3.0')»EntityAccess «ENDIF»$entity)«IF targets('3.0')»: bool«ENDIF»
+            {
+                return $this->handleSingleObject($entity, 'delete');
+            }
+        «ENDIF»
 
         /**
-         * Archives a single entity.
+         * Archives or deletes a single entity.
          «IF !targets('3.0')»
          *
          * @param EntityAccess $entity The given entity instance
+         * @param string $action Name of workflow action to be executed
          *
          * @return bool True if everything worked successfully, false otherwise
          «ENDIF»
          */
-        protected function archiveSingleObject(«IF targets('3.0')»EntityAccess «ENDIF»$entity)«IF targets('3.0')»: bool«ENDIF»
+        protected function handleSingleObject(«IF targets('3.0')»EntityAccess «ENDIF»$entity, «IF targets('3.0')»string «ENDIF»$action)«IF targets('3.0')»: bool«ENDIF»
         {
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;
             «IF hasHookSubscribers»
                 if ($entity->supportsHookSubscribers()) {
-                    // Let any hooks perform additional validation actions
-                    $validationErrors = $this->hookHelper->callValidationHooks($entity, UiHooksCategory::TYPE_VALIDATE_EDIT);
+                    // let any hooks perform additional validation actions
+                    $hookType = 'delete' === $action
+                        ? UiHooksCategory::TYPE_VALIDATE_DELETE
+                        : UiHooksCategory::TYPE_VALIDATE_EDIT
+                    ;
+                    $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
                     if (0 < count($validationErrors)) {
                         if (null !== $session) {
                             foreach ($validationErrors as $message) {
@@ -242,7 +315,7 @@ class ArchiveHelper {
             $success = false;
             try {
                 // execute the workflow action
-                $success = $this->workflowHelper->executeAction($entity, 'archive');
+                $success = $this->workflowHelper->executeAction($entity, $action);
             } catch (Exception $exception) {
                 if (null !== $session) {
                     $session->getFlashBag()->add(
@@ -261,7 +334,7 @@ class ArchiveHelper {
             «IF hasHookSubscribers»
 
                 if ($entity->supportsHookSubscribers()) {
-                    // Let any hooks know that we have updated an item
+                    // let any hooks know that we have updated an item
                     $objectType = $entity->get_objectType();
                     $url = null;
 
@@ -273,7 +346,11 @@ class ArchiveHelper {
                         }
                         $url = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
                     }
-                    $this->hookHelper->callProcessHooks($entity, UiHooksCategory::TYPE_PROCESS_EDIT, $url);
+                    $hookType = 'delete' === $action
+                        ? UiHooksCategory::TYPE_PROCESS_DELETE
+                        : UiHooksCategory::TYPE_PROCESS_EDIT
+                    ;
+                    $this->hookHelper->callProcessHooks($entity, $hookType, $url);
                 }
             «ENDIF»
 
@@ -281,17 +358,17 @@ class ArchiveHelper {
         }
     '''
 
-    def private archiveHelperImpl(Application it) '''
+    def private expiryHelperImpl(Application it) '''
         namespace «appNamespace»\Helper;
 
-        use «appNamespace»\Helper\Base\AbstractArchiveHelper;
+        use «appNamespace»\Helper\Base\AbstractExpiryHelper;
 
         /**
-         * Archive helper implementation class.
+         * Expiry helper implementation class.
          */
-        class ArchiveHelper extends AbstractArchiveHelper
+        class ExpiryHelper extends AbstractExpiryHelper
         {
-            // feel free to extend the archive helper here
+            // feel free to extend the expiry helper here
         }
     '''
 }

@@ -76,10 +76,10 @@ class ControllerHelper {
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
-        «IF hasAutomaticArchiving»
-            use «appNamespace»\Helper\ArchiveHelper;
-        «ENDIF»
         use «appNamespace»\Helper\CollectionFilterHelper;
+        «IF hasAutomaticExpiryHandling»
+            use «appNamespace»\Helper\ExpiryHelper;
+        «ENDIF»
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -170,8 +170,8 @@ class ControllerHelper {
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
-            «IF hasAutomaticArchiving»
-                ArchiveHelper $archiveHelper,
+            «IF hasAutomaticExpiryHandling»
+                ExpiryHelper $expiryHelper,
             «ENDIF»
             «IF hasUiHooksProviders»
                 RouterInterface $router,
@@ -216,9 +216,9 @@ class ControllerHelper {
             «IF needsFeatureActivationHelper»
                 $this->featureActivationHelper = $featureActivationHelper;
             «ENDIF»
-            «IF hasAutomaticArchiving»
+            «IF hasAutomaticExpiryHandling»
 
-                $archiveHelper->archiveObsoleteObjects(75);
+                $expiryHelper->handleObsoleteObjects(75);
             «ENDIF»
         }
         «IF !targets('3.0')»

@@ -814,9 +814,9 @@ class ServiceDefinitions {
     def private servicesHelper(Application it) '''
         # Helper services
         «val nsBase = appNamespace + '\\Helper\\'»
-        «IF hasAutomaticArchiving»
-            «modPrefix».archive_helper:
-                class: «nsBase»ArchiveHelper
+        «IF hasAutomaticExpiryHandling»
+            «modPrefix».expiry_helper:
+                class: «nsBase»ExpiryHelper
                 arguments:
                     - "@translator.default"
                     - "@request_stack"
@@ -862,8 +862,8 @@ class ServiceDefinitions {
             arguments:
                 - "@translator.default"
                 - "@request_stack"
-                «IF hasAutomaticArchiving»
-                    - "@«modPrefix».archive_helper"
+                «IF hasAutomaticExpiryHandling»
+                    - "@«modPrefix».expiry_helper"
                 «ENDIF»
                 «IF hasUiHooksProviders»
                     - "@router"

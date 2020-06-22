@@ -390,7 +390,7 @@ class Actions {
         «ENDIF»
         «IF !skipHookSubscribers»
             if ($«name.formatForCode»->supportsHookSubscribers()) {
-                // Let any ui hooks perform additional validation actions
+                // let any ui hooks perform additional validation actions
                 $validationErrors = $hookHelper->callValidationHooks($«name.formatForCode», UiHooksCategory::TYPE_VALIDATE_DELETE);
                 if (0 < count($validationErrors)) {
                     foreach ($validationErrors as $message) {
@@ -428,10 +428,10 @@ class Actions {
         «IF !skipHookSubscribers»
 
             if ($«name.formatForCode»->supportsHookSubscribers()) {
-                // Call form aware processing hooks
+                // call form aware processing hooks
                 $hookHelper->callFormProcessHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_PROCESS_DELETE);
 
-                // Let any ui hooks know that we have deleted the «name.formatForDisplay»
+                // let any ui hooks know that we have deleted the «name.formatForDisplay»
                 $hookHelper->callProcessHooks($«name.formatForCode», UiHooksCategory::TYPE_PROCESS_DELETE);
             }
         «ENDIF»

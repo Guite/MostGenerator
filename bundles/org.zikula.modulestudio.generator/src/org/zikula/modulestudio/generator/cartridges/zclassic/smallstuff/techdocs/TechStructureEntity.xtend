@@ -7,12 +7,14 @@ import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
 class TechStructureEntity {
 
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
@@ -194,6 +196,12 @@ class TechStructureEntity {
             <th id="h«name.formatForCodeCapital»WorkflowOwnerPermission" scope="row" headers="h«name.formatForCodeCapital»WorkflowName">«IF language == 'de'»Benutzer können ihre eigenen Daten verwalten und bearbeiten«ELSE»Users are able to manage and edit their own data«ENDIF»</th>
             <td headers="h«name.formatForCodeCapital»WorkflowOwnerPermission h«name.formatForCodeCapital»WorkflowDescription" class="text-center">«helper.flag(application, ownerPermission)»</td>
         </tr>
+        «IF hasEndDateField»
+            <tr>
+                <th id="h«name.formatForCodeCapital»WorkflowDeleteExpired" scope="row" headers="h«name.formatForCodeCapital»WorkflowName">«IF language == 'de'»Veraltete Daten werden automatisch gelöscht«ELSE»Obsolete data is automatically deleted«ENDIF»</th>
+                <td headers="h«name.formatForCodeCapital»WorkflowDeleteExpired h«name.formatForCodeCapital»WorkflowDescription" class="text-center">«helper.flag(application, deleteExpired)»</td>
+            </tr>
+        «ENDIF»
         «IF standardFields»
             <tr>
                 <th id="h«name.formatForCodeCapital»WorkflowAccountDeletionCreator" scope="row" headers="h«name.formatForCodeCapital»WorkflowName">«IF language == 'de'»Wenn Ersteller gelöscht wird«ELSE»If creator is deleted«ENDIF»</th>
