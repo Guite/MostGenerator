@@ -31,7 +31,7 @@ XPECT generated file composer.json ---
     },
     "extra": {
         "zikula": {
-            "core-compatibility": ">=2.0.12 <3.0.0",
+            "core-compatibility": ">=2.0.15 <3.0.0",
             "class": "Acme\\SimpleTestModule\\AcmeSimpleTestModule",
             "displayname": "Simple test",
             "url": "simpletest",
@@ -80,7 +80,7 @@ XPECT generated file zikula.manifest.json ---
     },
     "version": {
         "semver": "1.0.0",
-        "compatibility": ">=2.0.12 <3.0.0",
+        "compatibility": ">=2.0.15 <3.0.0",
         "composerpath": "composer.json",
         "description": "Just a simple test application.",
         "keywords": [
