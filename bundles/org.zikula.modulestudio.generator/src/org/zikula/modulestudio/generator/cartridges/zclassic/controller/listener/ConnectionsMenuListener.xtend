@@ -12,6 +12,24 @@ class ConnectionsMenuListener {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
+        /**
+         * @var TranslatorInterface
+         */
+        protected $translator;
+
+        /**
+         * @var PermissionApiInterface
+         */
+        protected $permissionApi;
+
+        public function __construct(
+            TranslatorInterface $translator,
+            PermissionApiInterface $permissionApi
+        ) {
+            $this->translator = $translator;
+            $this->permissionApi = $permissionApi;
+        }
+
         public static function getSubscribedEvents()
         {
             return [

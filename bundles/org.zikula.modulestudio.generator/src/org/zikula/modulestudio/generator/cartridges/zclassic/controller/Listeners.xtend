@@ -215,6 +215,7 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
+                use Symfony\Contracts\Translation\TranslatorInterface;
                 use Zikula\ExtensionsModule\Event\ConnectionsMenuEvent;
                 use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
             «ELSE»
