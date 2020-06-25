@@ -74,7 +74,7 @@ class ThirdPartyListener {
             return [
                 «IF needsApproval && generatePendingContentSupport»
                     «IF targets('3.0')»
-                        PendingContentEvent::class                => ['pendingContentListener', 5],
+                        PendingContentEvent::class => ['pendingContentListener', 5],
                     «ELSE»
                         'get.pending_content'                     => ['pendingContentListener', 5],
                     «ENDIF»
@@ -84,14 +84,15 @@ class ThirdPartyListener {
                 «ENDIF»
                 «IF generateScribitePlugins»
                     «IF targets('3.0')»
-                    EditorHelperEvent::class                  => ['getEditorHelpers', 5],
+                    EditorHelperEvent::class => ['getEditorHelpers', 5],
+                    LoadExternalPluginsEvent::class => ['getEditorPlugins', 5]
                     «ELSE»
                     'module.scribite.editorhelpers'           => ['getEditorHelpers', 5],
-                    «ENDIF»
                     'moduleplugin.ckeditor.externalplugins'   => ['getCKEditorPlugins', 5],
                     'moduleplugin.quill.externalplugins'      => ['getQuillPlugins', 5],
                     'moduleplugin.summernote.externalplugins' => ['getSummernotePlugins', 5],
                     'moduleplugin.tinymce.externalplugins'    => ['getTinyMcePlugins', 5]
+                    «ENDIF»
                 «ENDIF»
             ];
         }
@@ -107,13 +108,17 @@ class ThirdPartyListener {
 
             «getEditorHelpers»
 
-            «getCKEditorPlugins»
-
-            «getCommonEditorPlugins('Quill')»
-
-            «getCommonEditorPlugins('Summernote')»
-
-            «getCommonEditorPlugins('TinyMce')»
+            «IF targets('3.0')»
+                «getEditorPlugins»
+            «ELSE»
+                «getCKEditorPlugins»
+    
+                «getCommonEditorPlugins('Quill')»
+    
+                «getCommonEditorPlugins('Summernote')»
+    
+                «getCommonEditorPlugins('TinyMce')»
+            «ENDIF»
 
             «getPathToModuleWebAssets»
         «ENDIF»
@@ -203,8 +208,13 @@ class ThirdPartyListener {
          *
          * This occurs when Scribite adds pagevars to the editor page.
          * «appName» will use this to add a javascript helper to add custom items.
+         «IF targets('3.0')»
+         *
+         * Note the selected editor name can be used like this: `if ('CKEditor' === $event->getEditor())`.
+         «ELSE»
          *
          «commonExample.generalEventProperties(it, false)»
+         «ENDIF»
          */
         public function getEditorHelpers(EditorHelperEvent $event)«IF targets('3.0')»: void«ENDIF»
         {
@@ -250,6 +260,29 @@ class ThirdPartyListener {
                     'path' => $this->getPathToModuleWebAssets() . 'js/«appName».Finder.js'
                 ]
             );
+        }
+    '''
+
+    def private getEditorPlugins(Application it) '''
+        /**
+         * Listener for the `LoadExternalPluginsEvent`.
+         */
+        public function getEditorPlugins(LoadExternalPluginsEvent $event): void
+        {
+            $editorId = $event->getEditor();
+            if ('CKEditor' === $editorId) {
+                $event->getPluginCollection()->add([
+                    'name' => '«appName.formatForDB»',
+                    'path' => $this->getPathToModuleWebAssets() . 'scribite/' . $editorId . '/«appName.formatForDB»/',
+                    'file' => 'plugin.js',
+                    'img' => 'ed_«appName.formatForDB».gif'
+                ]);
+            } elseif (in_array($editorId, ['Quill', 'Summernote', 'TinyMce'], true)) {
+                $event->getPluginCollection()->add([
+                    'name' => '«appName.formatForDB»',
+                    'path' => $this->getPathToModuleWebAssets() . 'scribite/' . $editorId . '/«appName.formatForDB»/plugin.js'
+                ]);
+            }
         }
     '''
 

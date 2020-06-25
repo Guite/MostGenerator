@@ -8,7 +8,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.KernelListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.LoggableListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.MailerListener
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleDispatchListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleInstallerListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThemeListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThirdPartyListener
@@ -24,6 +23,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ConnectionsMenuListener
 
 class Listeners {
 
@@ -72,7 +72,7 @@ class Listeners {
         }
         listenerFile('Installer', listenersInstallerFile)
         listenerFile('Kernel', listenersKernelFile)
-        listenerFile('ModuleDispatch', listenersModuleDispatchFile)
+        listenerFile(if (targets('3.0')) 'ConnectionsMenu' else 'ModuleDispatch', listenersConnectionsMenuFile)
         listenerFile('Mailer', listenersMailerFile)
         listenerFile('Theme', listenersThemeFile)
         listenerFile('UserLogin', listenersUserLoginFile)
@@ -207,7 +207,7 @@ class Listeners {
         }
     '''
 
-    def private listenersModuleDispatchFile(Application it) '''
+    def private listenersConnectionsMenuFile(Application it) '''
         namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
@@ -215,19 +215,24 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
+                use Zikula\ExtensionsModule\Event\ConnectionsMenuEvent;
+                use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
             «ELSE»
                 use Zikula\Core\Event\GenericEvent;
             «ENDIF»
         «ENDIF»
 
         /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for dispatching modules.
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for «IF targets('3.0')»adding connections to extension menus«ELSE»dispatching modules«ENDIF».
          */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ModuleDispatchListener«IF !isBase» extends AbstractModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»«IF targets('3.0')»ConnectionsMenu«ELSE»ModuleDispatch«ENDIF»Listener«IF !isBase» extends Abstract«IF targets('3.0')»ConnectionsMenu«ELSE»ModuleDispatch«ENDIF»Listener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new ModuleDispatchListener().generate(it)»
+                «IF targets('3.0')»
+                    «new ConnectionsMenuListener().generate(it)»
+                «ELSE»
+                    «new ConnectionsMenuListener().generateLegacy(it)»
+                «ENDIF»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -529,7 +534,6 @@ class Listeners {
                 «ENDIF»
             «ENDIF»
             «IF targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Event\GenericEvent;
                 «IF generateScribitePlugins»
                     use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
                 «ENDIF»
@@ -541,6 +545,9 @@ class Listeners {
             «ENDIF»
             «IF generateScribitePlugins»
                 use Zikula\ScribiteModule\Event\EditorHelperEvent;
+                «IF targets('3.0')»
+                    use Zikula\ScribiteModule\Event\LoadExternalPluginsEvent;
+                «ENDIF»
             «ENDIF»
         «ENDIF»
 

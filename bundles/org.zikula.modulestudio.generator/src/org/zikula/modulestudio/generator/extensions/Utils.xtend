@@ -156,19 +156,19 @@ class Utils {
     def targetSemVer(Application it, Boolean withPoint) {
         switch targetCoreVersion {
             case ZK3DEV:
-                if (!withPoint) '3.0' else '3.0.0'
+                if (!withPoint) '3.0' else '3.0.1'
             case ZK30:
                 if (!withPoint) '3.0' else '3.0.0'
             case ZK2DEV:
-                if (!withPoint) '2.0' else '2.0.12'
+                if (!withPoint) '2.0' else '2.0.15'
             case ZK20:
-                if (!withPoint) '2.0' else '2.0.12'
+                if (!withPoint) '2.0' else '2.0.15'
             case ZK15:
-                if (!withPoint) '1.5' else '1.5.8'
+                if (!withPoint) '1.5' else '1.5.9'
             case ZK15DEV:
                 if (!withPoint) '1.5' else '1.5.9'
             default:
-                if (!withPoint) '2.0' else '2.0.12'
+                if (!withPoint) '2.0' else '2.0.15'
         }
     }
 
