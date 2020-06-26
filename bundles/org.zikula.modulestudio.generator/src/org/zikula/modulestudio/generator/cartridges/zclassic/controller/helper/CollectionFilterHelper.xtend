@@ -481,10 +481,18 @@ class CollectionFilterHelper {
             }
             «IF ownerPermission || standardFields»
 
-                «IF ownerPermission»
-                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
-                «ELSEIF standardFields»
+                «IF standardFields»
                     $showOnlyOwnEntries = (bool)$request->query->getInt('own', «IF application.targets('3.0')»(int) «ENDIF»$this->showOnlyOwnEntries);
+                «ENDIF»
+                «IF ownerPermission»
+                    «IF standardFields»
+                        $privateMode = (bool)$this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
+                        if ($privateMode) {
+                            $showOnlyOwnEntries = true;
+                        }
+                    «ELSE»
+                        $showOnlyOwnEntries = (bool)$this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
+                    «ENDIF»
                 «ENDIF»
                 if ($showOnlyOwnEntries) {
                     $qb = $this->addCreatorFilter($qb);
