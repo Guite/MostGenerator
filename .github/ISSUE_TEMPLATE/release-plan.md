@@ -29,7 +29,7 @@ assignees: 'Guite'
   - [ ] Forwarded to Xing
 - [ ] Post on Twitter
 - [ ] Post on Facebook
-- [ ] Post on LinkedIn
+- [ ] Post on #mdsd chanel in Symfony slack
 
 ## Start next iteration
 
