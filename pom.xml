@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.zikula.modulestudio.generator</groupId>
     <artifactId>org.zikula.modulestudio.generator.root</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>de.guite.modulestudio</groupId>
         <artifactId>de.guite.modulestudio.configuration</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.5.0-SNAPSHOT</version>
         <relativePath>MostProduct/releng/de.guite.modulestudio.configuration/pom.xml</relativePath>
     </parent>
 
