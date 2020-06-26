@@ -699,8 +699,7 @@ class Repository {
                         $paginator = new Paginator($query, true);
                     «ELSE»
                         $paginator = new Paginator($query, false);
-                    «ENDIF»
-                    «/* this breaks searching for / filtering by translated fields (#1234)
+                    «ENDIF»«/* this breaks searching for / filtering by translated fields (#1234)
                     IF hasTranslatableFields»
                         if (true === $this->translationsEnabled) {
                             $paginator->setUseOutputWalkers(true);
