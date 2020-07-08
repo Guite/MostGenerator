@@ -49,6 +49,7 @@ class CollectionFilterHelper {
         «ENDIF»
         «IF hasUserFields»
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+            use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
@@ -427,7 +428,15 @@ class CollectionFilterHelper {
 
                 // field filter
                 if ((!is_numeric($v) && '' !== $v) || (is_numeric($v) && 0 < $v)) {
-                    $v = (string)$v;
+                    «IF hasUserFieldsEntity»
+                        if ($v instanceof UserEntity) {
+                            $v = $v->getUid();
+                        } else {
+                            $v = (string)$v;
+                        }
+                    «ELSE»
+                        $v = (string)$v;
+                    «ENDIF»
                     if ('workflowState' === $k && 0 === strpos($v, '!')) {
                         $qb->andWhere('tbl.' . $k . ' != :' . $k)
                            ->setParameter($k, substr($v, 1));
