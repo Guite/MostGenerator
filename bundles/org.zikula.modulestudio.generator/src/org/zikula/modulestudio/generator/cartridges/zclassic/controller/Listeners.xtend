@@ -211,7 +211,7 @@ class Listeners {
         namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractModuleDispatchListener;
+            use «appNamespace»\Listener\Base\Abstract«IF targets('3.0')»ConnectionsMenu«ELSE»ModuleDispatch«ENDIF»Listener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF targets('3.0')»
