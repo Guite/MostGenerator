@@ -633,6 +633,9 @@ class QuickNavigationType {
             'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»«IF role == StringRole.LOCALE»,«ENDIF»
         «ENDIF»
         «IF role == StringRole.LOCALE»
+            «IF app.targets('3.0')»
+                /** @Ignore */
+            «ENDIF»
             'choices' => $this->localeApi->getSupportedLocaleNames()«IF !app.targets('2.0')»,«ENDIF»
             «IF !app.targets('2.0')»
                 'choices_as_values' => true

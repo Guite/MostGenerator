@@ -539,7 +539,12 @@ class EditEntityType {
             foreach ($options['attributes'] as $attributeName => $attributeValue) {
                 $builder->add('attributes' . $attributeName, TextType::class, [
                     'mapped' => false,
-                    'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»/** @Ignore */$attributeName«IF !app.targets('3.0')»)«ENDIF»,
+                    «IF app.targets('3.0')»
+                        /** @Ignore */
+                        'label' => $attributeName,
+                    «ELSE»
+                        'label' => $this->__(/** @Ignore */$attributeName),
+                    «ENDIF»
                     'attr' => [
                         'maxlength' => 255
                     ],
