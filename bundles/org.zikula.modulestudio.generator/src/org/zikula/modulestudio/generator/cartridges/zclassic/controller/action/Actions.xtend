@@ -280,9 +280,9 @@ class Actions {
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
-
         «IF !app.targets('3.0')»
             $controllerHelper = $this->get('«app.appService».controller_helper');
+
         «ENDIF»
 
         // delegate form processing to the form handler
