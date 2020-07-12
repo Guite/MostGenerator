@@ -102,7 +102,7 @@ class Delete {
     '''
 
     def private callDisplayHooks(Entity it, String appName) '''
-        {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«name.formatForCode».getKey(), outputAsArray=true) %}
+        {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
         {% if hooks is iterable and hooks|length > 0 %}
             {% for area, hook in hooks %}
                 <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>

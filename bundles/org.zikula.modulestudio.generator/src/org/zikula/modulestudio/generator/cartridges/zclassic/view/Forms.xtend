@@ -335,8 +335,7 @@ class Forms {
 
     def private displayHooks(Entity it, Application app) '''
         {% if supportsHookSubscribers %}
-            {% set hookId = mode != 'create' ? «name.formatForDB».«primaryKey.name.formatForCode» : null %}
-            {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId, outputAsArray=true) %}
+            {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
             {% if hooks is iterable and hooks|length > 0 %}
                 {% for area, hook in hooks %}
                     <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>

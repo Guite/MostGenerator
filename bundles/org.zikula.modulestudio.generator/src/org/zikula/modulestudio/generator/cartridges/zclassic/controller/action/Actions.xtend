@@ -39,9 +39,13 @@ class Actions {
 
     def actionImpl(Entity it, Action action) '''
         «IF action instanceof DisplayAction || action instanceof DeleteAction»
-            if (null === $«name.formatForCode») {
+            «IF action instanceof DisplayAction»
+                if (null === $«name.formatForCode») {
+                    $«name.formatForCode» = «IF app.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+                }
+            «ELSEIF action instanceof DeleteAction»
                 $«name.formatForCode» = «IF app.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
-            }
+            «ENDIF»
             if (null === $«name.formatForCode») {
                 throw new NotFoundHttpException(
                     «IF application.targets('3.0') && application.isSystemModule»
@@ -280,7 +284,6 @@ class Actions {
         «IF !app.targets('3.0')»
             $controllerHelper = $this->get('«app.appService».controller_helper');
         «ENDIF»
-        $templateParameters = $controllerHelper->processEditActionParameters($objectType, $templateParameters);
 
         // delegate form processing to the form handler
         «IF !app.targets('3.0')»
@@ -292,6 +295,12 @@ class Actions {
         }
 
         $templateParameters = $formHandler->getTemplateParameters();
+
+        $templateParameters = $controllerHelper->processEditActionParameters(
+            $objectType,
+            $templateParameters«IF app.hasHookSubscribers»,
+            $templateParameters['«name.formatForCode»']->supportsHookSubscribers()«ENDIF»
+        );
 
         // fetch and return the appropriate template
         return «IF app.targets('3.0')»$viewHelper«ELSE»$this->get('«app.appService».view_helper')«ENDIF»->processTemplate($objectType, 'edit', $templateParameters);
@@ -378,7 +387,11 @@ class Actions {
         «IF !app.targets('3.0')»
             $controllerHelper = $this->get('«app.appService».controller_helper');
         «ENDIF»
-        $templateParameters = $controllerHelper->processDeleteActionParameters($objectType, $templateParameters«IF app.hasHookSubscribers», «(!skipHookSubscribers).displayBool»«ENDIF»);
+        $templateParameters = $controllerHelper->processDeleteActionParameters(
+            $objectType,
+            $templateParameters«IF app.hasHookSubscribers»,
+            $«name.formatForCode»->supportsHookSubscribers()«ENDIF»
+        );
 
         // fetch and return the appropriate template
         return «IF app.targets('3.0')»$viewHelper«ELSE»$this->get('«app.appService».view_helper')«ENDIF»->processTemplate($objectType, 'delete', $templateParameters);

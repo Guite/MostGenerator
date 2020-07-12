@@ -47,7 +47,7 @@ class ControllerHelper {
             «IF hasViewActions»
                 use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             «ENDIF»
-            «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
+            «IF (hasViewActions || hasDisplayActions || hasEditActions || hasDeleteActions) && hasHookSubscribers»
                 use Zikula\Bundle\CoreBundle\RouteUrl;
             «ENDIF»
             use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
@@ -643,18 +643,33 @@ class ControllerHelper {
          *
          * @param string $objectType Name of treated entity type
          * @param array $templateParameters Template data
+         «IF hasHookSubscribers»
+         * @param bool $hasHookSubscriber Whether hook subscribers are supported or not
+         «ENDIF»
          *
          * @return array Enriched template parameters used for creating the response
          «ENDIF»
          */
         public function processEditActionParameters(
             «IF targets('3.0')»string «ENDIF»$objectType,
-            array $templateParameters = []
+            array $templateParameters = []«IF hasHookSubscribers»,
+            «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
         )«IF targets('3.0')»: array«ENDIF» {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
                 throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
+            «IF hasHookSubscribers»
+
+                if (true === $hasHookSubscriber) {
+                    // build RouteUrl instance for display hooks
+                    $entity = $templateParameters[$objectType];
+                    $urlParameters = $entity->createUrlArgs();
+                    $urlParameters['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
+                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_edit';
+                    $templateParameters['currentUrlObject'] = new RouteUrl($routeName, $urlParameters);
+                }
+            «ENDIF»
 
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
         }
@@ -683,6 +698,17 @@ class ControllerHelper {
             if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
                 throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
             }
+            «IF hasHookSubscribers»
+
+                if (true === $hasHookSubscriber) {
+                    // build RouteUrl instance for display hooks
+                    $entity = $templateParameters[$objectType];
+                    $urlParameters = $entity->createUrlArgs();
+                    $urlParameters['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
+                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_delete';
+                    $templateParameters['currentUrlObject'] = new RouteUrl($routeName, $urlParameters);
+                }
+            «ENDIF»
 
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
         }
