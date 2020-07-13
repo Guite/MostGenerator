@@ -472,8 +472,10 @@ class WorkflowHelper {
                 } else {
                     $this->logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
                 }
-                // uncomment to reveal Doctrine/SQL error
-                // die($exception->getMessage());
+                «IF !isIsSystemModule»
+                    // uncomment to reveal Doctrine/SQL error
+                    // die($exception->getMessage());
+                «ENDIF»
                 throw new RuntimeException($exception->getMessage());
             }
 
