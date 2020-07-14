@@ -44,6 +44,7 @@ class HookProviderView {
         «IF application.targets('3.0') && !application.isSystemModule»
             {% trans_default_domain 'hooks' %}
         «ENDIF»
+        <p>{{ testMessage }}</p>
         {% for element in form.«application.appName.formatForDB»_hook_edit«name.formatForDB» %}
             {{ form_row(element) }}
         {% endfor %}
@@ -55,6 +56,7 @@ class HookProviderView {
         «IF application.targets('3.0') && !application.isSystemModule»
             {% trans_default_domain 'hooks' %}
         «ENDIF»
+        <p>{{ testMessage }}</p>
         {% for element in form.«application.appName.formatForDB»_hook_delete«name.formatForDB» %}
             {{ form_row(element) }}
         {% endfor %}

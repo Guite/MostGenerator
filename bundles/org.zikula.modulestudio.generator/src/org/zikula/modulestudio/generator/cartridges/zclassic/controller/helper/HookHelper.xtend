@@ -586,7 +586,9 @@ class HookHelper {
                             'auto_initialize' => false,«/* required */»
                             'mapped' => false«/* required */»
                         ])
-                        ->addTemplate('@«application.appName»/Hook/edit«name.formatForCodeCapital»Form.html.twig')
+                        ->addTemplate('@«application.appName»/Hook/edit«name.formatForCodeCapital»Form.html.twig', [
+                            'testMessage' => 'This is a test message coming from the «application.appName.formatForCode» hook provider.'
+                        ])
                     ;
                 }
 
@@ -616,7 +618,9 @@ class HookHelper {
                             'auto_initialize' => false,«/* required */»
                             'mapped' => false«/* required */»
                         ])
-                        ->addTemplate('@«application.appName»/Hook/delete«name.formatForCodeCapital»Form.html.twig')
+                        ->addTemplate('@«application.appName»/Hook/delete«name.formatForCodeCapital»Form.html.twig', [
+                            'testMessage' => 'This is a test message coming from the «application.appName.formatForCode» hook provider.'
+                        ])
                     ;
                 }
 
