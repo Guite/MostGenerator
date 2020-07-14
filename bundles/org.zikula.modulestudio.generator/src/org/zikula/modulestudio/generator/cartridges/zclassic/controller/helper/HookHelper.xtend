@@ -202,7 +202,7 @@ class HookHelper {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
             $hookAreaPrefix = str_replace('.ui_hooks.', '.form_aware_hook.', $hookAreaPrefix);
 
-            $hook = new FormAwareHook($form);
+            $hook = new FormAwareHook($form«IF targets('3.0')», $entity->getKey()«ENDIF»);
             $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
 
             return $hook;
