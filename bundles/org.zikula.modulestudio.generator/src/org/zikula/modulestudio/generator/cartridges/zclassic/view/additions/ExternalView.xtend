@@ -358,7 +358,7 @@ class ExternalView {
             {#
             <div class="«app.appName.toLowerCase»-finderform">
                 <fieldset>
-                    {{ render(controller('«app.appName»:«name.formatForCodeCapital»:edit')) }}
+                    {{ render(controller('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Controller\\«name.formatForCodeCapital»Controller::editAction')) }}
                 </fieldset>
             </div>
             #}
