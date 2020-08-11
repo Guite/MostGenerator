@@ -494,9 +494,9 @@ class EditEntityType {
             $builder->add('slug', TextType::class, [
                 'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Permalink:'«IF !app.targets('3.0')»)«ENDIF»,
                 'required' => «IF hasTranslatableSlug»'create' !== $options['mode']«ELSE»false«ENDIF»,
-                «IF hasTranslatableSlug»
+                «/*IF hasTranslatableSlug»
                     'empty_data' => '',
-                «ENDIF»
+                «ENDIF*/»
                 'attr' => [
                     'maxlength' => «slugLength»,
                     «IF slugUnique»
