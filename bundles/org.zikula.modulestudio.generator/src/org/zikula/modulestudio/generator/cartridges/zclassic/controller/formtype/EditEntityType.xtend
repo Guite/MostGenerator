@@ -496,8 +496,7 @@ class EditEntityType {
                 'required' => «IF hasTranslatableSlug»'create' !== $options['mode']«ELSE»false«ENDIF»,
                 «/*IF hasTranslatableSlug»
                     'empty_data' => '',
-                «ENDIF*/»
-                'attr' => [
+                «ENDIF*/»'attr' => [
                     'maxlength' => «slugLength»,
                     «IF slugUnique»
                         'class' => 'validate-unique',
