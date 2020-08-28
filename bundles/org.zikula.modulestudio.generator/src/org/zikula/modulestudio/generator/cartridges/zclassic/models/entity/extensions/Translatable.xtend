@@ -134,7 +134,6 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»*
          «' '»* @ORM\Entity(repositoryClass="«repositoryClass(extensionClassType)»")
          «' '»* @ORM\Table(
          «' '»*     name="«fullEntityTableName»_translation",
