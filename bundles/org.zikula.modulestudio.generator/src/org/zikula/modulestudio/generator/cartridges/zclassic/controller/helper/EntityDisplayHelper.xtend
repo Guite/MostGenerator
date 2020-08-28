@@ -306,10 +306,13 @@ class EntityDisplayHelper {
                 // static part
                 // formattedPart = '\'' + patternPart.replace('\'', '') + '\''
             }
-            if (formattedPart != '' && !result.empty) {
-                result = result.concat("\n")
+            if (formattedPart != '') {
+                formattedPart = formattedPart + ','
+                if (!result.empty) {
+                    result = result.concat("\n")
+                }
             }
-            result = result.concat(formattedPart.toString + ',')
+            result = result.concat(formattedPart.toString)
         }
         result
     }

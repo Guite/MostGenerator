@@ -248,8 +248,8 @@ class PermissionHelper {
 
             /**
              * Filters a given collection of entities based on different permission checks.
-             *
              «IF !targets('3.0')»
+             *
              «IF !isSystemModule»
              * @param string $objectType
              «ENDIF»

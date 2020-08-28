@@ -65,7 +65,6 @@ class ListEntriesHelper {
         «hasMultipleSelection»
 
         «getEntries»
-
         «additions»
     '''
 

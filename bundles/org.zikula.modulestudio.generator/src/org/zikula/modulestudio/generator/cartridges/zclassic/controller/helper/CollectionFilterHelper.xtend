@@ -439,10 +439,10 @@ class CollectionFilterHelper {
                     «ENDIF»
                     if ('workflowState' === $k && 0 === mb_strpos($v, '!')) {
                         $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                           ->setParameter($k, substr($v, 1));
+                           ->setParameter($k, mb_substr($v, 1));
                     } elseif (0 === mb_strpos($v, '%')) {
                         $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
-                           ->setParameter($k, '%' . substr($v, 1) . '%');
+                           ->setParameter($k, '%' . mb_substr($v, 1) . '%');
                     «IF !getListFieldsEntity.filter[multiple].empty»
                         } elseif (in_array($k, [«FOR field : getListFieldsEntity.filter[multiple] SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
                             // multi list filter
@@ -661,7 +661,7 @@ class CollectionFilterHelper {
          * @return QueryBuilder Enriched query builder instance
          «ENDIF»
          */
-        public function addCreatorFilter(QueryBuilder $qb, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: QueryBuilder«ENDIF»
+        public function addCreatorFilter(QueryBuilder $qb, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: QueryBuilder«ENDIF»
         {
             if (null === $userId) {
                 $userId = $this->currentUserApi->isLoggedIn()

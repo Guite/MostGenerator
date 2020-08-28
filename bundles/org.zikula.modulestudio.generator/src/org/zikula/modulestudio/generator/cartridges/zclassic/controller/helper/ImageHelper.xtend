@@ -316,7 +316,7 @@ class ImageHelper {
                     )
                 );
 
-                return substr(
+                return mb_substr(
                     preg_replace('/[^a-zA-Z0-9-_]/', '', $encodedPath),
                     0,
                     8
