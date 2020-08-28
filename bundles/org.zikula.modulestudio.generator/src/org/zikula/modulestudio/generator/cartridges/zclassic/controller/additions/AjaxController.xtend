@@ -157,7 +157,6 @@ class AjaxController {
          * @return JsonResponse
          «ENDIF»
          «ELSE»
-         *
          * @Route("/getItemListFinder", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          */
@@ -279,7 +278,7 @@ class AjaxController {
         )«IF targets('3.0')»: array«ENDIF» {
             $objectType = $item->get_objectType();
             $previewParameters = [
-                $objectType => $item
+                $objectType => $item,
             ];
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
             $previewParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
@@ -325,7 +324,6 @@ class AjaxController {
          * @return JsonResponse
          «ENDIF»
          «ELSE»
-         *
          * @Route("/getItemListAutoCompletion", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          */

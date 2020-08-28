@@ -35,6 +35,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
          * @ORM\OneToMany(targetEntity="\«entityClassName('attribute', false)»", 
          *                mappedBy="entity", cascade={"all"}, 
          *                orphanRemoval=true, indexBy="name")
+         *
          * @var \«entityClassName('attribute', false)»
          */
         protected $attributes = null;

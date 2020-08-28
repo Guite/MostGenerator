@@ -94,7 +94,6 @@ class FinderType {
             «ENDIF»
             «IF !app.targets('3.0') || app.needsFeatureActivationHelper»
                 public function __construct(
-                    
                     «IF !app.targets('3.0')»
                         TranslatorInterface $translator,
                     «ENDIF»

@@ -20,7 +20,6 @@ class CategoryHelper {
     def private categoryHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Doctrine\Common\Collections\ArrayCollection;
         use Doctrine\ORM\QueryBuilder;
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;

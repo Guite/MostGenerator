@@ -96,8 +96,8 @@ class ThirdPartyListener {
                 «ENDIF»
             ];
         }
-
         «IF needsApproval && generatePendingContentSupport»
+
             «pendingContentListener»
         «ENDIF»
         «IF !targets('2.0') && (generateListContentType || needsDetailContentType)»

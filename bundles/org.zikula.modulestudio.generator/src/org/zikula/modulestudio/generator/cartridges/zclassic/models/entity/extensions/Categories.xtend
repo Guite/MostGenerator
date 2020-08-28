@@ -36,6 +36,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
          *                mappedBy="entity", cascade={"all"},
          *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»
          * )
+         *
          * @var \«entityClassName('category', false)»
          */
         protected $categories = null;

@@ -88,8 +88,8 @@ class ExternalController {
         /**
          «IF isBase»
          * Displays one item of a certain object type using a separate template for external usages.
-         *
          «IF !targets('3.0')»
+         *
          * @param Request $request
          * @param string $objectType The currently treated object type
          * @param int $id Identifier of the entity to be shown

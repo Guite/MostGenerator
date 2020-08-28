@@ -59,27 +59,26 @@ class ConfigType {
 
             «ENDIF»
             «IF !getAllVariables.filter(ListField).empty»
-
                 /**
                  * @var ListEntriesHelper
                  */
                 protected $listHelper;
+
             «ENDIF»
             «IF hasUploadVariables»
-
                 /**
                  * @var UploadHelper
                  */
                 protected $uploadHelper;
+
             «ENDIF»
             «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
-
                 /**
                  * @var LocaleApiInterface
                  */
                 protected $localeApi;
-            «ENDIF»
 
+            «ENDIF»
             public function __construct(
                 «IF targets('3.0')»
                     «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
