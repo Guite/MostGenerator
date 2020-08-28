@@ -881,8 +881,8 @@ class EditEntityType {
                     'label' => $action['title'],
                     'icon' => 'delete' === $action['id'] ? 'fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»' : '',
                     'attr' => [
-                        'class' => $action['buttonClass']
-                    ]
+                        'class' => $action['buttonClass'],
+                    ],
                 ]);
                 if ('create' === $options['mode'] && 'submit' === $action['id']«IF !incoming.empty || !outgoing.empty» && !$options['inline_usage']«ENDIF») {
                     // add additional button to submit item and return to create form
@@ -890,8 +890,8 @@ class EditEntityType {
                         'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Submit and repeat'«IF !app.targets('3.0')»)«ENDIF»,
                         'icon' => 'fa-repeat',
                         'attr' => [
-                            'class' => $action['buttonClass']
-                        ]
+                            'class' => $action['buttonClass'],
+                        ],
                     ]);
                 }
             }

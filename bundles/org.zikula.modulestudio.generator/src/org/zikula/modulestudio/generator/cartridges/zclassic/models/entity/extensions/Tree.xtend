@@ -41,7 +41,8 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * @Gedmo\TreeLeft
          * @ORM\Column(type="integer")
          * @Assert\Type(type="int")
-         * @var int $lft
+         *
+         * @var int
          */
         protected $lft;
 
@@ -49,7 +50,8 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * @Gedmo\TreeLevel
          * @ORM\Column(type="integer")
          * @Assert\Type(type="int")
-         * @var int $lvl
+         *
+         * @var int
          */
         protected $lvl;
 
@@ -57,14 +59,16 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * @Gedmo\TreeRight
          * @ORM\Column(type="integer")
          * @Assert\Type(type="int")
-         * @var int $rgt
+         *
+         * @var int
          */
         protected $rgt;
 
         /**
          * @Gedmo\TreeRoot
          * @ORM\Column(type="integer", nullable=true)
-         * @var int $root
+         *
+         * @var int
          */
         protected $root;
 
@@ -77,7 +81,8 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * @Gedmo\TreeParent
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="children")
          * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKey.name.formatForDisplay»", onDelete="SET NULL")
-         * @var self $parent
+         *
+         * @var self
          */
         protected $parent;
 
@@ -86,7 +91,8 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          *
          * @ORM\OneToMany(targetEntity="\«entityClassName('', false)»", mappedBy="parent")
          * @ORM\OrderBy({"lft" = "ASC"})
-         * @var self $children
+         *
+         * @var self
          */
         protected $children;
     '''

@@ -336,6 +336,7 @@ class Entities {
          * Entity class that defines the entity structure and behaviours.
          *
          * This is the concrete entity class for «name.formatForDisplay» entities.
+         *
          «extMan.classAnnotations»
         «classAnnotation»
         «IF it instanceof Entity»

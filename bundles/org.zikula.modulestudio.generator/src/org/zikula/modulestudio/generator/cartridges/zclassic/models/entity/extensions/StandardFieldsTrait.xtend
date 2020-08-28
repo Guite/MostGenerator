@@ -50,6 +50,7 @@ class StandardFieldsTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
+         *
          * @var UserEntity
          */
         protected $createdBy;
@@ -61,7 +62,8 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          * @Assert\Type("\DateTimeInterface")
-         * @var DateTimeInterface $createdDate
+         *
+         * @var DateTimeInterface
          */
         protected $createdDate;
 
@@ -72,6 +74,7 @@ class StandardFieldsTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
+         *
          * @var UserEntity
          */
         protected $updatedBy;
@@ -83,7 +86,8 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          * @Assert\Type("\DateTimeInterface")
-         * @var DateTimeInterface $updatedDate
+         *
+         * @var DateTimeInterface
          */
         protected $updatedDate;
         «IF targets('3.0')»

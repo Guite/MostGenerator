@@ -40,7 +40,8 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          *
          * @Assert\Locale()
          * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
-         * @var string $locale
+         *
+         * @var string
          */
         protected $locale;
     '''
@@ -98,6 +99,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
         «IF primaryKey instanceof AbstractIntegerField»
             /**
              * Use integer instead of string for increased performance.
+             *
              * @see https://github.com/Atlantic18/DoctrineExtensions/issues/1512
              *
              * @var int

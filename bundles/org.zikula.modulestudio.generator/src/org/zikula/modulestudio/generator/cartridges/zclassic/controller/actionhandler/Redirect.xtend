@@ -42,14 +42,15 @@ class Redirect {
         protected function getRedirectCodes()«IF app.targets('3.0')»: array«ENDIF»
         {
             $codes = parent::getRedirectCodes();
-
             «IF hasIndexAction»
+
                 // user index page of «name.formatForDisplay» area
                 $codes[] = 'userIndex';
                 // admin index page of «name.formatForDisplay» area
                 $codes[] = 'adminIndex';
             «ENDIF»
             «IF hasViewAction»
+
                 // user list of «nameMultiple.formatForDisplay»
                 $codes[] = 'userView';
                 // admin list of «nameMultiple.formatForDisplay»
@@ -62,15 +63,16 @@ class Redirect {
                 «ENDIF»
             «ENDIF»
             «IF hasDisplayAction»
+
                 // user detail page of treated «name.formatForDisplay»
                 $codes[] = 'userDisplay';
                 // admin detail page of treated «name.formatForDisplay»
                 $codes[] = 'adminDisplay';
             «ENDIF»
-
             «FOR incomingRelation : getBidirectionalIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
                 «val sourceEntity = incomingRelation.source as Entity»
                 «IF sourceEntity.name != it.name»
+
                     «IF sourceEntity.hasViewAction»
                         // user list of «sourceEntity.nameMultiple.formatForDisplay»
                         $codes[] = 'userView«sourceEntity.nameMultiple.formatForCodeCapital»';

@@ -262,7 +262,9 @@ class Repository {
     def private imports(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository\Base;
 
-        use Doctrine\Common\Collections\ArrayCollection;
+        «IF !app.targets('3.0')»
+            use Doctrine\Common\Collections\ArrayCollection;
+        «ENDIF»
         «IF tree != EntityTreeType.NONE»
             use Doctrine\ORM\EntityManager;
         «ENDIF»

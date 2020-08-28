@@ -145,8 +145,10 @@ class ConfigType {
             {
                 $resolver->setDefaults([
                     // define class for underlying data
-                    'data_class' => AppSettings::class«IF targets('3.0') && !isSystemModule»,
-                    'translation_domain' => 'config'«ENDIF»
+                    'data_class' => AppSettings::class,
+                    «IF targets('3.0') && !isSystemModule»
+                        'translation_domain' => 'config',
+                    «ENDIF»
                 ]);
             }
         }
@@ -174,8 +176,8 @@ class ConfigType {
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Update configuration'«IF !targets('3.0')»)«ENDIF»,
                 'icon' => 'fa-check',
                 'attr' => [
-                    'class' => '«IF !targets('3.0')»btn «ENDIF»btn-success'
-                ]
+                    'class' => '«IF !targets('3.0')»btn «ENDIF»btn-success',
+                ],
             ]);
             «addCommonSubmitButtons»
         }

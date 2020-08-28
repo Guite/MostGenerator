@@ -257,7 +257,7 @@ class FormHandler {
             /**
              * Identifier of treated entity.
              *
-             * @var integer
+             * @var int
              */
             protected $idValue = 0;
 
@@ -658,9 +658,9 @@ class FormHandler {
             «ENDIF»
             // save entity reference for later reuse
             $this->entityRef = $entity;
-
             «initialiseExtensions»
             «IF !getJoinRelations.empty»
+
                 «relationPresetsHelper.callBaseMethod(it)»
             «ENDIF»
 

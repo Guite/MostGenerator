@@ -46,7 +46,8 @@ class GeographicalTrait {
           * @Gedmo\Versioned
          «ENDIF»
          * @Assert\Type(type="numeric")«/* type="float" not possible due to https://github.com/doctrine/dbal/issues/1347 */»
-         * @var float $latitude
+         *
+         * @var float
          */
         protected $latitude = 0.00;
 
@@ -58,7 +59,8 @@ class GeographicalTrait {
           * @Gedmo\Versioned
          «ENDIF»
          * @Assert\Type(type="numeric")«/* type="float" not possible due to https://github.com/doctrine/dbal/issues/1347 */»
-         * @var float $longitude
+         *
+         * @var float
          */
         protected $longitude = 0.00;
         «IF targets('3.0')»

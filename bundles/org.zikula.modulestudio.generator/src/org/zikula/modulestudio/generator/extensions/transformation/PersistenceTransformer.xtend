@@ -151,7 +151,7 @@ class PersistenceTransformer {
         val factory = ModuleStudioFactory.eINSTANCE
         val listField = factory.createListField => [
             name = 'workflowState'
-            documentation = 'the current workflow state'
+            documentation = 'The current workflow state.'
             length = 20
             multiple = false
         ]
@@ -247,13 +247,13 @@ class PersistenceTransformer {
             varContainer.fields += factory.createIntegerField => [
                 name = entity.name.formatForCode + 'EntriesPerPage'
                 defaultValue = '10'
-                documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page'
+                documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page.'
             ]
             if (generateAccountApi && entity.standardFields) {
                 varContainer.fields += factory.createBooleanField => [
                     name = 'linkOwn' + entity.nameMultiple.formatForCodeCapital + 'OnAccountPage'
                     defaultValue = 'true'
-                    documentation = 'Whether to add a link to ' + entity.nameMultiple.formatForDisplay + ' of the current user on his account page'
+                    documentation = 'Whether to add a link to ' + entity.nameMultiple.formatForDisplay + ' of the current user on his account page.'
                     mandatory = false
                 ]
             }
@@ -262,21 +262,21 @@ class PersistenceTransformer {
             varContainer.fields += factory.createBooleanField => [
                 name = entity.name.formatForCode + 'PrivateMode'
                 defaultValue = 'false'
-                documentation = 'Whether users may only see own ' + entity.nameMultiple.formatForDisplay
+                documentation = 'Whether users may only see own ' + entity.nameMultiple.formatForDisplay + '.'
                 mandatory = false
             ]
         }
         varContainer.fields += factory.createBooleanField => [
             name = 'showOnlyOwnEntries'
             defaultValue = 'false'
-            documentation = 'Whether only own entries should be shown on view pages by default or not'
+            documentation = 'Whether only own entries should be shown on view pages by default or not.'
             mandatory = false
         ]
         if (supportLocaleFilter) {
             varContainer.fields += factory.createBooleanField => [
                 name = 'filterDataByLocale'
                 defaultValue = 'false'
-                documentation = 'Whether automatically filter data in the frontend based on the current locale or not'
+                documentation = 'Whether automatically filter data in the frontend based on the current locale or not.'
                 mandatory = false
             ]
         }

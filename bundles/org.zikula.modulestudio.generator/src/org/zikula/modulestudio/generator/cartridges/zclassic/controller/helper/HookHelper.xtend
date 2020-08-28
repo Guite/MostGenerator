@@ -298,19 +298,19 @@ class HookHelper {
             {
                 return [
                     «IF category == 'FilterHooks'»
-                        «category»Category::TYPE_FILTER => '«application.appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'
+                        «category»Category::TYPE_FILTER => '«application.appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter',
                     «ELSEIF category == 'FormAware'»
                         «IF hasEditAction»
                             // Display hook for create/edit forms.
                             «category»Category::TYPE_EDIT => '«application.appName.formatForDB».form_aware_hook.«nameMultiple.formatForDB».edit',
                             // Process the results of the edit form after the main form is processed.
-                            «category»Category::TYPE_PROCESS_EDIT => '«application.appName.formatForDB».form_aware_hook.«nameMultiple.formatForDB».process_edit'«IF hasDeleteAction»,«ENDIF»
+                            «category»Category::TYPE_PROCESS_EDIT => '«application.appName.formatForDB».form_aware_hook.«nameMultiple.formatForDB».process_edit',
                         «ENDIF»
                         «IF hasDeleteAction»
                             // Display hook for delete forms.
                             «category»Category::TYPE_DELETE => '«application.appName.formatForDB».form_aware_hook.«nameMultiple.formatForDB».delete',
                             // Process the results of the delete form after the main form is processed.
-                            «category»Category::TYPE_PROCESS_DELETE => '«application.appName.formatForDB».form_aware_hook.«nameMultiple.formatForDB».process_delete'
+                            «category»Category::TYPE_PROCESS_DELETE => '«application.appName.formatForDB».form_aware_hook.«nameMultiple.formatForDB».process_delete',
                         «ENDIF»
                     «ELSEIF category == 'UiHooks'»
                         «IF hasViewAction || hasDisplayAction»
@@ -335,7 +335,7 @@ class HookHelper {
                             // Validate input from an item to be deleted.
                             «category»Category::TYPE_VALIDATE_DELETE => '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».validate_delete',
                             // Perform the final delete actions for a deleted item.
-                            «category»Category::TYPE_PROCESS_DELETE => '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».process_delete'
+                            «category»Category::TYPE_PROCESS_DELETE => '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».process_delete',
                         «ENDIF»
                     «ENDIF»
                 ];

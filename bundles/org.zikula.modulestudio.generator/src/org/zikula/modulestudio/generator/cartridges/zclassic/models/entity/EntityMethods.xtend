@@ -121,17 +121,19 @@ class EntityMethods {
                 if (true === $forEditing) {
                     return [
                         '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»(),
-                        'slug' => $this->getSlug()
+                        'slug' => $this->getSlug(),
                     ];
                 }
 
                 return [
-                    'slug' => $this->getSlug()
+                    'slug' => $this->getSlug(),
                 ];
             «ELSE»
                 return [
-                    '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»()«IF hasSluggableFields»,
-                    'slug' => $this->getSlug()«ENDIF»
+                    '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»(),
+                    «IF hasSluggableFields»
+                        'slug' => $this->getSlug(),
+                    «ENDIF»
                 ];
             «ENDIF»
         }

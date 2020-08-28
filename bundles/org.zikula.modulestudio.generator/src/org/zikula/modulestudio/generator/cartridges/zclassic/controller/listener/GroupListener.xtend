@@ -19,7 +19,7 @@ class GroupListener {
                     GroupPreDeletedEvent::class => ['preDelete', 5],
                     GroupPostDeletedEvent::class => ['delete', 5],
                     GroupPostUserAddedEvent::class => ['addUser', 5],
-                    GroupPostUserRemovedEvent::class=> ['removeUser', 5],
+                    GroupPostUserRemovedEvent::class => ['removeUser', 5],
                     GroupApplicationPostProcessedEvent::class => ['applicationProcessed', 5],
                     GroupApplicationPostCreatedEvent::class => ['newApplication', 5],
                 «ELSE»

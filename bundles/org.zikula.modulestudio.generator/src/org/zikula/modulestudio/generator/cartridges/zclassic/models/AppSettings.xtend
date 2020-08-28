@@ -106,7 +106,6 @@ class AppSettings {
 
         «ENDIF»
         «memberVars»
-
         «constructor»
         «accessors»
 

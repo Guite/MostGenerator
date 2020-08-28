@@ -248,8 +248,10 @@ class PermissionHelper {
 
             /**
              * Filters a given collection of entities based on different permission checks.
-             «IF !targets('3.0')»
              *
+             «IF targets('3.0')»
+             * @param array|ArrayCollection $entities The given list of entities
+             «ELSE»
              «IF !isSystemModule»
              * @param string $objectType
              «ENDIF»

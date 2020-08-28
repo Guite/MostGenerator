@@ -279,7 +279,7 @@ class QuickNavigationType {
                     'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'OK'«IF !app.targets('3.0')»)«ENDIF»,
                     'attr' => [
                         'class' => '«IF app.targets('3.0')»btn-secondary«ELSE»btn btn-default«ENDIF» btn-sm',
-                    ]
+                    ],
                 ]);
             }
 
@@ -504,7 +504,7 @@ class QuickNavigationType {
                     'maxlength' => 255,
                     'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm',
                 ],
-                'required' => false
+                'required' => false,
             ]);
         }
     '''
@@ -666,7 +666,7 @@ class QuickNavigationType {
         'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»,
         'choices' => [
             «IF !app.targets('3.0')»$this->__(«ENDIF»'No'«IF !app.targets('3.0')»)«ENDIF» => 'no',
-            «IF !app.targets('3.0')»$this->__(«ENDIF»'Yes'«IF !app.targets('3.0')»)«ENDIF» => 'yes'
+            «IF !app.targets('3.0')»$this->__(«ENDIF»'Yes'«IF !app.targets('3.0')»)«ENDIF» => 'yes',
         ]«IF !app.targets('2.0')»,«ENDIF»
         «IF !app.targets('2.0')»
             'choices_as_values' => true,

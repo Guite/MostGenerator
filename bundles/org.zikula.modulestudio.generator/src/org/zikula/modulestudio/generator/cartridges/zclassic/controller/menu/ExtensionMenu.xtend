@@ -124,7 +124,7 @@ class ExtensionMenu {
                                     «ENDIF»
                                     $menu->addChild('My «entity.nameMultiple.formatForDisplay»', [
                                         'route' => '«appName.formatForDB»_' . strtolower($objectType) . '_view',
-                                        'routeParameters' => $routeParameters
+                                        'routeParameters' => $routeParameters,
                                     ])
                                         ->setAttribute('icon', 'fas fa-list-alt')
                                         «IF !isSystemModule»
@@ -137,7 +137,7 @@ class ExtensionMenu {
                         «ENDFOR»
                         if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                             $menu->addChild('«name.formatForDisplayCapital» Backend', [
-                                'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'
+                                'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»',
                             ])
                                 ->setAttribute('icon', 'fas fa-wrench')
                             ;

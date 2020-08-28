@@ -278,7 +278,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, EditAction action) '''
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : ''
+            'routeArea' => $isAdmin ? 'admin' : '',
         ];
         «IF !app.targets('3.0')»
             $controllerHelper = $this->get('«app.appService».controller_helper');
@@ -455,7 +455,7 @@ class Actions {
     def private dispatch actionImplBody(Entity it, CustomAction action) '''
         «/* TODO custom logic */»
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : ''
+            'routeArea' => $isAdmin ? 'admin' : '',
         ];
 
         // return template

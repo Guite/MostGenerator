@@ -120,7 +120,6 @@ class ListEntriesHelper {
 
             return $result;
         }
-
     '''
 
     def private extractMultiList(Application it) '''
@@ -148,7 +147,6 @@ class ListEntriesHelper {
 
             return $listValues;
         }
-
     '''
 
     def private hasMultipleSelection(Application it) '''
@@ -196,7 +194,6 @@ class ListEntriesHelper {
 
             return $result;
         }
-
     '''
 
     def private getEntries(Application it) '''

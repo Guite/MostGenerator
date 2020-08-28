@@ -38,13 +38,12 @@ class MenuBuilder {
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-        «IF hasEditActions || !relations.empty»
+        «IF (!getAllEntities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
-        use «appNamespace»\«name.formatForCodeCapital»Events;
         «IF targets('3.0')»
             use «appNamespace»\Event\ItemActionsMenuPostConfigurationEvent;
             use «appNamespace»\Event\ItemActionsMenuPreConfigurationEvent;
@@ -53,6 +52,7 @@ class MenuBuilder {
                 use «appNamespace»\Event\ViewActionsMenuPreConfigurationEvent;
             «ENDIF»
         «ELSE»
+            use «appNamespace»\«name.formatForCodeCapital»Events;
             use «appNamespace»\Event\ConfigureItemActionsMenuEvent;
             «IF hasViewActions»
                 use «appNamespace»\Event\ConfigureViewActionsMenuEvent;

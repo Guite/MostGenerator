@@ -18,7 +18,7 @@ class Locking {
         /**
          * Whether the PageLock extension is used for this entity type or not.
          *
-         * @var boolean
+         * @var bool
          */
         protected $hasPageLockSupport = false;
     '''

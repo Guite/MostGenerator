@@ -96,14 +96,14 @@ class LoggableListener {
 
         /**
          * Checks whether this listener is responsible for the given entity or not.
+         «IF !targets('3.0')»
          *
          * @param object $entity The given entity
-         «IF !targets('3.0')»
          *
          * @return bool True if entity is managed by this listener, false otherwise
          «ENDIF»
          */
-        protected function isEntityManagedByThisBundle($entity)«IF targets('3.0')»: bool«ENDIF»
+        protected function isEntityManagedByThisBundle(object $entity)«IF targets('3.0')»: bool«ENDIF»
         {
             $entityClassParts = explode('\\', get_class($entity));
 

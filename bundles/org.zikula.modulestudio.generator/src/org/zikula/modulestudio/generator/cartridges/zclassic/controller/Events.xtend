@@ -356,7 +356,7 @@ class Events {
             «IF !app.targets('3.0') || classSuffix == 'PreUpdate'»
 
                 /**
-                 * @var array Entity change set for preUpdate events.
+                 * @var array Entity change set for preUpdate events
                  */
                 protected $entityChangeSet = [];
             «ENDIF»

@@ -55,14 +55,12 @@ class Annotations {
     '''
 
     def private dispatch actionRoute(MainAction it, Entity entity, Boolean isAdmin) '''
-         «' '»*
          «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»",
          «' '»*        methods = {"GET"}
          «' '»* )
     '''
 
     def private dispatch actionRoute(ViewAction it, Entity entity, Boolean isAdmin) '''
-         «' '»*
          «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{«IF app.targets('3.0')»page«ELSE»pos«ENDIF»}/{num}.{_format}",
          «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "«IF app.targets('3.0')»page«ELSE»pos«ENDIF»" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»"},
          «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "«IF app.targets('3.0')»page«ELSE»pos«ENDIF»" = 1, "num" = 10, "_format" = "html"},
@@ -71,7 +69,6 @@ class Annotations {
     '''
 
     def private actionRouteForSingleEntity(Entity it, Action action, Boolean isAdmin) '''
-         «' '»*
          «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
          «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«app.getListOfDisplayFormats.join('|')»«ENDIF»"},
          «' '»*        defaults = {«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»"_format" = "html"},

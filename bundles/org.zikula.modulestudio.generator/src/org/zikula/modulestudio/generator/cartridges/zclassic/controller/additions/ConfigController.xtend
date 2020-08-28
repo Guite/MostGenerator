@@ -131,7 +131,7 @@ class ConfigController {
         }
 
         $templateParameters = [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ];
 
         // render the config form
