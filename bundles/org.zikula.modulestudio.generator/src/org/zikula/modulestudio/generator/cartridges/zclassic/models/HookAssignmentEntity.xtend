@@ -73,7 +73,6 @@ class HookAssignmentEntity {
         namespace «appNamespace»\Entity\Base;
 
         use Doctrine\ORM\Mapping as ORM;
-        use Gedmo\Mapping\Annotation as Gedmo;
         use Symfony\Component\Validator\Constraints as Assert;
         «IF targets('3.0')»
             use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
@@ -92,7 +91,6 @@ class HookAssignmentEntity {
         abstract class AbstractHookAssignmentEntity extends EntityAccess
         {
             «FOR field : entity.getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
-
             «FOR field : entity.getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         }
     '''

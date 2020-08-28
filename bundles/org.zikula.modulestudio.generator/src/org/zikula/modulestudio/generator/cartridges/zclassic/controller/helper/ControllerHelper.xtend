@@ -625,7 +625,7 @@ class ControllerHelper {
                         $assignments[] = [
                             'url' => $url,
                             'text' => $assignment->getSubscriberOwner(),
-                            'date' => $assignment->getUpdatedDate()
+                            'date' => $assignment->getUpdatedDate(),
                         ];
                     }
                     $templateParameters['hookAssignments'] = $assignments;

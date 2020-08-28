@@ -359,11 +359,11 @@ class FormHandler {
 
             «ENDIF»
             «IF hasNonNullableUserFields»
-
                 /**
                  * @var UserRepositoryInterface
                  */
                 protected $userRepository;
+
             «ENDIF»
             /**
              * @var EntityFactory

@@ -15,7 +15,7 @@ class InlineRedirect {
 
     def generate(Entity it, Boolean isBase) '''
         «handleInlineRedirectDocBlock(isBase)»
-        «handleInlineRedirectSignature» {
+        «handleInlineRedirectSignature»«IF application.targets('3.0')»: Response«ENDIF» {
             «IF isBase»
                 «handleInlineRedirectBaseImpl»
             «ELSE»
@@ -71,8 +71,7 @@ class InlineRedirect {
                 $commandName,
                 $id = 0
             «ENDIF»
-        )«IF application.targets('3.0')»: Response«ENDIF»
-    '''
+        )'''
 
     def private handleInlineRedirectBaseImpl(Entity it) '''
         if (empty($idPrefix)) {
@@ -107,7 +106,7 @@ class InlineRedirect {
             'formattedTitle' => $formattedTitle,
             'searchTerm' => $searchTerm,
             'idPrefix' => $idPrefix,
-            'commandName' => $commandName
+            'commandName' => $commandName,
         ];
 
         return new PlainResponse(

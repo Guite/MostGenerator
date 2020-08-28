@@ -774,7 +774,7 @@ class HookHelper {
                  */
                 protected function selectAssignedEntities(Hook $hook)«IF application.targets('3.0')»: array«ENDIF»
                 {
-                    list ($assignments, $assignedIds) = $this->selectAssignedIds($hook);
+                    list($assignments, $assignedIds) = $this->selectAssignedIds($hook);
                     if (!count($assignedIds)) {
                         return [[], []];
                     }
@@ -824,13 +824,13 @@ class HookHelper {
                  */
                 protected function renderDisplayHookResponse(Hook $hook, «IF application.targets('3.0')»string «ENDIF»$context)«IF application.targets('3.0')»: DisplayHookResponse«ENDIF»
                 {
-                    list ($assignments, $assignedEntities) = $this->selectAssignedEntities($hook);
+                    list($assignments, $assignedEntities) = $this->selectAssignedEntities($hook);
                     $template = '@«application.appName»/«name.formatForCodeCapital»/includeDisplayItemListMany.html.twig';
 
                     $templateParameters = [
                         'items' => $assignedEntities,
                         'context' => $context,
-                        'routeArea' => ''
+                        'routeArea' => '',
                     ];
 
                     if ('hookDisplayView' === $context) {

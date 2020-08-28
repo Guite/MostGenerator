@@ -123,7 +123,7 @@ class ExtensionMenu {
                                         }
                                     «ENDIF»
                                     $menu->addChild('My «entity.nameMultiple.formatForDisplay»', [
-                                        'route' => '«appName.formatForDB»_' . strtolower($objectType) . '_view',
+                                        'route' => '«appName.formatForDB»_' . mb_strtolower($objectType) . '_view',
                                         'routeParameters' => $routeParameters,
                                     ])
                                         ->setAttribute('icon', 'fas fa-list-alt')

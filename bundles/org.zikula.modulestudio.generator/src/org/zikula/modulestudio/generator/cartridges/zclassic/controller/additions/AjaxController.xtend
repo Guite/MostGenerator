@@ -397,10 +397,10 @@ class AjaxController {
                 if (!empty($itemDescription)) {
                     $itemDescription = strip_tags($itemDescription);
                     $descriptionLength = 50;
-                    if (strlen($itemDescription) > $descriptionLength) {
-                        if (false !== ($breakpoint = strpos($itemDescription, ' ', $descriptionLength))) {
+                    if (mb_strlen($itemDescription) > $descriptionLength) {
+                        if (false !== ($breakpoint = mb_strpos($itemDescription, ' ', $descriptionLength))) {
                             $descriptionLength = $breakpoint;
-                            $itemDescription = rtrim(substr($itemDescription, 0, $descriptionLength)) . '&hellip;';
+                            $itemDescription = rtrim(mb_substr($itemDescription, 0, $descriptionLength)) . '&hellip;';
                         }
                     }
                 }
@@ -1261,7 +1261,7 @@ class AjaxController {
 
         // return response
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
-            'id' => $id
+            'id' => $id,
         ]);
     '''
 

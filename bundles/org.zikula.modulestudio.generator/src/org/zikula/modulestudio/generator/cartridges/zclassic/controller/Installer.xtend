@@ -147,8 +147,7 @@ class Installer {
                 CategoryRegistryRepositoryInterface $categoryRegistryRepository,
                 CategoryPermissionApi $categoryPermissionApi«ENDIF»«IF hasUploads»,
                 Filesystem $filesystem,
-                string $dataDirectory
-                «ENDIF»
+                string $dataDirectory«ENDIF»
             ) {
                 parent::__construct($extension, $managerRegistry, $schemaTool, $requestStack, $translator, $variableApi);
                 $this->logger = $logger;
