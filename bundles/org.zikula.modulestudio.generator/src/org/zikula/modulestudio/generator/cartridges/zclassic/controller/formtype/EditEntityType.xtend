@@ -447,9 +447,9 @@ class EditEntityType {
                         'fields' => $translatableFields,
                         'mandatory_fields' => $mandatoryFields[$language],
                         «IF app.targets('3.0')»
-                            'values' => $options['translations'][$language] ?? []
+                            'values' => $options['translations'][$language] ?? [],
                         «ELSE»
-                            'values' => isset($options['translations'][$language]) ? $options['translations'][$language] : []
+                            'values' => isset($options['translations'][$language]) ? $options['translations'][$language] : [],
                         «ENDIF»
                     ]);
                 }

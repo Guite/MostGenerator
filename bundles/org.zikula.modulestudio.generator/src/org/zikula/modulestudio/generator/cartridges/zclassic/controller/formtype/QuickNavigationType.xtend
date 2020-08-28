@@ -667,7 +667,7 @@ class QuickNavigationType {
         'choices' => [
             «IF !app.targets('3.0')»$this->__(«ENDIF»'No'«IF !app.targets('3.0')»)«ENDIF» => 'no',
             «IF !app.targets('3.0')»$this->__(«ENDIF»'Yes'«IF !app.targets('3.0')»)«ENDIF» => 'yes',
-        ]«IF !app.targets('2.0')»,«ENDIF»
+        ],
         «IF !app.targets('2.0')»
             'choices_as_values' => true,
         «ENDIF»

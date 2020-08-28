@@ -35,13 +35,13 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
-
         /**
          * Description of currently executed action to be persisted in next log entry.
          *
          * @var string
          */
         protected $_actionDescriptionForLogEntry = '';
+
     '''
 
     /**

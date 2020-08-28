@@ -271,7 +271,6 @@ class Entities {
 
         «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
         «extMan.additionalProperties»
-
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
         «IF it instanceof Entity && (it as Entity).loggable && (it as Entity).hasTranslatableFields && getDerivedFields.filter(ArrayField).filter[name.equals('translationData')].empty»

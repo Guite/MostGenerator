@@ -200,8 +200,7 @@ class SharedFormTypeFields {
         «ENDIF»
     '''
 
-    def definition(DerivedField it) '''
-        «/* No input fields for foreign keys, relations are processed further down */»
+    def definition(DerivedField it) '''«/* No input fields for foreign keys, relations are processed further down */»
         «IF null === entity || entity.getIncomingJoinRelations.filter[r|r.getSourceFields.head == name.formatForDB].empty»
             «IF it instanceof ListField»
                 «fetchListEntries»
@@ -1331,7 +1330,7 @@ class SharedFormTypeFields {
                     'class' => 'btn btn-default',
                 «ENDIF»
                 'formnovalidate' => 'formnovalidate',
-            ]
+            ],
         ]);
         $builder->add('cancel', SubmitType::class, [
             'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Cancel'«IF !targets('3.0')»)«ENDIF»,

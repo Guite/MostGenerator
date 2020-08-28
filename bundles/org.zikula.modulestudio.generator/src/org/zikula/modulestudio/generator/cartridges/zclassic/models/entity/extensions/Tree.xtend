@@ -36,7 +36,6 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
-
         /**
          * @Gedmo\TreeLeft
          * @ORM\Column(type="integer")
@@ -95,6 +94,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * @var self
          */
         protected $children;
+
     '''
 
     /**

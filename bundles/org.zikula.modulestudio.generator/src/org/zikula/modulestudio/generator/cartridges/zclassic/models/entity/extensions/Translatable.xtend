@@ -33,7 +33,6 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
-
         /**
          * Used locale to override Translation listener's locale.
          * This is not a mapped field of entity metadata, just a simple property.
@@ -44,6 +43,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          * @var string
          */
         protected $locale;
+
     '''
 
     /**

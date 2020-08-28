@@ -31,7 +31,6 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
-
         /**
          * @ORM\OneToMany(targetEntity="\«entityClassName('category', false)»",
          *                mappedBy="entity", cascade={"all"},
@@ -40,6 +39,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
          * @var \«entityClassName('category', false)»
          */
         protected $categories = null;
+
     '''
 
     /**

@@ -233,7 +233,10 @@ class ExtensionMenu {
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {
                 «IF !isSystemModule»
-                    $contextArgs = ['api' => 'linkContainer', 'action' => 'getLinks'];
+                    $contextArgs = [
+                        'api' => 'linkContainer',
+                        'action' => 'getLinks',
+                    ];
                 «ENDIF»
                 $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api'«IF !isSystemModule», $contextArgs«ENDIF»);
         
@@ -263,7 +266,7 @@ class ExtensionMenu {
                                     $links[] = [
                                         'url' => $this->router->generate($routeName, $routeParameters),
                                         'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
-                                        'icon' => 'list-alt'
+                                        'icon' => 'list-alt',
                                     ];
                                 }
                             }
@@ -273,7 +276,7 @@ class ExtensionMenu {
                             $links[] = [
                                 'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
                                 'text' => $this->__('«name.formatForDisplayCapital» Backend'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»),
-                                'icon' => 'wrench'
+                                'icon' => 'wrench',
                             ];
                         }
 

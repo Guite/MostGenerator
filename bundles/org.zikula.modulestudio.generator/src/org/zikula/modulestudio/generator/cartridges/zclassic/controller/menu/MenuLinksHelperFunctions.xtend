@@ -51,7 +51,7 @@ class MenuLinksHelperFunctions {
         ) {
             «IF application.targets('3.0')»
                 $menu->addChild(«application.translate(nameMultiple.formatForDisplayCapital)», [
-                    'route' => '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«/*IF tree != EntityTreeType.NONE»,
+                    'route' => '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view',«/*IF tree != EntityTreeType.NONE»
                     'routeParameters' => ['tpl' => 'tree']«ENDIF*/»
                 ])
                     ->setLinkAttribute('title', «application.translate(nameMultiple.formatForDisplayCapital + ' list')»)
@@ -84,7 +84,7 @@ class MenuLinksHelperFunctions {
                         'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»'),
                         'text' => «translate('Frontend')»,
                         'title' => «translate('Switch to user area.')»,
-                        'icon' => 'home'
+                        'icon' => 'home',
                     ];
                 «ENDIF»
             }
@@ -102,7 +102,7 @@ class MenuLinksHelperFunctions {
                         'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
                         'text' => «translate('Backend')»,
                         'title' => «translate('Switch to administration area.')»,
-                        'icon' => 'wrench'
+                        'icon' => 'wrench',
                     ];
                 «ENDIF»
             }

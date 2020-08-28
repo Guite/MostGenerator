@@ -36,7 +36,6 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
-
         /**
          «IF loggable»
              * @Gedmo\Versioned
@@ -51,6 +50,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
          * @var string
          */
         protected $slug;
+
     '''
 
     def private slugDetails(Entity it) '''fields={«FOR field : getSluggableFields SEPARATOR ', '»"«field.name.formatForCode»"«ENDFOR»}, updatable=«slugUpdatable.displayBool», unique=«slugUnique.displayBool», separator="«slugSeparator»", style="«slugStyle.slugStyleAsConstant»"'''
