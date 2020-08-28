@@ -1079,8 +1079,7 @@ class FormHandler {
                 foreach ($this->getAttributeFieldNames() as $fieldName) {
                     $value = $this->form['attributes' . $fieldName]->getData();
                     $entity->setAttribute($fieldName, $value);
-                }
-                «/*
+                }«/*
                 $entity->setAttribute('url', 'http://www.example.com');
                 $entity->setAttribute('url', null); // remove
                 */»

@@ -618,7 +618,7 @@ class EditEntityType {
                 'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«aliasName.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF»,
                 «relationHelp(outgoing)»
                 'attr' => [
-                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the «aliasName.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»
+                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the «aliasName.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
                 ]
             ]);
         «ELSE»
@@ -682,7 +682,7 @@ class EditEntityType {
                 «ENDIF»
                 «relationHelp(outgoing)»
                 'attr' => [
-                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the «aliasName.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»
+                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the «aliasName.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
                 ]
             ]);
         «ENDIF»

@@ -15,7 +15,6 @@ class MassHandling {
         «handleSelectedObjects(isBase, true)»
 
         «handleSelectedObjects(isBase, false)»
-
     '''
 
     def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''

@@ -286,7 +286,7 @@ class EntityMethods {
                         $collection = $this->«aliasName»;
                         $this->«aliasName» = new ArrayCollection();
                         foreach ($collection as $rel) {
-                            $this->add«aliasName.formatForCodeCapital»(«IF !(relation instanceof ManyToManyRelationship)» clone«ENDIF» $rel);
+                            $this->add«aliasName.formatForCodeCapital»(«IF !(relation instanceof ManyToManyRelationship)»clone «ENDIF»$rel);
                         }
                     «ENDFOR»
                 «ENDFOR»

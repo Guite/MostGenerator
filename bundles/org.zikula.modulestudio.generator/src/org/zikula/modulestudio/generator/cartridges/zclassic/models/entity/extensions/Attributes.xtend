@@ -32,7 +32,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override properties(Entity it) '''
         /**
-         * @ORM\OneToMany(targetEntity="\«entityClassName('attribute', false)»", 
+         * @ORM\OneToMany(targetEntity="\«entityClassName('attribute', false)»",
          *                mappedBy="entity", cascade={"all"}, 
          *                orphanRemoval=true, indexBy="name")
          *

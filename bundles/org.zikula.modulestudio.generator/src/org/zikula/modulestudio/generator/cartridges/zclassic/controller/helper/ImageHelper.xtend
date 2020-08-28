@@ -190,7 +190,7 @@ class ImageHelper {
                         ImageInterface::THUMBNAIL_INSET
                     ),
                     'extension' => null, // file extension for thumbnails (jpg, png, gif; null for original file type)
-                ]
+                ],
             ];
 
             «IF needsAutoCompletion»

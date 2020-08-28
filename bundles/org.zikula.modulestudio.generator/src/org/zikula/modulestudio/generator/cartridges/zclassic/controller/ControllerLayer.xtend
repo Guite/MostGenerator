@@ -89,16 +89,17 @@ class ControllerLayer {
                 «adminAndUserImpl(action, true)»
             «ENDFOR»
             «IF hasViewAction»
+
                 «new MassHandling().generate(it, true)»
             «ENDIF»
             «IF loggable»
+
                 «new LoggableUndelete().generate(it, true)»
+
                 «new LoggableHistory().generate(it, true)»
             «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»
-                «IF loggable»
 
-                «ENDIF»
                 «new InlineRedirect().generate(it, true)»
             «ENDIF»
         }

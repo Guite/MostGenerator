@@ -49,7 +49,7 @@ class ThirdPartyListener {
                         ZikulaHttpKernelInterface $kernel,
                     «ENDIF»
                     Filesystem $filesystem,
-                    RequestStack $requestStack«IF needsApproval && generatePendingContentSupport», «ENDIF»
+                    RequestStack $requestStack«IF needsApproval && generatePendingContentSupport»,«ENDIF»
                 «ENDIF»
                 «IF needsApproval && generatePendingContentSupport»
                     WorkflowHelper $workflowHelper

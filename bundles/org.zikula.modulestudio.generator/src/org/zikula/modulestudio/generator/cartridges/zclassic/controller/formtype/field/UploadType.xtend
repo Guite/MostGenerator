@@ -233,7 +233,6 @@ class UploadType {
                     «ENDIF»
                 ;
             }
-
             «new FileHelper(it).getterMethod(null, 'formBuilder', 'FormBuilderInterface', false, false, targets('3.0'))»
             «new FileHelper(it).getterMethod(null, 'entity', 'object', false, false, targets('3.0'))»
 

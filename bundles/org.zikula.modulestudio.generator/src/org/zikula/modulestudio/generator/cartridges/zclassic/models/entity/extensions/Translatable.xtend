@@ -86,7 +86,6 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension base class implementation.
      */
     override extensionClassBaseImplementation(Entity it) '''
-
         /**
          * Use a length of 140 instead of 255 to avoid too long keys for the indexes.
          *

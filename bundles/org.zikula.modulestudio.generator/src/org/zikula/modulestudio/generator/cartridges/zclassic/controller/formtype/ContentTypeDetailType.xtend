@@ -129,7 +129,7 @@ class ContentTypeDetailType {
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Object type:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
-                'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.filter[hasDisplayAction].size > 1»,«ENDIF»
+                'empty_data' => '«leadingEntity.name.formatForCode»',
                 «IF getAllEntities.filter[hasDisplayAction].size > 1»
                     'attr' => [
                         'title' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the element once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,

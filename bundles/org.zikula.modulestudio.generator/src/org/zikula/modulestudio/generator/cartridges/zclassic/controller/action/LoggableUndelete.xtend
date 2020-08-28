@@ -19,7 +19,6 @@ class LoggableUndelete {
         «undelete(isBase, true)»
 
         «undelete(isBase, false)»
-
     '''
 
     def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''

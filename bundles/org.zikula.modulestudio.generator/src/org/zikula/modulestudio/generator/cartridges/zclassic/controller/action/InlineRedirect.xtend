@@ -32,7 +32,6 @@ class InlineRedirect {
                 «ENDIF»
             «ENDIF»
         }
-
     '''
 
     def private handleInlineRedirectDocBlock(Entity it, Boolean isBase) '''

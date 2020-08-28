@@ -92,7 +92,7 @@ class UploadFileTransformer {
             {
                 return [
                     $this->fieldName => $file,
-                    $this->fieldName . 'DeleteFile' => false
+                    $this->fieldName . 'DeleteFile' => false,
                 ];
             }
 
