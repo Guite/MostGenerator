@@ -327,7 +327,6 @@ class QuickNavigationType {
                 «addSearchField»
 
             «ENDIF»
-
             «addSortingFields»
 
             «addAmountField»
