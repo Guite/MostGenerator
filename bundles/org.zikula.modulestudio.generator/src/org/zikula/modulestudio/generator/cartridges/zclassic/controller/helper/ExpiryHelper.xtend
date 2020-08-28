@@ -220,14 +220,15 @@ class ExpiryHelper {
          * @param string $endField Name of field storing the end date
          «ENDIF»
          * @param mixed $endDate Datetime or date string for the threshold date
+         «IF !targets('3.0')»
          *
          * @return array List of affected entities
+         «ENDIF»
          */
-        protected function getExpiredObjects(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$endField = '', $endDate = '')
+        protected function getExpiredObjects(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$endField = '', $endDate = ''): array
         {
             $repository = $this->entityFactory->getRepository($objectType);
             $qb = $repository->genericBaseQuery('', '', false);
-
             «/*$qb->andWhere('tbl.workflowState != :archivedState')
                ->setParameter('archivedState', 'archived');*/»
             $qb->andWhere('tbl.workflowState = :approvedState')
@@ -344,7 +345,7 @@ class ExpiryHelper {
                         if (null !== $request) {
                             $urlArgs['_locale'] = $request->getLocale();
                         }
-                        $url = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
+                        $url = new RouteUrl('«appName.formatForDB»_' . mb_strtolower($objectType) . '_display', $urlArgs);
                     }
                     $hookType = 'delete' === $action
                         ? UiHooksCategory::TYPE_PROCESS_DELETE

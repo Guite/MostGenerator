@@ -1093,7 +1093,7 @@ class AjaxController {
         $repository = $entityFactory->getRepository($objectType);
         $sortableFieldMap = [
             «FOR entity : getAllEntities.filter[hasSortableFields]»
-                '«entity.name.formatForCode»' => '«entity.getSortableFields.head.name.formatForCode»'«IF entity != getAllEntities.filter[hasSortableFields].last»,«ENDIF»
+                '«entity.name.formatForCode»' => '«entity.getSortableFields.head.name.formatForCode»',
             «ENDFOR»
         ];
 
@@ -1107,7 +1107,7 @@ class AjaxController {
             }
             $entity = $repository->selectById($itemId);
             $entity->$sortFieldSetter($sortCounter);
-            $sortCounter++;
+            ++$sortCounter;
         }
 
         // save entities back to database
@@ -1115,7 +1115,7 @@ class AjaxController {
 
         // return response
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
-            'message' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The setting has been successfully changed.')
+            'message' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The setting has been successfully changed.'),
         ]);
     '''
 

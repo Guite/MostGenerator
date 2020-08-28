@@ -146,7 +146,7 @@ class UploadHelper {
             $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'];
             $this->forbiddenFileTypes = [
                 'cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5',
-                'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'
+                'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml',
             ];
         }
         «IF !targets('3.0')»
@@ -624,7 +624,7 @@ class UploadHelper {
 
             if (0 === $namingScheme || 3 === $namingScheme) {
                 // clean the given file name
-                $fileNameCharCount = strlen($fileName);
+                $fileNameCharCount = mb_strlen($fileName);
                 for ($y = 0; $y < $fileNameCharCount; ++$y) {
                     if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
                         $fileName[$y] = '_';

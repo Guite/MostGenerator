@@ -104,7 +104,7 @@ class ContentTypeDetail {
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                 'id' => null,
                 'displayMode' => 'embed',
-                'customTemplate' => null
+                'customTemplate' => null,
             ];
         }
 
@@ -168,7 +168,7 @@ class ContentTypeDetail {
                 'objectType' => $this->data['objectType'],
                 'id' => $this->data['id'],
                 'source' => 'contentType',
-                'displayMode' => $this->data['displayMode']
+                'displayMode' => $this->data['displayMode'],
             ];
         }
 

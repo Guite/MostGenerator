@@ -100,16 +100,16 @@ class LifecycleListener {
             protected $logger;
 
             public function __construct(
-            «IF targets('3.0') && !getUploadEntities.empty»
-                ZikulaHttpKernelInterface $kernel,
-            «ENDIF»
+                «IF targets('3.0') && !getUploadEntities.empty»
+                    ZikulaHttpKernelInterface $kernel,
+                «ENDIF»
                 ContainerInterface $container,
                 EventDispatcherInterface $eventDispatcher,
                 LoggerInterface $logger
             ) {
-            «IF targets('3.0') && !getUploadEntities.empty»
-                $this->kernel = $kernel;
-            «ENDIF»
+                «IF targets('3.0') && !getUploadEntities.empty»
+                    $this->kernel = $kernel;
+                «ENDIF»
                 $this->setContainer($container);
                 $this->eventDispatcher = $eventDispatcher;
                 $this->logger = $logger;

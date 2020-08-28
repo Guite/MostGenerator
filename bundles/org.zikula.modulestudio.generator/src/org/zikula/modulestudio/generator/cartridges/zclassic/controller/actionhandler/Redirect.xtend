@@ -162,11 +162,11 @@ class Redirect {
         {
             «IF app.needsInlineEditing && (!incoming.empty || !outgoing.empty)»
                 if (isset($this->templateParameters['inlineUsage']) && true === $this->templateParameters['inlineUsage']) {
-                    $commandName = 'submit' === substr($args['commandName'], 0, 6) ? 'create' : $args['commandName'];
+                    $commandName = 'submit' === mb_substr($args['commandName'], 0, 6) ? 'create' : $args['commandName'];
                     $urlArgs = [
                         'idPrefix' => $this->idPrefix,
                         'commandName' => $commandName,
-                        'id' => $this->idValue
+                        'id' => $this->idValue,
                     ];
 
                     // inline usage, return to special function for closing the modal window instance

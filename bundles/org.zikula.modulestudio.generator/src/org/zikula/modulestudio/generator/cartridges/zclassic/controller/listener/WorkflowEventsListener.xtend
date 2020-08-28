@@ -409,7 +409,7 @@ class WorkflowEventsListener {
                 $notifyArgs = [
                     'recipientType' => $recipientType,
                     'action' => $actionId,
-                    'entity' => $entity
+                    'entity' => $entity,
                 ];
                 $result = $this->notificationHelper->process($notifyArgs);
             }

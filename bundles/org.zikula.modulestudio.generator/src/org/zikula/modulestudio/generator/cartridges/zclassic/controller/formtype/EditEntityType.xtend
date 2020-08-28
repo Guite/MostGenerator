@@ -245,7 +245,7 @@ class EditEntityType {
                             'use_joins' => false,
                             'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Parent «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF»,
                             'attr' => [
-                                'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the parent «name.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»
+                                'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the parent «name.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
                             ]
                         ]);
                     }
@@ -379,7 +379,7 @@ class EditEntityType {
                         «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
                             'filter_by_ownership' => true,
-                            'inline_usage' => false
+                            'inline_usage' => false,
                         «ENDIF»
                     ])
                     ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
@@ -545,10 +545,10 @@ class EditEntityType {
                         'label' => $this->__(/** @Ignore */$attributeName),
                     «ENDIF»
                     'attr' => [
-                        'maxlength' => 255
+                        'maxlength' => 255,
                     ],
                     'data' => $attributeValue,
-                    'required' => false
+                    'required' => false,
                 ]);
             }
         }

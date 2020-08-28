@@ -189,7 +189,7 @@ class ImageHelper {
                         'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName),
                         ImageInterface::THUMBNAIL_INSET
                     ),
-                    'extension' => null // file extension for thumbnails (jpg, png, gif; null for original file type)
+                    'extension' => null, // file extension for thumbnails (jpg, png, gif; null for original file type)
                 ]
             ];
 
@@ -209,7 +209,7 @@ class ImageHelper {
                     $defaultHeight = 'view' === $args['action'] ? 24 : 180;
                     $options['thumbnail']['size'] = [
                         $this->variableApi->get('«appName»', 'thumbnailWidth' . $fieldSuffix, $defaultWidth),
-                        $this->variableApi->get('«appName»', 'thumbnailHeight' . $fieldSuffix, $defaultHeight)
+                        $this->variableApi->get('«appName»', 'thumbnailHeight' . $fieldSuffix, $defaultHeight),
                     ];
                 }
             }
@@ -325,7 +325,7 @@ class ImageHelper {
 
             public function check($hash, $path, array $runtimeConfig = null)
             {
-                return true;//$hash === $this->sign($path, $runtimeConfig);
+                return true; //$hash === $this->sign($path, $runtimeConfig);
             }
         }
     '''

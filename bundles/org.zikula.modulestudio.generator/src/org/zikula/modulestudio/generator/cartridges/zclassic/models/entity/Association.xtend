@@ -81,7 +81,8 @@ class Association {
             «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
             «' '»* @Assert\Valid()*/»
         «ENDIF»
-         * @var \«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName»
+         *
+         * @var \«entityClass»«IF isManySide(false)»[]«ENDIF»
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -131,7 +132,8 @@ class Association {
         «ENDIF»
          * @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
          * @Assert\Valid()*/»
-         * @var \«entityClass» $«sourceName»
+         *
+         * @var \«entityClass»
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -158,7 +160,8 @@ class Association {
             «IF maxSource > 0»
                 «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
             «ENDIF»
-             * @var \«entityClass»[] $«sourceName»
+             *
+             * @var \«entityClass»[]
              */
             protected $«sourceName» = null;
         «ENDIF»
@@ -193,7 +196,8 @@ class Association {
             «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
             «' '»* @Assert\Valid()*/»
         «ENDIF»
-         * @var \«entityClass» $«targetName»
+         *
+         * @var \«entityClass»
          */
         protected $«targetName»;
         «/* this last line is on purpose */»
@@ -244,7 +248,8 @@ class Association {
         «IF maxTarget > 0»
             «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
         «ENDIF»
-         * @var \«entityClass»[] $«targetName»
+         *
+         * @var \«entityClass»[]
          */
         protected $«targetName» = null;
         «/* this last line is on purpose */»
@@ -271,7 +276,8 @@ class Association {
         «IF maxTarget > 0»
             «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
         «ENDIF»
-         * @var \«entityClass»[] $«targetName»
+         *
+         * @var \«entityClass»[]
          */
         protected $«targetName» = null;
     '''

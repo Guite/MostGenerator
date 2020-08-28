@@ -135,10 +135,12 @@ class ContentTypeListType {
                 $resolver
                     ->setDefaults([
                         'context' => ContentTypeInterface::CONTEXT_EDIT,
-                        'object_type' => '«leadingEntity.name.formatForCode»'«IF hasCategorisableEntities»,
-                        'is_categorisable' => false,
-                        'category_helper' => null,
-                        'feature_activation_helper' => null«ENDIF»
+                        'object_type' => '«leadingEntity.name.formatForCode»',
+                        «IF hasCategorisableEntities»
+                            'is_categorisable' => false,
+                            'category_helper' => null,
+                            'feature_activation_helper' => null,
+                        «ENDIF»
                     ])
                     ->setRequired(['object_type'])
                     «IF hasCategorisableEntities»
@@ -331,10 +333,10 @@ class ContentTypeListType {
                 'choices' => [
                     «IF !targets('3.0')»$this->__(«ENDIF»'Only item titles'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'itemlist_display.html.twig',
                     «IF !targets('3.0')»$this->__(«ENDIF»'With description'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'itemlist_display_description.html.twig',
-                    «IF !targets('3.0')»$this->__(«ENDIF»'Custom template'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'custom'
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Custom template'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'custom',
                 ],
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => false,
             ]);
             $exampleTemplate = 'itemlist_[objectType]_display.html.twig';
             $builder->add('customTemplate', TextType::class, [

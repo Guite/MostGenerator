@@ -141,7 +141,7 @@ class NotificationHelper {
         /**
          * List of notification recipients.
          *
-         * @var array $recipients
+         * @var array
          */
         protected $recipients = [];
 
@@ -334,7 +334,7 @@ class NotificationHelper {
          * @param UserEntity $user Recipient user record
          «ENDIF»
          */
-        protected function addRecipient(UserEntity $user = null)«IF targets('3.0')»: void«ENDIF»
+        protected function addRecipient(?UserEntity $user = null)«IF targets('3.0')»: void«ENDIF»
         {
             if ($this->usesDesignatedEntityFields()) {
                 $recipientTypeParts = explode('-', $this->recipientType);
@@ -424,19 +424,19 @@ class NotificationHelper {
                     ->to(new Address($recipient['email'], $recipient['name']))
                     ->subject($subject)
                     ->html($body)
-                ;    
+                ;
 
                 $this->mailer->send($email);
 
                 if ($this->mailLoggingEnabled) {
                     $this->mailLogger->info(sprintf('Email sent to %s', $recipient['email']), [
-                        'in' => __METHOD__
+                        'in' => __METHOD__,
                     ]);
                 }
             }
         } catch (TransportExceptionInterface $exception) {
             $this->mailLogger->error($exception->getMessage(), [
-                'in' => __METHOD__
+                'in' => __METHOD__,
             ]);
 
             return false;
@@ -541,7 +541,7 @@ class NotificationHelper {
             $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'], true);
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
             $routeArea = in_array($this->recipientType, ['moderator', 'superModerator'], true) ? 'admin' : '';
-            $routePrefix = '«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea;
+            $routePrefix = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $routeArea;
 
             $urlArgs = $this->entity->createUrlArgs();
             $displayUrl = $hasDisplayAction

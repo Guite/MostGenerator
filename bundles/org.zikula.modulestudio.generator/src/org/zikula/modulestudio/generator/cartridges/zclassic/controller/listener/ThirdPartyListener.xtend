@@ -154,9 +154,9 @@ class ThirdPartyListener {
                     $aggregateType = $amountInfo['aggregateType'];
                     $description = $amountInfo['description'];
                     $amount = $amountInfo['amount'];
-                    $route = '«appName.toLowerCase»_' . strtolower($amountInfo['objectType']) . '_adminview';
+                    $route = '«appName.toLowerCase»_' . mb_strtolower($amountInfo['objectType']) . '_adminview';
                     $routeArgs = [
-                        'workflowState' => $amountInfo['state']
+                        'workflowState' => $amountInfo['state'],
                     ];
                     $item = new PendingContentCollectible($aggregateType, $description, $amount, $route, $routeArgs);
                     $collection->add($item);

@@ -53,7 +53,7 @@ class GetFileSize {
 
     def private getReadableFileSize(Application it) '''
         /**
-         * Display a given file size in a readable format
+         * Display a given file size in a readable format.
          «IF !targets('3.0')»
          *
          * @param int $size File size in bytes

@@ -209,7 +209,7 @@ class ViewHelper {
             $templateExtension = $this->determineExtension($type, $func);
             if (empty($template)) {
                 «IF separateAdminTemplates»
-                    $isAdmin = isset($templateParameters['routeArea']) && $templateParameters['routeArea'] == 'admin';
+                    $isAdmin = isset($templateParameters['routeArea']) && 'admin' === $templateParameters['routeArea'];
                 «ENDIF»
                 $template = $this->getViewTemplate($type, $func«IF separateAdminTemplates», $isAdmin«ENDIF»);
             }

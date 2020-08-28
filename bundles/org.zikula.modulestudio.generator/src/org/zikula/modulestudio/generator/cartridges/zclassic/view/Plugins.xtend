@@ -428,7 +428,7 @@ class Plugins {
             /**
              * The «appName.formatForDB»__relativePath filter returns the relative web path to a file.
              * Example:
-             *     {{ myPerson.image.getPathname()|«appName.formatForDB»_relativePath }}
+             *     {{ myPerson.image.getPathname()|«appName.formatForDB»_relativePath }}.
              */
             public function getRelativePath(string $absolutePath): string
             {

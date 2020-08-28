@@ -225,7 +225,7 @@ class Property {
 
             $fileName = $this->«name.formatForCode»FileName;
             if (!empty($fileName) && !$this->_uploadBasePath«IF application.targets('3.0')»Relative«ENDIF») {
-                throw new RuntimeException('Invalid upload base path in ' . get_class($this) . '#get«name.formatForCodeCapital»().');
+                throw new RuntimeException('Invalid upload base path in ' . static::class . '#get«name.formatForCodeCapital»().');
             }
 
             $filePath = $this->_uploadBasePath«IF application.targets('3.0')»Absolute«ENDIF» . '«subFolderPathSegment»/' . $fileName;
@@ -252,7 +252,7 @@ class Property {
          * @return void
          «ENDIF»
          */
-        public function set«name.formatForCodeCapital»(File $«name.formatForCode» = null)«IF application.targets('3.0')»: void«ENDIF»
+        public function set«name.formatForCodeCapital»(?File $«name.formatForCode» = null)«IF application.targets('3.0')»: void«ENDIF»
         {
             if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
                 return;

@@ -211,7 +211,7 @@ class AppSettings {
                 // normalise user selector values
                 «FOR userField : getAllVariables.filter(UserField)»
                     $user = $this->get«userField.name.formatForCodeCapital»();
-                    $user = is_object($user) ? $user->getUid() : intval($user);
+                    $user = is_object($user) ? $user->getUid() : (int) $user;
                     $this->set«userField.name.formatForCodeCapital»($user);
                 «ENDFOR»
 
@@ -220,7 +220,7 @@ class AppSettings {
                 // normalise group selector values
                 «FOR groupSelector : getUserGroupSelectors»
                     $group = $this->get«groupSelector.name.formatForCodeCapital»();
-                    $group = is_object($group) ? $group->getGid() : intval($group);
+                    $group = is_object($group) ? $group->getGid() : (int) $group;
                     $this->set«groupSelector.name.formatForCodeCapital»($group);
                 «ENDFOR»
 

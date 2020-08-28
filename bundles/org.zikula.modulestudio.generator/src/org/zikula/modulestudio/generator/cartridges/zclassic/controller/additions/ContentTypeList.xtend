@@ -144,7 +144,7 @@ class ContentTypeList {
                 'amount' => 1,
                 'template' => 'itemlist_display.html.twig',
                 'customTemplate' => null,
-                'filter' => ''
+                'filter' => '',
             ];
         }
 
@@ -258,7 +258,7 @@ class ContentTypeList {
             $templateOptions = [
                 'ContentType/' . $templateForObjectType,
                 'ContentType/' . $templateFile,
-                'ContentType/itemlist_display.html.twig'
+                'ContentType/itemlist_display.html.twig',
             ];
 
             $template = '';

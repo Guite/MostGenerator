@@ -918,7 +918,7 @@ class FormHandler {
             protected function getAttributeFieldNames()«IF targets('3.0')»: array«ENDIF»
             {
                 return [
-                    'field1', 'field2', 'field3'
+                    'field1', 'field2', 'field3',
                 ];
             }
         «ENDIF»
@@ -1518,10 +1518,10 @@ class FormHandler {
                     ),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD)«IF !incoming.empty || !outgoing.empty»,«ENDIF»
+                    'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD),
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'inline_usage' => $this->templateParameters['inlineUsage']
+                    'inline_usage' => $this->templateParameters['inlineUsage'],
                 «ENDIF»
             ];
             «IF attributable»

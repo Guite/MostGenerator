@@ -29,7 +29,7 @@ class FormatIcalText {
         {
             $result = preg_replace('/<a href="(.*)">.*<\/a>/i', '$1', $string);
             $result = str_replace('€', 'Euro', $result);
-            $result = ereg_replace("(\r\n|\n|\r)", '=0D=0A', $result);
+            $result = preg_replace("/(\r\n|\n|\r)/D", '=0D=0A', $result);
 
             return ';LANGUAGE=' . $this->requestStack->getCurrentRequest()->getLocale() . ';ENCODING=QUOTED-PRINTABLE:' . $result . "\r\n";
         }
