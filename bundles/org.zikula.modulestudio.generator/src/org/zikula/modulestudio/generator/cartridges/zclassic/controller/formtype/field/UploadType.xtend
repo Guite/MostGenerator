@@ -123,13 +123,13 @@ class UploadType {
                         'label' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Delete existing file'«IF !targets('3.0')»)«ENDIF»,
                         «IF targets('3.0')»
                             'label_attr' => [
-                                'class' => 'switch-custom'
+                                'class' => 'switch-custom',
                             ],
                         «ENDIF»
                         'required' => false,
                         'attr' => [
-                            'title' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Delete this file ?'«IF !targets('3.0')»)«ENDIF»
-                        ]
+                            'title' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Delete this file ?'«IF !targets('3.0')»)«ENDIF»,
+                        ],
                     ]);
                 }
                 «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
@@ -139,9 +139,9 @@ class UploadType {
                             'label' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Custom file name'«IF !targets('3.0')»)«ENDIF»,
                             'required' => false,
                             'attr' => [
-                                'title' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Optionally enter a custom file name (without extension)'«IF !targets('3.0')»)«ENDIF»
+                                'title' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Optionally enter a custom file name (without extension)'«IF !targets('3.0')»)«ENDIF»,
                             ],
-                            'help' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Optionally enter a custom file name (without extension)'«IF !targets('3.0')»)«ENDIF»
+                            'help' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Optionally enter a custom file name (without extension)'«IF !targets('3.0')»)«ENDIF»,
                         ]);
                     }
                 «ENDIF»
@@ -212,7 +212,7 @@ class UploadType {
                     ->setDefined(['allow_deletion', 'allowed_extensions', 'allowed_size'«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», 'custom_filename'«ENDIF»])
                     ->setDefaults([
                         'attr' => [
-                            'class' => 'file-selector'
+                            'class' => 'file-selector',
                         ],
                         'allow_deletion' => false,
                         'allowed_extensions' => '',
@@ -220,8 +220,10 @@ class UploadType {
                         «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
                             'custom_filename' => false,
                         «ENDIF»
-                        'error_bubbling' => false«IF targets('2.0')»,
-                        'allow_file_upload' => true«ENDIF»
+                        'error_bubbling' => false,
+                        «IF targets('2.0')»
+                            'allow_file_upload' => true,
+                        «ENDIF»
                     ])
                     ->setAllowedTypes('allow_deletion', 'bool')
                     ->setAllowedTypes('allowed_extensions', 'string')

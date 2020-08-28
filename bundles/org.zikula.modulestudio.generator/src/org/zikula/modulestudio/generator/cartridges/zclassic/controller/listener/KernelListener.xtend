@@ -15,13 +15,13 @@ class KernelListener {
         public static function getSubscribedEvents()
         {
             return [
-                KernelEvents::REQUEST        => ['onRequest', 5],
-                KernelEvents::CONTROLLER     => ['onController', 5],
-                KernelEvents::VIEW           => ['onView', 5],
-                KernelEvents::RESPONSE       => ['onResponse', 5],
+                KernelEvents::REQUEST => ['onRequest', 5],
+                KernelEvents::CONTROLLER => ['onController', 5],
+                KernelEvents::VIEW => ['onView', 5],
+                KernelEvents::RESPONSE => ['onResponse', 5],
                 KernelEvents::FINISH_REQUEST => ['onFinishRequest', 5],
-                KernelEvents::TERMINATE      => ['onTerminate', 5],
-                KernelEvents::EXCEPTION      => ['onException', 5]
+                KernelEvents::TERMINATE => ['onTerminate', 5],
+                KernelEvents::EXCEPTION => ['onException', 5],
             ];
         }
 

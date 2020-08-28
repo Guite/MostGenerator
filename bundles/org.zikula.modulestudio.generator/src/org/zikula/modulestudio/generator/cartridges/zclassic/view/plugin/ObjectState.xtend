@@ -18,7 +18,7 @@ class ObjectState {
          * The «appName.formatForDB»_objectState filter displays the name of a given object's workflow state.
          * Examples:
          *    {{ item.workflowState|«appName.formatForDB»_objectState }}        {# with visual feedback #}
-         *    {{ item.workflowState|«appName.formatForDB»_objectState(false) }} {# no ui feedback #}
+         *    {{ item.workflowState|«appName.formatForDB»_objectState(false) }} {# no ui feedback #}.
          «IF !targets('3.0')»
          *
          * @param string $state Name of given workflow state

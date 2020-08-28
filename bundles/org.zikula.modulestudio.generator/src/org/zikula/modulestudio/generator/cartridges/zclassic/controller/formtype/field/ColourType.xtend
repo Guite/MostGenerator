@@ -38,8 +38,8 @@ class ColourType {
                 $resolver->setDefaults([
                     'attr' => [
                         'maxlength' => 7,
-                        'class' => 'colour-selector'
-                    ]
+                        'class' => 'colour-selector',
+                    ],
                 ]);
             }
 

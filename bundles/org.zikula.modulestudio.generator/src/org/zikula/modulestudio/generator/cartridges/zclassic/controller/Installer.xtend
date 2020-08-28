@@ -313,36 +313,36 @@ class Installer {
     def private funcUpdate(Application it) '''
         public function upgrade(«IF targets('3.0')»string «ENDIF»$oldVersion)«IF targets('3.0')»: bool«ENDIF»
         {
-        /*
-            «IF !targets('3.0')»
-                $logger = $this->container->get('logger');
+            /*
+                «IF !targets('3.0')»
+                    $logger = $this->container->get('logger');
 
-            «ENDIF»
-            // upgrade dependent on old version number
-            switch ($oldVersion) {
-                case '1.0.0':
-                    // do something
-                    // ...
-                    // update the database schema
-                    try {
-                        $this->schemaTool->update($this->entities);
-                    } catch (Exception $exception) {
-                        $this->addFlash('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Doctrine Exception') . ': ' . $exception->getMessage());
-                        $«IF targets('3.0')»this->«ENDIF»logger->error(
-                            '{app}: Could not update the database tables during the upgrade.'
-                                . ' Error details: {errorMessage}.',
-                            ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
-                        );
+                «ENDIF»
+                // upgrade dependent on old version number
+                switch ($oldVersion) {
+                    case '1.0.0':
+                        // do something
+                        // ...
+                        // update the database schema
+                        try {
+                            $this->schemaTool->update($this->entities);
+                        } catch (Exception $exception) {
+                            $this->addFlash('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Doctrine Exception') . ': ' . $exception->getMessage());
+                            $«IF targets('3.0')»this->«ENDIF»logger->error(
+                                '{app}: Could not update the database tables during the upgrade.'
+                                    . ' Error details: {errorMessage}.',
+                                ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
+                            );
 
-                        throw $exception;
-                    }
-            }
-            «IF !targets('2.0') && hasHookSubscribers»
+                            throw $exception;
+                        }
+                }
+                «IF !targets('2.0') && hasHookSubscribers»
 
-                // remove obsolete persisted hooks from the database
-                //$this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
-            «ENDIF»
-        */
+                    // remove obsolete persisted hooks from the database
+                    //$this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
+                «ENDIF»
+            */
 
             // update successful
             return true;

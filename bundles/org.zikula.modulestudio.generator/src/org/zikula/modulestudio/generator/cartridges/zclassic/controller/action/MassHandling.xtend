@@ -102,7 +102,7 @@ class MassHandling {
             return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«getPrimaryAction»');
         }
 
-        $action = strtolower($action);
+        $action = mb_strtolower($action);
 
         $repository = «IF application.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository($objectType);
         «IF !application.targets('3.0')»
@@ -168,7 +168,7 @@ class MassHandling {
                         'action' => $action,
                         'entity' => '«name.formatForDisplay»',
                         'id' => $itemId,
-                        'errorMessage' => $exception->getMessage()
+                        'errorMessage' => $exception->getMessage(),
                     ]
                 );
             }
@@ -196,7 +196,7 @@ class MassHandling {
                         'app' => '«application.appName»',
                         'user' => $userName,
                         'entity' => '«name.formatForDisplay»',
-                        'id' => $itemId
+                        'id' => $itemId,
                     ]
                 );
             } else {
@@ -219,7 +219,7 @@ class MassHandling {
                         'user' => $userName,
                         'action' => $action,
                         'entity' => '«name.formatForDisplay»',
-                        'id' => $itemId
+                        'id' => $itemId,
                     ]
                 );
             }

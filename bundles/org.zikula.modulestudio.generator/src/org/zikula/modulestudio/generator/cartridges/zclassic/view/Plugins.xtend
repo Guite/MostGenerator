@@ -322,7 +322,7 @@ class Plugins {
                     new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_logDescription', [$this, 'getLogDescription']),
                 «ENDIF»
                 new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_formattedTitle', [$this, 'getFormattedEntityTitle']),
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_objectState', [$this, 'getObjectState'], ['is_safe' => ['html']])
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_objectState', [$this, 'getObjectState'], ['is_safe' => ['html']]),
             ];
         }
         «IF hasLoggable»
@@ -439,7 +439,7 @@ class Plugins {
         /**
          * The «appName.formatForDB»_formattedTitle filter outputs a formatted title for a given entity.
          * Example:
-         *     {{ myPost|«appName.formatForDB»_formattedTitle }}
+         *     {{ myPost|«appName.formatForDB»_formattedTitle }}.
          «IF !targets('3.0')»
          *
          * @param EntityAccess $entity The given entity instance

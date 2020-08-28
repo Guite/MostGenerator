@@ -29,10 +29,10 @@ class ThemeListener {
                 «IF targets('3.0')»
                     TwigPreRenderEvent::class  => ['preRender', 5],
                     TwigPostRenderEvent::class => ['postRender', 5],
-                    KernelEvents::RESPONSE => ['injectDefaultAssetsIntoRawPage', 1020] // after DefaultPageAssetSetterListener
+                    KernelEvents::RESPONSE => ['injectDefaultAssetsIntoRawPage', 1020], // after DefaultPageAssetSetterListener
                 «ELSE»
                     ThemeEvents::PRE_RENDER  => ['preRender', 5],
-                    ThemeEvents::POST_RENDER => ['postRender', 5]
+                    ThemeEvents::POST_RENDER => ['postRender', 5],
                 «ENDIF»
             ];
         }
@@ -69,7 +69,7 @@ class ThemeListener {
                 }
 
                 $routeName = $request->get('_route', '');
-                if (false === strpos($routeName, '«appName.formatForDB»')) {
+                if (false === mb_strpos($routeName, '«appName.formatForDB»')) {
                     return;
                 }
 

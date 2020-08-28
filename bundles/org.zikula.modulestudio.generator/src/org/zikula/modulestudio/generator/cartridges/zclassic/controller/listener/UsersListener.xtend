@@ -14,7 +14,7 @@ class UsersListener {
         public static function getSubscribedEvents()
         {
             return [
-                UserEvents::CONFIG_UPDATED => ['configUpdated', 5]
+                UserEvents::CONFIG_UPDATED => ['configUpdated', 5],
             ];
         }
 

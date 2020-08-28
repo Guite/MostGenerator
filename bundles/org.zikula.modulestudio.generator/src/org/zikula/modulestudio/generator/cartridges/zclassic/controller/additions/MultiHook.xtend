@@ -123,7 +123,7 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
-                $entityId = (int)$needleParts[1];
+                $entityId = (int) $needleParts[1];
 
                 $repository = $container->get('«app.appService».entity_factory')->getRepository('«name.formatForCode»');
                 $entity = $repository->selectById($entityId, false);
@@ -357,7 +357,7 @@ class MultiHook {
 
             «ENDIF»
             «IF hasDisplayAction»
-                $entityId = (int)$needleId;
+                $entityId = (int) $needleId;
                 if (!$entityId) {
                     $cache[$needleId] = '';
 

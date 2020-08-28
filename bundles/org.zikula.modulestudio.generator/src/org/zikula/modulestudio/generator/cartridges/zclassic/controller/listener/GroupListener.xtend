@@ -14,22 +14,22 @@ class GroupListener {
         {
             return [
                 «IF targets('3.0')»
-                    GroupPostCreatedEvent::class              => ['create', 5],
-                    GroupPostUpdatedEvent::class              => ['update', 5],
-                    GroupPreDeletedEvent::class               => ['preDelete', 5],
-                    GroupPostDeletedEvent::class              => ['delete', 5],
-                    GroupPostUserAddedEvent::class            => ['addUser', 5],
-                    GroupPostUserRemovedEvent::class          => ['removeUser', 5],
+                    GroupPostCreatedEvent::class => ['create', 5],
+                    GroupPostUpdatedEvent::class => ['update', 5],
+                    GroupPreDeletedEvent::class => ['preDelete', 5],
+                    GroupPostDeletedEvent::class => ['delete', 5],
+                    GroupPostUserAddedEvent::class 
+                    GroupPostUserRemovedEvent::class=> ['removeUser', 5],
                     GroupApplicationPostProcessedEvent::class => ['applicationProcessed', 5],
-                    GroupApplicationPostCreatedEvent::class   => ['newApplication', 5]
+                    GroupApplicationPostCreatedEvent::class => ['newApplication', 5],
                 «ELSE»
-                    GroupEvents::GROUP_CREATE                => ['create', 5],
-                    GroupEvents::GROUP_UPDATE                => ['update', 5],
-                    GroupEvents::GROUP_DELETE                => ['delete', 5],
-                    GroupEvents::GROUP_ADD_USER              => ['addUser', 5],
-                    GroupEvents::GROUP_REMOVE_USER           => ['removeUser', 5],
+                    GroupEvents::GROUP_CREATE => ['create', 5],
+                    GroupEvents::GROUP_UPDATE => ['update', 5],
+                    GroupEvents::GROUP_DELETE => ['delete', 5],
+                    GroupEvents::GROUP_ADD_USER => ['addUser', 5],
+                    GroupEvents::GROUP_REMOVE_USER => ['removeUser', 5],
                     GroupEvents::GROUP_APPLICATION_PROCESSED => ['applicationProcessed', 5],
-                    GroupEvents::GROUP_NEW_APPLICATION       => ['newApplication', 5]
+                    GroupEvents::GROUP_NEW_APPLICATION => ['newApplication', 5],
                 «ENDIF»
             ];
         }

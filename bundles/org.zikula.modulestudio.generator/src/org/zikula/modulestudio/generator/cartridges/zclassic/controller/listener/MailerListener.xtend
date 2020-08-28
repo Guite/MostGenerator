@@ -13,7 +13,7 @@ class MailerListener {
         public static function getSubscribedEvents()
         {
             return [
-                MessageEvent::class => ['onMessageSend', 5]
+                MessageEvent::class => ['onMessageSend', 5],
             ];
         }
 
@@ -30,10 +30,10 @@ class MailerListener {
         public static function getSubscribedEvents()
         {
             return [
-                MailerEvents::SEND_MESSAGE_START   => ['sendMessageStart', 5],
+                MailerEvents::SEND_MESSAGE_START => ['sendMessageStart', 5],
                 MailerEvents::SEND_MESSAGE_PERFORM => ['sendMessagePerform', 5],
                 MailerEvents::SEND_MESSAGE_SUCCESS => ['sendMessageSuccess', 5],
-                MailerEvents::SEND_MESSAGE_FAILURE => ['sendMessageFailure', 5]
+                MailerEvents::SEND_MESSAGE_FAILURE => ['sendMessageFailure', 5],
             ];
         }
 

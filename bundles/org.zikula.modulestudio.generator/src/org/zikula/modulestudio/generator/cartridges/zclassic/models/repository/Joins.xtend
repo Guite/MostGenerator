@@ -50,16 +50,18 @@ class Joins {
          */
         protected function addJoinsToFrom(QueryBuilder $qb)«IF app.targets('3.0')»: QueryBuilder«ENDIF»
         {
-            «IF isInheriting»
-                $qb = parent::addJoinsToFrom($qb);
-            «ENDIF»
-            «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'from')»«ENDFOR»
-            «FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'from')»«ENDFOR»
-            «IF categorisable»
+            «IF isInheriting || !getBidirectionalIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty || categorisable»
+                «IF isInheriting»
+                    $qb = parent::addJoinsToFrom($qb);
+                «ENDIF»
+                «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'from')»«ENDFOR»
+                «FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'from')»«ENDFOR»
+                «IF categorisable»
 
-                $qb->leftJoin('tbl.categories', 'tblCategories');
-            «ENDIF»
+                    $qb->leftJoin('tbl.categories', 'tblCategories');
+                «ENDIF»
 
+            «ENDIF»
             return $qb;
         }
     '''

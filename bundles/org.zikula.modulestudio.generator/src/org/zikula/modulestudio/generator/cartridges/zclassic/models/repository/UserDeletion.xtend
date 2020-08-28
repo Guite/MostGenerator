@@ -87,7 +87,7 @@ class UserDeletion {
                 'app' => '«application.appName»',
                 'user' => $currentUserApi->get('uname'),
                 'entities' => '«nameMultiple.formatForDisplay»',
-                'userid' => $userId
+                'userid' => $userId,
             ];
             $logger->debug('{app}: User {user} updated {entities} created by user id {userid}.', $logArgs);
         }
@@ -142,7 +142,7 @@ class UserDeletion {
                 'app' => '«application.appName»',
                 'user' => $currentUserApi->get('uname'),
                 'entities' => '«nameMultiple.formatForDisplay»',
-                'userid' => $userId
+                'userid' => $userId,
             ];
             $logger->debug('{app}: User {user} updated {entities} edited by user id {userid}.', $logArgs);
         }
@@ -185,7 +185,7 @@ class UserDeletion {
                 'app' => '«application.appName»',
                 'user' => $currentUserApi->get('uname'),
                 'entities' => '«nameMultiple.formatForDisplay»',
-                'userid' => $userId
+                'userid' => $userId,
             ];
             $logger->debug('{app}: User {user} deleted {entities} created by user id {userid}.', $logArgs);
         }
@@ -228,7 +228,7 @@ class UserDeletion {
                 'app' => '«application.appName»',
                 'user' => $currentUserApi->get('uname'),
                 'entities' => '«nameMultiple.formatForDisplay»',
-                'userid' => $userId
+                'userid' => $userId,
             ];
             $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', $logArgs);
         }
@@ -290,7 +290,7 @@ class UserDeletion {
                 'entities' => '«nameMultiple.formatForDisplay»',
                 'field' => $userFieldName,
                 'userid' => $userId,
-                'newuserid' => $newUserId
+                'newuserid' => $newUserId,
             ];
             $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', $logArgs);
         }
@@ -339,7 +339,7 @@ class UserDeletion {
                 'user' => $currentUserApi->get('uname'),
                 'entities' => '«nameMultiple.formatForDisplay»',
                 'field' => $userFieldName,
-                'userid' => $userId
+                'userid' => $userId,
             ];
             $logger->debug('{app}: User {user} deleted {entities} with {field} having set to user id {userid}.', $logArgs);
         }

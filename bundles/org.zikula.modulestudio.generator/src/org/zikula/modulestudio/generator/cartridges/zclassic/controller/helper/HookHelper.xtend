@@ -176,7 +176,7 @@ class HookHelper {
          * @param UrlInterface $routeUrl The route url object
          «ENDIF»
          */
-        public function callProcessHooks(EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$hookType, UrlInterface $routeUrl = null)«IF targets('3.0')»: void«ENDIF»
+        public function callProcessHooks(EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$hookType, ?UrlInterface $routeUrl = null)«IF targets('3.0')»: void«ENDIF»
         {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
@@ -224,7 +224,7 @@ class HookHelper {
             FormInterface $form,
             EntityAccess $entity,
             «IF targets('3.0')»string «ENDIF»$hookType,
-            UrlInterface $routeUrl = null
+            ?UrlInterface $routeUrl = null
         )«IF targets('3.0')»: void«ENDIF» {
             $formResponse = new FormAwareResponse($form, $entity, $routeUrl);
             $hookAreaPrefix = $entity->getHookAreaPrefix();
@@ -395,7 +395,7 @@ class HookHelper {
             public function getProviderTypes()«IF targets('3.0')»: array«ENDIF»
             {
                 return [
-                    FilterHooksCategory::TYPE_FILTER => ['applyFilter']
+                    FilterHooksCategory::TYPE_FILTER => ['applyFilter'],
                 ];
             }
 
@@ -562,7 +562,7 @@ class HookHelper {
                         «category»Category::TYPE_EDIT => 'edit',
                         «category»Category::TYPE_PROCESS_EDIT => 'processEdit',
                         «category»Category::TYPE_DELETE => 'delete',
-                        «category»Category::TYPE_PROCESS_DELETE => 'processDelete'
+                        «category»Category::TYPE_PROCESS_DELETE => 'processDelete',
                     «ELSEIF category == 'UiHooks'»
                         «category»Category::TYPE_DISPLAY_VIEW => 'view',«/*['view', 'display', 'display_more']*/»
                         «category»Category::TYPE_FORM_EDIT => 'displayEdit',
@@ -570,7 +570,7 @@ class HookHelper {
                         «category»Category::TYPE_PROCESS_EDIT => 'processEdit',
                         «category»Category::TYPE_FORM_DELETE => 'displayDelete',
                         «category»Category::TYPE_VALIDATE_DELETE => 'validateDelete',
-                        «category»Category::TYPE_PROCESS_DELETE => 'processDelete'
+                        «category»Category::TYPE_PROCESS_DELETE => 'processDelete',
                     «ENDIF»
                 ];
             }

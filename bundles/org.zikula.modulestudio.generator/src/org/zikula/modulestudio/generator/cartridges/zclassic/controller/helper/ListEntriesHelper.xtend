@@ -287,21 +287,21 @@ class ListEntriesHelper {
 
     def private entryInfo(ListFieldItem it, Application app, String domain) '''
         $states[] = [
-            'value'   => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«name.toFirstUpper.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
-            'title'   => «IF null !== documentation && !documentation.empty»$this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«documentation.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
-            'image'   => '«IF null !== image && !image.empty»«image»«ENDIF»',
-            'default' => «^default.displayBool»
+            'value' => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
+            'text' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«name.toFirstUpper.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'title' => «IF null !== documentation && !documentation.empty»$this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«documentation.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
+            'image' => '«IF null !== image && !image.empty»«image»«ENDIF»',
+            'default' => «^default.displayBool»,
         ];
     '''
 
     def private entryInfoNegative(ListFieldItem it, Application app, String domain) '''
         $states[] = [
-            'value'   => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text'    => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All except «name.toFirstLower.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
-            'title'   => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
-            'image'   => '',
-            'default' => false
+            'value' => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
+            'text' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All except «name.toFirstLower.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'title' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'image' => '',
+            'default' => false,
         ];
     '''
 

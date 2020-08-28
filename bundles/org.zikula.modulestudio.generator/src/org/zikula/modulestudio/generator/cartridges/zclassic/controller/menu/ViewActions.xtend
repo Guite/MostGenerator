@@ -36,7 +36,7 @@ class ViewActions {
                 «IF hasEditAction»
                     if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                         $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Add root node'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
-                            'uri' => 'javascript:void(0)'
+                            'uri' => 'javascript:void(0)',
                         ])
                             ->setLinkAttribute('id', 'treeAddRoot')
                             ->setLinkAttribute('class', '«IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»')
@@ -65,7 +65,7 @@ class ViewActions {
             «IF tree != EntityTreeType.NONE»
                 $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Switch to hierarchy view'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'view',
-                    'routeParameters' => ['tpl' => 'tree']
+                    'routeParameters' => ['tpl' => 'tree'],
                 ])
                     ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-code-«IF app.targets('3.0')»branch«ELSE»fork«ENDIF»')
                 ;
@@ -73,7 +73,7 @@ class ViewActions {
             «IF geographical»
                 $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Show map'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'view',
-                    'routeParameters' => ['tpl' => 'map', 'all' => 1]
+                    'routeParameters' => ['tpl' => 'map', 'all' => 1],
                 ])
                     ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-map«IF !app.targets('3.0')»-o«ENDIF»')
                 ;
@@ -88,7 +88,7 @@ class ViewActions {
                 if ($hasDeletedEntities) {
                     $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'View deleted «nameMultiple.formatForDisplay»'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                         'route' => $routePrefix . $routeArea . 'view',
-                        'routeParameters' => ['deleted' => 1]
+                        'routeParameters' => ['deleted' => 1],
                     ])
                         ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»')
                         «IF app.targets('3.0') && !app.isSystemModule»
@@ -110,7 +110,7 @@ class ViewActions {
         if ($canBeCreated) {
             if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                 $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Create «name.formatForDisplay»'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
-                    'route' => $routePrefix . $routeArea . 'edit'
+                    'route' => $routePrefix . $routeArea . 'edit',
                 ])
                     ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-plus')
                     «IF application.targets('3.0') && !application.isSystemModule»
@@ -132,7 +132,7 @@ class ViewActions {
             unset($routeParameters['all']);
             $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Back to paginated view'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
                 'route' => $routePrefix . $routeArea . 'view',
-                'routeParameters' => $routeParameters
+                'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-table')
             ;
@@ -140,7 +140,7 @@ class ViewActions {
             $routeParameters['all'] = 1;
             $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show all entries'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
                 'route' => $routePrefix . $routeArea . 'view',
-                'routeParameters' => $routeParameters
+                'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-table')
             ;
@@ -161,7 +161,7 @@ class ViewActions {
             unset($routeParameters['own']);
             $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show also entries from other users'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
                 'route' => $routePrefix . $routeArea . 'view',
-                'routeParameters' => $routeParameters
+                'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-users')
             ;
@@ -169,7 +169,7 @@ class ViewActions {
             $routeParameters['own'] = 1;
             $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show only own entries'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
                 'route' => $routePrefix . $routeArea . 'view',
-                'routeParameters' => $routeParameters
+                'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-user')
             ;

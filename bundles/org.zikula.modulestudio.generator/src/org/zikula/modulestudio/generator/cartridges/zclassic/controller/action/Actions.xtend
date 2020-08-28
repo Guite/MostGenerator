@@ -109,7 +109,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, MainAction action) '''
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : ''
+            'routeArea' => $isAdmin ? 'admin' : '',
         ];
 
         «IF hasViewAction»
@@ -122,7 +122,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, ViewAction action) '''
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : ''
+            'routeArea' => $isAdmin ? 'admin' : '',
         ];
         «IF !app.targets('3.0')»
             $controllerHelper = $this->get('«app.appService».controller_helper');

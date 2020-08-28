@@ -18,7 +18,7 @@ class GetListEntry {
          * The «appName.formatForDB»_listEntry filter displays the name
          * or names for a given list item.
          * Example:
-         *     {{ entity.listField|«appName.formatForDB»_listEntry('entityName', 'fieldName') }}
+         *     {{ entity.listField|«appName.formatForDB»_listEntry('entityName', 'fieldName') }}.
          «IF !targets('3.0')»
          *
          * @param string $value The dropdown value to process

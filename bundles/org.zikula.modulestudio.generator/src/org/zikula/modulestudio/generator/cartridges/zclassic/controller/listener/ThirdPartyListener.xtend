@@ -76,22 +76,22 @@ class ThirdPartyListener {
                     «IF targets('3.0')»
                         PendingContentEvent::class => ['pendingContentListener', 5],
                     «ELSE»
-                        'get.pending_content'                     => ['pendingContentListener', 5],
+                        'get.pending_content' => ['pendingContentListener', 5],
                     «ENDIF»
                 «ENDIF»
                 «IF !targets('2.0') && (generateListContentType || needsDetailContentType)»
-                    'module.content.gettypes'                 => ['contentGetTypes', 5],
+                    'module.content.gettypes' => ['contentGetTypes', 5],
                 «ENDIF»
                 «IF generateScribitePlugins»
                     «IF targets('3.0')»
                     EditorHelperEvent::class => ['getEditorHelpers', 5],
-                    LoadExternalPluginsEvent::class => ['getEditorPlugins', 5]
+                    LoadExternalPluginsEvent::class => ['getEditorPlugins', 5],
                     «ELSE»
-                    'module.scribite.editorhelpers'           => ['getEditorHelpers', 5],
-                    'moduleplugin.ckeditor.externalplugins'   => ['getCKEditorPlugins', 5],
-                    'moduleplugin.quill.externalplugins'      => ['getQuillPlugins', 5],
+                    'module.scribite.editorhelpers' => ['getEditorHelpers', 5],
+                    'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5],
+                    'moduleplugin.quill.externalplugins' => ['getQuillPlugins', 5],
                     'moduleplugin.summernote.externalplugins' => ['getSummernotePlugins', 5],
-                    'moduleplugin.tinymce.externalplugins'    => ['getTinyMcePlugins', 5]
+                    'moduleplugin.tinymce.externalplugins' => ['getTinyMcePlugins', 5],
                     «ENDIF»
                 «ENDIF»
             ];

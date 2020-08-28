@@ -126,7 +126,7 @@ class EventAction {
             'app' => '«appName»',
             'user' => $currentUserApi->get('uname'),
             'entity' => «entityVar»->get_objectType(),
-            'id' => «entityVar»->getKey()
+            'id' => «entityVar»->getKey(),
         ];
         $this->logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
         «IF hasLoggable»
@@ -186,7 +186,7 @@ class EventAction {
             'app' => '«appName»',
             'user' => $currentUserApi->get('uname'),
             'entity' => $objectType,
-            'id' => «entityVar»->getKey()
+            'id' => «entityVar»->getKey(),
         ];
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
@@ -222,7 +222,7 @@ class EventAction {
             'app' => '«appName»',
             'user' => $currentUserApi->get('uname'),
             'entity' => «entityVar»->get_objectType(),
-            'id' => «entityVar»->getKey()
+            'id' => «entityVar»->getKey(),
         ];
         $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
         «IF hasLoggable»

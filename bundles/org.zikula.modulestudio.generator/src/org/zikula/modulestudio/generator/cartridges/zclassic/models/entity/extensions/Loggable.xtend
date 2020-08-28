@@ -172,7 +172,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
             $logAmountMap = [];
             if ('limitedByAmount' === $revisionHandling) {
-                $limitParameter = (int)$limitParameter;
+                $limitParameter = (int) $limitParameter;
                 if (!$limitParameter) {
                     $limitParameter = 25;
                 }

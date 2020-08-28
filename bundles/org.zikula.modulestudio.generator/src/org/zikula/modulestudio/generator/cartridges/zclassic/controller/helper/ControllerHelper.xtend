@@ -342,9 +342,9 @@ class ControllerHelper {
             $repository = $this->entityFactory->getRepository($objectType);
 
             // parameter for used sorting field
-            list ($sort, $sortdir) = $this->determineDefaultViewSorting($objectType);
+            list($sort, $sortdir) = $this->determineDefaultViewSorting($objectType);
             $templateParameters['sort'] = $sort;
-            $templateParameters['sortdir'] = strtolower($sortdir);
+            $templateParameters['sortdir'] = mb_strtolower($sortdir);
             «IF hasTrees»
 
                 if ('tree' === $request->query->getAlnum('tpl')) {
@@ -355,7 +355,7 @@ class ControllerHelper {
             «ENDIF»
 
             $templateParameters['all'] = 'csv' === $request->getRequestFormat() ? 1 : $request->query->getInt('all');
-            $showOnlyOwnEntriesSetting = (bool)$request->query->getInt(
+            $showOnlyOwnEntriesSetting = (bool) $request->query->getInt(
                 'own',
                 (int) $this->variableApi->get('«appName»', 'showOnlyOwnEntries')
             );
@@ -364,7 +364,7 @@ class ControllerHelper {
                 $routeName = $request->get('_route');
                 $isAdminArea = 'admin' === $templateParameters['routeArea'];
                 if (!$isAdminArea && in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'], true)) {
-                    $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', $objectType . 'PrivateMode', false);
+                    $showOnlyOwnEntries = (bool) $this->variableApi->get('«appName»', $objectType . 'PrivateMode', false);
                     if (true === $showOnlyOwnEntries) {
                         $templateParameters['own'] = 1;
                     } else {
@@ -398,9 +398,9 @@ class ControllerHelper {
             $urlParameters = $templateParameters;
             foreach ($urlParameters as $parameterName => $parameterValue) {
                 if (
-                    false === stripos($parameterName, 'thumbRuntimeOptions')
-                    && false === stripos($parameterName, 'featureActivationHelper')
-                    && false === stripos($parameterName, 'permissionHelper')
+                    false === mb_stripos($parameterName, 'thumbRuntimeOptions')
+                    && false === mb_stripos($parameterName, 'featureActivationHelper')
+                    && false === mb_stripos($parameterName, 'permissionHelper')
                 ) {
                     continue;
                 }
@@ -444,7 +444,7 @@ class ControllerHelper {
                     }
                 }
             }
-            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
+            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), mb_strtoupper($sortdir));
             $resultsPerPage = $templateParameters['num'];
             $request->query->set('own', $templateParameters['own']);
 «/*
@@ -473,7 +473,7 @@ class ControllerHelper {
                         $resultsPerPage,
                         «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
                     );
-                    $paginator->setRoute('«appName.formatForDB»_' . strtolower($objectType) . '_' . $templateParameters['routeArea'] . 'view');
+                    $paginator->setRoute('«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $templateParameters['routeArea'] . 'view');
                     $paginator->setRouteParameters($urlParameters);
 
                     $templateParameters['paginator'] = $paginator;
@@ -502,7 +502,7 @@ class ControllerHelper {
                 if (true === $hasHookSubscriber) {
                     // build RouteUrl instance for display hooks
                     $urlParameters['_locale'] = $request->getLocale();
-                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_view';
+                    $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_view';
                     $templateParameters['currentUrlObject'] = new RouteUrl($routeName, $urlParameters);
                 }
             «ENDIF»
@@ -579,7 +579,7 @@ class ControllerHelper {
                     $entity = $templateParameters[$objectType];
                     $urlParameters = $entity->createUrlArgs();
                     $urlParameters['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
-                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_display';
+                    $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_display';
                     $templateParameters['currentUrlObject'] = new RouteUrl($routeName, $urlParameters);
                 }
             «ENDIF»
@@ -666,7 +666,7 @@ class ControllerHelper {
                     $entity = $templateParameters[$objectType];
                     $urlParameters = $entity->createUrlArgs();
                     $urlParameters['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
-                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_edit';
+                    $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_edit';
                     $templateParameters['currentUrlObject'] = new RouteUrl($routeName, $urlParameters);
                 }
             «ENDIF»
@@ -705,7 +705,7 @@ class ControllerHelper {
                     $entity = $templateParameters[$objectType];
                     $urlParameters = $entity->createUrlArgs();
                     $urlParameters['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
-                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_delete';
+                    $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_delete';
                     $templateParameters['currentUrlObject'] = new RouteUrl($routeName, $urlParameters);
                 }
             «ENDIF»

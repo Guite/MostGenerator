@@ -63,7 +63,7 @@ class ItemActions {
                 $previewRouteParameters['preview'] = 1;
                 $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Preview'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . 'display',
-                    'routeParameters' => $previewRouteParameters
+                    'routeParameters' => $previewRouteParameters,
                 ])
                     ->setLinkAttribute('target', '_blank')
                     ->setLinkAttribute(
@@ -78,7 +78,7 @@ class ItemActions {
                 $entityTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
                 $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Details'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'display',
-                    'routeParameters' => $entity->createUrlArgs()
+                    'routeParameters' => $entity->createUrlArgs(),
                 ])
                     ->setLinkAttribute(
                         'title',
@@ -109,7 +109,7 @@ class ItemActions {
                 if (in_array($context, ['view', 'display']) && $this->loggableHelper->hasHistoryItems($entity)) {
                     $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'History'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                         'route' => $routePrefix . $routeArea . 'loggablehistory',
-                        'routeParameters' => $entity->createUrlArgs()
+                        'routeParameters' => $entity->createUrlArgs(),
                     ])
                         ->setLinkAttribute(
                             'title',
@@ -125,7 +125,7 @@ class ItemActions {
             if ($this->permissionHelper->mayDelete($entity)«IF ownerPermission» || ($isOwner && $this->permissionHelper->mayEdit($entity))«ENDIF») {
                 $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Delete'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'delete',
-                    'routeParameters' => $entity->createUrlArgs()
+                    'routeParameters' => $entity->createUrlArgs(),
                 ])
                     ->setLinkAttribute(
                         'title',
@@ -145,7 +145,7 @@ class ItemActions {
         «IF hasDisplayAction && hasViewAction»
             if ('display' === $context) {
                 $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'«nameMultiple.formatForDisplayCapital» list'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
-                    'route' => $routePrefix . $routeArea . 'view'
+                    'route' => $routePrefix . $routeArea . 'view',
                 ])
                     «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                     «app.addIcon('reply')»
@@ -175,7 +175,7 @@ class ItemActions {
                         if (null === $entity->get«relationAliasName»()) {
                             $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Create «elem.getRelationAliasName(useTarget).formatForDisplay»'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
+                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»],
                             ])
                                 «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                                 «app.addIcon('plus')»
@@ -187,7 +187,7 @@ class ItemActions {
                     «ELSE»
                         $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Create «elem.getRelationAliasName(useTarget).formatForDisplay»'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
-                            'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»]
+                            'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»],
                         ])
                             «app.addLinkClass(if (app.targets('3.0')) 'secondary' else 'default')»
                             «app.addIcon('plus')»
@@ -205,7 +205,7 @@ class ItemActions {
         «IF !readOnly»«/*create is allowed, but editing not*/»
             $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Edit'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
                 'route' => $routePrefix . $routeArea . 'edit',
-                'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»)
+                'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»),
             ])
                 ->setLinkAttribute(
                     'title',
@@ -220,7 +220,7 @@ class ItemActions {
         «ENDIF»
         $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Reuse'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
             'route' => $routePrefix . $routeArea . 'edit',
-            'routeParameters' => ['astemplate' => $entity->getKey()]
+            'routeParameters' => ['astemplate' => $entity->getKey()],
         ])
             ->setLinkAttribute(
                 'title',
@@ -236,7 +236,7 @@ class ItemActions {
             if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                 $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Add sub «name.formatForDisplay»'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
                     'route' => $routePrefix . $routeArea . 'edit',
-                    'routeParameters' => ['parent' => $entity->getKey()]
+                    'routeParameters' => ['parent' => $entity->getKey()],
                 ])
                     ->setLinkAttribute(
                         'title',

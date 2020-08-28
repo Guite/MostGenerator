@@ -64,7 +64,7 @@ class WorkflowFormFieldsTrait {
                     «IF targets('3.0')»
                         /** @Ignore */
                     «ENDIF»
-                    'title' => $helpText
+                    'title' => $helpText,
                 ],
                 'attr' => [
                     'class' => 'noeditor',
@@ -73,10 +73,10 @@ class WorkflowFormFieldsTrait {
                     «ENDIF»
                     'title' => 'create' == $options['mode']
                         ? «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Enter any additions about your content'«IF !targets('3.0')»)«ENDIF»
-                        : «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Enter any additions about your changes'«IF !targets('3.0')»)«ENDIF»
+                        : «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Enter any additions about your changes'«IF !targets('3.0')»)«ENDIF»,
                 ],
                 'required' => false,
-                'help' => $helpText
+                'help' => $helpText,
             ]);
         }
     '''

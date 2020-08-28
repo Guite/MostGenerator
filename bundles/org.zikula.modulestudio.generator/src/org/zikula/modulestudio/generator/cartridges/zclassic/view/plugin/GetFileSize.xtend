@@ -19,7 +19,7 @@ class GetFileSize {
         /**
          * The «appName.formatForDB»_fileSize filter displays the size of a given file in a readable way.
          * Example:
-         *     {{ 12345|«appName.formatForDB»_fileSize }}
+         *     {{ 12345|«appName.formatForDB»_fileSize }}.
          «IF !targets('3.0')»
          *
          * @param int $size File size in bytes
@@ -83,7 +83,7 @@ class GetFileSize {
             // format number
             $dec_point = ',';
             $thousands_separator = '.';
-            if ($size - (int)$size >= 0.005) {
+            if ($size - (int) $size >= 0.005) {
                 $size = number_format($size, 2, $dec_point, $thousands_separator);
             } else {
                 $size = number_format($size, 0, '', $thousands_separator);

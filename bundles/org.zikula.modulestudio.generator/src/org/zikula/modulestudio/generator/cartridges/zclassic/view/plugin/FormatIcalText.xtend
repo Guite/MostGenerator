@@ -17,7 +17,7 @@ class FormatIcalText {
         /**
          * The «appName.formatForDB»_icalText filter outputs a given text for the ics output format.
          * Example:
-         *     {{ 'someString'|«appName.formatForDB»_icalText }}
+         *     {{ 'someString'|«appName.formatForDB»_icalText }}.
          «IF !targets('3.0')»
          *
          * @param string $string The given output string

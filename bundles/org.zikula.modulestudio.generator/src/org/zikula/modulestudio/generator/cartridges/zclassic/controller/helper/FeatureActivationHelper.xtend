@@ -36,28 +36,28 @@ class FeatureActivationHelper {
     def private featureConstants(Application it) '''
         «IF hasCategorisableEntities»
             /**
-             * Categorisation feature
+             * Categorisation feature.
              */
             «IF targets('3.0')»public «ENDIF»const CATEGORIES = 'categories';
 
         «ENDIF»
         «IF hasAttributableEntities»
             /**
-             * Attribution feature
+             * Attribution feature.
              */
             «IF targets('3.0')»public «ENDIF»const ATTRIBUTES = 'attributes';
 
         «ENDIF»
         «IF hasTranslatable»
             /**
-             * Translation feature
+             * Translation feature.
              */
             «IF targets('3.0')»public «ENDIF»const TRANSLATIONS = 'translations';
 
         «ENDIF»
         «IF hasTrees»
             /**
-             * Tree relatives feature
+             * Tree relatives feature.
              */
             «IF targets('3.0')»public «ENDIF»const TREE_RELATIVES = 'treeRelatives';
 

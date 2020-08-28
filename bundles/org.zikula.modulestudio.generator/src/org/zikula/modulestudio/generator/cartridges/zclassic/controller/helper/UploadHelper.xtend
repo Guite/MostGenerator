@@ -270,7 +270,7 @@ class UploadHelper {
                 $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
                 if (
                     isset($this->moduleVars['enableShrinkingFor' . $fieldSuffix])
-                    && true === (bool)$this->moduleVars['enableShrinkingFor' . $fieldSuffix]
+                    && true === (bool) $this->moduleVars['enableShrinkingFor' . $fieldSuffix]
                 ) {
                     // check for maximum size
                     $maxWidth = isset($this->moduleVars['shrinkWidth' . $fieldSuffix])

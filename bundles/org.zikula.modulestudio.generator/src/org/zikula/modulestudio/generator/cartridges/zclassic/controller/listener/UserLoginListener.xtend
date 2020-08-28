@@ -16,12 +16,12 @@ class UserLoginListener {
                 «IF targets('3.0')»
                     UserPreLoginSuccessEvent::class => ['veto', 5],
                     UserPostLoginSuccessEvent::class => ['succeeded', 5],
-                    UserPostLoginFailureEvent::class  => ['failed', 5]
+                    UserPostLoginFailureEvent::class => ['failed', 5],
                 «ELSE»
                     AccessEvents::LOGIN_STARTED => ['started', 5],
-                    AccessEvents::LOGIN_VETO    => ['veto', 5],
+                    AccessEvents::LOGIN_VETO => ['veto', 5],
                     AccessEvents::LOGIN_SUCCESS => ['succeeded', 5],
-                    AccessEvents::LOGIN_FAILED  => ['failed', 5]
+                    AccessEvents::LOGIN_FAILED => ['failed', 5],
                 «ENDIF»
             ];
         }

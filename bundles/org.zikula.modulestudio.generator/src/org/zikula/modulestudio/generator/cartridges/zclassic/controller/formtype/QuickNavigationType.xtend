@@ -278,7 +278,7 @@ class QuickNavigationType {
                 $builder->add('updateview', SubmitType::class, [
                     'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'OK'«IF !app.targets('3.0')»)«ENDIF»,
                     'attr' => [
-                        'class' => '«IF app.targets('3.0')»btn-secondary«ELSE»btn btn-default«ENDIF» btn-sm'
+                        'class' => '«IF app.targets('3.0')»btn-secondary«ELSE»btn btn-default«ENDIF» btn-sm',
                     ]
                 ]);
             }
@@ -345,7 +345,7 @@ class QuickNavigationType {
             {
                 $resolver->setDefaults([
                     'csrf_protection' => false«IF app.targets('3.0') && !app.isSystemModule»,
-                    'translation_domain' => '«name.formatForCode»'«ENDIF»
+                    'translation_domain' => '«name.formatForCode»'«ENDIF»,
                 ]);
             }
         }
@@ -364,14 +364,14 @@ class QuickNavigationType {
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
                     'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm category-selector',
-                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !app.targets('3.0')»)«ENDIF»
+                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !app.targets('3.0')»)«ENDIF»,
                 ],
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($objectType) . 'Entity',
                 'entityCategoryClass' => $entityCategoryClass,
-                'showRegistryLabels' => true
+                'showRegistryLabels' => true,
             ]);
         }
     '''
@@ -502,7 +502,7 @@ class QuickNavigationType {
                 'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Search'«IF !app.targets('3.0')»)«ENDIF»,
                 'attr' => [
                     'maxlength' => 255,
-                    'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
+                    'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm',
                 ],
                 'required' => false
             ]);
@@ -519,7 +519,7 @@ class QuickNavigationType {
                 ->add('sort', ChoiceType::class, [
                     'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Sort by'«IF !app.targets('3.0')»)«ENDIF»,
                     'attr' => [
-                        'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
+                        'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm',
                     ],
                     'choices' => [
                         «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
@@ -539,30 +539,30 @@ class QuickNavigationType {
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Creation date'«IF !app.targets('3.0')»)«ENDIF» => 'createdDate',
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Creator'«IF !app.targets('3.0')»)«ENDIF» => 'createdBy',
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Update date'«IF !app.targets('3.0')»)«ENDIF» => 'updatedDate',
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Updater'«IF !app.targets('3.0')»)«ENDIF» => 'updatedBy'
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Updater'«IF !app.targets('3.0')»)«ENDIF» => 'updatedBy',
                         «ENDIF»
                     ],
                     «IF !app.targets('2.0')»
                         'choices_as_values' => true,
                     «ENDIF»
                     'required' => true,
-                    'expanded' => false
+                    'expanded' => false,
                 ])
                 ->add('sortdir', ChoiceType::class, [
                     'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Sort direction'«IF !app.targets('3.0')»)«ENDIF»,
                     'empty_data' => 'asc',
                     'attr' => [
-                        'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
+                        'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm',
                     ],
                     'choices' => [
                         «IF !app.targets('3.0')»$this->__(«ENDIF»'Ascending'«IF !app.targets('3.0')»)«ENDIF» => 'asc',
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Descending'«IF !app.targets('3.0')»)«ENDIF» => 'desc'
+                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Descending'«IF !app.targets('3.0')»)«ENDIF» => 'desc',
                     ],
                     «IF !app.targets('2.0')»
                         'choices_as_values' => true,
                     «ENDIF»
                     'required' => true,
-                    'expanded' => false
+                    'expanded' => false,
                 ])
             ;
         }
@@ -578,7 +578,7 @@ class QuickNavigationType {
                 'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Page size'«IF !app.targets('3.0')»)«ENDIF»,
                 'empty_data' => 20,
                 'attr' => [
-                    'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm text-right'
+                    'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm text-right',
                 ],
                 «IF app.targets('3.0')»
                     /** @Ignore */
@@ -590,13 +590,13 @@ class QuickNavigationType {
                     20 => 20,
                     30 => 30,
                     50 => 50,
-                    100 => 100
+                    100 => 100,
                 ],
                 «IF !app.targets('2.0')»
                     'choices_as_values' => true,
                 «ENDIF»
                 'required' => false,
-                'expanded' => false
+                'expanded' => false,
             ]);
         }
     '''
@@ -617,7 +617,7 @@ class QuickNavigationType {
         $builder->add('«name.formatForCode»', «IF it instanceof StringField && (it as StringField).role == StringRole.LOCALE»Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»MultiList«ELSEIF it instanceof UserField»Entity«ELSE»«fieldType»«ENDIF»Type::class, [
             'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«IF name == 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'«IF !app.targets('3.0')»)«ENDIF»,
             'attr' => [
-                'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
+                'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm',
             ],
             'required' => false,
             «additionalOptions»
@@ -638,7 +638,7 @@ class QuickNavigationType {
             «ENDIF»
             'choices' => $this->localeApi->getSupportedLocaleNames()«IF !app.targets('2.0')»,«ENDIF»
             «IF !app.targets('2.0')»
-                'choices_as_values' => true
+                'choices_as_values' => true,
             «ENDIF»
         «ENDIF»
     '''
@@ -646,7 +646,7 @@ class QuickNavigationType {
     def private dispatch additionalOptions(UserField it) '''
         'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'All'«IF !app.targets('3.0')»)«ENDIF»,
         'class' => UserEntity::class,
-        'choice_label' => 'uname'
+        'choice_label' => 'uname',
     '''
 
     def private dispatch fieldType(ListField it) '''«/* called for multiple=false only */»Choice'''
@@ -658,7 +658,7 @@ class QuickNavigationType {
         «ENDIF»
         'choice_attr' => $choiceAttributes,
         'multiple' => «multiple.displayBool»,
-        'expanded' => false
+        'expanded' => false,
     '''
 
     def private dispatch fieldType(BooleanField it) '''Choice'''
@@ -669,7 +669,7 @@ class QuickNavigationType {
             «IF !app.targets('3.0')»$this->__(«ENDIF»'Yes'«IF !app.targets('3.0')»)«ENDIF» => 'yes'
         ]«IF !app.targets('2.0')»,«ENDIF»
         «IF !app.targets('2.0')»
-            'choices_as_values' => true
+            'choices_as_values' => true,
         «ENDIF»
     '''
 
@@ -701,8 +701,8 @@ class QuickNavigationType {
             'required' => false,
             'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«sourceAliasName.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF»,
             'attr' => [
-                'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm'
-            ]
+                'class' => '«IF app.targets('3.0')»form-control«ELSE»input«ENDIF»-sm',
+            ],
         ]);
     '''
 

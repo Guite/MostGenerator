@@ -143,7 +143,7 @@ class PermissionHelper {
          * @return bool
          «ENDIF»
          */
-        public function mayRead(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+        public function mayRead(EntityAccess $entity, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->hasEntityPermission($entity, ACCESS_READ, $userId);
         }
@@ -158,7 +158,7 @@ class PermissionHelper {
          * @return bool
          «ENDIF»
          */
-        public function mayEdit(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+        public function mayEdit(EntityAccess $entity, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->hasEntityPermission($entity, ACCESS_EDIT, $userId);
         }
@@ -174,7 +174,7 @@ class PermissionHelper {
              * @return bool
              «ENDIF»
              */
-            public function mayAccessHistory(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+            public function mayAccessHistory(EntityAccess $entity, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
             {
                 $objectType = $entity->get_objectType();
 
@@ -194,7 +194,7 @@ class PermissionHelper {
          * @return bool
          «ENDIF»
          */
-        public function mayDelete(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+        public function mayDelete(EntityAccess $entity, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->hasEntityPermission($entity, ACCESS_DELETE, $userId);
         }
@@ -210,7 +210,7 @@ class PermissionHelper {
          * @return bool
          «ENDIF»
          */
-        public function hasEntityPermission(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+        public function hasEntityPermission(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             $objectType = $entity->get_objectType();
             $instance = $entity->getKey() . '::';
@@ -260,7 +260,7 @@ class PermissionHelper {
              * @return array The filtered list of entities
              «ENDIF»
              */
-            public function filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: array«ENDIF»
+            public function filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: array«ENDIF»
             {
                 $filteredEntities = [];
                 foreach ($entities as $entity) {
@@ -327,7 +327,7 @@ class PermissionHelper {
          * @return bool
          «ENDIF»
          */
-        public function hasComponentPermission(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+        public function hasComponentPermission(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->permissionApi->hasPermission(
                 '«appName»:' . ucfirst($objectType) . ':',
@@ -348,7 +348,7 @@ class PermissionHelper {
              * @return bool
              «ENDIF»
              */
-            public function mayUseQuickNav(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+            public function mayUseQuickNav(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
             {
                 return $this->hasComponentPermission($objectType, ACCESS_READ, $userId);
             }
@@ -364,7 +364,7 @@ class PermissionHelper {
          * @return bool
          «ENDIF»
          */
-        public function hasPermission(«IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+        public function hasPermission(«IF targets('3.0')»int «ENDIF»$permissionLevel, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
         {
             return $this->permissionApi->hasPermission(
                 '«appName»::',
@@ -405,7 +405,7 @@ class PermissionHelper {
          */
         public function getUserId()«IF targets('3.0')»: int«ENDIF»
         {
-            return (int)$this->currentUserApi->get('uid');
+            return (int) $this->currentUserApi->get('uid');
         }
 
         /**

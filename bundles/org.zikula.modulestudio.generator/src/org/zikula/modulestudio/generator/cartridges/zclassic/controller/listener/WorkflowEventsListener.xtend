@@ -62,11 +62,11 @@ class WorkflowEventsListener {
                 'workflow.guard' => ['onGuard', 5],
                 'workflow.leave' => ['onLeave', 5],
                 'workflow.transition' => ['onTransition', 5],
-                'workflow.enter' => ['onEnter', 5]«IF targets('2.0')»,«ENDIF»
+                'workflow.enter' => ['onEnter', 5],
                 «IF targets('2.0')»
                     'workflow.entered' => ['onEntered', 5],
                     'workflow.completed' => ['onCompleted', 5],
-                    'workflow.announce' => ['onAnnounce', 5]
+                    'workflow.announce' => ['onAnnounce', 5],
                 «ENDIF»
             ];
         }
@@ -335,7 +335,7 @@ class WorkflowEventsListener {
         /**
          * Checks whether this listener is responsible for the given entity or not.
          *
-         * @param EntityAccess $entity The given entity
+         * @param object $entity The given entity
          «IF !targets('3.0')»
          *
          * @return bool True if entity is managed by this listener, false otherwise

@@ -73,24 +73,24 @@ class FormAwareProviderInnerForms {
                 $builder
                     ->add('dummyName', TextType::class, [
                         'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Dummy «name.formatForDisplay» text'«IF !app.targets('3.0')»)«ENDIF»,
-                        'required' => true
+                        'required' => true,
                     ])
                     ->add('dummyChoice', ChoiceType::class, [
                         'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Dummy «name.formatForDisplay» choice'«IF !app.targets('3.0')»)«ENDIF»,
                         'label_attr' => [
-                            'class' => 'checkbox-«IF app.targets('3.0')»custom«ELSE»inline«ENDIF»'
+                            'class' => 'checkbox-«IF app.targets('3.0')»custom«ELSE»inline«ENDIF»',
                         ],
                         'choices' => [
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Option A'«IF !app.targets('3.0')»)«ENDIF» => 'A',
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Option B'«IF !app.targets('3.0')»)«ENDIF» => 'B',
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Option C'«IF !app.targets('3.0')»)«ENDIF» => 'C'
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Option C'«IF !app.targets('3.0')»)«ENDIF» => 'C',
                         ],
                         «IF !app.targets('2.0')»
                             'choices_as_values' => true,
                         «ENDIF»
                         'required' => true,
                         'multiple' => true,
-                        'expanded' => true
+                        'expanded' => true,
                     ])
                 ;
             }
@@ -104,7 +104,7 @@ class FormAwareProviderInnerForms {
                 public function configureOptions(OptionsResolver $resolver)
                 {
                     $resolver->setDefaults([
-                        'translation_domain' => 'hooks'
+                        'translation_domain' => 'hooks',
                     ]);
                 }
             «ENDIF»

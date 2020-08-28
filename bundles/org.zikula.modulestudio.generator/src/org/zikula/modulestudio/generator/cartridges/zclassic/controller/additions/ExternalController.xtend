@@ -311,7 +311,7 @@ class ExternalController {
         «IF !targets('3.0')»
 
             // the current offset which is used to calculate the pagination
-            $currentPage = (int)$pos;
+            $currentPage = (int) $pos;
         «ENDIF»
 
         // the number of items displayed on a page for pagination
@@ -354,7 +354,7 @@ class ExternalController {
             $sdir = $formData['sortdir'];
             $searchTerm = $formData['q'];
             «IF hasImageFields»
-                $templateParameters['onlyImages'] = isset($formData['onlyImages']) ? (bool)$formData['onlyImages'] : false;
+                $templateParameters['onlyImages'] = isset($formData['onlyImages']) ? (bool) $formData['onlyImages'] : false;
                 $templateParameters['imageField'] = isset($formData['imageField']) ? $formData['imageField'] : '';
             «ENDIF»
         }

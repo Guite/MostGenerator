@@ -33,7 +33,7 @@ class ConnectionsMenuListener {
         public static function getSubscribedEvents()
         {
             return [
-                ConnectionsMenuEvent::class => ['addMenuItem', 5]
+                ConnectionsMenuEvent::class => ['addMenuItem', 5],
             ];
         }
 

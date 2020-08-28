@@ -78,11 +78,11 @@ class UserListener {
                 «IF targets('3.0')»
                     ActiveUserPostCreatedEvent::class => ['create', 5],
                     ActiveUserPostUpdatedEvent::class => ['update', 5],
-                    ActiveUserPostDeletedEvent::class => ['delete', 5]
+                    ActiveUserPostDeletedEvent::class => ['delete', 5],
                 «ELSE»
                     UserEvents::CREATE_ACCOUNT => ['create', 5],
                     UserEvents::UPDATE_ACCOUNT => ['update', 5],
-                    UserEvents::DELETE_ACCOUNT => ['delete', 5]
+                    UserEvents::DELETE_ACCOUNT => ['delete', 5],
                 «ENDIF»
             ];
         }
@@ -246,7 +246,7 @@ class UserListener {
             $logArgs = [
                 'app' => '«application.appName»',
                 'user' => $this->currentUserApi->get('uname'),
-                'entities' => '«nameMultiple.formatForDisplay»'
+                'entities' => '«nameMultiple.formatForDisplay»',
             ];
             $this->logger->notice(
                 '{app}: User {user} has been deleted, so we deleted/updated corresponding {entities}, too.',

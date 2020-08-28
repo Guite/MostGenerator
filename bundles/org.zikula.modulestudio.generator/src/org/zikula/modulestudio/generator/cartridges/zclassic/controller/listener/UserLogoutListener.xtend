@@ -14,9 +14,9 @@ class UserLogoutListener {
         {
             return [
                 «IF targets('3.0')»
-                    UserPostLogoutSuccessEvent::class => ['succeeded', 5]
+                    UserPostLogoutSuccessEvent::class => ['succeeded', 5],
                 «ELSE»
-                    AccessEvents::LOGOUT_SUCCESS => ['succeeded', 5]
+                    AccessEvents::LOGOUT_SUCCESS => ['succeeded', 5],
                 «ENDIF»
             ];
         }

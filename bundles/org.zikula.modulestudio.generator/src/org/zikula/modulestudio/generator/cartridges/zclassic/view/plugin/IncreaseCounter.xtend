@@ -20,7 +20,7 @@ class IncreaseCounter {
          * The «appName.formatForDB»_increaseCounter function increases a counter field of a specific entity.
          * It uses Doctrine DBAL to avoid creating a new loggable version, sending workflow notification or executing other unwanted actions.
          * Example:
-         *     {{ «appName.formatForDB»_increaseCounter(«getEntitiesWithCounterFields.head.name.formatForCode», '«getEntitiesWithCounterFields.head.getCounterFields.head.name.formatForCode»') }}
+         *     {{ «appName.formatForDB»_increaseCounter(«getEntitiesWithCounterFields.head.name.formatForCode», '«getEntitiesWithCounterFields.head.getCounterFields.head.name.formatForCode»') }}.
          */
         public function increaseCounter(EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$fieldName = '')«IF targets('3.0')»: void«ENDIF»
         {

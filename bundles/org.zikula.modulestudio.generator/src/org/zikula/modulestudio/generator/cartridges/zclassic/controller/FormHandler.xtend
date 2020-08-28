@@ -271,7 +271,7 @@ class FormHandler {
             /**
              * Whether a create action is going to be repeated or not.
              *
-             * @var boolean
+             * @var bool
              */
             protected $repeatCreateAction = false;
 
@@ -300,7 +300,7 @@ class FormHandler {
                 /**
                  * Whether the entity has attributes or not.
                  *
-                 * @var boolean
+                 * @var bool
                  */
                 protected $hasAttributes = false;
             «ENDIF»
@@ -309,7 +309,7 @@ class FormHandler {
                 /**
                  * Whether the entity has translatable fields or not.
                  *
-                 * @var boolean
+                 * @var bool
                  */
                 protected $hasTranslatableFields = false;
             «ENDIF»
@@ -630,7 +630,7 @@ class FormHandler {
 
                 // set default values from request parameters
                 foreach ($request->query->all() as $key => $value) {
-                    if (5 > strlen($key) || 0 !== strpos($key, 'set_')) {
+                    if (5 > mb_strlen($key) || 0 !== mb_strpos($key, 'set_')) {
                         continue;
                     }
                     $fieldName = str_replace('set_', '', $key);
@@ -676,7 +676,7 @@ class FormHandler {
                     'app' => '«appName»',
                     'user' => $this->currentUserApi->get('uname'),
                     'entity' => $this->objectType,
-                    'id' => $entity->getKey()
+                    'id' => $entity->getKey(),
                 ];
                 $this->logger->error(
                     '{app}: User {user} tried to edit the {entity} with id {id},'
@@ -1168,7 +1168,7 @@ class FormHandler {
                 'app' => '«appName»',
                 'user' => $this->currentUserApi->get('uname'),
                 'entity' => $this->objectType,
-                'id' => $this->entityRef->getKey()
+                'id' => $this->entityRef->getKey(),
             ];
             if (true === $success) {
                 $this->logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
@@ -1282,7 +1282,7 @@ class FormHandler {
                     '«appName»',
                     'moderationGroupFor' . $this->objectTypeCapital,
                     GroupsConstant::GROUP_ID_ADMIN
-                )
+                ),
             ];
             $roles['is_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
 
@@ -1293,7 +1293,7 @@ class FormHandler {
                         '«appName»',
                         'superModerationGroupFor' . $this->objectTypeCapital,
                         GroupsConstant::GROUP_ID_ADMIN
-                    )
+                    ),
                 ];
                 $roles['is_super_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
             }
@@ -1463,7 +1463,7 @@ class FormHandler {
                 $logArgs = [
                     'app' => '«app.appName»',
                     'user' => $this->currentUserApi->get('uname'),
-                    'entity' => $this->objectType
+                    'entity' => $this->objectType,
                 ];
                 $this->logger->notice(
                     '{app}: User {user} tried to create a new {entity}, but failed'
@@ -1506,12 +1506,12 @@ class FormHandler {
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
                     'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADMIN),
-                    'allow_moderation_specific_creator' => (bool)$this->variableApi->get(
+                    'allow_moderation_specific_creator' => (bool) $this->variableApi->get(
                         '«app.appName»',
                         'allowModerationSpecificCreatorFor' . $this->objectTypeCapital,
                         false
                     ),
-                    'allow_moderation_specific_creation_date' => (bool)$this->variableApi->get(
+                    'allow_moderation_specific_creation_date' => (bool) $this->variableApi->get(
                         '«app.appName»',
                         'allowModerationSpecificCreationDateFor' . $this->objectTypeCapital,
                         false
@@ -1673,7 +1673,7 @@ class FormHandler {
                     'user' => $this->currentUserApi->get('uname'),
                     'entity' => '«name.formatForDisplay»',
                     'id' => $entity->getKey(),
-                    'errorMessage' => $exception->getMessage()
+                    'errorMessage' => $exception->getMessage(),
                 ];
                 $this->logger->error(
                     '{app}: User {user} tried to edit the {entity} with id {id},'

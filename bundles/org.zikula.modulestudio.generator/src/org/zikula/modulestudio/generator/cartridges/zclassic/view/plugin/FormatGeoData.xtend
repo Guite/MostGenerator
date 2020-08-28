@@ -17,7 +17,7 @@ class FormatGeoData {
         /**
          * The «appName.formatForDB»_geoData filter formats geo data.
          * Example:
-         *     {{ latitude|«appName.formatForDB»_geoData }}
+         *     {{ latitude|«appName.formatForDB»_geoData }}.
          «IF !targets('3.0')»
          *
          * @param string $string The data to be formatted

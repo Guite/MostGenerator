@@ -198,7 +198,7 @@ class Redirect {
                 return $this->getDefaultReturnUrl($args);
             }
 
-            $routeArea = 0 === strpos($this->returnTo, 'admin') ? 'admin' : '';
+            $routeArea = 0 === mb_strpos($this->returnTo, 'admin') ? 'admin' : '';
             $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
 
             // parse given redirect code and return corresponding url
@@ -215,7 +215,7 @@ class Redirect {
                     «IF standardFields»
                         case 'userOwnView':
                         case 'adminOwnView':
-                            return $this->router->generate($routePrefix . 'view', [ 'own' => 1 ]);
+                            return $this->router->generate($routePrefix . 'view', ['own' => 1]);
                     «ENDIF»
                 «ENDIF»
                 «IF hasDisplayAction»

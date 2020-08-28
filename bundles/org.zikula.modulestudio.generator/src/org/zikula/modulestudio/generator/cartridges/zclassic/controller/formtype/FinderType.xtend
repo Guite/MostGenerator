@@ -123,10 +123,10 @@ class FinderType {
                 $builder
                     ->setMethod('GET')
                     ->add('objectType', HiddenType::class, [
-                        'data' => $options['object_type']
+                        'data' => $options['object_type'],
                     ])
                     ->add('editor', HiddenType::class, [
-                        'data' => $options['editor_name']
+                        'data' => $options['editor_name'],
                     ])
                 ;
 
@@ -151,7 +151,7 @@ class FinderType {
                         'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Change selection'«IF !app.targets('3.0')»)«ENDIF»,
                         'icon' => 'fa-check',
                         'attr' => [
-                            'class' => '«IF !app.targets('3.0')»btn «ENDIF»btn-success'
+                            'class' => '«IF !app.targets('3.0')»btn «ENDIF»btn-success',
                         ]
                     ])
                     ->add('cancel', SubmitType::class, [
@@ -159,11 +159,13 @@ class FinderType {
                         «IF app.targets('3.0')»
                             'validate' => false,
                         «ENDIF»
-                        'icon' => 'fa-times'«IF !app.targets('3.0')»,
-                        'attr' => [
-                            'class' => 'btn btn-default',
-                            'formnovalidate' => 'formnovalidate'
-                        ]«ENDIF»
+                        'icon' => 'fa-times',
+                        «IF !app.targets('3.0')»
+                            'attr' => [
+                                'class' => 'btn btn-default',
+                                'formnovalidate' => 'formnovalidate',
+                            ],
+                        «ENDIF»
                     ])
                 ;
             }
@@ -219,7 +221,7 @@ class FinderType {
                 'data' => $this->requestStack->getCurrentRequest()->getLocale(),
                 'empty_data' => null,
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => false,
             ]);
         }
     '''
@@ -236,7 +238,7 @@ class FinderType {
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
                     'class' => 'category-selector',
-                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !app.targets('3.0')»)«ENDIF»
+                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !app.targets('3.0')»)«ENDIF»,
                 ],
                 'help' => «IF !app.targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !app.targets('3.0')»)«ENDIF»,
                 'required' => false,
@@ -244,7 +246,7 @@ class FinderType {
                 'module' => '«app.appName»',
                 'entity' => ucfirst($options['object_type']) . 'Entity',
                 'entityCategoryClass' => $entityCategoryClass,
-                'showRegistryLabels' => true
+                'showRegistryLabels' => true,
             ]);
         }
     '''
@@ -259,12 +261,12 @@ class FinderType {
                 'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Only images'«IF !app.targets('3.0')»)«ENDIF»,
                 «IF app.targets('3.0')»
                     'label_attr' => [
-                        'class' => 'switch-custom'
+                        'class' => 'switch-custom',
                     ],
                 «ENDIF»
                 'empty_data' => false,
                 'help' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Enable this option to insert images'«IF !app.targets('3.0')»)«ENDIF»,
-                'required' => false
+                'required' => false,
             ]);
             «IF imageFieldsEntity.size > 1»
                 $builder->add('imageField', ChoiceType::class, [
@@ -273,18 +275,18 @@ class FinderType {
                     'help' => «IF !app.targets('3.0')»$this->__(«ENDIF»'You can switch between different image fields'«IF !app.targets('3.0')»)«ENDIF»,
                     'choices' => [
                         «FOR imageField : imageFieldsEntity»
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'«imageField.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«imageField.name.formatForCode»'«IF imageField != imageFieldsEntity.last»,«ENDIF»
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'«imageField.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«imageField.name.formatForCode»',
                         «ENDFOR»
                     ],
                     «IF !app.targets('2.0')»
                         'choices_as_values' => true,
                     «ENDIF»
                     'multiple' => false,
-                    'expanded' => false
+                    'expanded' => false,
                 ]);
             «ELSE»
                 $builder->add('imageField', HiddenType::class, [
-                    'data' => '«imageFieldsEntity.head.name.formatForCode»'
+                    'data' => '«imageFieldsEntity.head.name.formatForCode»',
                 ]);
             «ENDIF»
         }
@@ -304,19 +306,19 @@ class FinderType {
                         «IF !app.targets('3.0')»$this->__(«ENDIF»'Relative link to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 1,
                         «IF !app.targets('3.0')»$this->__(«ENDIF»'Absolute url to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 2,
                     «ENDIF»
-                    «IF !app.targets('3.0')»$this->__(«ENDIF»'ID of «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 3«IF hasImageFieldsEntity»,«ENDIF»
+                    «IF !app.targets('3.0')»$this->__(«ENDIF»'ID of «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 3,
                     «IF hasImageFieldsEntity»
                         «IF !app.targets('3.0')»$this->__(«ENDIF»'Relative link to the image'«IF !app.targets('3.0')»)«ENDIF» => 6,
                         «IF !app.targets('3.0')»$this->__(«ENDIF»'Image'«IF !app.targets('3.0')»)«ENDIF» => 7,
                         «IF !app.targets('3.0')»$this->__(«ENDIF»'Image with relative link to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 8,
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Image with absolute url to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 9
+                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Image with absolute url to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 9,
                     «ENDIF»
                 ],
                 «IF !app.targets('2.0')»
                     'choices_as_values' => true,
                 «ENDIF»
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => false,
             ]);
         }
     '''
@@ -334,34 +336,34 @@ class FinderType {
                     'choices' => [
                         «FOR field : getSortingFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                                «IF !app.targets('3.0')»$this->__(«ENDIF»'«field.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                                «IF !app.targets('3.0')»$this->__(«ENDIF»'«field.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«field.name.formatForCode»',
                             «ENDIF»
                         «ENDFOR»
                         «IF standardFields»
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Creation date'«IF !app.targets('3.0')»)«ENDIF» => 'createdDate',
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Creator'«IF !app.targets('3.0')»)«ENDIF» => 'createdBy',
                             «IF !app.targets('3.0')»$this->__(«ENDIF»'Update date'«IF !app.targets('3.0')»)«ENDIF» => 'updatedDate',
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Updater'«IF !app.targets('3.0')»)«ENDIF» => 'updatedBy'
+                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Updater'«IF !app.targets('3.0')»)«ENDIF» => 'updatedBy',
                         «ENDIF»
                     ],
                     «IF !app.targets('2.0')»
                         'choices_as_values' => true,
                     «ENDIF»
                     'multiple' => false,
-                    'expanded' => false
+                    'expanded' => false,
                 ])
                 ->add('sortdir', ChoiceType::class, [
                     'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Sort direction:'«IF !app.targets('3.0')»)«ENDIF»,
                     'empty_data' => 'asc',
                     'choices' => [
                         «IF !app.targets('3.0')»$this->__(«ENDIF»'Ascending'«IF !app.targets('3.0')»)«ENDIF» => 'asc',
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Descending'«IF !app.targets('3.0')»)«ENDIF» => 'desc'
+                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Descending'«IF !app.targets('3.0')»)«ENDIF» => 'desc',
                     ],
                     «IF !app.targets('2.0')»
                         'choices_as_values' => true,
                     «ENDIF»
                     'multiple' => false,
-                    'expanded' => false
+                    'expanded' => false,
                 ])
             ;
         }
@@ -377,7 +379,7 @@ class FinderType {
                 'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Page size:'«IF !app.targets('3.0')»)«ENDIF»,
                 'empty_data' => 20,
                 'attr' => [
-                    'class' => 'text-right'
+                    'class' => 'text-right',
                 ],
                 «IF app.targets('3.0')»
                     /** @Ignore */
@@ -389,13 +391,13 @@ class FinderType {
                     20 => 20,
                     30 => 30,
                     50 => 50,
-                    100 => 100
+                    100 => 100,
                 ],
                 «IF !app.targets('2.0')»
                     'choices_as_values' => true,
                 «ENDIF»
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => false,
             ]);
         }
     '''
@@ -410,8 +412,8 @@ class FinderType {
                 'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Search for:'«IF !app.targets('3.0')»)«ENDIF»,
                 'required' => false,
                 'attr' => [
-                    'maxlength' => 255
-                ]
+                    'maxlength' => 255,
+                ],
             ]);
         }
     '''

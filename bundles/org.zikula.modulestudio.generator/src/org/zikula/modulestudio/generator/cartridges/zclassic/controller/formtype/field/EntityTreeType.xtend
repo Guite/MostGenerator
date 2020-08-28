@@ -55,13 +55,13 @@ class EntityTreeType {
                         'include_root_nodes' => true,
                         'use_joins' => true,
                         'attr' => [
-                            'class' => 'entity-tree'
-                        ]«IF !targets('2.0')»,«ENDIF»«/*
+                            'class' => 'entity-tree',
+                        ],«/*
                         'query_builder' => function (EntityRepository $er) {
                             return $er->selectTree($options['root'], $options['use_joins']);
                         },*/»
                         «IF !targets('2.0')»
-                            'choices_as_values' => true
+                            'choices_as_values' => true,
                         «ENDIF»
                     ])
                     ->setAllowedTypes('root', 'int')

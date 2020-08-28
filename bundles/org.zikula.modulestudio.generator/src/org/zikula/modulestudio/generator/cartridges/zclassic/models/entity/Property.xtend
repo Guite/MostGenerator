@@ -61,7 +61,8 @@ class Property {
          «ENDIF»
          «ENDIF»
          * @Assert\Type(type="array")
-         * @var array $«name.formatForCode»Meta
+         *
+         * @var array
          */
         protected $«name.formatForCode»Meta = [];
 
@@ -71,7 +72,8 @@ class Property {
          *
          * @Assert\Type(type="string")
          «/* * @Assert\Url() disabled due to problems with space chars in file names
-         */»* @var string $«name.formatForCode»Url
+         */»*
+         * @var string
          */
         protected $«name.formatForCode»Url = '';
 
@@ -79,7 +81,8 @@ class Property {
          * «name.formatForDisplayCapital» file object.
          *
         «thVal.uploadFileAnnotations(it)»
-         * @var File $«name.formatForCode»
+         *
+         * @var File
          */
         protected $«name.formatForCode» = null;
         «/* this last line is on purpose */»
@@ -117,7 +120,8 @@ class Property {
             «persistentPropertyAdditions»
         «ENDIF»
         «thVal.fieldAnnotations(it)»
-         * @var «IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»
+         *
+         * @var «IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF»
          */
         «modifier» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»

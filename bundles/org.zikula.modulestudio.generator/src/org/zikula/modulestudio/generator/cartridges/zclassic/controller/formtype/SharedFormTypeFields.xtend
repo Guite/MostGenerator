@@ -213,15 +213,15 @@ class SharedFormTypeFields {
                 «IF null !== documentation && !documentation.empty»
                     'label_attr' => [
                         'class' => 'tooltips«IF useCustomSwitch» switch-custom«ELSEIF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-«IF application.targets('3.0')»custom«ELSE»inline«ENDIF»«ENDIF»',
-                        'title' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«documentation.replace("'", '"')»'«IF !application.targets('3.0')»)«ENDIF»
+                        'title' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«documentation.replace("'", '"')»'«IF !application.targets('3.0')»)«ENDIF»,
                     ],
                 «ELSEIF useCustomSwitch»
                     'label_attr' => [
-                        'class' => 'switch-custom'
+                        'class' => 'switch-custom',
                     ],
                 «ELSEIF isExpandedListField»
                     'label_attr' => [
-                        'class' => '«IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-«IF application.targets('3.0')»custom«ELSE»inline«ENDIF»'
+                        'class' => '«IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-«IF application.targets('3.0')»custom«ELSE»inline«ENDIF»',
                     ],
                 «ENDIF»
                 «helpAttribute»
@@ -254,7 +254,7 @@ class SharedFormTypeFields {
                             'max' => «maxValue»,
                         «ENDIF»
                     «ENDIF»
-                    'title' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«titleAttribute»'«IF !application.targets('3.0')»)«ENDIF»
+                    'title' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«titleAttribute»'«IF !application.targets('3.0')»)«ENDIF»,
                 ],
                 «requiredOption»
                 «additionalOptions»
@@ -1046,13 +1046,13 @@ class SharedFormTypeFields {
         «IF isUserGroupSelector»
             'class' => GroupEntity::class,
             'choice_label' => 'name',
-            'choice_value' => 'gid'
+            'choice_value' => 'gid',
         «ELSE»
             «IF percentage»
                 'type' => 'integer',
             «ENDIF»
             «IF unit != ''»
-                'input_group' => ['right' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'«unit»'«IF !application.targets('3.0')»)«ENDIF»]
+                'input_group' => ['right' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'«unit»'«IF !application.targets('3.0')»)«ENDIF»],
             «ENDIF»
         «ENDIF»
     '''
@@ -1070,9 +1070,9 @@ class SharedFormTypeFields {
         «/* not required since these are the default values IF percentage»
             'type' => 'fractional',
         «ENDIF*/»
-        'scale' => «scale»«IF unit != ''»,«ENDIF»
+        'scale' => «scale»,
         «IF unit != ''»
-            'input_group' => ['right' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'«unit»'«IF !application.targets('3.0')»)«ENDIF»]
+            'input_group' => ['right' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'«unit»'«IF !application.targets('3.0')»)«ENDIF»],
         «ENDIF»
     '''
 
@@ -1088,7 +1088,7 @@ class SharedFormTypeFields {
     '''
     def private dispatch additionalOptions(StringField it) '''
         «IF !mandatory && #[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»
-            'placeholder' => «IF !application.targets('3.0')»$this->__(«ENDIF»'All'«IF !application.targets('3.0')»)«ENDIF»«IF role == StringRole.LOCALE»,«ENDIF»
+            'placeholder' => «IF !application.targets('3.0')»$this->__(«ENDIF»'All'«IF !application.targets('3.0')»)«ENDIF»,
         «ENDIF»
         «IF unit != ''»
             'input_group' => ['right' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'«unit»'«IF !application.targets('3.0')»)«ENDIF»],
@@ -1098,7 +1098,7 @@ class SharedFormTypeFields {
             «IF application.targets('2.0')»
                 'choice_loader' => null,
             «ELSE»
-                'choices_as_values' => true
+                'choices_as_values' => true,
             «ENDIF»
         «ENDIF»
         «IF role == StringRole.DATE_INTERVAL && application.targets('2.0')»
@@ -1111,7 +1111,7 @@ class SharedFormTypeFields {
                 'days' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Days'«IF !application.targets('3.0')»)«ENDIF»,
                 'hours' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Hours'«IF !application.targets('3.0')»)«ENDIF»,
                 'minutes' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Minutes'«IF !application.targets('3.0')»)«ENDIF»,
-                'seconds' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Seconds'«IF !application.targets('3.0')»)«ENDIF»
+                'seconds' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Seconds'«IF !application.targets('3.0')»)«ENDIF»,
             ],
             «IF !mandatory»
                 «IF application.targets('3.0')»
@@ -1123,7 +1123,7 @@ class SharedFormTypeFields {
                     'days' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Days'«IF !application.targets('3.0')»)«ENDIF»,
                     'hours' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Hours'«IF !application.targets('3.0')»)«ENDIF»,
                     'minutes' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Minutes'«IF !application.targets('3.0')»)«ENDIF»,
-                    'seconds' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Seconds'«IF !application.targets('3.0')»)«ENDIF»
+                    'seconds' => «IF !application.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'Seconds'«IF !application.targets('3.0')»)«ENDIF»,
                 ],
             «ENDIF»
             'input' => 'string',
@@ -1134,25 +1134,25 @@ class SharedFormTypeFields {
             'with_days' => true,
             'with_hours' => true,
             'with_minutes' => true,
-            'with_seconds' => true
+            'with_seconds' => true,
         «ENDIF»
         «IF application.targets('3.0')»
             «IF role == StringRole.COLOUR»
-                'html5' => true
+                'html5' => true,
             «ELSEIF role == StringRole.COUNTRY»
-                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
             «ELSEIF role == StringRole.CURRENCY»
-                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
             «ELSEIF role == StringRole.LANGUAGE»
                 'choice_self_translation' => true,
-                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
             «/*ELSEIF role == StringRole.LOCALE»
-                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale()
+                'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
             */»«ELSEIF role == StringRole.TIME_ZONE»
                 'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
-                'intl' => true
+                'intl' => true,
             «ELSEIF role == StringRole.WEEK»
-                'input' => 'string'
+                'input' => 'string',
             «ENDIF»
         «ENDIF»
     '''
@@ -1201,8 +1201,10 @@ class SharedFormTypeFields {
         'entity' => $options['entity'],
         'allow_deletion' => «(!mandatory).displayBool»,
         'allowed_extensions' => implode(', ', $this->uploadHelper->getAllowedFileExtensions('«IF null !== entity»«entity.name.formatForCode»«ELSE»«varContainer.name.formatForCode»«ENDIF»', '«name.formatForCode»')),
-        'allowed_size' => '«maxSize»'«IF namingScheme == UploadNamingScheme.USERDEFINEDWITHCOUNTER»,
-        'custom_filename' => true«ENDIF»
+        'allowed_size' => '«maxSize»',
+        «IF namingScheme == UploadNamingScheme.USERDEFINEDWITHCOUNTER»
+            'custom_filename' => true,
+        «ENDIF»
     '''
 
     def private fetchListEntries(ListField it) '''
@@ -1228,7 +1230,7 @@ class SharedFormTypeFields {
         «ENDIF»
         'choice_attr' => $choiceAttributes,
         'multiple' => «multiple.displayBool»,
-        'expanded' => «expanded.displayBool»
+        'expanded' => «expanded.displayBool»,
     '''
 
     def private dispatch formType(UserField it) '''UserLiveSearch'''
@@ -1237,7 +1239,7 @@ class SharedFormTypeFields {
     '''
     def private dispatch additionalOptions(UserField it) '''
         «IF null !== entity && (!entity.incoming.empty || !entity.outgoing.empty)»
-            'inline_usage' => $options['inline_usage']
+            'inline_usage' => $options['inline_usage'],
         «ENDIF»
     '''
 
@@ -1257,16 +1259,16 @@ class SharedFormTypeFields {
             'empty_data' => «IF null !== defaultValue && !defaultValue.empty && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»«defaultValueForNow»«ENDIF»,
             'with_seconds' => true,
             'date_widget' => 'single_text',
-            'time_widget' => 'single_text'
+            'time_widget' => 'single_text',
         «ELSEIF isDateField»
             'empty_data' => «IF null !== defaultValue && !defaultValue.empty && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»«defaultValueForNow»«ENDIF»,
-            'widget' => 'single_text'
+            'widget' => 'single_text',
         «ELSEIF isTimeField»
             'empty_data' => '«defaultValue»',
-            'widget' => 'single_text'
+            'widget' => 'single_text',
         «ENDIF»
         «IF application.targets('3.0') && immutable»
-            'input' => 'datetime_immutable'
+            'input' => 'datetime_immutable',
         «ENDIF»
     '''
 
@@ -1328,7 +1330,7 @@ class SharedFormTypeFields {
                 «IF !targets('3.0')»
                     'class' => 'btn btn-default',
                 «ENDIF»
-                'formnovalidate' => 'formnovalidate'
+                'formnovalidate' => 'formnovalidate',
             ]
         ]);
         $builder->add('cancel', SubmitType::class, [
@@ -1336,11 +1338,13 @@ class SharedFormTypeFields {
             «IF targets('3.0')»
                 'validate' => false,
             «ENDIF»
-            'icon' => 'fa-times'«IF !targets('3.0')»,
+            'icon' => 'fa-times',
             'attr' => [
-                'class' => 'btn btn-default',
-                'formnovalidate' => 'formnovalidate'
-            ]«ENDIF»
+                «IF !targets('3.0')»
+                    'class' => 'btn btn-default',
+                «ENDIF»
+                'formnovalidate' => 'formnovalidate',
+            ],
         ]);
     '''
 }

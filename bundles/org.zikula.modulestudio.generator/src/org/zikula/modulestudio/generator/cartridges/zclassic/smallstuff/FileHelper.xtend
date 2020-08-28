@@ -69,7 +69,7 @@ class FileHelper {
          * @return void
          */
         «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF useHint»«IF skipTypeHint»/*«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «IF skipTypeHint»*/«ENDIF»«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: void«ENDIF»
+        public function set«name.formatForCodeCapital»(«IF useHint»«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «IF skipTypeHint»*/«ENDIF»«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: void«ENDIF»
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
@@ -86,13 +86,13 @@ class FileHelper {
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
         «IF type == 'float'»
             «IF #['latitude', 'longitude'].contains(name)»
-                $«name» = round((float)$«name», 7);
+                $«name» = round((float) $«name», 7);
             «ENDIF»
-            if ((float)$this->«name» !== «IF !app.targets('3.0')»(float)«ENDIF»$«name») {
+            if ((float) $this->«name» !== «IF !app.targets('3.0')»(float) «ENDIF»$«name») {
                 «IF nullable»
-                    $this->«name» = «IF !app.targets('3.0')»(float)«ENDIF»$«name»;
+                    $this->«name» = «IF !app.targets('3.0')»(float) «ENDIF»$«name»;
                 «ELSE»
-                    $this->«name» = «IF app.targets('3.0')»$«name» ?? 0.00«ELSE»isset($«name») ? (float)$«name» : 0.00«ENDIF»;
+                    $this->«name» = «IF app.targets('3.0')»$«name» ?? 0.00«ELSE»isset($«name») ? (float) $«name» : 0.00«ENDIF»;
                 «ENDIF»
             }
         «ELSE»
@@ -114,7 +114,7 @@ class FileHelper {
 
     def private dispatch setterMethodImpl(DerivedField it, String name, String type, Boolean nullable) '''
         «IF it instanceof NumberField»
-            $«name» = round((float)$«name», «scale»);
+            $«name» = round((float) $«name», «scale»);
         «ENDIF»
         if ($this->«name.formatForCode» !== $«name») {
             «triggerPropertyChangeListeners(name)»
@@ -123,7 +123,7 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(BooleanField it, String name, String type, Boolean nullable) '''
-        if ((bool)$this->«name.formatForCode» !== «IF !app.targets('3.0')»(bool)«ENDIF»$«name») {
+        if ((bool) $this->«name.formatForCode» !== «IF !app.targets('3.0')»(bool) «ENDIF»$«name») {
             «triggerPropertyChangeListeners(name)»
             «setterAssignment(name)»
         }
@@ -144,7 +144,7 @@ class FileHelper {
     }
 
     def private dispatch setterAssignment(BooleanField it, String name) '''
-        $this->«name» = «IF !app.targets('3.0')»(bool)«ENDIF»$«name»;
+        $this->«name» = «IF !app.targets('3.0')»(bool) «ENDIF»$«name»;
     '''
 
     def private dispatch setterAssignment(UserField it, String name) '''
@@ -194,9 +194,9 @@ class FileHelper {
             return variable
         }
         if (it instanceof AbstractIntegerField) {
-            return '(int)' + variable
+            return '(int) ' + variable
         } else {
-            return '(float)' + variable
+            return '(float) ' + variable
         }
     }
 

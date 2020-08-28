@@ -144,9 +144,9 @@ class CollectionFilterHelper {
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $this->variableApi = $variableApi;
             «ENDIF»
-            $this->showOnlyOwnEntries = (bool)$variableApi->get('«appName»', 'showOnlyOwnEntries');
+            $this->showOnlyOwnEntries = (bool) $variableApi->get('«appName»', 'showOnlyOwnEntries');
             «IF supportLocaleFilter»
-                $this->filterDataByLocale = (bool)$variableApi->get('«appName»', 'filterDataByLocale');
+                $this->filterDataByLocale = (bool) $variableApi->get('«appName»', 'filterDataByLocale');
             «ENDIF»
         }
 
@@ -355,7 +355,7 @@ class CollectionFilterHelper {
                 return $qb;
             }
             $routeName = $request->get('_route', '');
-            if (false !== strpos($routeName, 'edit')) {«/* fix for #547 */»
+            if (false !== mb_strpos($routeName, 'edit')) {«/* fix for #547 */»
                 return $qb;
             }
 
@@ -366,7 +366,7 @@ class CollectionFilterHelper {
                 }
                 «IF categorisable»
                     if ('catId' === $k) {
-                        if (0 < (int)$v) {
+                        if (0 < (int) $v) {
                             // single category filter
                             $qb->andWhere('tblCategories.category = :category')
                                ->setParameter('category', $v);
@@ -432,15 +432,15 @@ class CollectionFilterHelper {
                         if ($v instanceof UserEntity) {
                             $v = $v->getUid();
                         } else {
-                            $v = (string)$v;
+                            $v = (string) $v;
                         }
                     «ELSE»
-                        $v = (string)$v;
+                        $v = (string) $v;
                     «ENDIF»
-                    if ('workflowState' === $k && 0 === strpos($v, '!')) {
+                    if ('workflowState' === $k && 0 === mb_strpos($v, '!')) {
                         $qb->andWhere('tbl.' . $k . ' != :' . $k)
                            ->setParameter($k, substr($v, 1));
-                    } elseif (0 === strpos($v, '%')) {
+                    } elseif (0 === mb_strpos($v, '%')) {
                         $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
                            ->setParameter($k, '%' . substr($v, 1) . '%');
                     «IF !getListFieldsEntity.filter[multiple].empty»
@@ -491,16 +491,16 @@ class CollectionFilterHelper {
             «IF ownerPermission || standardFields»
 
                 «IF standardFields»
-                    $showOnlyOwnEntries = (bool)$request->query->getInt('own', «IF application.targets('3.0')»(int) «ENDIF»$this->showOnlyOwnEntries);
+                    $showOnlyOwnEntries = (bool) $request->query->getInt('own', «IF application.targets('3.0')»(int) «ENDIF»$this->showOnlyOwnEntries);
                 «ENDIF»
                 «IF ownerPermission»
                     «IF standardFields»
-                        $privateMode = (bool)$this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
+                        $privateMode = (bool) $this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
                         if ($privateMode) {
                             $showOnlyOwnEntries = true;
                         }
                     «ELSE»
-                        $showOnlyOwnEntries = (bool)$this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
+                        $showOnlyOwnEntries = (bool) $this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
                     «ENDIF»
                 «ENDIF»
                 if ($showOnlyOwnEntries) {
@@ -509,7 +509,7 @@ class CollectionFilterHelper {
             «ENDIF»
 
             $routeName = $request->get('_route', '');
-            $isAdminArea = false !== strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
+            $isAdminArea = false !== mb_strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
             if ($isAdminArea) {
                 return $qb;
             }
@@ -529,7 +529,7 @@ class CollectionFilterHelper {
             }
             «IF hasLanguageFieldsEntity || hasLocaleFieldsEntity»
 
-                if (true === (bool)$this->filterDataByLocale) {
+                if (true === (bool) $this->filterDataByLocale) {
                     $allowedLocales = ['', $request->getLocale()];
                     «FOR field : getLanguageFieldsEntity»
                         «val fieldName = field.name.formatForCode»
@@ -665,7 +665,7 @@ class CollectionFilterHelper {
         {
             if (null === $userId) {
                 $userId = $this->currentUserApi->isLoggedIn()
-                    ? (int)$this->currentUserApi->get('uid')
+                    ? (int) $this->currentUserApi->get('uid')
                     : UsersConstant::USER_ID_ANONYMOUS
                 ;
             }

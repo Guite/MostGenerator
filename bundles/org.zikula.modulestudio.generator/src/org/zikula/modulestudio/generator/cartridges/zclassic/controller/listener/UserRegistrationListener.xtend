@@ -14,21 +14,21 @@ class UserRegistrationListener {
         {
             return [
                 «IF targets('3.0')»
-                    ActiveUserPreCreatedEvent::class     => ['createVeto', 5],
-                    RegistrationPostSuccessEvent::class  => ['succeeded', 5],
-                    RegistrationPostCreatedEvent::class  => ['create', 5],
-                    RegistrationPostUpdatedEvent::class  => ['update', 5],
-                    RegistrationPostDeletedEvent::class  => ['delete', 5],
-                    RegistrationPostApprovedEvent::class => ['forceApproval', 5]
+                    ActiveUserPreCreatedEvent::class => ['createVeto', 5],
+                    RegistrationPostSuccessEvent::class => ['succeeded', 5],
+                    RegistrationPostCreatedEvent::class => ['create', 5],
+                    RegistrationPostUpdatedEvent::class => ['update', 5],
+                    RegistrationPostDeletedEvent::class => ['delete', 5],
+                    RegistrationPostApprovedEvent::class => ['forceApproval', 5],
                 «ELSE»
-                    RegistrationEvents::REGISTRATION_STARTED        => ['started', 5],
-                    RegistrationEvents::FULL_USER_CREATE_VETO       => ['createVeto', 5],
-                    RegistrationEvents::REGISTRATION_SUCCEEDED      => ['succeeded', 5],
-                    RegistrationEvents::REGISTRATION_FAILED         => ['failed', 5],
-                    RegistrationEvents::CREATE_REGISTRATION         => ['create', 5],
-                    RegistrationEvents::UPDATE_REGISTRATION         => ['update', 5],
-                    RegistrationEvents::DELETE_REGISTRATION         => ['delete', 5],
-                    RegistrationEvents::FORCE_REGISTRATION_APPROVAL => ['forceApproval', 5]
+                    RegistrationEvents::REGISTRATION_STARTED => ['started', 5],
+                    RegistrationEvents::FULL_USER_CREATE_VETO => ['createVeto', 5],
+                    RegistrationEvents::REGISTRATION_SUCCEEDED => ['succeeded', 5],
+                    RegistrationEvents::REGISTRATION_FAILED => ['failed', 5],
+                    RegistrationEvents::CREATE_REGISTRATION => ['create', 5],
+                    RegistrationEvents::UPDATE_REGISTRATION => ['update', 5],
+                    RegistrationEvents::DELETE_REGISTRATION => ['delete', 5],
+                    RegistrationEvents::FORCE_REGISTRATION_APPROVAL => ['forceApproval', 5],
                 «ENDIF»
             ];
         }

@@ -35,7 +35,7 @@ class TranslationListener {
         public static function getSubscribedEvents()
         {
             return [
-                FormEvents::PRE_SET_DATA => 'preSetData'
+                FormEvents::PRE_SET_DATA => 'preSetData',
             ];
         }
 

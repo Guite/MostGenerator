@@ -14,7 +14,7 @@ class Bootstrap {
     }
 
     def private bootstrapDocs() '''
-        /**
+        /*
          * Bootstrap called when application is first initialised at runtime.
          *
          * This is only called once, and only if the core has reason to initialise this module,

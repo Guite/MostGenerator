@@ -286,25 +286,31 @@ class Events {
                 $this->options = $options;
             }
 
+            «IF !targets('3.0')»
             /**
              * @return FactoryInterface
              */
+            «ENDIF»
             public function getFactory()«IF targets('3.0')»: FactoryInterface«ENDIF»
             {
                 return $this->factory;
             }
 
+            «IF !targets('3.0')»
             /**
              * @return ItemInterface
              */
+            «ENDIF»
             public function getMenu()«IF targets('3.0')»: ItemInterface«ENDIF»
             {
                 return $this->menu;
             }
 
+            «IF !targets('3.0')»
             /**
              * @return array
              */
+            «ENDIF»
             public function getOptions()«IF targets('3.0')»: array«ENDIF»
             {
                 return $this->options;
@@ -344,7 +350,7 @@ class Events {
         «IF application.targets('3.0')»abstract «ENDIF»class Abstract«IF !app.targets('3.0')»Filter«ENDIF»«name.formatForCodeCapital»«classSuffix»Event«IF !application.targets('3.0')» extends Event«ENDIF»
         {
             /**
-             * @var «name.formatForCodeCapital»Entity Reference to treated entity instance.
+             * @var «name.formatForCodeCapital»Entity Reference to treated entity instance
              */
             protected $«name.formatForCode»;
             «IF !app.targets('3.0') || classSuffix == 'PreUpdate'»
@@ -363,9 +369,6 @@ class Events {
                 «ENDIF»
             }
 
-            /**
-             * @return «name.formatForCodeCapital»Entity
-             */
             public function get«name.formatForCodeCapital»()«IF app.targets('3.0')»: «name.formatForCodeCapital»Entity«ENDIF»
             {
                 return $this->«name.formatForCode»;

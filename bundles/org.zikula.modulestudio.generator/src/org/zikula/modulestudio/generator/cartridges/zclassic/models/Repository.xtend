@@ -356,7 +356,7 @@ class Repository {
         }
         
         /**
-         * Selects a list of objects with an array of ids
+         * Selects a list of objects with an array of ids.
          *
          * @param array $idList The array of ids to use to retrieve the objects (optional) (default=0)
          * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
@@ -576,9 +576,9 @@ class Repository {
          * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
          * @param bool $slimMode If activated only some basic fields are selected without using any joins
          *                       (optional) (default=false)
-         «ENDIF»
          *
-         * @return «IF application.targets('3.0')»PaginatorInterface«ELSE»array Retrieved collection and the amount of total records affected«ENDIF»
+         * @return array Retrieved collection and the amount of total records affected
+         «ENDIF»
          */
         public function selectWherePaginated«IF application.targets('3.0')»(
             string $where = '',
@@ -775,7 +775,7 @@ class Repository {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
 
-            return (int)$query->getSingleScalarResult();
+            return (int) $query->getSingleScalarResult();
         }
     '''
 
@@ -806,7 +806,7 @@ class Repository {
             «IF hasPessimisticReadLock»
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
-            $count = (int)$query->getSingleScalarResult();
+            $count = (int) $query->getSingleScalarResult();
 
             return 1 > $count;
         }
@@ -935,7 +935,7 @@ class Repository {
 
             «ENDIF»
             // add order by clause
-            if (false === strpos($orderBy, '.')) {
+            if (false === mb_strpos($orderBy, '.')) {
                 $orderBy = 'tbl.' . $orderBy;
             }
             «IF hasUploadFieldsEntity»
@@ -944,12 +944,12 @@ class Repository {
                 }
             «ENDIF»
             «IF standardFields»
-                if (false !== strpos($orderBy, 'tbl.createdBy')) {
+                if (false !== mb_strpos($orderBy, 'tbl.createdBy')) {
                     $qb->addSelect('tblCreator')
                        ->leftJoin('tbl.createdBy', 'tblCreator');
                     $orderBy = str_replace('tbl.createdBy', 'tblCreator.uname', $orderBy);
                 }
-                if (false !== strpos($orderBy, 'tbl.updatedBy')) {
+                if (false !== mb_strpos($orderBy, 'tbl.updatedBy')) {
                     $qb->addSelect('tblUpdater')
                        ->leftJoin('tbl.updatedBy', 'tblUpdater');
                     $orderBy = str_replace('tbl.updatedBy', 'tblUpdater.uname', $orderBy);

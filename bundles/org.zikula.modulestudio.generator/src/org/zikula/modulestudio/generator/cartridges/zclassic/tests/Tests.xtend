@@ -32,15 +32,15 @@ class Tests {
         {
             public function testPushAndPop()
             {
-                $stack = array();
-                $this->assertEquals(0, count($stack));
+                $stack = [];
+                $this->assertCount(0, $stack);
 
                 array_push($stack, 'foo');
                 $this->assertEquals('foo', $stack[count($stack) - 1]);
-                $this->assertEquals(1, count($stack));
+                $this->assertCount(1, $stack);
 
                 $this->assertEquals('foo', array_pop($stack));
-                $this->assertEquals(0, count($stack));
+                $this->assertCount(0, $stack);
             }
         }
     '''
@@ -54,7 +54,7 @@ class Tests {
         {
             public function testEmpty()
             {
-                $stack = array();
+                $stack = [];
                 $this->assertEmpty($stack);
          
                 return $stack;

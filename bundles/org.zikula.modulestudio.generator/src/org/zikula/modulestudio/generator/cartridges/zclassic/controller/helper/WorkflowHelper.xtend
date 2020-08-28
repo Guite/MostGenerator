@@ -149,7 +149,7 @@ class WorkflowHelper {
         $states[] = [
             'value' => '«item.value»',
             'text' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«item.name»'),
-            'ui' => '«uiFeedback(item)»'
+            'ui' => '«uiFeedback(item)»',
         ];
     '''
 
@@ -222,7 +222,7 @@ class WorkflowHelper {
                 $actions[$actionId] = [
                     'id' => $actionId,
                     'title' => $this->getTitleForAction(«IF !isSystemModule»$currentState, «ENDIF»$actionId),
-                    'buttonClass' => $this->getButtonClassForAction($actionId)
+                    'buttonClass' => $this->getButtonClassForAction($actionId),
                 ];
             }
 

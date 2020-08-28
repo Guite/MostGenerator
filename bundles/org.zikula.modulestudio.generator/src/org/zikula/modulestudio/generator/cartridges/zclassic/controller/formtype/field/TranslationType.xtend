@@ -55,7 +55,7 @@ class TranslationType {
                         },
                         'fields' => [],
                         'mandatory_fields' => [],
-                        'values' => []
+                        'values' => [],
                     ])
                     ->setRequired(['fields'])
                     ->setDefined(['mandatory_fields', 'values'])

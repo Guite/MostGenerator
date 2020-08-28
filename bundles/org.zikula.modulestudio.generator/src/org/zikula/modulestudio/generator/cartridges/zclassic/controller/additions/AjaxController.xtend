@@ -302,7 +302,7 @@ class AjaxController {
                 'id' => $itemId,
                 'title' => str_replace('&amp;', '&', $title),
                 'description' => $description,
-                'previewInfo' => $previewInfo
+                'previewInfo' => $previewInfo,
             ];
         }
     '''
@@ -411,7 +411,7 @@ class AjaxController {
                     'id' => $item->getKey(),
                     'title' => $itemTitle,
                     'description' => $itemDescription,
-                    'image' => ''
+                    'image' => '',
                 ];
                 «IF hasImageFields»
 
@@ -645,7 +645,7 @@ class AjaxController {
             'user' => «IF targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname'),
             'field' => $field,
             'entity' => $objectType,
-            'id' => $id
+            'id' => $id,
         ];
         $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
 
@@ -653,7 +653,7 @@ class AjaxController {
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
             'id' => $id,
             'state' => $entity[$field],
-            'message' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The setting has been successfully changed.')
+            'message' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The setting has been successfully changed.'),
         ]);
     '''
 
@@ -1232,7 +1232,7 @@ class AjaxController {
 
         // return response
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
-            'id' => $assignment->getId()
+            'id' => $assignment->getId(),
         ]);
     '''
 

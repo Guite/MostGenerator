@@ -155,7 +155,7 @@ class ListEntryValidator {
                                 'The value "%value%" is not allowed for the "%property%" property.',
                                 [
                                     '%value%' => $value,
-                                    '%property%' => $constraint->propertyName
+                                    '%property%' => $constraint->propertyName,
                                 ]«IF targets('3.0')»,
                                 'validators'«ENDIF»
                             )
@@ -177,7 +177,7 @@ class ListEntryValidator {
                                 'The value "%value%" is not allowed for the "%property%" property.',
                                 [
                                     '%value%' => $singleValue,
-                                    '%property%' => $constraint->propertyName
+                                    '%property%' => $constraint->propertyName,
                                 ]«IF targets('3.0')»,
                                 'validators'«ENDIF»
                             )
@@ -194,7 +194,7 @@ class ListEntryValidator {
                                 'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
                                 [
                                     '%count%' => $count,
-                                    '%limit%' => $constraint->min
+                                    '%limit%' => $constraint->min,
                                 ]«IF targets('3.0')»,
                                 'validators'«ELSEIF !isSystemModule»,
                                 '«appName.formatForDB»'«ENDIF»
@@ -204,7 +204,7 @@ class ListEntryValidator {
                                 'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
                                 $count,
                                 [
-                                    '%limit%' => $constraint->min
+                                    '%limit%' => $constraint->min,
                                 ]«IF targets('3.0')»,
                                 'validators'«ELSEIF !isSystemModule»,
                                 '«appName.formatForDB»'«ENDIF»
@@ -219,7 +219,7 @@ class ListEntryValidator {
                                 'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
                                 [
                                     '%count%' => $count,
-                                    '%limit%' => $constraint->max
+                                    '%limit%' => $constraint->max,
                                 ]«IF targets('3.0')»,
                                 'validators'«ELSEIF !isSystemModule»,
                                 '«appName.formatForDB»'«ENDIF»
@@ -229,7 +229,7 @@ class ListEntryValidator {
                                 'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
                                 $count,
                                 [
-                                    '%limit%' => $constraint->max
+                                    '%limit%' => $constraint->max,
                                 ]«IF targets('3.0')»,
                                 'validators'«ELSEIF !isSystemModule»,
                                 '«appName.formatForDB»'«ENDIF»

@@ -24,6 +24,5 @@ class CommonExample {
             * The currently handled request:
             *     `$request = $event->getRequest();`
         «ENDIF»
-        *
     '''
 }

@@ -50,19 +50,19 @@ class ModuleInstallerListener {
         {
             return [
                 «IF targets('3.0')»
-                    ExtensionPostInstallEvent::class      => ['extensionInstalled', 5],
+                    ExtensionPostInstallEvent::class => ['extensionInstalled', 5],
                     ExtensionPostCacheRebuildEvent::class => ['extensionPostInstalled', 5],
-                    ExtensionPostUpgradeEvent::class      => ['extensionUpgraded', 5],
-                    ExtensionPostEnabledEvent::class      => ['extensionEnabled', 5],
-                    ExtensionPostDisabledEvent::class     => ['extensionDisabled', 5],
-                    ExtensionPostRemoveEvent::class       => ['extensionRemoved', 5]
+                    ExtensionPostUpgradeEvent::class => ['extensionUpgraded', 5],
+                    ExtensionPostEnabledEvent::class => ['extensionEnabled', 5],
+                    ExtensionPostDisabledEvent::class => ['extensionDisabled', 5],
+                    ExtensionPostRemoveEvent::class => ['extensionRemoved', 5],
                 «ELSE»
-                    CoreEvents::MODULE_INSTALL     => ['moduleInstalled', 5],
+                    CoreEvents::MODULE_INSTALL => ['moduleInstalled', 5],
                     CoreEvents::MODULE_POSTINSTALL => ['modulePostInstalled', 5],
-                    CoreEvents::MODULE_UPGRADE     => ['moduleUpgraded', 5],
-                    CoreEvents::MODULE_ENABLE      => ['moduleEnabled', 5],
-                    CoreEvents::MODULE_DISABLE     => ['moduleDisabled', 5],
-                    CoreEvents::MODULE_REMOVE      => ['moduleRemoved', 5]
+                    CoreEvents::MODULE_UPGRADE => ['moduleUpgraded', 5],
+                    CoreEvents::MODULE_ENABLE => ['moduleEnabled', 5],
+                    CoreEvents::MODULE_DISABLE => ['moduleDisabled', 5],
+                    CoreEvents::MODULE_REMOVE => ['moduleRemoved', 5],
                 «ENDIF»
             ];
         }

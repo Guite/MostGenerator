@@ -108,6 +108,7 @@ class MostFileSystemHelper {
 
         /**
          «phpFileHeaderImpl»
+         *
          * @version «generatedBy(timestampAllGeneratedFiles || isBootstrapFile, versionAllGeneratedFiles || isBootstrapFile)»
          */
         «IF targets('3.0')»
@@ -123,6 +124,7 @@ class MostFileSystemHelper {
         * @copyright «author» («vendor»)
         * @license «license»
         * @author «author»«IF null !== email && !email.empty» <«email»>«ENDIF».
+        *
         * @see «IF !url.empty»«url»«ELSE»«msUrl»«ENDIF»«IF url != 'https://ziku.la'»
         * @see https://ziku.la«ENDIF»
     '''

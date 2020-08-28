@@ -117,7 +117,7 @@ class ExtensionMenu {
                                 if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
                                     $routeParameters = ['own' => 1];
                                     «IF entity.ownerPermission»
-                                        $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', '«entity.name.formatForCode»PrivateMode');
+                                        $showOnlyOwnEntries = (bool) $this->variableApi->get('«appName»', '«entity.name.formatForCode»PrivateMode');
                                         if (true === $showOnlyOwnEntries) {
                                             $routeParameters = [];
                                         }
@@ -254,7 +254,7 @@ class ExtensionMenu {
                                 if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
                                     $routeParameters = ['own' => 1];
                                     «IF entity.ownerPermission»
-                                        $showOnlyOwnEntries = (bool)$this->variableApi->get('«appName»', '«entity.name.formatForCode»PrivateMode');
+                                        $showOnlyOwnEntries = (bool) $this->variableApi->get('«appName»', '«entity.name.formatForCode»PrivateMode');
                                         if (true === $showOnlyOwnEntries) {
                                             $routeParameters = [];
                                         }

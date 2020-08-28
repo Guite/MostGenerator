@@ -34,8 +34,8 @@ class GeoType {
                     'scale' => 7,
                     'attr' => [
                         'maxlength' => 12,
-                        'class' => 'geo-date'
-                    ]
+                        'class' => 'geo-date',
+                    ],
                 ]);
             }
 

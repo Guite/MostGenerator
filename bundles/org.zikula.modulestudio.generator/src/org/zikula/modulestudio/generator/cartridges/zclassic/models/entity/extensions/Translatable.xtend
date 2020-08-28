@@ -89,7 +89,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
         /**
          * Use a length of 140 instead of 255 to avoid too long keys for the indexes.
          *
-         * @var string $objectClass
+         * @var string
          *
          * @ORM\Column(name="object_class", type="string", length=140)
          */
@@ -100,7 +100,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
              * Use integer instead of string for increased performance.
              * @see https://github.com/Atlantic18/DoctrineExtensions/issues/1512
              *
-             * @var integer $foreignKey
+             * @var int
              *
              * @ORM\Column(name="foreign_key", type="integer")
              */
