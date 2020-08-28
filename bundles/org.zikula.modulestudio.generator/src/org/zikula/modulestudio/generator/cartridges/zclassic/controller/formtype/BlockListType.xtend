@@ -137,10 +137,12 @@ class BlockListType {
             {
                 $resolver
                     ->setDefaults([
-                        'object_type' => '«leadingEntity.name.formatForCode»'«IF hasCategorisableEntities»,
-                        'is_categorisable' => false,
-                        'category_helper' => null,
-                        'feature_activation_helper' => null«ENDIF»
+                        'object_type' => '«leadingEntity.name.formatForCode»',
+                        «IF hasCategorisableEntities»
+                            'is_categorisable' => false,
+                            'category_helper' => null,
+                            'feature_activation_helper' => null,
+                        «ENDIF»
                     ])
                     ->setRequired(['object_type'])
                     «IF hasCategorisableEntities»
@@ -314,7 +316,7 @@ class BlockListType {
                     «IF targets('3.0')»
                         /** @Ignore */
                     «ENDIF»
-                    'title' => $helpText
+                    'title' => $helpText,
                 ],
                 «IF targets('3.0')»
                     /** @Ignore */

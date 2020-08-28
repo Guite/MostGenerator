@@ -29,9 +29,10 @@ class BlockList {
     def private listBlockBaseClass(Application it) '''
         namespace «appNamespace»\Block\Base;
 
-        use Exception;
         «IF targets('3.0')»
             use Twig\Loader\LoaderInterface;
+        «ELSE»
+            use Exception;
         «ENDIF»
         use Zikula\BlocksModule\AbstractBlockHandler;
         use «appNamespace»\Block\Form\Type\ItemListBlockType;

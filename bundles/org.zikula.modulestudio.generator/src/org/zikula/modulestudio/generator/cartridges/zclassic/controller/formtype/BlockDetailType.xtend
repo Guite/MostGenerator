@@ -125,22 +125,22 @@ class BlockDetailType {
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Object type:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
-                'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.filter[hasDisplayAction].size > 1»,«ENDIF»
+                'empty_data' => '«leadingEntity.name.formatForCode»',
                 «IF getAllEntities.filter[hasDisplayAction].size > 1»
                     'attr' => [
-                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the block once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the block once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                     ],
                     'help' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the block once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                     'choices' => [
                         «FOR entity : getAllEntities.filter[hasDisplayAction]»
-                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
+                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»',
                         «ENDFOR»
                     ],
                     «IF !targets('2.0')»
                         'choices_as_values' => true,
                     «ENDIF»
                     'multiple' => false,
-                    'expanded' => false
+                    'expanded' => false,
                 «ENDIF»
             ]);
         }
@@ -170,7 +170,7 @@ class BlockDetailType {
                     'choices_as_values' => true,
                 «ENDIF»
                 'required' => true,
-                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Entry to display:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Entry to display:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
             ]);
         }
     '''
@@ -190,7 +190,7 @@ class BlockDetailType {
                         «IF targets('3.0')»
                             /** @Ignore */
                         «ENDIF»
-                        'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig'
+                        'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig',
                     ],
                     «IF targets('3.0')»
                         /** @Ignore */
@@ -198,8 +198,10 @@ class BlockDetailType {
                     'help' => [
                         «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>displaySpecial.html.twig</code>',
                         «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Needs to be located in the "External/YourEntity/" directory.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
-                    ]«IF targets('3.0')»,
-                    'help_html' => true«ENDIF»
+                    ],
+                    «IF targets('3.0')»
+                        'help_html' => true,
+                    «ENDIF»
                 ])
             ;
         }
