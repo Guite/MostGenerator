@@ -45,7 +45,6 @@ class EntityConstructor {
         {
             «constructorImpl(isInheriting)»
         }
-
     '''
 
     def private constructorArguments(Entity it, Boolean withTypeHints) '''
