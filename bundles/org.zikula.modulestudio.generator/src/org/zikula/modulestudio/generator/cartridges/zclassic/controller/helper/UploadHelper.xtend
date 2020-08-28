@@ -196,7 +196,7 @@ class UploadHelper {
         {
             $result = [
                 'fileName' => '',
-                'metaData' => []
+                'metaData' => [],
             ];
 
             // check whether uploads are allowed for the given object type
@@ -235,7 +235,7 @@ class UploadHelper {
                     'app' => '«appName»',
                     'user' => $this->currentUserApi->get('uname'),
                     'entity' => $objectType,
-                    'field' => $fieldName
+                    'field' => $fieldName,
                 ];
                 $this->logger->error(
                     '{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.'
@@ -312,7 +312,7 @@ class UploadHelper {
          *
          * @param string $objectType Currently treated entity type
          * @param UploadedFile $file Reference to data of uploaded file
-         * @param string $fieldName  Name of upload field
+         * @param string $fieldName Name of upload field
          *
          * @return bool true if file is valid else false
          «ENDIF»
@@ -352,7 +352,7 @@ class UploadHelper {
                 $logArgs = [
                     'app' => '«appName»',
                     'user' => $this->currentUserApi->get('uname'),
-                    'extension' => $extension
+                    'extension' => $extension,
                 ];
                 $this->logger->error(
                     '{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").',
@@ -405,7 +405,7 @@ class UploadHelper {
             }
 
             $extensionarr = explode('.', $fileName);
-            $meta['extension'] = strtolower($extensionarr[count($extensionarr) - 1]);
+            $meta['extension'] = mb_strtolower($extensionarr[count($extensionarr) - 1]);
             $meta['size'] = filesize($filePath);
             $meta['isImage'] = in_array($meta['extension'], $this->imageFileTypes, true);
 
@@ -468,13 +468,13 @@ class UploadHelper {
                 if (is_array($v)) {
                     foreach ($v as $kk => $vv) {
                         $exifData[$k][$kk] = mb_convert_encoding($vv, 'UTF-8', 'UTF-8');
-                        if (false !== strpos($exifData[$k][$kk], '????')) {
+                        if (false !== mb_strpos($exifData[$k][$kk], '????')) {
                             unset($exifData[$k][$kk]);
                         }
                     }
                 } else {
                     $exifData[$k] = mb_convert_encoding($v, 'UTF-8', 'UTF-8');
-                    if (false !== strpos($exifData[$k], '????')) {
+                    if (false !== mb_strpos($exifData[$k], '????')) {
                         unset($exifData[$k]);
                     }
                 }
@@ -490,7 +490,7 @@ class UploadHelper {
          «IF !targets('3.0')»
          *
          * @param string $objectType Currently treated entity type
-         * @param string $fieldName  Name of upload field
+         * @param string $fieldName Name of upload field
          «ENDIF»
          *
          * @return string[] List of allowed file extensions
@@ -587,10 +587,10 @@ class UploadHelper {
             $extension = null !== $file->guessExtension() ? $file->guessExtension() : $file->guessClientExtension();
             if (in_array($extension, ['bin', 'mpga'], true)) {
                 // fallback to given extension for mp3
-                $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+                $extension = mb_strtolower($fileNameParts[count($fileNameParts) - 1]);
             }
             if (null === $extension) {
-                $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+                $extension = mb_strtolower($fileNameParts[count($fileNameParts) - 1]);
             }
 
             return str_replace('jpeg', 'jpg', $extension);
@@ -625,7 +625,7 @@ class UploadHelper {
             if (0 === $namingScheme || 3 === $namingScheme) {
                 // clean the given file name
                 $fileNameCharCount = strlen($fileName);
-                for ($y = 0; $y < $fileNameCharCount; $y++) {
+                for ($y = 0; $y < $fileNameCharCount; ++$y) {
                     if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
                         $fileName[$y] = '_';
                     }
@@ -645,11 +645,11 @@ class UploadHelper {
                         // readd extension
                         $fileName .= '.' . $extension;
                     } else {
-                        $iterIndex++;
+                        ++$iterIndex;
                     }
                 } elseif (1 === $namingScheme) {
                     // md5 name
-                    $fileName = md5(uniqid((string)mt_rand(), true)) . '.' . $extension;
+                    $fileName = md5(uniqid((string) mt_rand(), true)) . '.' . $extension;
                 } elseif (2 === $namingScheme) {
                     // prefix with random number
                     $fileName = $fieldName . «IF targets('3.0')»random_int«ELSE»mt_rand«ENDIF»(1, 999999) . '.' . $extension;
@@ -805,7 +805,7 @@ class UploadHelper {
             }
 
             $result = $basePath;
-            if ('/' !== substr($result, -1, 1)) {
+            if ('/' !== mb_substr($result, -1, 1)) {
                 // reappend the removed slash
                 $result .= '/';
             }

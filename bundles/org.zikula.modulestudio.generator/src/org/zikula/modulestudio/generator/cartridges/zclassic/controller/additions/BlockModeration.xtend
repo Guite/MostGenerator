@@ -122,10 +122,10 @@ class BlockModeration {
     def private getDisplayTemplate(Application it) '''
         /**
          * Returns the template used for output.
-        «IF !targets('3.0')»
+         «IF !targets('3.0')»
          *
          * @return string the template path
-        «ENDIF»
+         «ENDIF»
          */
         protected function getDisplayTemplate()«IF targets('3.0')»: string«ENDIF»
         {

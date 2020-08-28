@@ -489,7 +489,7 @@ class ControllerHelper {
 
                     $templateParameters['pager'] = [
                         'amountOfItems' => $objectCount,
-                        'itemsPerPage' => $resultsPerPage
+                        'itemsPerPage' => $resultsPerPage,
                     ];
                 «ENDIF»
             }

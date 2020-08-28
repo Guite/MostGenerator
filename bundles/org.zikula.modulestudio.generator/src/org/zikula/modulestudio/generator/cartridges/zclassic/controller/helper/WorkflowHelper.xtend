@@ -548,14 +548,14 @@ class WorkflowHelper {
                             'plural_n.«nameMultiple.formatForDB».waiting_for_«requiredAction»',
                             ['%count%' => $amount]«IF !application.isSystemModule»,
                             '«name.formatForCode»'«ENDIF»
-                        )
+                        ),
                     «ELSE»
                         'message' => $this->translator->transChoice(
                             'One «name.formatForDisplay» is waiting for «requiredAction».|%count% «nameMultiple.formatForDisplay» are waiting for «requiredAction».',
                             $amount,
                             ['%count%' => $amount]«IF !application.isSystemModule»,
                             '«application.appName.formatForDB»'«ENDIF»
-                        )
+                        ),
                     «ENDIF»
                 ];
 

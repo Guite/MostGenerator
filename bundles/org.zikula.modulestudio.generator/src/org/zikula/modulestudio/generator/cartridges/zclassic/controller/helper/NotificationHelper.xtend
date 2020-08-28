@@ -289,7 +289,7 @@ class NotificationHelper {
                 «val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]»
                 $modVarSuffixes = [
                     «FOR entity : entitiesWithWorkflow»
-                        '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForCodeCapital»'«IF entity != entitiesWithWorkflow.last»,«ENDIF»
+                        '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForCodeCapital»',
                     «ENDFOR»
                 ];
                 $modVarSuffix = $modVarSuffixes[$this->entity->get_objectType()];
@@ -338,17 +338,17 @@ class NotificationHelper {
         {
             if ($this->usesDesignatedEntityFields()) {
                 $recipientTypeParts = explode('-', $this->recipientType);
-                if (count($recipientTypeParts) != 2) {
+                if (2 !== count($recipientTypeParts)) {
                     return;
                 }
                 $fieldNames = explode('^', $recipientTypeParts[1]);
-                if (count($fieldNames) != 2) {
+                if (2 !== count($fieldNames)) {
                     return;
                 }
 
                 $this->recipients[] = [
                     'name' => $this->entity[$fieldNames[1]],
-                    'email' => $this->entity[$fieldNames[0]]
+                    'email' => $this->entity[$fieldNames[0]],
                 ];
 
                 return;
@@ -365,7 +365,7 @@ class NotificationHelper {
             ;
             $this->recipients[] = [
                 'name' => $recipientName,
-                'email' => $user->getEmail()
+                'email' => $user->getEmail(),
             ];
         }
     '''
@@ -388,9 +388,9 @@ class NotificationHelper {
             if ($this->usesDesignatedEntityFields()) {
                 $templateType = $this->recipientType;
             } else {
-                $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
+                $templateType = 'creator' === $this->recipientType ? 'Creator' : 'Moderator';
             }
-            $template = 'Email/notify' . ucfirst($objectType) . $templateType .  '.html.twig';
+            $template = 'Email/notify' . ucfirst($objectType) . $templateType . '.html.twig';
 
             $mailData = $this->prepareEmailData();
             $subject = $this->getMailSubject();
@@ -416,7 +416,7 @@ class NotificationHelper {
 
                 $body = $this->twig->render('@«appName»/' . $template, [
                     'recipient' => $recipient,
-                    'mailData' => $mailData
+                    'mailData' => $mailData,
                 ]);
 
                 $email = (new Email())
@@ -564,7 +564,7 @@ class NotificationHelper {
                 'remarks' => $remarks,
                 'editor' => $this->getEditorName(),
                 'displayUrl' => $displayUrl,
-                'editUrl' => $editUrl
+                'editUrl' => $editUrl,
             ];
         }
     '''
@@ -579,7 +579,7 @@ class NotificationHelper {
          */
         protected function usesDesignatedEntityFields()«IF targets('3.0')»: bool«ENDIF»
         {
-            return 0 === strpos($this->recipientType, 'field-');
+            return 0 === mb_strpos($this->recipientType, 'field-');
         }
     '''
 
