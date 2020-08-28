@@ -108,7 +108,7 @@ class BlockDetailType {
             {
                 $resolver
                     ->setDefaults([
-                        'object_type' => '«leadingEntity.name.formatForCode»'
+                        'object_type' => '«leadingEntity.name.formatForCode»',
                     ])
                     ->setRequired(['object_type'])
                     ->setAllowedTypes('object_type', 'string')

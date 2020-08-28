@@ -110,7 +110,7 @@ class ContentTypeDetailType {
                 $resolver
                     ->setDefaults([
                         'context' => ContentTypeInterface::CONTEXT_EDIT,
-                        'object_type' => '«leadingEntity.name.formatForCode»'
+                        'object_type' => '«leadingEntity.name.formatForCode»',
                     ])
                     ->setRequired(['object_type'])
                     ->setAllowedTypes('context', 'string')

@@ -504,7 +504,7 @@ class EditEntityType {
                     «IF app.targets('3.0')»
                         /** @Ignore */
                     «ENDIF»
-                    'title' => $helpText
+                    'title' => $helpText,
                 ],
                 «IF app.targets('3.0')»
                     /** @Ignore */

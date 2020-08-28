@@ -224,7 +224,6 @@ class Entities {
     def private modelEntityBaseImplBody(DataObject it, Application app) '''
         «memberVars»
         «IF it instanceof Entity»
-
             «new EntityConstructor().constructor(it, false)»
         «ENDIF»
         «accessors»
@@ -279,6 +278,7 @@ class Entities {
              * @var array Log data for refreshing translations during revert to another revision
              */
             protected $translationData = [];
+
         «ENDIF»
     '''
 
