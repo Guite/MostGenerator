@@ -48,7 +48,6 @@ class InlineRedirect {
          * @return Response
          «ENDIF»
          «ELSE»
-         *
          * @Route("/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
          *        requirements = {"id" = "\d+"},
          *        defaults = {"commandName" = "", "id" = 0},

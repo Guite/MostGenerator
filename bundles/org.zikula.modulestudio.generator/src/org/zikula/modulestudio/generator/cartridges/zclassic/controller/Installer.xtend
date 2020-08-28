@@ -445,7 +445,7 @@ class Installer {
                 «ENDIF»
             «ENDFOR»
             «IF hasUiHooksProviders»
-                HookAssignmentEntity::class
+                HookAssignmentEntity::class,
             «ENDIF»
         «ENDIF»
     '''

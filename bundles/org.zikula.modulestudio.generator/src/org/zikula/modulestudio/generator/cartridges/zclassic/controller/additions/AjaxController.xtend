@@ -371,7 +371,7 @@ class AjaxController {
         // parameter for used sorting field
         «new ControllerHelperFunctions().defaultSorting(it)»
         $sortParam = $sort;
-        if (false === strpos(strtolower($sort), ' asc') && false === strpos(strtolower($sort), ' desc')) {
+        if (false === mb_strpos(strtolower($sort), ' asc') && false === mb_strpos(strtolower($sort), ' desc')) {
             $sortParam .= ' asc';
         }
 
@@ -383,7 +383,7 @@ class AjaxController {
 
         $resultItems = [];
 
-        if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
+        if ((is_array($entities) || is_object($entities)) && 0 < count($entities)) {
             «prepareForAutoCompletionProcessing»
             foreach ($entities as $item) {
                 $itemTitle = $entityDisplayHelper->getFormattedTitle($item);
