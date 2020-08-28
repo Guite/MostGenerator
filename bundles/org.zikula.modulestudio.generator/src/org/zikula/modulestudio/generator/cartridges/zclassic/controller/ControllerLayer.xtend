@@ -265,7 +265,7 @@ class ControllerLayer {
     def private adminAndUserImpl(Entity it, Action action, Boolean isBase) '''
         «IF isBase»
             «actionHelper.generate(it, action, isBase, true)»
-    
+
             «actionHelper.generate(it, action, isBase, false)»
         «ELSE»
             «actionHelper.generate(it, action, isBase, false)»«/* only one call required for generating common internal base method */»
