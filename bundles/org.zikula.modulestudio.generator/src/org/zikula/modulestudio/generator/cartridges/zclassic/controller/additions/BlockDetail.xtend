@@ -85,7 +85,7 @@ class BlockDetail {
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                 'id' => null,
                 'template' => 'item_display.html.twig',
-                'customTemplate' => null
+                'customTemplate' => null,
             ];
         }
         «IF targets('3.0')»
@@ -178,7 +178,7 @@ class BlockDetail {
                 'objectType' => $properties['objectType'],
                 'id' => $properties['id'],
                 'source' => 'block',
-                'displayMode' => 'embed'
+                'displayMode' => 'embed',
             ];
         }
     '''
@@ -208,7 +208,7 @@ class BlockDetail {
             }
 
             return [
-                'object_type' => $objectType
+                'object_type' => $objectType,
             ];
         }
 

@@ -635,7 +635,7 @@ class QuickNavigationType {
             «IF app.targets('3.0')»
                 /** @Ignore */
             «ENDIF»
-            'choices' => $this->localeApi->getSupportedLocaleNames()«IF !app.targets('2.0')»,«ENDIF»
+            'choices' => $this->localeApi->getSupportedLocaleNames(),
             «IF !app.targets('2.0')»
                 'choices_as_values' => true,
             «ENDIF»

@@ -37,10 +37,6 @@ class ListFieldTransformer {
 
             /**
              * Transforms the object values to the normalised value.
-             *
-             * @param string|null $values The object values
-             *
-             * @return array Normalised value
              */
             public function transform($values)
             {
@@ -57,10 +53,6 @@ class ListFieldTransformer {
 
             /**
              * Transforms an array with values back to the string.
-             *
-             * @param array $values The values
-             *
-             * @return string Resulting string
              */
             public function reverseTransform($values)
             {

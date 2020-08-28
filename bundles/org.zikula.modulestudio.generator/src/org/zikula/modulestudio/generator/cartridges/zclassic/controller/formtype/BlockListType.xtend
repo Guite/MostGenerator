@@ -173,13 +173,13 @@ class BlockListType {
             «ENDIF»
             $builder->add('objectType', «IF getAllEntities.size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Object type:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
-                'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.size > 1»,«ENDIF»
+                'empty_data' => '«leadingEntity.name.formatForCode»',
                 «IF getAllEntities.size > 1»
                     'attr' => [
                         «IF targets('3.0')»
                             /** @Ignore */
                         «ENDIF»
-                        'title' => $helpText
+                        'title' => $helpText,
                     ],
                     «IF targets('3.0')»
                         /** @Ignore */
@@ -187,14 +187,14 @@ class BlockListType {
                     'help' => $helpText,
                     'choices' => [
                         «FOR entity : getAllEntities»
-                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
+                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»',
                         «ENDFOR»
                     ],
                     «IF !targets('2.0')»
                         'choices_as_values' => true,
                     «ENDIF»
                     'multiple' => false,
-                    'expanded' => false
+                    'expanded' => false,
                 «ENDIF»
             ]);
         }
@@ -225,7 +225,7 @@ class BlockListType {
                 'empty_data' => $hasMultiSelection ? [] : null,
                 'attr' => [
                     'class' => 'category-selector',
-                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                    'title' => «IF !targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 ],
                 'help' => «IF !targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'required' => false,
@@ -233,7 +233,7 @@ class BlockListType {
                 'module' => '«appName»',
                 'entity' => ucfirst($objectType) . 'Entity',
                 'entityCategoryClass' => $entityCategoryClass,
-                'showRegistryLabels' => true
+                'showRegistryLabels' => true,
             ]);
 
             $categoryRepository = $this->categoryRepository;
@@ -280,20 +280,20 @@ class BlockListType {
             $builder->add('sorting', ChoiceType::class, [
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Sorting:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'label_attr' => [
-                    'class' => 'radio-«IF targets('3.0')»custom«ELSE»inline«ENDIF»'
+                    'class' => 'radio-«IF targets('3.0')»custom«ELSE»inline«ENDIF»',
                 ],
                 'empty_data' => 'default',
                 'choices' => [
                     «IF !targets('3.0')»$this->__(«ENDIF»'Random'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'random',
                     «IF !targets('3.0')»$this->__(«ENDIF»'Newest'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'newest',
                     «IF !targets('3.0')»$this->__(«ENDIF»'Updated'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'updated',
-                    «IF !targets('3.0')»$this->__(«ENDIF»'Default'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'default'
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Default'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'default',
                 ],
                 «IF !targets('2.0')»
                     'choices_as_values' => true,
                 «ENDIF»
                 'multiple' => false,
-                'expanded' => true
+                'expanded' => true,
             ]);
         }
     '''
@@ -320,7 +320,7 @@ class BlockListType {
                     /** @Ignore */
                 «ENDIF»
                 'help' => $helpText,
-                'empty_data' => 5
+                'empty_data' => 5,
             ]);
         }
     '''
@@ -337,13 +337,13 @@ class BlockListType {
                 'choices' => [
                     «IF !targets('3.0')»$this->__(«ENDIF»'Only item titles'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'itemlist_display.html.twig',
                     «IF !targets('3.0')»$this->__(«ENDIF»'With description'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'itemlist_display_description.html.twig',
-                    «IF !targets('3.0')»$this->__(«ENDIF»'Custom template'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'custom'
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Custom template'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'custom',
                 ],
                 «IF !targets('2.0')»
                     'choices_as_values' => true,
                 «ENDIF»
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => false,
             ]);
             $exampleTemplate = 'itemlist_[objectType]_display.html.twig';
             $builder->add('customTemplate', TextType::class, [
@@ -354,13 +354,15 @@ class BlockListType {
                     «IF targets('3.0')»
                         /** @Ignore */
                     «ENDIF»
-                    'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': ' . $exampleTemplate
+                    'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': ' . $exampleTemplate,
                 ],
                 «IF targets('3.0')»
                     /** @Ignore */
                 «ENDIF»
-                'help' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>' . $exampleTemplate . '</code>'«IF targets('3.0')»,
-                'help_html' => true«ENDIF»
+                'help' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>' . $exampleTemplate . '</code>',
+                «IF targets('3.0')»
+                    'help_html' => true,
+                «ENDIF»
             ]);
         }
     '''
@@ -379,12 +381,12 @@ class BlockListType {
                     «IF targets('3.0')»
                         /** @Ignore */
                     «ENDIF»
-                    'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
+                    'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18',
                 ],
                 «IF targets('3.0')»
                     /** @Ignore */
                 «ENDIF»
-                'help' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18'
+                'help' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': tbl.age >= 18',
             ]);
         }
     '''

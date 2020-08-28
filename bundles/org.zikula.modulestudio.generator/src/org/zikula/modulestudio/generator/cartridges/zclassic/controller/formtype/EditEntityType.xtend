@@ -509,7 +509,7 @@ class EditEntityType {
                 «IF app.targets('3.0')»
                     /** @Ignore */
                 «ENDIF»
-                'help' => $helpText
+                'help' => $helpText,
             ]);
         «ENDIF»
     '''
@@ -564,14 +564,14 @@ class EditEntityType {
                 'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»:'«IF !app.targets('3.0')»)«ENDIF»,
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
-                    'class' => 'category-selector'
+                    'class' => 'category-selector',
                 ],
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => '«name.formatForCodeCapital»Entity',
                 'entityCategoryClass' => «name.formatForCodeCapital»CategoryEntity::class,
-                'showRegistryLabels' => true
+                'showRegistryLabels' => true,
             ]);
         }
     '''

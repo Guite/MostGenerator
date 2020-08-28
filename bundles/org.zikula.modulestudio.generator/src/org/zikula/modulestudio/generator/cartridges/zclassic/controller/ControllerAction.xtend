@@ -232,7 +232,7 @@ class ControllerAction {
             «IF app.generateIcsTemplates && hasStartAndEndDateField»
                 EntityDisplayHelper $entityDisplayHelper,
             «ENDIF»
-            «name.formatForCodeCapital»Entity $«name.formatForCode» = null,
+            ?«name.formatForCodeCapital»Entity $«name.formatForCode» = null,
             «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
             bool $isAdmin = false«ENDIF»
         «ELSE»

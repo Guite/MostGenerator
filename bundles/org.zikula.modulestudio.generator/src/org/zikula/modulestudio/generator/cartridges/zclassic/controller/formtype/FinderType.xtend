@@ -152,7 +152,7 @@ class FinderType {
                         'icon' => 'fa-check',
                         'attr' => [
                             'class' => '«IF !app.targets('3.0')»btn «ENDIF»btn-success',
-                        ]
+                        ],
                     ])
                     ->add('cancel', SubmitType::class, [
                         'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Cancel'«IF !app.targets('3.0')»)«ENDIF»,
@@ -198,8 +198,10 @@ class FinderType {
                 $resolver
                     ->setDefaults([
                         'object_type' => '«app.leadingEntity.name.formatForCode»',
-                        'editor_name' => 'ckeditor'«IF app.targets('3.0') && !app.isSystemModule»,
-                        'translation_domain' => '«name.formatForCode»'«ENDIF»
+                        'editor_name' => 'ckeditor',
+                        «IF app.targets('3.0') && !app.isSystemModule»
+                            'translation_domain' => '«name.formatForCode»',
+                        «ENDIF»
                     ])
                     ->setRequired(['object_type', 'editor_name'])
                     ->setAllowedTypes('object_type', 'string')

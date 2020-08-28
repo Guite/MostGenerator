@@ -87,10 +87,6 @@ class UploadFileTransformer {
 
             /**
              * Transforms a filename to the corresponding upload input array.
-             *
-             * @param File|null $file
-             *
-             * @return array
              */
             public function transform($file)
             {
@@ -102,10 +98,6 @@ class UploadFileTransformer {
 
             /**
              * Transforms a result array back to the File object
-             *
-             * @param array $data Form data
-             *
-             * @return File
              */
             public function reverseTransform($data)
             {

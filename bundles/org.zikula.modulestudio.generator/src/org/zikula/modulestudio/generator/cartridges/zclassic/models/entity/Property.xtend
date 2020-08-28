@@ -103,7 +103,7 @@ class Property {
     def persistentProperty(DerivedField it, String name, String typePhp, String typeDoctrine, String init, String modifier) '''
         /**
          «IF null !== documentation && !documentation.empty»
-          * «documentation»
+          * «documentation»«IF !documentation.endsWith('.')».«ENDIF»
           *
          «ENDIF»
         «IF null !== entity»

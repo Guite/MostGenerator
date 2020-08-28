@@ -134,7 +134,7 @@ class BlockList {
                 'amount' => 5,
                 'template' => 'itemlist_display.html.twig',
                 'customTemplate' => null,
-                'filter' => ''
+                'filter' => '',
             ];
         }
         «IF hasCategorisableEntities»
@@ -352,7 +352,7 @@ class BlockList {
         $templateParameters = [
             'vars' => $properties,
             'objectType' => $objectType,
-            'items' => $entities
+            'items' => $entities,
         ];
         «IF hasCategorisableEntities»
             if ($hasCategories) {
@@ -404,7 +404,7 @@ class BlockList {
                     'ContentType/' . $templateFile,
                 «ENDIF»
                 'Block/' . $templateFile,
-                'Block/itemlist.html.twig'
+                'Block/itemlist.html.twig',
             ];
 
             $template = '';
@@ -450,7 +450,7 @@ class BlockList {
                 'object_type' => $objectType«IF hasCategorisableEntities»,
                 'is_categorisable' => in_array($objectType, $this->categorisableObjectTypes, true),
                 'category_helper' => $this->«IF targets('3.0')»categoryHelper«ELSE»get('«appService».category_helper')«ENDIF»,
-                'feature_activation_helper' => $this->«IF targets('3.0')»featureActivationHelper«ELSE»get('«appService».feature_activation_helper')«ENDIF»«ENDIF»
+                'feature_activation_helper' => $this->«IF targets('3.0')»featureActivationHelper«ELSE»get('«appService».feature_activation_helper')«ENDIF»«ENDIF»,
             ];
         }
 

@@ -57,7 +57,6 @@ class Joins {
                 «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'from')»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'from')»«ENDFOR»
                 «IF categorisable»
-
                     $qb->leftJoin('tbl.categories', 'tblCategories');
                 «ENDIF»
 

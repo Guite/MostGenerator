@@ -233,7 +233,7 @@ class ThirdPartyListener {
 
                 $commonEditorAssets = [
                     'images/admin.png',
-                    'js/«appName».Finder.js'
+                    'js/«appName».Finder.js',
                 ];
 
                 foreach ($commonEditorAssets as $assetRelativePath) {
@@ -257,7 +257,7 @@ class ThirdPartyListener {
                 [
                     'module' => '«appName»',
                     'type' => 'javascript',
-                    'path' => $this->getPathToModuleWebAssets() . 'js/«appName».Finder.js'
+                    'path' => $this->getPathToModuleWebAssets() . 'js/«appName».Finder.js',
                 ]
             );
         }
@@ -275,12 +275,12 @@ class ThirdPartyListener {
                     'name' => '«appName.formatForDB»',
                     'path' => $this->getPathToModuleWebAssets() . 'scribite/' . $editorId . '/«appName.formatForDB»/',
                     'file' => 'plugin.js',
-                    'img' => 'ed_«appName.formatForDB».gif'
+                    'img' => 'ed_«appName.formatForDB».gif',
                 ]);
             } elseif (in_array($editorId, ['Quill', 'Summernote', 'TinyMce'], true)) {
                 $event->getPluginCollection()->add([
                     'name' => '«appName.formatForDB»',
-                    'path' => $this->getPathToModuleWebAssets() . 'scribite/' . $editorId . '/«appName.formatForDB»/plugin.js'
+                    'path' => $this->getPathToModuleWebAssets() . 'scribite/' . $editorId . '/«appName.formatForDB»/plugin.js',
                 ]);
             }
         }
@@ -300,7 +300,7 @@ class ThirdPartyListener {
                 'name' => '«appName.formatForDB»',
                 'path' => $this->getPathToModuleWebAssets() . 'scribite/CKEditor/«appName.formatForDB»/',
                 'file' => 'plugin.js',
-                'img' => 'ed_«appName.formatForDB».gif'
+                'img' => 'ed_«appName.formatForDB».gif',
             ]);
         }
     '''
@@ -317,7 +317,7 @@ class ThirdPartyListener {
         {
             $event->getSubject()->add([
                 'name' => '«appName.formatForDB»',
-                'path' => $this->getPathToModuleWebAssets() . 'scribite/«editorName»/«appName.formatForDB»/plugin.js'
+                'path' => $this->getPathToModuleWebAssets() . 'scribite/«editorName»/«appName.formatForDB»/plugin.js',
             ]);
         }
     '''

@@ -117,6 +117,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
         /**
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="attributes")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
+         *
          * @var «name.formatForCodeCapital»Entity
          */
         protected $entity;

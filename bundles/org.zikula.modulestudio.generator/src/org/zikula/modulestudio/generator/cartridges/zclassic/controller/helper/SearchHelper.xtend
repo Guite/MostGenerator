@@ -122,7 +122,7 @@ class SearchHelper {
                 «FOR entity : entitiesWithStrings»
                     '«appName.toFirstLower»«entity.nameMultiple.formatForCodeCapital»' => [
                         'value' => '«entity.name.formatForCode»',
-                        'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule»«IF targets('3.0')», [], '«entity.name.formatForCode»'«ELSE», '«appName.formatForDB»'«ENDIF»«ENDIF»)
+                        'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule»«IF targets('3.0')», [], '«entity.name.formatForCode»'«ELSE», '«appName.formatForDB»'«ENDIF»«ENDIF»),
                     ]«IF entity != entitiesWithStrings.last»,«ENDIF»
                 «ENDFOR»
             ];
@@ -158,7 +158,7 @@ class SearchHelper {
             }
 
             $builder->add('active', HiddenType::class, [
-                'data' => true
+                'data' => true,
             ]);
 
             $searchTypes = $this->getSearchTypes();
@@ -169,7 +169,7 @@ class SearchHelper {
                     'value' => $typeInfo['value'],
                     'label' => $typeInfo['label'],
                     'label_attr' => ['class' => 'checkbox-inline'],
-                    'required' => false
+                    'required' => false,
                 ]);
             }
         }
@@ -264,7 +264,7 @@ class SearchHelper {
                             ? $entity[$languageField]
                             : $request->getLocale()
                         ;
-                        $displayUrl = new RouteUrl('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs);
+                        $displayUrl = new RouteUrl('«appName.formatForDB»_' . mb_strtolower($objectType) . '_display', $urlArgs);
                     }
 
                     $result = new SearchResultEntity();
@@ -325,7 +325,7 @@ class SearchHelper {
                     $expr = $qb->expr()->like($field, "?$i");
                     $subWhere->add($expr);
                     $qb->setParameter($i, '%' . $word . '%');
-                    $i++;
+                    ++$i;
                 }
                 $where->add($subWhere);
             }

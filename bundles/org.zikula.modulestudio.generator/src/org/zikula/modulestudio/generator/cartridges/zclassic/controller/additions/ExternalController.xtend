@@ -166,7 +166,7 @@ class ExternalController {
             'objectType' => $objectType,
             'source' => $source,
             $objectType => $entity,
-            'displayMode' => $displayMode
+            'displayMode' => $displayMode,
         ];
 
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
@@ -277,7 +277,7 @@ class ExternalController {
             return new RedirectResponse($redirectUrl);
         }
 
-        $formData = $request->query->get('«appName.formatForDB»_' . strtolower($objectType) . 'finder', []);
+        $formData = $request->query->get('«appName.formatForDB»_' . mb_strtolower($objectType) . 'finder', []);
         «IF hasTranslatable»
             if (isset($formData['language'])) {
                 $this->get('stof_doctrine_extensions.listener.translatable')->setTranslatableLocale($formData['language']);
@@ -304,7 +304,7 @@ class ExternalController {
             $sort = $repository->getDefaultSortingField();
         }
 
-        $sdir = strtolower($sortdir);
+        $sdir = mb_strtolower($sortdir);
         if ('asc' !== $sdir && 'desc' !== $sdir) {
             $sdir = 'asc';
         }
@@ -326,17 +326,17 @@ class ExternalController {
             'sort' => $sort,
             'sortdir' => $sdir,
             'currentPage' => «IF targets('3.0')»$page«ELSE»$currentPage«ENDIF»,
-            'language' => isset($formData['language']) ? $formData['language'] : $request->getLocale()«IF hasImageFields»,«ENDIF»
+            'language' => isset($formData['language']) ? $formData['language'] : $request->getLocale(),
             «IF hasImageFields»
                 'onlyImages' => false,
-                'imageField' => ''
+                'imageField' => '',
             «ENDIF»
         ];
         $searchTerm = '';
 
         $formOptions = [
             'object_type' => $objectType,
-            'editor_name' => $editor
+            'editor_name' => $editor,
         ];
         $form = $this->createForm(
             '«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType',

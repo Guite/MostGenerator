@@ -242,7 +242,7 @@ class Actions {
         «ENDIF»
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
-            $objectType => $«name.formatForCode»
+            $objectType => $«name.formatForCode»,
         ];
 
         «IF !app.targets('3.0')»
@@ -376,7 +376,7 @@ class Actions {
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
             'deleteForm' => $form->createView(),
-            $objectType => $«name.formatForCode»
+            $objectType => $«name.formatForCode»,
         ];
         «IF !skipHookSubscribers»
             if ($«name.formatForCode»->supportsHookSubscribers()) {

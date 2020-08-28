@@ -61,10 +61,6 @@ class AutoCompletionRelationTransformer {
 
             /**
              * Transforms a single object or a list of objects to a string with identifiers.
-             *
-             * @param EntityAccess|Selectable $entities
-             *
-             * @return string
              */
             public function transform($entities)
             {
@@ -90,10 +86,6 @@ class AutoCompletionRelationTransformer {
 
             /**
              * Transforms a string (identifier list) to an object or object collection.
-             *
-             * @param string $value Identifier(s)
-             *
-             * @return EntityAccess|ArrayCollection Resulting object or object collection
              *
              * @throws TransformationFailedException if entity is not found
              */

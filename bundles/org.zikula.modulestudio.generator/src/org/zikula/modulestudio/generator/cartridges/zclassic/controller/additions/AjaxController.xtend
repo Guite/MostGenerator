@@ -209,7 +209,7 @@ class AjaxController {
             $sort = $repository->getDefaultSortingField();
         }
 
-        $sdir = strtolower($request->query->getAlpha('sortdir'));
+        $sdir = mb_strtolower($request->query->getAlpha('sortdir'));
         if ('asc' !== $sdir && 'desc' !== $sdir) {
             $sdir = 'asc';
         }
@@ -220,7 +220,7 @@ class AjaxController {
 
         $entities = [];
         if ('' !== $searchTerm) {
-            list ($entities, $totalAmount) = $repository->selectSearch($searchTerm, [], $sortParam, 1, 50, false);
+            list($entities, $totalAmount) = $repository->selectSearch($searchTerm, [], $sortParam, 1, 50, false);
         } else {
             $entities = $repository->selectWhere($where, $sortParam);
         }
@@ -296,7 +296,7 @@ class AjaxController {
             $previewInfo = base64_encode($previewInfo);
 
             $title = «IF targets('3.0')»$entityDisplayHelper«ELSE»$this->get('«appService».entity_display_helper')«ENDIF»->getFormattedTitle($item);
-            $description = $descriptionField !== '' ? $item[$descriptionField] : '';
+            $description = '' !== $descriptionField ? $item[$descriptionField] : '';
 
             return [
                 'id' => $itemId,

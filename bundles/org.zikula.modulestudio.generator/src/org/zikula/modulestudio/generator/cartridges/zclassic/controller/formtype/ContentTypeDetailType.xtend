@@ -132,16 +132,16 @@ class ContentTypeDetailType {
                 'empty_data' => '«leadingEntity.name.formatForCode»'«IF getAllEntities.filter[hasDisplayAction].size > 1»,«ENDIF»
                 «IF getAllEntities.filter[hasDisplayAction].size > 1»
                     'attr' => [
-                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the element once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the element once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                     ],
                     'help' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the element once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                     'choices' => [
                         «FOR entity : getAllEntities.filter[hasDisplayAction]»
-                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»'«IF entity != getAllEntities.filter[hasDisplayAction].last»,«ENDIF»
+                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»',
                         «ENDFOR»
                     ],
                     'multiple' => false,
-                    'expanded' => false
+                    'expanded' => false,
                 «ENDIF»
             ]);
         }
@@ -168,7 +168,7 @@ class ContentTypeDetailType {
                 'expanded' => false,
                 'choices' => «IF targets('3.0')»/** @Ignore */«ENDIF»$choices,
                 'required' => true,
-                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Entry to display:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Entry to display:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
             ]);
         }
     '''
@@ -182,15 +182,15 @@ class ContentTypeDetailType {
             $builder->add('displayMode', ChoiceType::class, [
                 'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Display mode:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
                 'label_attr' => [
-                    'class' => 'radio-«IF targets('3.0')»custom«ELSE»inline«ENDIF»'
+                    'class' => 'radio-«IF targets('3.0')»custom«ELSE»inline«ENDIF»',
                 ],
                 'empty_data' => 'embed',
                 'choices' => [
                     «IF !targets('3.0')»$this->__(«ENDIF»'Link to object'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'link',
-                    «IF !targets('3.0')»$this->__(«ENDIF»'Embed object display'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'embed'
+                    «IF !targets('3.0')»$this->__(«ENDIF»'Embed object display'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'embed',
                 ],
                 'multiple' => false,
-                'expanded' => true
+                'expanded' => true,
             ]);
         }
     '''
@@ -210,16 +210,18 @@ class ContentTypeDetailType {
                         «IF targets('3.0')»
                             /** @Ignore */
                         «ENDIF»
-                        'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig'
+                        'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig',
                     ],
                     «IF targets('3.0')»
                         /** @Ignore */
                     «ENDIF»
                     'help' => [
                         «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>displaySpecial.html.twig</code>',
-                        «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Needs to be located in the "External/YourEntity/" directory.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
-                    ]«IF targets('3.0')»,
-                    'help_html' => true«ENDIF»
+                        «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Needs to be located in the "External/YourEntity/" directory.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                    ],
+                    «IF targets('3.0')»
+                        'help_html' => true,
+                    «ENDIF»
                 ])
             ;
         }

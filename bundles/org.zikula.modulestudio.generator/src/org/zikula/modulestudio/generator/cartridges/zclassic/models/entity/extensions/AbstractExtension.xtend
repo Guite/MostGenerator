@@ -127,6 +127,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          * «extensionClassDescription»
          *
          * This is the concrete «classType.formatForDisplay» class for «it.name.formatForDisplay» entities.
+         *
         «extensionClassImplAnnotations»
          */
         class «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends BaseEntity

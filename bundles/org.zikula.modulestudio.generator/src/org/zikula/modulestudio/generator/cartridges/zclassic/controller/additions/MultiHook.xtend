@@ -235,14 +235,14 @@ class MultiHook {
 
         «ENDIF»
         /**
-         * Bundle name
+         * Bundle name.
          *
          * @var string
          */
         protected $bundleName;
 
         /**
-         * The name of this needle
+         * The name of this needle.
          *
          * @var string
          */
@@ -263,7 +263,7 @@ class MultiHook {
                 $this->entityDisplayHelper = $entityDisplayHelper;
             «ENDIF»
 
-            $nsParts = explode('\\', get_class($this));
+            $nsParts = explode('\\', static::class);
             $vendor = $nsParts[0];
             $nameAndType = $nsParts[1];
 

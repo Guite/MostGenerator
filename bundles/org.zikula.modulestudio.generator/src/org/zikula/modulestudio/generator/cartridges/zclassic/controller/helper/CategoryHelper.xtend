@@ -152,9 +152,9 @@ class CategoryHelper {
 
             $properties = $this->getAllProperties($objectType);
             $inputValues = null;
-            $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'quicknav';
+            $inputName = '«appName.toLowerCase»_' . mb_strtolower($objectType) . 'quicknav';
             if (!$dataSource->has($inputName)) {
-                $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'finder';
+                $inputName = '«appName.toLowerCase»_' . mb_strtolower($objectType) . 'finder';
             }
             if ($dataSource->has($inputName)) {
                 $inputValues = $dataSource->get($inputName);
@@ -219,7 +219,7 @@ class CategoryHelper {
             $filtersPerRegistry = [];
             $filterParameters = [
                 'values' => [],
-                'registries' => []
+                'registries' => [],
             ];
 
             foreach ($properties as $propertyName => $propertyId) {
@@ -279,7 +279,7 @@ class CategoryHelper {
 
             $moduleRegistries = $this->categoryRegistryRepository->findBy([
                 'modname' => '«appName»',
-                'entityname' => ucfirst($objectType) . 'Entity'
+                'entityname' => ucfirst($objectType) . 'Entity',
             ]);
 
             $result = [];
@@ -308,7 +308,7 @@ class CategoryHelper {
 
             $moduleRegistries = $this->categoryRegistryRepository->findBy([
                 'modname' => '«appName»',
-                'entityname' => ucfirst($objectType) . 'Entity'
+                'entityname' => ucfirst($objectType) . 'Entity',
             ], ['id' => 'ASC']);
 
             $result = [];
