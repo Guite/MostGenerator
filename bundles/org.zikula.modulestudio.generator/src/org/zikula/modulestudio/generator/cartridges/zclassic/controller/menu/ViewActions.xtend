@@ -46,7 +46,7 @@ class ViewActions {
                     }
                 «ENDIF»
                 $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Switch to table view'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
-                    'route' => $routePrefix . $routeArea . 'view'
+                    'route' => $routePrefix . $routeArea . 'view',
                 ])
                     ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-table')
                 ;

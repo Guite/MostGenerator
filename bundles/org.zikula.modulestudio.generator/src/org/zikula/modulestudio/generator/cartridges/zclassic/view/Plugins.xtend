@@ -457,7 +457,7 @@ class Plugins {
              * The «appName.formatForDB»_logDescription filter returns the translated clear text
              * description for a given log entry.
              * Example:
-             *     {{ logEntry|«appName.formatForDB»_logDescription }}
+             *     {{ logEntry|«appName.formatForDB»_logDescription }}.
              «IF !targets('3.0')»
              *
              * @param AbstractLogEntry $logEntry

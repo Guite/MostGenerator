@@ -228,11 +228,11 @@ class LoggableHistory {
             'routeArea' => $routeArea,
             '«name.formatForCode»' => $«name.formatForCode»,
             'logEntries' => $logEntries,
-            'isDiffView' => $isDiffView
+            'isDiffView' => $isDiffView,
         ];
 
         if (true === $isDiffView) {
-            list (
+            list(
                 $minVersion,
                 $maxVersion,
                 $diffValues

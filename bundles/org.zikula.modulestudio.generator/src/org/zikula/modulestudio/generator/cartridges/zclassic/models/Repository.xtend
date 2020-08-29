@@ -265,10 +265,9 @@ class Repository {
         «IF !app.targets('3.0')»
             use Doctrine\Common\Collections\ArrayCollection;
         «ENDIF»
-        «IF tree != EntityTreeType.NONE»
+        «/*IF tree != EntityTreeType.NONE»
             use Doctrine\ORM\EntityManager;
-        «ENDIF»
-        «IF tree == EntityTreeType.NONE && !hasSortableFields»
+        «ENDIF*/»«IF tree == EntityTreeType.NONE && !hasSortableFields»
             use Doctrine\ORM\EntityRepository;
         «ENDIF»«/*IF tree != EntityTreeType.NONE»
             use Doctrine\ORM\Mapping\ClassMetadata;

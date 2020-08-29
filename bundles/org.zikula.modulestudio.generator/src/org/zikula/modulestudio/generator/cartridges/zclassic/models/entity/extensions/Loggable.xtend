@@ -115,7 +115,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          * @return array Collection containing retrieved items
          «ENDIF»
          */
-        public function selectDeleted«IF application.targets('3.0')»(int $limit = null): array«ELSE»($limit = null)«ENDIF»
+        public function selectDeleted«IF application.targets('3.0')»(?int $limit = null): array«ELSE»($limit = null)«ENDIF»
         {
             $objectClass = str_replace('LogEntry', '', $this->_entityName);
 
@@ -178,7 +178,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 if (!$limitParameter) {
                     $limitParameter = 25;
                 }
-                $limitParameter++; // one more for the initial creation entry
+                ++$limitParameter; // one more for the initial creation entry
 
                 $qbMatchingObjects = $this->getEntityManager()->createQueryBuilder();
                 $qbMatchingObjects->select('log.objectId, COUNT(log.objectId) amountOfRevisions')
@@ -265,7 +265,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 if (0 > $keepPerObject || $counterPerObject < $thresholdForObject) {
                     $lastLogEntry = $logEntry;
                 }
-                $counterPerObject++;
+                ++$counterPerObject;
             }
 
             // do not forget to save values for the last objectId

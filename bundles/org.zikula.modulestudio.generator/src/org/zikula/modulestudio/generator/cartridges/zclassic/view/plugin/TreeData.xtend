@@ -44,11 +44,11 @@ class TreeData {
 
             $result = [
                 'nodes' => '',
-                'actions' => ''
+                'actions' => '',
             ];
             foreach ($tree as $node) {
                 if (1 > $node->getLvl() || $rootId === $node->getKey()) {
-                    list ($nodes, $actions) = $this->processTreeItemWithChildren(
+                    list($nodes, $actions) = $this->processTreeItemWithChildren(
                         $objectType,
                         $node,
                         $routeArea,
@@ -102,7 +102,7 @@ class TreeData {
             $liTag = '<li id="' . $idPrefix . '"' . $titleAttribute . $classAttribute . $urlDataAttributes . '>';
             $liContent = $this->entityDisplayHelper->getFormattedTitle($node);
             if ($hasEditAction) {
-                $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit';
+                $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $routeArea . 'edit';
                 $url = $this->router->generate($routeName, $urlArgs);
                 $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
             }
@@ -112,7 +112,7 @@ class TreeData {
             $itemActionsMenu = $this->menuBuilder->createItemActionsMenu([
                 'entity' => $node,
                 'area' => $routeArea,
-                'context' => 'view'
+                'context' => 'view',
             ]);
             $renderer = new ListRenderer(new Matcher());
 
@@ -121,10 +121,10 @@ class TreeData {
             $actions = str_replace([' class="first"', ' class="last"'], '', $actions);
             $actions .= '</li>';
 
-            if (count($node->getChildren()) > 0) {
+            if (0 < count($node->getChildren())) {
                 $nodeItem .= '<ul>';
                 foreach ($node->getChildren() as $childNode) {
-                    list ($subNodes, $subActions) = $this->processTreeItemWithChildren(
+                    list($subNodes, $subActions) = $this->processTreeItemWithChildren(
                         $objectType,
                         $childNode,
                         $routeArea,

@@ -124,7 +124,7 @@ class Locking {
                     'app' => '«application.appName»',
                     'user' => $this->currentUserApi->get('uname'),
                     'entity' => '«name.formatForDisplay»',
-                    'id' => $entity->getKey()
+                    'id' => $entity->getKey(),
                 ];
                 $this->logger->error(
                     '{app}: User {user} tried to edit the {entity} with id {id},'

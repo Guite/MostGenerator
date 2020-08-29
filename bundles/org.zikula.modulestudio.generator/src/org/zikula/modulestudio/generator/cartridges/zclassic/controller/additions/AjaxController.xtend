@@ -716,9 +716,9 @@ class AjaxController {
         }
 
         $returnValue = [
-            'data'    => [],
-            'result'  => 'success',
-            'message' => ''
+            'data' => [],
+            'result' => 'success',
+            'message' => '',
         ];
 
         «prepareTreeOperationParameters»
@@ -752,9 +752,9 @@ class AjaxController {
         $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The operation was successful.');
 
         // Renew tree
-        /** postponed, for now we do a page reload
-        $returnValue['data'] = $repository->selectTree($rootId);
-        */
+        /* postponed, for now we do a page reload.
+         * $returnValue['data'] = $repository->selectTree($rootId);
+         */
 
         return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
     '''
@@ -902,7 +902,7 @@ class AjaxController {
                 if (!$success) {
                     $returnValue['result'] = 'failure';
                 } elseif (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true)) {
-                    $routeName = '«appName.formatForDB»_' . strtolower($objectType) . '_edit';
+                    $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_edit';
                     «IF !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].empty»
                         $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
                         $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();

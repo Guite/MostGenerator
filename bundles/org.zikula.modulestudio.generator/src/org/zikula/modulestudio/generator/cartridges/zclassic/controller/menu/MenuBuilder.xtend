@@ -212,7 +212,7 @@ class MenuBuilder {
 
                     // return empty menu for preview of deleted items
                     $routeName = $this->requestStack->getMasterRequest()->get('_route');
-                    if (false !== stripos($routeName, 'displaydeleted')) {
+                    if (false !== mb_stripos($routeName, 'displaydeleted')) {
                         return $menu;
                     }
                 «ENDIF»
