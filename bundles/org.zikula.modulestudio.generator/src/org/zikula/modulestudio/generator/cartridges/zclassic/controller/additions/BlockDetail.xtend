@@ -72,14 +72,16 @@ class BlockDetail {
 
         «modify»
 
-        /**
-         * Returns default settings for this block.
-         «IF !targets('3.0')»
-         *
-         * @return array The default settings
-         «ENDIF»
-         */
-        protected function getDefaults()«IF targets('3.0')»: array«ENDIF»
+        «IF !targets('3.0')»
+            /**
+             * Returns default settings for this block.
+             *
+             * @return array The default settings
+             */
+            protected function getDefaults()
+        «ELSE»
+            public function getPropertyDefaults(): array
+        «ENDIF»
         {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -115,10 +117,12 @@ class BlockDetail {
             if (!$this->hasPermission('«appName»:ItemBlock:', $properties['title'] . '::', ACCESS_OVERVIEW)) {
                 return '';
             }
+            «IF !targets('3.0')»
 
-            // set default values for all params which are not properly set
-            $defaults = $this->getDefaults();
-            $properties = array_merge($defaults, $properties);
+                // set default values for all params which are not properly set
+                $defaults = $this->getDefaults();
+                $properties = array_merge($defaults, $properties);
+            «ENDIF»
 
             if (null === $properties['id'] || empty($properties['id'])) {
                 return '';
@@ -192,20 +196,22 @@ class BlockDetail {
         public function getFormOptions()«IF targets('3.0')»: array«ENDIF»
         {
             $objectType = '«leadingEntity.name.formatForCode»';
+            «IF !targets('3.0')»
 
-            $request = $this->«IF targets('3.0')»requestStack«ELSE»get('request_stack')«ENDIF»->getCurrentRequest();
-            if (null !== $request && $request->attributes->has('blockEntity')) {
-                $blockEntity = $request->attributes->get('blockEntity');
-                if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {
-                    $blockProperties = $blockEntity->getProperties();
-                    if (isset($blockProperties['objectType'])) {
-                        $objectType = $blockProperties['objectType'];
-                    } else {
-                        // set default options for new block creation
-                        $blockEntity->setProperties($this->getDefaults());
+                $request = $this->«IF targets('3.0')»requestStack«ELSE»get('request_stack')«ENDIF»->getCurrentRequest();
+                if (null !== $request && $request->attributes->has('blockEntity')) {
+                    $blockEntity = $request->attributes->get('blockEntity');
+                    if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {
+                        $blockProperties = $blockEntity->getProperties();
+                        if (isset($blockProperties['objectType'])) {
+                            $objectType = $blockProperties['objectType'];
+                        } else {
+                            // set default options for new block creation
+                            $blockEntity->setProperties($this->getDefaults());
+                        }
                     }
                 }
-            }
+            «ENDIF»
 
             return [
                 'object_type' => $objectType,

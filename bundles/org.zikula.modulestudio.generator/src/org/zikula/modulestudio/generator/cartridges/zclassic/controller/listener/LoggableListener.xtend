@@ -67,7 +67,7 @@ class LoggableListener {
             }
             if (!$logEntry->getActionDescription()) {
                 // treat all changes without an explicit description as update
-                $logEntry->setActionDescription('_HISTORY_' . strtoupper($objectType) . '_UPDATED');
+                $logEntry->setActionDescription('_HISTORY_' . mb_strtoupper($objectType) . '_UPDATED');
             }
         }«/*
          * to add post-processing we could do:

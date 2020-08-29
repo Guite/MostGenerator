@@ -162,7 +162,6 @@ class ExampleDataHelper {
                 $categoryRegistries = $registryRepository->findBy(['modname' => '«appName»']);
 
             «ENDIF»
-
             «createExampleRows»
         }
     '''

@@ -165,7 +165,7 @@ class LoggableHelper {
                         $diffValues[$field] = [
                             'old' => '',
                             'new' => '',
-                            'changed' => false
+                            'changed' => false,
                         ];
                     }
                     if ($logEntry->getVersion() <= $minVersion) {
@@ -367,7 +367,7 @@ class LoggableHelper {
             }
 
             $entity->set_actionDescriptionForLogEntry(
-                '_HISTORY_' . strtoupper($objectType) . '_RESTORED'
+                '_HISTORY_' . mb_strtoupper($objectType) . '_RESTORED'
                 . '|%version%=' . $lastVersionBeforeDeletion
             );
 
