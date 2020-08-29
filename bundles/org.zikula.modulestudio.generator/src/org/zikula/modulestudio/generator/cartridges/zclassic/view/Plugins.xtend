@@ -339,7 +339,7 @@ class Plugins {
                 return [
                     new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test('«appNameLower»_instanceOf', static function ($var, $instance) {
                         return $var instanceof $instance;
-                    })
+                    }),
                 ];
             }
         «ENDIF»
