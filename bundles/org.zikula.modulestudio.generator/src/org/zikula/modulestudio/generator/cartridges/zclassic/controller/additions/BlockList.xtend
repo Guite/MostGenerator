@@ -120,14 +120,16 @@ class BlockList {
 
         «modify»
 
-        /**
-         * Returns default settings for this block.
-         «IF !targets('3.0')»
-         *
-         * @return array The default settings
-         «ENDIF»
-         */
-        protected function getDefaults()«IF targets('3.0')»: array«ENDIF»
+        «IF !targets('3.0')»
+            /**
+             * Returns default settings for this block.
+             *
+             * @return array The default settings
+             */
+            protected function getDefaults()
+        «ELSE»
+            public function getPropertyDefaults(): array
+        «ENDIF»
         {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -249,10 +251,12 @@ class BlockList {
             «initListOfCategorisableEntities»
 
         «ENDIF»
-        // set default values for all params which are not properly set
-        $defaults = $this->getDefaults();
-        $properties = array_merge($defaults, $properties);
+        «IF !targets('3.0')»
+            // set default values for all params which are not properly set
+            $defaults = $this->getDefaults();
+            $properties = array_merge($defaults, $properties);
 
+        «ENDIF»
         «IF targets('3.0')»
             «IF !isSystemModule»
                 $contextArgs = ['name' => 'list'];
