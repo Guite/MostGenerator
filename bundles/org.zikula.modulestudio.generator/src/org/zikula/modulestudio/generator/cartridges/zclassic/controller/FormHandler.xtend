@@ -660,7 +660,6 @@ class FormHandler {
             $this->entityRef = $entity;
             «initialiseExtensions»
             «IF !getJoinRelations.empty»
-
                 «relationPresetsHelper.callBaseMethod(it)»
             «ENDIF»
 

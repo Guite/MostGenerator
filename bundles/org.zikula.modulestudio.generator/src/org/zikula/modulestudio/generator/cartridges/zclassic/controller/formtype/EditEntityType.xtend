@@ -683,7 +683,7 @@ class EditEntityType {
                 «relationHelp(outgoing)»
                 'attr' => [
                     'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the «aliasName.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
-                ]
+                ],
             ]);
         «ENDIF»
     '''

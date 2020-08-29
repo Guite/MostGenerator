@@ -47,20 +47,15 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper(application)»
-        «IF application.targets('3.0')»
-            «fh.getterMethod(it, 'categories', 'Collection', true, true, true)»
-        «ELSE»
-            «fh.getterMethod(it, 'categories', 'Collection', true, true, false)»
-        «ENDIF»
+        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection', true, true, application.targets('3.0'))»
 
-        /**
-         * Sets the categories.
-         «IF !application.targets('3.0')»
-         *
-         * @return void
-         «ENDIF»
-         */
+        «IF !application.targets('3.0')»
+            /**
+             * Sets the categories.
+             *
+             * @return void
+             */
+        «ENDIF»
         public function setCategories(Collection $categories)«IF application.targets('3.0')»: void«ENDIF»
         {
             foreach ($this->categories as $category) {
