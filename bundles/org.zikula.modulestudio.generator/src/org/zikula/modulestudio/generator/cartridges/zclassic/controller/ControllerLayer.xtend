@@ -87,19 +87,16 @@ class ControllerLayer {
         {
             «FOR action : getAllEntityActions»
                 «adminAndUserImpl(action, true)»
+
             «ENDFOR»
             «IF hasViewAction»
-
                 «new MassHandling().generate(it, true)»
             «ENDIF»
             «IF loggable»
-
                 «new LoggableUndelete().generate(it, true)»
-
                 «new LoggableHistory().generate(it, true)»
             «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»
-
                 «new InlineRedirect().generate(it, true)»
             «ENDIF»
         }
@@ -233,32 +230,26 @@ class ControllerLayer {
          */
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
-            «IF hasSluggableFields»«/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
-                «FOR action : getAllEntityActions.reject(DisplayAction)»
-                    «adminAndUserImpl(action, false)»
-                «ENDFOR»
-                «IF loggable»
-                    «new LoggableUndelete().generate(it, false)»
-                    «new LoggableHistory().generate(it, false)»
-                «ENDIF»
-                «FOR action : getAllEntityActions.filter(DisplayAction)»
-                    «adminAndUserImpl(action, false)»
-                «ENDFOR»
-            «ELSE»
-                «IF loggable»
-                    «new LoggableUndelete().generate(it, false)»
-                    «new LoggableHistory().generate(it, false)»
-                «ENDIF»
-                «FOR action : getAllEntityActions»
-                    «adminAndUserImpl(action, false)»
-                «ENDFOR»
+            «/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
+            «FOR action : getAllEntityActions.reject(DisplayAction)»
+                «adminAndUserImpl(action, false)»
+
+            «ENDFOR»
+            «IF loggable»
+                «new LoggableUndelete().generate(it, false)»
+                «new LoggableHistory().generate(it, false)»
             «ENDIF»
+            «FOR action : getAllEntityActions.filter(DisplayAction)»
+                «adminAndUserImpl(action, false)»
+
+            «ENDFOR»
             «IF hasViewAction»
                 «new MassHandling().generate(it, false)»
             «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»
                 «new InlineRedirect().generate(it, false)»
             «ENDIF»
+
             // feel free to add your own controller methods here
         }
     '''

@@ -16,6 +16,7 @@ class LoggableUndelete {
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
+
         «undelete(isBase, true)»
 
         «undelete(isBase, false)»

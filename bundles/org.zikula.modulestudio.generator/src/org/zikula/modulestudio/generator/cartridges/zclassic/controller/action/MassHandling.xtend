@@ -12,6 +12,7 @@ class MassHandling {
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
+
         «handleSelectedObjects(isBase, true)»
 
         «handleSelectedObjects(isBase, false)»

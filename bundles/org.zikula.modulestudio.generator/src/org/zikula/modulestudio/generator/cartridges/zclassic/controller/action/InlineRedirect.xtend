@@ -14,6 +14,7 @@ class InlineRedirect {
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
+
         «handleInlineRedirectDocBlock(isBase)»
         «handleInlineRedirectSignature»«IF application.targets('3.0')»: Response«ENDIF» {
             «IF isBase»

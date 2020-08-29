@@ -514,7 +514,7 @@ class Plugins {
         if (generateIcsTemplates && hasEntitiesWithIcsTemplates) {
             result += new FormatIcalText().generate(it)
         }
-        result.join("\n\n")
+        result.join("\n")
     }
 
     def private otherPlugins(Application it) {
@@ -524,6 +524,6 @@ class Plugins {
         }
         result += new ObjectTypeSelector().generate(it, fsa, false)
         result += new TemplateSelector().generate(it, fsa, false)
-        result.join("\n\n")
+        result.join("\n")
     }
 }

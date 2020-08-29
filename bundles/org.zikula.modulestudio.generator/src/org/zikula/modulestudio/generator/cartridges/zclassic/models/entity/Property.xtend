@@ -210,13 +210,14 @@ class Property {
     '''
 
     def dispatch fieldAccessor(UploadField it) '''
-        /**
-         * Returns the «name.formatForDisplay».
-         «IF !application.targets('3.0')»
-         *
-         * @return File
-         «ENDIF»
-         */
+
+        «IF !application.targets('3.0')»
+            /**
+             * Returns the «name.formatForDisplay».
+             *
+             * @return File
+             */
+        «ENDIF»
         public function get«name.formatForCodeCapital»()«IF application.targets('3.0')»: ?File«ENDIF»
         {
             if (null !== $this->«name.formatForCode») {
@@ -280,7 +281,6 @@ class Property {
                 $this->set«name.formatForCodeCapital»FileName($this->«name.formatForCode»->getFilename());
             }
         }
-
         «IF application.targets('3.0')»
             «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, true, '', '')»
             «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, true, '', '')»

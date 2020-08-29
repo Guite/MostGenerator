@@ -246,7 +246,7 @@ class EditEntityType {
                             'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Parent «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF»,
                             'attr' => [
                                 'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the parent «name.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
-                            ]
+                            ],
                         ]);
                     }
                 «ENDIF»
@@ -619,7 +619,7 @@ class EditEntityType {
                 «relationHelp(outgoing)»
                 'attr' => [
                     'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the «aliasName.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
-                ]
+                ],
             ]);
         «ELSE»
             $queryBuilder = function (EntityRepository $er) {

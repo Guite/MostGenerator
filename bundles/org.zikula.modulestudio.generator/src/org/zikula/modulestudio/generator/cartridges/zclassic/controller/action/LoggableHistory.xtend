@@ -15,6 +15,7 @@ class LoggableHistory {
     extension Utils = new Utils
 
     def generate(Entity it, Boolean isBase) '''
+
         «loggableHistory(isBase, true)»
 
         «loggableHistory(isBase, false)»
