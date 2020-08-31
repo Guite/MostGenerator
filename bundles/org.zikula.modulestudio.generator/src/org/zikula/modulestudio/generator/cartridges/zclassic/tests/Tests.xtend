@@ -30,17 +30,17 @@ class Tests {
 
         class StackTest extends TestCase
         {
-            public function testPushAndPop()
+            public function testPushAndPop(): void
             {
                 $stack = [];
-                $this->assertCount(0, $stack);
+                self::assertCount(0, $stack);
 
-                array_push($stack, 'foo');
-                $this->assertEquals('foo', $stack[count($stack) - 1]);
-                $this->assertCount(1, $stack);
+                $stack[] = 'foo';
+                self::assertEquals('foo', $stack[count($stack) - 1]);
+                self::assertCount(1, $stack);
 
-                $this->assertEquals('foo', array_pop($stack));
-                $this->assertCount(0, $stack);
+                self::assertEquals('foo', array_pop($stack));
+                self::assertCount(0, $stack);
             }
         }
     '''
@@ -52,33 +52,33 @@ class Tests {
 
         class StackTest extends TestCase
         {
-            public function testEmpty()
+            public function testEmpty(): array
             {
                 $stack = [];
-                $this->assertEmpty($stack);
-         
+                self::assertEmpty($stack);
+
                 return $stack;
             }
-         
+
             /**
              * @depends testEmpty
              */
-            public function testPush(array $stack)
+            public function testPush(array $stack): array
             {
-                array_push($stack, 'foo');
-                $this->assertEquals('foo', $stack[count($stack) - 1]);
-                $this->assertNotEmpty($stack);
-         
+                $stack[] = 'foo';
+                self::assertEquals('foo', $stack[count($stack) - 1]);
+                self::assertNotEmpty($stack);
+
                 return $stack;
             }
-         
+
             /**
              * @depends testPush
              */
-            public function testPop(array $stack)
+            public function testPop(array $stack): void
             {
-                $this->assertEquals('foo', array_pop($stack));
-                $this->assertEmpty($stack);
+                self::assertEquals('foo', array_pop($stack));
+                self::assertEmpty($stack);
             }
         }
    '''
