@@ -284,7 +284,7 @@ class Property {
         «IF application.targets('3.0')»
             «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, true, '', '')»
             «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, '[]', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, true, '[]', '')»
         «ELSE»
             «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, false, '', '')»
             «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, false, '', '')»
