@@ -647,7 +647,7 @@ class FormHandler {
                     $session->getFlashBag()->add('error', «IF !targets('3.0')»$this->__(«ENDIF»'No such item found.'«IF !targets('3.0')»)«ENDIF»);
                 }
 
-                return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
+                return new RedirectResponse($this->router->generate('home'), 302);
             }
 
             «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
