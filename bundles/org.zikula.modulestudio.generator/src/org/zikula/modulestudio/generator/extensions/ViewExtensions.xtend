@@ -134,9 +134,14 @@ class ViewExtensions {
      * Returns the code used for including Leaflet.
      */
     def includeLeaflet(Entity it, String actionName, String objName) '''
-        {% set pathToLeaflet = zasset('@«application.appName»:css/style.css')|replace({'Resources/public/css/style.css': ''}) ~ 'vendor/drmonty/leaflet/' %}
-        {{ pageAddAsset('stylesheet', pathToLeaflet ~ 'css/leaflet.css') }}
-        {{ pageAddAsset('javascript', pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js') }}
+        «IF application.targets('3.0')»
+            {{ pageAddAsset('stylesheet', zasset('@«application.appName»:leaflet/css/leaflet.css')) }}
+            {{ pageAddAsset('javascript', zasset('@«application.appName»:leaflet/js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js')) }}
+        «ELSE»
+            {% set pathToLeaflet = zasset('@«application.appName»:css/style.css')|replace({'Resources/public/css/style.css': ''}) ~ 'vendor/drmonty/leaflet/' %}
+            {{ pageAddAsset('stylesheet', pathToLeaflet ~ 'css/leaflet.css') }}
+            {{ pageAddAsset('javascript', pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js') }}
+        «ENDIF»
         «IF 'view' == actionName»
             <div id="geographicalInfo" class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-context="«actionName»" data-object-type="«objName»" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"></div>
         «ELSE»

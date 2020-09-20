@@ -2,11 +2,15 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ViewHelper {
 
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
@@ -27,11 +31,17 @@ class ViewHelper {
         «IF !targets('3.0')»
             use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
         «ENDIF»
+        «IF hasGeographical && targets('3.0')»
+            use Symfony\Component\Filesystem\Filesystem;
+        «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
         use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
         «IF targets('3.0')»
             use Twig\Loader\LoaderInterface;
+            «IF hasGeographical»
+                use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+            «ENDIF»
             use Zikula\Bundle\CoreBundle\Response\PlainResponse;
         «ELSE»
             use Zikula\Core\Response\PlainResponse;
@@ -56,6 +66,18 @@ class ViewHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
+        «IF hasGeographical && targets('3.0')»
+            /**
+             * @var ZikulaHttpKernelInterface
+             */
+            protected $kernel;
+
+            /**
+             * @var Filesystem
+             */
+            protected $filesystem;
+
+        «ENDIF»
         /**
          * @var «IF !targets('3.0')»Twig_«ENDIF»Environment
          */
@@ -101,6 +123,10 @@ class ViewHelper {
         protected $permissionHelper;
 
         public function __construct(
+            «IF hasGeographical && targets('3.0')»
+                ZikulaHttpKernelInterface $kernel,
+                Filesystem $filesystem,
+            «ENDIF»
             «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
             «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF» $twigLoader,
             RequestStack $requestStack,
@@ -114,6 +140,10 @@ class ViewHelper {
             ControllerHelper $controllerHelper,
             PermissionHelper $permissionHelper
         ) {
+            «IF hasGeographical && targets('3.0')»
+                $this->kernel = $kernel;
+                $this->filesystem = $filesystem;
+            «ENDIF»
             $this->twig = $twig;
             $this->twigLoader = $twigLoader;
             $this->requestStack = $requestStack;
@@ -142,6 +172,10 @@ class ViewHelper {
         «IF generatePdfSupport»
 
             «processPdf»
+        «ENDIF»
+        «IF hasGeographical && targets('3.0')»
+
+            «copyLeafletAssets»
         «ENDIF»
     '''
 
@@ -213,6 +247,10 @@ class ViewHelper {
                 «ENDIF»
                 $template = $this->getViewTemplate($type, $func«IF separateAdminTemplates», $isAdmin«ENDIF»);
             }
+            «IF hasGeographical && targets('3.0')»
+                $this->copyLeafletAssets();
+
+            «ENDIF»
             «IF generatePdfSupport»
 
                 if ('pdf.twig' === $templateExtension) {
@@ -435,6 +473,33 @@ class ViewHelper {
             $pdf->stream($fileTitle);
 
             return new Response();
+        }
+    '''
+
+    def private copyLeafletAssets(Application it) '''
+        protected function copyLeafletAssets()
+        {
+            $leafletSrcPath = $this->kernel->getProjectDir() . '/src/extensions/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module/vendor/drmonty/leaflet/';
+            $leafletPublicPath = $this->kernel->getProjectDir() . '/public/modules/«vendor.toLowerCase»«name.toLowerCase»/leaflet/';
+            if (!$this->filesystem->exists($leafletPublicPath)) {
+                $this->filesystem->mkdir($leafletPublicPath);
+            }
+
+            $leafletFiles = [
+                ['type' => 'css', 'file' => 'leaflet.css'],
+                ['type' => 'images', 'file' => 'layers-2x.png'],
+                ['type' => 'images', 'file' => 'layers.png'],
+                ['type' => 'images', 'file' => 'marker-icon-2x.png'],
+                ['type' => 'images', 'file' => 'marker-icon.png'],
+                ['type' => 'images', 'file' => 'marker-shadow.png'],
+                ['type' => 'js', 'file' => 'leaflet.min.js'],
+            ];
+            foreach ($leafletFiles as $fileDef) {
+                $relativeFilePath = $fileDef['type'] . '/' . $fileDef['file'];
+                if (!$this->filesystem->exists($leafletPublicPath . $relativeFilePath)) {
+                    $this->filesystem->copy($leafletSrcPath . $relativeFilePath, $leafletPublicPath . $relativeFilePath);
+                }
+            }
         }
     '''
 
