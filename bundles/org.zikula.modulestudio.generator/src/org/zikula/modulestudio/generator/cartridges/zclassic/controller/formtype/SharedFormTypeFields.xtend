@@ -149,6 +149,9 @@ class SharedFormTypeFields {
             use Translation\Extractor\Annotation\Ignore;
             use Translation\Extractor\Annotation\Translate;
         «ENDIF»
+        «IF !fields.filter(DerivedField).filter[!mandatory && !nullable].empty»
+            use Zikula\Bundle\FormExtensionBundle\Form\DataTransformer\NullToEmptyTransformer;
+        «ENDIF»
         «IF !fields.filter(StringField).filter[role == StringRole.LOCALE].empty»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
@@ -207,7 +210,7 @@ class SharedFormTypeFields {
             «ENDIF»
             «val useCustomSwitch = it instanceof BooleanField && application.targets('3.0')»
             «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
-            $builder->add('«name.formatForCode»', «formType»Type::class, [
+            $builder->add(«IF !mandatory && !nullable»$builder->create(«ENDIF»'«name.formatForCode»', «formType»Type::class, [
                 'label' => «IF !application.targets('3.0')»$this->__(«ENDIF»'«label»:'«IF !application.targets('3.0')»)«ENDIF»,
                 «IF null !== documentation && !documentation.empty»
                     'label_attr' => [
@@ -257,7 +260,7 @@ class SharedFormTypeFields {
                 ],
                 «requiredOption»
                 «additionalOptions»
-            ]);
+            ])«IF !mandatory && !nullable»->addModelTransformer(new NullToEmptyTransformer()))«ENDIF»;
         «ENDIF»
     '''
 
