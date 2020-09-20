@@ -1477,7 +1477,7 @@ class FormHandler {
             «ENDIF»
 
             // assign data to template«IF !app.targets('3.0')» as array (for additions like standard fields)«ENDIF»
-            $this->templateParameters[$this->objectTypeLower] = «IF app.targets('3.0')»$this->entityRef«ELSE»$entityData«ENDIF»;
+            $this->templateParameters[$this->objectType] = «IF app.targets('3.0')»$this->entityRef«ELSE»$entityData«ENDIF»;
             «IF skipHookSubscribers»
                 $this->templateParameters['supportsHookSubscribers'] = false;
             «ELSE»
