@@ -2,14 +2,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ViewHelper {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
@@ -479,7 +477,8 @@ class ViewHelper {
     def private copyLeafletAssets(Application it) '''
         protected function copyLeafletAssets()
         {
-            $leafletSrcPath = $this->kernel->getProjectDir() . '/src/extensions/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module/vendor/drmonty/leaflet/';
+            $bundle = $this->kernel->getBundle('«appName»');
+            $leafletSrcPath = $bundle->getPath() . '/vendor/drmonty/leaflet/';
             $leafletPublicPath = $this->kernel->getProjectDir() . '/public/modules/«vendor.toLowerCase»«name.toLowerCase»/leaflet/';
             if (!$this->filesystem->exists($leafletPublicPath)) {
                 $this->filesystem->mkdir($leafletPublicPath);
