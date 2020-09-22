@@ -25,11 +25,11 @@ class LoggableUndelete {
     def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «undeleteDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndeleteAction(
+            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndelete«IF !application.targets('3.0')»Action«ENDIF»(
                 «undeleteArguments(false)»
             )«IF application.targets('3.0')»: Response«ENDIF» {
                 «IF application.targets('3.0')»
-                    return $this->undeleteActionInternal(
+                    return $this->undeleteInternal(
                         $request,
                         $loggableHelper,«IF hasTranslatableFields»
                         $translatableHelper,«ENDIF»
@@ -37,12 +37,12 @@ class LoggableUndelete {
                         «isAdmin.displayBool»
                     );
                 «ELSE»
-                    return $this->undeleteActionInternal($request, $id, «isAdmin.displayBool»);
+                    return $this->undeleteInternal($request, $id, «isAdmin.displayBool»);
                 «ENDIF»
             }
         «ELSEIF isBase && !isAdmin»
             «undeleteDocBlock(isBase, isAdmin)»
-            protected function undeleteActionInternal(
+            protected function undeleteInternal(
                 «undeleteArguments(true)»
             )«IF application.targets('3.0')»: Response«ENDIF» {
                 «loggableUndeleteBaseImpl»

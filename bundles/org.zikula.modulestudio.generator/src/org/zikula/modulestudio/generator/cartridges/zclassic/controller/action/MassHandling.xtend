@@ -21,11 +21,11 @@ class MassHandling {
     def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «handleSelectedObjectsDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntriesAction(
+            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries«IF !application.targets('3.0')»Action«ENDIF»(
                 «handleSelectedObjectsArguments(false)»
             )«IF application.targets('3.0')»: RedirectResponse«ENDIF» {
                 «IF application.targets('3.0')»
-                    return $this->handleSelectedEntriesActionInternal(
+                    return $this->handleSelectedEntriesInternal(
                         $request,
                         $logger,
                         $entityFactory,
@@ -35,12 +35,12 @@ class MassHandling {
                         «isAdmin.displayBool»
                     );
                 «ELSE»
-                    return $this->handleSelectedEntriesActionInternal($request, «isAdmin.displayBool»);
+                    return $this->handleSelectedEntriesInternal($request, «isAdmin.displayBool»);
                 «ENDIF»
             }
         «ELSEIF isBase && !isAdmin»
             «handleSelectedObjectsDocBlock(isBase, isAdmin)»
-            protected function handleSelectedEntriesActionInternal(
+            protected function handleSelectedEntriesInternal(
                 «handleSelectedObjectsArguments(true)»
             )«IF application.targets('3.0')»: RedirectResponse«ENDIF» {
                 «handleSelectedObjectsBaseImpl»

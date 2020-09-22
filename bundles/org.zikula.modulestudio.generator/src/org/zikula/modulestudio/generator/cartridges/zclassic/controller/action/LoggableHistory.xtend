@@ -24,11 +24,11 @@ class LoggableHistory {
     def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «loggableHistoryDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistoryAction(
+            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistory«IF !application.targets('3.0')»Action«ENDIF»(
                 «loggableHistoryArguments(false)»
             )«IF application.targets('3.0')»: Response«ENDIF» {
                 «IF application.targets('3.0')»
-                    return $this->loggableHistoryActionInternal(
+                    return $this->loggableHistoryInternal(
                         $request,
                         $permissionHelper,
                         $entityFactory,
@@ -39,12 +39,12 @@ class LoggableHistory {
                         «isAdmin.displayBool»
                     );
                 «ELSE»
-                    return $this->loggableHistoryActionInternal($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
+                    return $this->loggableHistoryInternal($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
                 «ENDIF»
             }
         «ELSEIF isBase && !isAdmin»
             «loggableHistoryDocBlock(isBase, isAdmin)»
-            protected function loggableHistoryActionInternal(
+            protected function loggableHistoryInternal(
                 «loggableHistoryArguments(true)»
             )«IF application.targets('3.0')»: Response«ENDIF» {
                 «loggableHistoryBaseImpl»
