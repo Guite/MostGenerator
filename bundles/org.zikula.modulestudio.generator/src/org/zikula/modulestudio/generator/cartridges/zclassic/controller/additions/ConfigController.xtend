@@ -50,7 +50,7 @@ class ConfigController {
     def private configAction(Application it, Boolean isBase) '''
         «configDocBlock(isBase)»
         «IF targets('3.0')»
-            public function configAction(
+            public function config(
                 Request $request,
                 PermissionHelper $permissionHelper,
                 AppSettings $appSettings,
@@ -60,7 +60,7 @@ class ConfigController {
                 «IF isBase»
                     «configBaseImpl»
                 «ELSE»
-                    return parent::configAction($request, $permissionHelper, $appSettings, $logger, $currentUserApi);
+                    return parent::config($request, $permissionHelper, $appSettings, $logger, $currentUserApi);
                 «ENDIF»
             }
         «ELSE»

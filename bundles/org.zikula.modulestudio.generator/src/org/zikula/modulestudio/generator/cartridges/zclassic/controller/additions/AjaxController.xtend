@@ -164,7 +164,7 @@ class AjaxController {
 
     def private getItemListFinderSignature(Application it) {
         if (targets('3.0')) '''
-            public function getItemListFinderAction(
+            public function getItemListFinder(
                 Request $request,
                 ControllerHelper $controllerHelper,
                 PermissionHelper $permissionHelper,
@@ -331,7 +331,7 @@ class AjaxController {
 
     def private getItemListAutoCompletionSignature(Application it) {
         if (targets('3.0')) '''
-            public function getItemListAutoCompletionAction(
+            public function getItemListAutoCompletion(
                 Request $request,
                 CacheManager $imagineCacheManager,
                 ControllerHelper $controllerHelper,
@@ -469,7 +469,7 @@ class AjaxController {
 
     def private checkForDuplicateSignature(Application it) {
         if (targets('3.0')) '''
-            public function checkForDuplicateAction(
+            public function checkForDuplicate(
                 Request $request,
                 ControllerHelper $controllerHelper,
                 EntityFactory $entityFactory
@@ -583,7 +583,7 @@ class AjaxController {
 
     def private toggleFlagSignature(Application it) {
         if (targets('3.0')) '''
-            public function toggleFlagAction(
+            public function toggleFlag(
                 Request $request,
                 LoggerInterface $logger,
                 EntityFactory $entityFactory,
@@ -682,7 +682,7 @@ class AjaxController {
 
     def private handleTreeOperationSignature(Application it) {
         if (targets('3.0')) '''
-            public function handleTreeOperationAction(
+            public function handleTreeOperation(
                 Request $request,
                 RouterInterface $router,
                 LoggerInterface $logger,
@@ -1059,7 +1059,7 @@ class AjaxController {
 
     def private updateSortPositionsSignature(Application it) {
         if (targets('3.0')) '''
-            public function updateSortPositionsAction(
+            public function updateSortPositions(
                 Request $request,
                 EntityFactory $entityFactory
             ): JsonResponse'''
@@ -1171,7 +1171,7 @@ class AjaxController {
 
     def private attachHookObjectSignature(Application it) {
         if (targets('3.0')) '''
-            public function attachHookObjectAction(
+            public function attachHookObject(
                 Request $request,
                 EntityFactory $entityFactory
             ): JsonResponse'''
@@ -1183,7 +1183,7 @@ class AjaxController {
 
     def private detachHookObjectSignature(Application it) {
         if (targets('3.0')) '''
-            public function detachHookObjectAction(
+            public function detachHookObject(
                 Request $request,
                 EntityFactory $entityFactory
             ): JsonResponse'''
@@ -1304,7 +1304,7 @@ class AjaxController {
         «getItemListFinderDocBlock(false)»
         «getItemListFinderSignature» {
             «IF targets('3.0')»
-                return parent::getItemListFinderAction(
+                return parent::getItemListFinder(
                     $request,
                     $controllerHelper,
                     $permissionHelper,
@@ -1321,7 +1321,7 @@ class AjaxController {
         «getItemListAutoCompletionDocBlock(false)»
         «getItemListAutoCompletionSignature» {
             «IF targets('3.0')»
-                return parent::getItemListAutoCompletionAction(
+                return parent::getItemListAutoCompletion(
                     $request,
                     $imagineCacheManager,
                     $controllerHelper,
@@ -1339,7 +1339,7 @@ class AjaxController {
         «checkForDuplicateDocBlock(false)»
         «checkForDuplicateSignature» {
             «IF targets('3.0')»
-                return parent::checkForDuplicateAction(
+                return parent::checkForDuplicate(
                     $request,
                     $controllerHelper,
                     $entityFactory
@@ -1354,7 +1354,7 @@ class AjaxController {
         «toggleFlagDocBlock(false)»
         «toggleFlagSignature» {
             «IF targets('3.0')»
-                return parent::toggleFlagAction(
+                return parent::toggleFlag(
                     $request,
                     $logger,
                     $entityFactory,
@@ -1370,7 +1370,7 @@ class AjaxController {
         «handleTreeOperationDocBlock(false)»
         «handleTreeOperationSignature» {
             «IF targets('3.0')»
-                return parent::handleTreeOperationAction(
+                return parent::handleTreeOperation(
                     $request,
                     $router,
                     $logger,
@@ -1390,7 +1390,7 @@ class AjaxController {
         «updateSortPositionsDocBlock(false)»
         «updateSortPositionsSignature» {
             «IF targets('3.0')»
-                return parent::updateSortPositionsAction(
+                return parent::updateSortPositions(
                     $request,
                     $entityFactory
                 );
@@ -1404,7 +1404,7 @@ class AjaxController {
         «attachHookObjectDocBlock(false)»
         «attachHookObjectSignature» {
             «IF targets('3.0')»
-                return parent::attachHookObjectAction(
+                return parent::attachHookObject(
                     $request,
                     $entityFactory
                 );
@@ -1418,7 +1418,7 @@ class AjaxController {
         «detachHookObjectDocBlock(false)»
         «detachHookObjectSignature» {
             «IF targets('3.0')»
-                return parent::detachHookObjectAction(
+                return parent::detachHookObject(
                     $request,
                     $entityFactory
                 );
