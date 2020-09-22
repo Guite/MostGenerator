@@ -135,12 +135,14 @@ class ContentTypeDetail {
 
             $controllerReference = new ControllerReference(
                 «IF targets('3.0')»
-                    '«appNamespace»\Controller\ExternalController::displayAction',
+                    '«appNamespace»\Controller\ExternalController::display',
                 «ELSE»
                     '«appName»:External:display',
                 «ENDIF»
                 $this->getDisplayArguments(),
-                ['template' => $this->data['customTemplate']]
+                [
+                    'template' => $this->data['customTemplate']
+                ]
             );
 
             return $this->fragmentHandler->render($controllerReference, 'inline', []);
@@ -307,7 +309,13 @@ class ContentTypeDetail {
                 return '';
             }
 
-            $controllerReference = new ControllerReference('«appName»:External:display', $this->getDisplayArguments(), ['template' => $this->customTemplate]);
+            $controllerReference = new ControllerReference(
+                '«appName»:External:display',
+                $this->getDisplayArguments(),
+                [
+                    'template' => $this->customTemplate
+                ]
+            );
 
             return $this->container->get('fragment.handler')->render($controllerReference, 'inline', []);
         }

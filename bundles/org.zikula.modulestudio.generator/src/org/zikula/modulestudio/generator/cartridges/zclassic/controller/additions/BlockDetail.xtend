@@ -154,12 +154,14 @@ class BlockDetail {
 
             $controllerReference = new ControllerReference(
                 «IF targets('3.0')»
-                    '«appNamespace»\Controller\ExternalController::displayAction',
+                    '«appNamespace»\Controller\ExternalController::display',
                 «ELSE»
                     '«appName»:External:display',
                 «ENDIF»
                 $this->getDisplayArguments($properties),
-                ['template' => $properties['customTemplate']]
+                [
+                    'template' => $properties['customTemplate']
+                ]
             );
 
             return $this->«IF targets('3.0')»fragmentHandler«ELSE»get('fragment.handler')«ENDIF»->render($controllerReference);
