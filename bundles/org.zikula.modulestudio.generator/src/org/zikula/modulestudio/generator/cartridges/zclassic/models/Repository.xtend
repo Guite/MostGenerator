@@ -630,7 +630,7 @@ class Repository {
             int $currentPage = 1,
             int $resultsPerPage = 25,
             bool $useJoins = true
-        ): array {«ELSE»(
+        ): \Traversable {«ELSE»(
             $fragment = '',
             array $exclude = [],
             $orderBy = '',
@@ -648,7 +648,9 @@ class Repository {
             }
 
             «IF application.targets('3.0')»
-                return $this->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
+                $paginator = $this->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
+
+                return $paginator->getResults();
             «ELSE»
                 $query = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 

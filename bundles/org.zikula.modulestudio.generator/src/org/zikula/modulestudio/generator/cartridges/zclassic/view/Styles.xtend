@@ -188,13 +188,23 @@ class Styles {
             }
 
             .ui-autocomplete .suggestion:before {
-                content: "\f0da";
-                font-family: 'FontAwesome';
-                font-style: normal;
-                color: #7db441;
-                margin-right: 15px;
-                position: absolute;
-                left: 20px;
+                «IF targets('3.0')»
+                    content: "\f105";
+                    font-family: 'Font Awesome 5 Free';
+                    font-weight: 900;
+                    color: #7db441;
+                    position: absolute;
+                    left: 10px;
+                    top: 2px;
+                «ELSE»
+                    content: "\f0da";
+                    font-family: 'FontAwesome';
+                    font-style: normal;
+                    color: #7db441;
+                    margin-right: 15px;
+                    position: absolute;
+                    left: 20px;
+                «ENDIF»
             }
 
             .ui-autocomplete .suggestion img {

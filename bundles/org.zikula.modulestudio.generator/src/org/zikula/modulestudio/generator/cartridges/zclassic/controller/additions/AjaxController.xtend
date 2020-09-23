@@ -219,7 +219,7 @@ class AjaxController {
 
         $entities = [];
         if ('' !== $searchTerm) {
-            list($entities, $totalAmount) = $repository->selectSearch($searchTerm, [], $sortParam, 1, 50, false);
+            «IF targets('3.0')»$entities«ELSE»list($entities, $totalAmount)«ENDIF» = $repository->selectSearch($searchTerm, [], $sortParam, 1, 50, false);
         } else {
             $entities = $repository->selectWhere($where, $sortParam);
         }
@@ -379,7 +379,7 @@ class AjaxController {
         $resultsPerPage = 20;
 
         // get objects from database
-        list($entities, $objectCount) = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage, false);
+        «IF targets('3.0')»$entities«ELSE»list($entities, $totalAmount)«ENDIF» = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage, false);
 
         $resultItems = [];
 
@@ -394,6 +394,9 @@ class AjaxController {
                     ? $item[$descriptionFieldName]
                     : '' //$this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No description yet.')
                 ;
+                if ($itemDescription === $itemTitle) {
+                    $itemDescription = '';
+                }
                 if (!empty($itemDescription)) {
                     $itemDescription = strip_tags($itemDescription);
                     $descriptionLength = 50;
