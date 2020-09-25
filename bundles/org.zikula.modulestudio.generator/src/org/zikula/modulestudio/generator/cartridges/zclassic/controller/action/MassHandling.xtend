@@ -21,7 +21,7 @@ class MassHandling {
     def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «handleSelectedObjectsDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries«IF !application.targets('3.0')»Action«ENDIF»(
+            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries«IF !application.targets('3.x-dev')»Action«ENDIF»(
                 «handleSelectedObjectsArguments(false)»
             )«IF application.targets('3.0')»: RedirectResponse«ENDIF» {
                 «IF application.targets('3.0')»

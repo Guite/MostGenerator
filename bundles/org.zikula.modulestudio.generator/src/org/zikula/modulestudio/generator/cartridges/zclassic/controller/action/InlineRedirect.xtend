@@ -21,7 +21,7 @@ class InlineRedirect {
                 «handleInlineRedirectBaseImpl»
             «ELSE»
                 «IF application.targets('3.0')»
-                    return parent::handleInlineRedirect(
+                    return parent::handleInlineRedirect«IF !application.targets('3.x-dev')»Action«ENDIF»(
                         $entityFactory,
                         $entityDisplayHelper,
                         $idPrefix,
@@ -58,7 +58,7 @@ class InlineRedirect {
     '''
 
     def private handleInlineRedirectSignature(Entity it) '''
-        public function handleInlineRedirect«IF !application.targets('3.0')»Action«ENDIF»(
+        public function handleInlineRedirect«IF !application.targets('3.x-dev')»Action«ENDIF»(
             «IF application.targets('3.0')»
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper,

@@ -164,7 +164,7 @@ class AjaxController {
 
     def private getItemListFinderSignature(Application it) {
         if (targets('3.0')) '''
-            public function getItemListFinder(
+            public function getItemListFinder«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 ControllerHelper $controllerHelper,
                 PermissionHelper $permissionHelper,
@@ -331,7 +331,7 @@ class AjaxController {
 
     def private getItemListAutoCompletionSignature(Application it) {
         if (targets('3.0')) '''
-            public function getItemListAutoCompletion(
+            public function getItemListAutoCompletion«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 CacheManager $imagineCacheManager,
                 ControllerHelper $controllerHelper,
@@ -472,7 +472,7 @@ class AjaxController {
 
     def private checkForDuplicateSignature(Application it) {
         if (targets('3.0')) '''
-            public function checkForDuplicate(
+            public function checkForDuplicate«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 ControllerHelper $controllerHelper,
                 EntityFactory $entityFactory
@@ -586,7 +586,7 @@ class AjaxController {
 
     def private toggleFlagSignature(Application it) {
         if (targets('3.0')) '''
-            public function toggleFlag(
+            public function toggleFlag«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 LoggerInterface $logger,
                 EntityFactory $entityFactory,
@@ -685,7 +685,7 @@ class AjaxController {
 
     def private handleTreeOperationSignature(Application it) {
         if (targets('3.0')) '''
-            public function handleTreeOperation(
+            public function handleTreeOperation«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 RouterInterface $router,
                 LoggerInterface $logger,
@@ -1062,7 +1062,7 @@ class AjaxController {
 
     def private updateSortPositionsSignature(Application it) {
         if (targets('3.0')) '''
-            public function updateSortPositions(
+            public function updateSortPositions«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 EntityFactory $entityFactory
             ): JsonResponse'''
@@ -1174,7 +1174,7 @@ class AjaxController {
 
     def private attachHookObjectSignature(Application it) {
         if (targets('3.0')) '''
-            public function attachHookObject(
+            public function attachHookObject«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 EntityFactory $entityFactory
             ): JsonResponse'''
@@ -1186,7 +1186,7 @@ class AjaxController {
 
     def private detachHookObjectSignature(Application it) {
         if (targets('3.0')) '''
-            public function detachHookObject(
+            public function detachHookObject«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 EntityFactory $entityFactory
             ): JsonResponse'''
@@ -1307,7 +1307,7 @@ class AjaxController {
         «getItemListFinderDocBlock(false)»
         «getItemListFinderSignature» {
             «IF targets('3.0')»
-                return parent::getItemListFinder(
+                return parent::getItemListFinder«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $controllerHelper,
                     $permissionHelper,
@@ -1324,7 +1324,7 @@ class AjaxController {
         «getItemListAutoCompletionDocBlock(false)»
         «getItemListAutoCompletionSignature» {
             «IF targets('3.0')»
-                return parent::getItemListAutoCompletion(
+                return parent::getItemListAutoCompletion«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $imagineCacheManager,
                     $controllerHelper,
@@ -1342,7 +1342,7 @@ class AjaxController {
         «checkForDuplicateDocBlock(false)»
         «checkForDuplicateSignature» {
             «IF targets('3.0')»
-                return parent::checkForDuplicate(
+                return parent::checkForDuplicate«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $controllerHelper,
                     $entityFactory
@@ -1357,7 +1357,7 @@ class AjaxController {
         «toggleFlagDocBlock(false)»
         «toggleFlagSignature» {
             «IF targets('3.0')»
-                return parent::toggleFlag(
+                return parent::toggleFlag«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $logger,
                     $entityFactory,
@@ -1373,7 +1373,7 @@ class AjaxController {
         «handleTreeOperationDocBlock(false)»
         «handleTreeOperationSignature» {
             «IF targets('3.0')»
-                return parent::handleTreeOperation(
+                return parent::handleTreeOperation«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $router,
                     $logger,
@@ -1393,7 +1393,7 @@ class AjaxController {
         «updateSortPositionsDocBlock(false)»
         «updateSortPositionsSignature» {
             «IF targets('3.0')»
-                return parent::updateSortPositions(
+                return parent::updateSortPositions«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $entityFactory
                 );
@@ -1407,7 +1407,7 @@ class AjaxController {
         «attachHookObjectDocBlock(false)»
         «attachHookObjectSignature» {
             «IF targets('3.0')»
-                return parent::attachHookObject(
+                return parent::attachHookObject«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $entityFactory
                 );
@@ -1421,7 +1421,7 @@ class AjaxController {
         «detachHookObjectDocBlock(false)»
         «detachHookObjectSignature» {
             «IF targets('3.0')»
-                return parent::detachHookObject(
+                return parent::detachHookObject«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $entityFactory
                 );

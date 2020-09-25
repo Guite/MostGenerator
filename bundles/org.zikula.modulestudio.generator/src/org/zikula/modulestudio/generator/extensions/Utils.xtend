@@ -125,11 +125,11 @@ class Utils {
      * @return Boolean The result
      */
     def Boolean targets(Application it, String version) {
-        val useStable15 = !#['1.5-dev', '2.0', '2.0-dev', '3.0', '3.0-dev'].contains(version)
+        val useStable15 = !#['1.5-dev', '2.0', '2.0-dev', '3.0', '3.x-dev'].contains(version)
 
         switch targetCoreVersion {
             case ZK3DEV:
-                #['3.0-dev', '3.0', '2.0-dev', '2.0', '1.5-dev'].contains(version)
+                #['3.x-dev', '3.0', '2.0-dev', '2.0', '1.5-dev'].contains(version)
             case ZK30:
                 #['3.0', '2.0-dev', '2.0', '1.5-dev'].contains(version)
             case ZK2DEV:

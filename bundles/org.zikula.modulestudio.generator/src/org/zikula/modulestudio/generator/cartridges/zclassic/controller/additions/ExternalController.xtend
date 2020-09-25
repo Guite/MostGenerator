@@ -110,7 +110,7 @@ class ExternalController {
 
     def private displaySignature(Application it) {
         if (targets('3.0')) '''
-            public function display(
+            public function display«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 ControllerHelper $controllerHelper,
                 PermissionHelper $permissionHelper,
@@ -228,7 +228,7 @@ class ExternalController {
 
     def private finderSignature(Application it) {
         if (targets('3.0')) '''
-            public function finder(
+            public function finder«IF !targets('3.x-dev')»Action«ENDIF»(
                 Request $request,
                 RouterInterface $router,
                 ControllerHelper $controllerHelper,
@@ -450,7 +450,7 @@ class ExternalController {
         «displayDocBlock(false)»
         «displaySignature» {
             «IF targets('3.0')»
-                return parent::display(
+                return parent::display«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $controllerHelper,
                     $permissionHelper,
@@ -477,7 +477,7 @@ class ExternalController {
         «finderDocBlock(false)»
         «finderSignature» {
             «IF targets('3.0')»
-                return parent::finder(
+                return parent::finder«IF !targets('3.x-dev')»Action«ENDIF»(
                     $request,
                     $router,
                     $controllerHelper,

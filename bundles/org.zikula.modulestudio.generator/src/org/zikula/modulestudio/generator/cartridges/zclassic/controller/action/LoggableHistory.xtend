@@ -24,7 +24,7 @@ class LoggableHistory {
     def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «loggableHistoryDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistory«IF !application.targets('3.0')»Action«ENDIF»(
+            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistory«IF !application.targets('3.x-dev')»Action«ENDIF»(
                 «loggableHistoryArguments(false)»
             )«IF application.targets('3.0')»: Response«ENDIF» {
                 «IF application.targets('3.0')»

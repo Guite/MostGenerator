@@ -135,7 +135,7 @@ class ContentTypeDetail {
 
             $controllerReference = new ControllerReference(
                 «IF targets('3.0')»
-                    '«appNamespace»\Controller\ExternalController::display',
+                    '«appNamespace»\Controller\ExternalController::display«IF !targets('3.x-dev')»Action«ENDIF»',
                 «ELSE»
                     '«appName»:External:display',
                 «ENDIF»

@@ -25,7 +25,7 @@ class LoggableUndelete {
     def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «undeleteDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndelete«IF !application.targets('3.0')»Action«ENDIF»(
+            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndelete«IF !application.targets('3.x-dev')»Action«ENDIF»(
                 «undeleteArguments(false)»
             )«IF application.targets('3.0')»: Response«ENDIF» {
                 «IF application.targets('3.0')»
