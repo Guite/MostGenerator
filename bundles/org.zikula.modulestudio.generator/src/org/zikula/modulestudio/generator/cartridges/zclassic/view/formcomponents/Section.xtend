@@ -60,17 +60,17 @@ class Section {
         «new Relations(fsa, app, isAdmin).generateIncludeStatement(it)»
         «IF attributable»
             {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                {{ include('@«app.appName»/Helper/includeAttributesEdit.html.twig', {obj: «name.formatForDB»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
+                {{ include('@«app.appName»/Helper/includeAttributesEdit.html.twig', {obj: «name.formatForCode»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
         «IF categorisable»
             {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                {{ include('@«app.appName»/Helper/includeCategoriesEdit.html.twig', {obj: «name.formatForDB»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
+                {{ include('@«app.appName»/Helper/includeCategoriesEdit.html.twig', {obj: «name.formatForCode»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
         «IF standardFields»
             {% if mode != 'create' %}
-                {{ include('@«app.appName»/Helper/includeStandardFieldsEdit.html.twig', {obj: «name.formatForDB»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
+                {{ include('@«app.appName»/Helper/includeStandardFieldsEdit.html.twig', {obj: «name.formatForCode»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
     '''
