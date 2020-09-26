@@ -283,9 +283,9 @@ class Forms {
 
     def private jsDefinitions(Entity it) '''
         «IF geographical»
-            «includeLeaflet('edit', name.formatForDB)»
+            «includeLeaflet('edit', name.formatForCode)»
         «ENDIF»
-        <div id="formEditingDefinition" data-mode="{{ mode|e('html_attr') }}" data-entityid="{% if mode != 'create' %}{{ «name.formatForDB».«primaryKey.name.formatForCode»|e('html_attr') }}{% endif %}"></div>
+        <div id="formEditingDefinition" data-mode="{{ mode|e('html_attr') }}" data-entityid="{% if mode != 'create' %}{{ «name.formatForCode».«primaryKey.name.formatForCode»|e('html_attr') }}{% endif %}"></div>
         «FOR field : getDerivedFields»«field.jsDefinition»«ENDFOR»
         «IF standardFields»
             {% if form.moderationSpecificCreator is defined %}
@@ -309,11 +309,11 @@ class Forms {
             </div>
         </div>
         «IF app.targets('3.0') && !getOutgoingJoinRelationsWithoutDeleteCascade.empty»
-            {% if mode != 'create' and not workflow_can(«name.formatForDB», 'delete') %}
+            {% if mode != 'create' and not workflow_can(«name.formatForCode», 'delete') %}
                 <div class="alert alert-info">
                     <h4>«IF app.targets('3.0')»{% trans %}Deletion of this «name.formatForDisplay» is not possible{% endtrans %}«ELSE»{{ __('Deletion of this «name.formatForDisplay» is not possible') }}«ENDIF»</h4>
                     <ul>
-                        {% for blocker in workflow_transition_blockers(«name.formatForDB», 'delete') %}
+                        {% for blocker in workflow_transition_blockers(«name.formatForCode», 'delete') %}
                             <li>{{ blocker.message }}</li>
                         {% endfor %}
                     </ul>
