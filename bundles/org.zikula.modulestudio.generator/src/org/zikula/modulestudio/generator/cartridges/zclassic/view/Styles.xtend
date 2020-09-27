@@ -172,7 +172,11 @@ class Styles {
             }
 
             .ui-autocomplete-loading {
-                background: white url("../../../../../../«IF targets('3.0')»public«ELSE»web«ENDIF»/«IF targets('2.0')»modules/zikulausers«ELSE»bundles/core«ENDIF»/images/ajax/indicator_arrows.gif") right center no-repeat;
+                «IF targets('3.0')»
+                    background: white url("../../zikulausers/images/indicator_arrows.gif") right center no-repeat;
+                «ELSE»
+                    background: white url("../../../../../../web/«IF targets('2.0')»modules/zikulausers«ELSE»bundles/core«ENDIF»/images/ajax/indicator_arrows.gif") right center no-repeat;
+                «ENDIF»
             }
 
             .ui-autocomplete .suggestion {

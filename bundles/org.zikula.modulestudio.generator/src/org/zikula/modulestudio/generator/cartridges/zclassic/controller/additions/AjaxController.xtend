@@ -418,8 +418,14 @@ class AjaxController {
 
                     // check for preview image
                     if (!empty($previewFieldName) && !empty($item[$previewFieldName])) {
-                        $thumbImagePath = $imagineCacheManager->getBrowserPath($item[$previewFieldName]->getPathname(), 'zkroot', $thumbRuntimeOptions);
-                        $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" />';
+                        «IF targets('3.0')»
+                            $imagePath = $item[$previewFieldName]->getPathname();
+                            $imagePath = str_replace($item->get_uploadBasePathAbsolute(), $item->get_uploadBasePathRelative(), $imagePath);
+                            $thumbImagePath = $imagineCacheManager->getBrowserPath($imagePath, 'zkroot', $thumbRuntimeOptions);
+                        «ELSE»
+                            $thumbImagePath = $imagineCacheManager->getBrowserPath($item[$previewFieldName]->getPathname(), 'zkroot', $thumbRuntimeOptions);
+                        «ENDIF»
+                        $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '"«IF targets('3.0')» class="mr-1"«ENDIF» />';
                     }
                 «ENDIF»
 
