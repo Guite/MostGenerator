@@ -136,7 +136,7 @@ class Relations {
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean useTarget, String relationAliasName, String uniqueNameForJs) '''
         {{ include(
             '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«IF isSeparateAdminTemplate»Admin/«ENDIF»«templateName».html.twig',
-            {group: '«linkingEntity.name.formatForDB»', heading: «IF application.targets('3.0')»'«getRelationAliasName(useTarget).formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«getRelationAliasName(useTarget).formatForDisplayCapital»')«ENDIF», alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(!useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
+            {group: '«linkingEntity.name.formatForDB»', heading: «IF application.targets('3.0')»'«getRelationAliasName(useTarget).formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«getRelationAliasName(useTarget).formatForDisplayCapital»')«ENDIF», alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForCode»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(!useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
         ) }}
     '''
 
