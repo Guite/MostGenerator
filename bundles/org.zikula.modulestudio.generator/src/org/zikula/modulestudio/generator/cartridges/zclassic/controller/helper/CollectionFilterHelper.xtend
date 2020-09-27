@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
+import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
@@ -632,7 +633,7 @@ class CollectionFilterHelper {
                                 $filters[] = 'tbl.«field.name.formatForCode»«IF field instanceof UploadField»FileName«ENDIF» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
                                 $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
                             }
-                        «ELSE»
+                        «ELSEIF !(field instanceof DatetimeField)»
                             $filters[] = 'tbl.«field.name.formatForCode»«IF field instanceof UploadField»FileName«ENDIF» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
                             $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
                         «ENDIF»
