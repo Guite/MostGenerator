@@ -304,7 +304,7 @@ class ExternalView {
                                     «IF hasImageFieldsEntity»
                                         {% if onlyImages %}
                                             {% set thumbOptions = attribute(thumbRuntimeOptions, '«name.formatForCode»' ~ imageField[:1]|upper ~ imageField[1:]) %}
-                                            <img src="{{ attribute(«name.formatForCode», imageField).getPathname()«IF app.targets('3.0')»|«app.appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-rounded" />
+                                            <img src="{{ attribute(«name.formatForCode», imageField).getPathname()«IF app.targets('3.0')»|«app.appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="«IF !app.targets('3.0')»img-«ENDIF»rounded" />
                                         {% else %}
                                             {{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}
                                         {% endif %}

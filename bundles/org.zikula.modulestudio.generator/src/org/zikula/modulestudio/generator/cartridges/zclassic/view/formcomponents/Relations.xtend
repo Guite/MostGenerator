@@ -213,7 +213,7 @@ class Relations {
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {% if item.«imageFieldName» is not empty and item.«imageFieldName»Meta.isImage %}
-                    <img src="{{ item.«imageFieldName».getPathname()«IF app.targets('3.0')»|«app.appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
+                    <img src="{{ item.«imageFieldName».getPathname()«IF app.targets('3.0')»|«app.appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="«IF !app.targets('3.0')»img-«ENDIF»rounded" />
                 {% endif %}
             «ENDIF»
         </li>
