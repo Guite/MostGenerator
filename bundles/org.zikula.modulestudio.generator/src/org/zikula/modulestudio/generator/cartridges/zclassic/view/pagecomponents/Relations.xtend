@@ -103,7 +103,7 @@ class Relations {
             «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
             {% if item.«imageFieldName» is not empty and item.«imageFieldName»Meta.isImage %}
                 <p«IF many» class="list-group-item-text"«ENDIF»>
-                    <img src="{{ item.«imageFieldName».getPathname()|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
+                    <img src="{{ item.«imageFieldName».getPathname()«IF app.targets('3.0')»|«app.appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
                 </p>
             {% endif %}
         «ENDIF»
