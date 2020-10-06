@@ -29,7 +29,7 @@ class TechHelper {
             <title>«name.formatForDisplayCapital» &ndash; «title»</title>
             «IF targets('3.0')»
                 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.0/css/all.css">
+                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
             «ELSE»
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap-theme.min.css">
