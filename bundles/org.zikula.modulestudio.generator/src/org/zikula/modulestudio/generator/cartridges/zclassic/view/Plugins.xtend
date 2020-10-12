@@ -38,6 +38,7 @@ class Plugins {
         'Generating Twig extension class'.printIfNotTesting(fsa)
         val twigFolder = 'Twig'
         fsa.generateClassPair(twigFolder + '/TwigExtension.php', twigExtensionBaseImpl, twigExtensionImpl)
+        fsa.generateClassPair(twigFolder + '/TwigRuntime.php', twigRuntimeBaseImpl, twigRuntimeImpl)
     }
 
     def generateInternal(Application it) {
@@ -60,6 +61,30 @@ class Plugins {
     }
 
     def private twigExtensionBaseImpl(Application it) '''
+        namespace «appNamespace»\Twig\Base;
+
+        «IF targets('3.0')»
+            use Twig\Extension\AbstractExtension;
+            use Twig\TwigFilter;
+            use Twig\TwigFunction;
+            «IF hasLoggable»
+                use Twig\TwigTest;
+            «ENDIF»
+        «ELSE»
+            use Twig_Extension;
+        «ENDIF»
+        use «appNamespace»\Twig\TwigRuntime;
+
+        /**
+         * Twig extension base class.
+         */
+        abstract class AbstractTwigExtension extends «IF targets('3.0')»Abstract«ELSE»Twig_«ENDIF»Extension
+        {
+            «twigExtensionBody»
+        }
+    '''
+
+    def private twigRuntimeBaseImpl(Application it) '''
         namespace «appNamespace»\Twig\Base;
 
         «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
@@ -90,15 +115,8 @@ class Plugins {
         «ENDIF»
         «IF targets('3.0')»
             use Symfony\Contracts\Translation\TranslatorInterface;
-            use Twig\Extension\AbstractExtension;
-            use Twig\TwigFilter;
-            use Twig\TwigFunction;
-            «IF hasLoggable»
-                use Twig\TwigTest;
-            «ENDIF»
-        «ELSE»
-            use Twig_Extension;
         «ENDIF»
+        use Twig\Extension\RuntimeExtensionInterface;
         «IF targets('3.0')»
             use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             «IF hasUploads»
@@ -127,16 +145,100 @@ class Plugins {
         «ENDIF»
 
         /**
-         * Twig extension base class.
+         * Twig runtime base class.
          */
-        abstract class AbstractTwigExtension extends «IF targets('3.0')»Abstract«ELSE»Twig_«ENDIF»Extension
+        abstract class AbstractTwigRuntime implements RuntimeExtensionInterface
         {
-            «twigExtensionBody»
+            «twigRuntimeBody»
         }
     '''
 
     def private twigExtensionBody(Application it) '''
         «val appNameLower = appName.toLowerCase»
+        «IF !targets('3.0')»
+            /**
+             * Returns a list of custom Twig functions.
+             *
+             * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function[] List of functions
+             */
+        «ENDIF»
+        public function getFunctions()
+        {
+            return [
+                «IF hasTrees»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_treeData', [TwigRuntime::class, 'getTreeData'], ['is_safe' => ['html']]),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_treeSelection', [TwigRuntime::class, 'getTreeSelection']),
+                «ENDIF»
+                «IF generateModerationPanel && needsApproval»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_moderationObjects', [TwigRuntime::class, 'getModerationObjects']),
+                «ENDIF»
+                «IF !getEntitiesWithCounterFields.empty»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_increaseCounter', [TwigRuntime::class, 'increaseCounter']),
+                «ENDIF»
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_objectTypeSelector', [TwigRuntime::class, 'getObjectTypeSelector']),
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_templateSelector', [TwigRuntime::class, 'getTemplateSelector']),
+            ];
+        }
+
+        «IF !targets('3.0')»
+            /**
+             * Returns a list of custom Twig filters.
+             *
+             * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter[] List of filters
+             */
+        «ENDIF»
+        public function getFilters()
+        {
+            return [
+                «IF hasCountryFields && !targets('3.0')»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_countryName', [TwigRuntime::class, 'getCountryName']),
+                «ENDIF»
+                «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_dateInterval', [TwigRuntime::class, 'getFormattedDateInterval']),
+                «ENDIF»
+                «IF hasUploads»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_fileSize', [TwigRuntime::class, 'getFileSize'], ['is_safe' => ['html']]),
+                    «IF targets('3.0')»
+                        new TwigFilter('«appNameLower»_relativePath', [TwigRuntime::class, 'getRelativePath']),
+                    «ENDIF»
+                «ENDIF»
+                «IF hasListFields»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_listEntry', [TwigRuntime::class, 'getListEntry']),
+                «ENDIF»
+                «IF hasGeographical»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_geoData', [TwigRuntime::class, 'formatGeoData']),
+                «ENDIF»
+                «IF hasEntitiesWithIcsTemplates»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_icalText', [TwigRuntime::class, 'formatIcalText']),
+                «ENDIF»
+                «IF hasLoggable»
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_logDescription', [TwigRuntime::class, 'getLogDescription']),
+                «ENDIF»
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_formattedTitle', [TwigRuntime::class, 'getFormattedEntityTitle']),
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_objectState', [TwigRuntime::class, 'getObjectState'], ['is_safe' => ['html']]),
+            ];
+        }
+        «IF hasLoggable»
+
+            «IF !targets('3.0')»
+                /**
+                 * Returns a list of custom Twig tests.
+                 *
+                 * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test[] List of tests
+                 */
+            «ENDIF»
+            public function getTests()
+            {
+                return [
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test('«appNameLower»_instanceOf', static function ($var, $instance) {
+                        return $var instanceof $instance;
+                    }),
+                ];
+            }
+        «ENDIF»
+    '''
+
+    def private twigRuntimeBody(Application it) '''
         use TranslatorTrait;
 
         «IF targets('3.0') && hasUploads»
@@ -260,88 +362,6 @@ class Plugins {
         «IF !targets('3.0')»
 
             «setTranslatorMethod»
-        «ENDIF»
-
-        «IF !targets('3.0')»
-            /**
-             * Returns a list of custom Twig functions.
-             *
-             * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function[] List of functions
-             */
-        «ENDIF»
-        public function getFunctions()
-        {
-            return [
-                «IF hasTrees»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_treeData', [$this, 'getTreeData'], ['is_safe' => ['html']]),
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_treeSelection', [$this, 'getTreeSelection']),
-                «ENDIF»
-                «IF generateModerationPanel && needsApproval»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_moderationObjects', [$this, 'getModerationObjects']),
-                «ENDIF»
-                «IF !getEntitiesWithCounterFields.empty»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_increaseCounter', [$this, 'increaseCounter']),
-                «ENDIF»
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_templateSelector', [$this, 'getTemplateSelector']),
-            ];
-        }
-
-        «IF !targets('3.0')»
-            /**
-             * Returns a list of custom Twig filters.
-             *
-             * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter[] List of filters
-             */
-        «ENDIF»
-        public function getFilters()
-        {
-            return [
-                «IF hasCountryFields && !targets('3.0')»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_countryName', [$this, 'getCountryName']),
-                «ENDIF»
-                «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_dateInterval', [$this, 'getFormattedDateInterval']),
-                «ENDIF»
-                «IF hasUploads»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_fileSize', [$this, 'getFileSize'], ['is_safe' => ['html']]),
-                    «IF targets('3.0')»
-                        new TwigFilter('«appNameLower»_relativePath', [$this, 'getRelativePath']),
-                    «ENDIF»
-                «ENDIF»
-                «IF hasListFields»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_listEntry', [$this, 'getListEntry']),
-                «ENDIF»
-                «IF hasGeographical»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_geoData', [$this, 'formatGeoData']),
-                «ENDIF»
-                «IF hasEntitiesWithIcsTemplates»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_icalText', [$this, 'formatIcalText']),
-                «ENDIF»
-                «IF hasLoggable»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_logDescription', [$this, 'getLogDescription']),
-                «ENDIF»
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_formattedTitle', [$this, 'getFormattedEntityTitle']),
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_objectState', [$this, 'getObjectState'], ['is_safe' => ['html']]),
-            ];
-        }
-        «IF hasLoggable»
-
-            «IF !targets('3.0')»
-                /**
-                 * Returns a list of custom Twig tests.
-                 *
-                 * @return «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test[] List of tests
-                 */
-            «ENDIF»
-            public function getTests()
-            {
-                return [
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Test('«appNameLower»_instanceOf', static function ($var, $instance) {
-                        return $var instanceof $instance;
-                    }),
-                ];
-            }
         «ENDIF»
 
         «generateInternal»
@@ -483,6 +503,20 @@ class Plugins {
         class TwigExtension extends AbstractTwigExtension
         {
             // feel free to add your own Twig extension methods here
+        }
+    '''
+
+    def private twigRuntimeImpl(Application it) '''
+        namespace «appNamespace»\Twig;
+
+        use «appNamespace»\Twig\Base\AbstractTwigRuntime;
+
+        /**
+         * Twig runtime implementation class.
+         */
+        class TwigRuntime extends AbstractTwigRuntime
+        {
+            // feel free to add your own Twig runtime methods here
         }
     '''
 
