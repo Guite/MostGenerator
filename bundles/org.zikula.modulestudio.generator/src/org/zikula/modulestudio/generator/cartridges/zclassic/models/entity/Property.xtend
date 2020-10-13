@@ -29,6 +29,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.ArrayType
 
 class Property {
 
@@ -138,7 +139,7 @@ class Property {
             UrlField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ArrayField:
-                '''type="«arrayType.literal.toLowerCase»"«/*», length=«it.length*/»'''
+                '''type="«IF entity.application.targets('3.0') && ArrayType.JSON_ARRAY == arrayType»json«ELSE»«arrayType.literal.toLowerCase»«ENDIF»"«/*», length=«it.length*/»'''
             UploadField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ListField:
