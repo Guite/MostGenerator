@@ -1183,6 +1183,16 @@ class ServiceDefinitions {
         «val nsBase = appNamespace + '\\Twig\\'»
         «modPrefix».twig_extension:
             class: «nsBase»TwigExtension
+            public: false
+            «IF targets('2.0')»
+                tags: ['twig.extension']
+            «ELSE»
+                tags:
+                    - { name: twig.extension }
+            «ENDIF»
+
+        «modPrefix».twig_runtime:
+            class: «nsBase»TwigRuntime
             arguments:
                 - "@translator.default"
                 «IF !getEntitiesWithCounterFields.empty»
@@ -1211,10 +1221,10 @@ class ServiceDefinitions {
                 «ENDIF»
             public: false
             «IF targets('2.0')»
-                tags: ['twig.extension']
+                tags: ['twig.runtime']
             «ELSE»
                 tags:
-                    - { name: twig.extension }
+                    - { name: twig.runtime }
             «ENDIF»
     '''
 

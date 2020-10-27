@@ -80,6 +80,19 @@ class Plugins {
          */
         abstract class AbstractTwigExtension extends «IF targets('3.0')»Abstract«ELSE»Twig_«ENDIF»Extension
         {
+            «IF !targets('3.0')»
+                /**
+                 * @var TwigRuntime
+                 */
+                protected $twigRuntime;
+
+                public function __construct(
+                    TwigRuntime $twigRuntime
+                ) {
+                    $this->twigRuntime = $twigRuntime;
+                }
+
+            «ENDIF»
             «twigExtensionBody»
         }
     '''
@@ -166,17 +179,17 @@ class Plugins {
         {
             return [
                 «IF hasTrees»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_treeData', [TwigRuntime::class, 'getTreeData'], ['is_safe' => ['html']]),
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_treeSelection', [TwigRuntime::class, 'getTreeSelection']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_treeData', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getTreeData'], ['is_safe' => ['html']]),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_treeSelection', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getTreeSelection']),
                 «ENDIF»
                 «IF generateModerationPanel && needsApproval»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_moderationObjects', [TwigRuntime::class, 'getModerationObjects']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_moderationObjects', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getModerationObjects']),
                 «ENDIF»
                 «IF !getEntitiesWithCounterFields.empty»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_increaseCounter', [TwigRuntime::class, 'increaseCounter']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_increaseCounter', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'increaseCounter']),
                 «ENDIF»
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_objectTypeSelector', [TwigRuntime::class, 'getObjectTypeSelector']),
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_templateSelector', [TwigRuntime::class, 'getTemplateSelector']),
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_objectTypeSelector', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getObjectTypeSelector']),
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Function('«appNameLower»_templateSelector', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getTemplateSelector']),
             ];
         }
 
@@ -191,31 +204,31 @@ class Plugins {
         {
             return [
                 «IF hasCountryFields && !targets('3.0')»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_countryName', [TwigRuntime::class, 'getCountryName']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_countryName', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getCountryName']),
                 «ENDIF»
                 «IF targets('2.0') && !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_dateInterval', [TwigRuntime::class, 'getFormattedDateInterval']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_dateInterval', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getFormattedDateInterval']),
                 «ENDIF»
                 «IF hasUploads»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_fileSize', [TwigRuntime::class, 'getFileSize'], ['is_safe' => ['html']]),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_fileSize', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getFileSize'], ['is_safe' => ['html']]),
                     «IF targets('3.0')»
-                        new TwigFilter('«appNameLower»_relativePath', [TwigRuntime::class, 'getRelativePath']),
+                        new TwigFilter('«appNameLower»_relativePath', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getRelativePath']),
                     «ENDIF»
                 «ENDIF»
                 «IF hasListFields»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_listEntry', [TwigRuntime::class, 'getListEntry']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_listEntry', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getListEntry']),
                 «ENDIF»
                 «IF hasGeographical»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_geoData', [TwigRuntime::class, 'formatGeoData']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_geoData', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'formatGeoData']),
                 «ENDIF»
                 «IF hasEntitiesWithIcsTemplates»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_icalText', [TwigRuntime::class, 'formatIcalText']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_icalText', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'formatIcalText']),
                 «ENDIF»
                 «IF hasLoggable»
-                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_logDescription', [TwigRuntime::class, 'getLogDescription']),
+                    new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_logDescription', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getLogDescription']),
                 «ENDIF»
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_formattedTitle', [TwigRuntime::class, 'getFormattedEntityTitle']),
-                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_objectState', [TwigRuntime::class, 'getObjectState'], ['is_safe' => ['html']]),
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_formattedTitle', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getFormattedEntityTitle']),
+                new «IF targets('3.0')»Twig«ELSE»\Twig_Simple«ENDIF»Filter('«appNameLower»_objectState', [«IF targets('3.0')»TwigRuntime::class«ELSE»$this->twigRuntime«ENDIF», 'getObjectState'], ['is_safe' => ['html']]),
             ];
         }
         «IF hasLoggable»
