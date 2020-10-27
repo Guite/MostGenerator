@@ -1471,13 +1471,9 @@ class FormHandler {
                 return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
             }
             «locking.setVersion(it)»
-            «IF !app.targets('3.0')»
 
-                $entityData = $this->entityRef->toArray();
-            «ENDIF»
-
-            // assign data to template«IF !app.targets('3.0')» as array (for additions like standard fields)«ENDIF»
-            $this->templateParameters[$this->objectType] = «IF app.targets('3.0')»$this->entityRef«ELSE»$entityData«ENDIF»;
+            // assign data to template
+            $this->templateParameters[$this->objectType] = $this->entityRef;
             «IF skipHookSubscribers»
                 $this->templateParameters['supportsHookSubscribers'] = false;
             «ELSE»
