@@ -1183,6 +1183,8 @@ class ServiceDefinitions {
         «val nsBase = appNamespace + '\\Twig\\'»
         «modPrefix».twig_extension:
             class: «nsBase»TwigExtension
+            arguments:
+                - «modPrefix».twig_runtime
             public: false
             «IF targets('2.0')»
                 tags: ['twig.extension']
