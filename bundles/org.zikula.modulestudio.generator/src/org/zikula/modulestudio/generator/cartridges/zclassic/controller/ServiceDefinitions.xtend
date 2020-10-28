@@ -1184,7 +1184,7 @@ class ServiceDefinitions {
         «modPrefix».twig_extension:
             class: «nsBase»TwigExtension
             arguments:
-                - «modPrefix».twig_runtime
+                - "@«modPrefix».twig_runtime"
             public: false
             «IF targets('2.0')»
                 tags: ['twig.extension']
