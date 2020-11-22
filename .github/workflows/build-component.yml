@@ -55,20 +55,14 @@ jobs:
 
     # see https://github.com/SamKirkland/FTP-Deploy-Action
     - name: Deploy repository
-      #uses: SamKirkland/FTP-Deploy-Action@master
-      #with:
-        #ftp-server: ftp://${{ secrets.FTP_SERVER }}/components/generator/
-        #ftp-username: ${{ secrets.FTP_USERNAME }}
-        #ftp-password: ${{ secrets.FTP_PASSWORD }}
-        #local-dir: deploy/repo
-      uses: SamKirkland/FTP-Deploy-Action@2.0.0
-      env:
-        FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        LOCAL_DIR: deploy/repo
-        REMOTE_DIR: components/generator
-        ARGS: --delete --continue
+      uses: SamKirkland/FTP-Deploy-Action@master
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: deploy/repo/
+        server-dir: components/generator/
+        dangerous-clean-slate: true
 
     # see https://github.com/peter-evans/repository-dispatch
     - name: Dispatch downstream job
