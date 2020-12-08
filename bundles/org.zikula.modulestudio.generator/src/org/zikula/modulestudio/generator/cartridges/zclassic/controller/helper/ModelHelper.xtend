@@ -107,7 +107,7 @@ class ModelHelper {
             «ELSE»«/* corresponding source objects exist already in the system */»
                 $result = true;
                 «FOR entity : getUniqueListOfSourceEntityTypes(incomingAndMandatoryRelations)»
-                    $result &= $this->hasExistingInstances('«entity.name.formatForCode»');
+                    $result = $result && $this->hasExistingInstances('«entity.name.formatForCode»');
                 «ENDFOR»
             «ENDIF»
         «ENDIF»
