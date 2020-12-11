@@ -957,7 +957,9 @@ class FormHandler {
                 «ENDIF»
             «ENDIF»
 
-            $this->fetchInputData();
+            if (false === $this->fetchInputData()) {
+                return false;
+            }
             «IF !getTranslatableEntities.filter[loggable].empty»
 
                 if ($isRegularAction && true === $this->hasTranslatableFields) {
