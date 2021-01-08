@@ -44,8 +44,8 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
              * @Gedmo\Translatable
          «ENDIF»
          * @Gedmo\Slug(«slugDetails»«slugHandler»)
-         * @ORM\Column(type="string", length=«slugLength», unique=«slugUnique.displayBool»)
-         * @Assert\Length(min="1", max="«slugLength»")
+         * @ORM\Column(type="string", length=«IF slugLength <= 190»«slugLength»«ELSE»190«ENDIF», unique=«slugUnique.displayBool»)
+         * @Assert\Length(min="1", max="«IF slugLength <= 190»«slugLength»«ELSE»190«ENDIF»")
          *
          * @var string
          */

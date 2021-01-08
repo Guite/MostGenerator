@@ -6,7 +6,7 @@ module org.zikula.modulestudio.generator.workflow.msManualTesting
  */
 
 // The model to be processed (file name without extension)
-var modelName = 'AutoMusic'
+var modelName = 'Maintenance'
 
 // The path where to find the model, without trailing slash
 //var modelPath = '/home/axel/projects/GitClones/Applications/models/zikula'
