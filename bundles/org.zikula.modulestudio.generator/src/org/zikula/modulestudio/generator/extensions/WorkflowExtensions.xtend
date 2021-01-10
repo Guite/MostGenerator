@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
 import java.util.ArrayList
+import de.guite.modulestudio.metamodel.MappedSuperClass
 
 /**
  * This class contains extension methods for workflow-related queries.
@@ -112,7 +113,7 @@ class WorkflowExtensions {
      * Returns the list field storing the possible workflow states for the given entity. 
      */
     def ListField getWorkflowStateField(DataObject it) {
-        if (isInheriting) {
+        if (isInheriting && !(parentType instanceof MappedSuperClass)) {
             parentType.getWorkflowStateField
         } else {
             fields.filter(ListField).filter[name == 'workflowState'].head
