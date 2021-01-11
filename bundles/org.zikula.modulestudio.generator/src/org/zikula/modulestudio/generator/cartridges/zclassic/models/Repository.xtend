@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
@@ -71,7 +72,7 @@ class Repository {
         sortRelationsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]
 
         var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
-        val content = if (!isInheriting) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
+        val content = if (!isInheriting || parentType instanceof MappedSuperClass) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
         fsa.generateFile(repositoryPath + fileName, content)
 
         if (!app.generateOnlyBaseClasses) {
