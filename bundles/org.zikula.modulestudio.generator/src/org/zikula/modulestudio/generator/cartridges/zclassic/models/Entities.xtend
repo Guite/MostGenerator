@@ -120,6 +120,11 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF isBase»
+            «IF application.targets('3.0')»
+                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+            «ELSE»
+                use Zikula\Core\Doctrine\EntityAccess;
+            «ENDIF»
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
@@ -349,12 +354,11 @@ class Entities {
     '''
 
     def dispatch private classAnnotation(MappedSuperClass it) '''
-        «' '»* @ORM\MappedSuperclass
-        «IF isTopSuperClass»
+        «' '»* @ORM\MappedSuperclass«/*IF isTopSuperClass»
         «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
-        «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
+        «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"* /»)
         «' '»* @ORM\DiscriminatorMap({«FOR relation : getChildRelations SEPARATOR ', '»«relation.discriminatorInfo»«ENDFOR»})
-        «ENDIF»
+        «ENDIF*/»
     '''
 
     def dispatch private classAnnotation(Entity it) '''
