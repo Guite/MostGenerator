@@ -444,12 +444,12 @@ class ControllerHelper {
                     }
                 }
                 if (1 !== $templateParameters['all']) {
-                	// reset page number to 1 to avoid empty page if filters have been set
-                	$routeParams = $request->attributes->get('_route_params');
-                	$routeParams['pos'] = 1;
-                	$request->attributes->Set('_route_params', $routeParams);
-                	$request->query->set('pos', 1);
-            	}
+                    // reset page number to 1 to avoid empty page if filters have been set
+                    $routeParams = $request->attributes->get('_route_params');
+                    $routeParams['pos'] = 1;
+                    $request->attributes->Set('_route_params', $routeParams);
+                    $request->query->set('pos', 1);
+                }
             }
             $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), mb_strtoupper($sortdir));
             $resultsPerPage = $templateParameters['num'];
