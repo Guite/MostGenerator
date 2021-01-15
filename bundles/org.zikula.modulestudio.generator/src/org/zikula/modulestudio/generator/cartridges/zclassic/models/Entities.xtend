@@ -228,9 +228,7 @@ class Entities {
 
     def private modelEntityBaseImplBody(DataObject it, Application app) '''
         «memberVars»
-        «IF it instanceof Entity»
-            «new EntityConstructor().constructor(it, false)»
-        «ENDIF»
+        «new EntityConstructor().constructor(it, false)»
         «accessors»
         «new EntityMethods().generate(it, app, thProp)»
     '''

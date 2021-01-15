@@ -373,14 +373,16 @@ class Association {
         criteria.join(', ')
     }
 
-    def initCollections(Entity it) '''
+    def initCollections(DataObject it) '''
         «FOR relation : getOutgoingCollections»«relation.initCollection(true)»«ENDFOR»
         «FOR relation : getIncomingCollections»«relation.initCollection(false)»«ENDFOR»
-        «IF attributable»
-            $this->attributes = new ArrayCollection();
-        «ENDIF»
-        «IF categorisable»
-            $this->categories = new ArrayCollection();
+        «IF it instanceof Entity»
+            «IF attributable»
+                $this->attributes = new ArrayCollection();
+            «ENDIF»
+            «IF categorisable»
+                $this->categories = new ArrayCollection();
+            «ENDIF»
         «ENDIF»
     '''
 

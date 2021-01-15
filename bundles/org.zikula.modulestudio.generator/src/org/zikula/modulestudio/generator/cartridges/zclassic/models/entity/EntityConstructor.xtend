@@ -1,6 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
-import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -17,7 +17,7 @@ class EntityConstructor {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def constructor(Entity it, Boolean isInheriting) '''
+    def constructor(DataObject it, Boolean isInheriting) '''
         /**
          * «name.formatForCodeCapital»Entity constructor.
          *
@@ -47,7 +47,7 @@ class EntityConstructor {
         }
     '''
 
-    def private constructorArguments(Entity it, Boolean withTypeHints) '''
+    def private constructorArguments(DataObject it, Boolean withTypeHints) '''
         «IF isIndexByTarget»
             «val indexRelation = getIndexByRelation»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
@@ -62,7 +62,7 @@ class EntityConstructor {
         «ENDIF»
     '''
 
-    def private getIndexByRelation(Entity it) {
+    def private getIndexByRelation(DataObject it) {
         getIncomingJoinRelations.filter[isIndexed].head
     }
 
@@ -71,7 +71,7 @@ class EntityConstructor {
         «source.entityClassName('', false)» $«getRelationAliasName(false)», «IF application.targets('3.0')»string «ENDIF»$«targetField.name.formatForCode»
     '''
 
-    def private constructorImpl(Entity it, Boolean isInheriting) '''
+    def private constructorImpl(DataObject it, Boolean isInheriting) '''
         «IF isInheriting»
             parent::__construct(«constructorArguments(false)»);
         «ENDIF»
