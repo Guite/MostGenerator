@@ -364,7 +364,7 @@ class AjaxController {
         }
 
         $repository = «IF targets('3.0')»$entityFactory«ELSE»$this->get('«appService».entity_factory')«ENDIF»->getRepository($objectType);
-        $fragment = $request->query->get('fragment');
+        $searchTerm = $request->query->get('q');
         $exclude = $request->query->get('exclude');
         $exclude = !empty($exclude) ? explode(',', str_replace(', ', ',', $exclude)) : [];
 
@@ -379,7 +379,7 @@ class AjaxController {
         $resultsPerPage = 20;
 
         // get objects from database
-        «IF targets('3.0')»$entities«ELSE»list($entities, $totalAmount)«ENDIF» = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage, false);
+        «IF targets('3.0')»$entities«ELSE»list($entities, $totalAmount)«ENDIF» = $repository->selectSearch($searchTerm, $exclude, $sortParam, $currentPage, $resultsPerPage, false);
 
         $resultItems = [];
 

@@ -644,9 +644,8 @@ class Repository {
                 $qb = $this->addExclusion($qb, $exclude);
             }
 
-            if (null !== $this->collectionFilterHelper) {
-                $qb = $this->collectionFilterHelper->addSearchFilter('«name.formatForCode»', $qb, $fragment);
-            }
+            // $fragment is currently not used because getListQueryBuilder calls CollectionFilterHelper
+            // which processes the search term given in the request automatically
 
             «IF application.targets('3.0')»
                 $paginator = $this->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
