@@ -862,11 +862,11 @@ class ServiceDefinitions {
             arguments:
                 - "@translator.default"
                 - "@request_stack"
+                «IF hasViewActions || hasUiHooksProviders»
+                    - "@router"
+                «ENDIF»
                 «IF hasAutomaticExpiryHandling»
                     - "@«modPrefix».expiry_helper"
-                «ENDIF»
-                «IF hasUiHooksProviders»
-                    - "@router"
                 «ENDIF»
                 «IF hasViewActions»
                     - "@form.factory"

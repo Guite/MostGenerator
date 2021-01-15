@@ -39,7 +39,7 @@ class ControllerHelper {
             use Symfony\Component\Form\FormFactoryInterface;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasUiHooksProviders»
+        «IF hasViewActions || hasUiHooksProviders»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
         «IF targets('3.0')»
@@ -104,7 +104,7 @@ class ControllerHelper {
          * @var RequestStack
          */
         protected $requestStack;
-        «IF hasUiHooksProviders»
+        «IF hasViewActions || hasUiHooksProviders»
 
             /**
              * @var RouterInterface
@@ -170,11 +170,11 @@ class ControllerHelper {
         public function __construct(
             TranslatorInterface $translator,
             RequestStack $requestStack,
+            «IF hasViewActions || hasUiHooksProviders»
+                RouterInterface $router,
+            «ENDIF»
             «IF hasAutomaticExpiryHandling»
                 ExpiryHelper $expiryHelper,
-            «ENDIF»
-            «IF hasUiHooksProviders»
-                RouterInterface $router,
             «ENDIF»
             «IF hasViewActions»
                 FormFactoryInterface $formFactory,
@@ -194,7 +194,7 @@ class ControllerHelper {
         ) {
             $this->setTranslator($translator);
             $this->requestStack = $requestStack;
-            «IF hasUiHooksProviders»
+            «IF hasViewActions || hasUiHooksProviders»
                 $this->router = $router;
             «ENDIF»
             «IF hasViewActions»
@@ -410,7 +410,19 @@ class ControllerHelper {
             $quickNavFormType = '«appNamespace»\Form\Type\QuickNavigation\\'
                 . ucfirst($objectType) . 'QuickNavType'
             ;
+
             $quickNavForm = $this->formFactory->create($quickNavFormType, $templateParameters);
+            $routeName = $request->get('_route', '');
+            $routeParams = $request->attributes->get('_route_params');
+            if (1 !== $templateParameters['all']) {
+                // let form target page number 1 to avoid empty page if filters have been set
+                $routeParams['pos'] = 1;
+            }
+            $targetRoute = $this->router->generate($routeName, $routeParams);
+
+            $quickNavForm = $this->formFactory->create($quickNavFormType, $templateParameters, [
+                'action' => $targetRoute
+            ]);
             $quickNavForm->handleRequest($request);
             if ($quickNavForm->isSubmitted()) {
                 $quickNavData = $quickNavForm->getData();
@@ -442,13 +454,6 @@ class ControllerHelper {
                         }
                         $urlParameters[$fieldName] = $fieldValue;
                     }
-                }
-                if (1 !== $templateParameters['all']) {
-                    // reset page number to 1 to avoid empty page if filters have been set
-                    $routeParams = $request->attributes->get('_route_params');
-                    $routeParams['pos'] = 1;
-                    $request->attributes->Set('_route_params', $routeParams);
-                    $request->query->set('pos', 1);
                 }
             }
             $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), mb_strtoupper($sortdir));
