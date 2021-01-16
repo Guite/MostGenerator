@@ -416,7 +416,7 @@ class ControllerHelper {
             $routeParams = $request->attributes->get('_route_params');
             if (1 !== $templateParameters['all']) {
                 // let form target page number 1 to avoid empty page if filters have been set
-                $routeParams['pos'] = 1;
+                $routeParams['«IF targets('3.0')»page«ELSE»pos«ENDIF»'] = 1;
             }
             $targetRoute = $this->router->generate($routeName, $routeParams);
 
