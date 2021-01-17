@@ -41,15 +41,15 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         var classPrefix = name.formatForCodeCapital + classType.formatForCodeCapital
         val repositoryPath = entityPath + 'Repository/'
         var fileName = ''
-        if (!isInheriting) {
-            fileName = 'Base/Abstract' + classPrefix + entitySuffix + '.php'
-            fsa.generateFile(entityPath + fileName, extensionClassBaseImpl)
 
-            fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.php'
-            if (classType != 'closure') {
-                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseImpl)
-            }
+        fileName = 'Base/Abstract' + classPrefix + entitySuffix + '.php'
+        fsa.generateFile(entityPath + fileName, extensionClassBaseImpl)
+
+        fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.php'
+        if (classType != 'closure') {
+            fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseImpl)
         }
+
         if (!app.generateOnlyBaseClasses) {
             fileName = classPrefix + entitySuffix + '.php'
             fsa.generateFile(entityPath + fileName, extensionClassImpl)
@@ -120,7 +120,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     def protected extensionClassImpl(Entity it) '''
         namespace «app.appNamespace»\Entity;
 
-        use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ELSE»Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ENDIF» as BaseEntity;
+        use «app.appNamespace»\Entity\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Entity as BaseEntity;
         use Doctrine\ORM\Mapping as ORM;
 
         /**
@@ -188,14 +188,14 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     def protected extensionClassRepositoryImpl(Entity it) '''
         namespace «app.appNamespace»\Entity\Repository;
 
-        use «app.appNamespace»\Entity\Repository\«IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»Repository;
+        use «app.appNamespace»\Entity\Repository\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Repository;
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *
          * This is the concrete repository class for «it.name.formatForDisplay» «classType.formatForDisplay» entities.
          */
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Repository extends «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»Repository
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Repository extends Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Repository
         {
             // feel free to add your own methods here
         }

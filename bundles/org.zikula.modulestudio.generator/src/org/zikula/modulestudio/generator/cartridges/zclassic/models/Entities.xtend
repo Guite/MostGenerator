@@ -88,10 +88,10 @@ class Entities {
         val entityClassSuffix = 'Entity'
         val entityFileName = name.formatForCodeCapital + entityClassSuffix
         var fileName = ''
-        if (!isInheriting) {
-            fileName = 'Abstract' + entityFileName + '.php'
-            fsa.generateFile(entityPath + 'Base/' + fileName, modelEntityBaseImpl(app))
-        }
+
+        fileName = 'Abstract' + entityFileName + '.php'
+        fsa.generateFile(entityPath + 'Base/' + fileName, modelEntityBaseImpl(app))
+
         if (!app.generateOnlyBaseClasses) {
             fileName = entityFileName + '.php'
             fsa.generateFile(entityPath + fileName, modelEntityImpl(app))
@@ -168,10 +168,12 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF isBase»
-            «IF application.targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            «ELSE»
-                use Zikula\Core\Doctrine\EntityAccess;
+            «IF !isInheriting»
+                «IF application.targets('3.0')»
+                    use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+                «ELSE»
+                    use Zikula\Core\Doctrine\EntityAccess;
+                «ENDIF»
             «ENDIF»
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
@@ -184,6 +186,9 @@ class Entities {
             «ENDIF»
             «IF hasListFieldsEntity»
                 use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
+            «ENDIF»
+            «IF isInheriting»
+                use «application.appNamespace»\Entity\«parentType.name.formatForCodeCapital»Entity as BaseEntity;
             «ENDIF»
         «ENDIF»
     '''
@@ -206,7 +211,7 @@ class Entities {
          *
          * @ORM\MappedSuperclass
          */
-        abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Entity extends «IF isInheriting»BaseEntity«ELSE»EntityAccess«ENDIF»«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
         {
             «IF it instanceof Entity && (it as Entity).geographical»
                 /**
@@ -308,24 +313,12 @@ class Entities {
     def private modelEntityImpl(DataObject it, Application app) '''
         namespace «app.appNamespace»\Entity;
 
-        use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»Entity as BaseEntity;
-        «imports(isInheriting)»
+        use «app.appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital»Entity as BaseEntity;
+        «imports(false)»
 
         «entityImplClassDocblock(app)»
         class «name.formatForCodeCapital»Entity extends BaseEntity
         {
-            «IF isInheriting»
-                «memberVars»
-                «IF it instanceof Entity»
-
-                    «new EntityConstructor().constructor(it, true)»
-                «ENDIF»
-                «accessors»
-                «IF it instanceof Entity»
-
-                    «new EntityMethods().generate(it, app, thProp)»
-                «ENDIF»
-            «ENDIF»
             // feel free to add your own methods here
         }
     '''
