@@ -314,22 +314,19 @@ class Entities {
         «entityImplClassDocblock(app)»
         class «name.formatForCodeCapital»Entity extends BaseEntity
         {
-            // feel free to add your own methods here
             «IF isInheriting»
-                «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
-                «extMan.additionalProperties»
-
-                «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
-                «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
+                «memberVars»
                 «IF it instanceof Entity»
 
                     «new EntityConstructor().constructor(it, true)»
                 «ENDIF»
-                «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
-                «extMan.additionalAccessors»
-                «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
-                «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
+                «accessors»
+                «IF it instanceof Entity»
+
+                    «new EntityMethods().generate(it, app, thProp)»
+                «ENDIF»
             «ENDIF»
+            // feel free to add your own methods here
         }
     '''
 
