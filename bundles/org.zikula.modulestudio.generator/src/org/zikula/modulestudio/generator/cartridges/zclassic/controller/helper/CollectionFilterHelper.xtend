@@ -489,6 +489,9 @@ class CollectionFilterHelper {
             if (null === $request) {
                 return $qb;
             }
+
+            $routeName = $request->get('_route', '');
+            $isAdminArea = false !== mb_strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
             «IF ownerPermission || standardFields»
 
                 «IF standardFields»
@@ -496,9 +499,11 @@ class CollectionFilterHelper {
                 «ENDIF»
                 «IF ownerPermission»
                     «IF standardFields»
-                        $privateMode = (bool) $this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
-                        if ($privateMode) {
-                            $showOnlyOwnEntries = true;
+                        if (!$isAdminArea) {
+                            $privateMode = (bool) $this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
+                            if ($privateMode) {
+                                $showOnlyOwnEntries = true;
+                            }
                         }
                     «ELSE»
                         $showOnlyOwnEntries = (bool) $this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
@@ -509,8 +514,6 @@ class CollectionFilterHelper {
                 }
             «ENDIF»
 
-            $routeName = $request->get('_route', '');
-            $isAdminArea = false !== mb_strpos($routeName, '«application.appName.toLowerCase»_«name.formatForDB»_admin');
             if ($isAdminArea) {
                 return $qb;
             }
