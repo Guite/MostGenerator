@@ -212,7 +212,12 @@ class WorkflowEventsListener {
                 $workflowShortName = 'enterprise';
             }
             if ('none' !== $workflowShortName) {
-                $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
+                $action = $event->getTransition()->getName();
+                $mayApprove = $this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD);
+                $needsNotification = 'submit' !== $action || !$mayApprove;
+                if ($needsNotification) {
+                    $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
+                }
             }
         «ENDIF»
     '''
@@ -364,11 +369,11 @@ class WorkflowEventsListener {
          «IF !targets('3.0')»
          *
          * @param EntityAccess $entity Processed entity
-         * @param string $actionId Name of performed transition
+         * @param string $action Name of performed transition
          * @param string $workflowShortName Name of workflow (none, standard, enterprise)
          «ENDIF»
          */
-        protected function sendNotifications($entity, «IF targets('3.0')»string «ENDIF»$actionId, «IF targets('3.0')»string «ENDIF»$workflowShortName)«IF targets('3.0')»: void«ENDIF»
+        protected function sendNotifications($entity, «IF targets('3.0')»string «ENDIF»$action, «IF targets('3.0')»string «ENDIF»$workflowShortName)«IF targets('3.0')»: void«ENDIF»
         {
             $newState = $entity->getWorkflowState();
 
@@ -377,19 +382,19 @@ class WorkflowEventsListener {
             $sendToModerator = false;
             $sendToSuperModerator = false;
             if (
-                'submit' === $actionId && 'waiting' === $newState
-                || 'demote' === $actionId && 'accepted' === $newState
+                'submit' === $action && 'waiting' === $newState
+                || 'demote' === $action && 'accepted' === $newState
             ) {
                 // only to moderator
                 $sendToCreator = false;
                 $sendToModerator = true;
-            } elseif ('accept' === $actionId && 'accepted' === $newState) {
+            } elseif ('accept' === $action && 'accepted' === $newState) {
                 // to creator and super moderator
                 $sendToSuperModerator = true;
-            } elseif ('approve' === $actionId && 'approved' === $newState && 'enterprise' === $workflowShortName) {
+            } elseif ('approve' === $action && 'approved' === $newState && 'enterprise' === $workflowShortName) {
                 // to creator and moderator
                 $sendToModerator = true;
-            } elseif ('update' === $actionId && 'waiting' === $newState) {
+            } elseif ('update' === $action && 'waiting' === $newState) {
                 // only to moderator
                 $sendToCreator = false;
                 $sendToModerator = true;
@@ -408,7 +413,7 @@ class WorkflowEventsListener {
             foreach ($recipientTypes as $recipientType) {
                 $notifyArgs = [
                     'recipientType' => $recipientType,
-                    'action' => $actionId,
+                    'action' => $action,
                     'entity' => $entity,
                 ];
                 $result = $this->notificationHelper->process($notifyArgs);
