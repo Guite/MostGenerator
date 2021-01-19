@@ -495,7 +495,11 @@ class CollectionFilterHelper {
             «IF ownerPermission || standardFields»
 
                 «IF standardFields»
-                    $showOnlyOwnEntries = (bool) $request->query->getInt('own', «IF application.targets('3.0')»(int) «ENDIF»$this->showOnlyOwnEntries);
+                    $showOnlyOwnDefault = $isAdminArea ? false : $this->showOnlyOwnEntries;
+                    $showOnlyOwnEntries = $showOnlyOwnDefault;
+                    if ($request->query->has('own')) {
+                        (bool) $request->query->getInt('own', «IF application.targets('3.0')»(int) «ENDIF»$showOnlyOwnDefault);
+                    }
                 «ENDIF»
                 «IF ownerPermission»
                     «IF standardFields»
