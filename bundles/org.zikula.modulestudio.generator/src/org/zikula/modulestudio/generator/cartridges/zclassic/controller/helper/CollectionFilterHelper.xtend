@@ -496,14 +496,11 @@ class CollectionFilterHelper {
 
                 «IF standardFields»
                     $showOnlyOwnDefault = $isAdminArea ? false : $this->showOnlyOwnEntries;
-                    $showOnlyOwnEntries = $showOnlyOwnDefault;
-                    if ($request->query->has('own')) {
-                        $showOnlyOwnEntries = (bool) $request->query->getInt('own', «IF application.targets('3.0')»(int) «ENDIF»$showOnlyOwnDefault);
-                    }
+                    $showOnlyOwnEntries = (bool) $request->query->getInt('own', «IF application.targets('3.0')»(int) «ENDIF»$showOnlyOwnDefault);
                 «ENDIF»
                 «IF ownerPermission»
-                    $privateMode = (bool) $this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
                     if (!$isAdminArea) {
+                        $privateMode = (bool) $this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
                         if ($privateMode) {
                             $showOnlyOwnEntries = true;
                         }
