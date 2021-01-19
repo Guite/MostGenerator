@@ -216,7 +216,7 @@ class WorkflowEventsListener {
                 $mayApprove = $this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD);
                 $needsNotification = 'submit' !== $action || !$mayApprove;
                 if ($needsNotification) {
-                    $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
+                    $this->sendNotifications($entity, $action, $workflowShortName);
                 }
             }
         «ENDIF»
