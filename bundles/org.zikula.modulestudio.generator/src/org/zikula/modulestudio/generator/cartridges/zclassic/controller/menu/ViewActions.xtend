@@ -158,7 +158,7 @@ class ViewActions {
     def private linkToggleOwnerImpl(Entity it) '''
         $routeParameters = $query->all();
         if (1 === $query->getInt('own')) {
-            unset($routeParameters['own']);
+            $routeParameters['own'] = 0;
             $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show also entries from other users'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
                 'route' => $routePrefix . $routeArea . 'view',
                 'routeParameters' => $routeParameters,
