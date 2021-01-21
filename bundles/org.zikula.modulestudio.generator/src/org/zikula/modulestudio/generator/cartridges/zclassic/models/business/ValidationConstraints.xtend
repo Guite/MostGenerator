@@ -152,9 +152,29 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(StringField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
-        «IF fixed && minLength != length»
-            «' '»* @Assert\Length(min="«length»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+        «IF application.targets('3.x-dev')»
+            «IF mandatory»
+                «' '»* @Assert\Length(min="«minLength»", max="«length»")
+                «IF fixed && minLength != length»
+                    «' '»* @Assert\Length(min="«length»", max="«length»")
+                «ENDIF»
+            «ELSE»
+                «' '»* @Assert\AtLeastOneOf({
+                «' '»*     @Assert\Blank(),
+                «' '»*     @Assert\Length(min="«minLength»", max="«length»")
+                «' '»* })
+                «IF fixed && minLength != length»
+                    «' '»* @Assert\AtLeastOneOf({
+                    «' '»*     @Assert\Blank(),
+                    «' '»*     @Assert\Length(min="«length»", max="«length»")
+                    «' '»* })
+                «ENDIF»
+            «ENDIF»
+        «ELSE»
+            «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+            «IF fixed && minLength != length»
+                «' '»* @Assert\Length(min="«length»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+            «ENDIF»
         «ENDIF»
         «IF role == StringRole.BIC»
             «IF application.targets('3.0')»
@@ -197,13 +217,27 @@ class ValidationConstraints {
             «' '»* @Assert\Uuid(strict=true)
         «ENDIF»
     '''
+    private def lengthAnnotationString(AbstractStringField it, int length) '''
+        «IF application.targets('3.x-dev')»
+            «IF mandatory»
+                «' '»* @Assert\Length(min="«minLength»", max="«length»")
+            «ELSE»
+                «' '»* @Assert\AtLeastOneOf({
+                «' '»*     @Assert\Blank(),
+                «' '»*     @Assert\Length(min="«minLength»", max="«length»")
+                «' '»* })
+            «ENDIF»
+        «ELSE»
+            «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+        «ENDIF»
+    '''
     def dispatch fieldAnnotations(TextField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+        «lengthAnnotationString(length)»
     '''
     def dispatch fieldAnnotations(EmailField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+        «lengthAnnotationString(length)»
         «IF mandatory»
             «IF application.targets('3.0')»
                 «' '»* @Assert\Email(mode="«validationMode.validationModeAsString»")
@@ -214,7 +248,7 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+        «lengthAnnotationString(length)»
         «IF application.targets('3.0')»
             «' '»* @Assert\Url
         «ELSE»
@@ -223,7 +257,7 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+        «lengthAnnotationString(length)»
     '''
     def uploadFileAnnotations(UploadField it) '''
         «' '»* @Assert\File(
