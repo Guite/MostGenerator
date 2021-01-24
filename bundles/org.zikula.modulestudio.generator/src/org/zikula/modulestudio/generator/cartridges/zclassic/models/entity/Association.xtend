@@ -39,25 +39,24 @@ class Association {
 
     def private directionSwitch(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) {
         if (!bidirectional)
-            unidirectional(useTarget, sourceName, targetName, entityClass)
+            unidirectionalImpl(useTarget, sourceName, targetName, entityClass)
         else
-            bidirectional(useTarget, sourceName, targetName, entityClass)
+            bidirectionalImpl(useTarget, sourceName, targetName, entityClass)
     }
 
-    def private unidirectional(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
+    def private unidirectionalImpl(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
         «IF useTarget»
             «outgoing(sourceName, targetName, entityClass)»
         «ENDIF»
     '''
 
-    def private bidirectional(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
+    def private bidirectionalImpl(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
         «IF !useTarget»
             «incoming(sourceName, targetName, entityClass)»
         «ELSE»
             «outgoing(sourceName, targetName, entityClass)»
         «ENDIF»
     '''
-
 
     def private dispatch incoming(JoinRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
@@ -409,8 +408,8 @@ class Association {
             «fh.getterAndSetterMethods(it, aliasName, entityClassPrefix + entityClass, false, true, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
         «ENDIF»
         «IF isMany»
-            «addMethod(useTarget, isMany, aliasName, nameSingle, entityClass)»
-            «removeMethod(useTarget, isMany, aliasName, nameSingle, entityClass)»
+            «addMethod(useTarget, aliasName, nameSingle, entityClass)»
+            «removeMethod(useTarget, aliasName, nameSingle, entityClass)»
         «ENDIF»
     '''
 
@@ -464,7 +463,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private addMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
+    def private addMethod(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
 
         /**
          * Adds an instance of \«type» to the list of «name.formatForDisplay».
@@ -472,10 +471,10 @@ class Association {
          *
          * @param «addParameters(useTarget, nameSingle, type)» The instance to be added to the collection
          *
-         * @return void
+         * @return self
          «ENDIF»
          */
-        «addMethodImpl(useTarget, selfIsMany, name, nameSingle, type)»
+        «addMethodImpl(useTarget, name, nameSingle, type)»
     '''
 
     def private isManyToMany(JoinRelationship it) {
@@ -494,24 +493,30 @@ class Association {
         «ELSE»\«type» $«name»«ENDIF»'''
 
     def private addMethodSignature(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
-        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)«IF application.targets('3.0')»: void«ENDIF»'''
+        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)«IF application.targets('3.0')»: self«ENDIF»'''
 
-    def private addMethodImplDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
+    def private addMethodImplDefault(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         «addMethodSignature(useTarget, name, nameSingle, type)»
         {
-            $this->«name»«IF selfIsMany»->add(«ELSE» = «ENDIF»$«nameSingle»«IF selfIsMany»)«ENDIF»;
-            «addInverseCalls(useTarget, nameSingle)»
+            if (!$this->«name»->contains($«nameSingle»)) {
+                $this->«name»->add($«nameSingle»);
+                «addInverseCalls(useTarget, nameSingle)»
+            }
+
+            return $this;
         }
     '''
-    def private dispatch addMethodImpl(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
-        «addMethodImplDefault(useTarget, selfIsMany, name, nameSingle, type)»
+    def private dispatch addMethodImpl(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
+        «addMethodImplDefault(useTarget, name, nameSingle, type)»
     '''
-    def private dispatch addMethodImpl(OneToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
+    def private dispatch addMethodImpl(OneToManyRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         «IF !useTarget && null !== indexBy && !indexBy.empty»
             «addMethodSignature(useTarget, name, nameSingle, type)»
             {
                 $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
                 «addInverseCalls(useTarget, nameSingle)»
+
+                return $this;
             }
         «ELSEIF !useTarget && !source.getAggregateFields.empty»
             «addMethodSignature(useTarget, name, nameSingle, type)»
@@ -519,10 +524,10 @@ class Association {
                 «val sourceField = source.getAggregateFields.head»
                 «val targetField = sourceField.getAggregateTargetField»
                 $«getRelationAliasName(true)» = new «target.entityClassName('', false)»($this, $«targetField.name.formatForCode»);
-                $this->«name»«IF selfIsMany»[]«ENDIF» = $«nameSingle»;
+                $this->«name»[] = $«nameSingle»;
                 $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
 
-                return $«getRelationAliasName(true)»;
+                return $this;
             }
 
             /**
@@ -530,25 +535,31 @@ class Association {
              «IF !application.targets('3.0')»
              *
              * @param «targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode» Given instance to be used for aggregation
+             *
+             * @return self
              «ENDIF»
              */
-            protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»(«IF application.targets('3.0')»«targetField.fieldTypeAsString(true)» «ENDIF»$«targetField.name.formatForCode»)«IF application.targets('3.0')»: void«ENDIF»
+            protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»(«IF application.targets('3.0')»«targetField.fieldTypeAsString(true)» «ENDIF»$«targetField.name.formatForCode»)«IF application.targets('3.0')»: self«ENDIF»
             {
                 $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
+
+                return $this;
             }
         «ELSE»
-            «addMethodImplDefault(useTarget, selfIsMany, name, nameSingle, type)»
+            «addMethodImplDefault(useTarget, name, nameSingle, type)»
         «ENDIF»
     '''
-    def private dispatch addMethodImpl(ManyToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
+    def private dispatch addMethodImpl(ManyToManyRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         «IF !useTarget && null !== indexBy && !indexBy.empty»
             «addMethodSignature(useTarget, name, nameSingle, type)»
             {
                 $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
                 «addInverseCalls(useTarget, nameSingle)»
+
+                return $this;
             }
         «ELSE»
-            «addMethodImplDefault(useTarget, selfIsMany, name, nameSingle, type)»
+            «addMethodImplDefault(useTarget, name, nameSingle, type)»
         «ENDIF»
     '''
 
@@ -565,7 +576,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private removeMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
+    def private removeMethod(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
 
         /**
          * Removes an instance of \«type» from the list of «name.formatForDisplay».
@@ -573,26 +584,28 @@ class Association {
          *
          * @param \«type» $«nameSingle» The instance to be removed from the collection
          *
-         * @return void
+         * @return self
          «ENDIF»
          */
-        public function remove«name.toFirstUpper»(\«type» $«nameSingle»)«IF application.targets('3.0')»: void«ENDIF»
+        public function remove«name.toFirstUpper»(\«type» $«nameSingle»)«IF application.targets('3.0')»: self«ENDIF»
         {
-            «IF selfIsMany»
+            if ($this->«name»->contains($«nameSingle»)) {
                 $this->«name»->removeElement($«nameSingle»);
-            «ELSE»
-                $this->«name» = null;
-            «ENDIF»
-            «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
-            «IF generateInverseCalls»
-                «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
-                «val otherIsMany = isManySide(!useTarget)»
-                «IF otherIsMany»
-                    $«nameSingle»->remove«ownAliasName»($this);
-                «ELSE»
-                    $«nameSingle»->set«ownAliasName»(null);
+                «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
+                «IF generateInverseCalls»
+                    «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
+                    «val otherIsMany = isManySide(!useTarget)»
+                    «IF otherIsMany»
+                        $«nameSingle»->remove«ownAliasName»($this);
+                    «ELSE»
+                        if ($«nameSingle»->get«ownAliasName»() === $this) {
+                            $«nameSingle»->set«ownAliasName»(null);
+                        }
+                    «ENDIF»
                 «ENDIF»
-            «ENDIF»
+            }
+
+            return self;
         }
     '''
 
