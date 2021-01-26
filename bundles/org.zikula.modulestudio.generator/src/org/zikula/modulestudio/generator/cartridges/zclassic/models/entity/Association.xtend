@@ -605,7 +605,7 @@ class Association {
                 «ENDIF»
             }
 
-            return self;
+            return $this;
         }
     '''
 
