@@ -168,7 +168,7 @@ class Relations {
     '''
 
     def private includedEditTemplateBody(JoinRelationship it, Entity ownEntity, Entity linkingEntity, Boolean hasEdit, Boolean many) '''
-        {% if attribute(form, alias)|default %}
+        {% if attribute(form, alias) is defined %}
             {% if displayMode == 'embedded' %}
                 {% set subFields = attribute(form, alias) %}
                 «new Forms().fieldDetails(ownEntity, 'subFields')»

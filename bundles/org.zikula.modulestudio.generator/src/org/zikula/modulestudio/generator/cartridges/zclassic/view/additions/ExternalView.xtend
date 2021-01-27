@@ -199,42 +199,42 @@ class ExternalView {
                 {{ form_errors(finderForm) }}
                 <fieldset>
                     <legend>«IF application.targets('3.0')»{% trans %}Search and select «name.formatForDisplay»{% endtrans %}«ELSE»{{ __('Search and select «name.formatForDisplay»') }}«ENDIF»</legend>
-                    {% if finderForm.language|default and getModVar('ZConfig', 'multilingual') %}
+                    {% if finderForm.language is defined and getModVar('ZConfig', 'multilingual') %}
                         {{ form_row(finderForm.language) }}
                     {% endif %}
                     «IF categorisable»
-                        {% if finderForm.categories|default and featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                        {% if finderForm.categories is defined and featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             {{ form_row(finderForm.categories) }}
                         {% endif %}
                     «ENDIF»
                     «IF hasImageFieldsEntity»
-                        {% if finderForm.onlyImages|default %}
+                        {% if finderForm.onlyImages is defined %}
                             {{ form_row(finderForm.onlyImages) }}
                         {% endif %}
                         <div id="imageFieldRow">
-                            {% if finderForm.imageField|default %}
+                            {% if finderForm.imageField is defined %}
                                 {{ form_row(finderForm.imageField) }}
                             {% endif %}
                         </div>
                     «ENDIF»
-                    {% if finderForm.pasteAs|default %}
+                    {% if finderForm.pasteAs is defined %}
                         {{ form_row(finderForm.pasteAs) }}
                     {% endif %}
                     <br />
                     «findTemplateObjectId(app)»
 
-                    {% if finderForm.sort|default %}
+                    {% if finderForm.sort is defined %}
                         {{ form_row(finderForm.sort) }}
                     {% endif %}
-                    {% if finderForm.sortdir|default %}
+                    {% if finderForm.sortdir is defined %}
                         {{ form_row(finderForm.sortdir) }}
                     {% endif %}
-                    {% if finderForm.num|default %}
+                    {% if finderForm.num is defined %}
                         {{ form_row(finderForm.num) }}
                     {% endif %}
                     «IF hasAbstractStringFieldsEntity»
                         <div id="searchTermRow">
-                            {% if finderForm.q|default %}
+                            {% if finderForm.q is defined %}
                                 {{ form_row(finderForm.q) }}
                             {% endif %}
                         </div>

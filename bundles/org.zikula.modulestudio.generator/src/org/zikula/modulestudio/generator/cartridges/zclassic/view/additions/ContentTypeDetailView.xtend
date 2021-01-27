@@ -29,16 +29,16 @@ class ContentTypeDetailView {
 
     def private editTemplate(Application it) '''
         {# purpose of this template: edit view of specific item detail view content type #}
-        {% if form.objectType|default %}
+        {% if form.objectType is defined %}
             {{ form_row(form.objectType) }}
         {% endif %}
-        {% if form.id|default %}
+        {% if form.id is defined %}
             {{ form_row(form.id) }}
         {% endif %}
-        {% if form.displayMode|default %}
+        {% if form.displayMode is defined %}
             {{ form_row(form.displayMode) }}
         {% endif %}
-        {% if form.customTemplate|default %}
+        {% if form.customTemplate is defined %}
             {{ form_row(form.customTemplate) }}
         {% endif %}
     '''

@@ -16,7 +16,7 @@ class SharedFormElements {
     extension Utils = new Utils
 
     def fieldFormRow(DerivedField it, String subElem) '''
-        {% if «formElemAccessor(subElem)»|default %}
+        {% if «formElemAccessor(subElem)» is defined %}
             «fieldFormRowImpl(subElem)»
         {% endif %}
     '''
