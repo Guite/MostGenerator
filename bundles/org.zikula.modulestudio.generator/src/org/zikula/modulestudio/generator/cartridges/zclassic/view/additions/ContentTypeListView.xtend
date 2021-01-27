@@ -30,22 +30,33 @@ class ContentTypeListView {
 
     def private editTemplate(Application it) '''
         {# purpose of this template: edit view of generic item list content type #}
-        {{ form_row(form.objectType) }}
+        {% if form.objectType|default %}
+            {{ form_row(form.objectType) }}
+        {% endif %}
         «IF hasCategorisableEntities»
-            {% if form.categories is defined %}
+            {% if form.categories|default %}
                 {{ form_row(form.categories) }}
             {% endif %}
         «ENDIF»
-        {{ form_row(form.sorting) }}
-        {{ form_row(form.amount) }}
+        {% if form.sorting|default %}
+            {{ form_row(form.sorting) }}
+        {% endif %}
+        {% if form.amount|default %}
+            {{ form_row(form.amount) }}
+        {% endif %}
 
-        {{ form_row(form.template) }}
+        {% if form.template|default %}
+            {{ form_row(form.template) }}
+            <div id="customTemplateArea">
+                {% if form.customTemplate|default %}
+                    {{ form_row(form.customTemplate) }}
+                {% endif %}
+            </div>
+        {% endif %}
 
-        <div id="customTemplateArea">
-            {{ form_row(form.customTemplate) }}
-        </div>
-
-        {{ form_row(form.filter) }}
+        {% if form.filter|default %}
+            {{ form_row(form.filter) }}
+        {% endif %}
 
         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».ContentType.List.Edit.js')) }}
     '''

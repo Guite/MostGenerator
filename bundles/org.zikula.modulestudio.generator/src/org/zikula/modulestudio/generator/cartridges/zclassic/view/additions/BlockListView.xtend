@@ -32,20 +32,32 @@ class BlockListView {
 
     def private editTemplate(Application it) '''
         {# purpose of this template: Edit block for generic item list view #}
-        {{ form_row(form.objectType) }}
+        {% if form.objectType|default %}
+            {{ form_row(form.objectType) }}
+        {% endif %}
         «IF hasCategorisableEntities»
-            {% if form.categories is defined %}
+            {% if form.categories|default %}
                 {{ form_row(form.categories) }}
             {% endif %}
         «ENDIF»
-        {{ form_row(form.sorting) }}
-        {{ form_row(form.amount) }}
+        {% if form.sorting|default %}
+            {{ form_row(form.sorting) }}
+        {% endif %}
+        {% if form.amount|default %}
+            {{ form_row(form.amount) }}
+        {% endif %}
 
-        {{ form_row(form.template) }}
-        <div id="customTemplateArea" data-switch="zikulablocksmodule_block[properties][template]" data-switch-value="custom">
-            {{ form_row(form.customTemplate) }}
-        </div>
+        {% if form.template|default %}
+            {{ form_row(form.template) }}
+            <div id="customTemplateArea" data-switch="zikulablocksmodule_block[properties][template]" data-switch-value="custom">
+                {% if form.customTemplate|default %}
+                    {{ form_row(form.customTemplate) }}
+                {% endif %}
+            </div>
+        {% endif %}
 
-        {{ form_row(form.filter) }}
+        {% if form.filter|default %}
+            {{ form_row(form.filter) }}
+        {% endif %}
     '''
 }

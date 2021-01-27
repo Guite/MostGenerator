@@ -39,7 +39,7 @@ class ViewQuickNavForm {
             {% import _self as helper %}
         «ENDIF»
         {% macro renderQuickNavEntry(quickNavForm, fieldName, isVisible) %}
-            {% if attribute(quickNavForm, fieldName) is defined and attribute(quickNavForm, fieldName) is not null %}
+            {% if attribute(quickNavForm, fieldName)|default %}
                 {% if not isVisible %}
                     <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
                 {% endif %}

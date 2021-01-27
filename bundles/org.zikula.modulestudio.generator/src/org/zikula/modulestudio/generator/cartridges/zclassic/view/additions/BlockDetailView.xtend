@@ -21,8 +21,14 @@ class BlockDetailView {
 
     def private editTemplate(Application it) '''
         {# purpose of this template: Edit block for generic item detail view #}
-        {{ form_row(form.objectType) }}
-        {{ form_row(form.id) }}
-        {{ form_row(form.customTemplate) }}
+        {% if form.objectType|default %}
+            {{ form_row(form.objectType) }}
+        {% endif %}
+        {% if form.id|default %}
+            {{ form_row(form.id) }}
+        {% endif %}
+        {% if form.customTemplate|default %}
+            {{ form_row(form.customTemplate) }}
+        {% endif %}
     '''
 }

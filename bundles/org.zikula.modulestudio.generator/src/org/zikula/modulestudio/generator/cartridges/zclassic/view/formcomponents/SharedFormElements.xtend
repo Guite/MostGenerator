@@ -16,6 +16,12 @@ class SharedFormElements {
     extension Utils = new Utils
 
     def fieldFormRow(DerivedField it, String subElem) '''
+        {% if «formElemAccessor(subElem)»|default %}
+            «fieldFormRowImpl(subElem)»
+        {% endif %}
+    '''
+
+    def fieldFormRowImpl(DerivedField it, String subElem) '''
         «IF !visible»
             <div class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
                 «formRow(it, subElem)»
@@ -26,12 +32,16 @@ class SharedFormElements {
     '''
 
     def private formRow(Field it, String subElem) '''
-        «IF !subElem.empty»
-            {{ form_row(attribute(«subElem», '«name.formatForCode»')) }}
-        «ELSE»
-            {{ form_row(form.«name.formatForCode») }}
-        «ENDIF»
+        {{ form_row(«formElemAccessor(subElem)») }}
     '''
+
+    def private formElemAccessor(Field it, String subElem) {
+        if (!subElem.empty) {
+            return '''attribute(«subElem», '«name.formatForCode»')'''
+        } else {
+            return '''form.«name.formatForCode»'''
+        }
+    }
 
     def jsDefinition(Field it) {
         val containerName = if (null !== entity) entity.name.formatForCode.toLowerCase else 'appsettings'

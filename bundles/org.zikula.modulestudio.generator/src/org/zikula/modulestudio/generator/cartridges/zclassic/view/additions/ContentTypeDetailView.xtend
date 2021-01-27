@@ -29,10 +29,18 @@ class ContentTypeDetailView {
 
     def private editTemplate(Application it) '''
         {# purpose of this template: edit view of specific item detail view content type #}
-        {{ form_row(form.objectType) }}
-        {{ form_row(form.id) }}
-        {{ form_row(form.displayMode) }}
-        {{ form_row(form.customTemplate) }}
+        {% if form.objectType|default %}
+            {{ form_row(form.objectType) }}
+        {% endif %}
+        {% if form.id|default %}
+            {{ form_row(form.id) }}
+        {% endif %}
+        {% if form.displayMode|default %}
+            {{ form_row(form.displayMode) }}
+        {% endif %}
+        {% if form.customTemplate|default %}
+            {{ form_row(form.customTemplate) }}
+        {% endif %}
     '''
 
     def private editLegacyTemplate(Application it) '''
