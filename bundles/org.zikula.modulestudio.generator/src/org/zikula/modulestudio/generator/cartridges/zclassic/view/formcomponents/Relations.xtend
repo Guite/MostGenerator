@@ -143,41 +143,41 @@ class Relations {
     def private includedEditTemplate(JoinRelationship it, Entity ownEntity, Entity linkingEntity, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
         {# purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» #}
-        {% if displayMode is not defined or displayMode is empty %}
-            {% set displayMode = 'choices' %}
-        {% endif %}
-        {% if tabs|default(false) == true %}
-            <div role="tabpanel" class="tab-pane fade" id="tab«ownEntityName.formatForCodeCapital»" aria-labelledby="«ownEntityName.formatForCode»Tab">
-                <h3>{{ heading|default ? heading : «IF application.targets('3.0')»'«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«ownEntityName.formatForDisplayCapital»')«ENDIF» }}</h3>
-        {% else %}
-            <fieldset class="«ownEntityName.formatForDB»">
-        {% endif %}
-            <legend>{{ heading|default ? heading : «IF application.targets('3.0')»'«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«ownEntityName.formatForDisplayCapital»')«ENDIF» }}</legend>
-            «IF app.needsInlineEditing»
-                <div id="{{ alias }}InlineEditingContainer">
+        {% if attribute(form, alias) is defined %}
+            {% if displayMode is not defined or displayMode is empty %}
+                {% set displayMode = 'choices' %}
+            {% endif %}
+            {% if tabs|default(false) == true %}
+                <div role="tabpanel" class="tab-pane fade" id="tab«ownEntityName.formatForCodeCapital»" aria-labelledby="«ownEntityName.formatForCode»Tab">
+                    <h3>{{ heading|default ? heading : «IF application.targets('3.0')»'«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«ownEntityName.formatForDisplayCapital»')«ENDIF» }}</h3>
+            {% else %}
+                <fieldset class="«ownEntityName.formatForDB»">
+            {% endif %}
+                <legend>{{ heading|default ? heading : «IF application.targets('3.0')»'«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«ownEntityName.formatForDisplayCapital»')«ENDIF» }}</legend>
+                «IF app.needsInlineEditing»
+                    <div id="{{ alias }}InlineEditingContainer">
+                        «includedEditTemplateBody(ownEntity, linkingEntity, hasEdit, many)»
+                    </div>
+                «ELSE»
                     «includedEditTemplateBody(ownEntity, linkingEntity, hasEdit, many)»
+                «ENDIF»
+            {% if tabs|default(false) == true %}
                 </div>
-            «ELSE»
-                «includedEditTemplateBody(ownEntity, linkingEntity, hasEdit, many)»
-            «ENDIF»
-        {% if tabs|default(false) == true %}
-            </div>
-        {% else %}
-            </fieldset>
+            {% else %}
+                </fieldset>
+            {% endif %}
         {% endif %}
     '''
 
     def private includedEditTemplateBody(JoinRelationship it, Entity ownEntity, Entity linkingEntity, Boolean hasEdit, Boolean many) '''
-        {% if attribute(form, alias) is defined %}
-            {% if displayMode == 'embedded' %}
-                {% set subFields = attribute(form, alias) %}
-                «new Forms().fieldDetails(ownEntity, 'subFields')»
-            {% elseif displayMode == 'choices' %}
-                {{ form_row(attribute(form, alias), {required: mandatory}) }}
-            {% elseif displayMode == 'autocomplete' %}
-                {{ form_row(attribute(form, alias), {required: mandatory}) }}
-                «component_AutoComplete(ownEntity, many, hasEdit)»
-            {% endif %}
+        {% if displayMode == 'embedded' %}
+            {% set subFields = attribute(form, alias) %}
+            «new Forms().fieldDetails(ownEntity, 'subFields')»
+        {% elseif displayMode == 'choices' %}
+            {{ form_row(attribute(form, alias), {required: mandatory}) }}
+        {% elseif displayMode == 'autocomplete' %}
+            {{ form_row(attribute(form, alias), {required: mandatory}) }}
+            «component_AutoComplete(ownEntity, many, hasEdit)»
         {% endif %}
     '''
 
