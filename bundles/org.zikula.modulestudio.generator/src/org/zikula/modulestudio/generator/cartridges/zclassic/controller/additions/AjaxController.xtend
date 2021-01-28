@@ -201,7 +201,6 @@ class AjaxController {
             $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
             $entityDisplayHelper = $this->get('«appService».entity_display_helper');
         «ENDIF»
-        $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
 
         $sort = $request->query->getAlnum('sort');
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields(), true)) {
@@ -239,8 +238,7 @@ class AjaxController {
                 $entityDisplayHelper,
                 «ELSE»$repository,«ENDIF»
                 $item,
-                $itemId,
-                $descriptionFieldName
+                $itemId
             );
         }
 
@@ -256,7 +254,6 @@ class AjaxController {
          * @param EntityRepository $repository Repository for the treated object type
          * @param object $item The currently treated entity
          * @param string $itemId Data item identifier(s)
-         * @param string $descriptionField Name of item description field
          *
          * @return array The slim data representation
          «ENDIF»
@@ -267,13 +264,11 @@ class AjaxController {
                 EntityRepository $repository,
                 EntityDisplayHelper $entityDisplayHelper,
                 $item,
-                string $itemId,
-                string $descriptionField
+                string $itemId
             «ELSE»
                 $repository,
                 $item,
-                $itemId,
-                $descriptionField
+                $itemId
             «ENDIF»
         )«IF targets('3.0')»: array«ENDIF» {
             $objectType = $item->get_objectType();
@@ -294,8 +289,11 @@ class AjaxController {
             );
             $previewInfo = base64_encode($previewInfo);
 
-            $title = «IF targets('3.0')»$entityDisplayHelper«ELSE»$this->get('«appService».entity_display_helper')«ENDIF»->getFormattedTitle($item);
-            $description = '' !== $descriptionField ? $item[$descriptionField] : '';
+            «IF !targets('3.0')»
+                $entityDisplayHelper = $this->get('«appService».entity_display_helper');
+            «ENDIF»
+            $title = $entityDisplayHelper->getFormattedTitle($item);
+            $description = $entityDisplayHelper->getDescription($item);
 
             return [
                 'id' => $itemId,
@@ -390,10 +388,7 @@ class AjaxController {
                 «IF hasImageFields»
                     $itemTitleStripped = str_replace('"', '', $itemTitle);
                 «ENDIF»
-                $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])
-                    ? $item[$descriptionFieldName]
-                    : '' //$this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No description yet.')
-                ;
+                $itemDescription = $entityDisplayHelper->getDescription($item);
                 if ($itemDescription === $itemTitle) {
                     $itemDescription = '';
                 }

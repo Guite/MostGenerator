@@ -138,9 +138,31 @@ class EntityDisplayHelper {
 
             return '';
         }
+
+        /**
+         * Returns an additional description for a given entity.
+         «IF !targets('3.0')»
+         *
+         * @param EntityAccess $entity The given entity instance
+         *
+         * @return string The description
+         «ENDIF»
+         */
+        public function getDescription(EntityAccess $entity)«IF targets('3.0')»: string«ENDIF»
+        {
+            «FOR entity : getAllEntities»
+                if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
+                    return $this->get«entity.name.formatForCodeCapital»Description($entity);
+                }
+            «ENDFOR»
+
+            return '';
+        }
         «FOR entity : getAllEntities»
 
             «entity.formatMethod»
+
+            «entity.describeMethod»
         «ENDFOR»
 
         «fieldNameHelpers»
@@ -148,10 +170,10 @@ class EntityDisplayHelper {
 
     def private formatMethod(Entity it) '''
         /**
-         * Returns the formatted title for a given entity.
+         * Returns the formatted title for a given «name.formatForDisplay».
          «IF !application.targets('3.0')»
          *
-         * @param «name.formatForCodeCapital»Entity $entity The given entity instance
+         * @param «name.formatForCodeCapital»Entity $entity The given «name.formatForDisplay» instance
          *
          * @return string The formatted title
          «ENDIF»
@@ -169,6 +191,27 @@ class EntityDisplayHelper {
                     '«name.formatForCode»'«ENDIF»
                 );
             «ENDIF»
+        }
+    '''
+
+    def private describeMethod(Entity it) '''
+        /**
+         * Returns an additional description for a given «name.formatForDisplay».
+         «IF !application.targets('3.0')»
+         *
+         * @param «name.formatForCodeCapital»Entity $entity The given «name.formatForDisplay» instance
+         *
+         * @return string The description
+         «ENDIF»
+         */
+        protected function get«name.formatForCodeCapital»Description(«name.formatForCodeCapital»Entity $entity)«IF application.targets('3.0')»: string«ENDIF»
+        {
+            $descriptionFieldName = $this->getDescriptionFieldName($entity->get_objectType());
+
+            return isset($entity[$descriptionFieldName]) && !empty($entity[$descriptionFieldName])
+                ? $entity[$descriptionFieldName]
+                : ''
+            ;
         }
     '''
 
