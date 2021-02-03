@@ -412,22 +412,20 @@ class Display {
         «IF !application.targets('3.0')»
             {% import _self as relatives %}
         «ENDIF»
-        <h3>«IF application.targets('3.0')»{% trans %}Related «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Related «nameMultiple.formatForDisplay»') }}«ENDIF»</h3>
+        {#<h3>«IF application.targets('3.0')»{% trans %}Related «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Related «nameMultiple.formatForDisplay»') }}«ENDIF»</h3>#}
         {% if «objName».lvl > 0 %}
             {% if allParents is not defined or allParents == true %}
-                {% set allParents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
-                {% if allParents is not null and allParents is iterable and allParents|length > 0 %}
+                {% set parents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
+                {% if parents is not null and parents is iterable and parents|length > 0 %}
                     <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}All parents{% endtrans %}«ELSE»{{ __('All parents') }}«ENDIF»</h4>
-                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(allParents, routeArea) }}
+                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(parents, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if directParent is not defined or directParent == true %}
-                {% set directParent = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directParent') %}
-                {% if directParent is not null %}
+                {% set parents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directParent') %}
+                {% if parents is not null and parents is iterable and parents|length > 0 %}
                     <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Direct parent{% endtrans %}«ELSE»{{ __('Direct parent') }}«ENDIF»</h4>
-                    <ul>
-                        <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'display'«routeParams('directParent', true)») }}" title="{{ directParent|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ directParent|«application.appName.formatForDB»_formattedTitle }}</a></li>
-                    </ul>
+                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(parents, routeArea) }}
                 {% endif %}
             {% endif %}
         {% endif %}
