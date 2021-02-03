@@ -36,7 +36,7 @@ class TreeSelection {
             $repository = $this->entityFactory->getRepository($objectType);
             $titleFieldName = $this->entityDisplayHelper->getTitleFieldName($objectType);
 
-            $result = null;
+            $result = [];
 
             switch ($target) {
                 case 'allParents':
@@ -53,7 +53,7 @@ class TreeSelection {
                     if ('allParents' === $target) {
                         $result = $path;
                     } elseif ('directParent' === $target && 0 < count($path)) {
-                        $result = $path[count($path) - 1];
+                        $result = [$path[count($path) - 1]];
                     }
                     break;
                 case 'allChildren':
@@ -80,7 +80,7 @@ class TreeSelection {
                     break;
             }
 
-            return $result ?? [];
+            return $result;
         }
     '''
 }
