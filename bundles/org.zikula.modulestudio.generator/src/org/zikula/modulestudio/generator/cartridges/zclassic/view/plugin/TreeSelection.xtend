@@ -80,7 +80,7 @@ class TreeSelection {
                     break;
             }
 
-            return $result;
+            return $result ?? [];
         }
     '''
 }
