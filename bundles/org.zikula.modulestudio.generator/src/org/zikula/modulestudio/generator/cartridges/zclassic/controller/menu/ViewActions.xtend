@@ -80,21 +80,23 @@ class ViewActions {
             «ENDIF»
             «linkToggleOwner»
             «IF loggable»
-                // check if there exist any deleted «nameMultiple.formatForDisplay»
-                $hasDeletedEntities = false;
-                if ($this->permissionHelper->hasPermission(ACCESS_EDIT)) {
-                    $hasDeletedEntities = $this->loggableHelper->hasDeletedEntities($objectType);
-                }
-                if ($hasDeletedEntities) {
-                    $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'View deleted «nameMultiple.formatForDisplay»'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
-                        'route' => $routePrefix . $routeArea . 'view',
-                        'routeParameters' => ['deleted' => 1],
-                    ])
-                        ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»')
-                        «IF app.targets('3.0') && !app.isSystemModule»
-                            ->setExtra('translation_domain', '«name.formatForCode»')
-                        «ENDIF»
-                    ;
+                if ($this->permissionHelper->mayAccessHistory) {
+                    // check if there exist any deleted «nameMultiple.formatForDisplay»
+                    $hasDeletedEntities = false;
+                    if ($this->permissionHelper->hasPermission(ACCESS_EDIT)) {
+                        $hasDeletedEntities = $this->loggableHelper->hasDeletedEntities($objectType);
+                    }
+                    if ($hasDeletedEntities) {
+                        $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'View deleted «nameMultiple.formatForDisplay»'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                            'route' => $routePrefix . $routeArea . 'view',
+                            'routeParameters' => ['deleted' => 1],
+                        ])
+                            ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»')
+                            «IF app.targets('3.0') && !app.isSystemModule»
+                                ->setExtra('translation_domain', '«name.formatForCode»')
+                            «ENDIF»
+                        ;
+                    }
                 }
             «ENDIF»
         }
