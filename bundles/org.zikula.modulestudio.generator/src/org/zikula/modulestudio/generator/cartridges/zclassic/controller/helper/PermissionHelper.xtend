@@ -178,9 +178,7 @@ class PermissionHelper {
             {
                 $objectType = $entity->get_objectType();
 
-                return $this->mayEdit($entity, $userId)
-                    && $this->variableApi->get('«appName»', 'show' . ucfirst($objectType) . 'History', true)
-                ;
+                return $this->mayEdit($entity, $userId) && $this->mayUseHistory($objectType, $userId);
             }
         «ENDIF»
 
@@ -353,6 +351,23 @@ class PermissionHelper {
             public function mayUseQuickNav(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
             {
                 return $this->hasComponentPermission($objectType, ACCESS_READ, $userId);
+            }
+        «ENDIF»
+        «IF hasLoggable»
+
+            /**
+             * Checks if the history for a given object type may be used or not.
+             «IF !targets('3.0')»
+             *
+             * @param string $objectType
+             * @param int $userId
+             *
+             * @return bool
+             «ENDIF»
+             */
+            public function mayUseHistory(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»?int «ENDIF»$userId = null)«IF targets('3.0')»: bool«ENDIF»
+            {
+                return $this->variableApi->get('«appName»', 'show' . ucfirst($objectType) . 'History', true);
             }
         «ENDIF»
 

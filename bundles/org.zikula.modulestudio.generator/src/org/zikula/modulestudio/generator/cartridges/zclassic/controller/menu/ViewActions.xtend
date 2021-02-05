@@ -80,7 +80,7 @@ class ViewActions {
             «ENDIF»
             «linkToggleOwner»
             «IF loggable»
-                if ($this->permissionHelper->mayAccessHistory()) {
+                if ($this->permissionHelper->mayUseHistory($objectType)) {
                     // check if there exist any deleted «nameMultiple.formatForDisplay»
                     $hasDeletedEntities = false;
                     if ($this->permissionHelper->hasPermission(ACCESS_EDIT)) {
