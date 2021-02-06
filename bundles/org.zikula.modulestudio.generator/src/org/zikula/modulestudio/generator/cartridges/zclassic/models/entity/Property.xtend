@@ -254,7 +254,7 @@ class Property {
          * @return void
          «ENDIF»
          */
-        public function set«name.formatForCodeCapital»(?File $«name.formatForCode» = null)«IF application.targets('3.0')»: void«ENDIF»
+        public function set«name.formatForCodeCapital»(«IF application.targets('3.0')»?«ENDIF»File $«name.formatForCode» = null)«IF application.targets('3.0')»: void«ENDIF»
         {
             if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
                 return;
