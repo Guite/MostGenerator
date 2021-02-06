@@ -163,12 +163,29 @@ class Relations {
         «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCode»
         «val otherEntity = (if (!useTarget) source else target) as Entity»
         «val many = isManySideDisplay(useTarget)»
+        «IF otherEntity.hasEditAction»
+            {% set createLink = null %}
+            {% set createTitle = null %}
+            {% set creationPossible = not isQuickView«IF !many» and not «relatedEntity.name.formatForCode».«relationAliasName»|default«ENDIF» %}
+            {% if creationPossible %}
+                {% set mayManage = permissionHelper.hasComponentPermission('«otherEntity.name.formatForCode»', constant('ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF otherEntity.workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
+                {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
+                    {% set createLink = path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».get«IF relatedEntity.hasSluggableFields && relatedEntity.slugUnique»Slug«ELSE»Key«ENDIF»()}) %}
+                    {% set createTitle = «IF application.targets('3.0')»'Create «otherEntity.name.formatForDisplay»'|trans«IF !application.isSystemModule»({}, '«otherEntity.name.formatForCode»')«ENDIF»«ELSE»__('Create «otherEntity.name.formatForDisplay»')«ENDIF» %}
+                {% endif %}
+            {% endif %}
+        «ENDIF»
+        {% set sectionTitle %}
+            «IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from '«otherEntity.name.formatForCode»'«ENDIF» %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»
+            {% if creationPossible and createLink|default %}
+                «createLink('')»
+            {% endif %}
+        {% endset %}
         {% if routeArea == 'admin' %}
-            <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from '«otherEntity.name.formatForCode»'«ENDIF» %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»</h4>
+            <h4>{{ sectionTitle }}</h4>
         {% else %}
-            <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from '«otherEntity.name.formatForCode»'«ENDIF» %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»</h3>
+            <h3>{{ sectionTitle }}</h3>
         {% endif %}
-
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
                 '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
@@ -176,21 +193,13 @@ class Relations {
             ) }}
         {% endif %}
         «IF otherEntity.hasEditAction»
-            {% if not isQuickView %}
-                «IF !many»
-                    {% if «relatedEntity.name.formatForCode».«relationAliasName» is not defined or «relatedEntity.name.formatForCode».«relationAliasName» is null %}
-                «ENDIF»
-                {% set mayManage = permissionHelper.hasComponentPermission('«otherEntity.name.formatForCode»', constant('ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF otherEntity.workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
-                {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
-                    <p class="managelink">
-                        {% set createTitle = «IF application.targets('3.0')»'Create «otherEntity.name.formatForDisplay»'|trans«IF !application.isSystemModule»({}, '«otherEntity.name.formatForCode»')«ENDIF»«ELSE»__('Create «otherEntity.name.formatForDisplay»')«ENDIF» %}
-                        <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».get«IF relatedEntity.hasSluggableFields && relatedEntity.slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ createTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-plus"></i> {{ createTitle }}</a>
-                    </p>
-                {% endif %}
-                «IF !many»
-                    {% endif %}
-                «ENDIF»
+            {% if creationPossible and createLink|default %}
+                <p class="managelink">
+                    «createLink(' {{ createTitle }}')»
+                </p>
             {% endif %}
         «ENDIF»
     '''
+
+    def private createLink(JoinRelationship it, String title) '''<a href="{{ createLink|e('html_attr') }}" title="{{ createTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-plus"></i>«title»</a>'''
 }
