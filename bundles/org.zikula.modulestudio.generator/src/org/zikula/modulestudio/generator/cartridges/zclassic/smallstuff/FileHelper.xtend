@@ -69,7 +69,7 @@ class FileHelper {
          * @return self
          */
         «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF useHint»«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «IF skipTypeHint»*/«ENDIF»«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: self«ENDIF»
+        public function set«name.formatForCodeCapital»(«IF useHint»«IF skipTypeHint»/*«ENDIF»«IF nullable && app.targets('3.0')»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «IF skipTypeHint»*/«ENDIF»«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: self«ENDIF»
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
