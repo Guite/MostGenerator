@@ -53,16 +53,22 @@ class SharedFormElements {
     }
 
     def private jsDefinitionUser(UserField it, String containerName) '''
-        <div class="field-editing-definition" data-field-type="user" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»"></div>
+        {% if form.«name.formatForCode» is defined %}
+            <div class="field-editing-definition" data-field-type="user" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»"></div>
+        {% endif %}
     '''
 
     def private jsDefinitionCalendar(DatetimeField it, String containerName) '''
         «IF !mandatory»
-            <div class="field-editing-definition" data-field-type="date" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»"></div>
+            {% if form.«name.formatForCode» is defined %}
+                <div class="field-editing-definition" data-field-type="date" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»"></div>
+            {% endif %}
         «ENDIF»
     '''
 
     def private jsDefinitionUpload(UploadField it, String containerName) '''
-        <div class="field-editing-definition" data-field-type="upload" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»_«name.formatForCode»"></div>
+        {% if form.«name.formatForCode» is defined %}
+            <div class="field-editing-definition" data-field-type="upload" data-field-name="«application.appName.toLowerCase»_«containerName»_«name.formatForCode»_«name.formatForCode»"></div>
+        {% endif %}
     '''
 }
