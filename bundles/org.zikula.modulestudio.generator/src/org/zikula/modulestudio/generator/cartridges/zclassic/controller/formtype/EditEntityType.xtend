@@ -239,6 +239,7 @@ class EditEntityType {
                 «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
                     if ('create' === $options['mode']) {
                         $builder->add('parent', EntityTreeType::class, [
+                            'object_type' => '«name.formatForCode»',
                             'class' => «name.formatForCodeCapital»Entity::class,
                             'multiple' => false,
                             'expanded' => false,
@@ -622,16 +623,14 @@ class EditEntityType {
                 ],
             ]);
         «ELSE»
-            $queryBuilder = function (EntityRepository $er) {
-                // select without joins
-                return $er->getListQueryBuilder('', '', false);
+            $queryBuilder = function (EntityRepository $er) {«/* get repo from entity factory to ensure CollectionFilterHelper is set return $er->getListQueryBuilder('', '', false);*/»
+                return $this->entityFactory->getRepository('«relatedEntity.name.formatForCode»')->getListQueryBuilder('', '', false);
             };
             «IF (relatedEntity as Entity).ownerPermission»
                 if (true === $options['filter_by_ownership']) {
                     $collectionFilterHelper = $this->collectionFilterHelper;
                     $queryBuilder = function (EntityRepository $er) use ($collectionFilterHelper) {
-                        // select without joins
-                        $qb = $er->getListQueryBuilder('', '', false);
+                        $qb = $this->entityFactory->getRepository('«relatedEntity.name.formatForCode»')->getListQueryBuilder('', '', false);
                         $qb = $collectionFilterHelper->addCreatorFilter($qb);
 
                         return $qb;
