@@ -1341,12 +1341,12 @@ class SharedFormTypeFields {
                 'validate' => false,
             «ENDIF»
             'icon' => 'fa-times',
-            'attr' => [
-                «IF !targets('3.0')»
+            «IF !targets('3.0')»
+                'attr' => [
                     'class' => 'btn btn-default',
-                «ENDIF»
-                'formnovalidate' => 'formnovalidate',
-            ],
+                    'formnovalidate' => 'formnovalidate',
+                ],
+            «ENDIF»
         ]);
     '''
 }
