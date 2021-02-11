@@ -239,7 +239,6 @@ class EditEntityType {
                 «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
                     if ('create' === $options['mode']) {
                         $builder->add('parent', EntityTreeType::class, [
-                            'object_type' => '«name.formatForCode»',
                             'class' => «name.formatForCodeCapital»Entity::class,
                             'multiple' => false,
                             'expanded' => false,
