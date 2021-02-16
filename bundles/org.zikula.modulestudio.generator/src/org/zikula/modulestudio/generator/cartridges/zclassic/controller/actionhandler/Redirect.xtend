@@ -248,10 +248,11 @@ class Redirect {
                         «IF sourceEntity.hasDisplayAction»
                             case 'userDisplay«sourceEntity.name.formatForCodeCapital»':
                             case 'adminDisplay«sourceEntity.name.formatForCodeCapital»':
-                                if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
+                                if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»']) || (method_exists($this->entityRef, 'get«incomingRelation.getRelationAliasName(false).toFirstUpper»') && null !== $this->entityRef->get«incomingRelation.getRelationAliasName(false).toFirstUpper»())) {
                                     $routeName = '«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'display';
+                                    $«incomingRelation.getRelationAliasName(false)»Id = !empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»']) ? $this->relationPresets['«incomingRelation.getRelationAliasName(false)»'] : $this->entityRef->get«incomingRelation.getRelationAliasName(false).toFirstUpper»();
 
-                                    return $this->router->generate($routeName, ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']]);
+                                    return $this->router->generate($routeName, ['id' => $«incomingRelation.getRelationAliasName(false)»Id]);
                                 }
 
                                 return $this->getDefaultReturnUrl($args);
