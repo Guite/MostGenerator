@@ -87,9 +87,9 @@ class TechComplexity {
         <h3>«IF language == 'de'»Weitere Aktionen«ELSE»Further actions«ENDIF»</h3>
         <p>
             «IF language == 'de'»
-                <a href="http://csse.usc.edu/tools/COCOMOII.php" target="_blank" class="btn btn-primary"><i class="fa«IF targets('3.0')»s«ENDIF» fa-money«IF targets('3.0')»-bill-alt«ENDIF»"></i> Aufwand, Dauer und Kosten mit COCOMO II berechnen</a>
+                <a href="http://softwarecost.org/tools/COCOMO/" target="_blank" class="btn btn-primary"><i class="fa«IF targets('3.0')»s«ENDIF» fa-money«IF targets('3.0')»-bill-alt«ENDIF»"></i> Aufwand, Dauer und Kosten mit COCOMO II berechnen</a>
             «ELSE»
-                <a href="http://csse.usc.edu/tools/COCOMOII.php" target="_blank" class="btn btn-primary"><i class="fa«IF targets('3.0')»s«ENDIF» fa-money«IF targets('3.0')»-bill-alt«ENDIF»"></i> Calculate effort, schedule and costs with COCOMO II</a>
+                <a href="http://softwarecost.org/tools/COCOMO/" target="_blank" class="btn btn-primary"><i class="fa«IF targets('3.0')»s«ENDIF» fa-money«IF targets('3.0')»-bill-alt«ENDIF»"></i> Calculate effort, schedule and costs with COCOMO II</a>
             «ENDIF»
         </p>
     '''
