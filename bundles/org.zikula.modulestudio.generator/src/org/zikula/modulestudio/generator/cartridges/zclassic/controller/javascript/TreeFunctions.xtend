@@ -459,7 +459,7 @@ class TreeFunctions {
                 jQuery('#treeAddRoot').click(function (event) {
                     event.preventDefault();
                     «vendorAndName»PerformTreeOperation(jQuery(this).data('object-type'), 1, 'addRootNode');
-                }).removeClass('hidden');
+                }).removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
             }
 
             trees = [];
