@@ -45,8 +45,8 @@ class Ics {
         PRODID:{{ app.request.schemeAndHttpHost }}
         METHOD:PUBLISH
         BEGIN:VEVENT
-        DTSTART:{{ «objName»|date('Ymd\THi00\Z') }}
-        DTEND:{{ «objName»|date('Ymd\THi00\Z') }}
+        DTSTART:{{ «objName».«getStartDateField.name.formatForCode»|date('Ymd\THi00\Z') }}
+        DTEND:{{ «objName».«getEndDateField.name.formatForCode»|date('Ymd\THi00\Z') }}
         {% if «objName».zipcode != '' and «objName».city is not empty %}{% set location = «objName».zipcode ~ ' ' ~ «objName».city %}LOCATION{{ location|«application.appName.formatForDB»_icalText }}{% endif %}
         «IF geographical»
             {% if «objName».latitude and «objName».longitude %}GEO:{{ «objName».longitude }};{{ «objName».latitude }}
@@ -60,7 +60,7 @@ class Ics {
             ORGANIZER;CN="{{ «objName».createdBy.getUname() }}":MAILTO:{{ «objName».createdBy.getEmail() }}
         «ENDIF»
         «IF categorisable»
-            CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if not loop.first %},{% endif %}{{ catMapping.category.display_name[lang]|upper }}{% endfor %}
+            CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if not loop.first %},{% endif %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% endfor %}
         «ENDIF»
         SUMMARY{{ «objName»|«application.appName.formatForDB»_formattedTitle|«application.appName.formatForDB»_icalText }}
         «IF hasTextFieldsEntity»
