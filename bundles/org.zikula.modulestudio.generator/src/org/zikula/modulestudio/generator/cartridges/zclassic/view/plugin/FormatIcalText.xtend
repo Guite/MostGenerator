@@ -29,6 +29,7 @@ class FormatIcalText {
         {
             $result = preg_replace('/<a href="(.*)">.*<\/a>/i', '$1', $string);
             $result = str_replace('€', 'Euro', $result);
+            $result = preg_replace("/(\r\n|\n|\r)/D", '=0D=0A', $result);
 
             $result = str_replace("\xA0", ' ', $result);
             $result = str_replace("\x0A", '', $result);
