@@ -54,7 +54,7 @@ class Ics {
         «ENDIF»
         TRANSP:OPAQUE
         SEQUENCE:0
-        UID:{{ 'ICAL' ~ «objName».«getStartDateField.name.formatForCode» ~ random(5000) ~ «objName».«getEndDateField.name.formatForCode» }}
+        UID:{{ 'ICAL' ~ «objName».«primaryKey.name.formatForCode» ~ «objName».«getStartDateField.name.formatForCode»|date('Ymd\THi00\Z') ~ «objName».«getEndDateField.name.formatForCode»|date('Ymd\THi00\Z') }}
         DTSTAMP:{{ 'now'|date('Ymd\THi00\Z') }}
         «IF standardFields»
             ORGANIZER;CN="{{ «objName».createdBy.getUname() }}":MAILTO:{{ «objName».createdBy.getEmail() }}
