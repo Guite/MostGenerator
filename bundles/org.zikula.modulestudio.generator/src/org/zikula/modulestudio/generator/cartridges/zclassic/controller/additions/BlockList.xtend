@@ -309,7 +309,7 @@ class BlockList {
             // create query
             $orderBy = $this->get('«appService».model_helper')->resolveSortParameter($objectType, $properties['sorting']);
         «ENDIF»
-        $qb = $repository->getListQueryBuilder($properties['filter'], $orderBy);
+        $qb = $repository->getListQueryBuilder($properties['filter'] ?? '', $orderBy);
         «IF hasCategorisableEntities»
 
             if ($hasCategories) {

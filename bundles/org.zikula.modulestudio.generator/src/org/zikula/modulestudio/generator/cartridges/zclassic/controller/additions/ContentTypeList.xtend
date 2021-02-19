@@ -200,7 +200,7 @@ class ContentTypeList {
 
             // create query
             $orderBy = $this->modelHelper->resolveSortParameter($this->data['objectType'], $this->data['sorting']);
-            $qb = $repository->getListQueryBuilder($this->data['filter'], $orderBy);
+            $qb = $repository->getListQueryBuilder($this->data['filter'] ?? '', $orderBy);
             «IF hasCategorisableEntities»
 
                 $this->getData();
