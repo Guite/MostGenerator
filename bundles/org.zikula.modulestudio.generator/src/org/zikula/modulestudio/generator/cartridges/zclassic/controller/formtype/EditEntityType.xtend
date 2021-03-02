@@ -606,7 +606,7 @@ class EditEntityType {
         «val aliasName = getRelationAliasName(outgoing)»
         «val relatedEntity = if (outgoing) target else source»
         «val editMode = if (outgoing) getSourceEditMode else getTargetEditMode»
-        «IF editMode == RelationEditMode.EMBEDDED»
+        «IF editMode == RelationEditMode.EMBEDDED»«/* TODO entity option is missing if related entity contains an upload field */»
             $builder->add('«aliasName.formatForCode»', '«app.appNamespace»\Form\Type\«relatedEntity.name.formatForCodeCapital»Type', [
                 «IF isManySide(outgoing)»
                     'by_reference' => false,
