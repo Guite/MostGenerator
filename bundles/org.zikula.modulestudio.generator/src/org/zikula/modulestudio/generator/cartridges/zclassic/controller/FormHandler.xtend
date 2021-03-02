@@ -1484,7 +1484,7 @@ class FormHandler {
 
             return $result;
         }
-        «IF !incoming.empty || !outgoing.empty»
+        «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
             «relationPresetsHelper.childMethod(it)»
         «ENDIF»
 
@@ -1514,10 +1514,10 @@ class FormHandler {
                         false
                     ),
                 «ENDIF»
-                «IF !incoming.empty || !outgoing.empty»
+                «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
                     'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD),
                 «ENDIF»
-                «IF !incoming.empty || !outgoing.empty»
+                «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
                     'inline_usage' => $this->templateParameters['inlineUsage'],
                 «ENDIF»
             ];
@@ -1685,7 +1685,7 @@ class FormHandler {
                 // store new identifier
                 $this->idValue = $entity->getKey();
             }
-            «IF !incoming.empty || !outgoing.empty»
+            «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
                 «relationPresetsHelper.saveNonEditablePresets(it, app)»
             «ENDIF»
 

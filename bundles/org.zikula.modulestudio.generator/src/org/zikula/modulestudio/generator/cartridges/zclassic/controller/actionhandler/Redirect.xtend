@@ -160,7 +160,7 @@ class Redirect {
          */
         protected function getRedirectUrl(array $args = [])«IF app.targets('3.0')»: string«ENDIF»
         {
-            «IF app.needsInlineEditing && (!incoming.empty || !outgoing.empty)»
+            «IF app.needsInlineEditing && (!getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty)»
                 if (isset($this->templateParameters['inlineUsage']) && true === $this->templateParameters['inlineUsage']) {
                     $commandName = 'submit' === mb_substr($args['commandName'], 0, 6) ? 'create' : $args['commandName'];
                     $urlArgs = [
