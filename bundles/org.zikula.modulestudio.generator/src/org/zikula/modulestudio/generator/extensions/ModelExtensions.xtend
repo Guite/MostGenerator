@@ -412,7 +412,7 @@ class ModelExtensions {
      */
     def getEditableFields(DataObject it) {
         var fields = getDerivedFields.filter[name != 'workflowState' && name != 'translationData']
-        if (it instanceof Entity && (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
+        if (!(it instanceof Entity) || (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter[!primaryKey]
         }
         var filteredFields = fields.filter[!isVersionField].reject(ObjectField)
