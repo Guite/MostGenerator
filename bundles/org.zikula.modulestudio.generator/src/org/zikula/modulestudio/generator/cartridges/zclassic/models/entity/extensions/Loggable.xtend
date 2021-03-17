@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.AbstractIntegerField
 
 class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
@@ -88,6 +89,17 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class implementation.
      */
     override extensionClassBaseImplementation(Entity it) '''
+        «IF primaryKey instanceof AbstractIntegerField»
+            /**
+             * Use integer instead of string for increased performance.
+             *
+             * @var int
+             *
+             * @ORM\Column(name="object_id", type="integer")
+             */
+            protected $objectId;
+
+        «ENDIF»
         /**
          * Extended description of the executed action which produced this log entry.
          *
