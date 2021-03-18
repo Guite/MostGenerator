@@ -28,9 +28,11 @@ import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 
 class Entities {
 
+    extension EntityIndexExtensions = new EntityIndexExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -383,7 +385,7 @@ class Entities {
     def private index(EntityIndex it, String indexType) '''
          «' '»*         @ORM\«indexType.toFirstUpper»(name="«name.formatForDB»", columns={«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»})
     '''
-    def private indexField(EntityIndexItem it) '''"«name.formatForCode»"'''
+    def private indexField(EntityIndexItem it) '''"«indexItemForEntity»"'''
 
     def private discriminatorInfo(InheritanceRelationship it) '''
         "«source.name.formatForCode»" = "«source.entityClassName('', false)»"

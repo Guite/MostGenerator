@@ -34,11 +34,13 @@ import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 
 class ValidationConstraints {
 
     extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
+    extension EntityIndexExtensions = new EntityIndexExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -469,16 +471,6 @@ class ValidationConstraints {
     '''
 
     def private uniqueAnnotation(EntityIndex it) '''
-        «' '»* @UniqueEntity(fields={«FOR item : items SEPARATOR ', '»"«item.name.formatForCode»"«ENDFOR»}, ignoreNull="«(!includesNotNullableField).displayBool»")
+        «' '»* @UniqueEntity(fields={«FOR item : items SEPARATOR ', '»"«item.indexItemForSymfonyValidator»"«ENDFOR»}, ignoreNull="«(!includesNotNullableItem).displayBool»")
     '''
-
-    def private includesNotNullableField(EntityIndex it) {
-        val nonNullableFields = entity.getDerivedFields.filter[!nullable]
-        for (item : items) {
-            if (!nonNullableFields.filter[item.name.equals(name)].empty) {
-                return true
-            }
-        }
-        false
-    }
 }

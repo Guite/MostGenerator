@@ -210,17 +210,6 @@ class ModelJoinExtensions {
     }
 
     /**
-     * Returns unified name for relation fields. If we have id or fooid the function returns foo_id.
-     * Otherwise it returns the actual field name of the referenced field.
-     */
-    def relationFieldName(DataObject it, String refField) {
-        if (isDefaultIdFieldName(refField))
-            name.formatForDB + '_id'
-        else
-            fields.findFirst[name == refField]?.name?.formatForCode ?: ''
-    }
-
-    /**
      * Returns a concatenated list of all source fields.
      */
     def getSourceFields(JoinRelationship it) {
