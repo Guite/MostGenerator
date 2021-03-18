@@ -108,7 +108,7 @@ class EntityDisplayHelper {
                 $this->listEntriesHelper = $listEntriesHelper;
             «ENDIF»
             «IF hasAnyDateTimeFields || hasNumberFields»
-                $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : null;
+                $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : 'en';
             «ENDIF»
             «IF hasAnyDateTimeFields»
                 $this->dateFormatter = new IntlDateFormatter($locale, IntlDateFormatter::NONE, IntlDateFormatter::NONE);
