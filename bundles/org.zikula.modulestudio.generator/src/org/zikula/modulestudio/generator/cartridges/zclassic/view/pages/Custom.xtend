@@ -54,7 +54,7 @@ class Custom {
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«controller.name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-                <p class="alert alert-info">Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«relativeTemplatePath(controller, isAdmin)»</em> to either <em>/themes/YourTheme/Resources/«app.appName»/views/«relativeTemplatePath(controller, isAdmin)»</em> or <em>/app/Resources/«app.appName»/views/«relativeTemplatePath(controller, isAdmin)»</em>.</p>
+                <p class="alert alert-info">Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«relativeTemplatePath(controller, isAdmin)»</em> to either <em>/themes/YourTheme/Resources/«IF app.targets('3.0')»«app.vendor.formatForCodeCapital»/«app.name.formatForCodeCapital»Module«ELSE»«app.appName»«ENDIF»/views/«relativeTemplatePath(controller, isAdmin)»</em> or <em>«IF app.targets('3.0')»/templates/bundles/«app.appName»/«ELSE»/app/Resources/«app.appName»/views/«ENDIF»«relativeTemplatePath(controller, isAdmin)»</em>.</p>
             </div>
         {% endblock %}
     '''
