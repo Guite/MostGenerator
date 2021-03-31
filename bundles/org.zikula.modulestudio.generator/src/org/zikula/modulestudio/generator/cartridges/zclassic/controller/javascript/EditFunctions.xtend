@@ -154,7 +154,7 @@ class EditFunctions {
                 «vendorAndName»ExecuteCustomValidationConstraints(editedObjectType, editedEntityId);
             });
 
-            formButtons = editForm.find('.form-buttons input');
+            formButtons = editForm.find('.form-buttons input, .form-buttons button');
             if (editForm.find('.btn-danger').length > 0) {
                 editForm.find('.btn-danger').first().bind('click keypress', function (event) {
                     if (!window.confirm(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Do you really want to delete this entry?'))) {
