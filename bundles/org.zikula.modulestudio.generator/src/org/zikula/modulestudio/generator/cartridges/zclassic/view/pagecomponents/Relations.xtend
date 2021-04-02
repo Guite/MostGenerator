@@ -177,9 +177,11 @@ class Relations {
         «ENDIF»
         {% set sectionTitle %}
             «IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from '«otherEntity.name.formatForCode»'«ENDIF» %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»
-            {% if creationPossible and createLink|default %}
-                «createLink('')»
-            {% endif %}
+            «IF otherEntity.hasEditAction»
+                {% if creationPossible and createLink|default %}
+                    «createLink('')»
+                {% endif %}
+            «ENDIF»
         {% endset %}
         {% if routeArea == 'admin' %}
             <h4>{{ sectionTitle }}</h4>
