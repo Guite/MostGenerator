@@ -22,6 +22,7 @@ jobs:
     - name: Setup JDK
       uses: actions/setup-java@master
       with:
+        distribution: 'adopt'
         java-version: 11
 
     - name: Cache Maven packages
