@@ -210,8 +210,13 @@ class MenuBuilder {
                 $context = $options['context'];
                 «IF hasLoggable»
 
+                    if (\is_callable([$this->requestStack, 'getMainRequest'])) {
+                        $mainRequest = $this->requestStack->getMainRequest(); // symfony 5.3+
+                    } else {
+                        $mainRequest = $this->requestStack->getMasterRequest();
+                    }
                     // return empty menu for preview of deleted items
-                    $routeName = $this->requestStack->getMasterRequest()->get('_route');
+                    $routeName = $mainRequest->get('_route');
                     if (false !== mb_stripos($routeName, 'displaydeleted')) {
                         return $menu;
                     }

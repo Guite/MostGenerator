@@ -17,7 +17,12 @@ class ViewActions {
     extension Utils = new Utils
 
     def actionsImpl(Application it) '''
-        $query = $this->requestStack->getMasterRequest()->query;
+        if (\is_callable([$this->requestStack, 'getMainRequest'])) {
+            $mainRequest = $this->requestStack->getMainRequest(); // symfony 5.3+
+        } else {
+            $mainRequest = $this->requestStack->getMasterRequest();
+        }
+        $query = $mainRequest->query;
         $currentTemplate = $query->getAlnum('tpl', '');
         «FOR entity : getAllEntities.filter[hasViewAction]»
             if ('«entity.name.formatForCode»' === $objectType) {
