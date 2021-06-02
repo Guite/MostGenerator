@@ -18,8 +18,8 @@ class PhpUnitXmlDist {
     def private phpUnitXml(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
         <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.3/phpunit.xsd"
-                 bootstrap="../../../«IF targets('3.0') && !isSystemModule»../«ENDIF»vendor/autoload.php"
+                 xsi:noNamespaceSchemaLocation="«IF targets('3.x-dev')»../../../vendor/phpunit/phpunit/«ELSE»https://schema.phpunit.de/8.3/«ENDIF»phpunit.xsd"
+                 bootstrap="../../../«IF targets('3.0') && !isSystemModule»../«ENDIF»«IF targets('3.x-dev')»tests/bootstrap.php«ELSE»vendor/autoload.php«ENDIF»"
                  executionOrder="depends,defects"
                  forceCoversAnnotation="true"
                  beStrictAboutCoversAnnotation="true"
