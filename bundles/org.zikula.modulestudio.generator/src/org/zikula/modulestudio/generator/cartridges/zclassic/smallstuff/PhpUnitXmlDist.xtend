@@ -20,6 +20,7 @@ class PhpUnitXmlDist {
         <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="«IF targets('3.x-dev')»../../../vendor/phpunit/phpunit/«ELSE»https://schema.phpunit.de/8.3/«ENDIF»phpunit.xsd"
                  bootstrap="../../../«IF targets('3.0') && !isSystemModule»../«ENDIF»«IF targets('3.x-dev')»tests/bootstrap.php«ELSE»vendor/autoload.php«ENDIF»"
+                 colors="true"
                  «IF targets('3.0')»
                     convertDeprecationsToExceptions="false"
                  «ENDIF»
