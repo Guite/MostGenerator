@@ -315,7 +315,7 @@ class ExternalController {
         «ENDIF»
 
         // the number of items displayed on a page for pagination
-        $resultsPerPage = «IF !targets('3.0')»(int)«ENDIF»$num;
+        $resultsPerPage = «IF !targets('3.0')»(int) «ENDIF»$num;
         if (0 === $resultsPerPage) {
             $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 20);
         }
