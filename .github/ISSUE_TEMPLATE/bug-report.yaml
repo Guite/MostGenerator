@@ -43,6 +43,8 @@ body:
         4. See error
         ...
       render: bash
+    validations:
+      required: true
   - type: textarea
     id: context
     attributes:
