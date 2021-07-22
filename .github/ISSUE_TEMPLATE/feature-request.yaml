@@ -1,7 +1,7 @@
 name: Feature Request
-about: Tell us about a new addition you want to see
+description: Tell us about a new addition you want to see
 title: 
-labels: feature
+labels: [feature]
 assignees: 'Guite'
 body:
   - type: markdown
