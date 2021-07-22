@@ -1,6 +1,5 @@
 name: Feature Request
 description: Tell us about a new addition you want to see
-title: 
 labels: [feature]
 assignees: 'Guite'
 body:
@@ -13,30 +12,30 @@ body:
     attributes:
       label: Summary
       description: Pleaseprovide a brief overview of what the new feature is all about.
+      render: bash
     validations:
       required: true
-    render: bash
   - type: textarea
     id: desired-behavior
     attributes:
       label: Desired behaviour
       description: Please tell us, how the new feature should work, be specific.
       placeholder: Describe what you imagine!
+      render: bash
     validations:
       required: true
-    render: bash
   - type: textarea
     id: possible-solution
     attributes:
       label: Possible solution
       description: Not required, but suggest ideas on how to implement the addition or change.
-    render: bash
+      render: bash
   - type: textarea
     id: context
     attributes:
       label: Context
       description:  Why does this feature matter to you? What unique circumstances do you have? If this involves a rather complex scenario maybe attach your .mostapp model file.
-    render: bash
+      render: bash
   - type: dropdown
     id: version
     attributes:

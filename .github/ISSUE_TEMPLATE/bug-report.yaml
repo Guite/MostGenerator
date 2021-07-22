@@ -1,6 +1,5 @@
 name: Bug Report
 description: Provide information about a problem
-title: 
 labels: [bug]
 assignees: 'Guite'
 body:
@@ -14,24 +13,24 @@ body:
       label: Expected behaviour - What did you expect to happen?
       description: Please tell us, what is the intended behavior?
       placeholder: Describe what you wanted to see!
+      render: bash
     validations:
       required: true
-    render: bash
   - type: textarea
     id: current-behavior
     attributes:
       label: Current behavior - What happened instead?
       description: Also tell us, what actually happened? If possible include screenshots of your problem!
       placeholder: Tell us what you see!
+      render: bash
     validations:
       required: true
-    render: bash
   - type: textarea
     id: possible-solution
     attributes:
       label: Possible solution
       description: Not required, but suggest a fix/reason for the bug.
-    render: bash
+      render: bash
   - type: textarea
     id: steps-to-reproduce
     attributes:
@@ -43,13 +42,13 @@ body:
         3. Scroll down to '....'
         4. See error
         ...
-    render: bash
+      render: bash
   - type: textarea
     id: context
     attributes:
       label: Context
       description: How has this issue affected you? What unique circumstances do you have? If this involves a rather complex scenario maybe attach your .mostapp model file.
-    render: bash
+      render: bash
   - type: dropdown
     id: version
     attributes:
