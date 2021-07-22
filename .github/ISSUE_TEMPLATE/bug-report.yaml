@@ -50,7 +50,7 @@ body:
       description: How has this issue affected you? What unique circumstances do you have? If this involves a rather complex scenario maybe attach your .mostapp model file.
       render: bash
   - type: dropdown
-    id: version
+    id: most-version
     attributes:
       label: ModuleStudio Version
       description: What version of ModuleStudio are you running?
@@ -63,7 +63,7 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: version
+    id: oeprating-system
     attributes:
       label: Operating system
       description: Which operating system are you running?
@@ -74,7 +74,7 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: version
+    id: zikula-target-version
     attributes:
       label: Zikula target in model
       description: Which Zikula target version do you have configured in your model?
@@ -88,7 +88,7 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: version
+    id: zikula-version
     attributes:
       label: Zikula version
       description: Which Zikula version are you running?
@@ -102,7 +102,7 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: version
+    id: php-version
     attributes:
       label: PHP version
       description: Which PHP version are you running?
