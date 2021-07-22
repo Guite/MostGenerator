@@ -16,6 +16,7 @@ body:
       placeholder: Describe what you wanted to see!
     validations:
       required: true
+    render: bash
   - type: textarea
     id: current-behavior
     attributes:
@@ -24,21 +25,31 @@ body:
       placeholder: Tell us what you see!
     validations:
       required: true
+    render: bash
   - type: textarea
     id: possible-solution
     attributes:
       label: Possible solution
       description: Not required, but suggest a fix/reason for the bug.
+    render: bash
   - type: textarea
     id: steps-to-reproduce
     attributes:
       label: Steps to reproduce
       description: Provide a link to a live example, or an unambiguous set of steps to reproduce this bug. Include code to reproduce, if relevant.
+      value: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+        ...
+    render: bash
   - type: textarea
     id: context
     attributes:
       label: Context
       description: How has this issue affected you? What unique circumstances do you have? If this involves a rather complex scenario maybe attach your .mostapp model file.
+    render: bash
   - type: dropdown
     id: version
     attributes:
