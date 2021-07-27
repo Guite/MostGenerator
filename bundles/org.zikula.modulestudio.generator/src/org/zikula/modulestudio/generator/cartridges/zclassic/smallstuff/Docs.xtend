@@ -119,7 +119,7 @@ class Docs {
         3. Execute this command replacing `en` by your desired locale code:
 
         «IF targets('3.0')»
-            `php -dmemory_limit=2G bin/console translation:extract --bundle=«appName» extension en`
+            `php -dmemory_limit=2G bin/console translation:extract --bundle «appName» extension en`
 
             4. Translate the resulting `.yaml` files in `«relativeAppRootPath»/Resources/translations/`.
         «ELSE»
