@@ -459,7 +459,7 @@ class Plugins {
         «IF targets('3.0') && hasUploads»
 
             /**
-             * The «appName.formatForDB»__relativePath filter returns the relative web path to a file.
+             * The «appName.formatForDB»_relativePath filter returns the relative web path to a file.
              * Example:
              *     {{ myPerson.image.getPathname()|«appName.formatForDB»_relativePath }}.
              */
