@@ -17,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.AbstractStringField
 
 class EntityDisplayHelper {
 
@@ -340,7 +341,7 @@ class EntityDisplayHelper {
                 if (matchedFields.head instanceof UploadField) {
                     formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(is_array($entity->get' + patternPart.toFirstUpper + '()) ? $entity->get' + patternPart.toFirstUpper + '()[\'' + patternPart + '\'] : $entity->get' + patternPart.toFirstUpper + '())'
                 } else {
-                    formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(' + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '())')
+                    formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(' + (if (matchedFields.head instanceof AbstractStringField) '' else '(string) ') + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '())')
                 }
             } else if (geographical && #['latitude', 'longitude'].contains(patternPart)) {
                 // geo field referencing part
