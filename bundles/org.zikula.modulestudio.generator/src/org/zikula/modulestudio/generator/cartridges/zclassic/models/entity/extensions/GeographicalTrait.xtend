@@ -45,7 +45,7 @@ class GeographicalTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\Type(type="numeric")«/* type="float" not possible due to https://github.com/doctrine/dbal/issues/1347 */»
+         * @Assert\Type(type="numeric")«/* type="float" not possible due to https://github.com/doctrine/orm/issues/9172 */»
          *
          * @var float
          */
@@ -58,7 +58,7 @@ class GeographicalTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\Type(type="numeric")«/* type="float" not possible due to https://github.com/doctrine/dbal/issues/1347 */»
+         * @Assert\Type(type="numeric")«/* type="float" not possible due to https://github.com/doctrine/orm/issues/9172 */»
          *
          * @var float
          */
