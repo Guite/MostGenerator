@@ -55,7 +55,7 @@ class ComposerFile {
         "require": {
             «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
             «IF generatePdfSupport»
-                "dompdf/dompdf": "^0",
+                "dompdf/dompdf": "^1",
             «ENDIF»
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
