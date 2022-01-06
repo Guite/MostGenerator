@@ -4,13 +4,11 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Attributes {
 
     extension ControllerExtensions = new ControllerExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate (Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Helper/'
@@ -32,9 +30,9 @@ class Attributes {
         {% if obj.attributes is defined %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabAttributes" aria-labelledby="attributesTab">
-                    <h3>«IF targets('3.0')»{% trans %}Attributes{% endtrans %}«ELSE»{{ __('Attributes') }}«ENDIF»</h3>
+                    <h3>{% trans %}Attributes{% endtrans %}</h3>
             {% else %}
-                <h3 class="attributes">«IF targets('3.0')»{% trans %}Attributes{% endtrans %}«ELSE»{{ __('Attributes') }}«ENDIF»</h3>
+                <h3 class="attributes">{% trans %}Attributes{% endtrans %}</h3>
             {% endif %}
             «viewBody»
             {% if tabs|default(false) == true %}
@@ -56,11 +54,11 @@ class Attributes {
         {# purpose of this template: reusable editing of entity attributes #}
         {% if tabs|default(false) == true %}
             <div role="tabpanel" class="tab-pane fade" id="tabAttributes" aria-labelledby="attributesTab">
-                <h3>«IF targets('3.0')»{% trans %}Attributes{% endtrans %}«ELSE»{{ __('Attributes') }}«ENDIF»</h3>
+                <h3>{% trans %}Attributes{% endtrans %}</h3>
         {% else %}
             <fieldset class="attributes">
         {% endif %}
-            <legend>«IF targets('3.0')»{% trans %}Attributes{% endtrans %}«ELSE»{{ __('Attributes') }}«ENDIF»</legend>
+            <legend>{% trans %}Attributes{% endtrans %}</legend>
             «editBody»
         {% if tabs|default(false) == true %}
             </div>

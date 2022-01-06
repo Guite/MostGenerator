@@ -485,12 +485,11 @@ class PersistenceTransformer {
             name = 'Limited revisions by amount of revisions'
             value = 'limitedByAmount'
         ]
-        if (targets('2.0')) {
-            revisionHandlingItems += factory.createListFieldItem => [
-                name = 'Limited revisions by date interval'
-                value = 'limitedByDate'
-            ]
-        }
+        revisionHandlingItems += factory.createListFieldItem => [
+            name = 'Limited revisions by date interval'
+            value = 'limitedByDate'
+        ]
+
         val revisionAmountItems = <ListFieldItem>newArrayList
         for (amount : #[1, 5, 10, 25, 50, 100, 250, 500]) {
             revisionAmountItems += factory.createListFieldItem => [
@@ -519,14 +518,12 @@ class PersistenceTransformer {
             listField.items.addAll(EcoreUtil.copyAll(revisionAmountItems))
             varContainer.fields += listField
 
-            if (targets('2.0')) {
-                varContainer.fields += factory.createStringField => [
-                    name = 'periodFor' + entity.name.formatForCodeCapital + 'Revisions'
-                    defaultValue = 'P1Y0M0DT0H0M0S'
-                    mandatory = false
-                    role = StringRole.DATE_INTERVAL
-                ]
-            }
+            varContainer.fields += factory.createStringField => [
+                name = 'periodFor' + entity.name.formatForCodeCapital + 'Revisions'
+                defaultValue = 'P1Y0M0DT0H0M0S'
+                mandatory = false
+                role = StringRole.DATE_INTERVAL
+            ]
 
             varContainer.fields += factory.createBooleanField => [
                 name = 'show' + entity.name.formatForCodeCapital + 'History'

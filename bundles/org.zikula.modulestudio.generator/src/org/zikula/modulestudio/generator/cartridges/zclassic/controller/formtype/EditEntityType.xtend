@@ -111,24 +111,24 @@ class EditEntityType {
          */
         abstract class Abstract«name.formatForCodeCapital»Type extends AbstractType
         {
-            «IF !app.targets('3.0')»
-                use TranslatorTrait;
+            «IF it instanceof Entity»
+                «IF it.standardFields || it.workflow != EntityWorkflowType.NONE»
+                    «IF it.standardFields»
+                        use ModerationFormFieldsTrait;
+                    «ENDIF»
+                    «IF it.workflow != EntityWorkflowType.NONE»
+                        use WorkflowFormFieldsTrait;
+                    «ENDIF»
 
+                «ENDIF»
             «ENDIF»
-            «IF application.targets('3.0') && !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+            «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                 /**
                  * @var RequestStack
                  */
                 protected $requestStack;
 
             «ENDIF»
-            «IF it instanceof Entity && (it as Entity).standardFields»
-                use ModerationFormFieldsTrait;
-            «ENDIF»
-            «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
-                use WorkflowFormFieldsTrait;
-            «ENDIF»
-
             /**
              * @var EntityFactory
              */
@@ -187,9 +187,7 @@ class EditEntityType {
             «ENDIF»
 
             public function __construct(
-                «IF !application.targets('3.0')»
-                    TranslatorInterface $translator,
-                «ELSEIF application.targets('3.0') && !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                     RequestStack $requestStack,
                 «ENDIF»
                 EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
@@ -202,9 +200,7 @@ class EditEntityType {
                 LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
                 FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
-                «IF !application.targets('3.0')»
-                    $this->setTranslator($translator);
-                «ELSEIF application.targets('3.0') && !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                     $this->requestStack = $requestStack;
                 «ENDIF»
                 $this->entityFactory = $entityFactory;
@@ -229,10 +225,6 @@ class EditEntityType {
                     $this->featureActivationHelper = $featureActivationHelper;
                 «ENDIF»
             }
-            «IF !app.targets('3.0')»
-
-                «app.setTranslatorMethod»
-            «ENDIF»
 
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -243,9 +235,9 @@ class EditEntityType {
                             'multiple' => false,
                             'expanded' => false,
                             'use_joins' => false,
-                            'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Parent «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF»,
+                            'label' => 'Parent «name.formatForDisplay»',
                             'attr' => [
-                                'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the parent «name.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
+                                'title' => 'Choose the parent «name.formatForDisplay».',
                             ],
                         ]);
                     }
@@ -254,7 +246,7 @@ class EditEntityType {
                 «IF isInheriting»
                     «val parents = getParentDataObjects(newArrayList)»
                     $builder->add('parentFields', «parents.head.name.formatForCodeCapital»Type::class, [
-                        'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«parents.head.name.formatForDisplayCapital» data'«IF !app.targets('3.0')»)«ENDIF»,
+                        'label' => '«parents.head.name.formatForDisplayCapital» data',
                         'inherit_data' => true,
                         'data_class' => «name.formatForCodeCapital»Entity::class
                     ]);
@@ -330,7 +322,7 @@ class EditEntityType {
                     ->setDefaults([
                         // define class for underlying data (required for embedding forms)
                         'data_class' => «name.formatForCodeCapital»Entity::class,
-                        «IF app.targets('3.0') && !app.isSystemModule»
+                        «IF !app.isSystemModule»
                             'translation_domain' => '«name.formatForCode»',
                         «ENDIF»
                         'empty_data' => function (FormInterface $form) {
@@ -417,7 +409,7 @@ class EditEntityType {
         /**
          * Adds basic entity fields.
          */
-        public function addEntityFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addEntityFields(FormBuilderInterface $builder, array $options = []): void
         {
             «IF it instanceof Entity && isTranslatable»
                 «translatableFields(it as Entity)»
@@ -446,11 +438,7 @@ class EditEntityType {
                     $builder->add('translations' . $language, TranslationType::class, [
                         'fields' => $translatableFields,
                         'mandatory_fields' => $mandatoryFields[$language],
-                        «IF app.targets('3.0')»
-                            'values' => $options['translations'][$language] ?? [],
-                        «ELSE»
-                            'values' => isset($options['translations'][$language]) ? $options['translations'][$language] : [],
-                        «ENDIF»
+                        'values' => $options['translations'][$language] ?? [],
                     ]);
                 }
             }
@@ -485,14 +473,14 @@ class EditEntityType {
 
     def private slugField(Entity it) '''
         «IF hasSluggableFields && slugUpdatable»
-            $helpText = «IF !app.targets('3.0')»$this->__(«ELSE»/** @Translate */«ENDIF»'You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.'«IF !app.targets('3.0')»)«ENDIF»;
+            $helpText = /** @Translate */'You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.';
             «IF hasTranslatableSlug»
                 if ('create' !== $options['mode']) {
                     $helpText = '';
                 }
             «ENDIF»
             $builder->add('slug', TextType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Permalink:'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => 'Permalink',
                 'required' => «IF hasTranslatableSlug»'create' !== $options['mode']«ELSE»false«ENDIF»,
                 «/*IF hasTranslatableSlug»
                     'empty_data' => '',
@@ -501,14 +489,10 @@ class EditEntityType {
                     «IF slugUnique»
                         'class' => 'validate-unique',
                     «ENDIF»
-                    «IF app.targets('3.0')»
-                        /** @Ignore */
-                    «ENDIF»
+                    /** @Ignore */
                     'title' => $helpText,
                 ],
-                «IF app.targets('3.0')»
-                    /** @Ignore */
-                «ENDIF»
+                /** @Ignore */
                 'help' => $helpText,
             ]);
         «ENDIF»
@@ -518,11 +502,11 @@ class EditEntityType {
         /**
          * Adds fields for coordinates.
          */
-        public function addGeographicalFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addGeographicalFields(FormBuilderInterface $builder, array $options = []): void
         {
             «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                 $builder->add('«geoFieldName»', GeoType::class, [
-                    'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«geoFieldName.toFirstUpper»:'«IF !app.targets('3.0')»)«ENDIF»,
+                    'label' => '«geoFieldName.toFirstUpper»',
                     'required' => false
                 ]);
             «ENDFOR»
@@ -533,17 +517,13 @@ class EditEntityType {
         /**
          * Adds fields for attributes.
          */
-        public function addAttributeFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addAttributeFields(FormBuilderInterface $builder, array $options = []): void
         {
             foreach ($options['attributes'] as $attributeName => $attributeValue) {
                 $builder->add('attributes' . $attributeName, TextType::class, [
                     'mapped' => false,
-                    «IF app.targets('3.0')»
-                        /** @Ignore */
-                        'label' => $attributeName,
-                    «ELSE»
-                        'label' => $this->__(/** @Ignore */$attributeName),
-                    «ENDIF»
+                    /** @Ignore */
+                    'label' => $attributeName,
                     'attr' => [
                         'maxlength' => 255,
                     ],
@@ -558,10 +538,10 @@ class EditEntityType {
         /**
          * Adds a categories field.
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('categories', CategoriesType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»:'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => '«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»',
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
                     'class' => 'category-selector',
@@ -580,7 +560,7 @@ class EditEntityType {
         /**
          * Adds fields for incoming relationships.
          */
-        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options = []): void
         {
             «FOR relation : incomingRelations»
                 «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_TARGET_SIDE»
@@ -593,7 +573,7 @@ class EditEntityType {
         /**
          * Adds fields for outgoing relationships.
          */
-        public function addOutgoingRelationshipFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addOutgoingRelationshipFields(FormBuilderInterface $builder, array $options = []): void
         {
             «FOR relation : outgoingRelations»
                 «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_SOURCE_SIDE»
@@ -615,10 +595,10 @@ class EditEntityType {
                     'required' => false,
                 «ENDIF»
                 'inline_usage' => true,
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«aliasName.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => '«aliasName.formatForDisplayCapital»',
                 «relationHelp(outgoing)»
                 'attr' => [
-                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the «aliasName.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
+                    'title' => 'Choose the «aliasName.formatForDisplay».',
                 ],
             ]);
         «ELSE»
@@ -667,12 +647,12 @@ class EditEntityType {
                     'query_builder' => $queryBuilder,
                     «IF /*outgoing && */nullable»
                         «IF !isManySide(outgoing) && !isExpanded/* expanded uses default: "None" */»
-                            'placeholder' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Please choose an option.'«IF !app.targets('3.0')»)«ENDIF»,
+                            'placeholder' => 'Please choose an option.',
                         «ENDIF»
                         'required' => false,
                     «ENDIF»
                 «ENDIF»
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«aliasName.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => '«aliasName.formatForDisplayCapital»',
                 «IF !autoComplete && isExpanded»
                     'label_attr' => [
                         'class' => '«IF isManySide(outgoing)»checkbox«ELSE»radio«ENDIF»-inline'
@@ -680,15 +660,15 @@ class EditEntityType {
                 «ENDIF»
                 «relationHelp(outgoing)»
                 'attr' => [
-                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Choose the «aliasName.formatForDisplay».'«IF !app.targets('3.0')»)«ENDIF»,
+                    'title' => 'Choose the «aliasName.formatForDisplay».',
                 ],
             ]);
         «ENDIF»
     '''
 
     def private relationHelp(JoinRelationship it, Boolean outgoing) {
-        val messages = if (application.targets('3.0')) relationHelpMessages(outgoing) else relationHelpMessagesLegacy(outgoing)
-        val parameters = if (application.targets('3.0')) relationHelpMessageParameters(outgoing) else newArrayList
+        val messages = relationHelpMessages(outgoing)
+        val parameters = relationHelpMessageParameters(outgoing)
         new SharedFormTypeHelper().displayHelpMessages(application, messages, parameters)
     }
 
@@ -731,7 +711,7 @@ class EditEntityType {
             } else if (maxSource > 0) {
                 messages += '''«''»'Note: you must not select more than %max% choices.'«''»'''
             }
-    	} else {
+        } else {
             if (minTarget > 0 && maxTarget > 0) {
                 if (minTarget == maxTarget) {
                     messages += '''«''»'Note: you must select exactly %amount% choices.'«''»'''
@@ -788,7 +768,7 @@ class EditEntityType {
             } else if (maxSource > 0) {
                 parameters += '''«''»'%max%' => «maxSource»'''
             }
-    	} else {
+        } else {
             if (minTarget > 0 && maxTarget > 0) {
                 if (minTarget == maxTarget) {
                     parameters += '''«''»'%amount%' => «minTarget»])'''
@@ -804,61 +784,6 @@ class EditEntityType {
 
         parameters
     }
-    def private dispatch ArrayList<String> relationHelpMessagesLegacy(JoinRelationship it, Boolean outgoing) {
-        newArrayList
-    }
-    def private dispatch relationHelpMessagesLegacy(OneToManyRelationship it, Boolean outgoing) {
-        val messages = newArrayList
-
-        if (!outgoing) {
-            return messages
-        }
-
-        if (minTarget > 0 && maxTarget > 0) {
-            if (minTarget == maxTarget) {
-                messages += '''$this->__f('Note: you must select exactly %amount% choices.', ['%amount%' => «minTarget»])'''
-            } else {
-                messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «minTarget», '%max%' => «maxTarget»])'''
-            }
-        } else if (minTarget > 0) {
-            messages += '''$this->__f('Note: you must select at least %min% choices.', ['%min%' => «minTarget»])'''
-        } else if (maxTarget > 0) {
-            messages += '''$this->__f('Note: you must not select more than %max% choices.', ['%max%' => «maxTarget»])'''
-        }
-
-        messages
-    }
-    def private dispatch relationHelpMessagesLegacy(ManyToManyRelationship it, Boolean outgoing) {
-        val messages = newArrayList
-
-        if (!outgoing) {
-            if (minSource > 0 && maxSource > 0) {
-                if (minSource == maxSource) {
-                    messages += '''$this->__f('Note: you must select exactly %amount% choices.', ['%amount%' => «minSource»])'''
-                } else {
-                    messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «minSource», '%max%' => «maxSource»])'''
-                }
-            } else if (minSource > 0) {
-                messages += '''$this->__f('Note: you must select at least %min% choices.', ['%min%' => «minSource»])'''
-            } else if (maxSource > 0) {
-                messages += '''$this->__f('Note: you must not select more than %max% choices.', ['%max%' => «maxSource»])'''
-            }
-    	} else {
-            if (minTarget > 0 && maxTarget > 0) {
-                if (minTarget == maxTarget) {
-                    messages += '''$this->__f('Note: you must select exactly %amount% choices.', ['%amount%' => «minTarget»])'''
-                } else {
-                    messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «minTarget», '%max%' => «maxTarget»])'''
-                }
-            } else if (minTarget > 0) {
-                messages += '''$this->__f('Note: you must select at least %min% choices.', ['%min%' => «minTarget»])'''
-            } else if (maxTarget > 0) {
-                messages += '''$this->__f('Note: you must not select more than %max% choices.', ['%max%' => «maxTarget»])'''
-            }
-        }
-
-        messages
-    }
 
     def private formType(JoinRelationship it, Boolean autoComplete) {
         if (autoComplete) '''«app.appNamespace»\Form\Type\Field\AutoCompletionRelation'''
@@ -869,15 +794,13 @@ class EditEntityType {
         /**
          * Adds submit buttons.
          */
-        public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addSubmitButtons(FormBuilderInterface $builder, array $options = []): void
         {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], SubmitType::class, [
-                    «IF app.targets('3.0')»
-                        /** @Ignore */
-                    «ENDIF»
+                    /** @Ignore */
                     'label' => $action['title'],
-                    'icon' => 'delete' === $action['id'] ? 'fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»' : '',
+                    'icon' => 'delete' === $action['id'] ? 'fa-trash-alt' : '',
                     'attr' => [
                         'class' => $action['buttonClass'],
                     ],
@@ -885,7 +808,7 @@ class EditEntityType {
                 if ('create' === $options['mode'] && 'submit' === $action['id']«IF !incoming.empty || !outgoing.empty» && !$options['inline_usage']«ENDIF») {
                     // add additional button to submit item and return to create form
                     $builder->add('submitrepeat', SubmitType::class, [
-                        'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Submit and repeat'«IF !app.targets('3.0')»)«ENDIF»,
+                        'label' => 'Submit and repeat',
                         'icon' => 'fa-repeat',
                         'attr' => [
                             'class' => $action['buttonClass'],

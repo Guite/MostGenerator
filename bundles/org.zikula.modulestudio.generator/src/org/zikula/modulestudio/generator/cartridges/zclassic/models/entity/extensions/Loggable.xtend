@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
+import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.ObjectField
@@ -7,15 +8,12 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 
 class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
@@ -49,11 +47,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «IF application.targets('3.0')»
-            «(new FileHelper(application)).getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, false, true, '', '')»
-        «ELSE»
-            «(new FileHelper(application)).getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, false, false, '', '')»
-        «ENDIF»
+        «(new FileHelper(application)).getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, false, true, '', '')»
     '''
 
     /**
@@ -107,11 +101,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          * @ORM\Column(name="action_description", length=255)
          */
         protected $actionDescription = '';
-        «IF application.targets('3.0')»
-            «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, false, true, '', '')»
-        «ELSE»
-            «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, false, false, '', '')»
-        «ENDIF»
+        «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, false, true, '', '')»
     '''
 
     /**
@@ -120,14 +110,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     override extensionRepositoryClassBaseImplementation(Entity it) '''
         /**
          * Selects all log entries for removals to determine deleted «nameMultiple.formatForDisplay».
-         «IF !application.targets('3.0')»
-         *
-         * @param integer $limit The maximum amount of items to fetch
-         *
-         * @return array Collection containing retrieved items
-         «ENDIF»
          */
-        public function selectDeleted«IF application.targets('3.0')»(?int $limit = null): array«ELSE»($limit = null)«ENDIF»
+        public function selectDeleted(?int $limit = null): array
         {
             $objectClass = str_replace('LogEntry', '', $this->_entityName);
 
@@ -160,9 +144,9 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          * Removes (or rather conflates) all obsolete log entries.
          *
          * @param string $revisionHandling The currently configured revision handling mode
-         * @param string $limitParameter Optional parameter for limitation (maximum revision amount«IF application.targets('2.0')» or date interval«ENDIF»)
+         * @param string $limitParameter Optional parameter for limitation (maximum revision amount or date interval)
          */
-        public function purgeHistory«IF application.targets('3.0')»(string $revisionHandling = 'unlimited', string $limitParameter = ''): void«ELSE»($revisionHandling = 'unlimited', $limitParameter = '')«ENDIF»
+        public function purgeHistory(string $revisionHandling = 'unlimited', string $limitParameter = ''): void
         {
             if (
                 'unlimited' === $revisionHandling
@@ -210,7 +194,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 $qb->andWhere('log.objectId IN (:identifiers)')
                    ->setParameter('identifiers', $identifiers)
                 ;
-            }«IF application.targets('2.0')» elseif ('limitedByDate' === $revisionHandling) {
+            } elseif ('limitedByDate' === $revisionHandling) {
                 if (!$limitParameter) {
                     $limitParameter = 'P1Y0M0DT0H0M0S';
                 }
@@ -220,7 +204,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 $qb->andWhere('log.loggedAt <= :thresholdDate')
                    ->setParameter('thresholdDate', $thresholdDate)
                 ;
-            }«ENDIF»
+            }
 
             // we do not need to filter specific actions, but may remove/conflate log entries with all actions
             // this does not affect detection of deleted «nameMultiple.formatForDisplay»

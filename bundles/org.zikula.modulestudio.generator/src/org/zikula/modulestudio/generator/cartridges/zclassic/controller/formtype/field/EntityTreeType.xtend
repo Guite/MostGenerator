@@ -22,11 +22,7 @@ class EntityTreeType {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\OptionsResolver\Options;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-        «ELSE»
-            use Zikula\Core\Doctrine\EntityAccess;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use «appNamespace»\Helper\EntityDisplayHelper;
 
         /**
@@ -60,9 +56,6 @@ class EntityTreeType {
                         'query_builder' => function (EntityRepository $er) {
                             return $er->selectTree($options['root'], $options['use_joins']);
                         },*/»
-                        «IF !targets('2.0')»
-                            'choices_as_values' => true,
-                        «ENDIF»
                     ])
                     ->setAllowedTypes('root', 'int')
                     ->setAllowedTypes('include_leaf_nodes', 'bool')
@@ -85,12 +78,8 @@ class EntityTreeType {
 
             /**
              * Performs the actual data selection.
-             «IF !targets('3.0')»
-             *
-             * @return array List of selected objects
-             «ENDIF»
              */
-            protected function loadChoices(Options $options)«IF targets('3.0')»: array«ENDIF»
+            protected function loadChoices(Options $options): array
             {
                 $repository = $options['em']->getRepository($options['class']);
                 $treeNodes = $repository->selectTree($options['root'], $options['use_joins']);
@@ -122,16 +111,8 @@ class EntityTreeType {
             /**
              * Determines whether a certain list item should be included or not.
              * Allows to exclude undesired items after the selection has happened.
-             «IF !targets('3.0')»
-             *
-             * @param EntityAccess $item The treated entity
-             * @param EntityRepository $repository The entity repository
-             * @param Options $options The options
-             *
-             * @return boolean Whether this entity should be included into the list
-             «ENDIF»
              */
-            protected function isIncluded(EntityAccess $item, EntityRepository $repository, Options $options)«IF targets('3.0')»: bool«ENDIF»
+            protected function isIncluded(EntityAccess $item, EntityRepository $repository, Options $options): bool
             {
                 $nodeLevel = $item->getLvl();
 
@@ -150,15 +131,8 @@ class EntityTreeType {
 
             /**
              * Creates the label for a choice.
-             «IF !targets('3.0')»
-             *
-             * @param object $choice The object
-             * @param boolean $includeRootNode Whether the root node should be included or not
-             *
-             * @return string The string representation of the object
-             «ENDIF»
              */
-            protected function createChoiceLabel($choice, «IF targets('3.0')»bool «ENDIF»$includeRootNode = false)«IF targets('3.0')»: string«ENDIF»
+            protected function createChoiceLabel($choice, bool $includeRootNode = false): string
             {
                 // determine current list hierarchy level depending on root node inclusion
                 $shownLevel = $choice->getLvl();

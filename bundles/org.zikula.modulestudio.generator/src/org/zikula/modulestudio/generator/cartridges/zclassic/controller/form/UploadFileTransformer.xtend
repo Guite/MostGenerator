@@ -21,12 +21,8 @@ class UploadFileTransformer {
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
-        «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «ELSE»
-            use Zikula\Core\Doctrine\EntityAccess;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use «appNamespace»\Helper\UploadHelper;
 
         /**
@@ -36,13 +32,11 @@ class UploadFileTransformer {
          */
         abstract class AbstractUploadFileTransformer implements DataTransformerInterface
         {
-            «IF targets('3.0')»
-                /**
-                 * @var ZikulaHttpKernelInterface
-                 */
-                protected $kernel;
+            /**
+             * @var ZikulaHttpKernelInterface
+             */
+            protected $kernel;
 
-            «ENDIF»
             /**
              * @var EntityAccess
              */
@@ -66,17 +60,13 @@ class UploadFileTransformer {
             «ENDIF»
 
             public function __construct(
-                «IF targets('3.0')»
-                    ZikulaHttpKernelInterface $kernel,
-                «ENDIF»
+                ZikulaHttpKernelInterface $kernel,
                 EntityAccess $entity,
                 UploadHelper $uploadHelper,
                 $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»,
                 $customName = false«ENDIF»
             ) {
-                «IF targets('3.0')»
-                    $this->kernel = $kernel;
-                «ENDIF»
+                $this->kernel = $kernel;
                 $this->entity = $entity;
                 $this->uploadHelper = $uploadHelper;
                 $this->fieldName = $fieldName;
@@ -157,7 +147,7 @@ class UploadFileTransformer {
                 $metaData = [];
                 if ('' !== $uploadResult['fileName']) {
                     $result = $this->uploadHelper->getFileBaseFolder($objectType, $fieldName) . $uploadResult['fileName'];
-                    $result = null !== $result ? new File(«IF targets('3.0')»$this->kernel->getProjectDir() . '/' . «ENDIF»$result) : $result;
+                    $result = null !== $result ? new File($this->kernel->getProjectDir() . '/' . $result) : $result;
                     $metaData = $uploadResult['metaData'];
                 }
 

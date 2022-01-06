@@ -125,23 +125,15 @@ class Utils {
      * @return Boolean The result
      */
     def Boolean targets(Application it, String version) {
-        val useStable15 = !#['1.5-dev', '2.0', '2.0-dev', '3.0', '3.x-dev'].contains(version)
-
         switch targetCoreVersion {
-            case ZK3DEV:
-                #['3.x-dev', '3.0', '2.0-dev', '2.0', '1.5-dev'].contains(version)
+            case ZK40:
+                #['4.0', '3.1', '3.0'].contains(version)
+            case ZK31:
+                #['3.1', '3.0'].contains(version)
             case ZK30:
-                #['3.0', '2.0-dev', '2.0', '1.5-dev'].contains(version)
-            case ZK2DEV:
-                #['2.0-dev', '2.0', '1.5-dev'].contains(version)
-            case ZK20:
-                #['2.0', '1.5-dev'].contains(version)
-            case ZK15:
-                useStable15
-            case ZK15DEV:
-                version == '1.5-dev'
+                #['3.0'].contains(version)
             default:
-                useStable15
+                true
         }
     }
 
@@ -155,20 +147,14 @@ class Utils {
      */
     def targetSemVer(Application it, Boolean withPoint) {
         switch targetCoreVersion {
-            case ZK3DEV:
-                if (!withPoint) '3.0' else '3.0.1'
+            case ZK40:
+                if (!withPoint) '4.0' else '4.0.0'
+            case ZK31:
+                if (!withPoint) '3.1' else '3.1.0'
             case ZK30:
-                if (!withPoint) '3.0' else '3.0.0'
-            case ZK2DEV:
-                if (!withPoint) '2.0' else '2.0.15'
-            case ZK20:
-                if (!withPoint) '2.0' else '2.0.15'
-            case ZK15:
-                if (!withPoint) '1.5' else '1.5.9'
-            case ZK15DEV:
-                if (!withPoint) '1.5' else '1.5.9'
+                if (!withPoint) '3.0' else '3.0.4'
             default:
-                if (!withPoint) '2.0' else '2.0.15'
+                if (!withPoint) '3.0' else '3.0.4'
         }
     }
 

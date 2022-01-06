@@ -15,12 +15,10 @@ import de.guite.modulestudio.metamodel.RelationEditMode
 import de.guite.modulestudio.metamodel.RelationFetchType
 import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class TechStructureRelations {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension Utils = new Utils
 
     TechHelper helper = new TechHelper
     String language
@@ -51,11 +49,11 @@ class TechStructureRelations {
     def private relationContent(DataObject it) '''
         «var counter = 0»
         «FOR relation : outgoing»
-            <span class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">«counter = counter + 1»</span>
+            <span class="d-none">«counter = counter + 1»</span>
             «relationSingle(relation, counter, false)»
         «ENDFOR»
         «FOR relation : incoming»
-            <span class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">«counter = counter + 1»</span>
+            <span class="d-none">«counter = counter + 1»</span>
             «relationSingle(relation, counter, true)»
         «ENDFOR»
     '''

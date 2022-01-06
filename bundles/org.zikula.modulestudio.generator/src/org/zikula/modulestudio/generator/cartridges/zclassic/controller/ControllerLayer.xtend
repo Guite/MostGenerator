@@ -104,35 +104,33 @@ class ControllerLayer {
 
     def private commonAppImports(Entity it) '''
         use «entityClassName('', false)»;
-        «IF app.targets('3.0')»
-            «IF hasViewAction || hasDisplayAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
-                use «app.appNamespace»\Entity\Factory\EntityFactory;
-            «ENDIF»
-            «IF hasEditAction»
-                use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;
-            «ENDIF»
-            «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
-                use «app.appNamespace»\Helper\ControllerHelper;
-            «ENDIF»
-            «IF (hasDisplayAction && app.generateIcsTemplates && hasStartAndEndDateField) || (hasEditAction && app.needsInlineEditing)»
-                use «app.appNamespace»\Helper\EntityDisplayHelper;
-            «ENDIF»
-            «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
-                use «app.appNamespace»\Helper\HookHelper;
-            «ENDIF»
-            «IF loggable»
-                use «app.appNamespace»\Helper\LoggableHelper;
-            «ENDIF»
-            use «app.appNamespace»\Helper\PermissionHelper;
-            «IF loggable && hasTranslatableFields»
-                use «app.appNamespace»\Helper\TranslatableHelper;
-            «ENDIF»
-            «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
-                use «app.appNamespace»\Helper\ViewHelper;
-            «ENDIF»
-            «IF hasViewAction || hasDeleteAction || loggable»
-                use «app.appNamespace»\Helper\WorkflowHelper;
-            «ENDIF»
+        «IF hasViewAction || hasDisplayAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
+            use «app.appNamespace»\Entity\Factory\EntityFactory;
+        «ENDIF»
+        «IF hasEditAction»
+            use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;
+        «ENDIF»
+        «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
+            use «app.appNamespace»\Helper\ControllerHelper;
+        «ENDIF»
+        «IF (hasDisplayAction && app.generateIcsTemplates && hasStartAndEndDateField) || (hasEditAction && app.needsInlineEditing)»
+            use «app.appNamespace»\Helper\EntityDisplayHelper;
+        «ENDIF»
+        «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
+            use «app.appNamespace»\Helper\HookHelper;
+        «ENDIF»
+        «IF loggable»
+            use «app.appNamespace»\Helper\LoggableHelper;
+        «ENDIF»
+        use «app.appNamespace»\Helper\PermissionHelper;
+        «IF loggable && hasTranslatableFields»
+            use «app.appNamespace»\Helper\TranslatableHelper;
+        «ENDIF»
+        «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
+            use «app.appNamespace»\Helper\ViewHelper;
+        «ENDIF»
+        «IF hasViewAction || hasDeleteAction || loggable»
+            use «app.appNamespace»\Helper\WorkflowHelper;
         «ENDIF»
     '''
 
@@ -142,7 +140,7 @@ class ControllerLayer {
         «IF hasViewAction || hasEditAction»
             use Exception;
         «ENDIF»
-        «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
+        «IF hasViewAction || hasDeleteAction»
             use Psr\Log\LoggerInterface;
         «ENDIF»
         «IF hasViewAction || hasEditAction || hasDeleteAction»
@@ -160,9 +158,7 @@ class ControllerLayer {
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «IF app.targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\Controller\AbstractController;
         «IF hasDeleteAction»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType;
         «ENDIF»
@@ -176,24 +172,13 @@ class ControllerLayer {
             use Zikula\Component\SortableColumns\Column;
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
-        «IF !app.targets('3.0')»
-            use Zikula\Core\Controller\AbstractController;
-        «ENDIF»
         «IF hasEditAction && app.needsInlineEditing»
-            «IF app.targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Response\PlainResponse;
-            «ELSE»
-                use Zikula\Core\Response\PlainResponse;
-            «ENDIF»
+            use Zikula\Bundle\CoreBundle\Response\PlainResponse;
         «ENDIF»
         «IF hasViewAction && hasDisplayAction && !skipHookSubscribers»
-            «IF app.targets('3.0')»
-                use Zikula\Bundle\CoreBundle\RouteUrl;
-            «ELSE»
-                use Zikula\Core\RouteUrl;
-            «ENDIF»
+            use Zikula\Bundle\CoreBundle\RouteUrl;
         «ENDIF»
-        «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
+        «IF hasViewAction || hasDeleteAction»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF ownerPermission && standardFields && hasDeleteAction»
@@ -207,7 +192,7 @@ class ControllerLayer {
         namespace «app.appNamespace»\Controller;
 
         use «app.appNamespace»\Controller\Base\Abstract«name.formatForCodeCapital»Controller;
-        «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
+        «IF hasViewAction || hasDeleteAction»
             use Psr\Log\LoggerInterface;
         «ENDIF»
         «IF hasViewAction»
@@ -216,11 +201,11 @@ class ControllerLayer {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
-        «IF app.targets('3.0') && hasViewAction»
+        «IF hasViewAction»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
         use Zikula\ThemeModule\Engine\Annotation\Theme;
-        «IF app.targets('3.0') && (hasViewAction || hasDeleteAction)»
+        «IF hasViewAction || hasDeleteAction»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «commonAppImports»

@@ -25,26 +25,22 @@ class LoggableUndelete {
     def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «undeleteDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndelete«IF !application.targets('3.x-dev')»Action«ENDIF»(
+            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndelete«IF !application.targets('3.1')»Action«ENDIF»(
                 «undeleteArguments(false)»
-            )«IF application.targets('3.0')»: Response«ENDIF» {
-                «IF application.targets('3.0')»
-                    return $this->undeleteInternal(
-                        $request,
-                        $loggableHelper,«IF hasTranslatableFields»
-                        $translatableHelper,«ENDIF»
-                        $id,
-                        «isAdmin.displayBool»
-                    );
-                «ELSE»
-                    return $this->undeleteInternal($request, $id, «isAdmin.displayBool»);
-                «ENDIF»
+            ): Response {
+                return $this->undeleteInternal(
+                    $request,
+                    $loggableHelper,«IF hasTranslatableFields»
+                    $translatableHelper,«ENDIF»
+                    $id,
+                    «isAdmin.displayBool»
+                );
             }
         «ELSEIF isBase && !isAdmin»
             «undeleteDocBlock(isBase, isAdmin)»
             protected function undeleteInternal(
                 «undeleteArguments(true)»
-            )«IF application.targets('3.0')»: Response«ENDIF» {
+            ): Response {
                 «loggableUndeleteBaseImpl»
             }
         «ENDIF»
@@ -55,14 +51,6 @@ class LoggableUndelete {
          * «IF hasDisplayAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
          *
          «IF isBase»
-         «IF !application.targets('3.0')»
-         * @param Request $request
-         * @param int $id Identifier of entity
-         * @param boolean $isAdmin Whether the admin area is used or not
-         *
-         * @return Response Output
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
          «ELSE»
@@ -79,50 +67,38 @@ class LoggableUndelete {
     '''
 
     def private undeleteArguments(Entity it, Boolean internalMethod) '''
-        «IF application.targets('3.0')»
-            Request $request,
-            PermissionHelper $permissionHelper,
-            ControllerHelper $controllerHelper,
-            ViewHelper $viewHelper,
-            EntityFactory $entityFactory,
-            «IF categorisable»
-                CategoryHelper $categoryHelper,
-                FeatureActivationHelper $featureActivationHelper,
-            «ENDIF»
-            LoggableHelper $loggableHelper,
-            «IF application.generateIcsTemplates && hasStartAndEndDateField»
-                EntityDisplayHelper $entityDisplayHelper,
-            «ENDIF»
-            «IF hasTranslatableFields»
-                TranslatableHelper $translatableHelper,
-            «ENDIF»
-            int $id = 0«IF internalMethod»,
-            bool $isAdmin = false«ENDIF»
-        «ELSE»
-            Request $request,
-            $id = 0«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+        Request $request,
+        PermissionHelper $permissionHelper,
+        ControllerHelper $controllerHelper,
+        ViewHelper $viewHelper,
+        EntityFactory $entityFactory,
+        «IF categorisable»
+            CategoryHelper $categoryHelper,
+            FeatureActivationHelper $featureActivationHelper,
         «ENDIF»
+        LoggableHelper $loggableHelper,
+        «IF application.generateIcsTemplates && hasStartAndEndDateField»
+            EntityDisplayHelper $entityDisplayHelper,
+        «ENDIF»
+        «IF hasTranslatableFields»
+            TranslatableHelper $translatableHelper,
+        «ENDIF»
+        int $id = 0«IF internalMethod»,
+        bool $isAdmin = false«ENDIF»
     '''
 
     def private loggableUndeleteBaseImpl(Entity it) '''
-        «IF !application.targets('3.0')»
-            $loggableHelper = $this->get('«application.appService».loggable_helper');
-        «ENDIF»
         $«name.formatForCode» = $loggableHelper->restoreDeletedEntity('«name.formatForCode»', $id);
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException(
-                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                    'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
+                $this->trans(
+                    'No such «name.formatForDisplay» found.'«IF !application.isSystemModule»,
                     [],
                     '«name.formatForCode»'«ENDIF»
                 )
             );
         }
 
-        «IF !application.targets('3.0')»
-            $permissionHelper = $this->get('«application.appService».permission_helper');
-        «ENDIF»
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
         if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
             throw new AccessDeniedException();
@@ -132,26 +108,22 @@ class LoggableUndelete {
             $preview = $request->query->getInt('preview');
             if (1 === $preview) {
                 return $this->displayInternal(
-                    «IF application.targets('3.0')»
-                        $request,
-                        $permissionHelper,
-                        $controllerHelper,
-                        $viewHelper,
-                        $entityFactory,
-                        «IF categorisable»
-                            $categoryHelper,
-                            $featureActivationHelper,
-                        «ENDIF»
-                        $loggableHelper,
-                        «IF application.generateIcsTemplates && hasStartAndEndDateField»
-                            $entityDisplayHelper,
-                        «ENDIF»
-                        $«name.formatForCode»,
-                        null,
-                        $isAdmin
-                    «ELSE»
-                        $request, $«name.formatForCode», null, $isAdmin
+                    $request,
+                    $permissionHelper,
+                    $controllerHelper,
+                    $viewHelper,
+                    $entityFactory,
+                    «IF categorisable»
+                        $categoryHelper,
+                        $featureActivationHelper,
                     «ENDIF»
+                    $loggableHelper,
+                    «IF application.generateIcsTemplates && hasStartAndEndDateField»
+                        $entityDisplayHelper,
+                    «ENDIF»
+                    $«name.formatForCode»,
+                    null,
+                    $isAdmin
                 );
             }
 
@@ -159,7 +131,7 @@ class LoggableUndelete {
         «undeletion»
         «IF hasTranslatableFields»
 
-            «IF application.targets('3.0')»$translatableHelper«ELSE»$this->get('«application.appService».translatable_helper')«ENDIF»->refreshTranslationsFromLogData($«name.formatForCode»);
+            $translatableHelper->refreshTranslationsFromLogData($«name.formatForCode»);
         «ENDIF»
 
         $routeArea = $isAdmin ? 'admin' : '';
@@ -172,20 +144,20 @@ class LoggableUndelete {
             $loggableHelper->undelete($«name.formatForCode»);
             $this->addFlash(
                 'status',
-                «IF application.targets('3.0') && application.isSystemModule»
+                «IF application.isSystemModule»
                     'Done! «name.formatForDisplayCapital» undeleted.'
                 «ELSE»
-                    $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                        'Done! «name.formatForDisplayCapital» undeleted.'«IF application.targets('3.0') && !application.isSystemModule»,
+                    $this->trans(
+                        'Done! «name.formatForDisplayCapital» undeleted.',
                         [],
-                        '«name.formatForCode»'«ENDIF»
+                        '«name.formatForCode»'
                     )
                 «ENDIF»
             );
         } catch (Exception $exception) {
             $this->addFlash(
                 'error',
-                $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
+                $this->trans(
                     'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                     ['%action%' => 'undelete']
                 ) . '  ' . $exception->getMessage()

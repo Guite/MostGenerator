@@ -16,23 +16,13 @@ class TreeSelection {
     def private treeSelectionImpl(Application it) '''
         /**
          * The «appName.formatForDB»_treeSelection function retrieves tree entities based on a given one.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated object type
-         * @param EntityAccess $node Given entity as tree entry point
-         * @param string $target One of 'allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors'
-         * @param bool $skipRootNode Whether root nodes are skipped or not (defaults to true). Useful for when working with many trees at once
-         *
-         * @return array The output of the plugin
-         «ENDIF»
          */
-        public function getTreeSelection«IF targets('3.0')»(
+        public function getTreeSelection(
             string $objectType,
             EntityAccess $node,
             string $target,
             bool $skipRootNode = true
-        ): array {«ELSE»($objectType, $node, $target, $skipRootNode = true)
-        {«ENDIF»
+        ): array {
             $repository = $this->entityFactory->getRepository($objectType);
             $titleFieldName = $this->entityDisplayHelper->getTitleFieldName($objectType);
 

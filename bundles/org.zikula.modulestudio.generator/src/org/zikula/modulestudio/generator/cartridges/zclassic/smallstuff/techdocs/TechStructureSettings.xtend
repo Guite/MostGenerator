@@ -57,12 +57,6 @@ class TechStructureSettings {
             <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateDetailContentType)»</td>
         </tr>
         <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Support für Mailz«ELSE»Mailz support«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateMailzApi)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»Newsletter Plugin«ELSE»Newsletter plugin«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateNewsletterPlugin)»</td>
-        </tr>
-        <tr>
             <td headers="hSettingName1">«IF language == 'de'»Block zur Moderation«ELSE»Moderation block«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateModerationBlock)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Panel zur Moderation«ELSE»Moderation panel«ENDIF»</td>
@@ -83,8 +77,8 @@ class TechStructureSettings {
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Authentifizierungsmethode«ELSE»Authentication method«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«authenticationMethod.literal» &ndash; «authenticationMethod.authMethodDescription»</td>
-            <td headers="hSettingName2">«IF language == 'de'»Support für Tagging«ELSE»Tagging support«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateTagSupport)»</td>
+            <td headers="hSettingName2"></td>
+            <td headers="hSettingValue2" class="text-center"></td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Anbieter für Filter-Hooks«ELSE»Filter hooks provider«ENDIF»</td>

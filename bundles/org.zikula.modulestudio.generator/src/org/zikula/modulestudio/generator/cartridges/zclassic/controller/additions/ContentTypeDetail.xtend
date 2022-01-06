@@ -3,19 +3,17 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ContentTypeDetailType
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeDetailView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeDetailView
 
 class ContentTypeDetail {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -23,12 +21,8 @@ class ContentTypeDetail {
             return
         }
         'Generating content type for single objects'.printIfNotTesting(fsa)
-        if (targets('2.0')) {
-            fsa.generateClassPair('ContentType/ItemType.php', contentTypeBaseClass, contentTypeImpl)
-            new ContentTypeDetailType().generate(it, fsa)
-        } else {
-            fsa.generateClassPair('ContentType/Item.php', contentTypeLegacyBaseClass, contentTypeLegacyImpl)
-        }
+        fsa.generateClassPair('ContentType/ItemType.php', contentTypeBaseClass, contentTypeImpl)
+        new ContentTypeDetailType().generate(it, fsa)
         new ContentTypeDetailView().generate(it, fsa)
     }
 
@@ -37,11 +31,7 @@ class ContentTypeDetail {
 
         use Symfony\Component\HttpKernel\Controller\ControllerReference;
         use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
-        «IF targets('3.0')»
-            use Zikula\ExtensionsModule\ModuleInterface\Content\AbstractContentType;
-        «ELSE»
-            use Zikula\Common\Content\AbstractContentType;
-        «ENDIF»
+        use Zikula\ExtensionsModule\ModuleInterface\Content\AbstractContentType;
         use «appNamespace»\ContentType\Form\Type\ItemType as FormType;
         use «appNamespace»\Helper\ControllerHelper;
 
@@ -51,24 +41,6 @@ class ContentTypeDetail {
         abstract class AbstractItemType extends AbstractContentType
         {
             «contentTypeBaseImpl»
-        }
-    '''
-
-    def private contentTypeLegacyBaseClass(Application it) '''
-        namespace «appNamespace»\ContentType\Base;
-
-        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-        use Symfony\Component\HttpKernel\Controller\ControllerReference;
-
-        /**
-         * Generic single item display content type base class.
-         */
-        abstract class AbstractItem extends \Content_AbstractContentType implements ContainerAwareInterface
-        {
-            use ContainerAwareTrait;
-
-            «contentTypeBaseLegacyImpl»
         }
     '''
 
@@ -83,22 +55,22 @@ class ContentTypeDetail {
          */
         protected $fragmentHandler;
 
-        public function getIcon()«IF targets('3.0')»: string«ENDIF»
+        public function getIcon(): string
         {
             return 'circle-o';
         }
 
-        public function getTitle()«IF targets('3.0')»: string«ENDIF»
+        public function getTitle(): string
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
+            return $this->translator->trans('«name.formatForDisplayCapital» detail');
         }
 
-        public function getDescription()«IF targets('3.0')»: string«ENDIF»
+        public function getDescription(): string
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display or link a single «name.formatForDisplay» object.'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
+            return $this->translator->trans('Display or link a single «name.formatForDisplay» object.');
         }
 
-        public function getDefaultData()«IF targets('3.0')»: array«ENDIF»
+        public function getDefaultData(): array
         {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -108,7 +80,7 @@ class ContentTypeDetail {
             ];
         }
 
-        public function getData()«IF targets('3.0')»: array«ENDIF»
+        public function getData(): array
         {
             $data = parent::getData();
 
@@ -127,18 +99,14 @@ class ContentTypeDetail {
             return $data;
         }
 
-        public function displayView()«IF targets('3.0')»: string«ENDIF»
+        public function displayView(): string
         {
             if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
                 return '';
             }
 
             $controllerReference = new ControllerReference(
-                «IF targets('3.0')»
-                    '«appNamespace»\Controller\ExternalController::display«IF !targets('3.x-dev')»Action«ENDIF»',
-                «ELSE»
-                    '«appName»:External:display',
-                «ENDIF»
+                '«appNamespace»\Controller\ExternalController::display«IF !targets('3.1')»Action«ENDIF»',
                 $this->getDisplayArguments(),
                 [
                     'template' => $this->data['customTemplate']
@@ -148,10 +116,10 @@ class ContentTypeDetail {
             return $this->fragmentHandler->render($controllerReference, 'inline', []);
         }
 
-        public function displayEditing()«IF targets('3.0')»: string«ENDIF»
+        public function displayEditing(): string
         {
             if (null === $this->data['id'] || empty($this->data['id']) || empty($this->data['displayMode'])) {
-                return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No item selected.'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
+                return $this->translator->trans('No item selected.');
             }
 
             return parent::displayEditing();
@@ -159,12 +127,8 @@ class ContentTypeDetail {
 
         /**
          * Returns common arguments for displaying the selected object using the external controller.
-         «IF !targets('3.0')»
-         *
-         * @return array Display arguments
-         «ENDIF»
          */
-        protected function getDisplayArguments()«IF targets('3.0')»: array«ENDIF»
+        protected function getDisplayArguments(): array
         {
             return [
                 'objectType' => $this->data['objectType'],
@@ -174,12 +138,12 @@ class ContentTypeDetail {
             ];
         }
 
-        public function getEditFormClass()«IF targets('3.0')»: string«ENDIF»
+        public function getEditFormClass(): string
         {
             return FormType::class;
         }
 
-        public function getEditFormOptions($context)«IF targets('3.0')»: array«ENDIF»
+        public function getEditFormOptions($context): array
         {
             $options = parent::getEditFormOptions($context);
             $data = $this->getData();
@@ -188,205 +152,20 @@ class ContentTypeDetail {
             return $options;
         }
 
-        «IF targets('3.0')»
-            /**
-             * @required
-             */
-        «ENDIF»
-        public function setControllerHelper(ControllerHelper $controllerHelper)«IF targets('3.0')»: void«ENDIF»
+        /**
+         * @required
+         */
+        public function setControllerHelper(ControllerHelper $controllerHelper): void
         {
             $this->controllerHelper = $controllerHelper;
         }
 
-        «IF targets('3.0')»
-            /**
-             * @required
-             */
-        «ENDIF»
-        public function setFragmentHandler(FragmentHandler $fragmentHandler)«IF targets('3.0')»: void«ENDIF»
+        /**
+         * @required
+         */
+        public function setFragmentHandler(FragmentHandler $fragmentHandler): void
         {
             $this->fragmentHandler = $fragmentHandler;
-        }
-    '''
-
-    def private contentTypeBaseLegacyImpl(Application it) '''
-        /**
-         * @var string
-         */
-        protected $objectType;
-
-        /**
-         * @var integer
-         */
-        protected $id;
-
-        /**
-         * @var string
-         */
-        protected $displayMode;
-
-        /**
-         * @var string
-         */
-        protected $customTemplate;
-
-        public function __construct()
-        {
-            $this->setContainer(\ServiceUtil::getManager());
-        }
-
-        /**
-         * Returns the module providing this content type.
-         *
-         * @return string The module name
-         */
-        public function getModule()
-        {
-            return '«appName»';
-        }
-
-        /**
-         * Returns the name of this content type.
-         *
-         * @return string The content type name
-         */
-        public function getName()
-        {
-            return 'Item';
-        }
-
-        /**
-         * Returns the title of this content type.
-         *
-         * @return string The content type title
-         */
-        public function getTitle()
-        {
-            return $this->container->get('translator.default')->__('«appName» detail view', '«appName.formatForDB»');
-        }
-
-        /**
-         * Returns the description of this content type.
-         *
-         * @return string The content type description
-         */
-        public function getDescription()
-        {
-            return $this->container->get('translator.default')->__('Display or link a single «appName» object.', '«appName.formatForDB»');
-        }
-
-        /**
-         * Loads the data.
-         *
-         * @param array $data Data array with parameters
-         */
-        public function loadData(&$data)
-        {
-            $controllerHelper = $this->container->get('«appService».controller_helper');
-
-            «IF !isSystemModule»
-                $contextArgs = ['name' => 'detail'];
-            «ENDIF»
-            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType'«IF !isSystemModule», $contextArgs«ENDIF»))) {
-                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType'«IF !isSystemModule», $contextArgs«ENDIF»);
-            }
-
-            $this->objectType = $data['objectType'];
-
-            $this->id = isset($data['id']) ? $data['id'] : null;
-            $this->displayMode = isset($data['displayMode']) ? $data['displayMode'] : 'embed';
-            $this->customTemplate = isset($data['customTemplate']) ? $data['customTemplate'] : null;
-        }
-
-        /**
-         * Displays the data.
-         *
-         * @return string The returned output
-         */
-        public function display()
-        {
-            if (null === $this->id || empty($this->id) || empty($this->displayMode)) {
-                return '';
-            }
-
-            $controllerReference = new ControllerReference(
-                '«appName»:External:display',
-                $this->getDisplayArguments(),
-                [
-                    'template' => $this->customTemplate
-                ]
-            );
-
-            return $this->container->get('fragment.handler')->render($controllerReference, 'inline', []);
-        }
-
-        /**
-         * Displays the data for editing.
-         */
-        public function displayEditing()
-        {
-            if (null === $this->id || empty($this->id) || empty($this->displayMode)) {
-                return $this->container->get('translator.default')->__('No item selected.', '«appName.formatForDB»');
-            }
-
-            return $this->display();
-        }
-
-        /**
-         * Returns common arguments for displaying the selected object using the external controller.
-         *
-         * @return array Display arguments
-         */
-        protected function getDisplayArguments()
-        {
-            return [
-                'objectType' => $this->objectType,
-                'id' => $this->id,
-                'source' => 'contentType',
-                'displayMode' => $this->displayMode
-            ];
-        }
-
-        /**
-         * Returns the default data.
-         *
-         * @return array Default data and parameters
-         */
-        public function getDefaultData()
-        {
-            return [
-                'objectType' => '«getLeadingEntity.name.formatForCode»',
-                'id' => null,
-                'displayMode' => 'embed',
-                'customTemplate' => null
-            ];
-        }
-
-        /**
-         * Executes additional actions for the editing mode.
-         */
-        public function startEditing()
-        {
-            // ensure that the view does not look for templates in the Content module (#218)
-            $this->view->toplevelmodule = '«appName»';
-
-            // ensure our custom plugins are loaded
-            array_push($this->view->plugins_dir, '«relativeAppRootPath»/«getViewPath»plugins');
-
-            // required as parameter for the item selector plugin
-            $this->view->assign('objectType', $this->objectType);
-        }
-
-        /**
-         * Returns the edit template path.
-         *
-         * @return string
-         */
-        public function getEditTemplate()
-        {
-            $absoluteTemplatePath = str_replace('ContentType/Base/AbstractItem.php', 'Resources/views/ContentType/item_edit.tpl', __FILE__);
-
-            return 'file:' . $absoluteTemplatePath;
         }
     '''
 
@@ -399,20 +178,6 @@ class ContentTypeDetail {
          * Generic single item display content type implementation class.
          */
         class ItemType extends AbstractItemType
-        {
-            // feel free to extend the content type here
-        }
-    '''
-
-    def private contentTypeLegacyImpl(Application it) '''
-        namespace «appNamespace»\ContentType;
-
-        use «appNamespace»\ContentType\Base\AbstractItem;
-
-        /**
-         * Generic single item display content type implementation class.
-         */
-        class Item extends AbstractItem
         {
             // feel free to extend the content type here
         }

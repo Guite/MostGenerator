@@ -14,7 +14,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Association {
 
@@ -22,7 +21,6 @@ class Association {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     FileHelper fh
 
@@ -444,15 +442,9 @@ class Association {
             /**
              * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
              *
-             «IF !application.targets('3.0')»
-             * @param «source.getDerivedFields.findFirst[e|e.name.equals(indexBy)].fieldTypeAsString(true)» $«indexBy.formatForCode»
-             *
-             * @return The desired «source.entityClassName('', false)» instance
-             * 
-             «ENDIF»
              * @throws InvalidArgumentException If desired index does not exist
              */
-            public function get«singleName.formatForCodeCapital»(«IF application.targets('3.0')»«source.getDerivedFields.findFirst[e|e.name.equals(indexBy)].fieldTypeAsString(true)» «ENDIF»$«indexBy.formatForCode»)«IF !application.targets('3.0')»: «source.entityClassName('', false)»«ENDIF»
+            public function get«singleName.formatForCodeCapital»(«source.getDerivedFields.findFirst[e|e.name.equals(indexBy)].fieldTypeAsString(true)» $«indexBy.formatForCode»): «source.entityClassName('', false)»
             {
                 if (!isset($this->«aliasName.formatForCode»[$«indexBy.formatForCode»])) {
                     throw new InvalidArgumentException("«indexBy.formatForDisplayCapital» is not available on this list of «aliasName.formatForDisplay».");
@@ -467,12 +459,6 @@ class Association {
 
         /**
          * Adds an instance of \«type» to the list of «name.formatForDisplay».
-         «IF !application.targets('3.0')»
-         *
-         * @param «addParameters(useTarget, nameSingle, type)» The instance to be added to the collection
-         *
-         * @return self
-         «ENDIF»
          */
         «addMethodImpl(useTarget, name, nameSingle, type)»
     '''
@@ -493,7 +479,7 @@ class Association {
         «ELSE»\«type» $«name»«ENDIF»'''
 
     def private addMethodSignature(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
-        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)«IF application.targets('3.0')»: self«ENDIF»'''
+        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»): self'''
 
     def private addMethodImplDefault(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         «addMethodSignature(useTarget, name, nameSingle, type)»
@@ -532,14 +518,8 @@ class Association {
 
             /**
              * Additional add function for internal use.
-             «IF !application.targets('3.0')»
-             *
-             * @param «targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode» Given instance to be used for aggregation
-             *
-             * @return self
-             «ENDIF»
              */
-            protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»(«IF application.targets('3.0')»«targetField.fieldTypeAsString(true)» «ENDIF»$«targetField.name.formatForCode»)«IF application.targets('3.0')»: self«ENDIF»
+            protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»(«targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode»): self
             {
                 $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
 
@@ -580,14 +560,8 @@ class Association {
 
         /**
          * Removes an instance of \«type» from the list of «name.formatForDisplay».
-         «IF !application.targets('3.0')»
-         *
-         * @param \«type» $«nameSingle» The instance to be removed from the collection
-         *
-         * @return self
-         «ENDIF»
          */
-        public function remove«name.toFirstUpper»(\«type» $«nameSingle»)«IF application.targets('3.0')»: self«ENDIF»
+        public function remove«name.toFirstUpper»(\«type» $«nameSingle»): self
         {
             if ($this->«name»->contains($«nameSingle»)) {
                 $this->«name»->removeElement($«nameSingle»);

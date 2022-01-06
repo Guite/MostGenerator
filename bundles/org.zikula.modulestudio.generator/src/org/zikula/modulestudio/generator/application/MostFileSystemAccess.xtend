@@ -12,14 +12,14 @@ class MostFileSystemAccess extends JavaIoFileSystemAccess implements IMostFileSy
     @Accessors(PUBLIC_SETTER)
     Application app
 
-	override generateFile(String fileName, String outputConfigName, CharSequence contents) throws RuntimeIOException {
+    override generateFile(String fileName, String outputConfigName, CharSequence contents) throws RuntimeIOException {
         if (app.shouldBeSkipped(fileName)) {
             return
         }
         val result = preProcess(app, fileName, contents).entrySet.head
 
         super.generateFile(result.key, outputConfigName, result.value)
-	}
+    }
 
     /**
      * Generates a base class and an inheriting concrete class with

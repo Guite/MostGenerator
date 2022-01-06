@@ -19,10 +19,10 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class FileHelper {
 
-    Application app
+    //Application app
 
     new(Application it) {
-        app = it
+        //app = it
     }
 
     extension ControllerExtensions = new ControllerExtensions
@@ -39,19 +39,12 @@ class FileHelper {
     '''
 
     def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint, String init, CharSequence customImpl) '''
-        «getterMethod(name, type, isMany, nullable, useHint && app.targets('3.0'))»
+        «getterMethod(name, type, isMany, nullable, useHint)»
         «setterMethod(name, type, isMany, nullable, useHint, init, customImpl)»
     '''
 
     def getterMethod(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint) '''
 
-        «IF !app.targets('3.0')»
-        /**
-         * Returns the «name.formatForDisplay».
-         *
-         * @return «IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF»
-         */
-        «ENDIF»
         public function get«name.formatForCodeCapital»()«IF useHint»«IF skipTypeHint»/*«ENDIF»: «IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF skipTypeHint»*/«ENDIF»«ENDIF»
         {
             return «IF type == 'float'»(float) «ENDIF»$this->«name»;
@@ -60,16 +53,7 @@ class FileHelper {
 
     def setterMethod(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint, String init, CharSequence customImpl) '''
 
-        «IF !app.targets('3.0')»
-        /**
-         * Sets the «name.formatForDisplay».
-         *
-         * @param «IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF» $«name»
-         *
-         * @return self
-         */
-        «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF useHint»«IF skipTypeHint»/*«ENDIF»«IF nullable && app.targets('3.0')»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «IF skipTypeHint»*/«ENDIF»«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»)«IF app.targets('3.0')»: self«ENDIF»
+        public function set«name.formatForCodeCapital»(«IF useHint»«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «IF skipTypeHint»*/«ENDIF»«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
@@ -90,11 +74,11 @@ class FileHelper {
             «IF #['latitude', 'longitude'].contains(name)»
                 $«name» = round((float) $«name», 7);
             «ENDIF»
-            if ((float) $this->«name» !== «IF !app.targets('3.0')»(float) «ENDIF»$«name») {
+            if ((float) $this->«name» !== $«name») {
                 «IF nullable»
-                    $this->«name» = «IF !app.targets('3.0')»(float) «ENDIF»$«name»;
+                    $this->«name» = $«name»;
                 «ELSE»
-                    $this->«name» = «IF app.targets('3.0')»$«name» ?? 0.00«ELSE»isset($«name») ? (float) $«name» : 0.00«ENDIF»;
+                    $this->«name» = $«name» ?? 0.00;
                 «ENDIF»
             }
         «ELSE»
@@ -102,7 +86,7 @@ class FileHelper {
                 «IF nullable»
                     $this->«name» = $«name»;
                 «ELSE»
-                    $this->«name» = «IF app.targets('3.0')»$«name» ?? ''«ELSE»isset($«name») ? $«name» : ''«ENDIF»;
+                    $this->«name» = $«name» ?? '';
                 «ENDIF»
             }
         «ENDIF»
@@ -125,7 +109,7 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(BooleanField it, String name, String type, Boolean nullable) '''
-        if ((bool) $this->«name.formatForCode» !== «IF !app.targets('3.0')»(bool) «ENDIF»$«name») {
+        if ((bool) $this->«name.formatForCode» !== $«name») {
             «triggerPropertyChangeListeners(name)»
             «setterAssignment(name)»
         }
@@ -135,7 +119,7 @@ class FileHelper {
         «IF nullable»
             $this->«name» = $«name»;
         «ELSE»
-            $this->«name» = «IF app.targets('3.0')»$«name» ?? «fallbackValue»«ELSE»isset($«name») ? $«name» : «fallbackValue»«ENDIF»;
+            $this->«name» = $«name» ?? «fallbackValue»;
         «ENDIF»
     '''
     def private dispatch fallbackValue(DerivedField it) {
@@ -146,7 +130,7 @@ class FileHelper {
     }
 
     def private dispatch setterAssignment(BooleanField it, String name) '''
-        $this->«name» = «IF !app.targets('3.0')»(bool) «ENDIF»$«name»;
+        $this->«name» = $«name»;
     '''
 
     def private dispatch setterAssignment(UserField it, String name) '''
@@ -164,7 +148,7 @@ class FileHelper {
         «IF !aggregators.empty»
             $diff = abs($this->«name» - $«name»);
         «ENDIF»
-        $this->«name» = «IF app.targets('3.0')»$«name»«ELSE»«numericCast('$' + name)»«ENDIF»;
+        $this->«name» = $«name»;
         «IF !aggregators.empty»
             «FOR aggregator : aggregators»
             $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
@@ -173,7 +157,7 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(IntegerField it, String name, String type, Boolean nullable) '''
-        if («numericCast('$this->' + name.formatForCode)» !== «IF app.targets('3.0')»$«name»«ELSE»«numericCast('$' + name)»«ENDIF») {
+        if («numericCast('$this->' + name.formatForCode)» !== »$«name») {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name)»
         }
@@ -185,7 +169,7 @@ class FileHelper {
         }
     '''
     def private dispatch setterMethodImpl(NumberField it, String name, String type, Boolean nullable) '''
-        if («numericCast('$this->' + name.formatForCode)» !== «IF app.targets('3.0')»$«name»«ELSE»«numericCast('$' + name)»«ENDIF») {
+        if («numericCast('$this->' + name.formatForCode)» !== $«name») {
             «triggerPropertyChangeListeners(name)»
             «setterAssignmentNumeric(name)»
         }

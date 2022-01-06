@@ -29,19 +29,13 @@ class ImageHelper {
 
         use Imagine\Image\ImageInterface;
         «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-            «IF targets('3.0')»
-                use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-            «ENDIF»
+            use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             use Symfony\Component\Filesystem\Filesystem;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-                use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-            «ENDIF»
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
 
@@ -55,7 +49,7 @@ class ImageHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        «IF targets('3.0') && (hasImageFields || !getUploadVariables.filter[isImageField].empty)»
+        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
             /**
              * @var ZikulaHttpKernelInterface
              */
@@ -85,14 +79,14 @@ class ImageHelper {
         protected $name;
 
         public function __construct(
-            «IF targets('3.0') && (hasImageFields || !getUploadVariables.filter[isImageField].empty)»
+            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
                 ZikulaHttpKernelInterface $kernel,
             «ENDIF»
             TranslatorInterface $translator,
             RequestStack $requestStack,
             VariableApiInterface $variableApi
         ) {
-            «IF targets('3.0') && (hasImageFields || !getUploadVariables.filter[isImageField].empty)»
+            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
                 $this->kernel = $kernel;
             «ENDIF»
             $this->translator = $translator;
@@ -113,17 +107,8 @@ class ImageHelper {
     def private getRuntimeOptions(Application it) '''
         /**
          * This method returns an Imagine runtime options array for the given arguments.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         * @param string $fieldName Name of upload field
-         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array $args Additional arguments
-         *
-         * @return array The selected runtime options
-         «ENDIF»
          */
-        public function getRuntimeOptions(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$fieldName = '', «IF targets('3.0')»string «ENDIF»$context = '', array $args = [])«IF targets('3.0')»: array«ENDIF»
+        public function getRuntimeOptions(string $objectType = '', string $fieldName = '', string $context = '', array $args = []): array
         {
             «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
                 $this->checkIfImagineCacheDirectoryExists();
@@ -163,24 +148,14 @@ class ImageHelper {
     def private getCustomRuntimeOptions(Application it) '''
         /**
          * This method returns an Imagine runtime options array for the given arguments.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         * @param string $fieldName Name of upload field
-         * @param string $contextName Name of desired context
-         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
-         * @param array $args Additional arguments
-         *
-         * @return array The selected runtime options
-         «ENDIF»
          */
         public function getCustomRuntimeOptions(
-            «IF targets('3.0')»string «ENDIF»$objectType = '',
-            «IF targets('3.0')»string «ENDIF»$fieldName = '',
-            «IF targets('3.0')»string «ENDIF»$contextName = '',
-            «IF targets('3.0')»string «ENDIF»$context = '',
+            string $objectType = '',
+            string $fieldName = '',
+            string $contextName = '',
+            string $context = '',
             array $args = []
-        )«IF targets('3.0')»: array«ENDIF» {
+        ): array {
             $options = [
                 'thumbnail' => [
                     'size' => [100, 100], // thumbnail width and height in pixels
@@ -236,26 +211,22 @@ class ImageHelper {
         /**
          * Check if cache directory exists and create it if needed.
          */
-        protected function checkIfImagineCacheDirectoryExists()«IF targets('3.0')»: void«ENDIF»
+        protected function checkIfImagineCacheDirectoryExists(): void
         {
-            $cacheDirectory = «IF targets('3.0')»$this->kernel->getProjectDir() . «ENDIF»'«IF targets('3.0')»/public/media«ELSE»web/imagine«ENDIF»/cache';
+            $cacheDirectory = $this->kernel->getProjectDir() . '/public/media/cache';
             $fs = new Filesystem();
             if ($fs->exists($cacheDirectory)) {
                 return;
             }
-            «IF targets('3.0')»
-                try {
-                    $parentDirectory = mb_substr($cacheDirectory, 0, -6);
-                    if (!$fs->exists($parentDirectory)) {
-                        $fs->mkdir($parentDirectory);
-                    }
-                    $fs->mkdir($cacheDirectory);
-                } catch (IOExceptionInterface $exception) {
-                    «warningAboutCacheDirectory»
+            try {
+                $parentDirectory = mb_substr($cacheDirectory, 0, -6);
+                if (!$fs->exists($parentDirectory)) {
+                    $fs->mkdir($parentDirectory);
                 }
-            «ELSE»
+                $fs->mkdir($cacheDirectory);
+            } catch (IOExceptionInterface $exception) {
                 «warningAboutCacheDirectory»
-            «ENDIF»
+            }
         }
     '''
 
@@ -264,9 +235,9 @@ class ImageHelper {
         if ($request->hasSession() && $session = $request->getSession()) {
             $session->getFlashBag()->add(
                 'warning',
-                $this->translator->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                $this->translator->trans(
                     'The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.',
-                    ['%directory%' => $cacheDirectory]«IF targets('3.0') && !isSystemModule»,
+                    ['%directory%' => $cacheDirectory]«IF !isSystemModule»,
                     'config'«ENDIF»
                 )
             );
@@ -288,12 +259,7 @@ class ImageHelper {
              */
             protected $secret;
 
-            «IF !targets('3.0')»
-            /**
-             * @param string $secret
-             */
-            «ENDIF»
-            public function __construct(«IF targets('3.0')»string «ENDIF»$secret)
+            public function __construct(string $secret)
             {
                 $this->secret = $secret;
             }

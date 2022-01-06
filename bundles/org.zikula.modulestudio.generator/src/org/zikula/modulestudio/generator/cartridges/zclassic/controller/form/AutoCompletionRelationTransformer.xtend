@@ -20,11 +20,7 @@ class AutoCompletionRelationTransformer {
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\Form\Exception\TransformationFailedException;
-        «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-        «ELSE»
-            use Zikula\Core\Doctrine\EntityAccess;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**
@@ -51,8 +47,8 @@ class AutoCompletionRelationTransformer {
 
             public function __construct(
                 EntityFactory $entityFactory,
-                «IF targets('3.0')»string «ENDIF»$objectType,
-                «IF targets('3.0')»bool «ENDIF»$isMultiple
+                string $objectType,
+                bool $isMultiple
             ) {
                 $this->entityFactory = $entityFactory;
                 $this->objectType = $objectType;
@@ -133,15 +129,8 @@ class AutoCompletionRelationTransformer {
     def private buildWhereClause(Application it) '''
         /**
          * Builds the where clause for selecting matches for the current search.
-         «IF !targets('3.0')»
-         *
-         * @param array $inputValues The identifier list
-         * @param QueryBuilder $qb The query builder to be enriched
-         *
-         * @return Querybuilder The enriched query builder
-         «ENDIF»
          */
-        protected function buildWhereClause(array $inputValues = [], QueryBuilder $qb)«IF targets('3.0')»: QueryBuilder«ENDIF»
+        protected function buildWhereClause(array $inputValues = [], QueryBuilder $qb): QueryBuilder
         {
             // remove empty option if it has been selected
             foreach ($inputValues as $k => $v) {

@@ -85,14 +85,8 @@ class Factory {
 
             /**
              * Returns a repository for a given object type.
-             «IF !targets('3.0')»
-             *
-             * @param string $objectType Name of desired entity type
-             *
-             * @return EntityRepository The repository responsible for the given object type
-             «ENDIF»
              */
-            public function getRepository(«IF targets('3.0')»string «ENDIF»$objectType)«IF targets('3.0')»: EntityRepository«ENDIF»
+            public function getRepository(string $objectType): EntityRepository
             {
                 $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
 
@@ -114,12 +108,8 @@ class Factory {
 
                 /**
                  * Creates a new «entity.name.formatForCode» instance.
-                 «IF !targets('3.0')»
-                 *
-                 * @return «entity.name.formatForCodeCapital»Entity The newly created entity instance
-                 «ENDIF»
                  */
-                public function create«entity.name.formatForCodeCapital»()«IF targets('3.0')»: «entity.name.formatForCodeCapital»Entity«ENDIF»
+                public function create«entity.name.formatForCodeCapital»(): «entity.name.formatForCodeCapital»Entity
                 {
                     $entity = new «entity.name.formatForCodeCapital»Entity(«/* TODO provide entity constructor arguments if required */»);
 
@@ -130,22 +120,16 @@ class Factory {
             «ENDFOR»
 
             «getIdField»
-            «fh.getterMethod(it, 'entityManager', 'EntityManagerInterface', false, true, true && targets('3.0'))»
-            «fh.getterMethod(it, 'entityInitialiser', 'EntityInitialiser', false, true, true && targets('3.0'))»
+            «fh.getterMethod(it, 'entityManager', 'EntityManagerInterface', false, true, true)»
+            «fh.getterMethod(it, 'entityInitialiser', 'EntityInitialiser', false, true, true)»
         }
     '''
 
     def private getIdField(Application it) '''
         /**
          * Returns the identifier field's name for a given object type.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType The object type to be treated
-         *
-         * @return string Primary identifier field name
-         «ENDIF»
          */
-        public function getIdField«IF targets('3.0')»(string $objectType = ''): string«ELSE»($objectType = '')«ENDIF»
+        public function getIdField(string $objectType = ''): string
         {
             if (empty($objectType)) {
                 throw new InvalidArgumentException('Invalid object type received.');

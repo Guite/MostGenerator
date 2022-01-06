@@ -22,24 +22,15 @@ class MenuLinksHelperFunctions {
         «ENDFOR»
         «IF needsConfig»
             if ('admin' === $routeArea && $this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
-                «IF targets('3.0')»
-                    $menu->addChild(«translate('Settings')», [
-                        'route' => '«appName.formatForDB»_config_config',
-                    ])
-                        ->setAttribute('icon', 'fas fa-wrench')
-                        ->setLinkAttribute('title', «translate('Manage settings for this application')»)
-                        «IF !isSystemModule»
-                            ->setExtra('translation_domain', 'config')
-                        «ENDIF»
-                    ;
-                «ELSE»
-                    $links[] = [
-                        'url' => $this->router->generate('«appName.formatForDB»_config_config'),
-                        'text' => «translate('Settings')»,
-                        'title' => «translate('Manage settings for this application')»,
-                        'icon' => 'wrench'
-                    ];
-                «ENDIF»
+                $menu->addChild('Settings', [
+                    'route' => '«appName.formatForDB»_config_config',
+                ])
+                    ->setAttribute('icon', 'fas fa-wrench')
+                    ->setLinkAttribute('title', 'Manage settings for this application')
+                    «IF !isSystemModule»
+                        ->setExtra('translation_domain', 'config')
+                    «ENDIF»
+                ;
             }
         «ENDIF»
     '''
@@ -49,65 +40,37 @@ class MenuLinksHelperFunctions {
             in_array('«name.formatForCode»', $allowedObjectTypes, true)
             && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)
         ) {
-            «IF application.targets('3.0')»
-                $menu->addChild(«application.translate(nameMultiple.formatForDisplayCapital)», [
-                    'route' => '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view',«/*IF tree != EntityTreeType.NONE»
-                    'routeParameters' => ['tpl' => 'tree']«ENDIF*/»
-                ])
-                    ->setLinkAttribute('title', «application.translate(nameMultiple.formatForDisplayCapital + ' list')»)
-                    «IF !application.isSystemModule»
-                        ->setExtra('translation_domain', '«name.formatForCode»')
-                    «ENDIF»
-                ;
-            «ELSE»
-                $links[] = [
-                    'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»),
-                    'text' => «application.translate(nameMultiple.formatForDisplayCapital)»,
-                    'title' => «application.translate(nameMultiple.formatForDisplayCapital + ' list')»
-                ];
-            «ENDIF»
+            $menu->addChild('«nameMultiple.formatForDisplayCapital»', [
+                'route' => '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view',«/*IF tree != EntityTreeType.NONE»
+                'routeParameters' => ['tpl' => 'tree']«ENDIF*/»
+            ])
+                ->setLinkAttribute('title', '«nameMultiple.formatForDisplayCapital» list')
+                «IF !application.isSystemModule»
+                    ->setExtra('translation_domain', '«name.formatForCode»')
+                «ENDIF»
+            ;
         }
     '''
 
     def private menuLinksBetweenControllers(Application it) '''
-        if («IF targets('3.0')»self«ELSE»LinkContainerInterface«ENDIF»::TYPE_ADMIN === $type) {
+        if (self::TYPE_ADMIN === $type) {
             if ($this->permissionHelper->hasPermission(ACCESS_READ)) {
-                «IF targets('3.0')»
-                    $menu->addChild(«translate('Frontend')», [
-                        'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»',
-                    ])
-                        ->setAttribute('icon', 'fas fa-home')
-                        ->setLinkAttribute('title', «translate('Switch to user area.')»)
-                    ;
-                «ELSE»
-                    $links[] = [
-                        'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»'),
-                        'text' => «translate('Frontend')»,
-                        'title' => «translate('Switch to user area.')»,
-                        'icon' => 'home',
-                    ];
-                «ENDIF»
+                $menu->addChild('Frontend', [
+                    'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»',
+                ])
+                    ->setAttribute('icon', 'fas fa-home')
+                    ->setLinkAttribute('title', 'Switch to user area.')
+                ;
             }
         } else {
             if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
-                «IF targets('3.0')»
-                    $menu->addChild(«translate('Backend')», [
-                        'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»',
-                    ])
-                        ->setAttribute('icon', 'fas fa-wrench')
-                        ->setLinkAttribute('title', «translate('Switch to administration area.')»)
-                    ;
-                «ELSE»
-                    $links[] = [
-                        'url' => $this->router->generate('«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»'),
-                        'text' => «translate('Backend')»,
-                        'title' => «translate('Switch to administration area.')»,
-                        'icon' => 'wrench',
-                    ];
-                «ENDIF»
+                $menu->addChild('Backend', [
+                    'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»',
+                ])
+                    ->setAttribute('icon', 'fas fa-wrench')
+                    ->setLinkAttribute('title', 'Switch to administration area.')
+                ;
             }
         }
     '''
-
-    def private translate(Application it, String text) '''«IF targets('3.0')»'«text»'«ELSE»$this->__('«text»'«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»'''
 }

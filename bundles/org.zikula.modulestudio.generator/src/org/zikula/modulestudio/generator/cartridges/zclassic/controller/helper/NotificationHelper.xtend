@@ -25,39 +25,22 @@ class NotificationHelper {
     def private notificationHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF targets('3.0')»
-            use Psr\Log\LoggerInterface;
-        «ELSE»
-            use Swift_Message;
-        «ENDIF»
+        use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF targets('3.0')»
-            use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-            use Symfony\Component\Mailer\MailerInterface;
-            use Symfony\Component\Mime\Address;
-            use Symfony\Component\Mime\Email;
-        «ENDIF»
+        use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+        use Symfony\Component\Mailer\MailerInterface;
+        use Symfony\Component\Mime\Address;
+        use Symfony\Component\Mime\Email;
         use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ENDIF»
-        use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Twig\Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-            use Zikula\Core\Doctrine\EntityAccess;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\GroupsModule\Constant as GroupsConstant;
         use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
-        «IF !targets('3.0')»
-            use Zikula\MailerModule\Api\ApiInterface\MailerApiInterface;
-        «ENDIF»
         use Zikula\UsersModule\Constant as UsersConstant;
         use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         use Zikula\UsersModule\Entity\UserEntity;
@@ -97,26 +80,24 @@ class NotificationHelper {
         protected $variableApi;
 
         /**
-         * @var «IF !targets('3.0')»Twig_«ENDIF»Environment
+         * @var Environment
          */
         protected $twig;
 
         /**
-         * @var «IF targets('3.0')»MailerInterface«ELSE»MailerApiInterface«ENDIF»
+         * @var MailerInterface
          */
         protected $mailer;
-        «IF targets('3.0')»
 
-            /**
-             * @var LoggerInterface
-             */
-            protected $mailLogger;
+        /**
+         * @var LoggerInterface
+         */
+        protected $mailLogger;
 
-            /**
-             * @var bool
-             */
-            protected $mailLoggingEnabled;
-        «ENDIF»
+        /**
+         * @var bool
+         */
+        protected $mailLoggingEnabled;
 
         /**
          * @var GroupRepositoryInterface
@@ -179,11 +160,9 @@ class NotificationHelper {
             RouterInterface $router,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
-            «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
-            «IF targets('3.0')»MailerInterface $mailer«ELSE»MailerApiInterface $mailerApi«ENDIF»,
-            «IF targets('3.0')»
-                LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
-            «ENDIF»
+            Environment $twig,
+            MailerInterface $mailer,
+            LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
             GroupRepositoryInterface $groupRepository,
             UserRepositoryInterface $userRepository,
             EntityDisplayHelper $entityDisplayHelper,
@@ -195,21 +174,15 @@ class NotificationHelper {
             $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
             $this->twig = $twig;
-            $this->mailer = «IF targets('3.0')»$mailer«ELSE»$mailerApi«ENDIF»;
-            «IF targets('3.0')»
-                $this->mailLogger = $mailLogger;
-                $this->mailLoggingEnabled = $variableApi->get('ZikulaMailerModule', 'enableLogging', false);
-            «ENDIF»
+            $this->mailer = $mailer;
+            $this->mailLogger = $mailLogger;
+            $this->mailLoggingEnabled = $variableApi->get('ZikulaMailerModule', 'enableLogging', false);
             $this->groupRepository = $groupRepository;
             $this->userRepository = $userRepository;
             $this->entityDisplayHelper = $entityDisplayHelper;
             $this->workflowHelper = $workflowHelper;
             $this->name = '«appName»';
         }
-        «IF !targets('3.0')»
-
-            «setTranslatorMethod»
-        «ENDIF»
 
         «process»
 
@@ -231,14 +204,8 @@ class NotificationHelper {
     def private process(Application it) '''
         /**
          * Sends a mail to either an item's creator or a group of moderators.
-         «IF !targets('3.0')»
-         *
-         * @param array $args
-         *
-         * @return bool
-         «ENDIF»
          */
-        public function process(array $args)«IF targets('3.0')»: bool«ENDIF»
+        public function process(array $args): bool
         {
             if (!isset($args['recipientType']) || !$args['recipientType']) {
                 return false;
@@ -281,7 +248,7 @@ class NotificationHelper {
          *
          * @param bool $debug Whether to add the admin or not
          */
-        protected function collectRecipients(«IF targets('3.0')»bool «ENDIF»$debug = false)
+        protected function collectRecipients(bool $debug = false)
         {
             $this->recipients = [];
 
@@ -329,12 +296,8 @@ class NotificationHelper {
     def private addRecipient(Application it) '''
         /**
          * Collects data for building the recipients array.
-         «IF !targets('3.0')»
-         *
-         * @param UserEntity $user Recipient user record
-         «ENDIF»
          */
-        protected function addRecipient(?UserEntity $user = null)«IF targets('3.0')»: void«ENDIF»
+        protected function addRecipient(?UserEntity $user = null): void
         {
             if ($this->usesDesignatedEntityFields()) {
                 $recipientTypeParts = explode('-', $this->recipientType);
@@ -373,12 +336,8 @@ class NotificationHelper {
     def private sendMails(Application it) '''
         /**
          * Performs the actual mailing.
-         «IF !targets('3.0')»
-         *
-         * @return bool
-         «ENDIF»
          */
-        protected function sendMails()«IF targets('3.0')»: bool«ENDIF»
+        protected function sendMails(): bool
         {
             $objectType = $this->entity->get_objectType();
             $siteName = $this->variableApi->getSystemVar('sitename');
@@ -396,11 +355,7 @@ class NotificationHelper {
             $subject = $this->getMailSubject();
 
             // send one mail per recipient
-            «IF targets('3.0')»
-                «sendMailsProcessing»
-            «ELSE»
-                «sendMailsProcessingLegacy»
-            «ENDIF»
+            «sendMailsProcessing»
         }
     '''
 
@@ -445,44 +400,11 @@ class NotificationHelper {
         return true;
     '''
 
-    def private sendMailsProcessingLegacy(Application it) '''
-        $totalResult = true;
-        foreach ($this->recipients as $recipient) {
-            if (!isset($recipient['name']) || !$recipient['name']) {
-                continue;
-            }
-            if (!isset($recipient['email']) || !$recipient['email']) {
-                continue;
-            }
-
-            $body = $this->twig->render('@«appName»/' . $template, [
-                'recipient' => $recipient,
-                'mailData' => $mailData
-            ]);
-            $altBody = '';
-            $html = true;
-
-            // create new message instance
-            /** @var Swift_Message */
-            $message = Swift_Message::newInstance();
-            $message->setFrom([$adminMail => $siteName]);
-            $message->setTo([$recipient['email'] => $recipient['name']]);
-
-            $totalResult = $totalResult && $this->mailer->sendMessage($message, $subject, $body, $altBody, $html);
-        }
-
-        return $totalResult;
-    '''
-
     def private getMailSubject(Application it) '''
         /**
          * Returns the subject used for the emails to be sent.
-         «IF !targets('3.0')»
-         *
-         * @return string
-         «ENDIF»
          */
-        protected function getMailSubject()«IF targets('3.0')»: string«ENDIF»
+        protected function getMailSubject(): string
         {
             $mailSubject = '';
             if (
@@ -490,29 +412,29 @@ class NotificationHelper {
                 || $this->usesDesignatedEntityFields()
             ) {
                 if ('submit' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('New content has been submitted'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('New content has been submitted', [], 'mail');
                 } elseif ('demote' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been demoted'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Content has been demoted', [], 'mail');
                 } elseif ('accept' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been accepted'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Content has been accepted', [], 'mail');
                 } elseif ('approve' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been approved'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Content has been approved', [], 'mail');
                 } elseif ('delete' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been deleted'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Content has been deleted', [], 'mail');
                 } else {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Content has been updated'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Content has been updated', [], 'mail');
                 }
             } elseif ('creator' === $this->recipientType) {
                 if ('accept' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been accepted'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Your submission has been accepted', [], 'mail');
                 } elseif ('approve' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been approved'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Your submission has been approved', [], 'mail');
                 } elseif ('reject' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been rejected'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Your submission has been rejected', [], 'mail');
                 } elseif ('delete' === $this->action) {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been deleted'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Your submission has been deleted', [], 'mail');
                 } else {
-                    $mailSubject = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Your submission has been updated'«IF targets('3.0')», [], 'mail'«ENDIF»);
+                    $mailSubject = $this->trans('Your submission has been updated', [], 'mail');
                 }
             }
 
@@ -523,12 +445,8 @@ class NotificationHelper {
     def private prepareEmailData(Application it) '''
         /**
          * Collects data used by the email templates.
-         «IF !targets('3.0')»
-         *
-         * @return array Email template data
-         «ENDIF»
          */
-        protected function prepareEmailData()«IF targets('3.0')»: array«ENDIF»
+        protected function prepareEmailData(): array
         {
             $objectType = $this->entity->get_objectType();
             $state = $this->entity->getWorkflowState();
@@ -572,12 +490,8 @@ class NotificationHelper {
     def private usesDesignatedEntityFields(Application it) '''
         /**
          * Checks whether a special notification type is used or not.
-         «IF !targets('3.0')»
-         *
-         * @return bool
-         «ENDIF»
          */
-        protected function usesDesignatedEntityFields()«IF targets('3.0')»: bool«ENDIF»
+        protected function usesDesignatedEntityFields(): bool
         {
             return 0 === mb_strpos($this->recipientType, 'field-');
         }
@@ -586,12 +500,8 @@ class NotificationHelper {
     def private getEditorName(Application it) '''
         /**
          * Determines name of editor for the given entity.
-         «IF !targets('3.0')»
-         *
-         * @return string
-         «ENDIF»
          */
-        protected function getEditorName()«IF targets('3.0')»: string«ENDIF»
+        protected function getEditorName(): string
         {
             «IF !hasStandardFieldEntities»
                 return '';

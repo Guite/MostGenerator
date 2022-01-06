@@ -30,15 +30,15 @@ class BlockModerationView {
                 {% set itemObjectType = modItem.objectType|lower %}
                 «IF hasViewActions»
                     {% if itemObjectType in ['«getAllEntities.filter[hasViewAction].map[name.formatForCode].join('\', \'')»'] %}
-                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="«IF targets('3.0')»font-weight-«ENDIF»bold">{{ modItem.message }}</a></li>
+                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="font-weight-bold">{{ modItem.message }}</a></li>
                     {% elseif itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
-                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="«IF targets('3.0')»font-weight-«ENDIF»bold">{{ modItem.message }}</a></li>
+                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="font-weight-bold">{{ modItem.message }}</a></li>
                     {% else %}
                         <li><strong>{{ modItem.message }}</strong></li>
                     {% endif %}
                 «ELSE»
                     {% if itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
-                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="«IF targets('3.0')»font-weight-«ENDIF»bold">{{ modItem.message }}</a></li>
+                        <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="font-weight-bold">{{ modItem.message }}</a></li>
                     {% else %}
                         <li><strong>{{ modItem.message }}</strong></li>
                     {% endif %}

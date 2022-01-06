@@ -47,7 +47,7 @@ class Kml {
     def private kmlView(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» view kml view #}
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         <?xml version="1.0" encoding="UTF-8"?>
@@ -56,10 +56,10 @@ class Kml {
         {% for «objName» in items %}
             <Placemark>
                 «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
-                <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»«IF application.targets('3.0')»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»«ENDIF»</name>
+                <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ENDIF»</name>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty && textFields.head != stringFields.head»
-                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDisplayAction»<br /><a href="{{ url('«application.appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">«IF application.targets('3.0')»{% trans %}Details{% endtrans %}«ELSE»{{ __('Details') }}«ENDIF»</a>«ENDIF»]]></description>
+                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDisplayAction»<br /><a href="{{ url('«application.appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">{% trans %}Details{% endtrans %}</a>«ENDIF»]]></description>
                 «ENDIF»
                 <Point>
                     <coordinates>{{ «objName».getLongitude() }}, {{ «objName».getLatitude() }}, 0</coordinates>
@@ -73,7 +73,7 @@ class Kml {
     def private kmlDisplay(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display kml view #}
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         <?xml version="1.0" encoding="UTF-8"?>
@@ -81,10 +81,10 @@ class Kml {
         <Document>
             <Placemark>
                 «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
-                <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»«IF application.targets('3.0')»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»«ENDIF»</name>
+                <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ENDIF»</name>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty && textFields.head != stringFields.head»
-                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDisplayAction»<br /><a href="{{ url('«application.appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">«IF application.targets('3.0')»{% trans %}Details{% endtrans %}«ELSE»{{ __('Details') }}«ENDIF»</a>«ENDIF»]]></description>
+                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDisplayAction»<br /><a href="{{ url('«application.appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">{% trans %}Details{% endtrans %}</a>«ENDIF»]]></description>
                 «ENDIF»
                 <Point>
                     <coordinates>{{ «objName».getLongitude() }}, {{ «objName».getLatitude() }}, 0</coordinates>

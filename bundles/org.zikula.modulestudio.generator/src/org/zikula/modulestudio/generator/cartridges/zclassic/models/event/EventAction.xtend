@@ -25,21 +25,17 @@ class EventAction {
             // prepare helper fields for uploaded files
             $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
             if (0 < count($uploadFields)) {
-                $uploadHelper = $this->container->get(«IF targets('3.0')»UploadHelper::class«ELSE»'«appService».upload_helper'«ENDIF»);
+                $uploadHelper = $this->container->get(UploadHelper::class);
                 $request = $this->container->get('request_stack')->getCurrentRequest();
                 $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
 
-                «IF targets('3.0')»
-                    $uploadBaseDirectory = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType());
-                    if ('/public' !== mb_substr($uploadBaseDirectory, -7)) {
-                        «entityVar»->set_uploadBasePathRelative(mb_substr($uploadBaseDirectory, 7));
-                    } else {
-                        «entityVar»->set_uploadBasePathRelative($uploadBaseDirectory);
-                    }
-                    «entityVar»->set_uploadBasePathAbsolute($this->kernel->getProjectDir() . '/' . $uploadBaseDirectory);
-                «ELSE»
-                    «entityVar»->set_uploadBasePath($uploadHelper->getFileBaseFolder(«entityVar»->get_objectType()));
-                «ENDIF»
+                $uploadBaseDirectory = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType());
+                if ('/public' !== mb_substr($uploadBaseDirectory, -7)) {
+                    «entityVar»->set_uploadBasePathRelative(mb_substr($uploadBaseDirectory, 7));
+                } else {
+                    «entityVar»->set_uploadBasePathRelative($uploadBaseDirectory);
+                }
+                «entityVar»->set_uploadBasePathAbsolute($this->kernel->getProjectDir() . '/' . $uploadBaseDirectory);
                 «entityVar»->set_uploadBaseUrl($baseUrl);
 
                 // determine meta data if it does not exist
@@ -53,7 +49,7 @@ class EventAction {
                     }
                     $basePath = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
                     $fileName = «entityVar»[$fieldName . 'FileName'];
-                    $filePath = «IF targets('3.0')»$this->kernel->getProjectDir() . '/' . «ENDIF»$basePath . $fileName;
+                    $filePath = $this->kernel->getProjectDir() . '/' . $basePath . $fileName;
                     if (!file_exists($filePath)) {
                         continue;
                     }
@@ -63,14 +59,8 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar»«IF targets('3.0')», 'PostLoad'«ENDIF»);
-        «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event);
-        «ELSE»
-            $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
-            $eventName = constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD');
-            $this->eventDispatcher->dispatch($eventName, $event);
-        «ENDIF»
+        $event = $this->createFilterEvent(«entityVar», 'PostLoad');
+        $this->eventDispatcher->dispatch($event);
     '''
 
     def prePersist(Application it) '''
@@ -87,7 +77,7 @@ class EventAction {
                     return;
                 }
 
-                $entityManager = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager();
+                $entityManager = $this->container->get(EntityFactory::class)->getEntityManager();
                 $repository = $entityManager->getRepository(«entityVar»->getObjectClass());
                 $object = $repository->find(«entityVar»->getObjectId());
                 if (null === $object || !method_exists($object, 'get_objectType')) {
@@ -109,19 +99,13 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar»«IF targets('3.0')», 'PrePersist'«ENDIF»);
-        «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event);
-        «ELSE»
-            $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
-            $eventName = constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST');
-            $this->eventDispatcher->dispatch($eventName, $event);
-        «ENDIF»
+        $event = $this->createFilterEvent(«entityVar», 'PrePersist');
+        $this->eventDispatcher->dispatch($event);
     '''
 
     def postPersist(Application it) '''
 
-        $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
+        $currentUserApi = $this->container->get(CurrentUserApi::class);
         $logArgs = [
             'app' => '«appName»',
             'user' => $currentUserApi->get('uname'),
@@ -135,27 +119,15 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar»«IF targets('3.0')», 'PostPersist'«ENDIF»);
-        «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event);
-        «ELSE»
-            $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
-            $eventName = constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST');
-            $this->eventDispatcher->dispatch($eventName, $event);
-        «ENDIF»
+        $event = $this->createFilterEvent(«entityVar», 'PostPersist');
+        $this->eventDispatcher->dispatch($event);
     '''
 
     def preRemove(Application it) '''
 
         // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar»«IF targets('3.0')», 'PreRemove'«ENDIF»);
-        «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event);
-        «ELSE»
-            $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
-            $eventName = constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE');
-            $this->eventDispatcher->dispatch($eventName, $event);
-        «ENDIF»
+        $event = $this->createFilterEvent(«entityVar», 'PreRemove');
+        $this->eventDispatcher->dispatch($event);
     '''
 
     def postRemove(Application it) '''
@@ -165,7 +137,7 @@ class EventAction {
 
             $uploadFields = $this->getUploadFields($objectType);
             if (0 < count($uploadFields)) {
-                $uploadHelper = $this->container->get(«IF targets('3.0')»UploadHelper::class«ELSE»'«appService».upload_helper'«ENDIF»);
+                $uploadHelper = $this->container->get(UploadHelper::class);
                 foreach ($uploadFields as $fieldName) {
                     if (empty(«entityVar»[$fieldName])) {
                         continue;
@@ -181,7 +153,7 @@ class EventAction {
             $this->purgeHistory($objectType);
         «ENDIF»
 
-        $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
+        $currentUserApi = $this->container->get(CurrentUserApi::class);
         $logArgs = [
             'app' => '«appName»',
             'user' => $currentUserApi->get('uname'),
@@ -191,33 +163,21 @@ class EventAction {
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
         // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar»«IF targets('3.0')», 'PostRemove'«ENDIF»);
-        «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event);
-        «ELSE»
-            $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
-            $eventName = constant($eventClass . '::' . strtoupper($objectType) . '_POST_REMOVE');
-            $this->eventDispatcher->dispatch($eventName, $event);
-        «ENDIF»
+        $event = $this->createFilterEvent(«entityVar», 'PostRemove');
+        $this->eventDispatcher->dispatch($event);
     '''
 
     def preUpdate(Application it) '''
 
         // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar»«IF targets('3.0')», 'PreUpdate'«ENDIF»);
+        $event = $this->createFilterEvent(«entityVar», 'PreUpdate');
         $event->setEntityChangeSet($args->getEntityChangeSet());
-        «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event);
-        «ELSE»
-            $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
-            $eventName = constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE');
-            $this->eventDispatcher->dispatch($eventName, $event);
-        «ENDIF»
+        $this->eventDispatcher->dispatch($event);
     '''
 
     def postUpdate(Application it) '''
 
-        $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
+        $currentUserApi = $this->container->get(CurrentUserApi::class);
         $logArgs = [
             'app' => '«appName»',
             'user' => $currentUserApi->get('uname'),
@@ -231,13 +191,7 @@ class EventAction {
         «ENDIF»
 
         // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar»«IF targets('3.0')», 'PostUpdate'«ENDIF»);
-        «IF targets('3.0')»
-            $this->eventDispatcher->dispatch($event);
-        «ELSE»
-            $eventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events';
-            $eventName = constant($eventClass . '::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE');
-            $this->eventDispatcher->dispatch($eventName, $event);
-        «ENDIF»
+        $event = $this->createFilterEvent(«entityVar», 'PostUpdate');
+        $this->eventDispatcher->dispatch($event);
     '''
 }

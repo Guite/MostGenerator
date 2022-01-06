@@ -42,7 +42,7 @@ class TranslationListener {
         /**
          * Adds translation fields to the form.
          */
-        public function preSetData(FormEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function preSetData(FormEvent $event): void
         {
             $form = $event->getForm();
             $formOptions = $form->getConfig()->getOptions();
@@ -59,14 +59,7 @@ class TranslationListener {
                 $fieldOptions['required'] = $fieldOptions['required']
                     && in_array($fieldName, $formOptions['mandatory_fields'], true)
                 ;
-                «IF targets('3.0')»
-                    $fieldOptions['data'] = $formOptions['values'][$fieldName] ?? null;
-                «ELSE»
-                    $fieldOptions['data'] = isset($formOptions['values'][$fieldName])
-                        ? $formOptions['values'][$fieldName]
-                        : null
-                    ;
-                «ENDIF»
+                $fieldOptions['data'] = $formOptions['values'][$fieldName] ?? null;
 
                 $form->add($fieldName, get_class($originalFieldConfig->getType()->getInnerType()), $fieldOptions);
             }
@@ -74,12 +67,8 @@ class TranslationListener {
 
         /**
          * Returns parent form editing the entity.
-         «IF !targets('3.0')»
-         *
-         * @return FormInterface
-         «ENDIF»
          */
-        protected function getEntityForm(FormInterface $form)«IF targets('3.0')»: FormInterface«ENDIF»
+        protected function getEntityForm(FormInterface $form): FormInterface
         {
             $parentForm = $form;
             do {

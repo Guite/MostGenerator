@@ -31,18 +31,11 @@ class ExpiryHelper {
         use Exception;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            use Zikula\Bundle\CoreBundle\RouteUrl;
-        «ENDIF»
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        use Zikula\Bundle\CoreBundle\RouteUrl;
         «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
-        «ENDIF»
-        «IF !targets('3.0')»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Core\Doctrine\EntityAccess;
-            use Zikula\Core\RouteUrl;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasHookSubscribers»
@@ -120,14 +113,10 @@ class ExpiryHelper {
 
         /**
          * Handles obsolete data bv either moving into the archive or deleting.
-         «IF !targets('3.0')»
-         *
-         * @param int $probabilityPercent Execution probability
-         «ENDIF»
          */
-        public function handleObsoleteObjects(«IF targets('3.0')»int «ENDIF»$probabilityPercent = 75)«IF targets('3.0')»: void«ENDIF»
+        public function handleObsoleteObjects(int $probabilityPercent = 75): void
         {
-            $randProbability = «IF targets('3.0')»random_int«ELSE»mt_rand«ENDIF»(1, 100);
+            $randProbability = random_int(1, 100);
             if ($randProbability < $probabilityPercent) {
                 return;
             }
@@ -173,7 +162,7 @@ class ExpiryHelper {
          *
          * @throws RuntimeException Thrown if workflow action execution fails
          */
-        protected function archive«nameMultiple.formatForCodeCapital»()«IF application.targets('3.0')»: void«ENDIF»
+        protected function archive«nameMultiple.formatForCodeCapital»(): void
         {
             «val endField = getEndDateField»
             «IF endField.isDateTimeField»
@@ -195,7 +184,7 @@ class ExpiryHelper {
          *
          * @throws RuntimeException Thrown if workflow action execution fails
          */
-        protected function delete«nameMultiple.formatForCodeCapital»()«IF application.targets('3.0')»: void«ENDIF»
+        protected function delete«nameMultiple.formatForCodeCapital»(): void
         {
             «val endField = getEndDateField»
             «IF endField.isDateTimeField»
@@ -214,18 +203,8 @@ class ExpiryHelper {
     def private helperMethods(Application it) '''
         /**
          * Returns the list of expired entities.
-         *
-         «IF !targets('3.0')»
-         * @param string $objectType Name of treated entity type
-         * @param string $endField Name of field storing the end date
-         «ENDIF»
-         * @param mixed $endDate Datetime or date string for the threshold date
-         «IF !targets('3.0')»
-         *
-         * @return array List of affected entities
-         «ENDIF»
          */
-        protected function getExpiredObjects(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$endField = '', $endDate = ''): array
+        protected function getExpiredObjects(string $objectType = '', string $endField = '', $endDate = ''): array
         {
             $repository = $this->entityFactory->getRepository($objectType);
             $qb = $repository->genericBaseQuery('', '', false);
@@ -250,14 +229,8 @@ class ExpiryHelper {
 
             /**
              * Archives a single entity.
-             «IF !targets('3.0')»
-             *
-             * @param EntityAccess $entity The given entity instance
-             *
-             * @return bool True if everything worked successfully, false otherwise
-             «ENDIF»
              */
-            protected function archiveSingleObject(«IF targets('3.0')»EntityAccess «ENDIF»$entity)«IF targets('3.0')»: bool«ENDIF»
+            protected function archiveSingleObject(EntityAccess $entity): bool
             {
                 return $this->handleSingleObject($entity, 'archive');
             }
@@ -266,14 +239,8 @@ class ExpiryHelper {
 
             /**
              * Deletes a single entity.
-             «IF !targets('3.0')»
-             *
-             * @param EntityAccess $entity The given entity instance
-             *
-             * @return bool True if everything worked successfully, false otherwise
-             «ENDIF»
              */
-            protected function deleteSingleObject(«IF targets('3.0')»EntityAccess «ENDIF»$entity)«IF targets('3.0')»: bool«ENDIF»
+            protected function deleteSingleObject(EntityAccess $entity): bool
             {
                 return $this->handleSingleObject($entity, 'delete');
             }
@@ -281,15 +248,8 @@ class ExpiryHelper {
 
         /**
          * Archives or deletes a single entity.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity The given entity instance
-         * @param string $action Name of workflow action to be executed
-         *
-         * @return bool True if everything worked successfully, false otherwise
-         «ENDIF»
          */
-        protected function handleSingleObject(«IF targets('3.0')»EntityAccess «ENDIF»$entity, «IF targets('3.0')»string «ENDIF»$action)«IF targets('3.0')»: bool«ENDIF»
+        protected function handleSingleObject(EntityAccess $entity, string $action): bool
         {
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;
@@ -321,7 +281,7 @@ class ExpiryHelper {
                 if (null !== $session) {
                     $session->getFlashBag()->add(
                         'error',
-                        $this->translator->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                        $this->translator->trans(
                             'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                             ['%action%' => $action]
                         ) . '  ' . $exception->getMessage()

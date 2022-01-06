@@ -2,14 +2,10 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.business
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ListEntryValidator {
 
-    extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     /**
@@ -65,13 +61,6 @@ class ListEntryValidator {
              * @var int
              */
             public $max;
-            «IF !targets('3.0')»
-
-                public function validatedBy()
-                {
-                    return '«appService».validator.list_entry.validator';
-                }
-            «ENDIF»
         }
     '''
 
@@ -96,18 +85,11 @@ class ListEntryValidator {
 
         use Symfony\Component\Validator\Constraint;
         use Symfony\Component\Validator\ConstraintValidator;
-        «IF targets('3.0')»
-            use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-        «ENDIF»
+        use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use «appNamespace»\Helper\ListEntriesHelper;
-        «IF targets('3.0')»
-            use «appNamespace»\Validator\Constraints\ListEntry;
-        «ENDIF»
+        use «appNamespace»\Validator\Constraints\ListEntry;
 
         /**
          * List entry validator.
@@ -126,18 +108,12 @@ class ListEntryValidator {
                 $this->setTranslator($translator);
                 $this->listEntriesHelper = $listEntriesHelper;
             }
-            «IF !targets('3.0')»
-
-                «setTranslatorMethod»
-            «ENDIF»
 
             public function validate($value, Constraint $constraint)
             {
-                «IF targets('3.0')»
-                    if (!$constraint instanceof ListEntry) {
-                        throw new UnexpectedTypeException($constraint, ListEntry::class);
-                    }
-                «ENDIF»
+                if (!$constraint instanceof ListEntry) {
+                    throw new UnexpectedTypeException($constraint, ListEntry::class);
+                }
                 if (null === $value) {
                     return;
                 }
@@ -156,13 +132,13 @@ class ListEntryValidator {
                     // single-valued list
                     if ('' !== $value && !in_array($value, $allowedValues/*, true*/)) {
                         $this->context->buildViolation(
-                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                            $this->trans(
                                 'The value "%value%" is not allowed for the "%property%" property.',
                                 [
                                     '%value%' => $value,
                                     '%property%' => $constraint->propertyName,
-                                ]«IF targets('3.0')»,
-                                'validators'«ENDIF»
+                                ],
+                                'validators'
                             )
                         )->addViolation();
                     }
@@ -178,13 +154,13 @@ class ListEntryValidator {
                     }
                     if (!in_array($singleValue, $allowedValues/*, true*/)) {
                         $this->context->buildViolation(
-                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                            $this->trans(
                                 'The value "%value%" is not allowed for the "%property%" property.',
                                 [
                                     '%value%' => $singleValue,
                                     '%property%' => $constraint->propertyName,
-                                ]«IF targets('3.0')»,
-                                'validators'«ENDIF»
+                                ],
+                                'validators'
                             )
                         )->addViolation();
                     }
@@ -194,52 +170,26 @@ class ListEntryValidator {
 
                 if (null !== $constraint->min && $count < $constraint->min) {
                     $this->context->buildViolation(
-                        «IF targets('3.0')»
-                            $this->translator->trans(
-                                'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
-                                [
-                                    '%count%' => $count,
-                                    '%limit%' => $constraint->min,
-                                ]«IF targets('3.0')»,
-                                'validators'«ELSEIF !isSystemModule»,
-                                '«appName.formatForDB»'«ENDIF»
-                            )
-                        «ELSE»
-                            $this->translator->transChoice(
-                                'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
-                                $count,
-                                [
-                                    '%limit%' => $constraint->min,
-                                ]«IF targets('3.0')»,
-                                'validators'«ELSEIF !isSystemModule»,
-                                '«appName.formatForDB»'«ENDIF»
-                            )
-                        «ENDIF»
+                        $this->translator->trans(
+                            'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
+                            [
+                                '%count%' => $count,
+                                '%limit%' => $constraint->min,
+                            ],
+                            'validators'
+                        )
                     )->addViolation();
                 }
                 if (null !== $constraint->max && $count > $constraint->max) {
                     $this->context->buildViolation(
-                        «IF targets('3.0')»
-                            $this->translator->trans(
-                                'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
-                                [
-                                    '%count%' => $count,
-                                    '%limit%' => $constraint->max,
-                                ]«IF targets('3.0')»,
-                                'validators'«ELSEIF !isSystemModule»,
-                                '«appName.formatForDB»'«ENDIF»
-                            )
-                        «ELSE»
-                            $this->translator->transChoice(
-                                'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
-                                $count,
-                                [
-                                    '%limit%' => $constraint->max,
-                                ]«IF targets('3.0')»,
-                                'validators'«ELSEIF !isSystemModule»,
-                                '«appName.formatForDB»'«ENDIF»
-                            )
-                        «ENDIF»
+                        $this->translator->trans(
+                            'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',
+                            [
+                                '%count%' => $count,
+                                '%limit%' => $constraint->max,
+                            ],
+                            'validators'
+                        )
                     )->addViolation();
                 }
             }

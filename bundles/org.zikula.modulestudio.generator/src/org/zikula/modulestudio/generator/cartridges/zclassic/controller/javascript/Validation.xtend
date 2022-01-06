@@ -213,7 +213,7 @@ class Validation {
             «IF hasColourFields»
                 jQuery('.validate-colour').each(function () {
                     if (!«vendorAndName»ValidateHtmlColour(jQuery(this).val())) {
-                        jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a valid html colour code.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                        jQuery(this).get(0).setCustomValidity(Translator.trans('Please select a valid html colour code.', {}, 'validators'));
                     } else {
                         jQuery(this).get(0).setCustomValidity('');
                     }
@@ -222,7 +222,7 @@ class Validation {
             «IF hasUploads»
                 jQuery('.validate-upload').each(function () {
                     if (!«vendorAndName»ValidateUploadExtension(jQuery(this).val(), jQuery(this))) {
-                        jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a valid file extension.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                        jQuery(this).get(0).setCustomValidity(Translator.trans('Please select a valid file extension.', {}, 'validators'));
                     } else {
                         jQuery(this).get(0).setCustomValidity('');
                     }
@@ -232,8 +232,8 @@ class Validation {
                 «IF datetimeFields.exists[past]»
                     jQuery('.validate-datetime-past').each(function () {
                         if (!«vendorAndName»ValidateDatetimePast(jQuery(jQuery(this).attr('id') + '_date').val() + ' ' + jQuery(jQuery(this).attr('id') + '_time').val())) {
-                            document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a value in the past.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
-                            document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a value in the past.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                            document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.trans('Please select a value in the past.', {}, 'validators'));
+                            document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.trans('Please select a value in the past.', {}, 'validators'));
                         } else {
                             document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity('');
                             document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity('');
@@ -243,8 +243,8 @@ class Validation {
                 «IF datetimeFields.exists[future]»
                     jQuery('.validate-datetime-future').each(function () {
                         if (!«vendorAndName»ValidateDatetimeFuture(jQuery(jQuery(this).attr('id') + '_date').val() + ' ' + jQuery(jQuery(this).attr('id') + '_time').val())) {
-                            document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a value in the future.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
-                            document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a value in the future.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                            document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity(Translator.trans('Please select a value in the future.', {}, 'validators'));
+                            document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity(Translator.trans('Please select a value in the future.', {}, 'validators'));
                         } else {
                             document.getElementById(jQuery(this).attr('id') + '_date').setCustomValidity('');
                             document.getElementById(jQuery(this).attr('id') + '_time').setCustomValidity('');
@@ -256,7 +256,7 @@ class Validation {
                 «IF dateFields.exists[past]»
                     jQuery('.validate-date-past').each(function () {
                         if (!«vendorAndName»ValidateDatePast(jQuery(this).val())) {
-                            jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a value in the past.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                            jQuery(this).get(0).setCustomValidity(Translator.trans('Please select a value in the past.', {}, 'validators'));
                         } else {
                             jQuery(this).get(0).setCustomValidity('');
                         }
@@ -265,7 +265,7 @@ class Validation {
                 «IF dateFields.exists[future]»
                     jQuery('.validate-date-future').each(function () {
                         if (!«vendorAndName»ValidateDateFuture(jQuery(this).val())) {
-                            jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a value in the future.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                            jQuery(this).get(0).setCustomValidity(Translator.trans('Please select a value in the future.', {}, 'validators'));
                         } else {
                             jQuery(this).get(0).setCustomValidity('');
                         }
@@ -276,7 +276,7 @@ class Validation {
                 «IF timeFields.exists[past]»
                     jQuery('.validate-time-past').each(function () {
                         if (!«vendorAndName»ValidateTimePast(jQuery(this).val())) {
-                            jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a value in the past.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                            jQuery(this).get(0).setCustomValidity(Translator.trans('Please select a value in the past.', {}, 'validators'));
                         } else {
                             jQuery(this).get(0).setCustomValidity('');
                         }
@@ -285,7 +285,7 @@ class Validation {
                 «IF timeFields.exists[future]»
                     jQuery('.validate-time-future').each(function () {
                         if (!«vendorAndName»ValidateTimeFuture(jQuery(this).val())) {
-                            jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Please select a value in the future.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                            jQuery(this).get(0).setCustomValidity(Translator.trans('Please select a value in the future.', {}, 'validators'));
                         } else {
                             jQuery(this).get(0).setCustomValidity('');
                         }
@@ -297,15 +297,15 @@ class Validation {
                     if ('undefined' != typeof jQuery(this).attr('id')) {
                         if ('DIV' == jQuery(this).prop('tagName')) {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
-                                jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
-                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                                jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
+                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
                             } else {
                                 jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity('');
                                 jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity('');
                             }
                         } else {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
-                                jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                                jQuery(this).get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
                             } else {
                                 jQuery(this).get(0).setCustomValidity('');
                             }
@@ -318,15 +318,15 @@ class Validation {
                     if ('undefined' != typeof jQuery(this).attr('id')) {
                         if ('DIV' == jQuery(this).prop('tagName')) {
                             if (!«vendorAndName»ValidateDateRange«varContainer.name.formatForCodeCapital»()) {
-                                jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
-                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                                jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
+                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
                             } else {
                                 jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity('');
                                 jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity('');
                             }
                         } else {
                             if (!«vendorAndName»ValidateDateRange«varContainer.name.formatForCodeCapital»()) {
-                                jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('The start must be before the end.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                                jQuery(this).get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
                             } else {
                                 jQuery(this).get(0).setCustomValidity('');
                             }
@@ -337,7 +337,7 @@ class Validation {
             «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                 jQuery('.validate-unique').each(function () {
                     if (!«vendorAndName»UniqueCheck(jQuery(this), currentEntityId)) {
-                        jQuery(this).get(0).setCustomValidity(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('This value is already assigned, but must be unique. Please change it.'«IF targets('3.0')», {}, 'validators'«ENDIF»));
+                        jQuery(this).get(0).setCustomValidity(Translator.trans('This value is already assigned, but must be unique. Please change it.', {}, 'validators'));
                     } else {
                         jQuery(this).get(0).setCustomValidity('');
                     }

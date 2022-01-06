@@ -7,14 +7,12 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Tree extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
@@ -102,21 +100,12 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper(application)»
-        «IF application.targets('3.0')»
-            «fh.getterAndSetterMethods(it, 'lft', 'int', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'lvl', 'int', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'rgt', 'int', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'root', 'int', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'parent', 'self', false, true, true, 'null', '')»
-            «fh.getterAndSetterMethods(it, 'children', 'Collection', true, true, true, '', '')»
-        «ELSE»
-            «fh.getterAndSetterMethods(it, 'lft', 'int', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'lvl', 'int', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'rgt', 'int', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'root', 'int', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'parent', 'self', false, true, true, 'null', '')»
-            «fh.getterAndSetterMethods(it, 'children', 'array', true, true, false, '', '')»
-        «ENDIF»
+        «fh.getterAndSetterMethods(it, 'lft', 'int', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'lvl', 'int', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'rgt', 'int', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'root', 'int', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'parent', 'self', false, true, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, 'children', 'Collection', true, true, true, '', '')»
     '''
 
     /**

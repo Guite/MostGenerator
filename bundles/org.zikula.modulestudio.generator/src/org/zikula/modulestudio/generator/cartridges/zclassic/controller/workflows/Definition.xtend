@@ -57,34 +57,25 @@ class Definition {
         this.states = getRequiredStateList(app, wfType)
         this.collectTransitions
 
-        val fileName = wfType.textualName + (if (app.targets('3.0')) '.yaml' else '.yml')
+        val fileName = wfType.textualName + '.yaml'
         fsa.generateFile(outputPath + fileName, workflowDefinition)
     }
 
     def private workflowDefinition() '''
-        «IF app.targets('2.0')»framework«ELSE»workflow«ENDIF»:
+        framework:
             workflows:
                 «app.appName.formatForDB»_«wfType.textualName.formatForDB»:
                     type: state_machine
                     marking_store:
-                        type: «IF app.targets('3.0')»method«ELSE»single_state«ENDIF»
-                        «IF app.targets('3.0')»
-                            property: workflowState
-                        «ELSE»
-                            arguments:
-                                - workflowState
-                        «ENDIF»
+                        type: method
+                        property: workflowState
                     supports:
                         «FOR entity : app.getEntitiesForWorkflow(wfType)»
                             «IF !entity.isInheriting || entity.parentType instanceof MappedSuperClass»
                                 - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity
                             «ENDIF»
                         «ENDFOR»
-                    «/*IF app.targets('3.0')»
-                        initial_marking: [initial]
-                    «ELSE»
-                        initial_place: initial
-                    «ENDIF*/»«statesImpl»
+                    «/*initial_marking: [initial]*/»«statesImpl»
                     «actionsImpl»
     '''
 
@@ -98,15 +89,9 @@ class Definition {
     def private actionsImpl() '''
         transitions:
             «FOR transitionKey : transitionsFrom.keySet»
-                «IF app.targets('2.0')»
-                    - name: «IF transitionKey.startsWith('update')»update«ELSEIF transitionKey.startsWith('trash')»trash«ELSEIF transitionKey.startsWith('recover')»recover«ELSE»«transitionKey»«ENDIF»
-                      from: «IF transitionsFrom.get(transitionKey).length > 1»[«transitionsFrom.get(transitionKey).join(', ')»]«ELSE»«transitionsFrom.get(transitionKey).join(', ')»«ENDIF»
-                      to: «transitionsTo.get(transitionKey)»
-                «ELSE»
-                    «transitionKey»:
-                        from: «IF transitionsFrom.get(transitionKey).length > 1»[«transitionsFrom.get(transitionKey).join(', ')»]«ELSE»«transitionsFrom.get(transitionKey).join(', ')»«ENDIF»
-                        to: «transitionsTo.get(transitionKey)»
-                «ENDIF»
+                - name: «IF transitionKey.startsWith('update')»update«ELSEIF transitionKey.startsWith('trash')»trash«ELSEIF transitionKey.startsWith('recover')»recover«ELSE»«transitionKey»«ENDIF»
+                  from: «IF transitionsFrom.get(transitionKey).length > 1»[«transitionsFrom.get(transitionKey).join(', ')»]«ELSE»«transitionsFrom.get(transitionKey).join(', ')»«ENDIF»
+                  to: «transitionsTo.get(transitionKey)»
             «ENDFOR»
     '''
 
@@ -193,11 +178,7 @@ class Definition {
     '''
 
     def private updateAction(ListFieldItem it) '''
-        «IF app.targets('2.0')»
-            «addTransition('update', it.value, it.value)»
-        «ELSE»
-            «addTransition('update' + it.value, it.value, it.value)»
-        «ENDIF»
+        «addTransition('update', it.value, it.value)»
     '''
 
     def private rejectAction(ListFieldItem it) '''
@@ -268,14 +249,9 @@ class Definition {
     '''
 
     def private trashAndRecoverActions(ListFieldItem it) '''
-        «IF app.targets('2.0')»
-            «addTransition('trash', it.value, 'trashed')»
-            «IF !transitionsTo.containsKey('recovertrashed')»
-                «addTransition('recover', 'trashed', it.value)»
-            «ENDIF»
-        «ELSE»
-            «addTransition('trash' + it.value, it.value, 'trashed')»
-            «addTransition('recover' + it.value, 'trashed', it.value)»
+        «addTransition('trash', it.value, 'trashed')»
+        «IF !transitionsTo.containsKey('recovertrashed')»
+            «addTransition('recover', 'trashed', it.value)»
         «ENDIF»
     '''
 
@@ -285,7 +261,7 @@ class Definition {
 
     def private addTransition(String id, String state, String nextState) {
         var uniqueKey = id
-        if (app.targets('2.0') && (id.startsWith('update') || id.startsWith('trash') || id.startsWith('recover'))) {
+        if (id.startsWith('update') || id.startsWith('trash') || id.startsWith('recover')) {
             uniqueKey = id + state
         }
         if (!transitionsFrom.containsKey(uniqueKey)) {

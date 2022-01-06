@@ -58,10 +58,10 @@ class AutoCompletion {
             }
 
             // show/hide the toggle link
-            jQuery('#' + idPrefix + 'AddLink').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+            jQuery('#' + idPrefix + 'AddLink').toggleClass('d-none');
 
             // hide/show the fields
-            jQuery('#' + idPrefix + 'AddFields').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+            jQuery('#' + idPrefix + 'AddFields').toggleClass('d-none');
         }
     '''
 
@@ -135,8 +135,8 @@ class AutoCompletion {
                     id: elemPrefix + 'Remove',
                     href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'
                 }).append(
-                    jQuery('<span>', { class: 'fa«IF targets('3.0')»s«ENDIF» fa-trash-«IF targets('3.0')»alt«ELSE»o«ENDIF»' })
-                        .append(' ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('remove'))
+                    jQuery('<span>', { class: 'fas fa-trash-alt' })
+                        .append(' ' + Translator.trans('remove'))
                 )
             );
 
@@ -242,7 +242,7 @@ class AutoCompletion {
                         jQuery('#' + idPrefix + 'LiveSearch .empty-message').remove();
                         if (ui.content.length === 0) {
                             jQuery('#' + idPrefix + 'LiveSearch').append(
-                                jQuery('<div>', { class: 'empty-message' }).text(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('No results found!'))
+                                jQuery('<div>', { class: 'empty-message' }).text(Translator.trans('No results found!'))
                             );
                         }
                     },

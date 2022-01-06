@@ -8,14 +8,12 @@ import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ConfigType {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension SharedFormTypeFields = new SharedFormTypeFields
     extension Utils = new Utils
@@ -47,11 +45,7 @@ class ConfigType {
          */
         abstract class AbstractConfigType extends AbstractType
         {
-            «IF !targets('3.0')»
-                use TranslatorTrait;
-
-            «ENDIF»
-            «IF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+            «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                 /**
                  * @var RequestStack
                  */
@@ -80,29 +74,20 @@ class ConfigType {
 
             «ENDIF»
             public function __construct(
-                «IF targets('3.0')»
-                    «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                        RequestStack $requestStack«IF !getAllVariables.filter(ListField).empty || hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
-                    «ENDIF»
-                    «IF !getAllVariables.filter(ListField).empty»
-                        ListEntriesHelper $listHelper«IF hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
-                    «ENDIF»
-                    «IF hasUploadVariables»
-                        UploadHelper $uploadHelper«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
-                    «ENDIF»
-                    «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
-                        LocaleApiInterface $localeApi
-                    «ENDIF»
-                «ELSE»
-                    TranslatorInterface $translator«IF !getAllVariables.filter(ListField).empty»,
-                    ListEntriesHelper $listHelper«ENDIF»«IF hasUploadVariables»,
-                    UploadHelper $uploadHelper«ENDIF»«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,
-                    LocaleApiInterface $localeApi«ENDIF»
+                «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                    RequestStack $requestStack«IF !getAllVariables.filter(ListField).empty || hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                «ENDIF»
+                «IF !getAllVariables.filter(ListField).empty»
+                    ListEntriesHelper $listHelper«IF hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                «ENDIF»
+                «IF hasUploadVariables»
+                    UploadHelper $uploadHelper«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                «ENDIF»
+                «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
+                    LocaleApiInterface $localeApi
                 «ENDIF»
             ) {
-                «IF !targets('3.0')»
-                    $this->setTranslator($translator);
-                «ELSEIF targets('3.0') && !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                     $this->requestStack = $requestStack;
                 «ENDIF»
                 «IF !getAllVariables.filter(ListField).empty»
@@ -115,10 +100,6 @@ class ConfigType {
                     $this->localeApi = $localeApi;
                 «ENDIF»
             }
-            «IF !targets('3.0')»
-
-                «setTranslatorMethod»
-            «ENDIF»
 
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -145,7 +126,7 @@ class ConfigType {
                 $resolver->setDefaults([
                     // define class for underlying data
                     'data_class' => AppSettings::class,
-                    «IF targets('3.0') && !isSystemModule»
+                    «IF !isSystemModule»
                         'translation_domain' => 'config',
                     «ENDIF»
                 ]);
@@ -157,7 +138,7 @@ class ConfigType {
         /**
          * Adds fields for «name.formatForDisplay» fields.
          */
-        public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options = [])«IF application.targets('3.0')»: void«ENDIF»
+        public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options = []): void
         {
             «FOR field : fields.filter(DerivedField)»
                 «field.definition»
@@ -169,13 +150,13 @@ class ConfigType {
         /**
          * Adds submit buttons.
          */
-        public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addSubmitButtons(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('save', SubmitType::class, [
-                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Update configuration'«IF !targets('3.0')»)«ENDIF»,
+                'label' => 'Update configuration',
                 'icon' => 'fa-check',
                 'attr' => [
-                    'class' => '«IF !targets('3.0')»btn «ENDIF»btn-success',
+                    'class' => 'btn-success',
                 ],
             ]);
             «addCommonSubmitButtons»

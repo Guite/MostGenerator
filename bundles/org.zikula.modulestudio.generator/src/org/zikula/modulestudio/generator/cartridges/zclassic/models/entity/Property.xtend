@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
+import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
@@ -28,15 +29,12 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.ArrayType
 
 class Property {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension Utils = new Utils
 
     FileHelper fh
     ExtensionManager extMan
@@ -133,19 +131,19 @@ class Property {
             NumberField: '''type="«type»"«IF numberType == NumberFieldType.DECIMAL», precision=«it.length», scale=«it.scale»«ENDIF»'''
             TextField: '''type="«type»", length=«it.length»'''
             StringField:
-                '''«IF ((null !== entity && entity.application.targets('3.0')) || (null !== varContainer && varContainer.application.targets('3.0'))) && role == StringRole.DATE_INTERVAL»type="dateinterval"«ELSE»«/*type="«type»", */»length=«it.length»«ENDIF»'''
+                '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type="dateinterval"«ELSE»«/*type="«type»", */»length=«it.length»«ENDIF»'''
             EmailField:
                 '''«/*type="«type»", */»length=«it.length»'''
             UrlField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ArrayField:
-                '''type="«IF entity.application.targets('3.0') && ArrayType.JSON_ARRAY == arrayType»json«ELSE»«arrayType.literal.toLowerCase»«ENDIF»"«/*», length=«it.length*/»'''
+                '''type="«IF ArrayType.JSON_ARRAY == arrayType»json«ELSE»«arrayType.literal.toLowerCase»«ENDIF»"«/*», length=«it.length*/»'''
             UploadField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ListField:
                 '''«/*type="«type»", */»length=«it.length»'''
             DatetimeField:
-                '''type="«/*utc*/»«type»«IF ((null !== entity && entity.application.targets('3.0')) || (null !== varContainer && varContainer.application.targets('3.0'))) && immutable»_immutable«ENDIF»"'''
+                '''type="«/*utc*/»«type»«IF (null !== entity || null !== varContainer) && immutable»_immutable«ENDIF»"'''
             default: '''type="«type»"'''
         }
     }
@@ -192,9 +190,9 @@ class Property {
 
     def private fieldAccessorDefault(DerivedField it) '''
         «IF isIndexByField»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'))»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, true)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'), '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable, true, '', '')»
         «ENDIF»
     '''
 
@@ -204,40 +202,29 @@ class Property {
 
     def dispatch fieldAccessor(IntegerField it) '''
         «IF isIndexByField/* || (null !== aggregateFor && !aggregateFor.empty*/»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, application.targets('3.0'))»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, true)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable || primaryKey, application.targets('3.0'), '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable || primaryKey, true, '', '')»
         «ENDIF»
     '''
 
     def dispatch fieldAccessor(UploadField it) '''
 
-        «IF !application.targets('3.0')»
-            /**
-             * Returns the «name.formatForDisplay».
-             *
-             * @return File
-             */
-        «ENDIF»
-        public function get«name.formatForCodeCapital»()«IF application.targets('3.0')»: ?File«ENDIF»
+        public function get«name.formatForCodeCapital»(): ?File
         {
             if (null !== $this->«name.formatForCode») {
                 return $this->«name.formatForCode»;
             }
 
             $fileName = $this->«name.formatForCode»FileName;
-            if (!empty($fileName) && !$this->_uploadBasePath«IF application.targets('3.0')»Relative«ENDIF») {
+            if (!empty($fileName) && !$this->_uploadBasePathRelative) {
                 throw new RuntimeException('Invalid upload base path in ' . static::class . '#get«name.formatForCodeCapital»().');
             }
 
-            $filePath = $this->_uploadBasePath«IF application.targets('3.0')»Absolute«ENDIF» . '«subFolderPathSegment»/' . $fileName;
+            $filePath = $this->_uploadBasePathAbsolute . '«subFolderPathSegment»/' . $fileName;
             if (!empty($fileName) && file_exists($filePath)) {
                 $this->«name.formatForCode» = new File($filePath);
-                «IF application.targets('3.0')»
-                    $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $this->_uploadBasePathRelative . '«subFolderPathSegment»/' . $fileName);
-                «ELSE»
-                    $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $filePath);
-                «ENDIF»
+                $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $this->_uploadBasePathRelative . '«subFolderPathSegment»/' . $fileName);
             } else {
                 $this->set«name.formatForCodeCapital»FileName('');
                 $this->set«name.formatForCodeCapital»Url('');«/* disabled to avoid persisting empty meta array after fresh upload
@@ -249,12 +236,8 @@ class Property {
 
         /**
          * Sets the «name.formatForDisplay».
-         «IF !application.targets('3.0')»
-         *
-         * @return void
-         «ENDIF»
          */
-        public function set«name.formatForCodeCapital»(«IF application.targets('3.0')»?«ENDIF»File $«name.formatForCode» = null)«IF application.targets('3.0')»: void«ENDIF»
+        public function set«name.formatForCodeCapital»(?File $«name.formatForCode» = null): void
         {
             if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
                 return;
@@ -271,7 +254,7 @@ class Property {
             «IF nullable»
                 $this->«name.formatForCode» = $«name.formatForCode»;
             «ELSE»
-                $this->«name.formatForCode» = «IF application.targets('3.0')»$«name.formatForCode» ?? ''«ELSE»isset($«name.formatForCode») ? $«name.formatForCode» : ''«ENDIF»;
+                $this->«name.formatForCode» = $«name.formatForCode» ?? '';
             «ENDIF»
 
             if (null === $this->«name.formatForCode» || '' === $this->«name.formatForCode») {
@@ -282,14 +265,8 @@ class Property {
                 $this->set«name.formatForCodeCapital»FileName($this->«name.formatForCode»->getFilename());
             }
         }
-        «IF application.targets('3.0')»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, true, '[]', '')»
-        «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, '[]', '')»
-        «ENDIF»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, true, '[]', '')»
     '''
 }

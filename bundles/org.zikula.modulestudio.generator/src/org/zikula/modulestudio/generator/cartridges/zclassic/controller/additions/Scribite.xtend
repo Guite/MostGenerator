@@ -91,7 +91,7 @@ class Scribite {
                 button = jQuery('button[value=«appName.toLowerCase»]');
 
                 button
-                    .css('background', 'url(' + Zikula.Config.baseURL + Zikula.Config.baseURI + '/«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»/images/admin.png) no-repeat center center transparent')
+                    .css('background', 'url(' + Zikula.Config.baseURL + Zikula.Config.baseURI + '/public/modules/«vendorAndName.toLowerCase»/images/admin.png) no-repeat center center transparent')
                     .css('background-size', '16px 16px')
                     .attr('title', '«name.formatForDisplayCapital»')
                 ;
@@ -119,7 +119,7 @@ class Scribite {
                     context.memo('button.«appName.toLowerCase»', function () {
                         // create button
                         var button = ui.button({
-                            contents: '<img src="' + Zikula.Config.baseURL + Zikula.Config.baseURI + '/«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»/images/admin.png' + '" alt="«name.formatForDisplayCapital»" width="16" height="16" />',
+                            contents: '<img src="' + Zikula.Config.baseURL + Zikula.Config.baseURI + '/public/modules/«vendorAndName.toLowerCase»/images/admin.png' + '" alt="«name.formatForDisplayCapital»" width="16" height="16" />',
                             tooltip: '«name.formatForDisplayCapital»',
                             click: function () {
                                 «appName»FinderOpenPopup(context, 'summernote');
@@ -146,33 +146,17 @@ class Scribite {
          * @param {string} url Absolute URL to where the plugin is located
          */
         tinymce.PluginManager.add('«appName.formatForDB»', function(editor, url) {
-            «IF !targets('3.0')»
-                var icon;
-
-                icon = Zikula.Config.baseURL + Zikula.Config.baseURI + '/«IF targets('3.0')»public«ELSE»web«ENDIF»/modules/«vendorAndName.toLowerCase»/images/admin.png';
-
-            «ENDIF»
-            editor«IF targets('3.0')».ui.registry«ENDIF».addButton('«appName.formatForDB»', {
-                «IF targets('3.0')»
-                    icon: 'link',
-                    tooltip: '«name.formatForDisplayCapital»',
-                «ELSE»
-                    //text: '«name.formatForDisplayCapital»',
-                    image: icon,
-                «ENDIF»
-                «IF targets('3.0')»onAction«ELSE»onclick«ENDIF»: function() {
+            editor.ui.registry.addButton('«appName.formatForDB»', {
+                icon: 'link',
+                tooltip: '«name.formatForDisplayCapital»',
+                onAction: function() {
                     «appName»FinderOpenPopup(editor, 'tinymce');
                 }
             });
-            editor«IF targets('3.0')».ui.registry«ENDIF».addMenuItem('«appName.formatForDB»', {
+            editor.ui.registry.addMenuItem('«appName.formatForDB»', {
                 text: '«name.formatForDisplayCapital»',
-                «IF targets('3.0')»
-                    icon: 'link',
-                «ELSE»
-                    context: 'tools',
-                    image: icon,
-                «ENDIF»
-                «IF targets('3.0')»onAction«ELSE»onclick«ENDIF»: function() {
+                icon: 'link',
+                onAction: function() {
                     «appName»FinderOpenPopup(editor, 'tinymce');
                 }
             });

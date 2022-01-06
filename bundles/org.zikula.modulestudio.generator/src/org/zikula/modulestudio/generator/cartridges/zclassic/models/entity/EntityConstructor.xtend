@@ -7,7 +7,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityConstructor {
 
@@ -15,7 +14,6 @@ class EntityConstructor {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def constructor(DataObject it, Boolean isInheriting) '''
         /**
@@ -23,9 +21,7 @@ class EntityConstructor {
          *
          * Will not be called by Doctrine and can therefore be used
          * for own implementation purposes. It is also possible to add
-         * arbitrary arguments as with every other class method.
-         «IF !application.targets('3.0')»
-         «IF isIndexByTarget || isAggregated»
+         * arbitrary arguments as with every other class method.«/*IF isIndexByTarget || isAggregated»
          *
          «IF isIndexByTarget»
          * @param string $«getIndexByRelation.getIndexByField.formatForCode» Indexing field
@@ -38,8 +34,7 @@ class EntityConstructor {
                 «ENDFOR»
             «ENDFOR»
          «ENDIF»
-         «ENDIF»
-         «ENDIF»
+         «ENDIF*/»
          */
         public function __construct(«constructorArguments(true)»)
         {
@@ -52,7 +47,7 @@ class EntityConstructor {
             «val indexRelation = getIndexByRelation»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
-            «IF application.targets('3.0')»string «ENDIF»$«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.entityClassName('', false)»«ENDIF» $«sourceAlias.formatForCode»
+            string $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.entityClassName('', false)»«ENDIF» $«sourceAlias.formatForCode»
         «ELSEIF isAggregated»
             «FOR aggregator : getAggregators SEPARATOR ', '»
                 «FOR relation : aggregator.getAggregatingRelationships SEPARATOR ', '»
@@ -68,7 +63,7 @@ class EntityConstructor {
 
     def private constructorArgumentsAggregate(OneToManyRelationship it) '''
         «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-        «source.entityClassName('', false)» $«getRelationAliasName(false)», «IF application.targets('3.0')»string «ENDIF»$«targetField.name.formatForCode»
+        «source.entityClassName('', false)» $«getRelationAliasName(false)», string $«targetField.name.formatForCode»
     '''
 
     def private constructorImpl(DataObject it, Boolean isInheriting) '''

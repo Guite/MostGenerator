@@ -38,13 +38,8 @@ class ModerationFormFieldsTrait {
     def private traitImpl(Application it) '''
         /**
          * Adds special fields for moderators.
-         «IF !targets('3.0')»
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array $options The options
-         «ENDIF»
          */
-        public function addModerationFields(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addModerationFields(FormBuilderInterface $builder, array $options = []): void
         {
             if (!$options['has_moderate_permission']) {
                 return;
@@ -61,14 +56,14 @@ class ModerationFormFieldsTrait {
             ) {
                 $builder->add('moderationSpecificCreator', UserLiveSearchType::class, [
                     'mapped' => false,
-                    'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Creator:'«IF !targets('3.0')»)«ENDIF»,
+                    'label' => 'Creator',
                     'attr' => [
                         'maxlength' => 11,
-                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Here you can choose a user which will be set as creator.'«IF !targets('3.0')»)«ENDIF»,
+                        'title' => 'Here you can choose a user which will be set as creator.',
                     ],
                     'empty_data' => 0,
                     'required' => false,
-                    'help' => «IF !targets('3.0')»$this->__(«ENDIF»'Here you can choose a user which will be set as creator.'«IF !targets('3.0')»)«ENDIF»,
+                    'help' => 'Here you can choose a user which will be set as creator.',
                 ]);
             }
             if (
@@ -77,17 +72,17 @@ class ModerationFormFieldsTrait {
             ) {
                 $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
                     'mapped' => false,
-                    'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Creation date:'«IF !targets('3.0')»)«ENDIF»,
+                    'label' => 'Creation date',
                     'attr' => [
                         'class' => '',
-                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'Here you can choose a custom creation date.'«IF !targets('3.0')»)«ENDIF»,
+                        'title' => 'Here you can choose a custom creation date.',
                     ],
                     'empty_data' => '',
                     'required' => false,
                     'with_seconds' => true,
                     'date_widget' => 'single_text',
                     'time_widget' => 'single_text',
-                    'help' => «IF !targets('3.0')»$this->__(«ENDIF»'Here you can choose a custom creation date.'«IF !targets('3.0')»)«ENDIF»,
+                    'help' => 'Here you can choose a custom creation date.',
                 ]);
             }
         }

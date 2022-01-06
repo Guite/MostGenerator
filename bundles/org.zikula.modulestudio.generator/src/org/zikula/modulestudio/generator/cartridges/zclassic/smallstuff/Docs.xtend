@@ -29,9 +29,7 @@ class Docs {
         fsa.generateFile(fileName, Readme)
 
         val docPath = getAppDocPath
-        if (targets('3.0')) {
-            fsa.generateFile(docPath + 'help/en/' + fileName, Readme)
-        }
+        fsa.generateFile(docPath + 'help/en/' + fileName, Readme)
 
         fileName = 'credits.md'
         fsa.generateFile(docPath + fileName, Credits)
@@ -99,9 +97,9 @@ class Docs {
         «ENDIF»
         2. Initialize and activate «appName» in the extensions administration.
         «IF hasUploads»
-            3. Move or copy the directory `Resources/userdata/«appName»/` to `/«IF targets('2.0')»«IF targets('3.0')»public«ELSE»web«ENDIF»/uploads«ELSE»userdata«ENDIF»/«appName»/`.
+            3. Move or copy the directory `Resources/userdata/«appName»/` to `/public/uploads/«appName»/`.
                Note this step is optional as the install process can create these folders, too.
-            4. Make the directory `/«IF targets('2.0')»«IF targets('3.0')»public«ELSE»web«ENDIF»/uploads«ELSE»userdata«ENDIF»/«appName»/` writable including all sub folders.
+            4. Make the directory `/public/uploads/«appName»/` writable including all sub folders.
         «ENDIF»
 
         For questions and other remarks visit our homepage <«url»>.
@@ -118,21 +116,9 @@ class Docs {
         2. Open a console and navigate to the Zikula root directory.
         3. Execute this command replacing `en` by your desired locale code:
 
-        «IF targets('3.0')»
-            `php -dmemory_limit=2G bin/console translation:extract --bundle «appName» extension en`
+        `php -dmemory_limit=2G bin/console translation:extract --bundle «appName» extension en`
 
-            4. Translate the resulting `.yaml` files in `«relativeAppRootPath»/Resources/translations/`.
-        «ELSE»
-            `php -dmemory_limit=2G «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF needsComposerInstall» --exclude-dir=vendor«ENDIF»«IF generateNewsletterPlugin» --exclude-dir=NewsletterPlugin«ENDIF»«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF»`
-
-            You can also use multiple locales at once, for example `de fr es`.
-
-            4. Translate the resulting `.po` files in `«relativeAppRootPath»/Resources/translations/` using your favourite Gettext tooling.
-
-            Note you can even include custom views in `app/Resources/«appName»/views/` and JavaScript files in `app/Resources/«appName»/public/js/` like this:
-
-            `php -dmemory_limit=2G «IF targets('2.0')»bin«ELSE»app«ENDIF»/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po«IF needsComposerInstall» --exclude-dir=vendor«ENDIF»«IF generateNewsletterPlugin» --exclude-dir=NewsletterPlugin«ENDIF»«IF generateTagSupport» --exclude-dir=TaggedObjectMeta«ENDIF» --dir=./«relativeAppRootPath» --dir=./app/Resources/«appName»`
-        «ENDIF»
+        4. Translate the resulting `.yaml` files in `«relativeAppRootPath»/Resources/translations/`.
 
         For questions and other remarks visit our homepage <«url»>.
 

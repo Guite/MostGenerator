@@ -32,16 +32,11 @@ class WorkflowHelper {
         use Psr\Log\LoggerInterface;
         use RuntimeException;
         use Symfony\Component\Workflow\Registry;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            «IF needsApproval»
-                use Translation\Extractor\Annotation\Desc;
-            «ENDIF»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Core\Doctrine\EntityAccess;
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        «IF needsApproval»
+            use Translation\Extractor\Annotation\Desc;
         «ENDIF»
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\ListEntriesHelper;
@@ -128,12 +123,8 @@ class WorkflowHelper {
     def private getObjectStates(Application it) '''
        /**
         * This method returns a list of possible object states.
-        «IF !targets('3.0')»
-        *
-        * @return array List of collected state information
-        «ENDIF»
         */
-       public function getObjectStates()«IF targets('3.0')»: array«ENDIF»
+       public function getObjectStates(): array
        {
            $states = [];
            «val states = getRequiredStateList»
@@ -148,7 +139,7 @@ class WorkflowHelper {
     def private stateInfo(Application it, ListFieldItem item) '''
         $states[] = [
             'value' => '«item.value»',
-            'text' => $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«item.name»'),
+            'text' => $this->translator->trans('«item.name»'),
             'ui' => '«uiFeedback(item)»',
         ];
     '''
@@ -175,14 +166,8 @@ class WorkflowHelper {
     def private getStateInfo(Application it) '''
         /**
          * This method returns information about a certain state.
-         «IF !targets('3.0')»
-         *
-         * @param string $state The given state value
-         *
-         * @return array|null The corresponding state information
-         «ENDIF»
          */
-        public function getStateInfo(«IF targets('3.0')»string «ENDIF»$state = 'initial')«IF targets('3.0')»: ?array«ENDIF»
+        public function getStateInfo(string $state = 'initial'): ?array
         {
             $result = null;
             $stateList = $this->getObjectStates();
@@ -201,14 +186,8 @@ class WorkflowHelper {
     def private getActionsForObject(Application it) '''
         /**
          * Retrieve the available actions for a given entity object.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity The given entity instance
-         *
-         * @return array List of available workflow actions
-         «ENDIF»
          */
-        public function getActionsForObject(EntityAccess $entity)«IF targets('3.0')»: array«ENDIF»
+        public function getActionsForObject(EntityAccess $entity): array
         {
             $workflow = $this->workflowRegistry->get($entity);
             $wfActions = $workflow->getEnabledTransitions($entity);
@@ -231,87 +210,78 @@ class WorkflowHelper {
 
         /**
          * Returns a translatable title for a certain action.
-         «IF !targets('3.0')»
-         *
-         «IF !isSystemModule»
-         * @param string $currentState Current state of the entity
-         «ENDIF»
-         * @param string $actionId Id of the treated action
-         *
-         * @return string The action title
-         «ENDIF»
          */
-        protected function getTitleForAction(«IF !isSystemModule»«IF targets('3.0')»string «ENDIF»$currentState, «ENDIF»«IF targets('3.0')»string «ENDIF»$actionId)«IF targets('3.0')»: string«ENDIF»
+        protected function getTitleForAction(«IF !isSystemModule»string $currentState, «ENDIF»string $actionId): string
         {
             $title = '';
             switch ($actionId) {
                 «IF hasWorkflowState('deferred')»
                     case 'defer':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Defer');
+                        $title = $this->translator->trans('Defer');
                         break;
                 «ENDIF»
                 case 'submit':
-                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Submit');
+                    $title = $this->translator->trans('Submit');
                     break;
                 «IF hasWorkflowState('deferred')»
                     case 'reject':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Reject');
+                        $title = $this->translator->trans('Reject');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
                     case 'accept':
-                        $title = $currentState == 'initial' ? $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Submit and accept') : $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Accept');
+                        $title = $currentState == 'initial' ? $this->translator->trans('Submit and accept') : $this->translator->trans('Accept');
                         break;
                 «ENDIF»
                 «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
                     case 'approve':
                         $title = 'initial' === $currentState
-                            ? $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Submit and approve')
-                            : $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Approve')
+                            ? $this->translator->trans('Submit and approve')
+                            : $this->translator->trans('Approve')
                         ;
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
                     case 'demote':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Demote');
+                        $title = $this->translator->trans('Demote');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('suspended')»
                     case 'unpublish':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Unpublish');
+                        $title = $this->translator->trans('Unpublish');
                         break;
                     case 'publish':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Publish');
+                        $title = $this->translator->trans('Publish');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('archived')»
                     case 'archive':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Archive');
+                        $title = $this->translator->trans('Archive');
                         break;
                     case 'unarchive':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Unarchive');
+                        $title = $this->translator->trans('Unarchive');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('trashed')»
                     case 'trash':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Trash');
+                        $title = $this->translator->trans('Trash');
                         break;
                     case 'recover':
-                        $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Recover');
+                        $title = $this->translator->trans('Recover');
                         break;
                 «ENDIF»
                 case 'delete':
-                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete');
+                    $title = $this->translator->trans('Delete');
                     break;
             }
 
             if ('' === $title) {
-                if ('update' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF») {
-                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Update');
-                } elseif ('trash' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 5)«ENDIF») {
-                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Trash');
-                } elseif ('recover' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 7)«ENDIF») {
-                    $title = $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Recover');
+                if ('update' === $actionId) {
+                    $title = $this->translator->trans('Update');
+                } elseif ('trash' === $actionId) {
+                    $title = $this->translator->trans('Trash');
+                } elseif ('recover' === $actionId) {
+                    $title = $this->translator->trans('Recover');
                 }
             }
 
@@ -320,14 +290,8 @@ class WorkflowHelper {
 
         /**
          * Returns a button class for a certain action.
-         «IF !targets('3.0')»
-         *
-         * @param string $actionId Id of the treated action
-         *
-         * @return string The button class
-         «ENDIF»
          */
-        protected function getButtonClassForAction(«IF targets('3.0')»string «ENDIF»$actionId)«IF targets('3.0')»: string«ENDIF»
+        protected function getButtonClassForAction(string $actionId): string
         {
             $buttonClass = '';
             switch ($actionId) {
@@ -388,39 +352,23 @@ class WorkflowHelper {
                     break;
             }
 
-            if ('' === $buttonClass && 'update' === «IF targets('2.0')»$actionId«ELSE»substr($actionId, 0, 6)«ENDIF») {
+            if ('' === $buttonClass && 'update' === $actionId) {
                 $buttonClass = 'success';
             }
 
-            «IF targets('3.0')»
-                if (!empty($buttonClass)) {
-                    $buttonClass = 'btn-' . $buttonClass;
-                }
+            if (!empty($buttonClass)) {
+                $buttonClass = 'btn-' . $buttonClass;
+            }
 
-                return $buttonClass;
-            «ELSE»
-                if (empty($buttonClass)) {
-                    $buttonClass = 'default';
-                }
-
-                return 'btn btn-' . $buttonClass;
-            «ENDIF»
+            return $buttonClass;
         }
     '''
 
     def private executeAction(Application it) '''
         /**
          * Executes a certain workflow action for a given entity object.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity The given entity instance
-         * @param string $actionId  Name of action to be executed
-         * @param bool $recursive True if the function called itself
-         *
-         * @return bool Whether everything worked well or not
-         «ENDIF»
          */
-        public function executeAction(EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$actionId = '', «IF targets('3.0')»bool «ENDIF»$recursive = false)«IF targets('3.0')»: bool«ENDIF»
+        public function executeAction(EntityAccess $entity, string $actionId = '', bool $recursive = false): bool
         {
             $workflow = $this->workflowRegistry->get($entity);
             if (!$workflow->can($entity, $actionId)) {
@@ -495,12 +443,8 @@ class WorkflowHelper {
     def private collectAmountOfModerationItems(Application it) '''
         /**
          * Collects amount of moderation items foreach object type.
-         «IF !targets('3.0')»
-         *
-         * @return array List of collected amounts
-         «ENDIF»
          */
-        public function collectAmountOfModerationItems()«IF targets('3.0')»: array«ENDIF»
+        public function collectAmountOfModerationItems(): array
         {
             $amounts = [];
 
@@ -538,25 +482,16 @@ class WorkflowHelper {
             if (0 < $amount) {
                 $amounts[] = [
                     'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
-                    'description' => $this->translator->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«nameMultiple.formatForCodeCapital» pending «requiredAction»'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»),
+                    'description' => $this->translator->trans('«nameMultiple.formatForCodeCapital» pending «requiredAction»'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»),
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
-                    «IF application.targets('3.0')»
-                        /** @Desc("{count, plural,\n  one   {One «name.formatForDisplay» is waiting for «requiredAction».}\n  other {# «nameMultiple.formatForDisplay» are waiting for «requiredAction».}\n}") */
-                        'message' => $this->translator->trans(
-                            'plural_n.«nameMultiple.formatForDB».waiting_for_«requiredAction»',
-                            ['%count%' => $amount]«IF !application.isSystemModule»,
-                            '«name.formatForCode»'«ENDIF»
-                        ),
-                    «ELSE»
-                        'message' => $this->translator->transChoice(
-                            'One «name.formatForDisplay» is waiting for «requiredAction».|%count% «nameMultiple.formatForDisplay» are waiting for «requiredAction».',
-                            $amount,
-                            ['%count%' => $amount]«IF !application.isSystemModule»,
-                            '«application.appName.formatForDB»'«ENDIF»
-                        ),
-                    «ENDIF»
+                    /** @Desc("{count, plural,\n  one   {One «name.formatForDisplay» is waiting for «requiredAction».}\n  other {# «nameMultiple.formatForDisplay» are waiting for «requiredAction».}\n}") */
+                    'message' => $this->translator->trans(
+                        'plural_n.«nameMultiple.formatForDB».waiting_for_«requiredAction»',
+                        ['%count%' => $amount]«IF !application.isSystemModule»,
+                        '«name.formatForCode»'«ENDIF»
+                    ),
                 ];
 
                 $this->logger->info(
@@ -571,15 +506,8 @@ class WorkflowHelper {
         /**
          * Retrieves the amount of moderation items for a given object type
          * and a certain workflow state.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated object type
-         * @param string $state The given state value
-         *
-         * @return int The affected amount of objects
-         «ENDIF»
          */
-        public function getAmountOfModerationItems(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$state = '')«IF targets('3.0')»: int«ENDIF»
+        public function getAmountOfModerationItems(string $objectType = '', string $state = ''): int
         {
             $repository = $this->entityFactory->getRepository($objectType);
             $collectionFilterHelper = $repository->getCollectionFilterHelper();

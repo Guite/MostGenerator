@@ -154,7 +154,7 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(StringField it) '''
         «fieldAnnotationsString»
-        «IF application.targets('3.x-dev')»
+        «IF application.targets('3.1')»
             «IF mandatory»
                 «' '»* @Assert\Length(min="«minLength»", max="«length»")
                 «IF fixed && minLength != length»
@@ -173,20 +173,16 @@ class ValidationConstraints {
                 «ENDIF»
             «ENDIF»
         «ELSE»
-            «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+            «' '»* @Assert\Length(min="«minLength»", max="«length»", allowEmptyString="«(if (mandatory) false else true).displayBool»")
             «IF fixed && minLength != length»
-                «' '»* @Assert\Length(min="«length»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+                «' '»* @Assert\Length(min="«length»", max="«length»", allowEmptyString="«(if (mandatory) false else true).displayBool»")
             «ENDIF»
         «ENDIF»
         «IF role == StringRole.BIC»
-            «IF application.targets('3.0')»
-                «IF null !== entity && !entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.empty»
-                    «' '»* @Assert\Bic(ibanPropertyPath = "«entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.head.name.formatForCode»")
-                «ELSEIF null !== varContainer && !varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].empty»
-                    «' '»* @Assert\Bic(ibanPropertyPath = "«varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].head.name.formatForCode»")
-                «ELSE»
-                    «' '»* @Assert\Bic
-                «ENDIF»
+            «IF null !== entity && !entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.empty»
+                «' '»* @Assert\Bic(ibanPropertyPath = "«entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.head.name.formatForCode»")
+            «ELSEIF null !== varContainer && !varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].empty»
+                «' '»* @Assert\Bic(ibanPropertyPath = "«varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].head.name.formatForCode»")
             «ELSE»
                 «' '»* @Assert\Bic
             «ENDIF»
@@ -196,10 +192,10 @@ class ValidationConstraints {
             «' '»* @Assert\Country
         «ELSEIF role == StringRole.CREDIT_CARD»
             «' '»* @Assert\Luhn(message="Please check your credit card number.")
-            «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD"«IF application.targets('3.0')», "UATP"«ENDIF», "VISA"})
+            «' '»* @Assert\CardScheme(schemes={"AMEX", "CHINA_UNIONPAY", "DINERS", "DISCOVER", "INSTAPAYMENT", "JCB", "LASER", "MAESTRO", "MASTERCARD", "UATP", "VISA"})
         «ELSEIF role == StringRole.CURRENCY»
             «' '»* @Assert\Currency
-        «ELSEIF role == StringRole.HOSTNAME && application.targets('3.0')»
+        «ELSEIF role == StringRole.HOSTNAME»
             «' '»* @Assert\Hostname
         «ELSEIF role == StringRole.IBAN»
             «' '»* @Assert\Iban
@@ -213,14 +209,14 @@ class ValidationConstraints {
             «' '»* @Assert\Issn(caseSensitive=«(issn == StringIssnStyle.CASE_SENSITIVE || issn == StringIssnStyle.STRICT).displayBool», requireHyphen=«(issn == StringIssnStyle.REQUIRE_HYPHEN || issn == StringIssnStyle.STRICT).displayBool»)
         «ELSEIF ipAddress != IpAddressScope.NONE»
             «' '»* @Assert\Ip(version="«ipAddress.ipScopeAsConstant»")
-        «ELSEIF role == StringRole.TIME_ZONE && application.targets('3.0')»
+        «ELSEIF role == StringRole.TIME_ZONE»
             «' '»@Assert\Timezone
         «ELSEIF role == StringRole.UUID»
             «' '»* @Assert\Uuid(strict=true)
         «ENDIF»
     '''
     private def lengthAnnotationString(AbstractStringField it, int length) '''
-        «IF application.targets('3.x-dev')»
+        «IF application.targets('3.1')»
             «IF mandatory»
                 «' '»* @Assert\Length(min="«minLength»", max="«length»")
             «ELSE»
@@ -230,7 +226,7 @@ class ValidationConstraints {
                 «' '»* })
             «ENDIF»
         «ELSE»
-            «' '»* @Assert\Length(min="«minLength»", max="«length»"«IF application.targets('3.0')», allowEmptyString="«(if (mandatory) false else true).displayBool»"«ENDIF»)
+            «' '»* @Assert\Length(min="«minLength»", max="«length»", allowEmptyString="«(if (mandatory) false else true).displayBool»")
         «ENDIF»
     '''
     def dispatch fieldAnnotations(TextField it) '''
@@ -241,21 +237,13 @@ class ValidationConstraints {
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
         «IF mandatory»
-            «IF application.targets('3.0')»
-                «' '»* @Assert\Email(mode="«validationMode.validationModeAsString»")
-            «ELSE»
-                «' '»* @Assert\Email(checkMX=«checkMX.displayBool», checkHost=«checkHost.displayBool»)
-            «ENDIF»
+            «' '»* @Assert\Email(mode="«validationMode.validationModeAsString»")
         «ENDIF»
     '''
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
-        «IF application.targets('3.0')»
-            «' '»* @Assert\Url
-        «ELSE»
-            «' '»* @Assert\Url(checkDNS=«IF application.targets('2.0') && checkDNS»'ANY'«ELSE»«checkDNS.displayBool»«ENDIF»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»)
-        «ENDIF»
+        «' '»* @Assert\Url
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
@@ -304,13 +292,11 @@ class ValidationConstraints {
         if (maxHeight > 0) {
             constraints += '''maxHeight = «maxHeight»'''
         }
-        if (application.targets('2.0')) {
-            if (minPixels > 0) {
-                constraints += '''minPixels = «minPixels»'''
-            }
-            if (maxPixels > 0) {
-                constraints += '''maxPixels = «maxPixels»'''
-            }
+        if (minPixels > 0) {
+            constraints += '''minPixels = «minPixels»'''
+        }
+        if (maxPixels > 0) {
+            constraints += '''maxPixels = «maxPixels»'''
         }
         if (minRatio > 0) {
             constraints += '''minRatio = «minRatio»'''
@@ -327,7 +313,7 @@ class ValidationConstraints {
         if (!allowPortrait) {
             constraints += 'allowPortrait = false'
         }
-        if (detectCorrupted && application.targets('2.0')) {
+        if (detectCorrupted) {
             constraints += 'detectCorrupted = true'
         }
 
@@ -350,20 +336,19 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(DatetimeField it) '''
         «fieldAnnotationsMandatory»
         «IF isDateTimeField || isDateField»
-            «IF !application.targets('3.0')»«/* no constraint if the underlying model is type hinted already */»
+            «/*IF false»«/* no constraint as the underlying model is type hinted already * /»
                 «IF isDateTimeField»
                     «' '»* @Assert\DateTime
                 «ELSEIF isDateField»
                     «' '»* @Assert\Date
                 «ENDIF»
-            «ENDIF»
-            «IF past»
+            «ENDIF*/»«IF past»
                 «' '»* @Assert\LessThan("now", message="Please select a value in the past.")
             «ELSEIF future»
                 «' '»* @Assert\GreaterThan("now", message="Please select a value in the future.")
             «ENDIF»
             «IF endDate»
-                «IF mandatory && application.targets('2.0')»
+                «IF mandatory»
                     «IF null !== entity && entity.hasStartDateField»
                         «' '»* @Assert\GreaterThan(propertyPath="«entity.getStartDateField.name.formatForCode»", message="The start must be before the end.")
                     «ELSEIF null !== varContainer && varContainer.hasStartDateField»
@@ -391,12 +376,8 @@ class ValidationConstraints {
          * This method is used for validation.
          *
          * @Assert\IsTrue(message="This value must be a valid user id.")
-         «IF !application.targets('3.0')»
-         *
-         * @return boolean True if data is valid else false
-         «ENDIF»
          */
-        public function is«name.formatForCodeCapital»UserValid()«IF application.targets('3.0')»: bool«ENDIF»
+        public function is«name.formatForCodeCapital»UserValid(): bool
         {
             return «IF !mandatory && nullable»null === $this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»'] instanceof UserEntity;
         }
@@ -410,12 +391,8 @@ class ValidationConstraints {
              * This method is used for validation.
              *
              * @Assert\IsTrue(message="This value must be a time in the past.")
-             «IF !application.targets('3.0')»
-             *
-             * @return boolean True if data is valid else false
-             «ENDIF»
              */
-            public function is«name.formatForCodeCapital»TimeValidPast()«IF application.targets('3.0')»: bool«ENDIF»
+            public function is«name.formatForCodeCapital»TimeValidPast(): bool
             {
                 $format = 'His';
 
@@ -427,12 +404,8 @@ class ValidationConstraints {
              * This method is used for validation.
              *
              * @Assert\IsTrue(message="This value must be a time in the future.")
-             «IF !application.targets('3.0')»
-             *
-             * @return boolean True if data is valid else false
-             «ENDIF»
              */
-            public function is«name.formatForCodeCapital»TimeValidFuture()«IF application.targets('3.0')»: bool«ENDIF»
+            public function is«name.formatForCodeCapital»TimeValidFuture(): bool
             {
                 $format = 'His';
 

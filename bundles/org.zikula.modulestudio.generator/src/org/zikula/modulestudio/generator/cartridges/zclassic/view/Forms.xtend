@@ -75,18 +75,13 @@ class Forms {
             {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
             {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         «ENDIF»
-        «IF app.targets('3.0')»
-            {% extends '@«app.appName»/' ~ baseTemplate ~ '.html.twig' %}
-            «IF !app.isSystemModule»
-                {% trans_default_domain '«name.formatForCode»' %}
-            «ENDIF»
-            {% block title mode == 'create' ? 'Create «name.formatForDisplay»'|trans : 'Edit «name.formatForDisplay»'|trans %}
-        «ELSE»
-            {% extends '«app.appName»::' ~ baseTemplate ~ '.html.twig' %}
-            {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
+        {% extends '@«app.appName»/' ~ baseTemplate ~ '.html.twig' %}
+        «IF !app.isSystemModule»
+            {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
+        {% block title mode == 'create' ? 'Create «name.formatForDisplay»'|trans : 'Edit «name.formatForDisplay»'|trans %}
         «IF !app.separateAdminTemplates || isSeparateAdminTemplate»
-            {% block admin_page_icon mode == 'create' ? 'plus' : '«IF app.targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' %}
+            {% block admin_page_icon mode == 'create' ? 'plus' : 'edit' %}
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
@@ -109,58 +104,54 @@ class Forms {
 
     def private formTemplateBody(Entity it, String actionName) '''
         {% form_theme form with [
-            '@«app.appName»/Form/bootstrap_«IF app.targets('3.0')»4«ELSE»3«ENDIF».html.twig',
-            «IF app.targets('3.0')»
-                '@ZikulaFormExtension/Form/form_div_layout.html.twig'
-            «ELSE»
-                'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
-            «ENDIF»
-        ]«IF app.targets('3.0')» only«ENDIF» %}
+            '@«app.appName»/Form/bootstrap_4.html.twig',
+            '@ZikulaFormExtension/Form/form_div_layout.html.twig'
+        ] only %}
         {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm', class: '«app.vendorAndName.toLowerCase»-edit-form'}}) }}
         «IF useGroupingTabs('edit')»
             <div class="zikula-bootstrap-tab-container">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li class="«IF app.targets('3.0')»nav-item«ELSE»active«ENDIF»" role="presentation">
-                        <a id="fieldsTab" href="#tabFields" title="{{ «IF app.targets('3.0')»'Fields'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Fields')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF app.targets('3.0')» class="nav-link active"«ENDIF»>«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}«ELSE»{{ __('Fields') }}«ENDIF»</a>
+                    <li class="nav-item" role="presentation">
+                        <a id="fieldsTab" href="#tabFields" title="{{ 'Fields'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link active">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</a>
                     </li>
                     «IF geographical»
-                        <li«IF app.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                            <a id="mapTab" href="#tabMap" title="{{ «IF app.targets('3.0')»'Map'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Map')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF app.targets('3.0')» class="nav-link"«ENDIF»>«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}«ELSE»{{ __('Map') }}«ENDIF»</a>
+                        <li class="nav-item" role="presentation">
+                            <a id="mapTab" href="#tabMap" title="{{ 'Map'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</a>
                         </li>
                     «ENDIF»
                     «new Relations(fsa, app, isSeparateAdminTemplate).generateTabTitles(it)»
                     «IF attributable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                            <li«IF app.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                                <a id="attributesTab" href="#tabAttributes" title="{{ «IF app.targets('3.0')»'Attributes'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Attributes')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF app.targets('3.0')» class="nav-link"«ENDIF»>«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Attributes{% endtrans %}«ELSE»{{ __('Attributes') }}«ENDIF»</a>
+                            <li class="nav-item" role="presentation">
+                                <a id="attributesTab" href="#tabAttributes" title="{{ 'Attributes'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Attributes{% endtrans %}</a>
                             </li>
                         {% endif %}
                     «ENDIF»
                     «IF categorisable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                            <li«IF app.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                                <a id="categoriesTab" href="#tabCategories" title="{{ «IF app.targets('3.0')»'Categories'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Categories')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF app.targets('3.0')» class="nav-link"«ENDIF»>«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Categories{% endtrans %}«ELSE»{{ __('Categories') }}«ENDIF»</a>
+                            <li class="nav-item" role="presentation">
+                                <a id="categoriesTab" href="#tabCategories" title="{{ 'Categories'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Categories{% endtrans %}</a>
                             </li>
                         {% endif %}
                     «ENDIF»
                     «IF standardFields»
                         {% if mode != 'create' %}
-                            <li«IF app.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                                <a id="standardFieldsTab" href="#tabStandardFields" title="{{ «IF app.targets('3.0')»'Creation and update'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Creation and update')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF app.targets('3.0')» class="nav-link"«ENDIF»>«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Creation and update{% endtrans %}«ELSE»{{ __('Creation and update') }}«ENDIF»</a>
+                            <li class="nav-item" role="presentation">
+                                <a id="standardFieldsTab" href="#tabStandardFields" title="{{ 'Creation and update'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Creation and update{% endtrans %}</a>
                             </li>
                         {% endif %}
                     «ENDIF»
                     {% if form.moderationSpecificCreator is defined or form.moderationSpecificCreationDate is defined %}
-                        <li«IF app.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                            <a id="moderationTab" href="#tabModeration" title="{{ «IF app.targets('3.0')»'Moderation options'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Moderation options')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF app.targets('3.0')» class="nav-link"«ENDIF»>«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Moderation{% endtrans %}«ELSE»{{ __('Moderation') }}«ENDIF»</a>
+                        <li class="nav-item" role="presentation">
+                            <a id="moderationTab" href="#tabModeration" title="{{ 'Moderation options'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Moderation{% endtrans %}</a>
                         </li>
                     {% endif %}
                 </ul>
 
                 {{ form_errors(form) }}
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade «IF app.targets('3.0')»show«ELSE»in«ENDIF» active" id="tabFields" aria-labelledby="fieldsTab">
-                        <h3>«IF app.targets('3.0')»{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}«ELSE»{{ __('Fields') }}«ENDIF»</h3>
+                    <div role="tabpanel" class="tab-pane fade show active" id="tabFields" aria-labelledby="fieldsTab">
+                        <h3>{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</h3>
                         «fieldDetails('')»
                     </div>
                     «new Section().generate(it, app, fsa, isSeparateAdminTemplate)»
@@ -197,22 +188,22 @@ class Forms {
                 <div class="zikula-bootstrap-tab-container">
                     <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs" role="tablist">
                         {% for language in supportedLanguages %}
-                            <li«IF application.targets('3.0')» class="nav-item"«ELSE»{% if language == app.request.locale %} class="active"{% endif %}«ENDIF» role="presentation">
-                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}"«IF application.targets('3.0')» class="nav-link{% if language == app.request.locale %} active{% endif %}"«ENDIF»>
+                            <li class="nav-item" role="presentation">
+                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}" class="nav-link{% if language == app.request.locale %} active{% endif %}">
                                     {% if language != app.request.locale and form[language]|default and not form[language].vars.valid %}
-                                        <span class="«IF application.targets('3.0')»badge badge«ELSE»label label«ENDIF»-danger"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-«IF application.targets('3.0')»exclamation-triangle«ELSE»warning«ENDIF»"></i> <span class="sr-only">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Errors{% endtrans %}«ELSE»{{ __('Errors') }}«ENDIF»</span></span>
+                                        <span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> <span class="sr-only">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Errors{% endtrans %}</span></span>
                                     {% endif %}
                                     {% set hasRequiredFields = language in localesWithMandatoryFields %}
-                                    {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|«IF application.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}{% if hasRequiredFields %}</span>{% endif %}
+                                    {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|language_name }}{% if hasRequiredFields %}</span>{% endif %}
                                 </a>
                             </li>
                         {% endfor %}
                     </ul>
                     <div class="{{ form.vars.id|lower }}-translation-fields tab-content">
                         {% for language in supportedLanguages %}
-                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} «IF application.targets('3.0')»show«ELSE»in«ENDIF» active{% endif %}">
+                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} show active{% endif %}">
                                 <fieldset>
-                                    <legend>{{ language|«IF application.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}</legend>
+                                    <legend>{{ language|language_name }}</legend>
                                     {% if language == app.request.locale %}
                                         «fieldSet(subElem)»
                                     {% else %}
@@ -226,7 +217,7 @@ class Forms {
             {% else %}
                 {% set language = app.request.locale %}
                 <fieldset>
-                    <legend>{{ language|«IF application.targets('3.0')»language_name«ELSE»languageName|safeHtml«ENDIF» }}</legend>
+                    <legend>{{ language|language_name }}</legend>
                     «fieldSet(subElem)»
                 </fieldset>
             {% endif %}
@@ -242,7 +233,7 @@ class Forms {
 
     def private fieldDetailsFurtherOptions(Entity it, String subElem) '''
         <fieldset>
-            <legend>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»{% endtrans %}«ELSE»{{ __('«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»') }}«ENDIF»</legend>
+            <legend>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»{% endtrans %}</legend>
             «IF tree != EntityTreeType.NONE»
                 {% if mode == 'create' and form.parent is defined %}
                     {{ form_row(form.parent) }}
@@ -303,15 +294,15 @@ class Forms {
 
     def private submitActions(Entity it) '''
         {# include possible submit actions #}
-        <div class="form-group form-buttons«IF app.targets('3.0')» row«ENDIF»">
-            <div class="«IF app.targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
+        <div class="form-group form-buttons row">
+            <div class="col-md-9 offset-md-3">
                 «submitActionsImpl»
             </div>
         </div>
-        «IF app.targets('3.0') && !getOutgoingJoinRelationsWithoutDeleteCascade.empty»
+        «IF !getOutgoingJoinRelationsWithoutDeleteCascade.empty»
             {% if mode != 'create' and not workflow_can(«name.formatForCode», 'delete') %}
                 <div class="alert alert-info">
-                    <h4>«IF app.targets('3.0')»{% trans %}Deletion of this «name.formatForDisplay» is not possible{% endtrans %}«ELSE»{{ __('Deletion of this «name.formatForDisplay» is not possible') }}«ENDIF»</h4>
+                    <h4>{% trans %}Deletion of this «name.formatForDisplay» is not possible{% endtrans %}</h4>
                     <ul>
                         {% for blocker in workflow_transition_blockers(«name.formatForCode», 'delete') %}
                             <li>{{ blocker.message }}</li>
@@ -335,7 +326,7 @@ class Forms {
 
     def private displayHooks(Entity it, Application app) '''
         {% if supportsHookSubscribers %}
-            {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=«name.formatForCode».«IF app.targets('3.0')»getKey()«ELSE»«primaryKey.name.formatForCode»«ENDIF», urlObject=currentUrlObject, outputAsArray=true) %}
+            {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
             {% if hooks is iterable and hooks|length > 0 %}
                 {% for area, hook in hooks %}
                     <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>

@@ -18,14 +18,8 @@ class FormatIcalText {
          * The «appName.formatForDB»_icalText filter outputs a given text for the ics output format.
          * Example:
          *     {{ 'someString'|«appName.formatForDB»_icalText }}.
-         «IF !targets('3.0')»
-         *
-         * @param string $string The given output string
-         *
-         * @return string Processed string for ics output
-         «ENDIF»
          */
-        public function formatIcalText«IF targets('3.0')»(string $string): string«ELSE»($string)«ENDIF»
+        public function formatIcalText(string $string): string
         {
             $result = preg_replace('/<a href="(.*)">.*<\/a>/i', '$1', $string);
             $result = str_replace('€', 'Euro', $result);

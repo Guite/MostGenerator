@@ -142,7 +142,7 @@ class InlineEditing {
                 href: editHref,
                 text: 'edit'
             }).append(
-                jQuery('<span>', { class: 'fa«IF targets('3.0')»s«ENDIF» fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
+                jQuery('<span>', { class: 'fas fa-edit' })
             );
 
             return editLink;
@@ -213,11 +213,11 @@ class InlineEditing {
                 createButton = jQuery('<a>', {
                     id: createButtonId,
                     href: createUrl,
-                    title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Create new entry'),
-                    class: 'btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button'
+                    title: Translator.trans('Create new entry'),
+                    class: 'btn btn-secondary «appName.toLowerCase»-inline-button'
                 }).append(
-                    jQuery('<i>', { class: 'fa«IF targets('3.0')»s«ENDIF» fa-plus' })
-                ).append(' ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Create'));
+                    jQuery('<i>', { class: 'fas fa-plus' })
+                ).append(' ' + Translator.trans('Create'));
 
                 if (inputType === 'select-single' || inputType === 'select-multi') {
                     inputReference.field.parent().append(createButton);
@@ -255,9 +255,9 @@ class InlineEditing {
                             jQuery('<a>', {
                                 id: elemPrefix,
                                 href: createUrl,
-                                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Edit this entry')
+                                title: Translator.trans('Edit this entry')
                             }).append(
-                                jQuery('<span>', { class: 'fa«IF targets('3.0')»s«ENDIF» fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»' })
+                                jQuery('<span>', { class: 'fas fa-edit' })
                             )
                         );
                     }
@@ -309,7 +309,7 @@ class InlineEditing {
 
                 // show a message
                 anchorElement = (inputType === 'autocomplete') ? inputReference.field : inputReference.field.parents('.form-group').first();
-                window.parent.«vendorAndName»SimpleAlert(anchorElement, window.parent.Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Information'), window.parent.Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Action has been completed.'), 'actionDoneAlert', 'success');
+                window.parent.«vendorAndName»SimpleAlert(anchorElement, window.parent.Translator.trans('Information'), window.parent.Translator.trans('Action has been completed.'), 'actionDoneAlert', 'success');
 
                 // check if a new item has been created
                 if (itemId > 0) {

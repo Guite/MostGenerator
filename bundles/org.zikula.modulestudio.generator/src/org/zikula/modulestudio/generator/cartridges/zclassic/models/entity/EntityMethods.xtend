@@ -77,7 +77,7 @@ class EntityMethods {
             /**
              * Adds a property change listener.
              */
-            public function addPropertyChangedListener(PropertyChangedListener $listener)«IF application.targets('3.0')»: void«ENDIF»
+            public function addPropertyChangedListener(PropertyChangedListener $listener): void
             {
                 $this->_propertyChangedListeners[] = $listener;
             }
@@ -85,13 +85,10 @@ class EntityMethods {
             /**
              * Notify all registered listeners about a changed property.
              *
-             «IF !application.targets('3.0')»
-             * @param string $propName Name of property which has been changed
-             «ENDIF»
              * @param mixed $oldValue The old property value
              * @param mixed $newValue The new property value
              */
-            protected function _onPropertyChanged(«IF application.targets('3.0')»string «ENDIF»$propName, $oldValue, $newValue)«IF application.targets('3.0')»: void«ENDIF»
+            protected function _onPropertyChanged(string $propName, $oldValue, $newValue): void
             {
                 if ($this->_propertyChangedListeners) {
                     foreach ($this->_propertyChangedListeners as $listener) {
@@ -106,16 +103,8 @@ class EntityMethods {
     def private createUrlArgs(Entity it) '''
         /**
          * Creates url arguments array for easy creation of display urls.
-         «IF !application.targets('3.0')»
-         *
-         «IF hasSluggableFields && slugUnique»
-         * @param bool $forEditing
-         *
-         «ENDIF»
-         * @return array List of resulting arguments
-         «ENDIF»
          */
-        public function createUrlArgs(«IF hasSluggableFields && slugUnique»«IF application.targets('3.0')»bool «ENDIF»$forEditing = false«ENDIF»)«IF application.targets('3.0')»: array«ENDIF»
+        public function createUrlArgs(«IF hasSluggableFields && slugUnique»bool $forEditing = false«ENDIF»): array
         {
             «IF hasSluggableFields && slugUnique»
                 if (true === $forEditing) {
@@ -142,12 +131,8 @@ class EntityMethods {
     def private getKey(Entity it) '''
         /**
          * Returns the primary key.
-         «IF !application.targets('3.0')»
-         *
-         * @return int The identifier
-         «ENDIF»
          */
-        public function getKey()«IF application.targets('3.0')»: ?int«ENDIF»
+        public function getKey(): ?int
         {
             return $this->get«getPrimaryKey.name.formatForCodeCapital»();
         }
@@ -156,12 +141,8 @@ class EntityMethods {
     def private supportsHookSubscribers(Entity it) '''
         /**
          * Determines whether this entity supports hook subscribers or not.
-         «IF !application.targets('3.0')»
-         *
-         * @return bool
-         «ENDIF»
          */
-        public function supportsHookSubscribers()«IF application.targets('3.0')»: bool«ENDIF»
+        public function supportsHookSubscribers(): bool
         {
             return «IF !skipHookSubscribers»true«ELSE»false«ENDIF»;
         }
@@ -170,12 +151,8 @@ class EntityMethods {
     def private getHookAreaPrefix(Entity it) '''
         /**
          * Return lower case name of multiple items needed for hook areas.
-         «IF !application.targets('3.0')»
-         *
-         * @return string
-         «ENDIF»
          */
-        public function getHookAreaPrefix()«IF application.targets('3.0')»: string«ENDIF»
+        public function getHookAreaPrefix(): string
         {
             return '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
         }
@@ -185,12 +162,8 @@ class EntityMethods {
         /**
          * ToString interceptor implementation.
          * This method is useful for debugging purposes.
-         «IF !application.targets('3.0')»
-         *
-         * @return string The output string for this entity
-         «ENDIF»
          */
-        public function __toString()«IF application.targets('3.0')»: string«ENDIF»
+        public function __toString(): string
         {
             return '«name.formatForDisplayCapital» ' . $this->getKey()«IF hasDisplayStringFieldsEntity» . ': ' . $this->get«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»()«ENDIF»;
         }
@@ -199,14 +172,8 @@ class EntityMethods {
     def private relatedObjectsImpl(DataObject it, Application app) '''
         /**
          * Returns an array of all related objects that need to be persisted after clone.
-         «IF !application.targets('3.0')»
-         *
-         * @param array $objects Objects that are added to this array
-         *
-         * @return array List of entity objects
-         «ENDIF»
          */
-        public function getRelatedObjectsToPersist(«IF application.targets('3.0')»array «ENDIF»&$objects = [])«IF application.targets('3.0')»: array«ENDIF»
+        public function getRelatedObjectsToPersist(array &$objects = []): array
         {
             «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «val joinsOut = outgoingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»

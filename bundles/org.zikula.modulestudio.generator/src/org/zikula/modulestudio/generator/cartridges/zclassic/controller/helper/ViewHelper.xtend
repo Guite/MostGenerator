@@ -26,28 +26,18 @@ class ViewHelper {
         «IF generatePdfSupport»
             use Dompdf\Dompdf;
         «ENDIF»
-        «IF !targets('3.0')»
-            use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
-        «ENDIF»
-        «IF hasGeographical && targets('3.0')»
+        «IF hasGeographical»
             use Symfony\Component\Filesystem\Filesystem;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
-        use Twig«IF targets('3.0')»\«ELSE»_«ENDIF»Environment;
-        «IF targets('3.0')»
-            use Twig\Loader\LoaderInterface;
-            «IF hasGeographical»
-                use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-            «ENDIF»
-            use Zikula\Bundle\CoreBundle\Response\PlainResponse;
-        «ELSE»
-            use Zikula\Core\Response\PlainResponse;
+        use Twig\Environment;
+        use Twig\Loader\LoaderInterface;
+        «IF hasGeographical»
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
+        use Zikula\Bundle\CoreBundle\Response\PlainResponse;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        «IF !targets('3.0')»
-            use Zikula\ThemeModule\Engine\AssetFilter;
-        «ENDIF»
         «IF generatePdfSupport»
             use Zikula\ThemeModule\Engine\ParameterBag;
         «ENDIF»
@@ -64,7 +54,7 @@ class ViewHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        «IF hasGeographical && targets('3.0')»
+        «IF hasGeographical»
             /**
              * @var ZikulaHttpKernelInterface
              */
@@ -77,12 +67,12 @@ class ViewHelper {
 
         «ENDIF»
         /**
-         * @var «IF !targets('3.0')»Twig_«ENDIF»Environment
+         * @var Environment
          */
         protected $twig;
 
         /**
-         * @var «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF»
+         * @var LoaderInterface
          */
         protected $twigLoader;
 
@@ -96,13 +86,6 @@ class ViewHelper {
          */
         protected $variableApi;
 
-        «IF !targets('3.0')»
-            /**
-             * @var AssetFilter
-             */
-            protected $assetFilter;
-
-        «ENDIF»
         «IF generatePdfSupport»
             /**
              * @var ParameterBag
@@ -121,24 +104,21 @@ class ViewHelper {
         protected $permissionHelper;
 
         public function __construct(
-            «IF hasGeographical && targets('3.0')»
+            «IF hasGeographical»
                 ZikulaHttpKernelInterface $kernel,
                 Filesystem $filesystem,
             «ENDIF»
-            «IF !targets('3.0')»Twig_«ENDIF»Environment $twig,
-            «IF targets('3.0')»LoaderInterface«ELSE»FilesystemLoader«ENDIF» $twigLoader,
+            Environment $twig,
+            LoaderInterface $twigLoader,
             RequestStack $requestStack,
             VariableApiInterface $variableApi,
-            «IF !targets('3.0')»
-                AssetFilter $assetFilter,
-            «ENDIF»
             «IF generatePdfSupport»
                 ParameterBag $pageVars,
             «ENDIF»
             ControllerHelper $controllerHelper,
             PermissionHelper $permissionHelper
         ) {
-            «IF hasGeographical && targets('3.0')»
+            «IF hasGeographical»
                 $this->kernel = $kernel;
                 $this->filesystem = $filesystem;
             «ENDIF»
@@ -146,9 +126,6 @@ class ViewHelper {
             $this->twigLoader = $twigLoader;
             $this->requestStack = $requestStack;
             $this->variableApi = $variableApi;
-            «IF !targets('3.0')»
-                $this->assetFilter = $assetFilter;
-            «ENDIF»
             «IF generatePdfSupport»
                 $this->pageVars = $pageVars;
             «ENDIF»
@@ -159,10 +136,6 @@ class ViewHelper {
         «getViewTemplate»
 
         «processTemplate»
-        «IF !targets('3.0')»
-
-            «injectAssetsIntoRawOutput»
-        «ENDIF»
 
         «determineExtension»
 
@@ -171,7 +144,7 @@ class ViewHelper {
 
             «processPdf»
         «ENDIF»
-        «IF hasGeographical && targets('3.0')»
+        «IF hasGeographical»
 
             «copyLeafletAssets»
         «ENDIF»
@@ -180,21 +153,8 @@ class ViewHelper {
     def private getViewTemplate(Application it) '''
         /**
          * Determines the view template for a certain method with given parameters.
-         «IF !targets('3.0')»
-         *
-         «IF separateAdminTemplates»
-         * @param string $type Current controller (name of currently treated entity)
-         * @param string $func Current function (index, view, ...)
-         * @param bool $isAdmin Whether an admin template is desired or not
-         «ELSE»
-         * @param string $type Current controller (name of currently treated entity)
-         * @param string $func Current function (index, view, ...)
-         «ENDIF»
-         *
-         * @return string name of template file
-         «ENDIF»
          */
-        public function getViewTemplate(«IF targets('3.0')»string «ENDIF»$type, «IF targets('3.0')»string «ENDIF»$func«IF separateAdminTemplates», «IF targets('3.0')»bool «ENDIF»$isAdmin = false«ENDIF»)«IF targets('3.0')»: string«ENDIF»
+        public function getViewTemplate(string $type, string $func«IF separateAdminTemplates», bool $isAdmin = false«ENDIF»): string
         {
             // create the base template name
             $template = '@«appName»/' . ucfirst($type) . '/' . «IF separateAdminTemplates»($isAdmin ? 'Admin/' : '') . «ENDIF»$func;
@@ -222,22 +182,13 @@ class ViewHelper {
     def private processTemplate(Application it) '''
         /**
          * Helper method for managing view templates.
-         «IF !targets('3.0')»
-         *
-         * @param string $type Current controller (name of currently treated entity)
-         * @param string $func Current function (index, view, ...)
-         * @param array $templateParameters Template data
-         * @param string $template Optional assignment of precalculated template file
-         *
-         * @return Response
-         «ENDIF»
          */
         public function processTemplate(
-            «IF targets('3.0')»string «ENDIF»$type,
-            «IF targets('3.0')»string «ENDIF»$func,
+            string $type,
+            string $func,
             array $templateParameters = [],
-            «IF targets('3.0')»string «ENDIF»$template = ''
-        )«IF targets('3.0')»: Response«ENDIF» {
+            string $template = ''
+        ): Response {
             $templateExtension = $this->determineExtension($type, $func);
             if (empty($template)) {
                 «IF separateAdminTemplates»
@@ -245,7 +196,7 @@ class ViewHelper {
                 «ENDIF»
                 $template = $this->getViewTemplate($type, $func«IF separateAdminTemplates», $isAdmin«ENDIF»);
             }
-            «IF hasGeographical && targets('3.0')»
+            «IF hasGeographical»
                 $this->copyLeafletAssets();
 
             «ENDIF»
@@ -276,9 +227,6 @@ class ViewHelper {
                         // see http://stackoverflow.com/questions/4348802/how-can-i-output-a-utf-8-csv-in-php-that-excel-will-read-properly
                         $output = chr(255) . chr(254) . mb_convert_encoding($output, 'UTF-16LE', 'UTF-8');
                     }
-                «ENDIF»
-                «IF !targets('3.0')»
-                    $output = $this->injectAssetsIntoRawOutput($output);
                 «ENDIF»
 
                 $response = new PlainResponse($output);
@@ -334,34 +282,11 @@ class ViewHelper {
         }
     '''
 
-    def private injectAssetsIntoRawOutput(Application it) '''
-        /**
-         * Adds assets to a raw page which is not processed by the Theme engine.
-         «IF !targets('3.0')»
-         *
-         * @param string $output The output to be enhanced
-         *
-         * @return string Output including additional assets
-         «ENDIF»
-         */
-        protected function injectAssetsIntoRawOutput(«IF targets('3.0')»string «ENDIF»$output = '')«IF targets('3.0')»: string«ENDIF»
-        {
-            return $this->assetFilter->filter($output);
-        }
-    '''
-
     def private determineExtension(Application it) '''
         /**
          * Get extension of the currently treated template.
-         «IF !targets('3.0')»
-         *
-         * @param string $type Current controller (name of currently treated entity)
-         * @param string $func Current function (index, view, ...)
-         *
-         * @return string Template extension
-         «ENDIF»
          */
-        protected function determineExtension(«IF targets('3.0')»string «ENDIF»$type, «IF targets('3.0')»string «ENDIF»$func)«IF targets('3.0')»: string«ENDIF»
+        protected function determineExtension(string $type, string $func): string
         {
             $templateExtension = 'html.twig';
             if (!in_array($func, ['view', 'display'])) {
@@ -386,15 +311,10 @@ class ViewHelper {
     def private availableExtensions(Application it) '''
         /**
          * Get list of available template extensions.
-         «IF !targets('3.0')»
-         *
-         * @param string $type Current controller (name of currently treated entity)
-         * @param string $func Current function (index, view, ...)
-         «ENDIF»
          *
          * @return string[] List of allowed template extensions
          */
-        protected function availableExtensions(«IF targets('3.0')»string «ENDIF»$type, «IF targets('3.0')»string «ENDIF»$func)«IF targets('3.0')»: array«ENDIF»
+        protected function availableExtensions(string $type, string $func): array
         {
             $extensions = [];
             $hasAdminAccess = $this->permissionHelper->hasComponentPermission($type, ACCESS_ADMIN);
@@ -419,15 +339,8 @@ class ViewHelper {
     def private processPdf(Application it) '''
         /**
          * Processes a template file using dompdf (LGPL).
-         «IF !targets('3.0')»
-         *
-         * @param array $templateParameters Template data
-         * @param string $template Name of template to use
-         *
-         * @return Response
-         «ENDIF»
          */
-        protected function processPdf(array $templateParameters = [], «IF targets('3.0')»string «ENDIF»$template = '')«IF targets('3.0')»: Response«ENDIF»
+        protected function processPdf(array $templateParameters = [], string $template = ''): Response
         {
             // first the content, to set page vars
             $output = $this->twig->render($template, $templateParameters);

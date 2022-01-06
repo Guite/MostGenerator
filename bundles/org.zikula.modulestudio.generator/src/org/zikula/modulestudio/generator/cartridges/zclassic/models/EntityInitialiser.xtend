@@ -110,14 +110,8 @@ class EntityInitialiser {
 
                 /**
                  * Initialises a given «entity.name.formatForCode» instance.
-                 «IF !targets('3.0')»
-                 *
-                 * @param «entity.name.formatForCodeCapital»Entity $entity The newly created entity instance
-                 *
-                 * @return «entity.name.formatForCodeCapital»Entity The updated entity instance
-                 «ENDIF»
                  */
-                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity)«IF targets('3.0')»: «entity.name.formatForCodeCapital»Entity«ENDIF»
+                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity): «entity.name.formatForCodeCapital»Entity
                 {
                     «FOR field : entity.getLanguageFieldsEntity + entity.getLocaleFieldsEntity»
                         $entity->set«field.name.formatForCodeCapital»($this->requestStack->getCurrentRequest()->getLocale());

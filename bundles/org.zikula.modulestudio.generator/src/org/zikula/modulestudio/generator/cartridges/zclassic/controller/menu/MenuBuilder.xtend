@@ -28,12 +28,8 @@ class MenuBuilder {
 
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
-        use Symfony\«IF targets('3.0')»Contracts«ELSE»Component«ENDIF»\EventDispatcher\EventDispatcherInterface;
+        use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF !targets('3.0')»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-        «ENDIF»
         «IF hasViewActions»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
@@ -44,19 +40,11 @@ class MenuBuilder {
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
-        «IF targets('3.0')»
-            use «appNamespace»\Event\ItemActionsMenuPostConfigurationEvent;
-            use «appNamespace»\Event\ItemActionsMenuPreConfigurationEvent;
-            «IF hasViewActions»
-                use «appNamespace»\Event\ViewActionsMenuPostConfigurationEvent;
-                use «appNamespace»\Event\ViewActionsMenuPreConfigurationEvent;
-            «ENDIF»
-        «ELSE»
-            use «appNamespace»\«name.formatForCodeCapital»Events;
-            use «appNamespace»\Event\ConfigureItemActionsMenuEvent;
-            «IF hasViewActions»
-                use «appNamespace»\Event\ConfigureViewActionsMenuEvent;
-            «ENDIF»
+        use «appNamespace»\Event\ItemActionsMenuPostConfigurationEvent;
+        use «appNamespace»\Event\ItemActionsMenuPreConfigurationEvent;
+        «IF hasViewActions»
+            use «appNamespace»\Event\ViewActionsMenuPostConfigurationEvent;
+            use «appNamespace»\Event\ViewActionsMenuPreConfigurationEvent;
         «ENDIF»
         «IF hasDisplayActions»
             use «appNamespace»\Helper\EntityDisplayHelper;
@@ -79,10 +67,6 @@ class MenuBuilder {
     '''
 
     def private menuBuilderClassBaseImpl(Application it) '''
-        «IF !targets('3.0')»
-            use TranslatorTrait;
-
-        «ENDIF»
         /**
          * @var FactoryInterface
          */
@@ -137,9 +121,6 @@ class MenuBuilder {
         «ENDIF»
 
         public function __construct(
-            «IF !targets('3.0')»
-                TranslatorInterface $translator,
-            «ENDIF»
             FactoryInterface $factory,
             EventDispatcherInterface $eventDispatcher,
             RequestStack $requestStack,
@@ -154,9 +135,6 @@ class MenuBuilder {
             VariableApiInterface $variableApi«ENDIF»«IF hasViewActions && hasEditActions»,
             ModelHelper $modelHelper«ENDIF»
         ) {
-            «IF !targets('3.0')»
-                $this->setTranslator($translator);
-            «ENDIF»
             $this->factory = $factory;
             $this->eventDispatcher = $eventDispatcher;
             $this->requestStack = $requestStack;
@@ -175,10 +153,6 @@ class MenuBuilder {
                 $this->modelHelper = $modelHelper;
             «ENDIF»
         }
-        «IF !targets('3.0')»
-
-            «setTranslatorMethod»
-        «ENDIF»
 
         «createMenu('item')»
         «IF hasViewActions»
@@ -190,14 +164,8 @@ class MenuBuilder {
     def private createMenu(Application it, String actionType) '''
         /**
          * Builds the «actionType» actions menu.
-         «IF !targets('3.0')»
-         *
-         * @param array $options List of additional options
-         *
-         * @return ItemInterface The assembled menu
-         «ENDIF»
          */
-        public function create«actionType.toFirstUpper»ActionsMenu(array $options = [])«IF targets('3.0')»: ItemInterface«ENDIF»
+        public function create«actionType.toFirstUpper»ActionsMenu(array $options = []): ItemInterface
         {
             $menu = $this->factory->createItem('«actionType»Actions');
             «IF 'item' == actionType»
@@ -229,18 +197,11 @@ class MenuBuilder {
                 $objectType = $options['objectType'];
                 $routeArea = $options['area'];
             «ENDIF»
-            $menu->setChildrenAttribute('class', '«IF targets('3.0')»nav«ELSE»list-inline«ENDIF» «actionType»-actions');
+            $menu->setChildrenAttribute('class', 'nav «actionType»-actions');
 
-            «IF targets('3.0')»
-                $this->eventDispatcher->dispatch(
-                    new «actionType.toFirstUpper»ActionsMenuPreConfigurationEvent($this->factory, $menu, $options)
-                );
-            «ELSE»
-                $this->eventDispatcher->dispatch(
-                    «name.formatForCodeCapital»Events::MENU_«actionType.toUpperCase»ACTIONS_PRE_CONFIGURE,
-                    new Configure«actionType.toFirstUpper»ActionsMenuEvent($this->factory, $menu, $options)
-                );
-            «ENDIF»
+            $this->eventDispatcher->dispatch(
+                new «actionType.toFirstUpper»ActionsMenuPreConfigurationEvent($this->factory, $menu, $options)
+            );
 
             «IF 'item' == actionType»
                 «new ItemActions().actionsImpl(it)»
@@ -248,16 +209,9 @@ class MenuBuilder {
                 «new ViewActions().actionsImpl(it)»
             «ENDIF»
 
-            «IF targets('3.0')»
-                $this->eventDispatcher->dispatch(
-                    new «actionType.toFirstUpper»ActionsMenuPostConfigurationEvent($this->factory, $menu, $options)
-                );
-            «ELSE»
-                $this->eventDispatcher->dispatch(
-                    «name.formatForCodeCapital»Events::MENU_«actionType.toUpperCase»ACTIONS_POST_CONFIGURE,
-                    new Configure«actionType.toFirstUpper»ActionsMenuEvent($this->factory, $menu, $options)
-                );
-            «ENDIF»
+            $this->eventDispatcher->dispatch(
+                new «actionType.toFirstUpper»ActionsMenuPostConfigurationEvent($this->factory, $menu, $options)
+            );
 
             return $menu;
         }

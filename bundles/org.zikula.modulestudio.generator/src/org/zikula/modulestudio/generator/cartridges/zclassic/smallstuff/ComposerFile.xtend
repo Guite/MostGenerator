@@ -39,7 +39,7 @@ class ComposerFile {
         "name": "«vendor.formatForDB»/«name.formatForDB»-module",
         "version": "«version»",
         "description": "«appDescription»",
-        "type": "zikula-«IF targets('3.0') && isSystemModule»system-«ENDIF»module",
+        "type": "zikula-«IF isSystemModule»system-«ENDIF»module",
         "license": "«licenseSPDX»",
         "authors": [
             {
@@ -60,10 +60,10 @@ class ComposerFile {
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
             «ENDIF»
-            «IF targets('3.0') && hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
+            «IF hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
                 "egulias/email-validator": "^2",
             «ENDIF»
-            "php": ">=«IF targets('3.0')»7.2.5«ELSE»5.5.9«ENDIF»"«IF !dependencies.empty»,«ENDIF»
+            "php": ">=«IF targets('4.0')»8.1.0«ELSE»7.2.5«ENDIF»"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
@@ -84,13 +84,11 @@ class ComposerFile {
         «ENDIF»
         "extra": {
             "zikula": {
-                "core-compatibility": ">=«targetSemVer(true)» <«IF targets('3.0')»4«ELSE»3«ENDIF».0.0",
+                "core-compatibility": ">=«targetSemVer(true)» <«IF targets('4.0')»5«ELSE»4«ENDIF».0.0",
                 "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«appName»",
                 "displayname": "«name.formatForDisplayCapital»",
                 "url": "«name.formatForDB»",
-                «IF targets('3.0')»
-                    "icon": "fas fa-database",
-                «ENDIF»
+                "icon": "fas fa-database",
                 "capabilities": {
                     «generateCapabilities»
                 },
@@ -114,11 +112,6 @@ class ComposerFile {
             "vendor-dir": "vendor",
             "preferred-install": "dist",
             "optimize-autoloader": true,
-            «IF !targets('3.0')»
-                "platform": {
-                    "php": "7.0.30"
-                },
-            «ENDIF»
             "sort-packages": true
         }
     '''

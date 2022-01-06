@@ -5,14 +5,12 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.HookProviderMode
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class FormAwareProviderInnerForms {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -43,13 +41,8 @@ class FormAwareProviderInnerForms {
         use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
         use Symfony\Component\Form\Extension\Core\Type\TextType;
         use Symfony\Component\Form\FormBuilderInterface;
-        «IF app.targets('3.0')»
-            «IF !app.isSystemModule»
-                use Symfony\Component\OptionsResolver\OptionsResolver;
-            «ENDIF»
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
+        «IF !app.isSystemModule»
+            use Symfony\Component\OptionsResolver\OptionsResolver;
         «ENDIF»
 
         /**
@@ -57,37 +50,23 @@ class FormAwareProviderInnerForms {
          */
         abstract class Abstract«action.formatForCodeCapital»«name.formatForCodeCapital»Type extends AbstractType
         {
-            «IF !app.targets('3.0')»
-                use TranslatorTrait;
-
-                public function __construct(TranslatorInterface $translator)
-                {
-                    $this->setTranslator($translator);
-                }
-
-                «app.setTranslatorMethod»
-
-            «ENDIF»
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $builder
                     ->add('dummyName', TextType::class, [
-                        'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Dummy «name.formatForDisplay» text'«IF !app.targets('3.0')»)«ENDIF»,
+                        'label' => 'Dummy «name.formatForDisplay» text',
                         'required' => true,
                     ])
                     ->add('dummyChoice', ChoiceType::class, [
-                        'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Dummy «name.formatForDisplay» choice'«IF !app.targets('3.0')»)«ENDIF»,
+                        'label' => 'Dummy «name.formatForDisplay» choice',
                         'label_attr' => [
-                            'class' => 'checkbox-«IF app.targets('3.0')»custom«ELSE»inline«ENDIF»',
+                            'class' => 'checkbox-custom',
                         ],
                         'choices' => [
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Option A'«IF !app.targets('3.0')»)«ENDIF» => 'A',
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Option B'«IF !app.targets('3.0')»)«ENDIF» => 'B',
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Option C'«IF !app.targets('3.0')»)«ENDIF» => 'C',
+                            'Option A' => 'A',
+                            'Option B' => 'B',
+                            'Option C' => 'C',
                         ],
-                        «IF !app.targets('2.0')»
-                            'choices_as_values' => true,
-                        «ENDIF»
                         'required' => true,
                         'multiple' => true,
                         'expanded' => true,
@@ -99,7 +78,7 @@ class FormAwareProviderInnerForms {
             {
                 return '«app.appName.formatForDB»_hook_«action.formatForDB»«name.formatForDB»';
             }
-            «IF app.targets('3.0') && !app.isSystemModule»
+            «IF !app.isSystemModule»
 
                 public function configureOptions(OptionsResolver $resolver)
                 {

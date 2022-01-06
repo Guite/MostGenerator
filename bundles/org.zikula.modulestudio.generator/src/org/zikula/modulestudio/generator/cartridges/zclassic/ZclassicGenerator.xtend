@@ -22,10 +22,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockModeration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeDetail
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeList
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Mailz
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.AppSettings
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
@@ -223,25 +220,10 @@ class ZclassicGenerator implements IGenerator {
     }
 
     def private generateIntegrationThirdParty(Application it) {
-        if (generateNewsletterPlugin && !targets('2.0')) {
-            pm?.subTask('Integration: Newsletter plugin')
-            'Generating newsletter plugin'.printIfNotTesting(fsa)
-            new Newsletter().generate(it, fsa)
-        }
-        if (generateMailzApi && !targets('2.0')) {
-            pm?.subTask('Integration: Mailz api')
-            'Generating mailz api'.printIfNotTesting(fsa)
-            new Mailz().generate(it, fsa)
-        }
         if (generateMultiHookNeedles) {
             pm?.subTask('Integration: MultiHook needles')
             'Generating MultiHook needles'.printIfNotTesting(fsa)
             new MultiHook().generate(it, fsa)
-        }
-        if (generateTagSupport && hasDisplayActions && !targets('2.0')) {
-            pm?.subTask('Integration: Tag support')
-            'Generating tag support'.printIfNotTesting(fsa)
-            new Tag().generate(it, fsa)
         }
     }
 

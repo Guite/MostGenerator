@@ -70,14 +70,8 @@ class ModelHelper {
          *
          * Note that even creation of a certain object is possible, it may still be forbidden for the current user
          * if he does not have the required permission level.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         *
-         * @return bool Whether a new instance can be created or not
-         «ENDIF»
          */
-        public function canBeCreated(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: bool«ENDIF»
+        public function canBeCreated(string $objectType = ''): bool
         {
             $result = false;
 
@@ -126,15 +120,8 @@ class ModelHelper {
     def private resolveSortParameter(Application it) '''
         /**
          * Returns a desired sorting criteria for passing it to a repository method.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         * @param string $sorting The type of sorting (newest, random, default)
-         *
-         * @return string The order by clause
-         «ENDIF»
          */
-        public function resolveSortParameter(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»string «ENDIF»$sorting = 'default')«IF targets('3.0')»: string«ENDIF»
+        public function resolveSortParameter(string $objectType = '', string $sorting = 'default'): string
         {
             if ('random' === $sorting) {
                 return 'RAND()';
@@ -167,14 +154,8 @@ class ModelHelper {
     def private hasExistingInstances(Application it) '''
         /**
          * Determines whether there exists at least one instance of a certain object type in the database.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         *
-         * @return bool Whether at least one instance exists or not
-         «ENDIF»
          */
-        protected function hasExistingInstances(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: bool«ENDIF»
+        protected function hasExistingInstances(string $objectType = ''): bool
         {
             $repository = $this->entityFactory->getRepository($objectType);
             if (null === $repository) {

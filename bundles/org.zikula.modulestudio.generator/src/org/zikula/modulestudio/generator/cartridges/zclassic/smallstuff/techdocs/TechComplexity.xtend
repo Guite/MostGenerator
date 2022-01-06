@@ -9,14 +9,12 @@ import java.util.HashMap
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class TechComplexity {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-    extension Utils = new Utils
 
     TechHelper helper = new TechHelper
     String language
@@ -75,7 +73,7 @@ class TechComplexity {
 
     def content(Application it) '''
         «helper.basicInfo(it, language)»
-        <h2><i class="fa«IF targets('3.0')»s«ENDIF» fa-calculator"></i> «IF language == 'de'»Funktionspunktanalyse«ELSE»Function points analysis«ENDIF»</h2>
+        <h2><i class="fas fa-calculator"></i> «IF language == 'de'»Funktionspunktanalyse«ELSE»Function points analysis«ENDIF»</h2>
         <p>
             «IF language == 'de'»
                 Der Funktionspunkt ist eine Metrik, um den Umfang eines Softwaresystems anzugeben. Weitere Infos können <a href="https://de.wikipedia.org/wiki/Function-Point-Verfahren" target="_blank">auf Wikipedia</a> eingesehen werden.
@@ -87,9 +85,9 @@ class TechComplexity {
         <h3>«IF language == 'de'»Weitere Aktionen«ELSE»Further actions«ENDIF»</h3>
         <p>
             «IF language == 'de'»
-                <a href="http://softwarecost.org/tools/COCOMO/" target="_blank" class="btn btn-primary"><i class="fa«IF targets('3.0')»s«ENDIF» fa-money«IF targets('3.0')»-bill-alt«ENDIF»"></i> Aufwand, Dauer und Kosten mit COCOMO II berechnen</a>
+                <a href="http://softwarecost.org/tools/COCOMO/" target="_blank" class="btn btn-primary"><i class="fas fa-money-bill-alt"></i> Aufwand, Dauer und Kosten mit COCOMO II berechnen</a>
             «ELSE»
-                <a href="http://softwarecost.org/tools/COCOMO/" target="_blank" class="btn btn-primary"><i class="fa«IF targets('3.0')»s«ENDIF» fa-money«IF targets('3.0')»-bill-alt«ENDIF»"></i> Calculate effort, schedule and costs with COCOMO II</a>
+                <a href="http://softwarecost.org/tools/COCOMO/" target="_blank" class="btn btn-primary"><i class="fas fa-money-bill-alt"></i> Calculate effort, schedule and costs with COCOMO II</a>
             «ENDIF»
         </p>
     '''

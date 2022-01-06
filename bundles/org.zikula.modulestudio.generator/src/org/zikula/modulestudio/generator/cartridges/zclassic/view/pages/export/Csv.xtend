@@ -44,10 +44,10 @@ class Csv {
 
     def private csvView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"«IF application.targets('3.0')»{% trans %}«geoFieldName.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«geoFieldName.formatForDisplayCapital»') }}«ENDIF»"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"«IF application.targets('3.0')»{% trans %}Workflow state{% endtrans %}«ELSE»{{ __('Workflow state') }}«ENDIF»"«ENDIF»«headerLinesRelations»
+        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{% trans %}«geoFieldName.formatForDisplayCapital»{% endtrans %}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{% trans %}Workflow state{% endtrans %}"«ENDIF»«headerLinesRelations»
         «val objName = name.formatForCode»
         {% for «objName» in items %}
         «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«application.appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«application.appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
@@ -73,9 +73,9 @@ class Csv {
         output
     }
 
-    def private headerLine(DerivedField it) '''"«IF application.targets('3.0')»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»"'''
+    def private headerLine(DerivedField it) '''"{% trans %}«name.formatForDisplayCapital»{% endtrans %}"'''
 
-    def private headerLineRelation(JoinRelationship it, Boolean useTarget) ''';"«IF application.targets('3.0')»{% trans %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«getRelationAliasName(useTarget).formatForDisplayCapital»') }}«ENDIF»"'''
+    def private headerLineRelation(JoinRelationship it, Boolean useTarget) ''';"{% trans %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}"'''
 
     def private dispatch displayEntry(DerivedField it) '''"«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
 

@@ -65,7 +65,7 @@ class Xml {
 
     def private xmlView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view xml view #}
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         <?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
@@ -80,7 +80,7 @@ class Xml {
 
     def private xmlDisplay(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» display xml view #}
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         <?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
@@ -89,10 +89,10 @@ class Xml {
 
     def private xmlInclude(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» xml inclusion template #}
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        <«name.formatForDB» «getPrimaryKey.name.formatForCode»="{{ «name.formatForCode».get«getPrimaryKey.name.formatForCodeCapital»() }}"«IF standardFields» createdon="{{ «name.formatForCode».createdDate|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short') }}" updatedon="{{ «name.formatForCode».updatedDate|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short') }}"«ENDIF»>
+        <«name.formatForDB» «getPrimaryKey.name.formatForCode»="{{ «name.formatForCode».get«getPrimaryKey.name.formatForCodeCapital»() }}"«IF standardFields» createdon="{{ «name.formatForCode».createdDate|format_datetime('medium', 'short') }}" updatedon="{{ «name.formatForCode».updatedDate|format_datetime('medium', 'short') }}"«ENDIF»>
             «FOR field : getDerivedFields.filter[primaryKey]»«field.displayEntry»«ENDFOR»
             «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»«field.displayEntry»«ENDFOR»
             «IF geographical»

@@ -74,20 +74,16 @@ class Display {
             {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
             {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         «ENDIF»
-        «IF application.targets('3.0')»
-            {% extends '@«application.appName»/' ~ baseTemplate ~ '.html.twig' %}
-        «ELSE»
-            {% extends '«application.appName»::' ~ baseTemplate ~ '.html.twig' %}
-        «ENDIF»
-        «IF application.targets('3.0') && !application.isSystemModule»
+        {% extends '@«application.appName»/' ~ baseTemplate ~ '.html.twig' %}
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default(«IF application.targets('3.0')»'«name.formatForDisplayCapital»'|trans«ELSE»__('«name.formatForDisplayCapital»')«ENDIF») }}{% endblock %}
+        {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) }}{% endblock %}
         {% block title %}
             «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
                 {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             «ENDIF»
-            {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default(«IF application.targets('3.0')»'«name.formatForDisplayCapital»'|trans«ELSE»__('«name.formatForDisplayCapital»')«ENDIF») %}
+            {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) %}
             «templateHeading(appName)»
             «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
                 {% if not isQuickView %}
@@ -116,7 +112,7 @@ class Display {
                 {% set isQuickView = app.request.query.getBoolean('raw', false) %}
                 «IF useGroupingTabs('display')»
                     <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
-                        <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}«ELSE»{{ __('Related data') }}«ENDIF»</h3>
+                        <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}</h3>
                         «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it, isAdmin)»«ENDFOR»
                     </div>
                 «ELSE»
@@ -144,7 +140,7 @@ class Display {
         «IF useGroupingTabs('display')»
             «tabs»
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade «IF application.targets('3.0')»show«ELSE»in«ENDIF» active" id="tabFields" aria-labelledby="fieldsTab">
+                <div role="tabpanel" class="tab-pane fade show active" id="tabFields" aria-labelledby="fieldsTab">
                     «fieldSection(true)»
                 </div>
                 «displayExtensions(name.formatForCode, isAdmin)»
@@ -152,12 +148,12 @@ class Display {
             </div>
         «ELSEIF !refedElems.empty»
             <div class="row">
-                <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-9">
+                <div class="col-md-9">
                     «fieldSection(false)»
                     «displayExtensions(name.formatForCode, isAdmin)»
                     «displayAdditions»
                 </div>
-                <div class="col-«IF application.targets('3.0')»md«ELSE»sm«ENDIF»-3">
+                <div class="col-md-3">
                     {{ block('related_items') }}
                 </div>
             </div>
@@ -171,53 +167,53 @@ class Display {
     def private tabs(Entity it) '''
         <div class="zikula-bootstrap-tab-container">
             <ul class="nav nav-tabs" role="tablist">
-                <li class="«IF application.targets('3.0')»nav-item«ELSE»active«ENDIF»" role="presentation">
-                    <a id="fieldsTab" href="#tabFields" title="{{ «IF application.targets('3.0')»'Fields'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Fields')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link active"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}«ELSE»{{ __('Fields') }}«ENDIF»</a>
+                <li class="nav-item" role="presentation">
+                    <a id="fieldsTab" href="#tabFields" title="{{ 'Fields'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link active">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</a>
                 </li>
                 «IF geographical»
-                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                        <a id="mapTab" href="#tabMap" title="{{ «IF application.targets('3.0')»'Map'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Map')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}«ELSE»{{ __('Map') }}«ENDIF»</a>
+                    <li class="nav-item" role="presentation">
+                        <a id="mapTab" href="#tabMap" title="{{ 'Map'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</a>
                     </li>
                 «ENDIF»
                 «IF !getReferredElements.empty»
-                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                        <a id="relationsTab" href="#tabRelations" title="{{ «IF application.targets('3.0')»'Related data'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Related data')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}«ELSE»{{ __('Related data') }}«ENDIF»</a>
+                    <li class="nav-item" role="presentation">
+                        <a id="relationsTab" href="#tabRelations" title="{{ 'Related data'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}</a>
                     </li>
                 «ENDIF»
                 «IF attributable»
                     {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                            <a id="attributesTab" href="#tabAttributes" title="{{ «IF application.targets('3.0')»'Attributes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Attributes')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Attributes{% endtrans %}«ELSE»{{ __('Attributes') }}«ENDIF»</a>
+                        <li class="nav-item" role="presentation">
+                            <a id="attributesTab" href="#tabAttributes" title="{{ 'Attributes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Attributes{% endtrans %}</a>
                         </li>
                     {% endif %}
                 «ENDIF»
                 «IF categorisable»
                     {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                            <a id="categoriesTab" href="#tabCategories" title="{{ «IF application.targets('3.0')»'Categories'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Categories')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Categories{% endtrans %}«ELSE»{{ __('Categories') }}«ENDIF»</a>
+                        <li class="nav-item" role="presentation">
+                            <a id="categoriesTab" href="#tabCategories" title="{{ 'Categories'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Categories{% endtrans %}</a>
                         </li>
                     {% endif %}
                 «ENDIF»
                 «IF tree != EntityTreeType.NONE»
                     {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
-                        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                            <a id="relativesTab" href="#tabRelatives" title="{{ «IF application.targets('3.0')»'Relatives'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Relatives')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}«ELSE»{{ __('Relatives') }}«ENDIF»</a>
+                        <li class="nav-item" role="presentation">
+                            <a id="relativesTab" href="#tabRelatives" title="{{ 'Relatives'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}</a>
                         </li>
                     {% endif %}
                 «ENDIF»
                 «IF uiHooksProvider != HookProviderMode.DISABLED»
-                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                        <a id="assignmentsTab" href="#tabAssignments" title="{{ «IF application.targets('3.0')»'Hook assignments'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»«ELSE»__('Hook assignments')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}«ELSE»{{ __('Hook assignments') }}«ENDIF»</a>
+                    <li class="nav-item" role="presentation">
+                        <a id="assignmentsTab" href="#tabAssignments" title="{{ 'Hook assignments'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}</a>
                     </li>
                 «ENDIF»
                 «IF standardFields»
-                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                        <a id="standardFieldsTab" href="#tabStandardFields" title="{{ «IF application.targets('3.0')»'Creation and update'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Creation and update')«ENDIF» }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Creation and update{% endtrans %}«ELSE»{{ __('Creation and update') }}«ENDIF»</a>
+                    <li class="nav-item" role="presentation">
+                        <a id="standardFieldsTab" href="#tabStandardFields" title="{{ 'Creation and update'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF» }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Creation and update{% endtrans %}</a>
                     </li>
                 «ENDIF»
                 «IF !skipHookSubscribers»
-                    <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                        <a id="hooksTab" href="#tabHooks" title="{{ «IF application.targets('3.0')»'Hooks'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»«ELSE»__('Hooks')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hooks{% endtrans %}«ELSE»{{ __('Hooks') }}«ENDIF»</a>
+                    <li class="nav-item" role="presentation">
+                        <a id="hooksTab" href="#tabHooks" title="{{ 'Hooks'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hooks{% endtrans %}</a>
                     </li>
                 «ENDIF»
             </ul>
@@ -231,14 +227,14 @@ class Display {
             {% endif %}
         «ENDIF»
         «IF withHeading»
-            <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}«ELSE»{{ __('Fields') }}«ENDIF»</h3>
+            <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</h3>
         «ENDIF»
         <dl>
             «FOR field : getFieldsForDisplayPage»«field.displayEntry»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     {% if «name.formatForCode».«geoFieldName» is not empty %}
-                        <dt>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}«geoFieldName.toFirstUpper»{% endtrans %}«ELSE»{{ __('«geoFieldName.toFirstUpper»') }}«ENDIF»</dt>
+                        <dt>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}«geoFieldName.toFirstUpper»{% endtrans %}</dt>
                         <dd>{{ «name.formatForCode».«geoFieldName»|«application.appName.formatForDB»_geoData }}</dd>
                     {% endif %}
                 «ENDFOR»
@@ -261,7 +257,7 @@ class Display {
 
     def private displayEntryInner(DerivedField it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
-        <dt>«IF application.targets('3.0')»{% trans %}«fieldLabel.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«fieldLabel.formatForDisplayCapital»') }}«ENDIF»</dt>
+        <dt>{% trans %}«fieldLabel.formatForDisplayCapital»{% endtrans %}</dt>
         <dd>«displayEntryImpl»</dd>
     '''
 
@@ -275,16 +271,16 @@ class Display {
         «val linkEntity = (if (useTarget) target else source) as Entity»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {% if «relObjName»|default %}
-            <dt>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from '«linkEntity.name.formatForCode»'«ENDIF» %}«relationAliasName.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«relationAliasName.formatForDisplayCapital»') }}«ENDIF»</dt>
+            <dt>{% trans«IF !application.isSystemModule» from '«linkEntity.name.formatForCode»'«ENDIF» %}«relationAliasName.formatForDisplayCapital»{% endtrans %}</dt>
             <dd>
               {% if not isQuickView %}
                   «IF linkEntity.hasDisplayAction»
-                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% «IF application.targets('3.0')»apply spaceless«ELSE»spaceless«ENDIF» %}
+                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
                   «ENDIF»
                     {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
                   «IF linkEntity.hasDisplayAction»
-                    {% «IF application.targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ «IF application.targets('3.0')»'Open quick view window'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Open quick view window')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window «IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-id-card«IF !application.targets('3.0')»-o«ENDIF»"></i></a>
+                    {% endapply %}</a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
@@ -297,9 +293,9 @@ class Display {
         «IF geographical»
             «IF useGroupingTabs('display')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
-                    <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}«ELSE»{{ __('Map') }}«ENDIF»</h3>
+                    <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</h3>
             «ELSE»
-                <h3 class="«application.appName.toLowerCase»-map">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}«ELSE»{{ __('Map') }}«ENDIF»</h3>
+                <h3 class="«application.appName.toLowerCase»-map">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</h3>
             «ENDIF»
             <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
             </div>
@@ -324,9 +320,9 @@ class Display {
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
                 «IF useGroupingTabs('display')»
                 <div role="tabpanel" class="tab-pane fade" id="tabRelatives" aria-labelledby="relativesTab">
-                    <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}«ELSE»{{ __('Relatives') }}«ENDIF»</h3>
+                    <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}</h3>
                 «ELSE»
-                <h3 class="relatives">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}«ELSE»{{ __('Relatives') }}«ENDIF»</h3>
+                <h3 class="relatives">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}</h3>
                 «ENDIF»
                     {{ include(
                         '@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»displayTreeRelatives.html.twig',
@@ -340,27 +336,19 @@ class Display {
         «IF uiHooksProvider != HookProviderMode.DISABLED»
             «IF useGroupingTabs('display')»
             <div role="tabpanel" class="tab-pane fade" id="tabAssignments" aria-labelledby="assignmentsTab">
-                <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}«ELSE»{{ __('Hook assignments') }}«ENDIF»</h3>
+                <h3>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}</h3>
             «ELSE»
-            <h3 class="hook-assignments">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}«ELSE»{{ __('Hook assignments') }}«ENDIF»</h3>
+            <h3 class="hook-assignments">{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}</h3>
             «ENDIF»
                 {% if hookAssignments|length > 0 %}
-                    «IF application.targets('3.0')»
-                        <p>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}This «name.formatForDisplay» is assigned to the following data objects:{% endtrans %}</p>
-                    «ELSE»
-                        <p>{{ __('This «name.formatForDisplay» is assigned to the following data objects:') }}</p>
-                    «ENDIF»
+                    <p>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}This «name.formatForDisplay» is assigned to the following data objects:{% endtrans %}</p>
                     <ul>
                     {% for assignment in hookAssignments %}
-                        <li><a href="{{ assignment.url|e('html_attr') }}" title="{{ «IF application.targets('3.0')»'View this object'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»«ELSE»__('View this object')«ENDIF»|e('html_attr') }}">{{ assignment.date|«IF application.targets('3.0')»format_datetime«ELSE»localizeddate«ENDIF»('medium', 'short') }} - {{ assignment.text }}</a></li>
+                        <li><a href="{{ assignment.url|e('html_attr') }}" title="{{ 'View this object'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»|e('html_attr') }}">{{ assignment.date|format_datetime('medium', 'short') }} - {{ assignment.text }}</a></li>
                     {% endfor %}
                     </ul>
                 {% else %}
-                    «IF application.targets('3.0')»
-                        <p>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}This «name.formatForDisplay» is not assigned to any data objects yet.{% endtrans %}</p>
-                    «ELSE»
-                        <p>{{ __('This «name.formatForDisplay» is not assigned to any data objects yet.') }}</p>
-                    «ENDIF»
+                    <p>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}This «name.formatForDisplay» is not assigned to any data objects yet.{% endtrans %}</p>
                 {% endif %}
             «IF useGroupingTabs('display')»
             </div>
@@ -385,7 +373,7 @@ class Display {
     def private callDisplayHooks(Entity it, String appName) '''
         «IF useGroupingTabs('display')»
             <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
-                <h3>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hooks{% endtrans %}«ELSE»{{ __('Hooks') }}«ENDIF»</h3>
+                <h3>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hooks{% endtrans %}</h3>
         «ENDIF»
         {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
         {% if hooks is iterable and hooks|length > 0 %}
@@ -406,63 +394,60 @@ class Display {
         «ELSE»
             {# purpose of this template: show different forms of relatives for a given tree node #}
         «ENDIF»
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        «IF !application.targets('3.0')»
-            {% import _self as relatives %}
-        «ENDIF»
-        {#<h3>«IF application.targets('3.0')»{% trans %}Related «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Related «nameMultiple.formatForDisplay»') }}«ENDIF»</h3>#}
+        {#<h3>{% trans %}Related «nameMultiple.formatForDisplay»{% endtrans %}</h3>#}
         {% if «objName».lvl > 0 %}
             {% if allParents is not defined or allParents == true %}
                 {% set parents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
                 {% if parents is not null and parents is iterable and parents|length > 0 %}
-                    <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}All parents{% endtrans %}«ELSE»{{ __('All parents') }}«ENDIF»</h4>
-                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(parents, routeArea) }}
+                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}All parents{% endtrans %}</h4>
+                    {{ _self.list_relatives(parents, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if directParent is not defined or directParent == true %}
                 {% set parents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directParent') %}
                 {% if parents is not null and parents is iterable and parents|length > 0 %}
-                    <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Direct parent{% endtrans %}«ELSE»{{ __('Direct parent') }}«ENDIF»</h4>
-                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(parents, routeArea) }}
+                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Direct parent{% endtrans %}</h4>
+                    {{ _self.list_relatives(parents, routeArea) }}
                 {% endif %}
             {% endif %}
         {% endif %}
         {% if allChildren is not defined or allChildren == true %}
             {% set allChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allChildren') %}
             {% if allChildren is not null and allChildren is iterable and allChildren|length > 0 %}
-                <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}All children{% endtrans %}«ELSE»{{ __('All children') }}«ENDIF»</h4>
-                {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(allChildren, routeArea) }}
+                <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}All children{% endtrans %}</h4>
+                {{ _self.list_relatives(allChildren, routeArea) }}
             {% endif %}
         {% endif %}
         {% if directChildren is not defined or directChildren == true %}
             {% set directChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directChildren') %}
             {% if directChildren is not null and directChildren is iterable and directChildren|length > 0 %}
-                <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Direct children{% endtrans %}«ELSE»{{ __('Direct children') }}«ENDIF»</h4>
-                {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(directChildren, routeArea) }}
+                <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Direct children{% endtrans %}</h4>
+                {{ _self.list_relatives(directChildren, routeArea) }}
             {% endif %}
         {% endif %}
         {% if «objName».lvl > 0 %}
             {% if predecessors is not defined or predecessors == true %}
                 {% set predecessors = «pluginPrefix»_treeSelection('«objName»', node=«objName», target='predecessors') %}
                 {% if predecessors is not null and predecessors is iterable and predecessors|length > 0 %}
-                    <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Predecessors{% endtrans %}«ELSE»{{ __('Predecessors') }}«ENDIF»</h4>
-                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(predecessors, routeArea) }}
+                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Predecessors{% endtrans %}</h4>
+                    {{ _self.list_relatives(predecessors, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if successors is not defined or successors == true %}
                 {% set successors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='successors') %}
                 {% if successors is not null and successors is iterable and successors|length > 0 %}
-                    <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Successors{% endtrans %}«ELSE»{{ __('Successors') }}«ENDIF»</h4>
-                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(successors, routeArea) }}
+                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Successors{% endtrans %}</h4>
+                    {{ _self.list_relatives(successors, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if preandsuccessors is not defined or preandsuccessors == true %}
                 {% set preandsuccessors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='preandsuccessors') %}
                 {% if preandsuccessors is not null and preandsuccessors is iterable and preandsuccessors|length > 0 %}
-                    <h4>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Siblings{% endtrans %}«ELSE»{{ __('Siblings') }}«ENDIF»</h4>
-                    {{ «IF application.targets('3.0')»_self«ELSE»relatives«ENDIF».list_relatives(preandsuccessors, routeArea) }}
+                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Siblings{% endtrans %}</h4>
+                    {{ _self.list_relatives(preandsuccessors, routeArea) }}
                 {% endif %}
             {% endif %}
         {% endif %}

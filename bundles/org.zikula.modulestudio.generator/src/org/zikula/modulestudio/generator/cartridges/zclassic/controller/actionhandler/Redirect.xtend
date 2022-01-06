@@ -28,7 +28,7 @@ class Redirect {
          *
          * @return string[] list of possible redirect codes
          */
-        protected function getRedirectCodes()«IF targets('3.0')»: array«ENDIF»
+        protected function getRedirectCodes(): array
         {
             $codes = [];
 
@@ -39,7 +39,7 @@ class Redirect {
     '''
 
     def getRedirectCodes(Entity it, Application app) '''
-        protected function getRedirectCodes()«IF app.targets('3.0')»: array«ENDIF»
+        protected function getRedirectCodes(): array
         {
             $codes = parent::getRedirectCodes();
             «IF hasIndexAction»
@@ -102,14 +102,8 @@ class Redirect {
         /**
          * Get the default redirect url. Required if no returnTo parameter has been supplied.
          * This method is called in handleCommand so we know which command has been performed.
-         «IF !app.targets('3.0')»
-         *
-         * @param array $args List of arguments
-         *
-         * @return string The default redirect url
-         «ENDIF»
          */
-        protected function getDefaultReturnUrl(array $args = [])«IF app.targets('3.0')»: string«ENDIF»
+        protected function getDefaultReturnUrl(array $args = []): string
         {
             $objectIsPersisted = 'delete' !== $args['commandName']
                 && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName']
@@ -151,14 +145,8 @@ class Redirect {
     def getRedirectUrl(Entity it, Application app) '''
         /**
          * Get URL to redirect to.
-         «IF !app.targets('3.0')»
-         *
-         * @param array $args List of arguments
-         *
-         * @return string The redirect url
-         «ENDIF»
          */
-        protected function getRedirectUrl(array $args = [])«IF app.targets('3.0')»: string«ENDIF»
+        protected function getRedirectUrl(array $args = []): string
         {
             «IF app.needsInlineEditing && (!getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty)»
                 if (isset($this->templateParameters['inlineUsage']) && true === $this->templateParameters['inlineUsage']) {

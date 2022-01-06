@@ -152,7 +152,7 @@ class AppSettings {
         /**
          * Loads module variables from the database.
          */
-        protected function load()«IF targets('3.0')»: void«ENDIF»
+        protected function load(): void
         {
             $moduleVars = $this->variableApi->getAll('«appName»');
 
@@ -205,7 +205,7 @@ class AppSettings {
         /**
          * Saves module variables into the database.
          */
-        public function save()«IF targets('3.0')»: void«ENDIF»
+        public function save(): void
         {
             «IF hasUserVariables»
                 // normalise user selector values
@@ -246,9 +246,9 @@ class AppSettings {
                     $limitParameter = '';
                     if ('limitedByAmount' === $revisionHandling) {
                         $limitParameter = $this->getMaximumAmountOf«entity.name.formatForCodeCapital»Revisions();
-                    }«IF entity.application.targets('2.0')» elseif ('limitedByDate' === $revisionHandling) {
+                    } elseif ('limitedByDate' === $revisionHandling) {
                         $limitParameter = $this->getPeriodFor«entity.name.formatForCodeCapital»Revisions();
-                    }«ENDIF»
+                    }
 
                     $logEntriesRepository = $entityManager->getRepository('«entity.application.appName»:«entity.name.formatForCodeCapital»LogEntryEntity');
                     $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);

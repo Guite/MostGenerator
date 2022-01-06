@@ -2,12 +2,10 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class LoggableListener {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension Utils = new Utils
 
     def generate(Application it) '''
         /**
@@ -96,14 +94,8 @@ class LoggableListener {
 
         /**
          * Checks whether this listener is responsible for the given entity or not.
-         «IF !targets('3.0')»
-         *
-         * @param object $entity The given entity
-         *
-         * @return bool True if entity is managed by this listener, false otherwise
-         «ENDIF»
          */
-        protected function isEntityManagedByThisBundle(object $entity)«IF targets('3.0')»: bool«ENDIF»
+        protected function isEntityManagedByThisBundle(object $entity): bool
         {
             $entityClassParts = explode('\\', get_class($entity));
 

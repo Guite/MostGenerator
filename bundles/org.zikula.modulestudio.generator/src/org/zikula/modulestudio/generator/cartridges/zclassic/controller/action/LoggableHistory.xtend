@@ -24,29 +24,25 @@ class LoggableHistory {
     def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «loggableHistoryDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistory«IF !application.targets('3.x-dev')»Action«ENDIF»(
+            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistory«IF !application.targets('3.1')»Action«ENDIF»(
                 «loggableHistoryArguments(false)»
-            )«IF application.targets('3.0')»: Response«ENDIF» {
-                «IF application.targets('3.0')»
-                    return $this->loggableHistoryInternal(
-                        $request,
-                        $permissionHelper,
-                        $entityFactory,
-                        $loggableHelper,«IF hasTranslatableFields»
-                        $translatableHelper,«ENDIF»
-                        $workflowHelper,
-                        «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»,
-                        «isAdmin.displayBool»
-                    );
-                «ELSE»
-                    return $this->loggableHistoryInternal($request, «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF», «isAdmin.displayBool»);
-                «ENDIF»
+            ): Response {
+                return $this->loggableHistoryInternal(
+                    $request,
+                    $permissionHelper,
+                    $entityFactory,
+                    $loggableHelper,«IF hasTranslatableFields»
+                    $translatableHelper,«ENDIF»
+                    $workflowHelper,
+                    «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»,
+                    «isAdmin.displayBool»
+                );
             }
         «ELSEIF isBase && !isAdmin»
             «loggableHistoryDocBlock(isBase, isAdmin)»
             protected function loggableHistoryInternal(
                 «loggableHistoryArguments(true)»
-            )«IF application.targets('3.0')»: Response«ENDIF» {
+            ): Response {
                 «loggableHistoryBaseImpl»
             }
         «ENDIF»
@@ -57,16 +53,6 @@ class LoggableHistory {
          «IF isBase»
          * This method provides a change history for a given «name.formatForDisplay».
          *
-         «IF !application.targets('3.0')»
-         * @param Request $request
-         * @param PermissionHelper $permissionHelper
-         * @param EntityFactory $entityFactory
-         * @param «IF hasSluggableFields && slugUnique»string $slug«ELSE»int $id«ENDIF» Identifier of «name.formatForDisplay»
-         * @param boolean $isAdmin Whether the admin area is used or not
-         *
-         * @return Response Output
-         *
-         «ENDIF»
          * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
@@ -87,52 +73,40 @@ class LoggableHistory {
     '''
 
     def private loggableHistoryArguments(Entity it, Boolean internalMethod) '''
-        «IF application.targets('3.0')»
-            Request $request,
-            PermissionHelper $permissionHelper,
-            EntityFactory $entityFactory,
-            LoggableHelper $loggableHelper,
-            «IF hasTranslatableFields»
-                TranslatableHelper $translatableHelper,
-            «ENDIF»
-            WorkflowHelper $workflowHelper,
-            «IF hasSluggableFields && slugUnique»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
-            bool $isAdmin = false«ENDIF»
-        «ELSE»
-            Request $request,
-            «IF hasSluggableFields && slugUnique»$slug = ''«ELSE»$id = 0«ENDIF»«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+        Request $request,
+        PermissionHelper $permissionHelper,
+        EntityFactory $entityFactory,
+        LoggableHelper $loggableHelper,
+        «IF hasTranslatableFields»
+            TranslatableHelper $translatableHelper,
         «ENDIF»
+        WorkflowHelper $workflowHelper,
+        «IF hasSluggableFields && slugUnique»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
+        bool $isAdmin = false«ENDIF»
     '''
 
     def private loggableHistoryBaseImpl(Entity it) '''
         if (empty(«IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»)) {
             throw new NotFoundHttpException(
-                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                    'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
+                $this->trans(
+                    'No such «name.formatForDisplay» found.'«IF !application.isSystemModule»,
                     [],
                     '«name.formatForCode»'«ENDIF»
                 )
             );
         }
 
-        «IF !application.targets('3.0')»
-            $entityFactory = $this->get('«application.appService».entity_factory');
-        «ENDIF»
         $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException(
-                $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                    'No such «name.formatForDisplay» found.'«IF application.targets('3.0') && !application.isSystemModule»,
+                $this->trans(
+                    'No such «name.formatForDisplay» found.'«IF !application.isSystemModule»,
                     [],
                     '«name.formatForCode»'«ENDIF»
                 )
             );
         }
 
-        «IF !application.targets('3.0')»
-            $permissionHelper = $this->get('«application.appService».permission_helper');
-        «ENDIF»
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
         if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
             throw new AccessDeniedException();
@@ -149,34 +123,31 @@ class LoggableHistory {
             «IF hasSluggableFields && slugUnique»
                 $«name.formatForCode»Id = $«name.formatForCode»->getId();
             «ENDIF»
-            $«name.formatForCode» = «IF application.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->revert($«name.formatForCode», $revertToVersion);
+            $«name.formatForCode» = $loggableHelper->revert($«name.formatForCode», $revertToVersion);
 
             try {
                 // execute the workflow action
-                «IF !application.targets('3.0')»
-                    $workflowHelper = $this->get('«application.appService».workflow_helper');
-                «ENDIF»
-                $success = $workflowHelper->executeAction($«name.formatForCode», 'update'«IF !application.targets('2.0')» . $«name.formatForCode»->getWorkflowState()«ENDIF»);
+                $success = $workflowHelper->executeAction($«name.formatForCode», 'update');
                 «IF hasTranslatableFields»
 
-                    «IF application.targets('3.0')»$translatableHelper«ELSE»$this->get('«application.appService».translatable_helper')«ENDIF»->refreshTranslationsFromLogData($«name.formatForCode»);
+                    $translatableHelper->refreshTranslationsFromLogData($«name.formatForCode»);
                 «ENDIF»
 
                 if ($success) {
                     $this->addFlash(
                         'status',
-                        $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
+                        $this->trans(
                             'Done! Reverted «name.formatForDisplay» to version %version%.',
-                            ['%version%' => $revertToVersion]«IF application.targets('3.0') && !application.isSystemModule»,
+                            ['%version%' => $revertToVersion]«IF !application.isSystemModule»,
                             '«name.formatForCode»'«ENDIF»
                         )
                     );
                 } else {
                     $this->addFlash(
                         'error',
-                        $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
+                        $this->trans(
                             'Error! Reverting «name.formatForDisplay» to version %version% failed.',
-                            ['%version%' => $revertToVersion]«IF application.targets('3.0') && !application.isSystemModule»,
+                            ['%version%' => $revertToVersion]«IF !application.isSystemModule»,
                             '«name.formatForCode»'«ENDIF»
                         )
                     );
@@ -184,7 +155,7 @@ class LoggableHistory {
             } catch (Exception $exception) {
                 $this->addFlash(
                     'error',
-                    $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
+                    $this->trans(
                         'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                         ['%action%' => 'update']
                     ) . '  ' . $exception->getMessage()
@@ -236,10 +207,7 @@ class LoggableHistory {
                 $minVersion,
                 $maxVersion,
                 $diffValues
-            ) = «IF application.targets('3.0')»$loggableHelper«ELSE»$this->get('«application.appService».loggable_helper')«ENDIF»->determineDiffViewParameters(
-                $logEntries,
-                $versions
-            );
+            ) = $loggableHelper->determineDiffViewParameters($logEntries, $versions);
             $templateParameters['minVersion'] = $minVersion;
             $templateParameters['maxVersion'] = $maxVersion;
             $templateParameters['diffValues'] = $diffValues;

@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class WorkflowEventsListener {
@@ -13,14 +12,11 @@ class WorkflowEventsListener {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it) '''
-        «IF targets('3.0')»
-            use TranslatorTrait;
+        use TranslatorTrait;
 
-        «ENDIF»
         /**
          * @var EntityFactory
          */
@@ -39,16 +35,12 @@ class WorkflowEventsListener {
         «ENDIF»
 
         public function __construct(
-            «IF targets('3.0')»
-                TranslatorInterface $translator,
-            «ENDIF»
+            TranslatorInterface $translator,
             EntityFactory $entityFactory,
             PermissionHelper $permissionHelper«IF needsApproval»,
             NotificationHelper $notificationHelper«ENDIF»
         ) {
-            «IF targets('3.0')»
-                $this->setTranslator($translator);
-            «ENDIF»
+            $this->setTranslator($translator);
             $this->entityFactory = $entityFactory;
             $this->permissionHelper = $permissionHelper;
             «IF needsApproval»
@@ -63,11 +55,9 @@ class WorkflowEventsListener {
                 'workflow.leave' => ['onLeave', 5],
                 'workflow.transition' => ['onTransition', 5],
                 'workflow.enter' => ['onEnter', 5],
-                «IF targets('2.0')»
-                    'workflow.entered' => ['onEntered', 5],
-                    'workflow.completed' => ['onCompleted', 5],
-                    'workflow.announce' => ['onAnnounce', 5],
-                «ENDIF»
+                'workflow.entered' => ['onEntered', 5],
+                'workflow.completed' => ['onCompleted', 5],
+                'workflow.announce' => ['onAnnounce', 5],
             ];
         }
 
@@ -82,14 +72,12 @@ class WorkflowEventsListener {
          *     `if (!$event->isBlocked()) {
          *         $event->setBlocked(true);
          *     }`
-         «IF targets('3.0')»
          * Example with providing a reason:
          *     `$event->addTransitionBlocker(
          *         new TransitionBlocker('You can not this because that.', '0')
          *     );`
-         «ENDIF»
          */
-        public function onGuard(GuardEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onGuard(GuardEvent $event): void
         {
             «guardImpl»
         }
@@ -101,7 +89,7 @@ class WorkflowEventsListener {
          * Carries the marking with the initial places.
          «commonDocs('leave')»
          */
-        public function onLeave(Event $event)«IF targets('3.0')»: void«ENDIF»
+        public function onLeave(Event $event): void
         {
             /** @var EntityAccess $entity */
             $entity = $event->getSubject();
@@ -117,7 +105,7 @@ class WorkflowEventsListener {
          * Carries the marking with the current places.
          «commonDocs('transition')»
          */
-        public function onTransition(Event $event)«IF targets('3.0')»: void«ENDIF»
+        public function onTransition(Event $event): void
         {
             /** @var EntityAccess $entity */
             $entity = $event->getSubject();
@@ -133,67 +121,62 @@ class WorkflowEventsListener {
          * This means the marking of the subject is not yet updated with the new places.
          «commonDocs('enter')»
          */
-        public function onEnter(Event $event)«IF targets('3.0')»: void«ENDIF»
+        public function onEnter(Event $event): void
         {
             /** @var EntityAccess $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
             }
-            «IF !targets('2.0')»
-                «sendNotificationsCall»
-            «ENDIF»
         }
-        «IF targets('2.0')»
 
-            /**
-             * Listener for the `workflow.entered` event.
-             *
-             * Occurs after the subject has entered into the new state.
-             * Carries the marking with the new places.
-             * This is a good place to flush data in Doctrine based on the entity not being updated yet.
-             «commonDocs('entered')»
-             */
-            public function onEntered(Event $event)«IF targets('3.0')»: void«ENDIF»
-            {
-                /** @var EntityAccess $entity */
-                $entity = $event->getSubject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
-                    return;
-                }
+        /**
+         * Listener for the `workflow.entered` event.
+         *
+         * Occurs after the subject has entered into the new state.
+         * Carries the marking with the new places.
+         * This is a good place to flush data in Doctrine based on the entity not being updated yet.
+         «commonDocs('entered')»
+         */
+        public function onEntered(Event $event): void
+        {
+            /** @var EntityAccess $entity */
+            $entity = $event->getSubject();
+            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                return;
             }
+        }
 
-            /**
-             * Listener for the `workflow.completed` event.
-             *
-             * Occurs after the subject has completed a transition.
-             «commonDocs('completed')»
-             */
-            public function onCompleted(Event $event)«IF targets('3.0')»: void«ENDIF»
-            {
-                /** @var EntityAccess $entity */
-                $entity = $event->getSubject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
-                    return;
-                }
-                «sendNotificationsCall»
+        /**
+         * Listener for the `workflow.completed` event.
+         *
+         * Occurs after the subject has completed a transition.
+         «commonDocs('completed')»
+         */
+        public function onCompleted(Event $event): void
+        {
+            /** @var EntityAccess $entity */
+            $entity = $event->getSubject();
+            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                return;
             }
+            «sendNotificationsCall»
+        }
 
-            /**
-             * Listener for the `workflow.announce` event.
-             *
-             * Triggered for each place that now is available for the subject.
-             «commonDocs('announce')»
-             */
-            public function onAnnounce(Event $event)«IF targets('3.0')»: void«ENDIF»
-            {
-                /** @var EntityAccess $entity */
-                $entity = $event->getSubject();
-                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
-                    return;
-                }
+        /**
+         * Listener for the `workflow.announce` event.
+         *
+         * Triggered for each place that now is available for the subject.
+         «commonDocs('announce')»
+         */
+        public function onAnnounce(Event $event): void
+        {
+            /** @var EntityAccess $entity */
+            $entity = $event->getSubject();
+            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+                return;
             }
-        «ENDIF»
+        }
 
         «isEntityManagedByThisBundle»
         «IF needsApproval»
@@ -236,9 +219,7 @@ class WorkflowEventsListener {
         * Access the entity: `$entity = $event->getSubject();`
         * Access the marking: `$marking = $event->getMarking();`
         * Access the transition: `$transition = $event->getTransition();`
-        «IF targets('2.0')»
-            * Access the workflow name: `$workflowName = $event->getWorkflowName();`
-        «ENDIF»
+        * Access the workflow name: `$workflowName = $event->getWorkflowName();`
     '''
 
     def private guardImpl(Application it) '''
@@ -253,11 +234,6 @@ class WorkflowEventsListener {
         «ENDIF»
         $permissionLevel = ACCESS_READ;
         $transitionName = $event->getTransition()->getName();
-        «IF !targets('2.0')»
-            if ('update' === substr($transitionName, 0, 6)) {
-                $transitionName = 'update';
-            }
-        «ENDIF»
         «/*not used atm $targetState = $event->getTransition()->getTos()[0];*/»
         $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'], true)«ELSE»false«ENDIF»;
 
@@ -291,7 +267,7 @@ class WorkflowEventsListener {
 
         if (!$this->permissionHelper->hasEntityPermission($entity, $permissionLevel)) {
             // no permission for this transition, so disallow it
-            $event->setBlocked(true«IF targets('3.0')», $this->trans('No permission for this action.')«ENDIF»);
+            $event->setBlocked(true, $this->trans('No permission for this action.'));
 
             return;
         }
@@ -305,26 +281,22 @@ class WorkflowEventsListener {
                         «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
                             «IF relation.isManySide(true)»
                                 if (0 < count($entity->get«relation.targetAlias.formatForCodeCapital»())) {
-                                    «IF targets('3.0')»
-                                        $event->addTransitionBlocker(
-                                            new TransitionBlocker(
-                                                $this->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
-                                                '0'
-                                            )
-                                        );
-                                    «ENDIF»
+                                    $event->addTransitionBlocker(
+                                        new TransitionBlocker(
+                                            $this->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
+                                            '0'
+                                        )
+                                    );
                                     $isBlocked = true;
                                 }
                             «ELSE»
                                 if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
-                                    «IF targets('3.0')»
-                                        $event->addTransitionBlocker(
-                                            new TransitionBlocker(
-                                                $this->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
-                                                '0'
-                                            )
-                                        );
-                                    «ENDIF»
+                                    $event->addTransitionBlocker(
+                                        new TransitionBlocker(
+                                            $this->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
+                                            '0'
+                                        )
+                                    );
                                     $isBlocked = true;
                                 }
                             «ENDIF»
@@ -339,14 +311,8 @@ class WorkflowEventsListener {
     def private isEntityManagedByThisBundle(Application it) '''
         /**
          * Checks whether this listener is responsible for the given entity or not.
-         «IF !targets('3.0')»
-         *
-         * @param object $entity The given entity
-         *
-         * @return bool True if entity is managed by this listener, false otherwise
-         «ENDIF»
          */
-        protected function isEntityManagedByThisBundle(object $entity)«IF targets('3.0')»: bool«ENDIF»
+        protected function isEntityManagedByThisBundle(object $entity): bool
         {
             if (!($entity instanceof EntityAccess)) {
                 return false;
@@ -366,14 +332,8 @@ class WorkflowEventsListener {
     def private sendNotifications(Application it) '''
         /**
          * Sends email notifications.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity Processed entity
-         * @param string $action Name of performed transition
-         * @param string $workflowShortName Name of workflow (none, standard, enterprise)
-         «ENDIF»
          */
-        protected function sendNotifications($entity, «IF targets('3.0')»string «ENDIF»$action, «IF targets('3.0')»string «ENDIF»$workflowShortName)«IF targets('3.0')»: void«ENDIF»
+        protected function sendNotifications($entity, string $action, string $workflowShortName): void
         {
             $newState = $entity->getWorkflowState();
 

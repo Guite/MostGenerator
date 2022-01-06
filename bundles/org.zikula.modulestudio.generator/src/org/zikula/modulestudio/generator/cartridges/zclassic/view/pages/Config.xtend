@@ -32,55 +32,43 @@ class Config {
 
     def private configView(Application it) '''
         {# purpose of this template: module configuration page #}
-        «IF targets('3.0')»
-            {% extends '@«appName»/adminBase.html.twig' %}
-            «IF !isSystemModule»
-                {% trans_default_domain 'config' %}
-            «ENDIF»
-        «ELSE»
-            {% extends '«appName»::adminBase.html.twig' %}
+        {% extends '@«appName»/adminBase.html.twig' %}
+        «IF !isSystemModule»
+            {% trans_default_domain 'config' %}
         «ENDIF»
-        {% block title «IF targets('3.0')»'Settings'|trans«ELSE»__('Settings')«ENDIF» %}
+        {% block title 'Settings'|trans %}
         {% block admin_page_icon 'wrench' %}
         {% block content %}
             <div class="«appName.toLowerCase»-config">
                 {% form_theme form with [
-                    '@«appName»/Form/bootstrap_«IF targets('3.0')»4«ELSE»3«ENDIF».html.twig',
-                    «IF targets('3.0')»
-                        '@ZikulaFormExtension/Form/form_div_layout.html.twig'
-                    «ELSE»
-                        'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
-                    «ENDIF»
-                ]«IF targets('3.0')» only«ENDIF» %}
+                    '@«appName»/Form/bootstrap_4.html.twig',
+                    '@ZikulaFormExtension/Form/form_div_layout.html.twig'
+                ] only %}
                 {{ form_start(form) }}
                 <div class="zikula-bootstrap-tab-container">
                     <ul class="nav nav-tabs" role="tablist">
                         «FOR varContainer : getSortedVariableContainers»
-                            {% set tabTitle = «IF targets('3.0')»'«varContainer.name.formatForDisplayCapital»'|trans«ELSE»__('«varContainer.name.formatForDisplayCapital»')«ENDIF» %}
-                            «IF targets('3.0')»
-                                <li class="nav-item«IF varContainer.isImageArea» dropdown«ENDIF»" role="presentation">
-                            «ELSE»
-                                <li role="presentation"«IF varContainer == getSortedVariableContainers.head || varContainer.isImageArea» class="«IF varContainer == getSortedVariableContainers.head»active«ENDIF»«IF varContainer.isImageArea» dropdown«ENDIF»"«ENDIF»>
-                            «ENDIF»
+                            {% set tabTitle = '«varContainer.name.formatForDisplayCapital»'|trans %}
+                            <li class="nav-item«IF varContainer.isImageArea» dropdown«ENDIF»" role="presentation">
                                 «IF varContainer.isImageArea»
-                                    <a id="imagesTabDrop" class="«IF targets('3.0')»nav-link «IF varContainer == getSortedVariableContainers.head»active «ENDIF»«ENDIF»dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false" title="{{ tabTitle|e('html_attr') }}">{{ tabTitle }}«IF !targets('3.0')»<span class="caret"></span>«ENDIF»</a>
+                                    <a id="imagesTabDrop" class="nav-link «IF varContainer == getSortedVariableContainers.head»active «ENDIF»dropdown-toggle" href="#" data-toggle="dropdown" aria-controls="imagesTabDropSections" aria-expanded="false" title="{{ tabTitle|e('html_attr') }}">{{ tabTitle }}</a>
                                     <ul id="imagesTabDropSections" class="dropdown-menu" aria-labelledby="imagesTabDrop">
                                     «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
                                         «FOR imageUploadField : entity.imageFieldsEntity»
-                                            <li«IF targets('3.0')» class="dropdown-item"«ENDIF»>
-                                                <a id="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab" href="#tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" role="tab" data-toggle="tab" aria-controls="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»">«IF targets('3.0')»{% trans %}«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»{% endtrans %}«ELSE»{{ __('«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»') }}«ENDIF»</a>
+                                            <li class="dropdown-item">
+                                                <a id="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab" href="#tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" role="tab" data-toggle="tab" aria-controls="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»">{% trans %}«entity.nameMultiple.formatForDisplayCapital» «imageUploadField.name.formatForDisplay»{% endtrans %}</a>
                                             </li>
                                         «ENDFOR»
                                     «ENDFOR»
                                     </ul>
                                 «ELSE»
-                                    <a id="vars«varContainer.sortOrder»Tab" href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab"«IF targets('3.0')» class="nav-link«IF varContainer == getSortedVariableContainers.head» active«ENDIF»"«ENDIF»>{{ tabTitle }}</a>
+                                    <a id="vars«varContainer.sortOrder»Tab" href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link«IF varContainer == getSortedVariableContainers.head» active«ENDIF»">{{ tabTitle }}</a>
                                 «ENDIF»
                             </li>
                         «ENDFOR»
-                        {% set tabTitle = «IF targets('3.0')»'Workflows'|trans«ELSE»__('Workflows')«ENDIF» %}
-                        <li«IF targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-                            <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab"«IF targets('3.0')» class="nav-link"«ENDIF»>{{ tabTitle }}</a>
+                        {% set tabTitle = 'Workflows'|trans %}
+                        <li class="nav-item" role="presentation">
+                            <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{{ tabTitle }}</a>
                         </li>
                     </ul>
 
@@ -90,8 +78,8 @@ class Config {
                     </div>
                 </div>
 
-                <div class="form-group form-buttons«IF targets('3.0')» row«ENDIF»">
-                    <div class="«IF targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
+                <div class="form-group form-buttons row">
+                    <div class="col-md-9 offset-md-3">
                         {{ form_widget(form.save) }}
                         {{ form_widget(form.reset) }}
                         {{ form_widget(form.cancel) }}
@@ -114,23 +102,15 @@ class Config {
     def private configSections(Application it) '''
         «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(it, varContainer == getSortedVariableContainers.head)»«ENDFOR»
         <div role="tabpanel" class="tab-pane fade" id="tabWorkflows" aria-labelledby="workflowsTab">
-            {% set tabTitle = «IF targets('3.0')»'Workflows'|trans«ELSE»__('Workflows')«ENDIF» %}
+            {% set tabTitle = 'Workflows'|trans %}
             <fieldset>
                 <legend>{{ tabTitle }}</legend>
 
-                «IF targets('3.0')»
-                    <p class="alert alert-info">{% trans %}Here you can inspect and amend the existing workflows.{% endtrans %}</p>
-                «ELSE»
-                    <p class="alert alert-info">{{ __('Here you can inspect and amend the existing workflows.') }}</p>
-                «ENDIF»
+                <p class="alert alert-info">{% trans %}Here you can inspect and amend the existing workflows.{% endtrans %}</p>
 
                 «FOR entity : getAllEntities»
-                    «IF targets('3.0')»
-                        <h4>{% trans %}«entity.nameMultiple.formatForDisplayCapital»{% endtrans %}</h4>
-                    «ELSE»
-                        <h4>{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</h4>
-                    «ENDIF»
-                    <p><a href="{{ path('zikula_workflow_editor_index', {workflow: '«appName.formatForDB»_«entity.workflow.textualName»'}) }}" title="{{ «IF targets('3.0')»'Edit workflow for «entity.nameMultiple.formatForDisplay»'|trans«ELSE»__('Edit workflow for «entity.nameMultiple.formatForDisplay»')«ENDIF»|e('html_attr') }}" target="_blank"><i class="fa«IF targets('3.0')»s«ENDIF» fa-cubes"></i> «IF targets('3.0')»{% trans %}Edit «entity.nameMultiple.formatForDisplay» workflow{% endtrans %}«ELSE»{{ __('Edit «entity.nameMultiple.formatForDisplay» workflow') }}«ENDIF»</a>
+                    <h4>{% trans %}«entity.nameMultiple.formatForDisplayCapital»{% endtrans %}</h4>
+                    <p><a href="{{ path('zikula_workflow_editor_index', {workflow: '«appName.formatForDB»_«entity.workflow.textualName»'}) }}" title="{{ 'Edit workflow for «entity.nameMultiple.formatForDisplay»'|trans|e('html_attr') }}" target="_blank"><i class="fas fa-cubes"></i> {% trans %}Edit «entity.nameMultiple.formatForDisplay» workflow{% endtrans %}</a>
                 «ENDFOR»
             </fieldset>
         </div>
@@ -140,8 +120,8 @@ class Config {
         «IF isImageArea»
             «configSectionBodyImages(app, isPrimaryVarContainer)»
         «ELSE»
-            <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» «IF app.targets('3.0')»show«ELSE»in«ENDIF» active«ENDIF»" id="tab«sortOrder»" aria-labelledby="vars«sortOrder»Tab">
-                {% set tabTitle = «IF app.targets('3.0')»'«name.formatForDisplayCapital»'|trans«ELSE»__('«name.formatForDisplayCapital»')«ENDIF» %}
+            <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» show active«ENDIF»" id="tab«sortOrder»" aria-labelledby="vars«sortOrder»Tab">
+                {% set tabTitle = '«name.formatForDisplayCapital»'|trans %}
                 «configSectionBody(app, isPrimaryVarContainer)»
             </div>
         «ENDIF»
@@ -150,12 +130,8 @@ class Config {
     def private configSectionBodyImages(Variables it, Application app, Boolean isPrimaryVarContainer) '''
         «FOR entity : app.getAllEntities.filter[hasImageFieldsEntity]»
             «FOR imageUploadField : entity.imageFieldsEntity»
-                <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer && entity == app.getAllEntities.filter[hasImageFieldsEntity].head && imageUploadField == entity.imageFieldsEntity.head» «IF app.targets('3.0')»show«ELSE»in«ENDIF» active«ENDIF»" id="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" aria-labelledby="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab">
-                    «IF app.targets('3.0')»
-                        {% set tabTitle = 'Image settings for «entity.nameMultiple.formatForDisplay» «imageUploadField.name.formatForDisplay»'|trans %}
-                    «ELSE»
-                        {% set tabTitle = __('Image settings for «entity.nameMultiple.formatForDisplay» «imageUploadField.name.formatForDisplay»') %}
-                    «ENDIF»
+                <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer && entity == app.getAllEntities.filter[hasImageFieldsEntity].head && imageUploadField == entity.imageFieldsEntity.head» show active«ENDIF»" id="tabImages«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»" aria-labelledby="images«entity.name.formatForCodeCapital»«imageUploadField.name.formatForCodeCapital»Tab">
+                    {% set tabTitle = 'Image settings for «entity.nameMultiple.formatForDisplay» «imageUploadField.name.formatForDisplay»'|trans %}
                     <fieldset>
                         <legend>{{ tabTitle }}</legend>
                         «val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital»
@@ -172,11 +148,7 @@ class Config {
             <legend>{{ tabTitle }}</legend>
             «new ViewPagesHelper().docsWithVariables(it, app)»
             «IF (null === documentation || documentation.empty) && (!app.hasMultipleConfigSections || isPrimaryVarContainer)»
-                «IF app.targets('3.0')»
-                    <p class="alert alert-info">{% trans %}Here you can manage all basic settings for this application.{% endtrans %}</p>
-                «ELSE»
-                    <p class="alert alert-info">{{ __('Here you can manage all basic settings for this application.') }}</p>
-                «ENDIF»
+                <p class="alert alert-info">{% trans %}Here you can manage all basic settings for this application.{% endtrans %}</p>
 
             «ENDIF»
             «FOR field : fields.filter(DerivedField)»«field.fieldWrapper»«ENDFOR»

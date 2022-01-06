@@ -128,7 +128,7 @@ class ImageCreator {
     def private determineTargetDirectories() {
         if (context == CONTEXT_ADMIN) {
             targetDirectories = #[settings.getPathToModuleImageAssets]
-    	}
+        }
     }
 
     /**
@@ -201,7 +201,7 @@ class ImageCreator {
      */
     def private resizeImage(Image picture, double width, double height)
     {
-    	val size = 48
+        val size = 48
         var buffer = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB)
 
         val graphics = buffer.createGraphics

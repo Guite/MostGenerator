@@ -21,18 +21,10 @@ class ViewPagesHelper {
 
     def docsWithVariables(NamedObject it, Application app) '''
         «IF null !== documentation && !documentation.replaceAll('\\s+', '').empty»
-            «IF app.targets('3.0')»
-                «IF !documentation.containedTwigVariables.empty»
-                    <p class="alert alert-info">{% trans with {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»{% endtrans %}</p>
-                «ELSE»
-                    <p class="alert alert-info">{% trans«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'')»{% endtrans %}</p>
-                «ENDIF»
+            «IF !documentation.containedTwigVariables.empty»
+                <p class="alert alert-info">{% trans with {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»{% endtrans %}</p>
             «ELSE»
-                «IF !documentation.containedTwigVariables.empty»
-                    <p class="alert alert-info">{{ __f('«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»', {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}) }}</p>
-                «ELSE»
-                    <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
-                «ENDIF»
+                <p class="alert alert-info">{% trans«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'')»{% endtrans %}</p>
             «ENDIF»
 
         «ENDIF»
@@ -40,12 +32,8 @@ class ViewPagesHelper {
 
     def pagerCall(Entity it) '''
 
-        {% if all != 1«IF !application.targets('3.0')» and pager|default«ENDIF» %}
-            «IF application.targets('3.0')»
-                {{ include(paginator.template) }}
-            «ELSE»
-                {{ pager({rowcount: pager.amountOfItems, limit: pager.itemsPerPage, display: 'page', route: '«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view'}) }}
-            «ENDIF»
+        {% if all != 1 %}
+            {{ include(paginator.template) }}
         {% endif %}
     '''
 

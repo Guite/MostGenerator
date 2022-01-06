@@ -172,11 +172,7 @@ class Styles {
             }
 
             .ui-autocomplete-loading {
-                «IF targets('3.0')»
-                    background: white url("../../zikulausers/images/indicator_arrows.gif") right center no-repeat;
-                «ELSE»
-                    background: white url("../../../../../../web/«IF targets('2.0')»modules/zikulausers«ELSE»bundles/core«ENDIF»/images/ajax/indicator_arrows.gif") right center no-repeat;
-                «ENDIF»
+                background: white url("../../zikulausers/images/indicator_arrows.gif") right center no-repeat;
             }
 
             .ui-autocomplete .suggestion {
@@ -192,23 +188,13 @@ class Styles {
             }
 
             .ui-autocomplete .suggestion:before {
-                «IF targets('3.0')»
-                    content: "\f105";
-                    font-family: 'Font Awesome 5 Free';
-                    font-weight: 900;
-                    color: #7db441;
-                    position: absolute;
-                    left: 10px;
-                    top: 2px;
-                «ELSE»
-                    content: "\f0da";
-                    font-family: 'FontAwesome';
-                    font-style: normal;
-                    color: #7db441;
-                    margin-right: 15px;
-                    position: absolute;
-                    left: 20px;
-                «ENDIF»
+                content: "\f105";
+                font-family: 'Font Awesome 5 Free';
+                font-weight: 900;
+                color: #7db441;
+                position: absolute;
+                left: 10px;
+                top: 2px;
             }
 
             .ui-autocomplete .suggestion img {
@@ -262,7 +248,7 @@ class Styles {
             div.«cssPrefix»-history .table-responsive .table > tbody > tr > td.diff-new {
                 background-color: #eaffea !important;
             }
-            div.«cssPrefix»-history .img-«IF targets('3.0')»fluid«ELSE»responsive«ENDIF» {
+            div.«cssPrefix»-history .img-fluid {
                 max-width: 20px;
             }
         «ENDIF»
@@ -274,39 +260,26 @@ class Styles {
             padding: 8px 12px;
             border: 1px solid #ccc;
         }
-        «IF !targets('3.0')»
 
-            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset {
-                padding: 3px 10px;
-                margin-bottom: 0;
-            }
-        «ENDIF»
-
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav «IF !targets('3.0')»fieldset «ENDIF»h3 {
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav h3 {
             display: none;
         }
-        «IF targets('3.0')»
 
-            div.«cssPrefix»-view form.«cssPrefix»-quicknav .form-group {
-                display: inline-block;
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav .form-group {
+            display: inline-block;
+        }
+        «IF hasCategorisableEntities»
+
+            div.«cssPrefix»-view form.«cssPrefix»-quicknav .col-md-3 fieldset {
+                border: none;
+                padding: 0;
+                background: none;
             }
-            «IF hasCategorisableEntities»
-
-                div.«cssPrefix»-view form.«cssPrefix»-quicknav .col-md-3 fieldset {
-                    border: none;
-                    padding: 0;
-                    background: none;
-                }
-            «ENDIF»
         «ENDIF»
 
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav «IF !targets('3.0')»fieldset «ENDIF»label {
-            «IF targets('3.0')»
-               margin: 0 5px;
-               display: inline;
-            «ELSE»
-               margin-right: 5px;
-            «ENDIF»
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav label {
+           margin: 0 5px;
+           display: inline;
         }
     '''
 

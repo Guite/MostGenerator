@@ -19,30 +19,16 @@ class GetListEntry {
          * or names for a given list item.
          * Example:
          *     {{ entity.listField|«appName.formatForDB»_listEntry('entityName', 'fieldName') }}.
-         «IF !targets('3.0')»
-         *
-         * @param string $value The dropdown value to process
-         * @param string $objectType The treated object type
-         * @param string $fieldName The list field's name
-         * @param string $delimiter String used as separator for multiple selections
-         *
-         * @return string List item name
-         «ENDIF»
          */
-        public function getListEntry«IF targets('3.0')»(
+        public function getListEntry(
             string $value,
             string $objectType = '',
             string $fieldName = '',
             string $delimiter = ', '
-        ): string {«ELSE»($value, $objectType = '', $fieldName = '', $delimiter = ', ')
-        {«ENDIF»
+        ): string {
             if ((empty($value) && '0' !== $value) || empty($objectType) || empty($fieldName)) {
                 return $value;
             }
-            «IF !isSystemModule && !targets('3.0')»
-
-                $this->translator->setDomain('«appName.formatForDB»');
-            «ENDIF»
 
             return $this->listHelper->resolve($value, $objectType, $fieldName, $delimiter);
         }

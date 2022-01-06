@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class UploadHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -42,16 +40,10 @@ class UploadHelper {
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-            use Zikula\Core\Doctrine\EntityAccess;
-        «ENDIF»
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 
@@ -67,13 +59,11 @@ class UploadHelper {
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
-        «IF targets('3.0')»
-            /**
-             * @var ZikulaHttpKernelInterface
-             */
-            protected $kernel;
+        /**
+         * @var ZikulaHttpKernelInterface
+         */
+        protected $kernel;
 
-        «ENDIF»
         /**
          * @var Filesystem
          */
@@ -120,20 +110,16 @@ class UploadHelper {
         protected $forbiddenFileTypes;
 
         public function __construct(
-            «IF targets('3.0')»
-                ZikulaHttpKernelInterface $kernel,
-            «ENDIF»
+            ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
             Filesystem $filesystem,
             RequestStack $requestStack,
             LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi,
             VariableApiInterface $variableApi,
-            «IF targets('3.0')»string «ENDIF»$dataDirectory
+            string $dataDirectory
         ) {
-            «IF targets('3.0')»
-                $this->kernel = $kernel;
-            «ENDIF»
+            $this->kernel = $kernel;
             $this->setTranslator($translator);
             $this->filesystem = $filesystem;
             $this->requestStack = $requestStack;
@@ -149,10 +135,6 @@ class UploadHelper {
                 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml',
             ];
         }
-        «IF !targets('3.0')»
-
-            «setTranslatorMethod»
-        «ENDIF»
 
         «performFileUpload»
 
@@ -180,19 +162,8 @@ class UploadHelper {
     def private performFileUpload(Application it) '''
         /**
          * Process a file upload.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         * @param UploadedFile $file The uploaded file
-         * @param string $fieldName  Name of upload field
-         «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-         * @param string $customName Optional custom file name
-         «ENDIF»
-         *
-         * @return array Resulting file name and collected meta data
-         «ENDIF»
          */
-        public function performFileUpload«IF targets('3.0')»(string $objectType, UploadedFile $file, string $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», string $customName«ENDIF»): array«ELSE»($objectType, UploadedFile $file, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $customName«ENDIF»)«ENDIF»
+        public function performFileUpload(string $objectType, UploadedFile $file, string $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», string $customName«ENDIF»): array
         {
             $result = [
                 'fileName' => '',
@@ -226,7 +197,7 @@ class UploadHelper {
 
             // retrieve the final file name
             try {
-                $basePath = «IF targets('3.0')»$this->kernel->getProjectDir() . '/' . «ENDIF»$this->getFileBaseFolder($objectType, $fieldName);
+                $basePath = $this->kernel->getProjectDir() . '/' . $this->getFileBaseFolder($objectType, $fieldName);
             } catch (Exception $exception) {
                 if (null !== $flashBag) {
                     $flashBag->add('error', $exception->getMessage());
@@ -308,16 +279,8 @@ class UploadHelper {
     def private validateFileUpload(Application it) '''
         /**
          * Check if an upload file meets all validation criteria.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         * @param UploadedFile $file Reference to data of uploaded file
-         * @param string $fieldName Name of upload field
-         *
-         * @return bool true if file is valid else false
-         «ENDIF»
          */
-        protected function validateFileUpload(«IF targets('3.0')»string «ENDIF»$objectType, UploadedFile $file, «IF targets('3.0')»string «ENDIF»$fieldName)«IF targets('3.0')»: bool«ENDIF»
+        protected function validateFileUpload(string $objectType, UploadedFile $file, string $fieldName): bool
         {
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;
@@ -346,7 +309,7 @@ class UploadHelper {
                 if (null !== $flashBag) {
                     $flashBag->add(
                         'error',
-                        $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! This file type is not allowed. Please choose another file format.')
+                        $this->trans('Error! This file type is not allowed. Please choose another file format.')
                     );
                 }
                 $logArgs = [
@@ -373,7 +336,7 @@ class UploadHelper {
             $imgInfo = getimagesize(«fileVar»);
             if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
                 if (null !== $flashBag) {
-                    $flashBag->add('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! This file type seems not to be a valid image.'));
+                    $flashBag->add('error', $this->trans('Error! This file type seems not to be a valid image.'));
                 }
                 $this->logger->error(
                     '{app}: User {user} tried to upload a file which is seems not to be a valid image.',
@@ -388,16 +351,8 @@ class UploadHelper {
     def private readMetaDataForFile(Application it) '''
         /**
          * Read meta data from a certain file.
-         «IF !targets('3.0')»
-         *
-         * @param string $fileName Name of file to be processed
-         * @param string $filePath Path to file to be processed
-         * @param bool $includeExif Whether to read out EXIF data or not
-         *
-         * @return array Collected meta data
-         «ENDIF»
          */
-        public function readMetaDataForFile(«IF targets('3.0')»string «ENDIF»$fileName, «IF targets('3.0')»string «ENDIF»$filePath, «IF targets('3.0')»bool «ENDIF»$includeExif = true)«IF targets('3.0')»: array«ENDIF»
+        public function readMetaDataForFile(string $fileName, string $filePath, bool $includeExif = true): array
         {
             $meta = [];
             if (empty($fileName)) {
@@ -446,14 +401,8 @@ class UploadHelper {
 
         /**
          * Read EXIF data from a certain file.
-         «IF !targets('3.0')»
-         *
-         * @param string $filePath Path to file to be processed
-         *
-         * @return array Collected meta data
-         «ENDIF»
          */
-        protected function readExifData(«IF targets('3.0')»string «ENDIF»$filePath)«IF targets('3.0')»: array«ENDIF»
+        protected function readExifData(string $filePath): array
         {
             $imagine = new Imagine();
             $image = $imagine
@@ -487,15 +436,10 @@ class UploadHelper {
     def private getAllowedFileExtensions(Application it) '''
         /**
          * Determines the allowed file extensions for a given object type and field.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         * @param string $fieldName Name of upload field
-         «ENDIF»
          *
          * @return string[] List of allowed file extensions
          */
-        public function getAllowedFileExtensions(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName)«IF targets('3.0')»: array«ENDIF»
+        public function getAllowedFileExtensions(string $objectType, string $fieldName): array
         {
             // determine the allowed extensions
             $allowedExtensions = [];
@@ -513,16 +457,8 @@ class UploadHelper {
     def private isAllowedFileExtension(Application it) '''
         /**
          * Determines whether a certain file extension is allowed for a given object type and field.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         * @param string $fieldName Name of upload field
-         * @param string $extension Input file extension
-         *
-         * @return bool True if given extension is allowed, false otherwise
-         «ENDIF»
          */
-        protected function isAllowedFileExtension(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName, «IF targets('3.0')»string «ENDIF»$extension)«IF targets('3.0')»: bool«ENDIF»
+        protected function isAllowedFileExtension(string $objectType, string $fieldName, string $extension): bool
         {
             // determine the allowed extensions
             $allowedExtensions = $this->getAllowedFileExtensions($objectType, $fieldName);
@@ -573,14 +509,8 @@ class UploadHelper {
     def private determineFileExtension(Application it) '''
         /**
          * Determines the extension for a given file.
-         «IF !targets('3.0')»
-         *
-         * @param UploadedFile $file Reference to data of uploaded file
-         *
-         * @return string the file extension
-         «ENDIF»
          */
-        protected function determineFileExtension(UploadedFile $file)«IF targets('3.0')»: string«ENDIF»
+        protected function determineFileExtension(UploadedFile $file): string
         {
             $fileName = $file->getClientOriginalName();
             $fileNameParts = explode('.', $fileName);
@@ -601,18 +531,8 @@ class UploadHelper {
         /**
          * Determines the final filename for a given input filename.
          * It considers different strategies for computing the result.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         * @param string $fieldName Name of upload field
-         * @param string $basePath Base path for file storage
-         * @param string $fileName Input file name
-         * @param string $extension Input file extension
-         *
-         * @return string the resulting file name
-         «ENDIF»
          */
-        protected function determineFileName«IF targets('3.0')»(string $objectType, string $fieldName, string $basePath, string $fileName, string $extension): string«ELSE»($objectType, $fieldName, $basePath, $fileName, $extension)«ENDIF»
+        protected function determineFileName(string $objectType, string $fieldName, string $basePath, string $fileName, string $extension): string
         {
             $namingScheme = 0;
             switch ($objectType) {
@@ -652,7 +572,7 @@ class UploadHelper {
                     $fileName = md5(uniqid((string) mt_rand(), true)) . '.' . $extension;
                 } elseif (2 === $namingScheme) {
                     // prefix with random number
-                    $fileName = $fieldName . «IF targets('3.0')»random_int«ELSE»mt_rand«ENDIF»(1, 999999) . '.' . $extension;
+                    $fileName = $fieldName . random_int(1, 999999) . '.' . $extension;
                 }
             } while (file_exists($basePath . $fileName)); // repeat until we have a new name
 
@@ -696,15 +616,8 @@ class UploadHelper {
     def private deleteUploadFile(Application it) '''
         /**
          * Deletes an existing upload file.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity Currently treated entity
-         * @param string $fieldName Name of upload field
-         *
-         * @return mixed Updated entity on success, else false
-         «ENDIF»
          */
-        public function deleteUploadFile(EntityAccess $entity, «IF targets('3.0')»string «ENDIF»$fieldName)«IF targets('3.0')»: EntityAccess«ENDIF»
+        public function deleteUploadFile(EntityAccess $entity, string $fieldName): EntityAccess
         {
             $objectType = $entity->get_objectType();
             if (!in_array($objectType, $this->allowedObjectTypes, true)) {
@@ -740,18 +653,10 @@ class UploadHelper {
     def private getFileBaseFolder(Application it) '''
         /**
          * Retrieve the base path for given object type and upload field combination.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         * @param string $fieldName Name of upload field
-         * @param bool $ignoreCreate Whether to ignore the creation of upload folders on demand or not
-         *
-         * @return string
-         «ENDIF»
          *
          * @throws Exception If an invalid object type is used
          */
-        public function getFileBaseFolder(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName = '', «IF targets('3.0')»bool «ENDIF»$ignoreCreate = false)«IF targets('3.0')»: string«ENDIF»
+        public function getFileBaseFolder(string $objectType, string $fieldName = '', bool $ignoreCreate = false): string
         {
             $basePath = $this->dataDirectory . '/«appName»/';
 
@@ -801,7 +706,7 @@ class UploadHelper {
                         break;
                 «ENDIF»
                 default:
-                    throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
+                    throw new Exception($this->trans('Error! Invalid object type received.'));
             }
 
             $result = $basePath;
@@ -821,12 +726,8 @@ class UploadHelper {
     def private checkAndCreateAllUploadFolders(Application it) '''
         /**
          * Creates all required upload folders for this application.
-         «IF !targets('3.0')»
-         *
-         * @return bool Whether everything went okay or not
-         «ENDIF»
          */
-        public function checkAndCreateAllUploadFolders()«IF targets('3.0')»: bool«ENDIF»
+        public function checkAndCreateAllUploadFolders(): bool
         {
             $result = true;
             «FOR uploadEntity : getUploadEntities»
@@ -846,18 +747,10 @@ class UploadHelper {
     def private checkAndCreateUploadFolder(Application it) '''
         /**
          * Creates an upload folder and a .htaccess file within it.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         * @param string $fieldName Name of upload field
-         * @param string $allowedExtensions String with list of allowed file extensions (separated by ", ")
-         *
-         * @return bool Whether everything went okay or not
-         «ENDIF»
          */
-        protected function checkAndCreateUploadFolder(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName, «IF targets('3.0')»string «ENDIF»$allowedExtensions = '')«IF targets('3.0')»: bool«ENDIF»
+        protected function checkAndCreateUploadFolder(string $objectType, string $fieldName, string $allowedExtensions = ''): bool
         {
-            $uploadPath = «IF targets('3.0')»$this->kernel->getProjectDir() . '/' . «ENDIF»$this->getFileBaseFolder($objectType, $fieldName, true);
+            $uploadPath = $this->kernel->getProjectDir() . '/' . $this->getFileBaseFolder($objectType, $fieldName, true);
 
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;
@@ -871,9 +764,9 @@ class UploadHelper {
                     if (null !== $flashBag) {
                         $flashBag->add(
                             'error',
-                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                            $this->trans(
                                 'The upload directory "%path%" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.',
-                                ['%path%' => $exception->getPath()]«IF targets('3.0') && !isSystemModule»,
+                                ['%path%' => $exception->getPath()]«IF !isSystemModule»,
                                 'config'«ENDIF»
                             )
                         );
@@ -897,9 +790,9 @@ class UploadHelper {
                     if (null !== $flashBag) {
                         $flashBag->add(
                             'warning',
-                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                            $this->trans(
                                 'Warning! The upload directory at "%path%" exists but is not writable by the webserver.',
-                                ['%path%' => $exception->getPath()]«IF targets('3.0') && !isSystemModule»,
+                                ['%path%' => $exception->getPath()]«IF !isSystemModule»,
                                 'config'«ENDIF»
                             )
                         );
@@ -929,9 +822,9 @@ class UploadHelper {
                     if (null !== $flashBag) {
                         $flashBag->add(
                             'error',
-                            $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                            $this->trans(
                                 'An error occured during creation of the .htaccess file in directory "%path%".',
-                                ['%path%' => $exception->getPath()]«IF targets('3.0') && !isSystemModule»,
+                                ['%path%' => $exception->getPath()]«IF !isSystemModule»,
                                 'config'«ENDIF»
                             )
                         );

@@ -7,7 +7,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class StandardFields {
 
@@ -15,7 +14,6 @@ class StandardFields {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate (Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Helper/'
@@ -37,9 +35,9 @@ class StandardFields {
         {% if (obj.createdBy|default and obj.createdBy.uid > 0) or (obj.updatedBy|default and obj.updatedBy.uid > 0) %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabStandardFields" aria-labelledby="standardFieldsTab">
-                    <h3>«IF targets('3.0')»{% trans %}Creation and update{% endtrans %}«ELSE»{{ __('Creation and update') }}«ENDIF»</h3>
+                    <h3>{% trans %}Creation and update{% endtrans %}</h3>
             {% else %}
-                <h3 class="standard-fields">«IF targets('3.0')»{% trans %}Creation and update{% endtrans %}«ELSE»{{ __('Creation and update') }}«ENDIF»</h3>
+                <h3 class="standard-fields">{% trans %}Creation and update{% endtrans %}</h3>
             {% endif %}
             «viewBody»
             {% if tabs|default(false) == true %}
@@ -51,37 +49,29 @@ class StandardFields {
     def private viewBody(Application it) '''
         <dl class="propertylist">
         {% if obj.createdBy|default and obj.createdBy.uid > 0 %}
-            <dt>«IF targets('3.0')»{% trans %}Creation{% endtrans %}«ELSE»{{ __('Creation') }}«ENDIF»</dt>
+            <dt>{% trans %}Creation{% endtrans %}</dt>
             {% set profileLink = obj.createdBy.uid|profileLinkByUserId %}
             <dd class="avatar">{{ userAvatar(obj.createdBy.uid, {rating: 'g'}) }}</dd>
             <dd>
-                «IF targets('3.0')»
-                    {{ 'Created by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.createdDate|format_datetime('medium', 'short')})|raw }}
-                «ELSE»
-                    {{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}
-                «ENDIF»
+                {{ 'Created by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.createdDate|format_datetime('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.createdBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="«IF targets('3.0')»{% trans with {'%userName%': obj.createdBy.uname} %}Send private message to %userName%{% endtrans %}«ELSE»{{ __f('Send private message to %userName%', {'%userName%': obj.createdBy.uname}) }}«ENDIF»"><i class="fa«IF targets('3.0')»s«ENDIF» fa-envelope«IF !targets('3.0')»-o«ENDIF»"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="{% trans with {'%userName%': obj.createdBy.uname} %}Send private message to %userName%{% endtrans %}"><i class="fas fa-envelope"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>
         {% endif %}
         {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
-            <dt>«IF targets('3.0')»{% trans %}Last update{% endtrans %}«ELSE»{{ __('Last update') }}«ENDIF»</dt>
+            <dt>{% trans %}Last update{% endtrans %}</dt>
             {% set profileLink = obj.updatedBy.uid|profileLinkByUserId %}
             <dd class="avatar">{{ userAvatar(obj.updatedBy.uid, {rating: 'g'}) }}</dd>
             <dd>
-                «IF targets('3.0')»
-                    {{ 'Last update by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedDate|format_datetime('medium', 'short')})|raw }}
-                «ELSE»
-                    {{ __f('Last update by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}
-                «ENDIF»
+                {{ 'Last update by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedDate|format_datetime('medium', 'short')})|raw }}
                 {% if currentUser.loggedIn %}
                     {% set sendMessageUrl = obj.updatedBy.uid|messageSendLink(urlOnly=true) %}
                     {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="«IF targets('3.0')»{% trans with {'%userName%': obj.updatedBy.uname} %}Send private message to %userName%{% endtrans %}«ELSE»{{ __f('Send private message to %userName%', {'%userName%': obj.updatedBy.uname}) }}«ENDIF»"><i class="fa«IF targets('3.0')»s«ENDIF» fa-envelope«IF !targets('3.0')»-o«ENDIF»"></i></a>
+                        <a href="{{ sendMessageUrl }}" title="{% trans with {'%userName%': obj.updatedBy.uname} %}Send private message to %userName%{% endtrans %}"><i class="fas fa-envelope"></i></a>
                     {% endif %}
                 {% endif %}
             </dd>
@@ -94,11 +84,11 @@ class StandardFields {
         {% if (obj.createdBy|default and obj.createdBy.uid > 0) or (obj.updatedBy|default and obj.updatedBy.uid > 0) %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tabStandardFields" aria-labelledby="standardFieldsTab">
-                    <h3>«IF targets('3.0')»{% trans %}Creation and update{% endtrans %}«ELSE»{{ __('Creation and update') }}«ENDIF»</h3>
+                    <h3>{% trans %}Creation and update{% endtrans %}</h3>
             {% else %}
                 <fieldset class="standardfields">
             {% endif %}
-                <legend>«IF targets('3.0')»{% trans %}Creation and update{% endtrans %}«ELSE»{{ __('Creation and update') }}«ENDIF»</legend>
+                <legend>{% trans %}Creation and update{% endtrans %}</legend>
                 «editBody»
             {% if tabs|default(false) == true %}
                 </div>
@@ -111,26 +101,16 @@ class StandardFields {
     def private editBody(Application it) '''
         <ul>
         {% if obj.createdBy|default and obj.createdBy.uid > 0 %}
-            «IF targets('3.0')»
-                <li>{% trans with {'%user%': obj.createdBy.uname} %}Created by %user%{% endtrans %}</li>
-                <li>{% trans with {'%date%': obj.createdDate|format_datetime('medium', 'short')} %}Created on %date%{% endtrans %}</li>
-            «ELSE»
-                <li>{{ __f('Created by %user', {'%user': obj.createdBy.uname}) }}</li>
-                <li>{{ __f('Created on %date', {'%date': obj.createdDate|localizeddate('medium', 'short')}) }}</li>
-            «ENDIF»
+            <li>{% trans with {'%user%': obj.createdBy.uname} %}Created by %user%{% endtrans %}</li>
+            <li>{% trans with {'%date%': obj.createdDate|format_datetime('medium', 'short')} %}Created on %date%{% endtrans %}</li>
         {% endif %}
         {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
-            «IF targets('3.0')»
-                <li>{% trans with {'%user%': obj.updatedBy.uname} %}Last update by %user%{% endtrans %}</li>
-                <li>{% trans with {'%date%': obj.updatedDate|format_datetime('medium', 'short')} %}Last update on %date%{% endtrans %}</li>
-            «ELSE»
-                <li>{{ __f('Last update by %user', {'%user': obj.updatedBy.uname}) }}</li>
-                <li>{{ __f('Last update on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
-            «ENDIF»
+            <li>{% trans with {'%user%': obj.updatedBy.uname} %}Last update by %user%{% endtrans %}</li>
+            <li>{% trans with {'%date%': obj.updatedDate|format_datetime('medium', 'short')} %}Last update on %date%{% endtrans %}</li>
         {% endif %}
         «FOR entity : getLoggableEntities»
             {% if obj._objectType == '«entity.name.formatForCode»' %}
-                <li>«IF targets('3.0')»{% trans %}Current version{% endtrans %}«ELSE»{{ __('Current version') }}«ENDIF»: {{ obj.«entity.fields.filter(IntegerField).filter[version].head.name.formatForCode» }}</li>
+                <li>{% trans %}Current version{% endtrans %}: {{ obj.«entity.fields.filter(IntegerField).filter[version].head.name.formatForCode» }}</li>
             {% endif %}
         «ENDFOR»
         </ul>

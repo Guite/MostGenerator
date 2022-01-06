@@ -26,43 +26,39 @@ class AjaxController {
     }
 
     def private commonSystemImports(Application it) '''
-        «IF targets('3.0')»
-            «IF needsAutoCompletion»
-                use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+        «IF needsAutoCompletion»
+            use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+        «ENDIF»
+        «IF hasBooleansWithAjaxToggle || hasTrees»
+            use Psr\Log\LoggerInterface;
+            «IF hasTrees»
+                use Symfony\Component\Routing\RouterInterface;
             «ENDIF»
-            «IF hasBooleansWithAjaxToggle || hasTrees»
-                use Psr\Log\LoggerInterface;
-                «IF hasTrees»
-                    use Symfony\Component\Routing\RouterInterface;
-                «ENDIF»
-                use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-                «IF hasTrees»
-                    use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
-                «ENDIF»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            «IF hasTrees»
+                use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
             «ENDIF»
         «ENDIF»
     '''
 
     def private commonAppImports(Application it) '''
-        «IF targets('3.0')»
-            «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
-                use «appNamespace»\Entity\Factory\EntityFactory;
-            «ENDIF»
-            «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck»
-                use «appNamespace»\Helper\ControllerHelper;
-            «ENDIF»
-            «IF generateExternalControllerAndFinder || needsAutoCompletion || hasTrees»
-                use «appNamespace»\Helper\EntityDisplayHelper;
-            «ENDIF»
-            «IF needsAutoCompletion && hasImageFields»
-                use «appNamespace»\Helper\ImageHelper;
-            «ENDIF»
-            «IF generateExternalControllerAndFinder»
-                use «appNamespace»\Helper\PermissionHelper;
-            «ENDIF»
-            «IF hasTrees»
-                use «appNamespace»\Helper\WorkflowHelper;
-            «ENDIF»
+        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
+            use «appNamespace»\Entity\Factory\EntityFactory;
+        «ENDIF»
+        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck»
+            use «appNamespace»\Helper\ControllerHelper;
+        «ENDIF»
+        «IF generateExternalControllerAndFinder || needsAutoCompletion || hasTrees»
+            use «appNamespace»\Helper\EntityDisplayHelper;
+        «ENDIF»
+        «IF needsAutoCompletion && hasImageFields»
+            use «appNamespace»\Helper\ImageHelper;
+        «ENDIF»
+        «IF generateExternalControllerAndFinder»
+            use «appNamespace»\Helper\PermissionHelper;
+        «ENDIF»
+        «IF hasTrees»
+            use «appNamespace»\Helper\WorkflowHelper;
         «ENDIF»
     '''
 
@@ -84,11 +80,7 @@ class AjaxController {
         «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
-        «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
-        «ELSE»
-            use Zikula\Core\Controller\AbstractController;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\Controller\AbstractController;
         «commonSystemImports»
         «IF hasUiHooksProviders»
             use «appNamespace»\Entity\HookAssignmentEntity;
@@ -150,36 +142,24 @@ class AjaxController {
         /**
          «IF isBase»
          * Retrieve item list for finder selections, for example used in Scribite editor plug-ins.
-         «IF !targets('3.0')»
-         *
-         * @param Request $request
-         *
-         * @return JsonResponse
-         «ENDIF»
          «ELSE»
          * @Route("/getItemListFinder", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          */
     '''
 
-    def private getItemListFinderSignature(Application it) {
-        if (targets('3.0')) '''
-            public function getItemListFinder«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                ControllerHelper $controllerHelper,
-                PermissionHelper $permissionHelper,
-                EntityFactory $entityFactory,
-                EntityDisplayHelper $entityDisplayHelper
-            ): JsonResponse'''
-        else '''
-            public function getItemListFinderAction(
-                Request $request
-            )'''
-    }
+    def private getItemListFinderSignature(Application it) '''
+        public function getItemListFinder«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            ControllerHelper $controllerHelper,
+            PermissionHelper $permissionHelper,
+            EntityFactory $entityFactory,
+            EntityDisplayHelper $entityDisplayHelper
+        ): JsonResponse'''
 
     def private getItemListFinderBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -187,20 +167,12 @@ class AjaxController {
         }
 
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        «IF !targets('3.0')»
-            $controllerHelper = $this->get('«appService».controller_helper');
-        «ENDIF»
         $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListFinder'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
         }
 
-        «IF targets('3.0')»
-            $repository = $entityFactory->getRepository($objectType);
-        «ELSE»
-            $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
-            $entityDisplayHelper = $this->get('«appService».entity_display_helper');
-        «ENDIF»
+        $repository = $entityFactory->getRepository($objectType);
 
         $sort = $request->query->getAlnum('sort');
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields(), true)) {
@@ -218,80 +190,59 @@ class AjaxController {
 
         $entities = [];
         if ('' !== $searchTerm) {
-            «IF targets('3.0')»$entities«ELSE»list($entities, $totalAmount)«ENDIF» = $repository->selectSearch($searchTerm, [], $sortParam, 1, 50, false);
+            $entities = $repository->selectSearch($searchTerm, [], $sortParam, 1, 50, false);
         } else {
             $entities = $repository->selectWhere($where, $sortParam);
         }
 
         $slimItems = [];
-        «IF !targets('3.0')»
-            $permissionHelper = $this->get('«appService».permission_helper');
-        «ENDIF»
         foreach ($entities as $item) {
             if (!$permissionHelper->mayRead($item)) {
                 continue;
             }
             $itemId = $item->getKey();
             $slimItems[] = $this->prepareSlimItem(
-                «IF targets('3.0')»$controllerHelper,
+                $controllerHelper,
                 $repository,
                 $entityDisplayHelper,
-                «ELSE»$repository,«ENDIF»
                 $item,
                 $itemId
             );
         }
 
         // return response
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($slimItems);
+        return $this->json($slimItems);
     '''
 
     def private getItemListFinderPrepareSlimItem(Application it) '''
         /**
          * Builds and returns a slim data array from a given entity.
-         «IF !targets('3.0')»
-         *
-         * @param EntityRepository $repository Repository for the treated object type
-         * @param object $item The currently treated entity
-         * @param string $itemId Data item identifier(s)
-         *
-         * @return array The slim data representation
-         «ENDIF»
          */
         protected function prepareSlimItem(
-            «IF targets('3.0')»
-                ControllerHelper $controllerHelper,
-                EntityRepository $repository,
-                EntityDisplayHelper $entityDisplayHelper,
-                $item,
-                string $itemId
-            «ELSE»
-                $repository,
-                $item,
-                $itemId
-            «ENDIF»
-        )«IF targets('3.0')»: array«ENDIF» {
+            ControllerHelper $controllerHelper,
+            EntityRepository $repository,
+            EntityDisplayHelper $entityDisplayHelper,
+            $item,
+            string $itemId
+        ): array {
             $objectType = $item->get_objectType();
             $previewParameters = [
                 $objectType => $item,
             ];
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
-            $previewParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+            $previewParameters = $controllerHelper->addTemplateParameters(
                 $objectType,
                 $previewParameters,
                 'controllerAction',
                 $contextArgs
             );
 
-            $previewInfo = $this->«IF targets('3.0')»renderView«ELSE»get('twig')->render«ENDIF»(
+            $previewInfo = $this->renderView(
                 '@«appName»/External/' . ucfirst($objectType) . '/info.html.twig',
                 $previewParameters
             );
             $previewInfo = base64_encode($previewInfo);
 
-            «IF !targets('3.0')»
-                $entityDisplayHelper = $this->get('«appService».entity_display_helper');
-            «ENDIF»
             $title = $entityDisplayHelper->getFormattedTitle($item);
             $description = $entityDisplayHelper->getDescription($item);
 
@@ -315,37 +266,25 @@ class AjaxController {
         /**
          «IF isBase»
          * Searches for entities for auto completion usage.
-         «IF !targets('3.0')»
-         *
-         * @param Request $request
-         *
-         * @return JsonResponse
-         «ENDIF»
          «ELSE»
          * @Route("/getItemListAutoCompletion", methods = {"GET"}, options={"expose"=true})
          «ENDIF»
          */
     '''
 
-    def private getItemListAutoCompletionSignature(Application it) {
-        if (targets('3.0')) '''
-            public function getItemListAutoCompletion«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                CacheManager $imagineCacheManager,
-                ControllerHelper $controllerHelper,
-                EntityFactory $entityFactory,
-                EntityDisplayHelper $entityDisplayHelper«IF hasImageFields»,
-                ImageHelper $imageHelper«ENDIF»
-            ): JsonResponse'''
-        else '''
-            public function getItemListAutoCompletionAction(
-                Request $request
-            )'''
-    }
+    def private getItemListAutoCompletionSignature(Application it) '''
+        public function getItemListAutoCompletion«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            CacheManager $imagineCacheManager,
+            ControllerHelper $controllerHelper,
+            EntityFactory $entityFactory,
+            EntityDisplayHelper $entityDisplayHelper«IF hasImageFields»,
+            ImageHelper $imageHelper«ENDIF»
+        ): JsonResponse'''
 
     def private getItemListAutoCompletionBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -353,15 +292,12 @@ class AjaxController {
         }
 
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        «IF !targets('3.0')»
-            $controllerHelper = $this->get('«appService».controller_helper');
-        «ENDIF»
         $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListAutoCompletion'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
         }
 
-        $repository = «IF targets('3.0')»$entityFactory«ELSE»$this->get('«appService».entity_factory')«ENDIF»->getRepository($objectType);
+        $repository = $entityFactory->getRepository($objectType);
         $searchTerm = $request->query->get('q');
         $exclude = $request->query->get('exclude');
         $exclude = !empty($exclude) ? explode(',', str_replace(', ', ',', $exclude)) : [];
@@ -377,7 +313,7 @@ class AjaxController {
         $resultsPerPage = 20;
 
         // get objects from database
-        «IF targets('3.0')»$entities«ELSE»list($entities, $totalAmount)«ENDIF» = $repository->selectSearch($searchTerm, $exclude, $sortParam, $currentPage, $resultsPerPage, false);
+        $entities = $repository->selectSearch($searchTerm, $exclude, $sortParam, $currentPage, $resultsPerPage, false);
 
         $resultItems = [];
 
@@ -413,14 +349,10 @@ class AjaxController {
 
                     // check for preview image
                     if (!empty($previewFieldName) && !empty($item[$previewFieldName])) {
-                        «IF targets('3.0')»
-                            $imagePath = $item[$previewFieldName]->getPathname();
-                            $imagePath = str_replace($item->get_uploadBasePathAbsolute(), $item->get_uploadBasePathRelative(), $imagePath);
-                            $thumbImagePath = $imagineCacheManager->getBrowserPath($imagePath, 'zkroot', $thumbRuntimeOptions);
-                        «ELSE»
-                            $thumbImagePath = $imagineCacheManager->getBrowserPath($item[$previewFieldName]->getPathname(), 'zkroot', $thumbRuntimeOptions);
-                        «ENDIF»
-                        $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '"«IF targets('3.0')» class="mr-1"«ENDIF» />';
+                        $imagePath = $item[$previewFieldName]->getPathname();
+                        $imagePath = str_replace($item->get_uploadBasePathAbsolute(), $item->get_uploadBasePathRelative(), $imagePath);
+                        $thumbImagePath = $imagineCacheManager->getBrowserPath($imagePath, 'zkroot', $thumbRuntimeOptions);
+                        $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" class="mr-1" />';
                     }
                 «ENDIF»
 
@@ -428,20 +360,13 @@ class AjaxController {
             }
         }
 
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($resultItems);
+        return $this->json($resultItems);
     '''
 
     def private prepareForAutoCompletionProcessing(Application it) '''
-        «IF !targets('3.0')»
-            $entityDisplayHelper = $this->get('«appService».entity_display_helper');
-        «ENDIF»
         $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
         «IF hasImageFields»
             $previewFieldName = $entityDisplayHelper->getPreviewFieldName($objectType);
-            «IF !targets('3.0')»
-                $imagineCacheManager = $this->get('liip_imagine.cache.manager');
-                $imageHelper = $this->get('«appService».image_helper');
-            «ENDIF»
             $thumbRuntimeOptions = $imageHelper->getRuntimeOptions($objectType, $previewFieldName, 'controllerAction', $contextArgs);
         «ENDIF»
     '''
@@ -458,12 +383,6 @@ class AjaxController {
          «IF isBase»
          * Checks whether a field value is a duplicate or not.
          *
-         «IF !targets('3.0')»
-         * @param Request $request
-         *
-         * @return JsonResponse
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @Route("/checkForDuplicate", methods = {"GET"}, options={"expose"=true})
@@ -471,22 +390,16 @@ class AjaxController {
          */
     '''
 
-    def private checkForDuplicateSignature(Application it) {
-        if (targets('3.0')) '''
-            public function checkForDuplicate«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                ControllerHelper $controllerHelper,
-                EntityFactory $entityFactory
-            ): JsonResponse'''
-        else '''
-            public function checkForDuplicateAction(
-                Request $request
-            )'''
-    }
+    def private checkForDuplicateSignature(Application it) '''
+        public function checkForDuplicate«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            ControllerHelper $controllerHelper,
+            EntityFactory $entityFactory
+        ): JsonResponse'''
 
     def private checkForDuplicateBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -501,7 +414,7 @@ class AjaxController {
                 «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
-                        $repository = «IF targets('3.0')»$entityFactory«ELSE»$this->get('«appService».entity_factory')«ENDIF»->getRepository($objectType);
+                        $repository = $entityFactory->getRepository($objectType);
                         switch ($fieldName) {
                             «FOR uniqueField : uniqueFields»
                                 case '«uniqueField.name.formatForCode»':
@@ -521,14 +434,11 @@ class AjaxController {
         }
 
         // return response
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»(['isDuplicate' => $result]);
+        return $this->json(['isDuplicate' => $result]);
     '''
 
     def private prepareDuplicateCheckParameters(Application it) '''
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        «IF !targets('3.0')»
-            $controllerHelper = $this->get('«appService».controller_helper');
-        «ENDIF»
         $contextArgs = ['controller' => 'ajax', 'action' => 'checkForDuplicate'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
@@ -538,7 +448,7 @@ class AjaxController {
         $value = $request->query->get('v');
 
         if (empty($fieldName) || empty($value)) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // check if the given field is existing and unique
@@ -554,7 +464,7 @@ class AjaxController {
             «ENDFOR»
         }
         if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields, true)) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $exclude = $request->query->getInt('ex');
@@ -572,12 +482,6 @@ class AjaxController {
          «IF isBase»
          * Changes a given flag (boolean field) by switching between true and false.
          *
-         «IF !targets('3.0')»
-         * @param Request $request
-         *
-         * @return JsonResponse
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @Route("/toggleFlag", methods = {"POST"}, options={"expose"=true})
@@ -585,23 +489,17 @@ class AjaxController {
          */
     '''
 
-    def private toggleFlagSignature(Application it) {
-        if (targets('3.0')) '''
-            public function toggleFlag«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                LoggerInterface $logger,
-                EntityFactory $entityFactory,
-                CurrentUserApiInterface $currentUserApi
-            ): JsonResponse'''
-        else '''
-            public function toggleFlagAction(
-                Request $request
-            )'''
-    }
+    def private toggleFlagSignature(Application it) '''
+        public function toggleFlag«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            LoggerInterface $logger,
+            EntityFactory $entityFactory,
+            CurrentUserApiInterface $currentUserApi
+        ): JsonResponse'''
 
     def private toggleFlagBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -620,17 +518,14 @@ class AjaxController {
                 || ('«entity.name.formatForCode»' === $objectType && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true))
             «ENDFOR»
         ) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // select data from data source
-        «IF !targets('3.0')»
-            $entityFactory = $this->get('«appService».entity_factory');
-        «ENDIF»
         $repository = $entityFactory->getRepository($objectType);
         $entity = $repository->selectById($id, false);
         if (null === $entity) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.'), JsonResponse::HTTP_NOT_FOUND);
+            return $this->json($this->trans('No such item.'), JsonResponse::HTTP_NOT_FOUND);
         }
 
         // toggle the flag
@@ -639,12 +534,9 @@ class AjaxController {
         // save entity back to database
         $entityFactory->getEntityManager()->flush();
 
-        «IF !targets('3.0')»
-            $logger = $this->get('logger');
-        «ENDIF»
         $logArgs = [
             'app' => '«appName»',
-            'user' => «IF targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname'),
+            'user' => $currentUserApi->get('uname'),
             'field' => $field,
             'entity' => $objectType,
             'id' => $id,
@@ -652,10 +544,10 @@ class AjaxController {
         $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
 
         // return response
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
+        return $this->json([
             'id' => $id,
             'state' => $entity[$field],
-            'message' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The setting has been successfully changed.'),
+            'message' => $this->trans('The setting has been successfully changed.'),
         ]);
     '''
 
@@ -671,12 +563,6 @@ class AjaxController {
          «IF isBase»
          * Performs different operations on tree hierarchies.
          *
-         «IF !targets('3.0')»
-         * @param Request $request
-         *
-         * @return JsonResponse
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @Route("/handleTreeOperation", methods = {"POST"}, options={"expose"=true})
@@ -684,27 +570,21 @@ class AjaxController {
          */
     '''
 
-    def private handleTreeOperationSignature(Application it) {
-        if (targets('3.0')) '''
-            public function handleTreeOperation«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                RouterInterface $router,
-                LoggerInterface $logger,
-                EntityFactory $entityFactory,
-                EntityDisplayHelper $entityDisplayHelper,
-                CurrentUserApiInterface $currentUserApi,
-                UserRepositoryInterface $userRepository,
-                WorkflowHelper $workflowHelper
-            ): JsonResponse'''
-        else '''
-            public function handleTreeOperationAction(
-                Request $request
-            )'''
-    }
+    def private handleTreeOperationSignature(Application it) '''
+        public function handleTreeOperation«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            RouterInterface $router,
+            LoggerInterface $logger,
+            EntityFactory $entityFactory,
+            EntityDisplayHelper $entityDisplayHelper,
+            CurrentUserApiInterface $currentUserApi,
+            UserRepositoryInterface $userRepository,
+            WorkflowHelper $workflowHelper
+        ): JsonResponse'''
 
     def private handleTreeOperationBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -728,9 +608,6 @@ class AjaxController {
         «prepareTreeOperationParameters»
 
         $createMethod = 'create' . ucfirst($objectType);
-        «IF !targets('3.0')»
-            $entityFactory = $this->get('«appService».entity_factory');
-        «ENDIF»
         $repository = $entityFactory->getRepository($objectType);
 
         $rootId = 1;
@@ -738,38 +615,35 @@ class AjaxController {
             $rootId = $request->request->getInt('root');
             if (!$rootId) {
                 $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid root node.');
+                $returnValue['message'] = $this->trans('Error: invalid root node.');
 
-                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+                return $this->json($returnValue);
             }
         }
 
         $entityManager = $entityFactory->getEntityManager();
-        «IF !targets('3.0')»
-            $entityDisplayHelper = $this->get('«appService».entity_display_helper');
-        «ENDIF»
         $titleFieldName = $entityDisplayHelper->getTitleFieldName($objectType);
         $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
 
         «treeOperationSwitch»
 
-        $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The operation was successful.');
+        $returnValue['message'] = $this->trans('The operation was successful.');
 
         // Renew tree
         /* postponed, for now we do a page reload.
          * $returnValue['data'] = $repository->selectTree($rootId);
          */
 
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+        return $this->json($returnValue);
     '''
 
     def private prepareTreeOperationParameters(Application it) '''
         $op = $request->request->getAlpha('op');
         if (!in_array($op, ['addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'], true)) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid operation.');
+            $returnValue['message'] = $this->trans('Error: invalid operation.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         // Get id of treated node
@@ -778,23 +652,19 @@ class AjaxController {
             $id = $request->request->getInt('id');
             if (!$id) {
                 $returnValue['result'] = 'failure';
-                $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid node.');
+                $returnValue['message'] = $this->trans('Error: invalid node.');
 
-                return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+                return $this->json($returnValue);
             }
         }
     '''
 
     def private treeOperationSwitch(Application it) '''
-        «IF !targets('3.0')»
-            $currentUserApi = $this->get('zikula_users_module.current_user');
-            $logger = $this->get('logger');
-        «ENDIF»
         $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType];
         «IF hasStandardFieldEntities»
 
             $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
-            $currentUser = «IF targets('3.0')»$userRepository«ELSE»$this->get('zikula_users_module.user_repository')«ENDIF»->find($currentUserId);
+            $currentUser = $userRepository->find($currentUserId);
         «ENDIF»
 
         switch ($op) {
@@ -829,10 +699,10 @@ class AjaxController {
     def private treeOperationAddRootNode(Application it) '''
         $entity = $entityFactory->$createMethod();
         if (!empty($titleFieldName)) {
-            $entity[$titleFieldName] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('New root node');
+            $entity[$titleFieldName] = $this->trans('New root node');
         }
         if (!empty($descriptionFieldName)) {
-            $entity[$descriptionFieldName] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is a new root node');
+            $entity[$descriptionFieldName] = $this->trans('This is a new root node');
         }
         «IF hasStandardFieldEntities»
             if (method_exists($entity, 'setCreatedBy')) {
@@ -847,21 +717,18 @@ class AjaxController {
         $action = 'submit';
         try {
             // execute the workflow action
-            «IF !targets('3.0')»
-                $workflowHelper = $this->get('«appService».workflow_helper');
-            «ENDIF»
             $success = $workflowHelper->executeAction($entity, $action);
             if (!$success) {
                 $returnValue['result'] = 'failure';
             }
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+            $returnValue['message'] = $this->trans(
                 'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                 ['%action%' => $action]
             ) . '  ' . $exception->getMessage();
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
     '''
 
@@ -869,15 +736,15 @@ class AjaxController {
         $parentId = $request->request->getInt('pid');
         if (!$parentId) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid parent node.');
+            $returnValue['message'] = $this->trans('Error: invalid parent node.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         $childEntity = $entityFactory->$createMethod();
-        $childEntity[$titleFieldName] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('New child node');
+        $childEntity[$titleFieldName] = $this->trans('New child node');
         if (!empty($descriptionFieldName)) {
-            $childEntity[$descriptionFieldName] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('This is a new child node');
+            $childEntity[$descriptionFieldName] = $this->trans('This is a new child node');
         }
         «IF hasStandardFieldEntities»
             if (method_exists($childEntity, 'setCreatedBy')) {
@@ -888,9 +755,9 @@ class AjaxController {
         $parentEntity = $repository->selectById($parentId, false);
         if (null === $parentEntity) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.');
+            $returnValue['message'] = $this->trans('No such item.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
         $childEntity->setParent($parentEntity);
 
@@ -898,9 +765,6 @@ class AjaxController {
         $action = 'submit';
         try {
             // execute the workflow action
-            «IF !targets('3.0')»
-                $workflowHelper = $this->get('«appService».workflow_helper');
-            «ENDIF»
             $success = $workflowHelper->executeAction($childEntity, $action);
             «IF hasEditActions && !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].empty»
                 if (!$success) {
@@ -913,7 +777,7 @@ class AjaxController {
                     «ELSE»
                         $urlArgs = $childEntity->createUrlArgs();
                     «ENDIF»
-                    $returnValue['returnUrl'] = «IF targets('3.0')»$router«ELSE»$this->get('router')«ENDIF»->generate(
+                    $returnValue['returnUrl'] = $router->generate(
                         $routeName,
                         $urlArgs,
                         UrlGeneratorInterface::ABSOLUTE_URL
@@ -926,12 +790,12 @@ class AjaxController {
             «ENDIF»
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+            $returnValue['message'] = $this->trans(
                 'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                 ['%action%' => $action]
             ) . '  ' . $exception->getMessage();
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
     '''
 
@@ -940,30 +804,27 @@ class AjaxController {
         $entity = $repository->selectById($id, false);
         if (null === $entity) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.');
+            $returnValue['message'] = $this->trans('No such item.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         // delete the object
         $action = 'delete';
         try {
             // execute the workflow action
-            «IF !targets('3.0')»
-                $workflowHelper = $this->get('«appService».workflow_helper');
-            «ENDIF»
             $success = $workflowHelper->executeAction($entity, $action);
             if (!$success) {
                 $returnValue['result'] = 'failure';
             }
         } catch (Exception $exception) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+            $returnValue['message'] = $this->trans(
                 'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                 ['%action%' => $action]
             ) . '  ' . $exception->getMessage();
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         $repository->removeFromTree($entity);
@@ -974,17 +835,17 @@ class AjaxController {
         $moveDirection = $request->request->getAlpha('direction');
         if (!in_array($moveDirection, ['top', 'up', 'down', 'bottom'], true)) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid direction.');
+            $returnValue['message'] = $this->trans('Error: invalid direction.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         $entity = $repository->selectById($id, false);
         if (null === $entity) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.');
+            $returnValue['message'] = $this->trans('No such item.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         if ('top' === $moveDirection) {
@@ -1003,26 +864,26 @@ class AjaxController {
         $moveDirection = $request->request->getAlpha('direction');
         if (!in_array($moveDirection, ['after', 'before', 'bottom'], true)) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid direction.');
+            $returnValue['message'] = $this->trans('Error: invalid direction.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         $destId = $request->request->getInt('destid');
         if (!$destId) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid destination node.');
+            $returnValue['message'] = $this->trans('Error: invalid destination node.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         $entity = $repository->selectById($id, false);
         $destEntity = $repository->selectById($destId, false);
         if (null === $entity || null === $destEntity) {
             $returnValue['result'] = 'failure';
-            $returnValue['message'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.');
+            $returnValue['message'] = $this->trans('No such item.');
 
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($returnValue);
+            return $this->json($returnValue);
         }
 
         if ('after' === $moveDirection) {
@@ -1048,12 +909,6 @@ class AjaxController {
          «IF isBase»
          * Updates the sort positions for a given list of entities.
          *
-         «IF !targets('3.0')»
-         * @param Request $request
-         *
-         * @return JsonResponse
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @Route("/updateSortPositions", methods = {"POST"}, options={"expose"=true})
@@ -1061,21 +916,15 @@ class AjaxController {
          */
     '''
 
-    def private updateSortPositionsSignature(Application it) {
-        if (targets('3.0')) '''
-            public function updateSortPositions«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                EntityFactory $entityFactory
-            ): JsonResponse'''
-        else '''
-            public function updateSortPositionsAction(
-                Request $request
-            )'''
-    }
+    def private updateSortPositionsSignature(Application it) '''
+        public function updateSortPositions«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            EntityFactory $entityFactory
+        ): JsonResponse'''
 
     def private updateSortPositionsBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -1088,12 +937,9 @@ class AjaxController {
         $max = $request->request->getInt('max');
 
         if (!is_array($itemIds) || 2 > count($itemIds) || 1 > $max || $max <= $min) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        «IF !targets('3.0')»
-            $entityFactory = $this->get('«appService».entity_factory');
-        «ENDIF»
         $repository = $entityFactory->getRepository($objectType);
         $sortableFieldMap = [
             «FOR entity : getAllEntities.filter[hasSortableFields]»
@@ -1118,8 +964,8 @@ class AjaxController {
         $entityFactory->getEntityManager()->flush();
 
         // return response
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
-            'message' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('The setting has been successfully changed.'),
+        return $this->json([
+            'message' => $this->trans('The setting has been successfully changed.'),
         ]);
     '''
 
@@ -1142,12 +988,6 @@ class AjaxController {
          «IF isBase»
          * Attachs a given hook assignment by creating the corresponding assignment data record.
          *
-         «IF !targets('3.0')»
-         * @param Request $request
-         *
-         * @return JsonResponse
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @Route("/attachHookObject", methods = {"POST"}, options={"expose"=true})
@@ -1160,12 +1000,6 @@ class AjaxController {
          «IF isBase»
          * Detachs a given hook assignment by removing the corresponding assignment data record.
          *
-         «IF !targets('3.0')»
-         * @param Request $request
-         *
-         * @return JsonResponse
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
          * @Route("/detachHookObject", methods = {"POST"}, options={"expose"=true})
@@ -1173,33 +1007,21 @@ class AjaxController {
          */
     '''
 
-    def private attachHookObjectSignature(Application it) {
-        if (targets('3.0')) '''
-            public function attachHookObject«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                EntityFactory $entityFactory
-            ): JsonResponse'''
-        else '''
-            public function attachHookObjectAction(
-                Request $request
-            )'''
-    }
+    def private attachHookObjectSignature(Application it) '''
+        public function attachHookObject«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            EntityFactory $entityFactory
+        ): JsonResponse'''
 
-    def private detachHookObjectSignature(Application it) {
-        if (targets('3.0')) '''
-            public function detachHookObject«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                EntityFactory $entityFactory
-            ): JsonResponse'''
-        else '''
-            public function detachHookObjectAction(
-                Request $request
-            )'''
-    }
+    def private detachHookObjectSignature(Application it) '''
+        public function detachHookObject«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            EntityFactory $entityFactory
+        ): JsonResponse'''
 
     def private attachHookObjectBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -1214,7 +1036,7 @@ class AjaxController {
         $assignedId = $request->request->getInt('assignedId');
 
         if (!$subscriberOwner || !$subscriberAreaId || !$subscriberObjectId || !$assignedEntity || !$assignedId) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $subscriberUrl = !empty($subscriberUrl) ? unserialize($subscriberUrl) : [];
@@ -1228,19 +1050,19 @@ class AjaxController {
         $assignment->setAssignedId($assignedId);
         $assignment->setUpdatedDate(new DateTime());
 
-        $entityManager = «IF targets('3.0')»$entityFactory«ELSE»$this->get('«appService».entity_factory')«ENDIF»->getEntityManager();
+        $entityManager = $entityFactory->getEntityManager();
         $entityManager->persist($assignment);
         $entityManager->flush();
 
         // return response
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
+        return $this->json([
             'id' => $assignment->getId(),
         ]);
     '''
 
     def private detachHookObjectBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
@@ -1249,12 +1071,9 @@ class AjaxController {
 
         $id = $request->request->getInt('id', 0);
         if (!$id) {
-            return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        «IF !targets('3.0')»
-            $entityFactory = $this->get('«appService».entity_factory');
-        «ENDIF»
         $qb = $entityFactory->getEntityManager()->createQueryBuilder();
         $qb->delete('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
            ->where('tbl.id = :identifier')
@@ -1264,12 +1083,10 @@ class AjaxController {
         $query->execute();
 
         // return response
-        return «IF targets('2.0')»$this->json«ELSE»new JsonResponse«ENDIF»([
+        return $this->json([
             'id' => $id,
         ]);
     '''
-
-
 
     def additionalAjaxFunctions(Application it) '''
         «IF generateExternalControllerAndFinder»
@@ -1307,128 +1124,96 @@ class AjaxController {
     def private getItemListFinderImpl(Application it) '''
         «getItemListFinderDocBlock(false)»
         «getItemListFinderSignature» {
-            «IF targets('3.0')»
-                return parent::getItemListFinder«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $controllerHelper,
-                    $permissionHelper,
-                    $entityFactory,
-                    $entityDisplayHelper
-                );
-            «ELSE»
-                return parent::getItemListFinderAction($request);
-            «ENDIF»
+            return parent::getItemListFinder«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $controllerHelper,
+                $permissionHelper,
+                $entityFactory,
+                $entityDisplayHelper
+            );
         }
     '''
 
     def private getItemListAutoCompletionImpl(Application it) '''
         «getItemListAutoCompletionDocBlock(false)»
         «getItemListAutoCompletionSignature» {
-            «IF targets('3.0')»
-                return parent::getItemListAutoCompletion«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $imagineCacheManager,
-                    $controllerHelper,
-                    $entityFactory,
-                    $entityDisplayHelper«IF hasImageFields»,
-                    $imageHelper«ENDIF»
-                );
-            «ELSE»
-                return parent::getItemListAutoCompletionAction($request);
-            «ENDIF»
+            return parent::getItemListAutoCompletion«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $imagineCacheManager,
+                $controllerHelper,
+                $entityFactory,
+                $entityDisplayHelper«IF hasImageFields»,
+                $imageHelper«ENDIF»
+            );
         }
     '''
 
     def private checkForDuplicateImpl(Application it) '''
         «checkForDuplicateDocBlock(false)»
         «checkForDuplicateSignature» {
-            «IF targets('3.0')»
-                return parent::checkForDuplicate«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $controllerHelper,
-                    $entityFactory
-                );
-            «ELSE»
-                return parent::checkForDuplicateAction($request);
-            «ENDIF»
+            return parent::checkForDuplicate«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $controllerHelper,
+                $entityFactory
+            );
         }
     '''
 
     def private toggleFlagImpl(Application it) '''
         «toggleFlagDocBlock(false)»
         «toggleFlagSignature» {
-            «IF targets('3.0')»
-                return parent::toggleFlag«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $logger,
-                    $entityFactory,
-                    $currentUserApi
-                );
-            «ELSE»
-                return parent::toggleFlagAction($request);
-            «ENDIF»
+            return parent::toggleFlag«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $logger,
+                $entityFactory,
+                $currentUserApi
+            );
         }
     '''
 
     def private handleTreeOperationImpl(Application it) '''
         «handleTreeOperationDocBlock(false)»
         «handleTreeOperationSignature» {
-            «IF targets('3.0')»
-                return parent::handleTreeOperation«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $router,
-                    $logger,
-                    $entityFactory,
-                    $entityDisplayHelper,
-                    $currentUserApi,
-                    $userRepository,
-                    $workflowHelper
-                );
-            «ELSE»
-                return parent::handleTreeOperationAction($request);
-            «ENDIF»
+            return parent::handleTreeOperation«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $router,
+                $logger,
+                $entityFactory,
+                $entityDisplayHelper,
+                $currentUserApi,
+                $userRepository,
+                $workflowHelper
+            );
         }
     '''
 
     def private updateSortPositionsImpl(Application it) '''
         «updateSortPositionsDocBlock(false)»
         «updateSortPositionsSignature» {
-            «IF targets('3.0')»
-                return parent::updateSortPositions«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $entityFactory
-                );
-            «ELSE»
-                return parent::updateSortPositionsAction($request);
-            «ENDIF»
+            return parent::updateSortPositions«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $entityFactory
+            );
         }
     '''
 
     def private attachHookObjectImpl(Application it) '''
         «attachHookObjectDocBlock(false)»
         «attachHookObjectSignature» {
-            «IF targets('3.0')»
-                return parent::attachHookObject«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $entityFactory
-                );
-            «ELSE»
-                return parent::attachHookObjectAction($request);
-            «ENDIF»
+            return parent::attachHookObject«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $entityFactory
+            );
         }
     '''
 
     def private detachHookObjectImpl(Application it) '''
         «detachHookObjectDocBlock(false)»
         «detachHookObjectSignature» {
-            «IF targets('3.0')»
-                return parent::detachHookObject«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $entityFactory
-                );
-            «ELSE»
-                return parent::detachHookObjectAction($request);
-            «ENDIF»
+            return parent::detachHookObject«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $entityFactory
+            );
         }
     '''
 

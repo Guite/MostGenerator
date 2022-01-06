@@ -95,7 +95,7 @@ class TreeFunctions {
                 }
                 jQuery('#' + data.node.id)
                     // hide the folder icons
-                    .find('a.jstree-anchor.leaf > i.fa-folder').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»).end()
+                    .find('a.jstree-anchor.leaf > i.fa-folder').addClass('d-none).end()
                     // replace folder with folder-open
                     .find('i.jstree-icon.jstree-themeicon').first()
                         .removeClass('fa-folder').addClass('fa-folder-open');
@@ -201,49 +201,49 @@ class TreeFunctions {
             });
             if (true === hasDisplayAction) {
                 actions.display = {
-                    label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Display'),
-                    title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Show detail page'),
+                    label: Translator.trans('Display'),
+                    title: Translator.trans('Show detail page'),
                     action: function (node) {
                         document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', nodeEntityRouteArgs, true);
                     },
-                    icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-eye'
+                    icon: 'fas fa-fw fa-eye'
                 };
             }
             if (true === hasEditAction) {
                 actions.edit = {
-                    label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Edit'),
-                    title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Show edit form'),
+                    label: Translator.trans('Edit'),
+                    title: Translator.trans('Show edit form'),
                     action: function (node) {
                         document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', nodeEntityRouteArgs, true);
                     },
-                    icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-«IF targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»'
+                    icon: 'fas fa-fw fa-edit'
                 };
             }
             actions.addChildNode = {
-                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Add child node'),
-                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Add child node'),
+                label: Translator.trans('Add child node'),
+                title: Translator.trans('Add child node'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
                 },
-                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-plus'
+                icon: 'fas fa-fw fa-plus'
             };
             actions.deleteNode = {
-                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete'),
-                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Delete this node'),
+                label: Translator.trans('Delete'),
+                title: Translator.trans('Delete this node'),
                 action: function (node) {
                     var confirmQuestion;
                     var amountOfChildren;
 
-                    confirmQuestion = Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Do you really want to remove this node?');
+                    confirmQuestion = Translator.trans('Do you really want to remove this node?');
                     amountOfChildren = currentNode.children.length;
                     if (amountOfChildren > 0) {
-                        confirmQuestion = Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Do you really want to remove this node including all child nodes?');
+                        confirmQuestion = Translator.trans('Do you really want to remove this node including all child nodes?');
                     }
                     if (false !== window.confirm(confirmQuestion)) {
                         «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
                     }
                 },
-                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-trash-«IF targets('3.0')»alt«ELSE»o«ENDIF»'
+                icon: 'fas fa-fw fa-trash-alt'
             };
         }
 
@@ -258,41 +258,41 @@ class TreeFunctions {
         if (!currentNodeDom.is(':first-child')) {
             // has previous sibling
             actions.moveTop = {
-                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move to top'),
-                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move to top position'),
+                label: Translator.trans('Move to top'),
+                title: Translator.trans('Move to top position'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeTop');
                 },
-                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-angle-double-up',
+                icon: 'fas fa-fw fa-angle-double-up',
                 separator_before: true
             };
             actions.moveUp = {
-                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move up'),
-                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move one position up'),
+                label: Translator.trans('Move up'),
+                title: Translator.trans('Move one position up'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
                 },
-                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-angle-up'
+                icon: 'fas fa-fw fa-angle-up'
             };
         }
         if (!currentNodeDom.is(':last-child')) {
             // has next sibling
             actions.moveDown = {
-                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move down'),
-                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move one position down'),
+                label: Translator.trans('Move down'),
+                title: Translator.trans('Move one position down'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
                 },
-                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-angle-down',
+                icon: 'fas fa-fw fa-angle-down',
                 separator_before: currentNodeDom.is(':first-child')
             };
             actions.moveBottom = {
-                label: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move to bottom'),
-                title: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Move to bottom position'),
+                label: Translator.trans('Move to bottom'),
+                title: Translator.trans('Move to bottom position'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeBottom');
                 },
-                icon: 'fa«IF targets('3.0')»s«ENDIF» fa-fw fa-angle-double-down'
+                icon: 'fas fa-fw fa-angle-double-down'
             };
         }
 
@@ -315,7 +315,7 @@ class TreeFunctions {
 
             if (op !== 'addRootNode') {
                 if (!nodeEntityId) {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.trans('Error'), Translator.trans('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
                     return;
                 }
                 params['root'] = rootId;
@@ -338,7 +338,7 @@ class TreeFunctions {
                 data: params
             }).done(function (data) {
                 if (data.result == 'success') {
-                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
+                    /*«vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.trans('Success'), data.message, 'treeAjaxDoneAlert', 'success');*/
 
                     if (typeof data.returnUrl !== 'undefined') {
                         window.location = data.returnUrl;
@@ -346,10 +346,10 @@ class TreeFunctions {
                         window.location.reload();
                     }
                 } else {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), data.message !== '' ? data.message : Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.trans('Error'), data.message !== '' ? data.message : Translator.trans('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
                 }
             }).fail(function (jqXHR, textStatus) {
-                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.trans('Error'), Translator.trans('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
             });
         }
     '''
@@ -442,7 +442,7 @@ class TreeFunctions {
 
                 return true;
             }).fail(function (jqXHR, textStatus) {
-                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
+                «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.trans('Error'), Translator.trans('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
 
                 window.location.reload();
 
@@ -459,7 +459,7 @@ class TreeFunctions {
                 jQuery('#treeAddRoot').click(function (event) {
                     event.preventDefault();
                     «vendorAndName»PerformTreeOperation(jQuery(this).data('object-type'), 1, 'addRootNode');
-                }).removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                }).removeClass('d-none');
             }
 
             trees = [];

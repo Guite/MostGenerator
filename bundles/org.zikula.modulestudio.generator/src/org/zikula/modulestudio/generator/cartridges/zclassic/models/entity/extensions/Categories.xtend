@@ -6,14 +6,12 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class Categories extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     /**
      * Additional field annotations.
@@ -47,16 +45,9 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection', true, true, application.targets('3.0'))»
+        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection', true, true, true)»
 
-        «IF !application.targets('3.0')»
-            /**
-             * Sets the categories.
-             *
-             * @return void
-             */
-        «ENDIF»
-        public function setCategories(Collection $categories)«IF application.targets('3.0')»: void«ENDIF»
+        public function setCategories(Collection $categories): void
         {
             foreach ($this->categories as $category) {
                 if (false === ($key = $this->categoryCollectionContains($categories, $category))) {
@@ -72,11 +63,6 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
 
         /**
          * Checks if a collection contains an element based only on two criteria (categoryRegistryId, category).
-         «IF !application.targets('3.0')»
-         *
-         * @param Collection $collection Given collection
-         * @param \«entityClassName('category', false)» $element Element to search for
-         «ENDIF»
          *
          * @return bool|int
          */

@@ -42,7 +42,7 @@ class Json {
 
     def private jsonView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view json view #}
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         [
@@ -55,7 +55,7 @@ class Json {
 
     def private jsonDisplay(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         {{ «name.formatForCode».toArray()|json_encode()|raw }}

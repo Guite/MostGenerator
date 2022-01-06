@@ -50,16 +50,10 @@ class FinderType {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF app.targets('3.0')»
-            use Translation\Extractor\Annotation\Ignore;
-        «ENDIF»
+        use Translation\Extractor\Annotation\Ignore;
         use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «IF categorisable»
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
-        «ENDIF»
-        «IF !app.targets('3.0')»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
         «ENDIF»
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «IF app.needsFeatureActivationHelper»
@@ -71,10 +65,6 @@ class FinderType {
          */
         abstract class Abstract«name.formatForCodeCapital»FinderType extends AbstractType
         {
-            «IF !app.targets('3.0')»
-                use TranslatorTrait;
-
-            «ENDIF»
             /**
              * @var RequestStack
              */
@@ -92,31 +82,19 @@ class FinderType {
                 protected $featureActivationHelper;
 
             «ENDIF»
-            «IF !app.targets('3.0') || app.needsFeatureActivationHelper»
-                public function __construct(
-                    «IF !app.targets('3.0')»
-                        TranslatorInterface $translator,
-                    «ENDIF»
-                    RequestStack $requestStack,
-                    VariableApiInterface $variableApi«IF app.needsFeatureActivationHelper»,
-                    FeatureActivationHelper $featureActivationHelper
-                    «ENDIF»
-                ) {
-                    «IF !app.targets('3.0')»
-                        $this->setTranslator($translator);
-                    «ENDIF»
-                    $this->requestStack = $requestStack;
-                    $this->variableApi = $variableApi;
-                    «IF app.needsFeatureActivationHelper»
-                        $this->featureActivationHelper = $featureActivationHelper;
-                    «ENDIF»
-                }
+            public function __construct(
+                RequestStack $requestStack,
+                VariableApiInterface $variableApi«IF app.needsFeatureActivationHelper»,
+                FeatureActivationHelper $featureActivationHelper
+                «ENDIF»
+            ) {
+                $this->requestStack = $requestStack;
+                $this->variableApi = $variableApi;
+                «IF app.needsFeatureActivationHelper»
+                    $this->featureActivationHelper = $featureActivationHelper;
+                «ENDIF»
+            }
 
-            «ENDIF»
-            «IF !app.targets('3.0')»
-                «app.setTranslatorMethod»
-
-            «ENDIF»
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $builder
@@ -147,24 +125,16 @@ class FinderType {
 
                 $builder
                     ->add('update', SubmitType::class, [
-                        'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Change selection'«IF !app.targets('3.0')»)«ENDIF»,
+                        'label' => 'Change selection',
                         'icon' => 'fa-check',
                         'attr' => [
-                            'class' => '«IF !app.targets('3.0')»btn «ENDIF»btn-success',
+                            'class' => 'btn-success',
                         ],
                     ])
                     ->add('cancel', SubmitType::class, [
-                        'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Cancel'«IF !app.targets('3.0')»)«ENDIF»,
-                        «IF app.targets('3.0')»
-                            'validate' => false,
-                        «ENDIF»
+                        'label' => 'Cancel',
+                        'validate' => false,
                         'icon' => 'fa-times',
-                        «IF !app.targets('3.0')»
-                            'attr' => [
-                                'class' => 'btn btn-default',
-                                'formnovalidate' => 'formnovalidate',
-                            ],
-                        «ENDIF»
                     ])
                 ;
             }
@@ -198,7 +168,7 @@ class FinderType {
                     ->setDefaults([
                         'object_type' => '«app.leadingEntity.name.formatForCode»',
                         'editor_name' => 'ckeditor',
-                        «IF app.targets('3.0') && !app.isSystemModule»
+                        «IF !app.isSystemModule»
                             'translation_domain' => '«name.formatForCode»',
                         «ENDIF»
                     ])
@@ -218,7 +188,7 @@ class FinderType {
         public function addLanguageField(FormBuilderInterface $builder, array $options = [])
         {
             $builder->add('language', LocaleType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Language:'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => 'Language',
                 'data' => $this->requestStack->getCurrentRequest()->getLocale(),
                 'empty_data' => null,
                 'multiple' => false,
@@ -231,17 +201,17 @@ class FinderType {
         /**
          * Adds a categories field.
          */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addCategoriesField(FormBuilderInterface $builder, array $options = []): void
         {
             $entityCategoryClass = '«app.appNamespace»\Entity\\' . ucfirst($options['object_type']) . 'CategoryEntity';
             $builder->add('categories', CategoriesType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»:'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => '«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»',
                 'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
                 'attr' => [
                     'class' => 'category-selector',
-                    'title' => «IF !app.targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !app.targets('3.0')»)«ENDIF»,
+                    'title' => 'This is an optional filter.',
                 ],
-                'help' => «IF !app.targets('3.0')»$this->__(«ENDIF»'This is an optional filter.'«IF !app.targets('3.0')»)«ENDIF»,
+                'help' => 'This is an optional filter.',
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
@@ -256,32 +226,27 @@ class FinderType {
         /**
          * Adds fields for image insertion options.
          */
-        public function addImageFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addImageFields(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('onlyImages', CheckboxType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Only images'«IF !app.targets('3.0')»)«ENDIF»,
-                «IF app.targets('3.0')»
-                    'label_attr' => [
-                        'class' => 'switch-custom',
-                    ],
-                «ENDIF»
+                'label' => 'Only images',
+                'label_attr' => [
+                    'class' => 'switch-custom',
+                ],
                 'empty_data' => false,
-                'help' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Enable this option to insert images'«IF !app.targets('3.0')»)«ENDIF»,
+                'help' => 'Enable this option to insert images',
                 'required' => false,
             ]);
             «IF imageFieldsEntity.size > 1»
                 $builder->add('imageField', ChoiceType::class, [
-                    'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Image field'«IF !app.targets('3.0')»)«ENDIF»,
+                    'label' => 'Image field',
                     'empty_data' => '«imageFieldsEntity.head.name.formatForCode»',
-                    'help' => «IF !app.targets('3.0')»$this->__(«ENDIF»'You can switch between different image fields'«IF !app.targets('3.0')»)«ENDIF»,
+                    'help' => 'You can switch between different image fields',
                     'choices' => [
                         «FOR imageField : imageFieldsEntity»
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'«imageField.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«imageField.name.formatForCode»',
+                            '«imageField.name.formatForDisplayCapital»' => '«imageField.name.formatForCode»',
                         «ENDFOR»
                     ],
-                    «IF !app.targets('2.0')»
-                        'choices_as_values' => true,
-                    «ENDIF»
                     'multiple' => false,
                     'expanded' => false,
                 ]);
@@ -297,27 +262,24 @@ class FinderType {
         /**
          * Adds a "paste as" field.
          */
-        public function addPasteAsField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addPasteAsField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('pasteAs', ChoiceType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Paste as:'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => 'Paste as',
                 'empty_data' => 1,
                 'choices' => [
                     «IF hasDisplayAction»
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Relative link to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 1,
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Absolute url to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 2,
+                        'Relative link to the «name.formatForDisplay»' => 1,
+                        'Absolute url to the «name.formatForDisplay»' => 2,
                     «ENDIF»
-                    «IF !app.targets('3.0')»$this->__(«ENDIF»'ID of «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 3,
+                    'ID of «name.formatForDisplay»' => 3,
                     «IF hasImageFieldsEntity»
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Relative link to the image'«IF !app.targets('3.0')»)«ENDIF» => 6,
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Image'«IF !app.targets('3.0')»)«ENDIF» => 7,
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Image with relative link to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 8,
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Image with absolute url to the «name.formatForDisplay»'«IF !app.targets('3.0')»)«ENDIF» => 9,
+                        'Relative link to the image' => 6,
+                        'Image' => 7,
+                        'Image with relative link to the «name.formatForDisplay»' => 8,
+                        'Image with absolute url to the «name.formatForDisplay»' => 9,
                     «ENDIF»
                 ],
-                «IF !app.targets('2.0')»
-                    'choices_as_values' => true,
-                «ENDIF»
                 'multiple' => false,
                 'expanded' => false,
             ]);
@@ -328,41 +290,35 @@ class FinderType {
         /**
          * Adds sorting fields.
          */
-        public function addSortingFields(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addSortingFields(FormBuilderInterface $builder, array $options = []): void
         {
             $builder
                 ->add('sort', ChoiceType::class, [
-                    'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Sort by:'«IF !app.targets('3.0')»)«ENDIF»,
+                    'label' => 'Sort by',
                     'empty_data' => '',
                     'choices' => [
                         «FOR field : getSortingFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                                «IF !app.targets('3.0')»$this->__(«ENDIF»'«field.name.formatForDisplayCapital»'«IF !app.targets('3.0')»)«ENDIF» => '«field.name.formatForCode»',
+                                '«field.name.formatForDisplayCapital»' => '«field.name.formatForCode»',
                             «ENDIF»
                         «ENDFOR»
                         «IF standardFields»
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Creation date'«IF !app.targets('3.0')»)«ENDIF» => 'createdDate',
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Creator'«IF !app.targets('3.0')»)«ENDIF» => 'createdBy',
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Update date'«IF !app.targets('3.0')»)«ENDIF» => 'updatedDate',
-                            «IF !app.targets('3.0')»$this->__(«ENDIF»'Updater'«IF !app.targets('3.0')»)«ENDIF» => 'updatedBy',
+                            'Creation date' => 'createdDate',
+                            'Creator' => 'createdBy',
+                            'Update date' => 'updatedDate',
+                            'Updater' => 'updatedBy',
                         «ENDIF»
                     ],
-                    «IF !app.targets('2.0')»
-                        'choices_as_values' => true,
-                    «ENDIF»
                     'multiple' => false,
                     'expanded' => false,
                 ])
                 ->add('sortdir', ChoiceType::class, [
-                    'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Sort direction:'«IF !app.targets('3.0')»)«ENDIF»,
+                    'label' => 'Sort direction',
                     'empty_data' => 'asc',
                     'choices' => [
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Ascending'«IF !app.targets('3.0')»)«ENDIF» => 'asc',
-                        «IF !app.targets('3.0')»$this->__(«ENDIF»'Descending'«IF !app.targets('3.0')»)«ENDIF» => 'desc',
+                        'Ascending' => 'asc',
+                        'Descending' => 'desc',
                     ],
-                    «IF !app.targets('2.0')»
-                        'choices_as_values' => true,
-                    «ENDIF»
                     'multiple' => false,
                     'expanded' => false,
                 ])
@@ -374,17 +330,15 @@ class FinderType {
         /**
          * Adds a page size field.
          */
-        public function addAmountField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addAmountField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('num', ChoiceType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Page size:'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => 'Page size',
                 'empty_data' => 20,
                 'attr' => [
                     'class' => 'text-right',
                 ],
-                «IF app.targets('3.0')»
-                    /** @Ignore */
-                «ENDIF»
+                /** @Ignore */
                 'choices' => [
                     5 => 5,
                     10 => 10,
@@ -394,9 +348,6 @@ class FinderType {
                     50 => 50,
                     100 => 100,
                 ],
-                «IF !app.targets('2.0')»
-                    'choices_as_values' => true,
-                «ENDIF»
                 'multiple' => false,
                 'expanded' => false,
             ]);
@@ -407,10 +358,10 @@ class FinderType {
         /**
          * Adds a search field.
          */
-        public function addSearchField(FormBuilderInterface $builder, array $options = [])«IF app.targets('3.0')»: void«ENDIF»
+        public function addSearchField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('q', SearchType::class, [
-                'label' => «IF !app.targets('3.0')»$this->__(«ENDIF»'Search for:'«IF !app.targets('3.0')»)«ENDIF»,
+                'label' => 'Search for',
                 'required' => false,
                 'attr' => [
                     'maxlength' => 255,

@@ -42,29 +42,16 @@ class ControllerHelper {
         «IF hasViewActions || hasUiHooksProviders»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            «IF hasViewActions»
-                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            «ENDIF»
-            «IF (hasViewActions || hasDisplayActions || hasEditActions || hasDeleteActions) && hasHookSubscribers»
-                use Zikula\Bundle\CoreBundle\RouteUrl;
-            «ENDIF»
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        «IF hasViewActions»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «ENDIF»
+        «IF (hasViewActions || hasDisplayActions || hasEditActions || hasDeleteActions) && hasHookSubscribers»
+            use Zikula\Bundle\CoreBundle\RouteUrl;
+        «ENDIF»
+        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «IF hasViewActions»
             use Zikula\Component\SortableColumns\SortableColumns;
-        «ENDIF»
-        «IF !targets('3.0')»
-            «IF hasViewActions»
-                use Zikula\Core\Doctrine\EntityAccess;
-            «ENDIF»
-            «IF (hasViewActions || hasDisplayActions) && hasHookSubscribers»
-                use Zikula\Core\RouteUrl;
-            «ENDIF»
         «ENDIF»
         «IF hasViewActions»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
@@ -221,10 +208,6 @@ class ControllerHelper {
                 $expiryHelper->handleObsoleteObjects(75);
             «ENDIF»
         }
-        «IF !targets('3.0')»
-
-            «setTranslatorMethod»
-        «ENDIF»
 
         «getObjectTypes»
 
@@ -256,18 +239,10 @@ class ControllerHelper {
     def private getObjectTypes(Application it) '''
         /**
          * Returns an array of all allowed object types in «appName».
-         «IF !targets('3.0')»
-         *
-         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler,
-         *                        block, contentType, mailz)
-         «IF !isSystemModule»
-         * @param array $args Additional arguments
-         «ENDIF»
-         «ENDIF»
          *
          * @return string[] List of allowed object types
          */
-        public function getObjectTypes(«IF targets('3.0')»string «ENDIF»$context = ''«IF !isSystemModule», array $args = []«ENDIF»)«IF targets('3.0')»: array«ENDIF»
+        public function getObjectTypes(string $context = ''«IF !isSystemModule», array $args = []«ENDIF»): array
         {
             $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
             if (!in_array($context, $allowedContexts, true)) {
@@ -286,18 +261,8 @@ class ControllerHelper {
     def private getDefaultObjectType(Application it) '''
         /**
          * Returns the default object type in «appName».
-         «IF !targets('3.0')»
-         *
-         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler,
-         *                        block, contentType, mailz)
-         «IF !isSystemModule»
-         * @param array $args Additional arguments
-         «ENDIF»
-         *
-         * @return string The name of the default object type
-         «ENDIF»
          */
-        public function getDefaultObjectType(«IF targets('3.0')»string «ENDIF»$context = ''«IF !isSystemModule», array $args = []«ENDIF»)«IF targets('3.0')»: string«ENDIF»
+        public function getDefaultObjectType(string $context = ''«IF !isSystemModule», array $args = []«ENDIF»): string
         {
             $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
             if (!in_array($context, $allowedContexts, true)) {
@@ -312,32 +277,21 @@ class ControllerHelper {
         /**
          * Processes the parameters for a view action.
          * This includes handling pagination, quick navigation forms and other aspects.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         * @param SortableColumns $sortableColumns Used SortableColumns instance
-         * @param array $templateParameters Template data
-         «IF hasHookSubscribers»
-         * @param bool $hasHookSubscriber Whether hook subscribers are supported or not
-         «ENDIF»
-         *
-         * @return array Enriched template parameters used for creating the response
-         «ENDIF»
          */
         public function processViewActionParameters(
-            «IF targets('3.0')»string «ENDIF»$objectType,
+            string $objectType,
             SortableColumns $sortableColumns,
             array $templateParameters = []«IF hasHookSubscribers»,
-            «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
-        )«IF targets('3.0')»: array«ENDIF» {
+            bool $hasHookSubscriber = false«ENDIF»
+        ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'view'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
-                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
+                throw new Exception($this->trans('Error! Invalid object type received.'));
             }
 
             $request = $this->requestStack->getCurrentRequest();
             if (null === $request) {
-                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Controller helper needs a request.'));
+                throw new Exception($this->trans('Error! Controller helper needs a request.'));
             }
             $repository = $this->entityFactory->getRepository($objectType);
 
@@ -416,7 +370,7 @@ class ControllerHelper {
             $routeParams = $request->attributes->get('_route_params');
             if (1 !== $templateParameters['all']) {
                 // let form target page number 1 to avoid empty page if filters have been set
-                $routeParams['«IF targets('3.0')»page«ELSE»pos«ENDIF»'] = 1;
+                $routeParams['page'] = 1;
             }
             $targetRoute = $this->router->generate($routeName, $routeParams);
 
@@ -473,37 +427,22 @@ class ControllerHelper {
                 $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir, «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»);
             } else {
                 // the current offset which is used to calculate the pagination
-                $currentPage = $request->query->getInt('«IF targets('3.0')»page«ELSE»pos«ENDIF»', 1);
+                $currentPage = $request->query->getInt('page', 1);
                 $templateParameters['currentPage'] = $currentPage;
 
                 // retrieve item list with pagination
-                «IF targets('3.0')»
-                    $paginator = $repository->selectWherePaginated(
-                        $where,
-                        $sort . ' ' . $sortdir,
-                        $currentPage,
-                        $resultsPerPage,
-                        «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
-                    );
-                    $paginator->setRoute('«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $templateParameters['routeArea'] . 'view');
-                    $paginator->setRouteParameters($urlParameters);
+                $paginator = $repository->selectWherePaginated(
+                    $where,
+                    $sort . ' ' . $sortdir,
+                    $currentPage,
+                    $resultsPerPage,
+                    «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
+                );
+                $paginator->setRoute('«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $templateParameters['routeArea'] . 'view');
+                $paginator->setRouteParameters($urlParameters);
 
-                    $templateParameters['paginator'] = $paginator;
-                    $entities = $paginator->getResults();
-                «ELSE»
-                    list($entities, $objectCount) = $repository->selectWherePaginated(
-                        $where,
-                        $sort . ' ' . $sortdir,
-                        $currentPage,
-                        $resultsPerPage,
-                        «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
-                    );
-
-                    $templateParameters['pager'] = [
-                        'amountOfItems' => $objectCount,
-                        'itemsPerPage' => $resultsPerPage,
-                    ];
-                «ENDIF»
+                $templateParameters['paginator'] = $paginator;
+                $entities = $paginator->getResults();
             }
 
             $templateParameters['sort'] = $sort;
@@ -535,14 +474,8 @@ class ControllerHelper {
 
         /**
          * Determines the default sorting criteria.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         *
-         * @return array with sort field and sort direction
-         «ENDIF»
          */
-        protected function determineDefaultViewSorting(«IF targets('3.0')»string «ENDIF»$objectType)«IF targets('3.0')»: array«ENDIF»
+        protected function determineDefaultViewSorting(string $objectType): array
         {
             $request = $this->requestStack->getCurrentRequest();
             if (null === $request) {
@@ -564,25 +497,15 @@ class ControllerHelper {
     def private processDisplayActionParameters(Application it) '''
         /**
          * Processes the parameters for a display action.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         * @param array $templateParameters Template data
-         «IF hasHookSubscribers»
-         * @param bool $hasHookSubscriber Whether hook subscribers are supported or not
-         «ENDIF»
-         *
-         * @return array Enriched template parameters used for creating the response
-         «ENDIF»
          */
         public function processDisplayActionParameters(
-            «IF targets('3.0')»string «ENDIF»$objectType,
+            string $objectType,
             array $templateParameters = []«IF hasHookSubscribers»,
-            «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
-        )«IF targets('3.0')»: array«ENDIF» {
+            bool $hasHookSubscriber = false«ENDIF»
+        ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
-                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
+                throw new Exception($this->trans('Error! Invalid object type received.'));
             }
             «IF hasHookSubscribers»
 
@@ -615,16 +538,7 @@ class ControllerHelper {
                         $url = 'javascript:void(0);';
                         $subscriberUrl = $assignment->getSubscriberUrl();
                         if (null !== $subscriberUrl && !empty($subscriberUrl)) {
-                            «IF targets('2.0')»
-                                $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
-                            «ELSE»
-                                if (!isset($subscriberUrl['route'])) {
-                                    // legacy module
-                                    $url = \ModUtil::url($subscriberUrl['application'], $subscriberUrl['controller'], $subscriberUrl['action'], $subscriberUrl['args'], null, null, true, true);
-                                } else {
-                                    $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
-                                }
-                            «ENDIF»
+                            $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
 
                             $fragment = $subscriberUrl['fragment'];
                             if (!empty($fragment)) {
@@ -651,25 +565,15 @@ class ControllerHelper {
     def private processEditActionParameters(Application it) '''
         /**
          * Processes the parameters for an edit action.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         * @param array $templateParameters Template data
-         «IF hasHookSubscribers»
-         * @param bool $hasHookSubscriber Whether hook subscribers are supported or not
-         «ENDIF»
-         *
-         * @return array Enriched template parameters used for creating the response
-         «ENDIF»
          */
         public function processEditActionParameters(
-            «IF targets('3.0')»string «ENDIF»$objectType,
+            string $objectType,
             array $templateParameters = []«IF hasHookSubscribers»,
-            «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
-        )«IF targets('3.0')»: array«ENDIF» {
+            bool $hasHookSubscriber = false«ENDIF»
+        ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
-                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
+                throw new Exception($this->trans('Error! Invalid object type received.'));
             }
             «IF hasHookSubscribers»
 
@@ -690,25 +594,15 @@ class ControllerHelper {
     def private processDeleteActionParameters(Application it) '''
         /**
          * Processes the parameters for a delete action.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         * @param array $templateParameters Template data
-         «IF hasHookSubscribers»
-         * @param bool $hasHookSubscriber Whether hook subscribers are supported or not
-         «ENDIF»
-         *
-         * @return array Enriched template parameters used for creating the response
-         «ENDIF»
          */
         public function processDeleteActionParameters(
-            «IF targets('3.0')»string «ENDIF»$objectType,
+            string $objectType,
             array $templateParameters = []«IF hasHookSubscribers»,
-            «IF targets('3.0')»bool «ENDIF»$hasHookSubscriber = false«ENDIF»
-        )«IF targets('3.0')»: array«ENDIF» {
+            bool $hasHookSubscriber = false«ENDIF»
+        ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
-                throw new Exception($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error! Invalid object type received.'));
+                throw new Exception($this->trans('Error! Invalid object type received.'));
             }
             «IF hasHookSubscribers»
 
@@ -729,23 +623,13 @@ class ControllerHelper {
     def private addTemplateParameters(Application it) '''
         /**
          * Returns an array of additional template variables which are specific to the object type.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Name of treated entity type
-         * @param array $parameters Given parameters to enrich
-         * @param string $context Usage context (allowed values: controllerAction, api, helper, actionHandler,
-         *                        block, contentType, mailz)
-         * @param array $args Additional arguments
-         *
-         * @return array List of template variables to be assigned
-         «ENDIF»
          */
         public function addTemplateParameters(
-            «IF targets('3.0')»string «ENDIF»$objectType = '',
+            string $objectType = '',
             array $parameters = [],
-            «IF targets('3.0')»string «ENDIF»$context = '',
+            string $context = '',
             array $args = []
-        )«IF targets('3.0')»: array«ENDIF» {
+        ): array {
             $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
             if (!in_array($context, $allowedContexts, true)) {
                 $context = 'controllerAction';
@@ -808,14 +692,8 @@ class ControllerHelper {
          * To use this please extend it or customise it to your needs in the concrete subclass.
          *
          * You can also easily do geocoding on JS level with some Leaflet plugins, see https://leafletjs.com/plugins.html#geocoding
-         «IF !targets('3.0')»
-         *
-         * @param string $address The address input string
-         *
-         * @return array The determined coordinates
-         «ENDIF»
          */
-        public function performGeoCoding(«IF targets('3.0')»string «ENDIF»$address)«IF targets('3.0')»: array«ENDIF»
+        public function performGeoCoding(string $address): array
         {
             $url = 'https://nominatim.openstreetmap.org/search?limit=1&format=json&q=' . urlencode($address);
 

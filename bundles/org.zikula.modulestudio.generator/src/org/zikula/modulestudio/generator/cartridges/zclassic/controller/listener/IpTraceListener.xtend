@@ -1,11 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class IpTraceListener {
-
-    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 
@@ -43,7 +40,7 @@ class IpTraceListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onKernelRequest(GetResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onKernelRequest(RequestEvent $event): void
         {
             $request = null !== $this->requestStack ? $this->requestStack->getCurrentRequest() : null;
             if (null === $request) {

@@ -128,7 +128,7 @@ class GeoFunctions {
         }
 
         function «vendorAndName»HandlePositionError (event) {
-            «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error during geolocation'), event.message, 'geoLocationAlert', 'danger');
+            «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.trans('Error during geolocation'), event.message, 'geoLocationAlert', 'danger');
         }
     '''
 
@@ -221,7 +221,7 @@ class GeoFunctions {
                 var marker = markerData[i];
                 var markerCaption = (marker.image ? '<img src="' + marker.image + '" alt="Logo" style="max-width: 100px !important" /><br />' : '') + marker.title;
                 if ('undefined' !== typeof marker.detailUrl && marker.detailUrl) {
-                    markerCaption += '<br /><a href="' + marker.detailUrl + '" target="_blank"><i class="fa«IF targets('3.0')»s«ENDIF» fa-arrow-circle-right"></i> Details</a>';
+                    markerCaption += '<br /><a href="' + marker.detailUrl + '" target="_blank"><i class="fas fa-arrow-circle-right"></i> Details</a>';
                 }
                 L.marker([marker.latitude, marker.longitude]).bindPopup(markerCaption).addTo(entityMarkers);
                 L.marker([marker.latitude, marker.longitude], {
@@ -277,7 +277,7 @@ class GeoFunctions {
             if (infoElem.data('context') == 'view') {
                 «vendorAndName»InitGeographicalView(parameters);
 
-                jQuery('.«appName.formatForDB»-quicknav').removeClass('«IF targets('3.0')»form-inline«ELSE»navbar-form«ENDIF»');
+                jQuery('.«appName.formatForDB»-quicknav').removeClass('form-inline');
                 jQuery('.«appName.formatForDB»-quicknav input, .«appName.formatForDB»-quicknav select')
                     .css('width', '100%')
                 ;

@@ -43,7 +43,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onRequest(«IF targets('3.0')»Request«ELSE»GetResponse«ENDIF»Event $event)«IF targets('3.0')»: void«ENDIF»
+        public function onRequest(RequestEvent $event): void
         {
         }
 
@@ -74,7 +74,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onController(«IF !targets('3.0')»Filter«ENDIF»ControllerEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onController(ControllerEvent $event): void
         {
         }
 
@@ -96,7 +96,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onView(«IF targets('3.0')»View«ELSE»GetResponseForControllerResult«ENDIF»Event $event)«IF targets('3.0')»: void«ENDIF»
+        public function onView(ViewEvent $event): void
         {
         }
 
@@ -123,7 +123,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onResponse(«IF !targets('3.0')»Filter«ENDIF»ResponseEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onResponse(ResponseEvent $event): void
         {
         }
 
@@ -137,7 +137,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onFinishRequest(FinishRequestEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onFinishRequest(FinishRequestEvent $event): void
         {
         }
 
@@ -154,7 +154,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onTerminate(«IF targets('3.0')»Terminate«ELSE»PostResponse«ENDIF»Event $event)«IF targets('3.0')»: void«ENDIF»
+        public function onTerminate(TerminateEvent $event): void
         {
         }
 
@@ -193,7 +193,7 @@ class KernelListener {
          *
          «commonExample.generalEventProperties(it, true)»
          */
-        public function onException(«IF !targets('3.0')»GetResponseFor«ENDIF»ExceptionEvent $event)«IF targets('3.0')»: void«ENDIF»
+        public function onException(ExceptionEvent $event): void
         {
         }
     '''

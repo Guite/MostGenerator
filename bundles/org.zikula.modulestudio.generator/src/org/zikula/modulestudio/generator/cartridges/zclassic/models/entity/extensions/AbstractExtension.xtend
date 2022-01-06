@@ -113,7 +113,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     }
 
     def protected extensionClassEntityAccessors(Entity it) '''
-        «(new FileHelper(application)).getterMethod(it, 'entity', name.formatForCodeCapital + 'Entity', false, false, app.targets('3.0'))»
+        «(new FileHelper(application)).getterMethod(it, 'entity', name.formatForCodeCapital + 'Entity', false, false, true)»
         «(new FileHelper(application)).setterMethod(it, 'entity', name.formatForCodeCapital + 'Entity', false, false, false, '', '')»
     '''
 
@@ -156,10 +156,8 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         «IF 'translation' == classType»
             use Gedmo\Translatable\Entity\Repository\TranslationRepository;
         «ELSEIF 'logEntry' == classType»
-            «IF application.targets('2.0')»
-                use DateInterval;
-                use DateTime;
-            «ENDIF»
+            use DateInterval;
+            use DateTime;
             use Doctrine\Common\Collections\ArrayCollection;
             use Gedmo\Loggable\Entity\Repository\LogEntryRepository;
             use Gedmo\Loggable\LoggableListener;

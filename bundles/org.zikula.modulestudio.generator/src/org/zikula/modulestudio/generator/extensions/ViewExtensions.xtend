@@ -134,18 +134,12 @@ class ViewExtensions {
      * Returns the code used for including Leaflet.
      */
     def includeLeaflet(Entity it, String actionName, String objName) '''
-        «IF application.targets('3.0')»
-            {{ pageAddAsset('stylesheet', zasset('@«application.appName»:leaflet/css/leaflet.css')) }}
-            {{ pageAddAsset('javascript', zasset('@«application.appName»:leaflet/js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js')) }}
-        «ELSE»
-            {% set pathToLeaflet = zasset('@«application.appName»:css/style.css')|replace({'Resources/public/css/style.css': ''}) ~ 'vendor/drmonty/leaflet/' %}
-            {{ pageAddAsset('stylesheet', pathToLeaflet ~ 'css/leaflet.css') }}
-            {{ pageAddAsset('javascript', pathToLeaflet ~ 'js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js') }}
-        «ENDIF»
+        {{ pageAddAsset('stylesheet', zasset('@«application.appName»:leaflet/css/leaflet.css')) }}
+        {{ pageAddAsset('javascript', zasset('@«application.appName»:leaflet/js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js')) }}
         «IF 'view' == actionName»
-            <div id="geographicalInfo" class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-context="«actionName»" data-object-type="«objName»" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"></div>
+            <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-object-type="«objName»" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"></div>
         «ELSE»
-            <div id="geographicalInfo" class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»" data-context="«actionName»" data-latitude="{{ «objName».latitude|«application.appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«application.appName.formatForDB»_geoData }}" data-zoom-level="{{ getModVar('«application.appName»', 'defaultZoomLevel', 18) }}" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and getModVar('«application.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) == true %}true{% else %}false{% endif %}"«ENDIF»></div>
+            <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-latitude="{{ «objName».latitude|«application.appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«application.appName.formatForDB»_geoData }}" data-zoom-level="{{ getModVar('«application.appName»', 'defaultZoomLevel', 18) }}" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and getModVar('«application.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) == true %}true{% else %}false{% endif %}"«ENDIF»></div>
         «ENDIF»
 
     '''

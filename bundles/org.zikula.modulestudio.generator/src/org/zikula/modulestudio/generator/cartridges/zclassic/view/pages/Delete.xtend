@@ -28,42 +28,26 @@ class Delete {
         «val app = application»
         «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» delete confirmation view #}
-            «IF application.targets('3.0')»
-                {% extends «IF isAdmin»'@«application.appName»/adminBase.html.twig'«ELSE»'@«application.appName»/base.html.twig'«ENDIF» %}
-            «ELSE»
-                {% extends «IF isAdmin»'«application.appName»::adminBase.html.twig'«ELSE»'«application.appName»::base.html.twig'«ENDIF» %}
-            «ENDIF»
+            {% extends «IF isAdmin»'@«application.appName»/adminBase.html.twig'«ELSE»'@«application.appName»/base.html.twig'«ENDIF» %}
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
-            «IF application.targets('3.0')»
-                {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
-            «ELSE»
-                {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
-            «ENDIF»
+            {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
         «ENDIF»
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        {% block title «IF app.targets('3.0')»'Delete «name.formatForDisplay»'|trans«ELSE»__('Delete «name.formatForDisplay»')«ENDIF» %}
+        {% block title 'Delete «name.formatForDisplay»'|trans %}
         «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'trash-«IF application.targets('3.0')»alt«ELSE»o«ENDIF»' %}
+            {% block admin_page_icon 'trash-alt' %}
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-delete">
-                «IF app.targets('3.0')»
-                    <p class="alert alert-warning">{% trans with {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle} %}Do you really want to delete this «name.formatForDisplay»: "%name%" ?{% endtrans %}</p>
-                «ELSE»
-                    <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) }}</p>
-                «ENDIF»
+                <p class="alert alert-warning">{% trans with {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle} %}Do you really want to delete this «name.formatForDisplay»: "%name%" ?{% endtrans %}</p>
 
                 {% form_theme deleteForm with [
-                    '@«app.appName»/Form/bootstrap_«IF application.targets('3.0')»4«ELSE»3«ENDIF».html.twig',
-                    «IF app.targets('3.0')»
-                        '@ZikulaFormExtension/Form/form_div_layout.html.twig'
-                    «ELSE»
-                        'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
-                    «ENDIF»
-                ]«IF app.targets('3.0')» only«ENDIF» %}
+                    '@«app.appName»/Form/bootstrap_4.html.twig',
+                    '@ZikulaFormExtension/Form/form_div_layout.html.twig'
+                ] only %}
                 {{ form_start(deleteForm) }}
                 {{ form_errors(deleteForm) }}
 
@@ -77,9 +61,9 @@ class Delete {
                     {% endif %}
                 «ENDIF»
                 <fieldset>
-                    <legend>«IF app.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Confirmation prompt{% endtrans %}«ELSE»{{ __('Confirmation prompt') }}«ENDIF»</legend>
-                    <div class="form-group«IF application.targets('3.0')» row«ENDIF»">
-                        <div class="«IF application.targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-offset-3 col-sm-9«ENDIF»">
+                    <legend>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Confirmation prompt{% endtrans %}</legend>
+                    <div class="form-group row">
+                        <div class="col-md-9 offset-md-3">
                             {{ form_widget(deleteForm.delete) }}
                             {{ form_widget(deleteForm.cancel) }}
                         </div>

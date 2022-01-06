@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -12,7 +11,6 @@ class ContentTypeDetailType {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -38,16 +36,10 @@ class ContentTypeDetailType {
         use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF targets('3.0')»
-            use Translation\Extractor\Annotation\Ignore;
-            use Translation\Extractor\Annotation\Translate;
-            use Zikula\ExtensionsModule\ModuleInterface\Content\ContentTypeInterface;
-            use Zikula\ExtensionsModule\ModuleInterface\Content\Form\Type\AbstractContentFormType;
-        «ELSE»
-            use Zikula\Common\Content\AbstractContentFormType;
-            use Zikula\Common\Content\ContentTypeInterface;
-            use Zikula\Common\Translator\TranslatorInterface;
-        «ENDIF»
+        use Translation\Extractor\Annotation\Ignore;
+        use Translation\Extractor\Annotation\Translate;
+        use Zikula\ExtensionsModule\ModuleInterface\Content\ContentTypeInterface;
+        use Zikula\ExtensionsModule\ModuleInterface\Content\Form\Type\AbstractContentFormType;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\EntityDisplayHelper;
 
@@ -67,15 +59,9 @@ class ContentTypeDetailType {
             protected $entityDisplayHelper;
 
             public function __construct(
-                «IF !targets('3.0')»
-                    TranslatorInterface $translator,
-                «ENDIF»
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper
             ) {
-                «IF !targets('3.0')»
-                    $this->setTranslator($translator);
-                «ENDIF»
                 $this->entityFactory = $entityFactory;
                 $this->entityDisplayHelper = $entityDisplayHelper;
             }
@@ -87,10 +73,6 @@ class ContentTypeDetailType {
                 $this->addDisplayModeField($builder, $options);
                 $this->addTemplateField($builder, $options);
             }
-            «IF !targets('3.0')»
-
-                «setTranslatorMethod»
-            «ENDIF»
 
             «addObjectTypeField»
 
@@ -125,19 +107,19 @@ class ContentTypeDetailType {
         /**
          * Adds an object type field.
          */
-        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addObjectTypeField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
-                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Object type:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                'label' => 'Object type',
                 'empty_data' => '«leadingEntity.name.formatForCode»',
                 «IF getAllEntities.filter[hasDisplayAction].size > 1»
                     'attr' => [
-                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the element once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                        'title' => 'If you change this please save the element once to reload the parameters below.',
                     ],
-                    'help' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the element once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                    'help' => 'If you change this please save the element once to reload the parameters below.',
                     'choices' => [
                         «FOR entity : getAllEntities.filter[hasDisplayAction]»
-                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»',
+                            '«entity.nameMultiple.formatForDisplayCapital»' => '«entity.name.formatForCode»',
                         «ENDFOR»
                     ],
                     'multiple' => false,
@@ -151,7 +133,7 @@ class ContentTypeDetailType {
         /**
          * Adds a item identifier field.
          */
-        public function addIdField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addIdField(FormBuilderInterface $builder, array $options = []): void
         {
             $repository = $this->entityFactory->getRepository($options['object_type']);
             // select without joins
@@ -166,9 +148,9 @@ class ContentTypeDetailType {
             $builder->add('id', ChoiceType::class, [
                 'multiple' => false,
                 'expanded' => false,
-                'choices' => «IF targets('3.0')»/** @Ignore */«ENDIF»$choices,
+                'choices' => /** @Ignore */$choices,
                 'required' => true,
-                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Entry to display:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                'label' => 'Entry to display',
             ]);
         }
     '''
@@ -177,17 +159,17 @@ class ContentTypeDetailType {
         /**
          * Adds a display mode field.
          */
-        public function addDisplayModeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addDisplayModeField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('displayMode', ChoiceType::class, [
-                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Display mode:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                'label' => 'Display mode',
                 'label_attr' => [
-                    'class' => 'radio-«IF targets('3.0')»custom«ELSE»inline«ENDIF»',
+                    'class' => 'radio-custom',
                 ],
                 'empty_data' => 'embed',
                 'choices' => [
-                    «IF !targets('3.0')»$this->__(«ENDIF»'Link to object'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'link',
-                    «IF !targets('3.0')»$this->__(«ENDIF»'Embed object display'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => 'embed',
+                    'Link to object' => 'link',
+                    'Embed object display' => 'embed',
                 ],
                 'multiple' => false,
                 'expanded' => true,
@@ -199,29 +181,23 @@ class ContentTypeDetailType {
         /**
          * Adds template fields.
          */
-        public function addTemplateField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addTemplateField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder
                 ->add('customTemplate', TextType::class, [
-                    'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Custom template:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                    'label' => 'Custom template',
                     'required' => false,
                     'attr' => [
                         'maxlength' => 80,
-                        «IF targets('3.0')»
-                            /** @Ignore */
-                        «ENDIF»
-                        'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig',
-                    ],
-                    «IF targets('3.0')»
                         /** @Ignore */
-                    «ENDIF»
-                    'help' => [
-                        «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>displaySpecial.html.twig</code>',
-                        «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Needs to be located in the "External/YourEntity/" directory.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                        'title' => /** @Translate */'Example' . ': displaySpecial.html.twig',
                     ],
-                    «IF targets('3.0')»
-                        'help_html' => true,
-                    «ENDIF»
+                    /** @Ignore */
+                    'help' => [
+                        /** @Translate */'Example' . ': <code>displaySpecial.html.twig</code>',
+                        /** @Translate */'Needs to be located in the "External/YourEntity/" directory.',
+                    ],
+                    'help_html' => true,
                 ])
             ;
         }

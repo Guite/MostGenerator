@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -13,7 +12,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ListEntriesHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
@@ -29,13 +27,8 @@ class ListEntriesHelper {
     def private listFieldFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-        «ENDIF»
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
 
         /**
          * Helper base class for list field entries related methods.
@@ -44,7 +37,7 @@ class ListEntriesHelper {
         {
             «helperBaseImpl»
         }
-	'''
+    '''
 
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
@@ -53,10 +46,6 @@ class ListEntriesHelper {
         {
             $this->setTranslator($translator);
         }
-        «IF !targets('3.0')»
-
-            «setTranslatorMethod»
-        «ENDIF»
 
         «resolve»
 
@@ -71,23 +60,13 @@ class ListEntriesHelper {
     def private resolve(Application it) '''
         /**
          * Return the name or names for a given list item.
-         «IF !targets('3.0')»
-         *
-         * @param string $value The dropdown value to process
-         * @param string $objectType The treated object type
-         * @param string $fieldName The list field's name
-         * @param string $delimiter String used as separator for multiple selections
-         *
-         * @return string List item name
-         «ENDIF»
          */
-        public function resolve(«IF targets('3.0')»
+        public function resolve(
             string $value,
             string $objectType = '',
             string $fieldName = '',
             string $delimiter = ', '
-        ): string {«ELSE»$value, $objectType = '', $fieldName = '', $delimiter = ', ')
-        {«ENDIF»
+        ): string {
             if ((empty($value) && '0' !== $value) || empty($objectType) || empty($fieldName)) {
                 return $value;
             }
@@ -125,14 +104,8 @@ class ListEntriesHelper {
     def private extractMultiList(Application it) '''
         /**
          * Extract concatenated multi selection.
-         «IF !targets('3.0')»
-         *
-         * @param string $value The dropdown value to process
-         *
-         * @return string[] List of single values
-         «ENDIF»
          */
-        public function extractMultiList(«IF targets('3.0')»string «ENDIF»$value)«IF targets('3.0')»: array«ENDIF»
+        public function extractMultiList(string $value): array
         {
             $listValues = explode('###', $value);
             $amountOfValues = count($listValues);
@@ -152,15 +125,8 @@ class ListEntriesHelper {
     def private hasMultipleSelection(Application it) '''
         /**
          * Determine whether a certain dropdown field has a multi selection or not.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType The treated object type
-         * @param string $fieldName The list field's name
-         *
-         * @return bool True if this is a multi list false otherwise
-         «ENDIF»
          */
-        public function hasMultipleSelection(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName)«IF targets('3.0')»: bool«ENDIF»
+        public function hasMultipleSelection(string $objectType, string $fieldName): bool
         {
             if (empty($objectType) || empty($fieldName)) {
                 return false;
@@ -199,15 +165,8 @@ class ListEntriesHelper {
     def private getEntries(Application it) '''
         /**
          * Get entries for a certain dropdown field.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType The treated object type
-         * @param string $fieldName The list field's name
-         *
-         * @return array Array with desired list entries
-         «ENDIF»
          */
-        public function getEntries(«IF targets('3.0')»string «ENDIF»$objectType, «IF targets('3.0')»string «ENDIF»$fieldName)«IF targets('3.0')»: array«ENDIF»
+        public function getEntries(string $objectType, string $fieldName): array
         {
             if (empty($objectType) || empty($fieldName)) {
                 return [];
@@ -261,12 +220,8 @@ class ListEntriesHelper {
     def private getItemsImpl(ListField it) '''
         /**
          * Get '«name.formatForDisplay»' list entries.
-         «IF !application.targets('3.0')»
-         *
-         * @return array Array with desired list entries
-         «ENDIF»
          */
-        public function get«name.formatForCodeCapital»EntriesFor«IF null !== entity»«entity.name.formatForCodeCapital»«ELSE»AppSettings«ENDIF»()«IF application.targets('3.0')»: array«ENDIF»
+        public function get«name.formatForCodeCapital»EntriesFor«IF null !== entity»«entity.name.formatForCodeCapital»«ELSE»AppSettings«ENDIF»(): array
         {
             $states = [];
             «IF name == 'workflowState'»
@@ -284,8 +239,8 @@ class ListEntriesHelper {
     def private entryInfo(ListFieldItem it, Application app, String domain) '''
         $states[] = [
             'value' => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«name.toFirstUpper.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
-            'title' => «IF null !== documentation && !documentation.empty»$this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('«documentation.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
+            'text' => $this->trans('«name.toFirstUpper.replace("'", "")»'«IF !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'title' => «IF null !== documentation && !documentation.empty»$this->trans('«documentation.replace("'", "")»'«IF !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
             'image' => '«IF null !== image && !image.empty»«image»«ENDIF»',
             'default' => «^default.displayBool»,
         ];
@@ -294,8 +249,8 @@ class ListEntriesHelper {
     def private entryInfoNegative(ListFieldItem it, Application app, String domain) '''
         $states[] = [
             'value' => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('All except «name.toFirstLower.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
-            'title' => $this->«IF app.targets('3.0')»trans«ELSE»__«ENDIF»('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF app.targets('3.0') && !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'text' => $this->trans('All except «name.toFirstLower.replace("'", "")»'«IF !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'title' => $this->trans('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
             'image' => '',
             'default' => false,
         ];

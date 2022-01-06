@@ -122,11 +122,7 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF isBase»
-            «IF application.targets('3.0')»
-                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            «ELSE»
-                use Zikula\Core\Doctrine\EntityAccess;
-            «ENDIF»
+            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
@@ -171,11 +167,7 @@ class Entities {
         «ENDIF»
         «IF isBase»
             «IF !isInheriting»
-                «IF application.targets('3.0')»
-                    use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-                «ELSE»
-                    use Zikula\Core\Doctrine\EntityAccess;
-                «ENDIF»
+                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             «ENDIF»
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
@@ -255,22 +247,15 @@ class Entities {
         «ENDIF»
         «IF hasUploadFieldsEntity»
 
-            «IF application.targets('3.0')»
-                /**
-                 * @var string Relative path to upload base folder
-                 */
-                protected $_uploadBasePathRelative = '';
+            /**
+             * @var string Relative path to upload base folder
+             */
+            protected $_uploadBasePathRelative = '';
 
-                /**
-                 * @var string Absolute path to upload base folder
-                 */
-                protected $_uploadBasePathAbsolute = '';
-            «ELSE»
-                /**
-                 * @var string Path to upload base folder
-                 */
-                protected $_uploadBasePath = '';
-            «ENDIF»
+            /**
+             * @var string Absolute path to upload base folder
+             */
+            protected $_uploadBasePathAbsolute = '';
 
             /**
              * @var string Base URL to upload files
@@ -293,15 +278,11 @@ class Entities {
     '''
 
     def private accessors(DataObject it) '''
-        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, application.targets('3.0'), '', '')»
+        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, true, '', '')»
         «IF hasUploadFieldsEntity»
-            «IF application.targets('3.0')»
-                «fh.getterAndSetterMethods(it, '_uploadBasePathRelative', 'string', false, false, application.targets('3.0'), '', '')»
-                «fh.getterAndSetterMethods(it, '_uploadBasePathAbsolute', 'string', false, false, application.targets('3.0'), '', '')»
-            «ELSE»
-                «fh.getterAndSetterMethods(it, '_uploadBasePath', 'string', false, false, application.targets('3.0'), '', '')»
-            «ENDIF»
-            «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, false, application.targets('3.0'), '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBasePathRelative', 'string', false, false, true, '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBasePathAbsolute', 'string', false, false, true, '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, false, true, '', '')»
         «ENDIF»
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»

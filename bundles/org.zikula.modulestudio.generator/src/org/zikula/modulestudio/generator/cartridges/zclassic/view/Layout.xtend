@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -18,7 +17,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Layout {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -45,7 +43,7 @@ class Layout {
         fileName = 'adminBase' + templateExtension
         fsa.generateFile(templatePath + fileName, adminBaseTemplate)
 
-        fileName = 'Form/bootstrap_' + (if (targets('3.0')) '4' else '3') + templateExtension
+        fileName = 'Form/bootstrap_4' + templateExtension
         fsa.generateFile(templatePath + fileName, formBaseTemplate)
 
         fileName = 'raw.html.twig'
@@ -54,15 +52,10 @@ class Layout {
 
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
-        «IF targets('3.0') && !isSystemModule»
+        «IF !isSystemModule»
             {% trans_default_domain 'messages' %}
         «ENDIF»
         {% block header %}
-            «IF hasGeographical && hasEditActions && !targets('3.0')»
-                {% if 'edit' in app.request.get('_route') %}
-                    {{ polyfill(['geolocation']) }}
-                {% endif %}
-            «ENDIF»
         {% endblock %}
 
         {% block appTitle %}
@@ -99,7 +92,7 @@ class Layout {
         {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
         «IF needsJQueryUI»
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-            {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js')«IF targets('3.0')», constant('Zikula\\ThemeModule\\Engine\\AssetBag::WEIGHT_JQUERY_UI')«ENDIF») }}
+            {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js'), constant('Zikula\\ThemeModule\\Engine\\AssetBag::WEIGHT_JQUERY_UI')) }}
         «ENDIF»
         «IF hasImageFields»
             {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
@@ -113,43 +106,20 @@ class Layout {
 
     def adminBaseTemplate(Application it) '''
         {# purpose of this template: admin area base layout #}
-        «IF targets('3.0')»
-            {% extends '@«appName»/base.html.twig' %}
-        «ELSE»
-            {% extends '«appName»::base.html.twig' %}
-        «ENDIF»
-        «IF targets('3.0') && !isSystemModule»
+        {% extends '@«appName»/base.html.twig' %}
+        «IF !isSystemModule»
             {% trans_default_domain 'messages' %}
-        «ENDIF»
-        «IF !targets('3.0')»
-            {% block header %}
-                {% if not app.request.query.getBoolean('raw', false) %}
-                    {{ adminHeader() }}
-                {% endif %}
-                {{ parent() }}
-            {% endblock %}
         «ENDIF»
         {% block appTitle %}{# empty on purpose #}{% endblock %}
         {% block titleArea %}
-            <h3><i class="fa«IF targets('3.0')»s«ENDIF» fa-{% block admin_page_icon %}{% endblock %}"></i> {% block title %}{% endblock %}</h3>
+            <h3><i class="fas fa-{% block admin_page_icon %}{% endblock %}"></i> {% block title %}{% endblock %}</h3>
         {% endblock %}
-        «IF !targets('3.0')»
-            {% block footer %}
-                {% if not app.request.query.getBoolean('raw', false) %}
-                    {{ adminFooter() }}
-                {% endif %}
-            {% endblock %}
-        «ENDIF»
     '''
 
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
-        «IF targets('3.0')»
-            {% extends '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
-        «ELSE»
-            {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
-        «ENDIF»
-        «IF targets('3.0') && !isSystemModule»
+        {% extends '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
+        «IF !isSystemModule»
             {% trans_default_domain 'messages' %}
         «ENDIF»
         «IF !getAllEntities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
@@ -157,9 +127,9 @@ class Layout {
             {%- block datetime_widget -%}
                 {{- parent() -}}
                 {%- if not required -%}
-                    «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
-                        <a id="{{ id }}ResetVal" href="javascript:void(0);" class="«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»">«IF targets('3.0')»{% trans %}Reset to empty value{% endtrans %}«ELSE»{{ __('Reset to empty value') }}«ENDIF»</a>
-                    «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
+                    <small class="form-text text-muted">
+                        <a id="{{ id }}ResetVal" href="javascript:void(0);" class="d-none">{% trans %}Reset to empty value{% endtrans %}</a>
+                    </small>
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
@@ -168,24 +138,10 @@ class Layout {
             {%- block date_widget -%}
                 {{- parent() -}}
                 {%- if not required -%}
-                    «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
-                        <a id="{{ id }}ResetVal" href="javascript:void(0);" class="«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»">«IF targets('3.0')»{% trans %}Reset to empty value{% endtrans %}«ELSE»{{ __('Reset to empty value') }}«ENDIF»</a>
-                    «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
+                    <small class="form-text text-muted">
+                        <a id="{{ id }}ResetVal" href="javascript:void(0);" class="d-none">{% trans %}Reset to empty value{% endtrans %}</a>
+                    </small>
                 {%- endif -%}
-            {%- endblock -%}
-        «ENDIF»
-        «IF hasColourFields && !targets('2.0')»
-
-            {%- block «appName.formatForDB»_field_colour_widget -%}
-                {%- set type = type|default('color') -%}
-                {{ block('form_widget_simple') }}
-            {%- endblock -%}
-        «ENDIF»
-        «IF hasTelephoneFields && !targets('2.0')»
-
-            {%- block «appName.formatForDB»_field_tel_widget -%}
-                {%- set type = type|default('tel') -%}
-                {{ block('form_widget_simple') }}
             {%- endblock -%}
         «ENDIF»
         «IF hasTranslatable»
@@ -198,21 +154,21 @@ class Layout {
 
             {% block «appName.formatForDB»_field_upload_label %}{% endblock %}
             {% block «appName.formatForDB»_field_upload_row %}
-                {% «IF targets('3.0')»apply spaceless«ELSE»spaceless«ENDIF» %}
+                {% apply spaceless %}
                 {{ form_row(attribute(form, field_name)) }}
-                <div class="«IF targets('3.0')»col-md-9 offset-md-3«ELSE»col-sm-9 col-sm-offset-3«ENDIF»"«IF !targets('3.0')» style="margin-top: -20px; padding-left: 8px"«ENDIF»>
+                <div class="col-md-9 offset-md-3">
                     {% if not required %}
-                        «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
-                            <a id="{{ id }}_{{ field_name }}ResetVal" href="javascript:void(0);" class="«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»">«IF targets('3.0')»{% trans %}Reset to empty value{% endtrans %}«ELSE»{{ __('Reset to empty value') }}«ENDIF»</a>
-                        «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
+                        <small class="form-text text-muted">
+                            <a id="{{ id }}_{{ field_name }}ResetVal" href="javascript:void(0);" class="d-none">{% trans %}Reset to empty value{% endtrans %}</a>
+                        </small>
                     {% endif %}
-                    «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
-                        «IF targets('3.0')»{% trans %}Allowed file extensions{% endtrans %}«ELSE»{{ __('Allowed file extensions') }}«ENDIF»: <span id="{{ id }}_{{ field_name }}FileExtensions">{{ allowed_extensions|default('') }}</span>
-                    «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
+                    <small class="form-text text-muted">
+                        {% trans %}Allowed file extensions{% endtrans %}: <span id="{{ id }}_{{ field_name }}FileExtensions">{{ allowed_extensions|default('') }}</span>
+                    </small>
                     {% if allowed_size|default %}
-                        «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<em class="help-block small">«ENDIF»
-                            «IF targets('3.0')»{% trans %}Allowed file size{% endtrans %}«ELSE»{{ __('Allowed file size') }}«ENDIF»: {{ allowed_size }}
-                        «IF targets('3.0')»</small>«ELSE»</em>«ENDIF»
+                        <small class="form-text text-muted">
+                            {% trans %}Allowed file size{% endtrans %}: {{ allowed_size }}
+                        </small>
                     {% endif %}
                     «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
                         {% if has_custom_filename %}
@@ -220,22 +176,22 @@ class Layout {
                         {% endif %}
                     «ENDIF»
                     {% if file_path|default %}
-                        «IF targets('3.0')»<small class="form-text text-muted">«ELSE»<span class="help-block small">«ENDIF»
-                            «IF targets('3.0')»{% trans %}Current file{% endtrans %}«ELSE»{{ __('Current file') }}«ENDIF»:
-                            <a href="{{ file_url }}" title="{{ «IF targets('3.0')»'Open file'|trans«ELSE»__('Open file')«ENDIF»|e('html_attr') }}"{% if file_meta.isImage %} class="image-link"{% endif %}>
+                        <small class="form-text text-muted">
+                            {% trans %}Current file{% endtrans %}:
+                            <a href="{{ file_url }}" title="{{ 'Open file'|trans|e('html_attr') }}"{% if file_meta.isImage %} class="image-link"{% endif %}>
                             {% if file_meta.isImage %}
-                                <img src="{{ file_path«IF targets('3.0')»|«appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', thumb_runtime_options) }}" alt="{{ edited_entity|«appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumb_runtime_options.thumbnail.size[0] }}" height="{{ thumb_runtime_options.thumbnail.size[1] }}" class="img-thumbnail" />
+                                <img src="{{ file_path|«appName.formatForDB»_relativePath|imagine_filter('zkroot', thumb_runtime_options) }}" alt="{{ edited_entity|«appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumb_runtime_options.thumbnail.size[0] }}" height="{{ thumb_runtime_options.thumbnail.size[1] }}" class="img-thumbnail" />
                             {% else %}
-                                «IF targets('3.0')»{% trans %}Download{% endtrans %}«ELSE»{{ __('Download') }}«ENDIF» ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
+                                {% trans %}Download{% endtrans %} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
                             {% endif %}
                             </a>
-                        «IF targets('3.0')»</small>«ELSE»</span>«ENDIF»
+                        </small>
                         {% if allow_deletion and not required and form[field_name ~ 'DeleteFile'] is defined %}
                             {{ form_row(attribute(form, field_name ~ 'DeleteFile')) }}
                         {% endif %}
                     {% endif %}
                 </div>
-                {% «IF targets('3.0')»endapply«ELSE»endspaceless«ENDIF» %}
+                {% endapply %}
             {% endblock %}
         «ENDIF»
         «IF hasAutoCompletionRelation»
@@ -245,36 +201,32 @@ class Layout {
                 {% set withImage = false %}
                 «FOR entity : entities»
                     {% «IF entity != entities.head»else«ENDIF»if object_type == '«entity.name.formatForCode»' %}
-                        {% set entityNameTranslated = «IF targets('3.0')»'«entity.name.formatForDisplay»'|trans«ELSE»__('«entity.name.formatForDisplay»')«ENDIF» %}
+                        {% set entityNameTranslated = '«entity.name.formatForDisplay»'|trans %}
                         «IF entity.hasImageFieldsEntity»
                             {% set withImage = true %}
                         «ENDIF»
                 «ENDFOR»
                 {% endif %}
                 {% set idPrefix = unique_name_for_js %}
-                «IF targets('3.0')»
-                    {% set addLinkText = multiple ? 'Add %name%'|trans({'%name%': entityNameTranslated}) : 'Select %name%'|trans({'%name%': entityNameTranslated}) %}
-                «ELSE»
-                    {% set addLinkText = multiple ? __f('Add %name%', {'%name%': entityNameTranslated}) : __f('Select %name%', {'%name%': entityNameTranslated}) %}
-                «ENDIF»
-                {% set findLinkText = «IF targets('3.0')»'Find %name%'|trans({'%name%': entityNameTranslated})«ELSE»__f('Find %name%', {'%name%': entityNameTranslated})«ENDIF» %}
-                {% set searchLinkText = «IF targets('3.0')»'Search %name%'|trans({'%name%': entityNameTranslated})«ELSE»__f('Search %name%', {'%name%': entityNameTranslated})«ENDIF» %}
-                {% set createNewLinkText = «IF targets('3.0')»'Create new %name%'|trans({'%name%': entityNameTranslated})«ELSE»__f('Create new %name%', {'%name%': entityNameTranslated})«ENDIF» %}
+                {% set addLinkText = multiple ? 'Add %name%'|trans({'%name%': entityNameTranslated}) : 'Select %name%'|trans({'%name%': entityNameTranslated}) %}
+                {% set findLinkText = 'Find %name%'|trans({'%name%': entityNameTranslated}) %}
+                {% set searchLinkText = 'Search %name%'|trans({'%name%': entityNameTranslated}) %}
+                {% set createNewLinkText = 'Create new %name%'|trans({'%name%': entityNameTranslated}) %}
 
                 <div id="{{ idPrefix }}LiveSearch" class="«appName.toLowerCase»-relation-rightside">
-                    <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»">{{ addLinkText }}</a>
+                    <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="d-none">{{ addLinkText }}</a>
                     <div id="{{ idPrefix }}AddFields" class="«appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
                         <label for="{{ idPrefix }}Selector">{{ findLinkText }}</label>
                         <br />
-                        <i class="fa«IF targets('3.0')»s«ENDIF» fa-search" title="{{ searchLinkText|e('html_attr') }}"></i>
+                        <i class="fas fa-search" title="{{ searchLinkText|e('html_attr') }}"></i>
                         <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
                         <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="{{ multiple ? '1' : '0' }}" />
                         <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
-                        <button type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa«IF targets('3.0')»s«ENDIF» fa-times"></i> «IF targets('3.0')»{% trans %}Cancel{% endtrans %}«ELSE»{{ __('Cancel') }}«ENDIF»</button>
+                        <button type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" class="btn btn-secondary «appName.toLowerCase»-inline-button"><i class="fas fa-times"></i> {% trans %}Cancel{% endtrans %}</button>
                         {% if create_url != '' %}
-                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF» «appName.toLowerCase»-inline-button"><i class="fa«IF targets('3.0')»s«ENDIF» fa-plus"></i> «IF targets('3.0')»{% trans %}Create{% endtrans %}«ELSE»{{ __('Create') }}«ENDIF»</a>
+                            <a id="{{ idPrefix }}SelectorDoNew" href="{{ create_url }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-secondary «appName.toLowerCase»-inline-button"><i class="fas fa-plus"></i> {% trans %}Create{% endtrans %}</a>
                         {% endif %}
-                        <noscript><p>«IF targets('3.0')»{% trans %}This function requires JavaScript activated!{% endtrans %}«ELSE»{{ __('This function requires JavaScript activated!') }}«ENDIF»</p></noscript>
+                        <noscript><p>{% trans %}This function requires JavaScript activated!{% endtrans %}</p></noscript>
                     </div>
                 </div>
             {% endblock %}
@@ -283,7 +235,7 @@ class Layout {
 
     def rawPageImpl(Application it) '''
         {# purpose of this template: display pages without the theme #}
-        «IF targets('3.0') && !isSystemModule»
+        «IF !isSystemModule»
             {% trans_default_domain 'messages' %}
         «ENDIF»
         <!DOCTYPE html>
@@ -302,19 +254,6 @@ class Layout {
             {% block content %}{% endblock %}
             {% block footer %}
                 «commonFooter»
-                «IF !targets('3.0')»
-                    <script>
-                        /* <![CDATA[ */
-                            if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                            Zikula.Config = {'entrypoint': '{{ getSystemVar('entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.schemeAndHttpHost ~ '/' }}', 'baseURI': '{{ app.request.basePath }}'};
-                        /* ]]> */
-                    </script>
-                «ENDIF»
-                «IF (hasEditActions || needsConfig) && !targets('3.0')»
-                    {% if «IF hasEditActions»'edit' in app.request.get('_route')«IF needsConfig» or «ENDIF»«ENDIF»«IF needsConfig»'config' in app.request.get('_route')«ENDIF» %}
-                        {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
-                    {% endif %}
-                «ENDIF»
                 «IF generateExternalControllerAndFinder»
                     {% if useFinder|default != true %}
                         «rawJsInit»
@@ -341,7 +280,7 @@ class Layout {
 
     def private pdfHeaderImpl(Application it) '''
         {# purpose of this template: export pages to PDF #}
-        «IF targets('3.0') && !isSystemModule»
+        «IF !isSystemModule»
             {% trans_default_domain 'messages' %}
         «ENDIF»
         <!DOCTYPE html>

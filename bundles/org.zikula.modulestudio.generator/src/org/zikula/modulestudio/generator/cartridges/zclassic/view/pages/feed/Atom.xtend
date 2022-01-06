@@ -36,13 +36,13 @@ class Atom {
 
     def private atomView(Entity it, Application app) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» atom feed #}
-        «IF app.targets('3.0') && !app.isSystemModule»
+        «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
         <feed xmlns="http://www.w3.org/2005/Atom">
-            <title type="text">«IF app.targets('3.0')»{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Latest «nameMultiple.formatForDisplay»') }}«ENDIF»</title>
-            <subtitle type="text">«IF app.targets('3.0')»{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }}«ENDIF» - {{ getSystemVar('slogan') }}</subtitle>
+            <title type="text">{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}</title>
+            <subtitle type="text">{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %} - {{ getSystemVar('slogan') }}</subtitle>
             <author>
                 <name>{{ getSystemVar('sitename') }}</name>
             </author>
@@ -90,11 +90,11 @@ class Atom {
         <summary type="html">
             <![CDATA[
             «IF !textFields.empty»
-                {{ «objName».«textFields.head.name.formatForCode»|«IF application.targets('3.0')»u.«ENDIF»truncate(150«IF !application.targets('3.0')», true«ENDIF», '…')|default('-') }}
+                {{ «objName».«textFields.head.name.formatForCode»|u.truncate(150, '…')|default('-') }}
             «ELSEIF !stringFields.empty»
-                {{ «objName».«stringFields.head.name.formatForCode»|«IF application.targets('3.0')»u.«ENDIF»truncate(150«IF !application.targets('3.0')», true«ENDIF», '…')|default('-') }}
+                {{ «objName».«stringFields.head.name.formatForCode»|u.truncate(150, '…')|default('-') }}
             «ELSE»
-                {{ «objName»|«application.appName.formatForDB»_formattedTitle|«IF application.targets('3.0')»u.«ENDIF»truncate(150«IF !application.targets('3.0')», true«ENDIF», '…')|default('-') }}
+                {{ «objName»|«application.appName.formatForDB»_formattedTitle|u.truncate(150, '…')|default('-') }}
             «ENDIF»
             ]]>
         </summary>

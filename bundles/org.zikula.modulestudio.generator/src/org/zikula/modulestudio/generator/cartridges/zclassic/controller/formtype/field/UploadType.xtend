@@ -33,11 +33,7 @@ class UploadType {
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
-        «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use «appNamespace»\Form\DataTransformer\UploadFileTransformer;
         use «appNamespace»\Helper\ImageHelper;
         use «appNamespace»\Helper\UploadHelper;
@@ -47,17 +43,10 @@ class UploadType {
          */
         abstract class AbstractUploadType extends AbstractType
         {
-            «IF targets('3.0')»
-                /**
-                 * @var ZikulaHttpKernelInterface
-                 */
-                protected $kernel;
-            «ELSE»
-                /**
-                 * @var TranslatorInterface
-                 */
-                protected $translator;
-            «ENDIF»
+            /**
+             * @var ZikulaHttpKernelInterface
+             */
+            protected $kernel;
 
             /**
              * @var ImageHelper
@@ -80,19 +69,11 @@ class UploadType {
             protected $entity = null;
 
             public function __construct(
-                «IF targets('3.0')»
-                    ZikulaHttpKernelInterface $kernel,
-                «ELSE»
-                    TranslatorInterface $translator,
-                «ENDIF»
+                ZikulaHttpKernelInterface $kernel,
                 ImageHelper $imageHelper,
                 UploadHelper $uploadHelper
             ) {
-                «IF targets('3.0')»
-                    $this->kernel = $kernel;
-                «ELSE»
-                    $this->translator = $translator;
-                «ENDIF»
+                $this->kernel = $kernel;
                 $this->imageHelper = $imageHelper;
                 $this->uploadHelper = $uploadHelper;
             }
@@ -115,20 +96,18 @@ class UploadType {
                 $fileOptions['attr']['class'] = 'validate-upload';
 
                 $builder->add($fieldName, FileType::class, $fileOptions);
-                $uploadFileTransformer = new UploadFileTransformer(«IF targets('3.0')»$this->kernel, «ENDIF»$this->entity, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
+                $uploadFileTransformer = new UploadFileTransformer($this->kernel, $this->entity, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
                 $builder->addModelTransformer($uploadFileTransformer);
 
                 if ($options['allow_deletion'] && !$options['required']) {
                     $builder->add($fieldName . 'DeleteFile', CheckboxType::class, [
-                        'label' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Delete existing file'«IF !targets('3.0')»)«ENDIF»,
-                        «IF targets('3.0')»
-                            'label_attr' => [
-                                'class' => 'switch-custom',
-                            ],
-                        «ENDIF»
+                        'label' => 'Delete existing file',
+                        'label_attr' => [
+                            'class' => 'switch-custom',
+                        ],
                         'required' => false,
                         'attr' => [
-                            'title' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Delete this file ?'«IF !targets('3.0')»)«ENDIF»,
+                            'title' => 'Delete this file ?',
                         ],
                     ]);
                 }
@@ -136,12 +115,12 @@ class UploadType {
 
                     if (true === $options['custom_filename']) {
                         $builder->add($fieldName . 'CustomFileName', TextType::class, [
-                            'label' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Custom file name'«IF !targets('3.0')»)«ENDIF»,
+                            'label' => 'Custom file name',
                             'required' => false,
                             'attr' => [
-                                'title' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Optionally enter a custom file name (without extension)'«IF !targets('3.0')»)«ENDIF»,
+                                'title' => 'Optionally enter a custom file name (without extension)',
                             ],
-                            'help' => «IF !targets('3.0')»$this->translator->__(«ENDIF»'Optionally enter a custom file name (without extension)'«IF !targets('3.0')»)«ENDIF»,
+                            'help' => 'Optionally enter a custom file name (without extension)',
                         ]);
                     }
                 «ENDIF»
@@ -221,9 +200,7 @@ class UploadType {
                             'custom_filename' => false,
                         «ENDIF»
                         'error_bubbling' => false,
-                        «IF targets('2.0')»
-                            'allow_file_upload' => true,
-                        «ENDIF»
+                        'allow_file_upload' => true,
                     ])
                     ->setAllowedTypes('allow_deletion', 'bool')
                     ->setAllowedTypes('allowed_extensions', 'string')
@@ -233,8 +210,8 @@ class UploadType {
                     «ENDIF»
                 ;
             }
-            «new FileHelper(it).getterMethod(null, 'formBuilder', 'FormBuilderInterface', false, false, targets('3.0'))»
-            «new FileHelper(it).getterMethod(null, 'entity', 'object', false, false, targets('3.0'))»
+            «new FileHelper(it).getterMethod(null, 'formBuilder', 'FormBuilderInterface', false, false, true)»
+            «new FileHelper(it).getterMethod(null, 'entity', 'object', false, false, true)»
 
             public function getBlockPrefix()
             {

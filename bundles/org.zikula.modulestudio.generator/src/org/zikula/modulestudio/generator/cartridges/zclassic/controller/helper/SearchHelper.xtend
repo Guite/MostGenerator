@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -13,7 +12,6 @@ class SearchHelper {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -31,15 +29,9 @@ class SearchHelper {
         use Symfony\Component\Form\Extension\Core\Type\HiddenType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\RouteUrl;
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-            use Zikula\Core\RouteUrl;
-        «ENDIF»
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Zikula\Bundle\CoreBundle\RouteUrl;
+        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\SearchModule\Entity\SearchResultEntity;
         use Zikula\SearchModule\SearchableInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -99,10 +91,6 @@ class SearchHelper {
             $this->entityDisplayHelper = $entityDisplayHelper;
             $this->permissionHelper = $permissionHelper;
         }
-        «IF !targets('3.0')»
-
-            «setTranslatorMethod»
-        «ENDIF»
 
         «amendForm»
 
@@ -111,18 +99,14 @@ class SearchHelper {
         «val entitiesWithStrings = getAllEntities.filter[hasAbstractStringFieldsEntity]»
         /**
          * Returns list of supported search types.
-         «IF !targets('3.0')»
-         *
-         * @return array List of search types
-         «ENDIF»
          */
-        protected function getSearchTypes()«IF targets('3.0')»: array«ENDIF»
+        protected function getSearchTypes(): array
         {
             $searchTypes = [
                 «FOR entity : entitiesWithStrings»
                     '«appName.toFirstLower»«entity.nameMultiple.formatForCodeCapital»' => [
                         'value' => '«entity.name.formatForCode»',
-                        'label' => $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule»«IF targets('3.0')», [], '«entity.name.formatForCode»'«ELSE», '«appName.formatForDB»'«ENDIF»«ENDIF»),
+                        'label' => $this->trans('«entity.nameMultiple.formatForDisplayCapital»'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
                     ],
                 «ENDFOR»
             ];
@@ -151,7 +135,7 @@ class SearchHelper {
     '''
 
     def private amendForm(Application it) '''
-        public function amendForm(FormBuilderInterface $builder)«IF targets('3.0')»: void«ENDIF»
+        public function amendForm(FormBuilderInterface $builder): void
         {
             if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
                 return;
@@ -176,7 +160,7 @@ class SearchHelper {
     '''
 
     def private getResults(Application it) '''
-        public function getResults(array $words, «IF targets('3.0')»string «ENDIF»$searchType = 'AND', «IF targets('3.0')»?array «ENDIF»$modVars = null)«IF targets('3.0')»: array«ENDIF»
+        public function getResults(array $words, string $searchType = 'AND', ?array $modVars = null): array
         {
             if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
                 return [];
@@ -250,11 +234,7 @@ class SearchHelper {
                     }
 
                     $description = !empty($descriptionFieldName) ? strip_tags($entity[$descriptionFieldName]) : '';
-                    «IF targets('3.0')»
-                        $created = $entity['createdDate'] ?? null;
-                    «ELSE»
-                        $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
-                    «ENDIF»
+                    $created = $entity['createdDate'] ?? null;
 
                     $formattedTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
                     $displayUrl = null;
@@ -270,7 +250,7 @@ class SearchHelper {
                     $result = new SearchResultEntity();
                     $result->setTitle($formattedTitle)
                         ->setText($description)
-                        ->setModule(«IF targets('3.0')»$this->getBundleName()«ELSE»'«appName»'«ENDIF»)
+                        ->setModule($this->getBundleName())
                         ->setCreated($created)
                         ->setSesid(null !== $session ? $session->getId() : null)
                     ;
@@ -286,7 +266,7 @@ class SearchHelper {
     '''
 
     def private getErrors(Application it) '''
-        public function getErrors()«IF targets('3.0')»: array«ENDIF»
+        public function getErrors(): array
         {
             return [];
         }
@@ -295,22 +275,13 @@ class SearchHelper {
     def private formatWhere(Application it) '''
         /**
          * Construct a QueryBuilder Where orX|andX Expr instance.
-         «IF !targets('3.0')»
-         *
-         * @param QueryBuilder $qb
-         * @param string[] $words List of words to query for
-         * @param string[] $fields List of fields to include into query
-         * @param string $searchtype AND|OR|EXACT
-         *
-         * @return null|Composite
-         «ENDIF»
          */
         protected function formatWhere(
             QueryBuilder $qb,
             array $words = [],
             array $fields = [],
-            «IF targets('3.0')»string «ENDIF»$searchtype = 'AND'
-        )«IF targets('3.0')»: ?Composite«ENDIF» {
+            string $searchtype = 'AND'
+        ): ?Composite {
             if (empty($words) || empty($fields)) {
                 return null;
             }
@@ -332,13 +303,11 @@ class SearchHelper {
 
             return $where;
         }
-        «IF targets('3.0')»
 
-            public function getBundleName(): string
-            {
-                return '«appName»';
-            }
-        «ENDIF»
+        public function getBundleName(): string
+        {
+            return '«appName»';
+        }
     '''
 
     def private searchHelperImpl(Application it) '''

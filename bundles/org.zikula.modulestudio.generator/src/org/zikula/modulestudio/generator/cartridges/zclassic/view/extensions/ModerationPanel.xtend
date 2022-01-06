@@ -38,15 +38,15 @@ class ModerationPanel {
                         {% set itemObjectType = modItem.objectType|lower %}
                         «IF hasViewActions»
                             {% if itemObjectType in ['«getAllEntities.filter[hasViewAction].map[name.formatForCode].join('\', \'')»'] %}
-                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="«IF targets('3.0')»font-weight-«ENDIF»bold alert-link">{{ modItem.message }}</a>
+                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="font-weight-bold alert-link">{{ modItem.message }}</a>
                             {% elseif itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
-                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="«IF targets('3.0')»font-weight-«ENDIF»bold alert-link">{{ modItem.message }}</a>
+                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="font-weight-bold alert-link">{{ modItem.message }}</a>
                             {% else %}
                                 <strong>{{ modItem.message }}</strong>
                             {% endif %}
                         «ELSE»
                             {% if itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
-                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="«IF targets('3.0')»font-weight-«ENDIF»bold alert-link">{{ modItem.message }}</a>
+                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="font-weight-bold alert-link">{{ modItem.message }}</a>
                             {% else %}
                                 <strong>{{ modItem.message }}</strong>
                             {% endif %}

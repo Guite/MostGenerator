@@ -30,14 +30,10 @@ class BlockDetail {
         namespace «appNamespace»\Block\Base;
 
         use Symfony\Component\HttpKernel\Controller\ControllerReference;
-        «IF targets('3.0')»
-            use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
-        «ENDIF»
+        use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
         use Zikula\BlocksModule\AbstractBlockHandler;
         use «appNamespace»\Block\Form\Type\ItemBlockType;
-        «IF targets('3.0')»
-            use «appNamespace»\Helper\ControllerHelper;
-        «ENDIF»
+        use «appNamespace»\Helper\ControllerHelper;
 
         /**
          * Generic item detail block base class.
@@ -49,21 +45,19 @@ class BlockDetail {
     '''
 
     def private detailBlockBaseImpl(Application it) '''
-        «IF targets('3.0')»
-            /**
-             * @var ControllerHelper
-             */
-            protected $controllerHelper;
+        /**
+         * @var ControllerHelper
+         */
+        protected $controllerHelper;
 
-            /**
-             * @var FragmentHandler
-             */
-            protected $fragmentHandler;
+        /**
+         * @var FragmentHandler
+         */
+        protected $fragmentHandler;
 
-        «ENDIF»
-        public function getType()«IF targets('3.0')»: string«ENDIF»
+        public function getType(): string
         {
-            return $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» detail'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
+            return $this->trans('«name.formatForDisplayCapital» detail');
         }
 
         «display»
@@ -72,16 +66,7 @@ class BlockDetail {
 
         «modify»
 
-        «IF !targets('3.0')»
-            /**
-             * Returns default settings for this block.
-             *
-             * @return array The default settings
-             */
-            protected function getDefaults()
-        «ELSE»
-            public function getPropertyDefaults(): array
-        «ENDIF»
+        public function getPropertyDefaults(): array
         {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -90,95 +75,64 @@ class BlockDetail {
                 'customTemplate' => null,
             ];
         }
-        «IF targets('3.0')»
 
-            /**
-             * @required
-             */
-            public function setControllerHelper(ControllerHelper $controllerHelper): void
-            {
-                $this->controllerHelper = $controllerHelper;
-            }
+        /**
+         * @required
+         */
+        public function setControllerHelper(ControllerHelper $controllerHelper): void
+        {
+            $this->controllerHelper = $controllerHelper;
+        }
 
-            /**
-             * @required
-             */
-            public function setFragmentHandler(FragmentHandler $fragmentHandler): void
-            {
-                $this->fragmentHandler = $fragmentHandler;
-            }
-        «ENDIF»
+        /**
+         * @required
+         */
+        public function setFragmentHandler(FragmentHandler $fragmentHandler): void
+        {
+            $this->fragmentHandler = $fragmentHandler;
+        }
     '''
 
     def private display(Application it) '''
-        public function display(array $properties = [])«IF targets('3.0')»: string«ENDIF»
+        public function display(array $properties = []): string
         {
             // only show block content if the user has the required permissions
             if (!$this->hasPermission('«appName»:ItemBlock:', $properties['title'] . '::', ACCESS_OVERVIEW)) {
                 return '';
             }
-            «IF !targets('3.0')»
-
-                // set default values for all params which are not properly set
-                $defaults = $this->getDefaults();
-                $properties = array_merge($defaults, $properties);
-            «ENDIF»
 
             if (null === $properties['id'] || empty($properties['id'])) {
                 return '';
             }
 
-            «IF targets('3.0')»
-                «IF !isSystemModule»
-                    $contextArgs = ['name' => 'detail'];
-                «ENDIF»
-                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»);
-                if (
-                    !isset($properties['objectType'])
-                    || !in_array($properties['objectType'], $allowedObjectTypes, true)
-                ) {
-                    $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
-                }
-            «ELSE»
-                $controllerHelper = $this->get('«appService».controller_helper');
-                «IF !isSystemModule»
-                    $contextArgs = ['name' => 'detail'];
-                «ENDIF»
-                if (
-                    !isset($properties['objectType'])
-                    || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»), true)
-                ) {
-                    $properties['objectType'] = $controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
-                }
+            «IF !isSystemModule»
+                $contextArgs = ['name' => 'detail'];
             «ENDIF»
+            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»);
+            if (
+                !isset($properties['objectType'])
+                || !in_array($properties['objectType'], $allowedObjectTypes, true)
+            ) {
+                $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
+            }
 
             $controllerReference = new ControllerReference(
-                «IF targets('3.0')»
-                    '«appNamespace»\Controller\ExternalController::display«IF !targets('3.x-dev')»Action«ENDIF»',
-                «ELSE»
-                    '«appName»:External:display',
-                «ENDIF»
+                '«appNamespace»\Controller\ExternalController::display«IF !targets('3.1')»Action«ENDIF»',
                 $this->getDisplayArguments($properties),
                 [
                     'template' => $properties['customTemplate']
                 ]
             );
 
-            return $this->«IF targets('3.0')»fragmentHandler«ELSE»get('fragment.handler')«ENDIF»->render($controllerReference);
+            return $this->fragmentHandler->render($controllerReference);
         }
     '''
 
     def private getDisplayArguments(Application it) '''
         /**
          * Returns common arguments for displaying the selected object using the external controller.
-         «IF !targets('3.0')»
-         *
-         * @param array $properties The block properties
-         *
-         * @return array Display arguments
-         «ENDIF»
          */
-        protected function getDisplayArguments(array $properties = [])«IF targets('3.0')»: array«ENDIF»
+        protected function getDisplayArguments(array $properties = []): array
         {
             return [
                 'objectType' => $properties['objectType'],
@@ -190,37 +144,35 @@ class BlockDetail {
     '''
 
     def private modify(Application it) '''
-        public function getFormClassName()«IF targets('3.0')»: string«ENDIF»
+        public function getFormClassName(): string
         {
             return ItemBlockType::class;
         }
 
-        public function getFormOptions()«IF targets('3.0')»: array«ENDIF»
+        public function getFormOptions(): array
         {
             $objectType = '«leadingEntity.name.formatForCode»';
-            «IF !targets('3.0')»
-
-                $request = $this->«IF targets('3.0')»requestStack«ELSE»get('request_stack')«ENDIF»->getCurrentRequest();
-                if (null !== $request && $request->attributes->has('blockEntity')) {
-                    $blockEntity = $request->attributes->get('blockEntity');
-                    if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {
-                        $blockProperties = $blockEntity->getProperties();
-                        if (isset($blockProperties['objectType'])) {
-                            $objectType = $blockProperties['objectType'];
-                        } else {
-                            // set default options for new block creation
-                            $blockEntity->setProperties($this->getDefaults());
-                        }
+            «/* TODO remove the following block */»
+            $request = $this->requestStack->getCurrentRequest();
+            if (null !== $request && $request->attributes->has('blockEntity')) {
+                $blockEntity = $request->attributes->get('blockEntity');
+                if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {
+                    $blockProperties = $blockEntity->getProperties();
+                    if (isset($blockProperties['objectType'])) {
+                        $objectType = $blockProperties['objectType'];
+                    } else {
+                        // set default options for new block creation
+                        $blockEntity->setProperties($this->getDefaults());
                     }
                 }
-            «ENDIF»
+            }
 
             return [
                 'object_type' => $objectType,
             ];
         }
 
-        public function getFormTemplate()«IF targets('3.0')»: string«ENDIF»
+        public function getFormTemplate(): string
         {
             return '@«appName»/Block/item_modify.html.twig';
         }

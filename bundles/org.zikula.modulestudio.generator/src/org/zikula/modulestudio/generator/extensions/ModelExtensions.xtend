@@ -155,13 +155,6 @@ class ModelExtensions {
     }
 
     /**
-     * Checks whether the application contains at least one entity with at least one phone number field.
-     */
-    def hasTelephoneFields(Application it) {
-        getAllEntities.exists[hasTelephoneFieldsEntity] || !getAllVariables.filter(StringField).filter[role == StringRole.PHONE_NUMBER].empty
-    }
-
-    /**
      * Checks whether the application contains at least one entity with at least one country field.
      */
     def hasCountryFields(Application it) {
@@ -615,20 +608,6 @@ class ModelExtensions {
      */
     def getColourFieldsEntity(DataObject it) {
         getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.COLOUR]].flatten
-    }
-
-    /**
-     * Checks whether this entity has at least one phone number field.
-     */
-    def hasTelephoneFieldsEntity(DataObject it) {
-        !getTelephoneFieldsEntity.empty
-    }
-
-    /**
-     * Returns a list of all phone number fields of this entity.
-     */
-    def getTelephoneFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.PHONE_NUMBER]].flatten
     }
 
     /**

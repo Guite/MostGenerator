@@ -124,8 +124,8 @@ class Relations {
 
     def private tabTitleForEditTemplate(JoinRelationship it, Entity ownEntity, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
-        <li«IF application.targets('3.0')» class="nav-item"«ENDIF» role="presentation">
-            <a id="«ownEntityName.formatForCode»Tab" href="#tab«ownEntityName.formatForCodeCapital»" title="{{ «IF application.targets('3.0')»'«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«ownEntityName.formatForDisplayCapital»')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab"«IF application.targets('3.0')» class="nav-link"«ENDIF»>«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from '«ownEntity.name.formatForCode»'«ENDIF» %}«ownEntityName.formatForDisplayCapital»{% endtrans %}«ELSE»{{ __('«ownEntityName.formatForDisplayCapital»') }}«ENDIF»</a>
+        <li class="nav-item" role="presentation">
+            <a id="«ownEntityName.formatForCode»Tab" href="#tab«ownEntityName.formatForCodeCapital»" title="{{ '«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from '«ownEntity.name.formatForCode»'«ENDIF» %}«ownEntityName.formatForDisplayCapital»{% endtrans %}</a>
         </li>
     '''
 
@@ -136,7 +136,7 @@ class Relations {
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean useTarget, String relationAliasName, String uniqueNameForJs) '''
         {{ include(
             '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«IF isSeparateAdminTemplate»Admin/«ENDIF»«templateName».html.twig',
-            {group: '«linkingEntity.name.formatForDB»', heading: «IF application.targets('3.0')»'«getRelationAliasName(useTarget).formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«getRelationAliasName(useTarget).formatForDisplayCapital»')«ENDIF», alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForCode»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(!useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
+            {group: '«linkingEntity.name.formatForDB»', heading: '«getRelationAliasName(useTarget).formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF», alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForCode»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(!useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
         ) }}
     '''
 
@@ -149,11 +149,11 @@ class Relations {
             {% endif %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tab«ownEntityName.formatForCodeCapital»" aria-labelledby="«ownEntityName.formatForCode»Tab">
-                    <h3>{{ heading|default ? heading : «IF application.targets('3.0')»'«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«ownEntityName.formatForDisplayCapital»')«ENDIF» }}</h3>
+                    <h3>{{ heading|default ? heading : '«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF» }}</h3>
             {% else %}
                 <fieldset class="«ownEntityName.formatForDB»">
             {% endif %}
-                <legend>{{ heading|default ? heading : «IF application.targets('3.0')»'«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»«ELSE»__('«ownEntityName.formatForDisplayCapital»')«ENDIF» }}</legend>
+                <legend>{{ heading|default ? heading : '«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF» }}</legend>
                 «IF app.needsInlineEditing»
                     <div id="{{ alias }}InlineEditingContainer">
                         «includedEditTemplateBody(ownEntity, linkingEntity, hasEdit, many)»
@@ -208,14 +208,14 @@ class Relations {
         <li id="{{ idPrefixItem }}">
             {{ item|«app.appName.formatForDB»_formattedTitle }}
             «IF includeEditing»
-                <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}"><i class="fa«IF app.targets('3.0')»s«ENDIF» fa-«IF app.targets('3.0')»edit«ELSE»pencil-square-o«ENDIF»"></i></a>
+                <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}"><i class="fas fa-edit"></i></a>
             «ENDIF»
-             <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');"><i class="fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»"></i></a>
+             <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');"><i class="fas fa-trash-alt"></i></a>
             «IF targetEntity.hasImageFieldsEntity»
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {% if item.«imageFieldName» is not empty and item.«imageFieldName»Meta.isImage %}
-                    <img src="{{ item.«imageFieldName».getPathname()«IF app.targets('3.0')»|«app.appName.formatForDB»_relativePath«ENDIF»|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="«IF !app.targets('3.0')»img-«ENDIF»rounded" />
+                    <img src="{{ item.«imageFieldName».getPathname()|«app.appName.formatForDB»_relativePath|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="rounded" />
                 {% endif %}
             «ENDIF»
         </li>

@@ -27,25 +27,15 @@ class TechHelper {
             <meta name="description" content="«appDescription»">
             <meta name="author" content="«author»">
             <title>«name.formatForDisplayCapital» &ndash; «title»</title>
-            «IF targets('3.0')»
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
-            «ELSE»
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap-theme.min.css">
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-                <!--[if lt IE 9]>
-                    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-                    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-                <![endif]-->
-            «ENDIF»
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
             <link rel="icon" href="../../public/images/admin.png">
             <link rel="stylesheet" href="../../public/css/techdocs.css">
         </head>
         <body>
               <div class="container">
                   <h1>
-                      <img src="../../public/images/admin.png" width="48" height="48" alt="Icon" class="img-thumbnail «IF targets('3.0')»float«ELSE»pull«ENDIF»-right" />
+                      <img src="../../public/images/admin.png" width="48" height="48" alt="Icon" class="img-thumbnail float-right" />
                       «name.formatForDisplayCapital» &ndash; «title»
                   </h1>
                   <p>«appDescription»</p>
@@ -53,21 +43,15 @@ class TechHelper {
 
     def private footer(Application it) '''
                 </div>
-                «IF targets('3.0')»
-                    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
-                «ELSE»
-                    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-                    <script src="https://code.jquery.com/jquery-migrate-3.0.1.min.js"></script>
-                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-                «ENDIF»
+                <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
             </body>
         </html>
     '''
 
     def table(Application it, CharSequence columns, CharSequence header, CharSequence content) '''
         <div class="table-responsive">
-            <table class="table-striped table-bordered table-hover table-«IF targets('3.0')»sm«ELSE»condensed«ENDIF»">
+            <table class="table-striped table-bordered table-hover table-sm">
                 «columns»
                 «IF header != ''»
                     <thead>
@@ -83,16 +67,16 @@ class TechHelper {
 
     def flag(Application it, Boolean value) '''
         «IF value»
-            <i class="fa«IF targets('3.0')»s«ENDIF» fa-check"></i>
+            <i class="fas fa-check"></i>
         «ELSE»
-            <i class="fa«IF targets('3.0')»s«ENDIF» fa-times"></i>
+            <i class="fas fa-times"></i>
         «ENDIF»
     '''
 
     def basicInfo(Application it, String language) '''
         «table(basicInfoColumns, basicInfoHeader(language), basicInfoContent(language))»
-        <h2><i class="fa«IF targets('3.0')»s«ENDIF» fa-sitemap"></i> «IF language == 'de'»Modell der Anwendung«ELSE»Application model«ENDIF»</h2>
-        <p><img src="«name.formatForCodeCapital»_Entities%20Diagram.jpg" alt="«name.formatForDisplayCapital» «IF language == 'de'»Modell«ELSE»Model«ENDIF»" class="img-thumbnail img-«IF targets('3.0')»fluid«ELSE»responsive«ENDIF»" /></p>
+        <h2><i class="fas fa-sitemap"></i> «IF language == 'de'»Modell der Anwendung«ELSE»Application model«ENDIF»</h2>
+        <p><img src="«name.formatForCodeCapital»_Entities%20Diagram.jpg" alt="«name.formatForDisplayCapital» «IF language == 'de'»Modell«ELSE»Model«ENDIF»" class="img-thumbnail img-fluid" /></p>
     '''
 
     def private basicInfoColumns(Application it) '''
@@ -120,11 +104,11 @@ class TechHelper {
         </tr>
         <tr>
             <th id="hEmail" scope="row" headers="hBasicField">«IF language == 'de'»E-Mail«ELSE»Email«ENDIF»</th>
-            <td headers="hBasicValue hEmail"><a href="mailto:«email»"><i class="fa«IF targets('3.0')»s«ENDIF» fa-envelope"></i> «email»</a></td>
+            <td headers="hBasicValue hEmail"><a href="mailto:«email»"><i class="fas fa-envelope"></i> «email»</a></td>
         </tr>
         <tr>
             <th id="hUrl" scope="row" headers="hBasicField">URL</th>
-            <td headers="hBasicValue hUrl"><a href="«url»" title="«IF language == 'de'»Projektseite«ELSE»Project page«ENDIF»" target="_blank"><i class="fa«IF targets('3.0')»s«ENDIF» fa-external-link-square«IF targets('3.0')»-alt«ENDIF»"></i> «url»</a></td>
+            <td headers="hBasicValue hUrl"><a href="«url»" title="«IF language == 'de'»Projektseite«ELSE»Project page«ENDIF»" target="_blank"><i class="fas fa-external-link-square-alt"></i> «url»</a></td>
         </tr>
         <tr>
             <th id="hVersion" scope="row" headers="hBasicField">Version</th>

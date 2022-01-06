@@ -27,29 +27,18 @@ class LoggableHelper {
     def private loggableFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF !targets('3.0')»
-            use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-        «ENDIF»
         «IF hasTrees && !getTreeEntities.filter[loggable].empty»
             use Doctrine\Common\Proxy\Proxy;
         «ENDIF»
         use Doctrine\ORM\Id\AssignedGenerator;
         use Doctrine\ORM\Mapping\ClassMetadata;
-        «IF targets('3.0')»
-            use Doctrine\Persistence\Event\LifecycleEventArgs;
-        «ENDIF»
+        use Doctrine\Persistence\Event\LifecycleEventArgs;
         use Exception;
         use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
         use Gedmo\Loggable\LoggableListener;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-            use Zikula\Core\Doctrine\EntityAccess;
-        «ENDIF»
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\EntityDisplayHelper;
         «IF hasLoggableTranslatable»
@@ -106,10 +95,6 @@ class LoggableHelper {
                 $this->translatableHelper = $translatableHelper;
             «ENDIF»
         }
-        «IF !targets('3.0')»
-
-            «setTranslatorMethod»
-        «ENDIF»
 
         «determineDiffViewParameters»
 
@@ -135,15 +120,8 @@ class LoggableHelper {
     def private determineDiffViewParameters(Application it) '''
         /**
          * Determines template parameters for diff view.
-         «IF !targets('3.0')»
-         *
-         * @param array $logEntries List of log entries for currently treated entity instance
-         * @param array $versions List of desired version numbers
-         *
-         * @return array
-         «ENDIF»
          */
-        public function determineDiffViewParameters(«IF targets('3.0')»array «ENDIF»$logEntries, «IF targets('3.0')»array «ENDIF»$versions)«IF targets('3.0')»: array«ENDIF»
+        public function determineDiffViewParameters(array $logEntries, array $versions): array
         {
             $minVersion = $maxVersion = 0;
             if ($versions[0] < $versions[1]) {
@@ -185,14 +163,8 @@ class LoggableHelper {
     def private getVersionFieldName(Application it) '''
         /**
          * Return name of the version field for the given object type.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         *
-         * @return string|null
-         «ENDIF»
          */
-        public function getVersionFieldName(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: ?string«ENDIF»
+        public function getVersionFieldName(string $objectType = ''): ?string
         {
             $versionFieldMap = [
                 «FOR entity : getLoggableEntities»
@@ -200,25 +172,15 @@ class LoggableHelper {
                 «ENDFOR»
             ];
 
-            «IF targets('3.0')»
-                return $versionFieldMap[$objectType] ?? null;
-            «ELSE»
-                return isset($versionFieldMap[$objectType]) ? $versionFieldMap[$objectType] : null;
-            «ENDIF»
+            return $versionFieldMap[$objectType] ?? null;
         }
     '''
 
     def private hasHistoryItems(Application it) '''
         /**
          * Checks whether a history may be shown for the given entity instance.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity Currently treated entity instance
-         *
-         * @return bool
-         «ENDIF»
          */
-        public function hasHistoryItems(EntityAccess $entity)«IF targets('3.0')»: bool«ENDIF»
+        public function hasHistoryItems(EntityAccess $entity): bool
         {
             $objectType = $entity->get_objectType();
             $versionFieldName = $this->getVersionFieldName($objectType);
@@ -243,14 +205,8 @@ class LoggableHelper {
     def private hasDeletedEntities(Application it) '''
         /**
          * Checks whether deleted entities exist for the given object type.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         *
-         * @return bool
-         «ENDIF»
          */
-        public function hasDeletedEntities(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: bool«ENDIF»
+        public function hasDeletedEntities(string $objectType = ''): bool
         {
             $entityManager = $this->entityFactory->getEntityManager();
             $logEntriesRepository = $entityManager->getRepository(
@@ -264,14 +220,8 @@ class LoggableHelper {
     def private getDeletedEntities(Application it) '''
         /**
          * Returns deleted entities for the given object type.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         *
-         * @return array
-         «ENDIF»
          */
-        public function getDeletedEntities(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: array«ENDIF»
+        public function getDeletedEntities(string $objectType = ''): array
         {
             $entityManager = $this->entityFactory->getEntityManager();
             $logEntriesRepository = $entityManager->getRepository(
@@ -285,16 +235,8 @@ class LoggableHelper {
     def private revert(Application it) '''
         /**
          * Sets the given entity to back to a specific version.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity Currently treated entity instance
-         * @param int $requestedVersion Target version
-         * @param bool $detach Whether to detach the entity or not
-         *
-         * @return EntityAccess The reverted entity instance
-         «ENDIF»
          */
-        public function revert(EntityAccess $entity, «IF targets('3.0')»int «ENDIF»$requestedVersion = 1, «IF targets('3.0')»bool «ENDIF»$detach = false)«IF targets('3.0')»: EntityAccess«ENDIF»
+        public function revert(EntityAccess $entity, int $requestedVersion = 1, bool $detach = false): EntityAccess
         {
             $entityManager = $this->entityFactory->getEntityManager();
             $objectType = $entity->get_objectType();
@@ -321,15 +263,8 @@ class LoggableHelper {
     def private restoreDeletedEntity(Application it) '''
         /**
          * Resets a deleted entity back to the last version before it's deletion.
-         «IF !targets('3.0')»
-         *
-         * @param string $objectType Currently treated entity type
-         * @param int $id The entity's identifier
-         *
-         * @return EntityAccess|null The restored entity instance
-         «ENDIF»
          */
-        public function restoreDeletedEntity(«IF targets('3.0')»string «ENDIF»$objectType = '', «IF targets('3.0')»int «ENDIF»$id = 0)«IF targets('3.0')»: ?EntityAccess«ENDIF»
+        public function restoreDeletedEntity(string $objectType = '', int $id = 0): ?EntityAccess
         {
             if (!$id) {
                 return null;
@@ -378,14 +313,8 @@ class LoggableHelper {
     def private revertPostProcess(Application it) '''
         /**
          * Performs actions after reverting an entity to a previous revision.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity Currently treated entity instance
-         *
-         * @return EntityAccess The processed entity instance
-         «ENDIF»
          */
-        protected function revertPostProcess(EntityAccess $entity)«IF targets('3.0')»: EntityAccess«ENDIF»
+        protected function revertPostProcess(EntityAccess $entity): EntityAccess
         {
             $objectType = $entity->get_objectType();
 
@@ -419,14 +348,10 @@ class LoggableHelper {
     def private undeleteEntity(Application it) '''
         /**
          * Persists a formerly entity again.
-         «IF !targets('3.0')»
-         *
-         * @param EntityAccess $entity Currently treated entity instance
-         «ENDIF»
          *
          * @throws Exception If something goes wrong
          */
-        public function undelete(EntityAccess $entity)«IF targets('3.0')»: void«ENDIF»
+        public function undelete(EntityAccess $entity): void
         {
             $entityManager = $this->entityFactory->getEntityManager();
 
@@ -449,14 +374,8 @@ class LoggableHelper {
     def private translateActionDescription(Application it) '''
         /**
          * Returns the translated clear text action description for a given log entry.
-         «IF !targets('3.0')»
-         *
-         * @param AbstractLogEntry $logEntry
-         *
-         * @return string
-         «ENDIF»
          */
-        public function translateActionDescription(AbstractLogEntry $logEntry)«IF targets('3.0')»: string«ENDIF»
+        public function translateActionDescription(AbstractLogEntry $logEntry): string
         {
             $textAndParam = explode('|', $logEntry->getActionDescription());
             $text = $textAndParam[0];
@@ -476,19 +395,9 @@ class LoggableHelper {
 
         /**
          * Returns the translated clear text action description for a given log entry.
-         «IF !targets('3.0')»
-         *
-         * @param string $text The constant which is replaced by a corresponding Gettext call
-         * @param array $parameters Optional additional parameters for the Gettext call
-         *
-         * @return string The resulting description
-         «ENDIF»
          */
-        protected function translateActionDescriptionInternal(«IF targets('3.0')»string «ENDIF»$text = '', array $parameters = [])«IF targets('3.0')»: string«ENDIF»
+        protected function translateActionDescriptionInternal(string $text = '', array $parameters = []): string
         {
-            «IF !isSystemModule && !targets('3.0')»
-                $this->translator->setDomain('«appName.formatForDB»');
-            «ENDIF»
             $actionTranslated = '';
             switch ($text) {
                 «FOR entity : getLoggableEntities»
@@ -504,10 +413,10 @@ class LoggableHelper {
 
     def private actionDescriptions(Entity it, String constantPrefix, String displayName) '''
         case '«constantPrefix»CREATED':
-            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» created'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» created'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
             break;
         case '«constantPrefix»UPDATED':
-            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» updated'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» updated'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
             break;
         case '«constantPrefix»CLONED':
             if (isset($parameters['%«name.formatForCode»%']) && is_numeric($parameters['%«name.formatForCode»%'])) {
@@ -516,23 +425,23 @@ class LoggableHelper {
                     $parameters['%«name.formatForCode»%'] = $this->entityDisplayHelper->getFormattedTitle($originalEntity);
                 }
             }
-            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»%"', $parameters«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»%"', $parameters«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
             break;
         case '«constantPrefix»RESTORED':
-            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»('«displayName» restored from version "%version%"', $parameters«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» restored from version "%version%"', $parameters«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
             break;
         case '«constantPrefix»DELETED':
-            $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» deleted'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» deleted'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
             break;
         «IF hasTranslatableFields»«/* currently not used by default but provided for convenience */»
             case '«constantPrefix»TRANSLATION_CREATED':
-                $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» translation created'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                $actionTranslated = $this->trans('«displayName» translation created'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
                 break;
             case '«constantPrefix»TRANSLATION_UPDATED':
-                $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» translation updated'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                $actionTranslated = $this->trans('«displayName» translation updated'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
                 break;
             case '«constantPrefix»TRANSLATION_DELETED':
-                $actionTranslated = $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»('«displayName» translation deleted'«IF application.targets('3.0') && !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                $actionTranslated = $this->trans('«displayName» translation deleted'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
                 break;
         «ENDIF»
     '''

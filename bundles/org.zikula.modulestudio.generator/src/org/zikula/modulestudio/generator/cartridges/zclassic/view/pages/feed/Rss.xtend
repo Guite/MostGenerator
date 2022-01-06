@@ -36,7 +36,7 @@ class Rss {
 
     def private rssView(Entity it, Application app) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» rss feed #}
-        «IF app.targets('3.0') && !app.isSystemModule»
+        «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
@@ -49,10 +49,10 @@ class Rss {
             xmlns:atom="http://www.w3.org/2005/Atom">
         {#<rss version="0.92">#}
             <channel>
-                <title>«IF app.targets('3.0')»{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('Latest «nameMultiple.formatForDisplay»') }}«ENDIF»</title>
+                <title>{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}</title>
                 <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
                 <atom:link href="{{ app.request.schemeAndHttpHost ~ app.request.basePath ~ app.request.pathInfo }}" rel="self" type="application/rss+xml" />
-                <description>«IF app.targets('3.0')»{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %}«ELSE»{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }}«ENDIF» - {{ getSystemVar('slogan') }}</description>
+                <description>{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %} - {{ getSystemVar('slogan') }}</description>
                 <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
@@ -77,7 +77,7 @@ class Rss {
                     {% endif %}
                 «ENDIF»
                 «IF categorisable»
-                    <category><![CDATA[«IF app.targets('3.0')»{% trans %}Categories{% endtrans %}«ELSE»{{ __('Categories') }}«ENDIF»: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
+                    <category><![CDATA[{% trans %}Categories{% endtrans %}: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
                 «ENDIF»
                 «description(objName)»
             </item>

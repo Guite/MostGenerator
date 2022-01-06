@@ -68,7 +68,7 @@ class EditFunctions {
             jQuery('#' + fieldName + 'ResetVal').click(function (event) {
                 event.preventDefault();
                 «vendorAndName»ResetUploadField(fieldName);
-            }).removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+            }).removeClass('d-none');
         }
     '''
 
@@ -84,7 +84,7 @@ class EditFunctions {
                 } else {
                     jQuery('#' + fieldName + ', #' + fieldName + '').val('');
                 }
-            }).removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+            }).removeClass('d-none');
         }
     '''
 
@@ -116,7 +116,7 @@ class EditFunctions {
 
             // hide form buttons to prevent double submits by accident
             formButtons.each(function (index) {
-                jQuery(this).addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                jQuery(this).addClass('d-none');
             });
 
             return true;
@@ -136,13 +136,13 @@ class EditFunctions {
             «IF hasStandardFieldEntities»
 
                 if (jQuery('#moderationFieldsSection').length > 0) {
-                    jQuery('#moderationFieldsContent').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
-                    jQuery('#moderationFieldsSection legend').«IF targets('3.0')»css({cursor: 'pointer'})«ELSE»addClass('pointer')«ENDIF».click(function (event) {
-                        if (jQuery('#moderationFieldsContent').hasClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»')) {
-                            jQuery('#moderationFieldsContent').removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                    jQuery('#moderationFieldsContent').addClass('d-none');
+                    jQuery('#moderationFieldsSection legend').css({cursor: 'pointer'}).click(function (event) {
+                        if (jQuery('#moderationFieldsContent').hasClass('d-none')) {
+                            jQuery('#moderationFieldsContent').removeClass('d-none');
                             jQuery(this).find('i').removeClass('fa-expand').addClass('fa-compress');
                         } else {
-                            jQuery('#moderationFieldsContent').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                            jQuery('#moderationFieldsContent').addClass('d-none');
                             jQuery(this).find('i').removeClass('fa-compress').addClass('fa-expand');
                         }
                     });
@@ -157,7 +157,7 @@ class EditFunctions {
             formButtons = editForm.find('.form-buttons input, .form-buttons button');
             if (editForm.find('.btn-danger').length > 0) {
                 editForm.find('.btn-danger').first().bind('click keypress', function (event) {
-                    if (!window.confirm(Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Do you really want to delete this entry?'))) {
+                    if (!window.confirm(Translator.trans('Do you really want to delete this entry?'))) {
                         event.preventDefault();
                     }
                 });
@@ -189,7 +189,7 @@ class EditFunctions {
                 }
             «ENDIF»
         }
-	'''
+    '''
 
     def private onLoad(Application it) '''
         jQuery(document).ready(function () {

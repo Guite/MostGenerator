@@ -80,13 +80,13 @@ class Finder {
 
                 imageModeEnabled = jQuery("[id$='onlyImages']").prop('checked');
                 if (!imageModeEnabled) {
-                    jQuery('#imageFieldRow').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
-                    jQuery("[id$='pasteAs'] option[value=6]").addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
-                    jQuery("[id$='pasteAs'] option[value=7]").addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
-                    jQuery("[id$='pasteAs'] option[value=8]").addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
-                    jQuery("[id$='pasteAs'] option[value=9]").addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                    jQuery('#imageFieldRow').addClass('d-none');
+                    jQuery("[id$='pasteAs'] option[value=6]").addClass('d-none');
+                    jQuery("[id$='pasteAs'] option[value=7]").addClass('d-none');
+                    jQuery("[id$='pasteAs'] option[value=8]").addClass('d-none');
+                    jQuery("[id$='pasteAs'] option[value=9]").addClass('d-none');
                 } else {
-                    jQuery('#searchTermRow').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                    jQuery('#searchTermRow').addClass('d-none');
                 }
 
                 jQuery('input[type="checkbox"]').click(«objName».finder.onParamChanged);
@@ -96,8 +96,8 @@ class Finder {
                 }
             «ENDIF»
             jQuery('select').not("[id$='pasteAs']").change(«objName».finder.onParamChanged);
-            «/*jQuery('.btn-success').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');*/»
-            jQuery('.btn-«IF targets('3.0')»secondary«ELSE»default«ENDIF»').click(«objName».finder.handleCancel);
+            «/*jQuery('.btn-success').addClass('d-none');*/»
+            jQuery('.btn-secondary').click(«objName».finder.handleCancel);
 
             var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer a');
             selectedItems.bind('click keypress', function (event) {
@@ -208,7 +208,7 @@ class Finder {
             } else if ('summernote' === editor) {
                 if (null !== window.opener.current«appName»Editor) {
                     if ('3' === jQuery("[id$='pasteAs']").first().val()) {
-                        window.opener.currentZikulaContentModuleEditor.invoke('insertText', html);
+                        window.opener.current«appName»Editor.invoke('insertText', html);
                     } else {
                         html = jQuery(html).get(0);
                         window.opener.current«appName»Editor.invoke('insertNode', html);

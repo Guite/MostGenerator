@@ -33,14 +33,12 @@ import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class TechStructureFields {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension Utils = new Utils
 
     TechHelper helper = new TechHelper
     String language
@@ -275,21 +273,11 @@ class TechStructureFields {
         if (language == 'de') {
             result += 'Hat eine Länge von ' + length + ' Zeichen.'
             result += commonStringConstraints
-            if (application.targets('3.0')) {
-                result += 'Der Validierungsmodus ist auf "' + validationMode.validationModeAsString + '" eingestellt.'
-            } else {
-                if (checkMX) result += 'Die Validität des MX-Records des Hosts der gegebenen E-Mail Adresse wird geprüft.'
-                if (checkHost) result += 'Die Validität des MX- oder A- oder AAAA-Records des Hosts der gegebenen E-Mail Adresse wird geprüft.'
-            }
+            result += 'Der Validierungsmodus ist auf "' + validationMode.validationModeAsString + '" eingestellt.'
         } else {
             result += 'Has a length of ' + length + ' chars.'
             result += commonStringConstraints
-            if (application.targets('3.0')) {
-                result += 'Validation mode is set to "' + validationMode.validationModeAsString + '".'
-            } else {
-                if (checkMX) result += 'The MX record\'s validity of the given email\'s host is checked.'
-                if (checkHost) result += 'The MX or A or AAAA record\'s validity of given email\'s host is checked.'
-            }
+            result += 'Validation mode is set to "' + validationMode.validationModeAsString + '".'
         }
         result
     }
@@ -298,15 +286,9 @@ class TechStructureFields {
         if (language == 'de') {
             result += 'Hat eine Länge von ' + length + ' Zeichen.'
             result += commonStringConstraints
-            if (!application.targets('3.0')) {
-                if (checkDNS) result += 'Der assoziierte Host wird geprüft.'
-            }
         } else {
             result += 'Has a length of ' + length + ' chars.'
             result += commonStringConstraints
-            if (!application.targets('3.0')) {
-                if (checkDNS) result += 'The associated host is checked.'
-            }
         }
         result
     }
@@ -331,14 +313,12 @@ class TechStructureFields {
                 }
                 else if (minHeight > 0) result += 'Die Höhe von Bildern darf nicht niedriger als ' + minHeight + ' Pixel sein.'
                 else if (maxHeight > 0) result += 'Die Höhe von Bildern darf nicht höher als ' + maxHeight + ' Pixel sein.'
-                if (application.targets('2.0')) {
-                    if (minPixels > 0 && maxPixels > 0) {
-                        if (minPixels == maxPixels) result += 'Die Anzahl von Pixeln muß genau ' + minPixels + ' Pixel betragen.'
-                        else result += 'Die Anzahl von Pixeln muß zwischen ' + minPixels + ' und ' + maxPixels + ' Pixeln liegen.'
-                    }
-                    else if (minPixels > 0) result += 'Die Anzahl von Pixeln darf nicht niedriger als ' + minPixels + ' Pixel sein.'
-                    else if (maxPixels > 0) result += 'Die Anzahl von Pixeln darf nicht höher als ' + maxPixels + ' Pixel sein.'
+                if (minPixels > 0 && maxPixels > 0) {
+                    if (minPixels == maxPixels) result += 'Die Anzahl von Pixeln muß genau ' + minPixels + ' Pixel betragen.'
+                    else result += 'Die Anzahl von Pixeln muß zwischen ' + minPixels + ' und ' + maxPixels + ' Pixeln liegen.'
                 }
+                else if (minPixels > 0) result += 'Die Anzahl von Pixeln darf nicht niedriger als ' + minPixels + ' Pixel sein.'
+                else if (maxPixels > 0) result += 'Die Anzahl von Pixeln darf nicht höher als ' + maxPixels + ' Pixel sein.'
                 if (minRatio > 0 && maxRatio > 0) {
                     if (minRatio == maxRatio) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) muß genau ' + minRatio + ' betragen.'
                     else result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) muß zwischen ' + minRatio + ' und ' + maxRatio + ' liegen.'
@@ -381,14 +361,12 @@ class TechStructureFields {
                 }
                 else if (minHeight > 0) result += 'Image height must not be lower than ' + minHeight + ' pixels.'
                 else if (maxHeight > 0) result += 'Image height must not be greater than ' + maxHeight + ' pixels.'
-                if (application.targets('2.0')) {
-                    if (minPixels > 0 && maxPixels > 0) {
-                        if (minPixels == maxPixels) result += 'The amount of pixels must be exactly equal to ' + minPixels + ' pixels.'
-                        else result += 'The amount of pixels must be between ' + minPixels + ' and ' + maxPixels + ' pixels.'
-                    }
-                    else if (minPixels > 0) result += 'The amount of pixels must not be lower than ' + minPixels + ' pixels.'
-                    else if (maxPixels > 0) result += 'The amount of pixels must not be greater than ' + maxPixels + ' pixels.'
+                if (minPixels > 0 && maxPixels > 0) {
+                    if (minPixels == maxPixels) result += 'The amount of pixels must be exactly equal to ' + minPixels + ' pixels.'
+                    else result += 'The amount of pixels must be between ' + minPixels + ' and ' + maxPixels + ' pixels.'
                 }
+                else if (minPixels > 0) result += 'The amount of pixels must not be lower than ' + minPixels + ' pixels.'
+                else if (maxPixels > 0) result += 'The amount of pixels must not be greater than ' + maxPixels + ' pixels.'
                 if (minRatio > 0 && maxRatio > 0) {
                     if (minRatio == maxRatio) result += 'Image aspect ratio (width / height) must be exactly equal to ' + minRatio + '.'
                     else result += 'Image aspect ratio (width / height) must be between ' + minRatio + ' and ' + maxRatio + '.'

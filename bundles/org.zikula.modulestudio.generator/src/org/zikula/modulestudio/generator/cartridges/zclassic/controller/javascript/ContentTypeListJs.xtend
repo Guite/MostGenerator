@@ -25,7 +25,7 @@ class ContentTypeListJs {
         (function($) {
             $(document).ready(function () {
                 $('#zikulacontentmodule_contentitem_contentData_template').change(function () {
-                    $('#customTemplateArea').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', 'custom' !== $(this).val());
+                    $('#customTemplateArea').toggleClass('d-none', 'custom' !== $(this).val());
                 }).trigger('change');
             });
         })(jQuery)

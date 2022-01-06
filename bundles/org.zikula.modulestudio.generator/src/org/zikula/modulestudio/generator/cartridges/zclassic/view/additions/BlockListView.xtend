@@ -4,19 +4,17 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockListView {
 
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Block/'
-        if (!generateListContentType || targets('2.0')) {
-            new CommonIntegrationTemplates().generate(it, fsa, templatePath)
-        }
+
+        new CommonIntegrationTemplates().generate(it, fsa, templatePath)
+
         val templateExtension = '.html.twig'
         var fileName = 'itemlist' + templateExtension
         fsa.generateFile(templatePath + fileName, displayTemplate)

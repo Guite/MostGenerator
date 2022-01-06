@@ -30,7 +30,6 @@ class ModelBehaviourExtensions {
     extension DateTimeExtensions = new DateTimeExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-    extension Utils = new Utils
 
     /**
      * Returns a list of all entities for the finder component
@@ -472,17 +471,10 @@ class ModelBehaviourExtensions {
         }
     }
 
-    def setTranslatorMethod(Application it) '''
-        public function setTranslator(TranslatorInterface $translator)«IF targets('3.0')»: void«ENDIF»
-        {
-            $this->translator = $translator;
-        }
-    '''
-
     /**
      * Checks whether a composer execution is required before installing the application.
      */
     def needsComposerInstall(Application it) {
-        hasGeographical || generatePdfSupport || (targets('3.0') && hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)) 
+        hasGeographical || generatePdfSupport || hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT) 
     }
 }

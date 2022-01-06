@@ -42,25 +42,17 @@ class ViewHierarchy {
     def private hierarchyView(Entity it, String appName, Boolean isAdmin) '''
         «IF application.separateAdminTemplates»
             {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree view #}
-            «IF application.targets('3.0')»
-                {% extends «IF isAdmin»'@«appName»/adminBase.html.twig'«ELSE»'@«appName»/base.html.twig'«ENDIF» %}
-            «ELSE»
-                {% extends «IF isAdmin»'«appName»::adminBase.html.twig'«ELSE»'«appName»::base.html.twig'«ENDIF» %}
-            «ENDIF»
+            {% extends «IF isAdmin»'@«appName»/adminBase.html.twig'«ELSE»'@«appName»/base.html.twig'«ENDIF» %}
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
-            «IF application.targets('3.0')»
-                {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
-            «ELSE»
-                {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
-            «ENDIF»
+            {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
         «ENDIF»
-        «IF application.targets('3.0') && !application.isSystemModule»
+        «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        {% block title «IF application.targets('3.0')»'«name.formatForDisplayCapital» hierarchy'|trans«ELSE»__('«name.formatForDisplayCapital» hierarchy')«ENDIF» %}
+        {% block title '«name.formatForDisplayCapital» hierarchy'|trans %}
         «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'code-«IF application.targets('3.0')»branch«ELSE»fork«ENDIF»' %}
+            {% block admin_page_icon 'code-branch' %}
         «ENDIF»
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
@@ -97,14 +89,14 @@ class ViewHierarchy {
         {% set idPrefix = '«name.formatForCode.toFirstLower»Tree' ~ rootId %}
 
         <p>
-            <label for="{{ idPrefix }}SearchTerm">«IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Quick search{% endtrans %}«ELSE»{{ __('Quick search') }}«ENDIF»:</label>
+            <label for="{{ idPrefix }}SearchTerm">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Quick search{% endtrans %}:</label>
             <input type="search" id="{{ idPrefix }}SearchTerm" value="" />
         </p>
 
-        <div class="btn-toolbar" role="toolbar" aria-label="{{ «IF application.targets('3.0')»'Tree button toolbar'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Tree button toolbar')«ENDIF»|e('html_attr') }}">
+        <div class="btn-toolbar" role="toolbar" aria-label="{{ 'Tree button toolbar'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">
             <div class="btn-group btn-group-sm" role="group" aria-label="«name.formatForDB» buttons">
-                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ «IF application.targets('3.0')»'Expand all nodes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Expand all nodes')«ENDIF»|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-expand"></i> «IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Expand all{% endtrans %}«ELSE»{{ __('Expand all') }}«ENDIF»</button>
-                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-«IF application.targets('3.0')»secondary«ELSE»info«ENDIF»" title="{{ «IF application.targets('3.0')»'Collapse all nodes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»«ELSE»__('Collapse all nodes')«ENDIF»|e('html_attr') }}"><i class="fa«IF application.targets('3.0')»s«ENDIF» fa-compress"></i> «IF application.targets('3.0')»{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Collapse all{% endtrans %}«ELSE»{{ __('Collapse all') }}«ENDIF»</button>
+                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-secondary" title="{{ 'Expand all nodes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"><i class="fas fa-expand"></i> {% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Expand all{% endtrans %}</button>
+                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-secondary" title="{{ 'Collapse all nodes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"><i class="fas fa-compress"></i> {% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Collapse all{% endtrans %}</button>
             </div>
         </div>
         <div class="clearfix">
@@ -117,7 +109,7 @@ class ViewHierarchy {
                 {% endif %}
             </div>
             {% if treeData|default %}
-                <ul id="itemActionsForTree{{ rootId|e('html_attr') }}" class="«IF application.targets('3.0')»d-none«ELSE»hidden«ENDIF»">
+                <ul id="itemActionsForTree{{ rootId|e('html_attr') }}" class="d-none">
                     {{ treeData.actions|raw }}
                 </ul>
             {% endif %}

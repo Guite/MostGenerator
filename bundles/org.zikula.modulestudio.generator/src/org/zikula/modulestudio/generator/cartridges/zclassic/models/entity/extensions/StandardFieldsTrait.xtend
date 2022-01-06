@@ -90,16 +90,9 @@ class StandardFieldsTrait {
          * @var DateTimeInterface
          */
         protected $updatedDate;
-        «IF targets('3.0')»
-            «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedDate', 'DateTimeInterface', false, true, true, '', '')»
-        «ELSE»
-            «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, true, false, '', '')»
-        «ENDIF»
+        «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedDate', 'DateTimeInterface', false, true, true, '', '')»
     '''
 }

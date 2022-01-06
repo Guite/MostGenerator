@@ -29,42 +29,29 @@ class Installer {
     def private installerBaseClass(Application it) '''
         namespace «appNamespace»\Base;
 
-        «IF targets('3.0')»
-            use Doctrine\Persistence\ManagerRegistry;
-        «ENDIF»
+        use Doctrine\Persistence\ManagerRegistry;
         use Exception;
-        «IF targets('3.0')»
-            use Psr\Log\LoggerInterface;
-            «IF hasUploads»
-                use Symfony\Component\Filesystem\Filesystem;
-            «ENDIF»
-            use Symfony\Component\HttpFoundation\RequestStack;
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Doctrine\Helper\SchemaHelper;
-            «IF hasUploads»
-                use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-            «ENDIF»
+        use Psr\Log\LoggerInterface;
+        «IF hasUploads»
+            use Symfony\Component\Filesystem\Filesystem;
         «ENDIF»
-        «IF !targets('3.0')»
-            use Zikula\Core\AbstractExtensionInstaller;
+        use Symfony\Component\HttpFoundation\RequestStack;
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Zikula\Bundle\CoreBundle\Doctrine\Helper\SchemaHelper;
+        «IF hasUploads»
+            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
         «IF hasCategorisableEntities»
-            «IF targets('3.0')»
-                use Zikula\CategoriesModule\Api\CategoryPermissionApi;
-            «ENDIF»
+            use Zikula\CategoriesModule\Api\CategoryPermissionApi;
             use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
-            «IF targets('3.0')»
-                use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
-                use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
-            «ENDIF»
+            use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
+            use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
         «ENDIF»
-        «IF targets('3.0')»
-            use Zikula\ExtensionsModule\AbstractExtension;
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-            use Zikula\ExtensionsModule\Installer\AbstractExtensionInstaller;
-            «IF hasUploads || hasCategorisableEntities»
-                use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-            «ENDIF»
+        use Zikula\ExtensionsModule\AbstractExtension;
+        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\ExtensionsModule\Installer\AbstractExtensionInstaller;
+        «IF hasUploads || hasCategorisableEntities»
+            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «funcListEntityClasses('import')»
 
@@ -86,89 +73,85 @@ class Installer {
         protected $entities = [
             «funcListEntityClasses('usage')»
         ];
-        «IF targets('3.0')»
+
+        /**
+         * @var LoggerInterface
+         */
+        protected $logger;
+        «IF hasUploads || hasCategorisableEntities»
 
             /**
-             * @var LoggerInterface
+             * @var CurrentUserApiInterface
              */
-            protected $logger;
-            «IF hasUploads || hasCategorisableEntities»
+            protected $currentUserApi;
+        «ENDIF»
+        «IF hasCategorisableEntities»
 
-                /**
-                 * @var CurrentUserApiInterface
-                 */
-                protected $currentUserApi;
-            «ENDIF»
-            «IF hasCategorisableEntities»
+            /**
+             * @var CategoryRepositoryInterface
+             */
+            protected $categoryRepository;
 
-                /**
-                 * @var CategoryRepositoryInterface
-                 */
-                protected $categoryRepository;
+            /**
+             * @var CategoryRegistryRepositoryInterface
+             */
+            protected $categoryRegistryRepository;
 
-                /**
-                 * @var CategoryRegistryRepositoryInterface
-                 */
-                protected $categoryRegistryRepository;
+            /**
+             * @var CategoryPermissionApi
+             */
+            protected $categoryPermissionApi;
+        «ENDIF»
+        «IF hasUploads»
 
-                /**
-                 * @var CategoryPermissionApi
-                 */
-                protected $categoryPermissionApi;
-            «ENDIF»
-            «IF hasUploads»
+            /**
+             * @var Filesystem
+             */
+            protected $filesystem;
 
-                /**
-                 * @var Filesystem
-                 */
-                protected $filesystem;
-
-                /**
-                 * @var string
-                 */
-                protected $dataDirectory;
-            «ENDIF»
+            /**
+             * @var string
+             */
+            protected $dataDirectory;
         «ENDIF»
     '''
 
     def private installerBaseImpl(Application it) '''
-        «IF targets('3.0')»
-            public function __construct(
-                AbstractExtension $extension,
-                ManagerRegistry $managerRegistry,
-                SchemaHelper $schemaTool,
-                RequestStack $requestStack,
-                TranslatorInterface $translator,
-                VariableApiInterface $variableApi,
-                LoggerInterface $logger«IF hasUploads»,
-                ZikulaHttpKernelInterface $kernel«ENDIF»«IF hasUploads || hasCategorisableEntities»,
-                CurrentUserApiInterface $currentUserApi«ENDIF»«IF hasCategorisableEntities»,
-                CategoryRepositoryInterface $categoryRepository,
-                CategoryRegistryRepositoryInterface $categoryRegistryRepository,
-                CategoryPermissionApi $categoryPermissionApi«ENDIF»«IF hasUploads»,
-                Filesystem $filesystem,
-                string $dataDirectory«ENDIF»
-            ) {
-                parent::__construct($extension, $managerRegistry, $schemaTool, $requestStack, $translator, $variableApi);
-                $this->logger = $logger;
-                «IF hasUploads»
-                    $this->kernel = $kernel;
-                «ENDIF»
-                «IF hasUploads || hasCategorisableEntities»
-                    $this->currentUserApi = $currentUserApi;
-                «ENDIF»
-                «IF hasCategorisableEntities»
-                    $this->categoryRepository = $categoryRepository;
-                    $this->categoryRegistryRepository = $categoryRegistryRepository;
-                    $this->categoryPermissionApi = $categoryPermissionApi;
-                «ENDIF»
-                «IF hasUploads»
-                    $this->filesystem = $filesystem;
-                    $this->dataDirectory = $dataDirectory;
-                «ENDIF»
-            }
+        public function __construct(
+            AbstractExtension $extension,
+            ManagerRegistry $managerRegistry,
+            SchemaHelper $schemaTool,
+            RequestStack $requestStack,
+            TranslatorInterface $translator,
+            VariableApiInterface $variableApi,
+            LoggerInterface $logger«IF hasUploads»,
+            ZikulaHttpKernelInterface $kernel«ENDIF»«IF hasUploads || hasCategorisableEntities»,
+            CurrentUserApiInterface $currentUserApi«ENDIF»«IF hasCategorisableEntities»,
+            CategoryRepositoryInterface $categoryRepository,
+            CategoryRegistryRepositoryInterface $categoryRegistryRepository,
+            CategoryPermissionApi $categoryPermissionApi«ENDIF»«IF hasUploads»,
+            Filesystem $filesystem,
+            string $dataDirectory«ENDIF»
+        ) {
+            parent::__construct($extension, $managerRegistry, $schemaTool, $requestStack, $translator, $variableApi);
+            $this->logger = $logger;
+            «IF hasUploads»
+                $this->kernel = $kernel;
+            «ENDIF»
+            «IF hasUploads || hasCategorisableEntities»
+                $this->currentUserApi = $currentUserApi;
+            «ENDIF»
+            «IF hasCategorisableEntities»
+                $this->categoryRepository = $categoryRepository;
+                $this->categoryRegistryRepository = $categoryRegistryRepository;
+                $this->categoryPermissionApi = $categoryPermissionApi;
+            «ENDIF»
+            «IF hasUploads»
+                $this->filesystem = $filesystem;
+                $this->dataDirectory = $dataDirectory;
+            «ENDIF»
+        }
 
-        «ENDIF»
         «funcInit»
 
         «funcUpdate»
@@ -177,18 +160,10 @@ class Installer {
     '''
 
     def private funcInit(Application it) '''
-        public function install()«IF targets('3.0')»: bool«ENDIF»
+        public function install(): bool
         {
-            «IF !targets('3.0')»
-                $logger = $this->container->get('logger');
-
-            «ENDIF»
             «IF hasUploads || hasCategorisableEntities»
-                «IF targets('3.0')»
-                    $userName = $this->currentUserApi->get('uname');
-                «ELSE»
-                    $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
-                «ENDIF»
+                $userName = $this->currentUserApi->get('uname');
 
             «ENDIF»
             «processUploadFolders»
@@ -196,8 +171,8 @@ class Installer {
             try {
                 $this->schemaTool->create($this->entities);
             } catch (Exception $exception) {
-                $this->addFlash('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Doctrine Exception') . ': ' . $exception->getMessage());
-                $«IF targets('3.0')»this->«ENDIF»logger->error(
+                $this->addFlash('error', $this->trans('Doctrine Exception') . ': ' . $exception->getMessage());
+                $this->logger->error(
                     '{app}: Could not create the database tables during installation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
                 );
@@ -212,27 +187,15 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // add default entry for category registry (property named Main)
-                «IF targets('3.0')»
-                    $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
-                        $this->getTranslator(),
-                        $this->requestStack,
-                        $this->logger,
-                        $this->currentUserApi,
-                        $this->categoryRegistryRepository,
-                        $this->categoryPermissionApi
-                    );
-                    $categoryGlobal = $this->categoryRepository->findOneBy(['name' => 'Global']);
-                «ELSE»
-                    $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
-                        $this->container->get('translator.default'),
-                        $this->container->get('request_stack'),
-                        $logger,
-                        $this->container->get('zikula_users_module.current_user'),
-                        $this->container->get('zikula_categories_module.category_registry_repository'),
-                        $this->container->get('zikula_categories_module.api.category_permission')
-                    );
-                    $categoryGlobal = $this->container->get('zikula_categories_module.category_repository')->findOneBy(['name' => 'Global']);
-                «ENDIF»
+                $categoryHelper = new \«appNamespace»\Helper\CategoryHelper(
+                    $this->getTranslator(),
+                    $this->requestStack,
+                    $this->logger,
+                    $this->currentUserApi,
+                    $this->categoryRegistryRepository,
+                    $this->categoryPermissionApi
+                );
+                $categoryGlobal = $this->categoryRepository->findOneBy(['name' => 'Global']);
                 if ($categoryGlobal) {
                     $categoryRegistryIdsPerEntity = [];
                     «FOR entity : getCategorisableEntities»
@@ -249,17 +212,11 @@ class Installer {
                         } catch (Exception $exception) {
                             $this->addFlash(
                                 'warning',
-                                $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                                $this->trans(
                                     'Error! Could not create a category registry for the %entity% entity. If you want to use categorisation, register at least one registry in the Categories administration.',
                                     ['%entity%' => '«entity.name.formatForDisplay»']
                                 )
                             );
-                            «IF !targets('3.0')»
-                                $«IF targets('3.0')»this->«ENDIF»logger->error(
-                                    '{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.',
-                                    ['app' => '«appName»', 'user' => $userName, 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $exception->getMessage()]
-                                );
-                            «ENDIF»
                         }
                         $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
                     «ENDFOR»
@@ -275,33 +232,20 @@ class Installer {
         «IF hasUploads»
             // Check if upload directories exist and if needed create them
             try {
-                «IF targets('3.0')»
-                    $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
-                        $this->kernel,
-                        $this->getTranslator(),
-                        $this->filesystem,
-                        $this->requestStack,
-                        $this->logger,
-                        $this->currentUserApi,
-                        $this->getVariableApi(),
-                        $this->dataDirectory
-                    );
-                «ELSE»
-                    $container = $this->container;
-                    $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
-                        $container->get('translator.default'),
-                        $container->get('filesystem'),
-                        $container->get('request_stack'),
-                        $logger,
-                        $container->get('zikula_users_module.current_user'),
-                        $container->get('zikula_extensions_module.api.variable'),
-                        $container->getParameter('datadir')
-                    );
-                «ENDIF»
+                $uploadHelper = new \«appNamespace»\Helper\UploadHelper(
+                    $this->kernel,
+                    $this->getTranslator(),
+                    $this->filesystem,
+                    $this->requestStack,
+                    $this->logger,
+                    $this->currentUserApi,
+                    $this->getVariableApi(),
+                    $this->dataDirectory
+                );
                 $uploadHelper->checkAndCreateAllUploadFolders();
             } catch (Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
-                $«IF targets('3.0')»this->«ENDIF»logger->error(
+                $this->logger->error(
                     '{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $exception->getMessage()]
                 );
@@ -310,13 +254,9 @@ class Installer {
     '''
 
     def private funcUpdate(Application it) '''
-        public function upgrade(«IF targets('3.0')»string «ENDIF»$oldVersion)«IF targets('3.0')»: bool«ENDIF»
+        public function upgrade(string $oldVersion): bool
         {
             /*
-                «IF !targets('3.0')»
-                    $logger = $this->container->get('logger');
-
-                «ENDIF»
                 // upgrade dependent on old version number
                 switch ($oldVersion) {
                     case '1.0.0':
@@ -326,8 +266,8 @@ class Installer {
                         try {
                             $this->schemaTool->update($this->entities);
                         } catch (Exception $exception) {
-                            $this->addFlash('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Doctrine Exception') . ': ' . $exception->getMessage());
-                            $«IF targets('3.0')»this->«ENDIF»logger->error(
+                            $this->addFlash('error', $this->trans('Doctrine Exception') . ': ' . $exception->getMessage());
+                            $this->logger->error(
                                 '{app}: Could not update the database tables during the upgrade.'
                                     . ' Error details: {errorMessage}.',
                                 ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
@@ -336,11 +276,6 @@ class Installer {
                             throw $exception;
                         }
                 }
-                «IF !targets('2.0') && hasHookSubscribers»
-
-                    // remove obsolete persisted hooks from the database
-                    //$this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
-                «ENDIF»
             */
 
             // update successful
@@ -349,17 +284,13 @@ class Installer {
     '''
 
     def private funcDelete(Application it) '''
-        public function uninstall()«IF targets('3.0')»: bool«ENDIF»
+        public function uninstall(): bool
         {
-            «IF !targets('3.0')»
-                $logger = $this->container->get('logger');
-
-            «ENDIF»
             try {
                 $this->schemaTool->drop($this->entities);
             } catch (Exception $exception) {
-                $this->addFlash('error', $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Doctrine Exception') . ': ' . $exception->getMessage());
-                $«IF targets('3.0')»this->«ENDIF»logger->error(
+                $this->addFlash('error', $this->trans('Doctrine Exception') . ': ' . $exception->getMessage());
+                $this->logger->error(
                     '{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.',
                     ['app' => '«appName»', 'errorMessage' => $exception->getMessage()]
                 );
@@ -374,10 +305,7 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // remove category registry entries
-                «IF !targets('3.0')»
-                    $registryRepository = $this->container->get('zikula_categories_module.category_registry_repository');
-                «ENDIF»
-                $registries = $«IF targets('3.0')»this->categoryRegistryRepository«ELSE»registryRepository«ENDIF»->findBy(['modname' => '«appName»']);
+                $registries = $this->categoryRegistryRepository->findBy(['modname' => '«appName»']);
                 foreach ($registries as $registry) {
                     $this->entityManager->remove($registry);
                 }
@@ -386,12 +314,12 @@ class Installer {
             «IF hasUploads»
 
                 // remind user about upload folders not being deleted
-                $uploadPath = $this->«IF targets('3.0')»dataDirectory«ELSE»container->getParameter('datadir')«ENDIF» . '/«appName»/';
+                $uploadPath = $this->dataDirectory . '/«appName»/';
                 $this->addFlash(
                     'status',
-                    $this->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                    $this->trans(
                         'The upload directories at "%path%" can be removed manually.',
-                        ['%path%' => $uploadPath]«IF targets('3.0') && !isSystemModule»,
+                        ['%path%' => $uploadPath]«IF !isSystemModule»,
                         'config'«ENDIF»
                     )
                 );

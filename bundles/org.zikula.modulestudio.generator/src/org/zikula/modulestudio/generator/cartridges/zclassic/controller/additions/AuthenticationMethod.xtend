@@ -28,17 +28,10 @@ class AuthenticationMethod {
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
-        «IF targets('3.0')»
-            use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-        «ENDIF»
+        use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+        use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersModule\AuthenticationMethodInterface\«IF authenticationMethod == AuthMethodType.LOCAL»Non«ENDIF»ReEntrantAuthenticationMethodInterface;
-        «IF !targets('3.0')»
-            use Zikula\ZAuthModule\Api\ApiInterface\PasswordApiInterface;
-        «ENDIF»
         «IF authenticationMethod == AuthMethodType.LOCAL»
             use Zikula\ZAuthModule\Form\Type\RegistrationType;
             use Zikula\ZAuthModule\Form\Type\UnameLoginType;
@@ -78,9 +71,9 @@ class AuthenticationMethod {
             protected $variableApi;
 
             /**
-             * @var «IF targets('3.0')»EncoderFactoryInterface«ELSE»PasswordApiInterface«ENDIF»
+             * @var EncoderFactoryInterface
              */
-            protected «IF targets('3.0')»$encoderFactory«ELSE»$passwordApi«ENDIF»;
+            protected $encoderFactory;
 
             public function __construct(
                 TranslatorInterface $translator,
@@ -90,8 +83,8 @@ class AuthenticationMethod {
                 «ENDIF»
                 EntityFactory $entityFactory,
                 VariableApiInterface $variableApi,
-                «IF targets('3.0')»EncoderFactoryInterface $encoderFactory«ELSE»PasswordApiInterface $passwordApi«ENDIF»)
-            {
+                EncoderFactoryInterface $encoderFactory
+            ) {
                 $this->translator = $translator;
                 $this->requestStack = $requestStack;
                 «IF authenticationMethod == AuthMethodType.REMOTE»
@@ -99,11 +92,7 @@ class AuthenticationMethod {
                 «ENDIF»
                 $this->entityFactory = $entityFactory;
                 $this->variableApi = $variableApi;
-                «IF targets('3.0')»
-                    $this->encoderFactory = $encoderFactory;
-                «ELSE»
-                    $this->passwordApi = $passwordApi;
-                «ENDIF»
+                $this->encoderFactory = $encoderFactory;
             }
 
             «authMethodBaseImplCommon»
@@ -117,36 +106,36 @@ class AuthenticationMethod {
     '''
 
     def private authMethodBaseImplCommon(Application it) '''
-        public function getAlias()«IF targets('3.0')»: string«ENDIF»
+        public function getAlias(): string
         {
             return '«name.formatForDB»_authentication';
         }
 
-        public function getDisplayName()«IF targets('3.0')»: string«ENDIF»
+        public function getDisplayName(): string
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital»');
+            return $this->translator->trans('«name.formatForDisplayCapital»');
         }
 
-        public function getDescription()«IF targets('3.0')»: string«ENDIF»
+        public function getDescription(): string
         {
-            return $this->translator->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Allow a user to authenticate and login using the «name.formatForDisplay» module.');
+            return $this->translator->trans('Allow a user to authenticate and login using the «name.formatForDisplay» module.');
         }
 
-        public function authenticate(array $data = [])«IF targets('3.0')»: ?int«ENDIF»
+        public function authenticate(array $data = []): ?int
         {
             $request = $this->requestStack->getCurrentRequest();
             if ($request->hasSession() && ($session = $request->getSession())) {
-                $session->getFlashBag()->add('error', «IF !targets('3.0')»$this->translator->__(«ENDIF»'Login for «name.formatForDisplay» authentication method is not implemented yet.'«IF !targets('3.0')»)«ENDIF»);
+                $session->getFlashBag()->add('error', 'Login for «name.formatForDisplay» authentication method is not implemented yet.');
             }
 
             return null;
         }
 
-        public function register(array $data = [])«IF targets('3.0')»: bool«ENDIF»
+        public function register(array $data = []): bool
         {
             $request = $this->requestStack->getCurrentRequest();
             if ($request->hasSession() && ($session = $request->getSession())) {
-                $session->getFlashBag()->add('error', «IF !targets('3.0')»$this->translator->__(«ENDIF»'Registration for «name.formatForDisplay» authentication method is not implemented yet.'«IF !targets('3.0')»)«ENDIF»);
+                $session->getFlashBag()->add('error', 'Registration for «name.formatForDisplay» authentication method is not implemented yet.');
             }
 
             return false;
@@ -159,24 +148,24 @@ class AuthenticationMethod {
             return null;
         }
 
-        public function getEmail()«IF targets('3.0')»: string«ENDIF»
+        public function getEmail(): string
         {
             return null;
         }
 
-        public function getUname()«IF targets('3.0')»: string«ENDIF»
+        public function getUname(): string
         {
             return null;
         }
     '''
 
     def private authMethodBaseImplLocal(Application it) '''
-        public function getLoginFormClassName()«IF targets('3.0')»: string«ENDIF»
+        public function getLoginFormClassName(): string
         {
             return UnameLoginType::class;
         }
 
-        public function getLoginTemplateName«IF targets('3.0')»(string $type = 'page', string $position = 'left'): string«ELSE»($type = 'page', $position = 'left')«ENDIF»
+        public function getLoginTemplateName(string $type = 'page', string $position = 'left'): string
         {
             if ('block' === $type) {
                 if ('topnav' === $position) {
@@ -189,12 +178,12 @@ class AuthenticationMethod {
             return 'ZikulaZAuthModule:Authentication:UnameLogin.html.twig';
         }
 
-        public function getRegistrationFormClassName()«IF targets('3.0')»: string«ENDIF»
+        public function getRegistrationFormClassName(): string
         {
             return RegistrationType;
         }
 
-        public function getRegistrationTemplateName()«IF targets('3.0')»: string«ENDIF»
+        public function getRegistrationTemplateName(): string
         {
             return 'ZikulaZAuthModule:Authentication:register.html.twig';
         }
@@ -221,13 +210,13 @@ class AuthenticationMethod {
     '''
 
     def private authMethodImplCommon(Application it) '''
-        public function authenticate(array $data = [])«IF targets('3.0')»: ?int«ENDIF»
+        public function authenticate(array $data = []): ?int
         {
             // @todo replace by your own authentication logic
             return parent::authenticate($data);
         }
 
-        public function register(array $data = [])«IF targets('3.0')»: bool«ENDIF»
+        public function register(array $data = []): bool
         {
             // @todo replace by your own registration logic
             return parent::register($data);
@@ -241,13 +230,13 @@ class AuthenticationMethod {
             return parent::getId();
         }
 
-        public function getEmail()«IF targets('3.0')»: string«ENDIF»
+        public function getEmail(): string
         {
             // @todo replace by your own logic
             return parent::getEmail();
         }
 
-        public function getUname()«IF targets('3.0')»: string«ENDIF»
+        public function getUname(): string
         {
             // @todo replace by your own logic
             return parent::getUname();
@@ -255,25 +244,25 @@ class AuthenticationMethod {
     '''
 
     def private authMethodImplLocal(Application it) '''
-        public function getLoginFormClassName()«IF targets('3.0')»: string«ENDIF»
+        public function getLoginFormClassName(): string
         {
             // @todo replace by your own form type
             return parent::getLoginFormClassName();
         }
 
-        public function getLoginTemplateName«IF targets('3.0')»(string $type = 'page', string $position = 'left'): string«ELSE»($type = 'page', $position = 'left')«ENDIF»
+        public function getLoginTemplateName(string $type = 'page', string $position = 'left'): string
         {
             // @todo replace by your own template
             return parent::getLoginTemplateName($type, $position);
         }
 
-        public function getRegistrationFormClassName()«IF targets('3.0')»: string«ENDIF»
+        public function getRegistrationFormClassName(): string
         {
             // @todo replace by your own form type
             return parent::getRegistrationFormClassName();
         }
 
-        public function getRegistrationTemplateName()«IF targets('3.0')»: string«ENDIF»
+        public function getRegistrationTemplateName(): string
         {
             // @todo replace by your own template
             return parent::getRegistrationTemplateName();

@@ -117,7 +117,7 @@ class Locking {
                 if ($request->hasSession() && ($session = $request->getSession())) {
                     $session->getFlashBag()->add(
                         'error',
-                        «IF !application.targets('3.0')»$this->__(«ENDIF»'Sorry, but someone else has already changed this record. Please apply the changes again!'«IF !application.targets('3.0')»)«ENDIF»
+                        'Sorry, but someone else has already changed this record. Please apply the changes again!'
                     );
                 }
                 $logArgs = [

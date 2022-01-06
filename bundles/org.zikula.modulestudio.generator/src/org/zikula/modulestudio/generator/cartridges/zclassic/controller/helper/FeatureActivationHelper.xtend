@@ -38,28 +38,28 @@ class FeatureActivationHelper {
             /**
              * Categorisation feature.
              */
-            «IF targets('3.0')»public «ENDIF»const CATEGORIES = 'categories';
+            public const CATEGORIES = 'categories';
 
         «ENDIF»
         «IF hasAttributableEntities»
             /**
              * Attribution feature.
              */
-            «IF targets('3.0')»public «ENDIF»const ATTRIBUTES = 'attributes';
+            public const ATTRIBUTES = 'attributes';
 
         «ENDIF»
         «IF hasTranslatable»
             /**
              * Translation feature.
              */
-            «IF targets('3.0')»public «ENDIF»const TRANSLATIONS = 'translations';
+            public const TRANSLATIONS = 'translations';
 
         «ENDIF»
         «IF hasTrees»
             /**
              * Tree relatives feature.
              */
-            «IF targets('3.0')»public «ENDIF»const TREE_RELATIVES = 'treeRelatives';
+            public const TREE_RELATIVES = 'treeRelatives';
 
         «ENDIF»
     '''
@@ -67,15 +67,8 @@ class FeatureActivationHelper {
     def private isEnabled(Application it) '''
         /**
          * This method checks whether a certain feature is enabled for a given entity type or not.
-         «IF !targets('3.0')»
-         *
-         * @param string $feature Name of requested feature
-         * @param string $objectType Currently treated entity type
-         *
-         * @return bool True if the feature is enabled, false otherwise
-         «ENDIF»
          */
-        public function isEnabled(«IF targets('3.0')»string «ENDIF»$feature = '', «IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: bool«ENDIF»
+        public function isEnabled(string $feature = '', string $objectType = ''): bool
         {
             «IF hasCategorisableEntities»
                 if (self::CATEGORIES === $feature) {

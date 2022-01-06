@@ -59,14 +59,9 @@ class ExampleDataHelper {
         use Exception;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF targets('3.0')»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ENDIF»
+        use Symfony\Contracts\Translation\TranslatorInterface;
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Entity\CategoryEntity;
-        «ENDIF»
-        «IF !targets('3.0')»
-            use Zikula\Common\Translator\TranslatorInterface;
         «ENDIF»
         «IF hasUserFields»
             use Zikula\UsersModule\Constant as UsersConstant;
@@ -144,7 +139,7 @@ class ExampleDataHelper {
         /**
          * Create the default data for «appName».
          */
-        public function createDefaultData()«IF targets('3.0')»: void«ENDIF»
+        public function createDefaultData(): void
         {
             «IF hasUserFields»
                 $adminUser = $this->userRepository->find(UsersConstant::USER_ID_ADMIN);
@@ -272,7 +267,7 @@ class ExampleDataHelper {
                 $session = $this->requestStack->getCurrentRequest()->getSession();
                 $session->getFlashBag()->add(
                     'error',
-                    $this->translator->«IF targets('3.0')»trans«ELSE»__f«ENDIF»(
+                    $this->translator->trans(
                         'Exception during example data creation: %message%',
                         ['%message%' => $exception->getMessage()]
                     )

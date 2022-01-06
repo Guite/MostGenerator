@@ -40,20 +40,20 @@ class ViewActions {
             if ('tree' === $currentTemplate) {
                 «IF hasEditAction»
                     if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
-                        $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Add root node'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                        $menu->addChild('Add root node', [
                             'uri' => 'javascript:void(0)',
                         ])
                             ->setLinkAttribute('id', 'treeAddRoot')
-                            ->setLinkAttribute('class', '«IF app.targets('3.0')»d-none«ELSE»hidden«ENDIF»')
+                            ->setLinkAttribute('class', 'd-none')
                             ->setLinkAttribute('data-object-type', $objectType)
-                            ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-plus')
+                            ->setAttribute('icon', 'fas fa-plus')
                         ;
                     }
                 «ENDIF»
-                $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Switch to table view'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                $menu->addChild('Switch to table view', [
                     'route' => $routePrefix . $routeArea . 'view',
                 ])
-                    ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-table')
+                    ->setAttribute('icon', 'fas fa-table')
                 ;
             }
         «ENDIF»
@@ -68,19 +68,19 @@ class ViewActions {
             «linkToEntityCreation»
             «linkTogglePagination»
             «IF tree != EntityTreeType.NONE»
-                $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Switch to hierarchy view'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                $menu->addChild('Switch to hierarchy view', [
                     'route' => $routePrefix . $routeArea . 'view',
                     'routeParameters' => ['tpl' => 'tree'],
                 ])
-                    ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-code-«IF app.targets('3.0')»branch«ELSE»fork«ENDIF»')
+                    ->setAttribute('icon', 'fas fa-code-branch')
                 ;
             «ENDIF»
             «IF geographical»
-                $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'Show map'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                $menu->addChild('Show map', [
                     'route' => $routePrefix . $routeArea . 'view',
                     'routeParameters' => ['tpl' => 'map', 'all' => 1],
                 ])
-                    ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-map«IF !app.targets('3.0')»-o«ENDIF»')
+                    ->setAttribute('icon', 'fas fa-map')
                 ;
             «ENDIF»
             «linkToggleOwner»
@@ -92,12 +92,12 @@ class ViewActions {
                         $hasDeletedEntities = $this->loggableHelper->hasDeletedEntities($objectType);
                     }
                     if ($hasDeletedEntities) {
-                        $menu->addChild(«IF !app.targets('3.0')»$this->__(«ENDIF»'View deleted «nameMultiple.formatForDisplay»'«IF !app.targets('3.0')»«IF !app.isSystemModule», '«app.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                        $menu->addChild('View deleted «nameMultiple.formatForDisplay»', [
                             'route' => $routePrefix . $routeArea . 'view',
                             'routeParameters' => ['deleted' => 1],
                         ])
-                            ->setAttribute('icon', 'fa«IF app.targets('3.0')»s«ENDIF» fa-trash-«IF app.targets('3.0')»alt«ELSE»o«ENDIF»')
-                            «IF app.targets('3.0') && !app.isSystemModule»
+                            ->setAttribute('icon', 'fas fa-trash-alt')
+                            «IF !app.isSystemModule»
                                 ->setExtra('translation_domain', '«name.formatForCode»')
                             «ENDIF»
                         ;
@@ -116,11 +116,11 @@ class ViewActions {
         $canBeCreated = $this->modelHelper->canBeCreated($objectType);
         if ($canBeCreated) {
             if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
-                $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Create «name.formatForDisplay»'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+                $menu->addChild('Create «name.formatForDisplay»', [
                     'route' => $routePrefix . $routeArea . 'edit',
                 ])
-                    ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-plus')
-                    «IF application.targets('3.0') && !application.isSystemModule»
+                    ->setAttribute('icon', 'fas fa-plus')
+                    «IF !application.isSystemModule»
                         ->setExtra('translation_domain', '«name.formatForCode»')
                     «ENDIF»
                 ;
@@ -137,19 +137,19 @@ class ViewActions {
         }
         if (1 === $query->getInt('all')) {
             unset($routeParameters['all']);
-            $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Back to paginated view'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+            $menu->addChild('Back to paginated view', [
                 'route' => $routePrefix . $routeArea . 'view',
                 'routeParameters' => $routeParameters,
             ])
-                ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-table')
+                ->setAttribute('icon', 'fas fa-table')
             ;
         } else {
             $routeParameters['all'] = 1;
-            $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show all entries'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+            $menu->addChild('Show all entries', [
                 'route' => $routePrefix . $routeArea . 'view',
                 'routeParameters' => $routeParameters,
             ])
-                ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-table')
+                ->setAttribute('icon', 'fas fa-table')
             ;
         }
     '''
@@ -166,19 +166,19 @@ class ViewActions {
         $routeParameters = $query->all();
         if (1 === $query->getInt('own')) {
             $routeParameters['own'] = 0;
-            $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show also entries from other users'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+            $menu->addChild('Show also entries from other users', [
                 'route' => $routePrefix . $routeArea . 'view',
                 'routeParameters' => $routeParameters,
             ])
-                ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-users')
+                ->setAttribute('icon', 'fas fa-users')
             ;
         } else {
             $routeParameters['own'] = 1;
-            $menu->addChild(«IF !application.targets('3.0')»$this->__(«ENDIF»'Show only own entries'«IF !application.targets('3.0')»«IF !application.isSystemModule», '«application.appName.formatForDB»'«ENDIF»)«ENDIF», [
+            $menu->addChild('Show only own entries', [
                 'route' => $routePrefix . $routeArea . 'view',
                 'routeParameters' => $routeParameters,
             ])
-                ->setAttribute('icon', 'fa«IF application.targets('3.0')»s«ENDIF» fa-user')
+                ->setAttribute('icon', 'fas fa-user')
             ;
         }
     '''

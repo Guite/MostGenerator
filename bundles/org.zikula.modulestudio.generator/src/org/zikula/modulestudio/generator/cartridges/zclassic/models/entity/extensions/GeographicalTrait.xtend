@@ -63,12 +63,7 @@ class GeographicalTrait {
          * @var float
          */
         protected $longitude = 0.00;
-        «IF targets('3.0')»
-            «fh.getterAndSetterMethods(it, 'latitude', 'float', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'longitude', 'float', false, true, true, '', '')»
-        «ELSE»
-            «fh.getterAndSetterMethods(it, 'latitude', 'float', false, true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'longitude', 'float', false, true, false, '', '')»
-        «ENDIF»
+        «fh.getterAndSetterMethods(it, 'latitude', 'float', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'longitude', 'float', false, true, true, '', '')»
     '''
 }

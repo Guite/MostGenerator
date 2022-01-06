@@ -69,8 +69,8 @@ class Main
             ]
         }
         if (!issues.filter[severity == Severity.ERROR].empty) {
-        	System.err.println
-        	System.err.println('Aborting because the model has errors.')
+            System.err.println
+            System.err.println('Aborting because the model has errors.')
             return
         }
 

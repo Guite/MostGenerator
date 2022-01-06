@@ -60,14 +60,8 @@ class ArrayFieldTransformer {
 
             /**
              * Iterates over the given array and removes all empty entries.
-             «IF !targets('3.0')»
-             *
-             * @param array array The given input array.
-             *
-             * @return array The cleaned array.
-             «ENDIF»
              */
-            protected function removeEmptyEntries(array $array = [])«IF targets('3.0')»: array«ENDIF»
+            protected function removeEmptyEntries(array $array = []): array
             {
                 $items = $array;
         

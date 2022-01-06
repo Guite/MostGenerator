@@ -21,28 +21,24 @@ class MassHandling {
     def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «handleSelectedObjectsDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries«IF !application.targets('3.x-dev')»Action«ENDIF»(
+            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries«IF !application.targets('3.1')»Action«ENDIF»(
                 «handleSelectedObjectsArguments(false)»
-            )«IF application.targets('3.0')»: RedirectResponse«ENDIF» {
-                «IF application.targets('3.0')»
-                    return $this->handleSelectedEntriesInternal(
-                        $request,
-                        $logger,
-                        $entityFactory,
-                        $workflowHelper,«IF !skipHookSubscribers»
-                        $hookHelper,«ENDIF»
-                        $currentUserApi,
-                        «isAdmin.displayBool»
-                    );
-                «ELSE»
-                    return $this->handleSelectedEntriesInternal($request, «isAdmin.displayBool»);
-                «ENDIF»
+            ): RedirectResponse {
+                return $this->handleSelectedEntriesInternal(
+                    $request,
+                    $logger,
+                    $entityFactory,
+                    $workflowHelper,«IF !skipHookSubscribers»
+                    $hookHelper,«ENDIF»
+                    $currentUserApi,
+                    «isAdmin.displayBool»
+                );
             }
         «ELSEIF isBase && !isAdmin»
             «handleSelectedObjectsDocBlock(isBase, isAdmin)»
             protected function handleSelectedEntriesInternal(
                 «handleSelectedObjectsArguments(true)»
-            )«IF application.targets('3.0')»: RedirectResponse«ENDIF» {
+            ): RedirectResponse {
                 «handleSelectedObjectsBaseImpl»
             }
         «ENDIF»
@@ -55,13 +51,6 @@ class MassHandling {
          «IF isBase»
          * This function processes the items selected in the admin view page.
          * Multiple items may have their state changed or be deleted.
-         «IF !application.targets('3.0')»
-         *
-         * @param Request $request
-         * @param boolean $isAdmin Whether the admin area is used or not
-         *
-         * @return RedirectResponse
-         «ENDIF»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          «ELSE»
@@ -76,20 +65,15 @@ class MassHandling {
     '''
 
     def private handleSelectedObjectsArguments(Entity it, Boolean internalMethod) '''
-        «IF application.targets('3.0')»
-            Request $request,
-            LoggerInterface $logger,
-            EntityFactory $entityFactory,
-            WorkflowHelper $workflowHelper,
-            «IF !skipHookSubscribers»
-                HookHelper $hookHelper,
-            «ENDIF»
-            CurrentUserApiInterface $currentUserApi«IF internalMethod»,
-            bool $isAdmin = false«ENDIF»
-        «ELSE»
-            Request $request«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+        Request $request,
+        LoggerInterface $logger,
+        EntityFactory $entityFactory,
+        WorkflowHelper $workflowHelper,
+        «IF !skipHookSubscribers»
+            HookHelper $hookHelper,
         «ENDIF»
+        CurrentUserApiInterface $currentUserApi«IF internalMethod»,
+        bool $isAdmin = false«ENDIF»
     '''
 
     def private handleSelectedObjectsBaseImpl(Entity it) '''
@@ -104,15 +88,8 @@ class MassHandling {
 
         $action = mb_strtolower($action);
 
-        $repository = «IF application.targets('3.0')»$entityFactory«ELSE»$this->get('«application.appService».entity_factory')«ENDIF»->getRepository($objectType);
-        «IF !application.targets('3.0')»
-            $workflowHelper = $this->get('«application.appService».workflow_helper');
-            «IF !skipHookSubscribers»
-                $hookHelper = $this->get('«application.appService».hook_helper');
-            «ENDIF»
-            $logger = $this->get('logger');
-        «ENDIF»
-        $userName = «IF application.targets('3.0')»$currentUserApi«ELSE»$this->get('zikula_users_module.current_user')«ENDIF»->get('uname');
+        $repository = $entityFactory->getRepository($objectType);
+        $userName = $currentUserApi->get('uname');
 
         // process each item
         foreach ($items as $itemId) {
@@ -154,7 +131,7 @@ class MassHandling {
             } catch (Exception $exception) {
                 $this->addFlash(
                     'error',
-                    $this->«IF application.targets('3.0')»trans«ELSE»__f«ENDIF»(
+                    $this->trans(
                         'Sorry, but an error occured during the %action% action.',
                         ['%action%' => $action]
                     ) . '  ' . $exception->getMessage()
@@ -180,13 +157,13 @@ class MassHandling {
             if ('delete' === $action) {
                 $this->addFlash(
                     'status',
-                    «IF application.targets('3.0') && application.isSystemModule»
+                    «IF application.isSystemModule»
                         'Done! «name.formatForDisplayCapital» deleted.'
                     «ELSE»
-                        $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                            'Done! «name.formatForDisplayCapital» deleted.'«IF application.targets('3.0') && !application.isSystemModule»,
+                        $this->trans(
+                            'Done! «name.formatForDisplayCapital» deleted.',
                             [],
-                            '«name.formatForCode»'«ENDIF»
+                            '«name.formatForCode»'
                         )
                     «ENDIF»
                 );
@@ -202,13 +179,13 @@ class MassHandling {
             } else {
                 $this->addFlash(
                     'status',
-                    «IF application.targets('3.0') && application.isSystemModule»
+                    «IF application.isSystemModule»
                         'Done! «name.formatForDisplayCapital» updated.'
                     «ELSE»
-                        $this->«IF application.targets('3.0')»trans«ELSE»__«ENDIF»(
-                            'Done! «name.formatForDisplayCapital» updated.'«IF application.targets('3.0') && !application.isSystemModule»,
+                        $this->trans(
+                            'Done! «name.formatForDisplayCapital» updated.',
                             [],
-                            '«name.formatForCode»'«ENDIF»
+                            '«name.formatForCode»'
                         )
                     «ENDIF»
                 );

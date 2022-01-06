@@ -29,22 +29,18 @@ class ExternalController {
     }
 
     def private commonSystemImports(Application it) '''
-        «IF targets('3.0')»
-            use Symfony\Component\Routing\RouterInterface;
-            use Zikula\ThemeModule\Engine\Asset;
-            use Zikula\ThemeModule\Engine\AssetBag;
-        «ENDIF»
+        use Symfony\Component\Routing\RouterInterface;
+        use Zikula\ThemeModule\Engine\Asset;
+        use Zikula\ThemeModule\Engine\AssetBag;
     '''
 
     def private commonAppImports(Application it) '''
-        «IF targets('3.0')»
-            use «appNamespace»\Entity\Factory\EntityFactory;
-            use «appNamespace»\Helper\CollectionFilterHelper;
-            use «appNamespace»\Helper\ControllerHelper;
-            use «appNamespace»\Helper\ListEntriesHelper;
-            use «appNamespace»\Helper\PermissionHelper;
-            use «appNamespace»\Helper\ViewHelper;
-        «ENDIF»
+        use «appNamespace»\Entity\Factory\EntityFactory;
+        use «appNamespace»\Helper\CollectionFilterHelper;
+        use «appNamespace»\Helper\ControllerHelper;
+        use «appNamespace»\Helper\ListEntriesHelper;
+        use «appNamespace»\Helper\PermissionHelper;
+        use «appNamespace»\Helper\ViewHelper;
     '''
 
     def private externalBaseClass(Application it) '''
@@ -54,11 +50,7 @@ class ExternalController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Controller\AbstractController;
-        «ELSE»
-            use Zikula\Core\Controller\AbstractController;
-        «ENDIF»
+        use Zikula\Bundle\CoreBundle\Controller\AbstractController;
         «commonSystemImports»
         «commonAppImports»
 
@@ -88,16 +80,6 @@ class ExternalController {
         /**
          «IF isBase»
          * Displays one item of a certain object type using a separate template for external usages.
-         «IF !targets('3.0')»
-         *
-         * @param Request $request
-         * @param string $objectType The currently treated object type
-         * @param int $id Identifier of the entity to be shown
-         * @param string $source Source of this call (block, contentType, scribite)
-         * @param string $displayMode Display mode (link or embed)
-         *
-         * @return Response
-         «ENDIF»
          «ELSE»
          * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
          *        requirements = {"id" = "\d+", "source" = "block|contentType|scribite", "displayMode" = "link|embed"},
@@ -108,33 +90,20 @@ class ExternalController {
          */
     '''
 
-    def private displaySignature(Application it) {
-        if (targets('3.0')) '''
-            public function display«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                ControllerHelper $controllerHelper,
-                PermissionHelper $permissionHelper,
-                EntityFactory $entityFactory,
-                ViewHelper $viewHelper,
-                string $objectType,
-                int $id,
-                string $source,
-                string $displayMode
-            ): Response'''
-        else '''
-            public function displayAction(
-                Request $request,
-                $objectType,
-                $id,
-                $source,
-                $displayMode
-            )'''
-    }
+    def private displaySignature(Application it) '''
+        public function display«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            ControllerHelper $controllerHelper,
+            PermissionHelper $permissionHelper,
+            EntityFactory $entityFactory,
+            ViewHelper $viewHelper,
+            string $objectType,
+            int $id,
+            string $source,
+            string $displayMode
+        ): Response'''
 
     def private displayBaseImpl(Application it) '''
-        «IF !targets('3.0')»
-            $controllerHelper = $this->get('«appService».controller_helper');
-        «ENDIF»
         «IF !isSystemModule»
             $contextArgs = ['controller' => 'external', 'action' => 'display'];
         «ENDIF»
@@ -142,18 +111,15 @@ class ExternalController {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
         }
 
-        «IF !targets('3.0')»
-            $entityFactory = $this->get('«appService».entity_factory');
-        «ENDIF»
         $repository = $entityFactory->getRepository($objectType);
 
         // assign object data fetched from the database
         $entity = $repository->selectById($id);
         if (null === $entity) {
-            return new Response($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('No such item.'));
+            return new Response($this->trans('No such item.'));
         }
 
-        if (!«IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->mayRead($entity)) {
+        if (!$permissionHelper->mayRead($entity)) {
             return new Response('');
         }
 
@@ -170,16 +136,13 @@ class ExternalController {
         ];
 
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
-        $templateParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+        $templateParameters = $controllerHelper->addTemplateParameters(
             $objectType,
             $templateParameters,
             'controllerAction',
             $contextArgs
         );
 
-        «IF !targets('3.0')»
-            $viewHelper = $this->get('«appService».view_helper');
-        «ENDIF»
         $request->query->set('raw', true);
         
         return $viewHelper->processTemplate(
@@ -202,23 +165,11 @@ class ExternalController {
          * Popup selector for Scribite plugins.
          * Finds items of a certain object type.
          *
-         «IF !targets('3.0')»
-         * @param Request $request
-         * @param string $objectType The object type
-         * @param string $editor Name of used Scribite editor
-         * @param string $sort Sorting field
-         * @param string $sortdir Sorting direction
-         * @param int $pos Current pager position
-         * @param int $num Amount of entries to display
-         *
-         * @return Response
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ELSE»
-         * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{«IF targets('3.0')»page«ELSE»pos«ENDIF»}/{num}",
-         *        requirements = {"editor" = "ckeditor|quill|summernote|tinymce", "sortdir" = "asc|desc", "«IF targets('3.0')»page«ELSE»pos«ENDIF»" = "\d+", "num" = "\d+"},
-         *        defaults = {"sort" = "dummy«/* will be replaced by default field */»", "sortdir" = "asc", "«IF targets('3.0')»page«ELSE»pos«ENDIF»" = 1, "num" = 0},
+         * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{page}/{num}",
+         *        requirements = {"editor" = "ckeditor|quill|summernote|tinymce", "sortdir" = "asc|desc", "page" = "\d+", "num" = "\d+"},
+         *        defaults = {"sort" = "dummy«/* will be replaced by default field */»", "sortdir" = "asc", "page" = 1, "num" = 0},
          *        methods = {"GET"},
          *        options={"expose"=true}
          * )
@@ -226,42 +177,27 @@ class ExternalController {
          */
     '''
 
-    def private finderSignature(Application it) {
-        if (targets('3.0')) '''
-            public function finder«IF !targets('3.x-dev')»Action«ENDIF»(
-                Request $request,
-                RouterInterface $router,
-                ControllerHelper $controllerHelper,
-                PermissionHelper $permissionHelper,
-                EntityFactory $entityFactory,
-                CollectionFilterHelper $collectionFilterHelper,
-                ListEntriesHelper $listEntriesHelper,
-                ViewHelper $viewHelper,
-                AssetBag $cssAssetBag,
-                Asset $assetHelper,
-                string $objectType,
-                string $editor,
-                string $sort,
-                string $sortdir,
-                int $page = 1,
-                int $num = 0
-            ): Response'''
-        else '''
-            public function finderAction(
-                Request $request,
-                $objectType,
-                $editor,
-                $sort,
-                $sortdir,
-                $pos = 1,
-                $num = 0
-            )'''
-    }
+    def private finderSignature(Application it) '''
+        public function finder«IF !targets('3.1')»Action«ENDIF»(
+            Request $request,
+            RouterInterface $router,
+            ControllerHelper $controllerHelper,
+            PermissionHelper $permissionHelper,
+            EntityFactory $entityFactory,
+            CollectionFilterHelper $collectionFilterHelper,
+            ListEntriesHelper $listEntriesHelper,
+            ViewHelper $viewHelper,
+            AssetBag $cssAssetBag,
+            Asset $assetHelper,
+            string $objectType,
+            string $editor,
+            string $sort,
+            string $sortdir,
+            int $page = 1,
+            int $num = 0
+        ): Response'''
 
     def private finderBaseImpl(Application it) '''
-        «IF !targets('3.0')»
-            $listEntriesHelper = $this->get('«appService».listentries_helper');
-        «ENDIF»
         $activatedObjectTypes = $listEntriesHelper->extractMultiList($this->getVar('enabledFinderTypes', ''));
         if (!in_array($objectType, $activatedObjectTypes, true)) {
             if (!count($activatedObjectTypes)) {
@@ -269,7 +205,7 @@ class ExternalController {
             }
 
             // redirect to first valid object type
-            $redirectUrl = «IF targets('3.0')»$router«ELSE»$this->get('router')«ENDIF»->generate(
+            $redirectUrl = $router->generate(
                 '«appName.formatForDB»_external_finder',
                 ['objectType' => array_shift($activatedObjectTypes), 'editor' => $editor]
             );
@@ -284,22 +220,18 @@ class ExternalController {
             }
         «ENDIF»
 
-        if (!«IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->hasComponentPermission($objectType, ACCESS_COMMENT)) {
+        if (!$permissionHelper->hasComponentPermission($objectType, ACCESS_COMMENT)) {
             throw new AccessDeniedException();
         }
 
         if (empty($editor) || !in_array($editor, ['ckeditor', 'quill', 'summernote', 'tinymce'], true)) {
-            return new Response($this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error: Invalid editor context given for external controller action.'));
+            return new Response($this->trans('Error: Invalid editor context given for external controller action.'));
         }
 
-        «IF !targets('3.0')»
-            $assetHelper = $this->get('zikula_core.common.theme.asset_helper');
-            $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
-        «ENDIF»
         $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
         $cssAssetBag->add([$assetHelper->resolve('@«appName»:css/custom.css') => 120]);
 
-        $repository = «IF targets('3.0')»$entityFactory«ELSE»$this->get('«appService».entity_factory')«ENDIF»->getRepository($objectType);
+        $repository = $entityFactory->getRepository($objectType);
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields(), true)) {
             $sort = $repository->getDefaultSortingField();
         }
@@ -308,14 +240,9 @@ class ExternalController {
         if ('asc' !== $sdir && 'desc' !== $sdir) {
             $sdir = 'asc';
         }
-        «IF !targets('3.0')»
-
-            // the current offset which is used to calculate the pagination
-            $currentPage = (int) $pos;
-        «ENDIF»
 
         // the number of items displayed on a page for pagination
-        $resultsPerPage = «IF !targets('3.0')»(int) «ENDIF»$num;
+        $resultsPerPage = $num;
         if (0 === $resultsPerPage) {
             $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 20);
         }
@@ -325,7 +252,7 @@ class ExternalController {
             'objectType' => $objectType,
             'sort' => $sort,
             'sortdir' => $sdir,
-            'currentPage' => «IF targets('3.0')»$page«ELSE»$currentPage«ENDIF»,
+            'currentPage' => $page,
             'language' => isset($formData['language']) ? $formData['language'] : $request->getLocale(),
             «IF hasImageFields»
                 'onlyImages' => false,
@@ -348,7 +275,7 @@ class ExternalController {
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
             $templateParameters = array_merge($templateParameters, $formData);
-            «IF targets('3.0')»$page«ELSE»$currentPage«ENDIF» = $formData['currentPage'];
+            $page = $formData['currentPage'];
             $resultsPerPage = $formData['num'];
             $sort = $formData['sort'];
             $sdir = $formData['sortdir'];
@@ -377,29 +304,24 @@ class ExternalController {
         «ENDIF»
 
         if ('' !== $searchTerm) {
-            $qb = $this->«IF targets('3.0')»$collectionFilterHelper«ELSE»get('«appService».collection_filter_helper')«ENDIF»->addSearchFilter($objectType, $qb, $searchTerm);
+            $qb = $collectionFilterHelper->addSearchFilter($objectType, $qb, $searchTerm);
         }
 
-        «IF targets('3.0')»
-            $paginator = $repository->retrieveCollectionResult($qb, true, $page, $resultsPerPage);
-            $paginator->setRoute('«appName.formatForDB»_external_finder');
-            $paginator->setRouteParameters($formData);
+        $paginator = $repository->retrieveCollectionResult($qb, true, $page, $resultsPerPage);
+        $paginator->setRoute('«appName.formatForDB»_external_finder');
+        $paginator->setRouteParameters($formData);
 
-            $templateParameters['paginator'] = $paginator;
-            $entities = $paginator->getResults();
-        «ELSE»
-            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
-        «ENDIF»
+        $templateParameters['paginator'] = $paginator;
+        $entities = $paginator->getResults();
 
         // filter by permissions
-        $entities = «IF targets('3.0')»$permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
+        $entities = $permissionHelper->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
 
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();
 
         $contextArgs = ['controller' => 'external', 'action' => 'display'];
-        $templateParameters = «IF targets('3.0')»$controllerHelper«ELSE»$this->get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+        $templateParameters = $controllerHelper->addTemplateParameters(
             $objectType,
             $templateParameters,
             'controllerAction',
@@ -407,15 +329,6 @@ class ExternalController {
         );
 
         $templateParameters['activatedObjectTypes'] = $activatedObjectTypes;
-        «IF !targets('3.0')»
-
-            $templateParameters['pager'] = [
-                'numitems' => $objectCount,
-                'itemsperpage' => $resultsPerPage
-            ];
-
-            $viewHelper = $this->get('«appService».view_helper');
-        «ENDIF»
         $request->query->set('raw', true);
         
         return $viewHelper->processTemplate('external', ucfirst($objectType) . '/find', $templateParameters);
@@ -449,63 +362,41 @@ class ExternalController {
     def private displayImpl(Application it) '''
         «displayDocBlock(false)»
         «displaySignature» {
-            «IF targets('3.0')»
-                return parent::display«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $controllerHelper,
-                    $permissionHelper,
-                    $entityFactory,
-                    $viewHelper,
-                    $objectType,
-                    $id,
-                    $source,
-                    $displayMode
-                );
-            «ELSE»
-                return parent::displayAction(
-                    $request,
-                    $objectType,
-                    $id,
-                    $source,
-                    $displayMode
-                );
-            «ENDIF»
+            return parent::display«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $controllerHelper,
+                $permissionHelper,
+                $entityFactory,
+                $viewHelper,
+                $objectType,
+                $id,
+                $source,
+                $displayMode
+            );
         }
     '''
 
     def private finderImpl(Application it) '''
         «finderDocBlock(false)»
         «finderSignature» {
-            «IF targets('3.0')»
-                return parent::finder«IF !targets('3.x-dev')»Action«ENDIF»(
-                    $request,
-                    $router,
-                    $controllerHelper,
-                    $permissionHelper,
-                    $entityFactory,
-                    $collectionFilterHelper,
-                    $listEntriesHelper,
-                    $viewHelper,
-                    $cssAssetBag,
-                    $assetHelper,
-                    $objectType,
-                    $editor,
-                    $sort,
-                    $sortdir,
-                    $page,
-                    $num
-                );
-            «ELSE»
-                return parent::finderAction(
-                    $request,
-                    $objectType,
-                    $editor,
-                    $sort,
-                    $sortdir,
-                    $pos,
-                    $num
-                );
-            «ENDIF»
+            return parent::finder«IF !targets('3.1')»Action«ENDIF»(
+                $request,
+                $router,
+                $controllerHelper,
+                $permissionHelper,
+                $entityFactory,
+                $collectionFilterHelper,
+                $listEntriesHelper,
+                $viewHelper,
+                $cssAssetBag,
+                $assetHelper,
+                $objectType,
+                $editor,
+                $sort,
+                $sortdir,
+                $page,
+                $num
+            );
         }
     '''
 }

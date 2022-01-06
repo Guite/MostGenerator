@@ -29,7 +29,7 @@ class BacklinkIntegrator {
                 }
 
                 $('#poweredBy')
-                    .html($('#poweredBy').html() + ' ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('and') + ' ')
+                    .html($('#poweredBy').html() + ' ' + Translator.trans('and') + ' ')
                     .append($('#poweredByMost a'))
                 ;
                 $('#poweredByMost').remove();

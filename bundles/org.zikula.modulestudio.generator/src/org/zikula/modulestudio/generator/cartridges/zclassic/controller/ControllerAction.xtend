@@ -36,9 +36,9 @@ class ControllerAction {
     def generate(Entity it, Action action, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «action.actionDoc(it, isBase, isAdmin)»
-            public function «action.methodName(isAdmin)»«IF !application.targets('3.x-dev')»Action«ENDIF»(
+            public function «action.methodName(isAdmin)»«IF !application.targets('3.1')»Action«ENDIF»(
                 «methodArguments(it, action, false)»
-            )«IF app.targets('3.0')»: Response«ENDIF» {
+            ): Response {
                 return $this->«action.methodName(false)»Internal(
                     «methodArgsCall(it, action, isAdmin)»
                 );
@@ -47,7 +47,7 @@ class ControllerAction {
             «action.actionDoc(it, isBase, isAdmin)»
             protected function «action.methodName(false)»Internal(
                 «methodArguments(it, action, true)»
-            )«IF app.targets('3.0')»: Response«ENDIF» {
+            ): Response {
                 «actionsImpl.actionImpl(it, action)»
             }
         «ENDIF»
@@ -64,13 +64,6 @@ class ControllerAction {
         «ENDIF»
         «IF isBase»
          *
-        «IF !app.targets('3.0')»
-         * @param Request $request
-        «actionDocMethodParams(entity, it)»
-         *
-         * @return Response Output
-         *
-         «ENDIF»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
          * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be displayed isn't found
@@ -107,239 +100,133 @@ class ControllerAction {
         }
     }
 
-    // not for 3.0
-    def private actionDocMethodParams(Entity it, Action action) {
-        if (!(action instanceof MainAction || action instanceof CustomAction)) {
-            '''«actionDocAdditionalParams(action, it)»'''
-        }
-    }
-
-    // not for 3.0
-    def private actionDocAdditionalParams(Action it, Entity refEntity) {
-        switch it {
-            ViewAction:
-               ' * @param string $sort Sorting field\n'
-               + ' * @param string $sortdir Sorting direction\n'
-               + ' * @param int $pos Current pager position\n'
-               + ' * @param int $num Amount of entries to display\n'
-            DisplayAction:
-                if (refEntity.hasUniqueSlug) {
-                    ' * @param string $slug Slug of treated ' + refEntity.name.formatForDisplay + ' instance\n'
-                } else {
-                    ' * @param int $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
-                }
-            EditAction: ''
-            DeleteAction:
-                if (refEntity.hasUniqueSlug) {
-                    ' * @param string $slug Slug of treated ' + refEntity.name.formatForDisplay + ' instance\n'
-                } else {
-                    ' * @param int $id Identifier of treated ' + refEntity.name.formatForDisplay + ' instance\n'
-                }
-            default: ''
-        }
-    }
-
     def private dispatch methodName(Action it, Boolean isAdmin) '''«IF !isAdmin»«name.formatForCode.toFirstLower»«ELSE»admin«name.formatForCodeCapital»«ENDIF»'''
 
     def private dispatch methodName(MainAction it, Boolean isAdmin) '''«IF isAdmin»adminIndex«ELSE»index«ENDIF»'''
 
     def private dispatch methodArguments(Entity it, Action action, Boolean internalMethod) '''
-        «IF application.targets('3.0')»
-            Request $request,
-            PermissionHelper $permissionHelper«IF internalMethod»,
-            bool $isAdmin = false«ENDIF»
-        «ELSE»
-            Request $request«IF internalMethod»,
-            $isAdmin = false«ENDIF»
-        «ENDIF»
+        Request $request,
+        PermissionHelper $permissionHelper«IF internalMethod»,
+        bool $isAdmin = false«ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, Action action, Boolean isAdmin) {
-        if (application.targets('3.0')) {
-            '''
-                $request,
-                $permissionHelper,
-                «isAdmin.displayBool»
-            '''
-        } else {
-            '''
-                $request,
-                «isAdmin.displayBool»
-            '''
-        }
+        '''
+            $request,
+            $permissionHelper,
+            «isAdmin.displayBool»
+        '''
     }
 
     def private dispatch methodArguments(Entity it, ViewAction action, Boolean internalMethod) '''
-        «IF application.targets('3.0')»
-            Request $request,
-            RouterInterface $router,
-            PermissionHelper $permissionHelper,
-            ControllerHelper $controllerHelper,
-            ViewHelper $viewHelper,
-            «IF loggable»
-                LoggableHelper $loggableHelper,
-            «ENDIF»
-            string $sort,
-            string $sortdir,
-            int $page,
-            int $num«IF internalMethod»,
-            bool $isAdmin = false«ENDIF»
-        «ELSE»
-            Request $request,
-            $sort,
-            $sortdir,
-            $pos,
-            $num«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+        Request $request,
+        RouterInterface $router,
+        PermissionHelper $permissionHelper,
+        ControllerHelper $controllerHelper,
+        ViewHelper $viewHelper,
+        «IF loggable»
+            LoggableHelper $loggableHelper,
         «ENDIF»
+        string $sort,
+        string $sortdir,
+        int $page,
+        int $num«IF internalMethod»,
+        bool $isAdmin = false«ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, ViewAction action, Boolean isAdmin) {
-        if (application.targets('3.0')) {
-            '''
-                $request,
-                $router,
-                $permissionHelper,
-                $controllerHelper,
-                $viewHelper,«IF loggable»
-                $loggableHelper,«ENDIF»
-                $sort,
-                $sortdir,
-                $page,
-                $num,
-                «isAdmin.displayBool»
-            '''
-        } else {
-            '''
-                $request,
-                $sort,
-                $sortdir,
-                $pos,
-                $num,
-                «isAdmin.displayBool»
-            '''
-        }
+        '''
+            $request,
+            $router,
+            $permissionHelper,
+            $controllerHelper,
+            $viewHelper,«IF loggable»
+            $loggableHelper,«ENDIF»
+            $sort,
+            $sortdir,
+            $page,
+            $num,
+            «isAdmin.displayBool»
+        '''
     }
 
     def private dispatch methodArguments(Entity it, DisplayAction action, Boolean internalMethod) '''
-        «IF application.targets('3.0')»
-            Request $request,
-            PermissionHelper $permissionHelper,
-            ControllerHelper $controllerHelper,
-            ViewHelper $viewHelper,
-            EntityFactory $entityFactory,
-            «IF loggable»
-                LoggableHelper $loggableHelper,
-            «ENDIF»
-            «IF app.generateIcsTemplates && hasStartAndEndDateField»
-                EntityDisplayHelper $entityDisplayHelper,
-            «ENDIF»
-            ?«name.formatForCodeCapital»Entity $«name.formatForCode» = null,
-            «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
-            bool $isAdmin = false«ENDIF»
-        «ELSE»
-            Request $request,
-            «name.formatForCodeCapital»Entity $«name.formatForCode» = null,
-            «IF hasUniqueSlug»$slug = ''«ELSE»$id = 0«ENDIF»«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+        Request $request,
+        PermissionHelper $permissionHelper,
+        ControllerHelper $controllerHelper,
+        ViewHelper $viewHelper,
+        EntityFactory $entityFactory,
+        «IF loggable»
+            LoggableHelper $loggableHelper,
         «ENDIF»
+        «IF app.generateIcsTemplates && hasStartAndEndDateField»
+            EntityDisplayHelper $entityDisplayHelper,
+        «ENDIF»
+        ?«name.formatForCodeCapital»Entity $«name.formatForCode» = null,
+        «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
+        bool $isAdmin = false«ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, DisplayAction action, Boolean isAdmin) {
-        if (application.targets('3.0')) {
-            '''
-                $request,
-                $permissionHelper,
-                $controllerHelper,
-                $viewHelper,
-                $entityFactory,«IF loggable»
-                $loggableHelper,«ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField»
-                $entityDisplayHelper,«ENDIF»
-                $«name.formatForCode»,
-                $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
-                «isAdmin.displayBool»
-            '''
-        } else {
-            '''
-                $request,
-                $«name.formatForCode»,
-                $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
-                «isAdmin.displayBool»
-            '''
-        }
+        '''
+            $request,
+            $permissionHelper,
+            $controllerHelper,
+            $viewHelper,
+            $entityFactory,«IF loggable»
+            $loggableHelper,«ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField»
+            $entityDisplayHelper,«ENDIF»
+            $«name.formatForCode»,
+            $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
+            «isAdmin.displayBool»
+        '''
     }
 
     def private dispatch methodArguments(Entity it, EditAction action, Boolean internalMethod) '''
-        «IF application.targets('3.0')»
-            Request $request,
-            PermissionHelper $permissionHelper,
-            ControllerHelper $controllerHelper,
-            ViewHelper $viewHelper,
-            EditHandler $formHandler«IF internalMethod»,
-            bool $isAdmin = false«ENDIF»
-        «ELSE»
-            Request $request«IF internalMethod»,
-            $isAdmin = false«ENDIF»
-        «ENDIF»
+        Request $request,
+        PermissionHelper $permissionHelper,
+        ControllerHelper $controllerHelper,
+        ViewHelper $viewHelper,
+        EditHandler $formHandler«IF internalMethod»,
+        bool $isAdmin = false«ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, EditAction action, Boolean isAdmin) {
-        if (application.targets('3.0')) {
-            '''
-                $request,
-                $permissionHelper,
-                $controllerHelper,
-                $viewHelper,
-                $formHandler,
-                «isAdmin.displayBool»
-            '''
-        } else {
-            '''
-                $request,
-                «isAdmin.displayBool»
-            '''
-        }
+        '''
+            $request,
+            $permissionHelper,
+            $controllerHelper,
+            $viewHelper,
+            $formHandler,
+            «isAdmin.displayBool»
+        '''
     }
 
     def private dispatch methodArguments(Entity it, DeleteAction action, Boolean internalMethod) '''
-        «IF application.targets('3.0')»
-            Request $request,
-            LoggerInterface $logger,
-            PermissionHelper $permissionHelper,
-            ControllerHelper $controllerHelper,
-            ViewHelper $viewHelper,
-            EntityFactory $entityFactory,
-            CurrentUserApiInterface $currentUserApi,
-            WorkflowHelper $workflowHelper,
-            «IF !skipHookSubscribers»
-                HookHelper $hookHelper,
-            «ENDIF»
-            «IF hasUniqueSlug»string $slug«ELSE»int $id«ENDIF»«IF internalMethod»,
-            bool $isAdmin = false«ENDIF»
-        «ELSE»
-            Request $request,
-            $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»«IF internalMethod»,
-            $isAdmin = false«ENDIF»
+        Request $request,
+        LoggerInterface $logger,
+        PermissionHelper $permissionHelper,
+        ControllerHelper $controllerHelper,
+        ViewHelper $viewHelper,
+        EntityFactory $entityFactory,
+        CurrentUserApiInterface $currentUserApi,
+        WorkflowHelper $workflowHelper,
+        «IF !skipHookSubscribers»
+            HookHelper $hookHelper,
         «ENDIF»
+        «IF hasUniqueSlug»string $slug«ELSE»int $id«ENDIF»«IF internalMethod»,
+        bool $isAdmin = false«ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, DeleteAction action, Boolean isAdmin) {
-        if (application.targets('3.0')) {
-            '''
-                $request,
-                $logger,
-                $permissionHelper,
-                $controllerHelper,
-                $viewHelper,
-                $entityFactory,
-                $currentUserApi,
-                $workflowHelper,«IF !skipHookSubscribers»
-                $hookHelper,«ENDIF»
-                $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
-                «isAdmin.displayBool»
-            '''
-        } else {
-            '''
-                $request,
-                $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
-                «isAdmin.displayBool»
-            '''
-        }
+        '''
+            $request,
+            $logger,
+            $permissionHelper,
+            $controllerHelper,
+            $viewHelper,
+            $entityFactory,
+            $currentUserApi,
+            $workflowHelper,«IF !skipHookSubscribers»
+            $hookHelper,«ENDIF»
+            $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
+            «isAdmin.displayBool»
+        '''
     }
 
     def private hasUniqueSlug(Entity it) {

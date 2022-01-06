@@ -18,14 +18,14 @@ class Routing {
      * Entry point for Routing YAML file.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        fsa.generateFile(getResourcesPath + 'config/routing' + (if (targets('3.0')) '.yaml' else '.yml'), routingConfig)
+        fsa.generateFile(getResourcesPath + 'config/routing.yaml', routingConfig)
     }
 
     def private routingConfig(Application it) '''
-		«appName.toLowerCase»:
-		    # define routing support for these controllers
-		    resource: "@«appName»/Controller"
-		    # enable support for defining routes by annotations
-		    type: annotation
-	'''
+        «appName.toLowerCase»:
+            # define routing support for these controllers
+            resource: "@«appName»/Controller"
+            # enable support for defining routes by annotations
+            type: annotation
+    '''
 }

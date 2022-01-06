@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -12,7 +11,6 @@ class BlockDetailType {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -39,13 +37,8 @@ class BlockDetailType {
         use «nsSymfonyFormType»TextType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        «IF targets('3.0')»
-            use Translation\Extractor\Annotation\Ignore;
-            use Translation\Extractor\Annotation\Translate;
-        «ELSE»
-            use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula\Common\Translator\TranslatorTrait;
-        «ENDIF»
+        use Translation\Extractor\Annotation\Ignore;
+        use Translation\Extractor\Annotation\Translate;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\EntityDisplayHelper;
 
@@ -54,10 +47,6 @@ class BlockDetailType {
          */
         abstract class AbstractItemBlockType extends AbstractType
         {
-            «IF !targets('3.0')»
-                use TranslatorTrait;
-
-            «ENDIF»
             /**
              * @var EntityFactory
              */
@@ -69,22 +58,12 @@ class BlockDetailType {
             protected $entityDisplayHelper;
 
             public function __construct(
-                «IF !targets('3.0')»
-                    TranslatorInterface $translator,
-                «ENDIF»
                 EntityFactory $entityFactory,
                 EntityDisplayHelper $entityDisplayHelper
             ) {
-                «IF !targets('3.0')»
-                    $this->setTranslator($translator);
-                «ENDIF»
                 $this->entityFactory = $entityFactory;
                 $this->entityDisplayHelper = $entityDisplayHelper;
             }
-            «IF !targets('3.0')»
-
-                «setTranslatorMethod»
-            «ENDIF»
 
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
@@ -121,24 +100,21 @@ class BlockDetailType {
         /**
          * Adds an object type field.
          */
-        public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addObjectTypeField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder->add('objectType', «IF getAllEntities.filter[hasDisplayAction].size == 1»Hidden«ELSE»Choice«ENDIF»Type::class, [
-                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Object type:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                'label' => 'Object type',
                 'empty_data' => '«leadingEntity.name.formatForCode»',
                 «IF getAllEntities.filter[hasDisplayAction].size > 1»
                     'attr' => [
-                        'title' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the block once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                        'title' => 'If you change this please save the block once to reload the parameters below.',
                     ],
-                    'help' => «IF !targets('3.0')»$this->__(«ENDIF»'If you change this please save the block once to reload the parameters below.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                    'help' => 'If you change this please save the block once to reload the parameters below.',
                     'choices' => [
                         «FOR entity : getAllEntities.filter[hasDisplayAction]»
-                            «IF !targets('3.0')»$this->__(«ENDIF»'«entity.nameMultiple.formatForDisplayCapital»'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» => '«entity.name.formatForCode»',
+                            '«entity.nameMultiple.formatForDisplayCapital»' => '«entity.name.formatForCode»',
                         «ENDFOR»
                     ],
-                    «IF !targets('2.0')»
-                        'choices_as_values' => true,
-                    «ENDIF»
                     'multiple' => false,
                     'expanded' => false,
                 «ENDIF»
@@ -150,7 +126,7 @@ class BlockDetailType {
         /**
          * Adds a item identifier field.
          */
-        public function addIdField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addIdField(FormBuilderInterface $builder, array $options = []): void
         {
             $repository = $this->entityFactory->getRepository($options['object_type']);
             // select without joins
@@ -165,12 +141,9 @@ class BlockDetailType {
             $builder->add('id', ChoiceType::class, [
                 'multiple' => false,
                 'expanded' => false,
-                'choices' => «IF targets('3.0')»/** @Ignore */«ENDIF»$choices,
-                «IF !targets('2.0')»
-                    'choices_as_values' => true,
-                «ENDIF»
+                'choices' => /** @Ignore */$choices,
                 'required' => true,
-                'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Entry to display:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                'label' => 'Entry to display',
             ]);
         }
     '''
@@ -179,29 +152,23 @@ class BlockDetailType {
         /**
          * Adds template fields.
          */
-        public function addTemplateField(FormBuilderInterface $builder, array $options = [])«IF targets('3.0')»: void«ENDIF»
+        public function addTemplateField(FormBuilderInterface $builder, array $options = []): void
         {
             $builder
                 ->add('customTemplate', TextType::class, [
-                    'label' => «IF !targets('3.0')»$this->__(«ENDIF»'Custom template:'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»,
+                    'label' => 'Custom template',
                     'required' => false,
                     'attr' => [
                         'maxlength' => 80,
-                        «IF targets('3.0')»
-                            /** @Ignore */
-                        «ENDIF»
-                        'title' => «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': displaySpecial.html.twig',
-                    ],
-                    «IF targets('3.0')»
                         /** @Ignore */
-                    «ENDIF»
-                    'help' => [
-                        «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Example'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF» . ': <code>displaySpecial.html.twig</code>',
-                        «IF targets('3.0')»/** @Translate */«ELSE»$this->__(«ENDIF»'Needs to be located in the "External/YourEntity/" directory.'«IF !targets('3.0')»«IF !isSystemModule», '«appName.formatForDB»'«ENDIF»)«ENDIF»
+                        'title' => /** @Translate */'Example' . ': displaySpecial.html.twig',
                     ],
-                    «IF targets('3.0')»
-                        'help_html' => true,
-                    «ENDIF»
+                    /** @Ignore */
+                    'help' => [
+                        /** @Translate */'Example' . ': <code>displaySpecial.html.twig</code>',
+                        /** @Translate */'Needs to be located in the "External/YourEntity/" directory.',
+                    ],
+                    'help_html' => true,
                 ])
             ;
         }

@@ -36,7 +36,7 @@ class CommonIntegrationTemplates {
 
     def private displayDescTemplate(Entity it, Application app) '''
         {# purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
-        «IF app.targets('3.0') && !app.isSystemModule»
+        «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         <dl>
@@ -45,13 +45,13 @@ class CommonIntegrationTemplates {
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty»
                     {% if «name.formatForCode».«textFields.head.name.formatForCode» %}
-                        <dd>{{ «name.formatForCode».«textFields.head.name.formatForCode»|striptags|«IF app.targets('3.0')»u.«ENDIF»truncate(200«IF !app.targets('3.0')», true«ENDIF», '…') }}</dd>
+                        <dd>{{ «name.formatForCode».«textFields.head.name.formatForCode»|striptags|u.truncate(200, '…') }}</dd>
                     {% endif %}
                 «ELSE»
                     «val stringFields = fields.filter(StringField).filter[role != StringRole.PASSWORD]»
                     «IF !stringFields.empty»
                         {% if «name.formatForCode».«stringFields.head.name.formatForCode» %}
-                            <dd>{{ «name.formatForCode».«stringFields.head.name.formatForCode»|striptags|«IF app.targets('3.0')»u.«ENDIF»truncate(200«IF !app.targets('3.0')», true«ENDIF», '…') }}</dd>
+                            <dd>{{ «name.formatForCode».«stringFields.head.name.formatForCode»|striptags|u.truncate(200, '…') }}</dd>
                         {% endif %}
                     «ENDIF»
                 «ENDIF»
@@ -59,14 +59,14 @@ class CommonIntegrationTemplates {
                     <dd>«detailLink»</dd>
                 «ENDIF»
             {% else %}
-                <dt>«IF app.targets('3.0')»{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»</dt>
+                <dt>{% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}</dt>
             {% endfor %}
         </dl>
     '''
 
     def private displayTemplate(Entity it, Application app) '''
         {# purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
-        «IF app.targets('3.0') && !app.isSystemModule»
+        «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         {% for «name.formatForCode» in items %}
@@ -82,6 +82,6 @@ class CommonIntegrationTemplates {
     '''
 
     def private detailLink(Entity it) '''
-        <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ «IF application.targets('3.0')»'Read more'|trans«ELSE»__('Read more')«ENDIF»|e('html_attr') }}">«IF application.targets('3.0')»{% trans %}Read more{% endtrans %}«ELSE»{{ __('Read more') }}«ENDIF»</a>
+        <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ 'Read more'|trans|e('html_attr') }}">{% trans %}Read more{% endtrans %}</a>
     '''
 }

@@ -99,8 +99,8 @@ class DisplayFunctions {
 
             var fieldPrefix = '«appName.formatForDB»_' + objectType.toLowerCase() + 'quicknav_';
             // we can hide the submit button if we have no visible quick search field
-            if (jQuery('#' + fieldPrefix + 'q').length < 1 || jQuery('#' + fieldPrefix + 'q').parent().parent().hasClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»')) {
-                jQuery('#' + fieldPrefix + 'updateview').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+            if (jQuery('#' + fieldPrefix + 'q').length < 1 || jQuery('#' + fieldPrefix + 'q').parent().parent().hasClass('d-none')) {
+                jQuery('#' + fieldPrefix + 'updateview').addClass('d-none');
             }
         }
     '''
@@ -126,16 +126,16 @@ class DisplayFunctions {
                 toggleLink = jQuery('#toggle' + idSuffix);
 
                 /*if (data.message) {
-                    «vendorAndName»SimpleAlert(toggleLink, Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                    «vendorAndName»SimpleAlert(toggleLink, Translator.trans('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
                 }*/
 
-                toggleLink.find('.fa-check').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', true !== data.state);
-                toggleLink.find('.fa-times').toggleClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»', true === data.state);
+                toggleLink.find('.fa-check').toggleClass('d-none', true !== data.state);
+                toggleLink.find('.fa-times').toggleClass('d-none', true === data.state);
             })«/*,
             fail: function (jqXHR, textStatus, errorThrown) {
                 // nothing to do yet
                 var idSuffix = fieldName + '_' + itemId;
-                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Error'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.trans('Error'), Translator.trans('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
             })*/»;
         }
     '''
@@ -156,7 +156,7 @@ class DisplayFunctions {
                 itemId = jQuery(this).data('item-id');
 
                 «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
-            }).removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+            }).removeClass('d-none');
         }
     '''
 
@@ -168,7 +168,7 @@ class DisplayFunctions {
             var alertBox;
 
             alertBox = ' \
-                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade«IF targets('3.0')» show«ENDIF»"> \
+                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade show"> \
                   <button type="button" class="close" data-dismiss="alert">&times;</button> \
                   <h4>' + title + '</h4> \
                   <p>' + content + '</p> \
@@ -221,11 +221,11 @@ class DisplayFunctions {
 
     def private initItemActionStyle(Application it, ItemActionsStyle style, String context) '''
         «IF style == ItemActionsStyle.ICON»
-            jQuery('ul.«IF targets('3.0')»nav«ELSE»list-inline«ENDIF» > li > a > i.tooltips').tooltip();
+            jQuery('ul.nav > li > a > i.tooltips').tooltip();
         «ELSEIF style == ItemActionsStyle.BUTTON_GROUP»
             jQuery('.btn-group-sm.item-actions').each(function (index) {
                 var innerList;
-                innerList = jQuery(this).children('ul.«IF targets('3.0')»nav«ELSE»list-inline«ENDIF»').first().detach();
+                innerList = jQuery(this).children('ul.nav').first().detach();
                 jQuery(this).append(innerList.find('a.btn'));
             });
         «ELSEIF style == ItemActionsStyle.DROPDOWN»
@@ -248,16 +248,12 @@ class DisplayFunctions {
                 return;
             }
 
-            containers.find('.dropdown > ul').removeClass('«IF targets('3.0')»nav«ELSE»list-inline«ENDIF»').addClass('list-unstyled dropdown-menu');
-            «IF targets('3.0')»
-                containers.find('.dropdown > ul > li').addClass('dropdown-item').css('padding', 0);
-                containers.find('.dropdown > ul a').addClass('d-block').css('padding', '3px 5px');
-                containers.find('.dropdown > ul a i').addClass('fa-fw mr-1');
-            «ELSE»
-                containers.find('.dropdown > ul a i').addClass('fa-fw');
-            «ENDIF»
+            containers.find('.dropdown > ul').removeClass('nav').addClass('list-unstyled dropdown-menu');
+            containers.find('.dropdown > ul > li').addClass('dropdown-item').css('padding', 0);
+            containers.find('.dropdown > ul a').addClass('d-block').css('padding', '3px 5px');
+            containers.find('.dropdown > ul a i').addClass('fa-fw mr-1');
             if (containers.find('.dropdown-toggle').length > 0) {
-                containers.find('.dropdown-toggle').removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»').dropdown();
+                containers.find('.dropdown-toggle').removeClass('d-none').dropdown();
             }
         «ENDIF»
     '''
@@ -273,7 +269,7 @@ class DisplayFunctions {
             var modalTitle;
 
             // show the container (hidden for users without JavaScript)
-            containerElem.removeClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+            containerElem.removeClass('d-none');
 
             // define name of window
             newWindowId = containerElem.attr('id') + 'Dialog';
@@ -359,9 +355,9 @@ class DisplayFunctions {
                     enabled: true,
                     navigateByImgClick: true,
                     arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
-                    tPrev: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Previous (Left arrow key)'),
-                    tNext: Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Next (Right arrow key)'),
-                    tCounter: '<span class="mfp-counter">%curr% ' + Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('of') + ' %total%</span>'
+                    tPrev: Translator.trans('Previous (Left arrow key)'),
+                    tNext: Translator.trans('Next (Right arrow key)'),
+                    tCounter: '<span class="mfp-counter">%curr% ' + Translator.trans('of') + ' %total%</span>'
                 },
                 zoom: {
                     enabled: true,
@@ -405,7 +401,7 @@ class DisplayFunctions {
                         }
                     }).done(function (data) {
                         /*if (data.message) {
-                            «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.«IF targets('3.0')»trans«ELSE»__«ENDIF»('Success'), data.message, 'sortingDoneAlert', 'success');
+                            «vendorAndName»SimpleAlert(jQuery('#sortableTable'), Translator.trans('Success'), data.message, 'sortingDoneAlert', 'success');
                         }*/
                         window.location.reload();
                     });

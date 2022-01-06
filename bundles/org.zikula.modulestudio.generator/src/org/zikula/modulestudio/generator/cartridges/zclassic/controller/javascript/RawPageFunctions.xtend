@@ -21,7 +21,7 @@ class RawPageFunctions {
 
         (function($) {
             $(document).ready(function () {
-                $('.dropdown-toggle').addClass('«IF targets('3.0')»d-none«ELSE»hidden«ENDIF»');
+                $('.dropdown-toggle').addClass('d-none');
             });
         })(jQuery);
     '''

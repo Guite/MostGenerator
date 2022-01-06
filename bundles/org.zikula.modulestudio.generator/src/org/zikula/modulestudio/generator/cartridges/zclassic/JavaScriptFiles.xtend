@@ -13,7 +13,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HistoryFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HookAssignment
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.InlineEditing
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ItemSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.RawPageFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
@@ -50,10 +49,6 @@ class JavaScriptFiles {
         }
         if (generateExternalControllerAndFinder) {
             new Finder().generate(it, fsa)
-        }
-        val needsDetailContentType = generateDetailContentType && hasDisplayActions
-        if (needsDetailContentType) {
-            new ItemSelector().generate(it, fsa)
         }
         if (hasGeographical) {
             new GeoFunctions().generate(it, fsa)

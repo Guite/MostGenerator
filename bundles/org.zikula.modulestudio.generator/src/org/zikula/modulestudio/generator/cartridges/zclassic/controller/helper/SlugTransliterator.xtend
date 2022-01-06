@@ -35,15 +35,8 @@ class SlugTransliterator {
         {
             /**
              * Transliterates a given text.
-             «IF !targets('3.0')»
-             *
-             * @param string $text
-             * @param string $separator
-             *
-             * @return string
-             «ENDIF»
              */
-            public static function transliterate($text, $separator = '-')«IF targets('3.0')»: string«ENDIF»
+            public static function transliterate($text, $separator = '-'): string
             {
                 $text = Urlizer::unaccent($text);
 

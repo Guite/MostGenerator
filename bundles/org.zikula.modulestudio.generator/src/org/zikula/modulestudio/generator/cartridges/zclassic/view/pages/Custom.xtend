@@ -32,29 +32,21 @@ class Custom {
     def private customView(CustomAction it, Entity controller, Boolean isAdmin) '''
         «IF app.separateAdminTemplates»
             {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» area #}
-            «IF app.targets('3.0')»
-                {% extends «IF isAdmin»'@«app.appName»/adminBase.html.twig'«ELSE»'@«app.appName»/base.html.twig'«ENDIF» %}
-            «ELSE»
-                {% extends «IF isAdmin»'«app.appName»::adminBase.html.twig'«ELSE»'«app.appName»::base.html.twig'«ENDIF» %}
-            «ENDIF»
+            {% extends «IF isAdmin»'@«app.appName»/adminBase.html.twig'«ELSE»'@«app.appName»/base.html.twig'«ENDIF» %}
         «ELSE»
             {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area #}
-            «IF app.targets('3.0')»
-                {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
-            «ELSE»
-                {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
-            «ENDIF»
+            {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
         «ENDIF»
-        «IF app.targets('3.0') && !app.isSystemModule»
+        «IF !app.isSystemModule»
             {% trans_default_domain '«controller.name.formatForCode»' %}
         «ENDIF»
-        {% block title «IF app.targets('3.0')»'«name.formatForDisplayCapital»'|trans«ELSE»__('«name.formatForDisplayCapital»')«ENDIF» %}
+        {% block title '«name.formatForDisplayCapital»'|trans %}
         «IF !app.separateAdminTemplates || isAdmin»
             {% block admin_page_icon 'square' %}
         «ENDIF»
         {% block content %}
             <div class="«app.appName.toLowerCase»-«controller.name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-                <p class="alert alert-info">Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«relativeTemplatePath(controller, isAdmin)»</em> to either <em>/themes/YourTheme/Resources/«IF app.targets('3.0')»«app.vendor.formatForCodeCapital»/«app.name.formatForCodeCapital»Module«ELSE»«app.appName»«ENDIF»/views/«relativeTemplatePath(controller, isAdmin)»</em> or <em>«IF app.targets('3.0')»/templates/bundles/«app.appName»/«ELSE»/app/Resources/«app.appName»/views/«ENDIF»«relativeTemplatePath(controller, isAdmin)»</em>.</p>
+                <p class="alert alert-info">Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«relativeTemplatePath(controller, isAdmin)»</em> to either <em>/themes/YourTheme/Resources/«app.vendor.formatForCodeCapital»/«app.name.formatForCodeCapital»Module/views/«relativeTemplatePath(controller, isAdmin)»</em> or <em>/templates/bundles/«app.appName»/«relativeTemplatePath(controller, isAdmin)»</em>.</p>
             </div>
         {% endblock %}
     '''

@@ -29,27 +29,19 @@ class BlockList {
     def private listBlockBaseClass(Application it) '''
         namespace «appNamespace»\Block\Base;
 
-        «IF targets('3.0')»
-            use Twig\Loader\LoaderInterface;
-        «ELSE»
-            use Exception;
-        «ENDIF»
+        use Twig\Loader\LoaderInterface;
         use Zikula\BlocksModule\AbstractBlockHandler;
         use «appNamespace»\Block\Form\Type\ItemListBlockType;
-        «IF targets('3.0')»
-            use «appNamespace»\Entity\Factory\EntityFactory;
-            «IF hasCategorisableEntities»
-                use «appNamespace»\Helper\CategoryHelper;
-            «ENDIF»
-            use «appNamespace»\Helper\ControllerHelper;
+        use «appNamespace»\Entity\Factory\EntityFactory;
+        «IF hasCategorisableEntities»
+            use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
+        use «appNamespace»\Helper\ControllerHelper;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
-        «IF targets('3.0')»
-            use «appNamespace»\Helper\ModelHelper;
-            use «appNamespace»\Helper\PermissionHelper;
-        «ENDIF»
+        use «appNamespace»\Helper\ModelHelper;
+        use «appNamespace»\Helper\PermissionHelper;
 
         /**
          * Generic item list block base class.
@@ -61,44 +53,42 @@ class BlockList {
     '''
 
     def private listBlockBaseImpl(Application it) '''
-        «IF targets('3.0')»
+        /**
+         * @var LoaderInterface
+         */
+        protected $twigLoader;
+
+        /**
+         * @var ControllerHelper
+         */
+        protected $controllerHelper;
+
+        /**
+         * @var ModelHelper
+         */
+        protected $modelHelper;
+
+        /**
+         * @var PermissionHelper
+         */
+        protected $permissionHelper;
+
+        /**
+         * @var EntityFactory
+         */
+        protected $entityFactory;
+
+        «IF hasCategorisableEntities»
             /**
-             * @var LoaderInterface
+             * @var categoryHelper
              */
-            protected $twigLoader;
+            protected $categoryHelper;
 
             /**
-             * @var ControllerHelper
+             * @var FeatureActivationHelper
              */
-            protected $controllerHelper;
+            protected $featureActivationHelper;
 
-            /**
-             * @var ModelHelper
-             */
-            protected $modelHelper;
-
-            /**
-             * @var PermissionHelper
-             */
-            protected $permissionHelper;
-
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            «IF hasCategorisableEntities»
-                /**
-                 * @var categoryHelper
-                 */
-                protected $categoryHelper;
-
-                /**
-                 * @var FeatureActivationHelper
-                 */
-                protected $featureActivationHelper;
-
-            «ENDIF»
         «ENDIF»
         «IF hasCategorisableEntities»
             /**
@@ -109,9 +99,9 @@ class BlockList {
             protected $categorisableObjectTypes;
 
         «ENDIF»
-        public function getType()«IF targets('3.0')»: string«ENDIF»
+        public function getType(): string
         {
-            return $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
+            return $this->trans('«name.formatForDisplayCapital» list');
         }
 
         «display»
@@ -120,16 +110,7 @@ class BlockList {
 
         «modify»
 
-        «IF !targets('3.0')»
-            /**
-             * Returns default settings for this block.
-             *
-             * @return array The default settings
-             */
-            protected function getDefaults()
-        «ELSE»
-            public function getPropertyDefaults(): array
-        «ENDIF»
+        public function getPropertyDefaults(): array
         {
             return [
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -144,21 +125,10 @@ class BlockList {
 
             /**
              * Resolves category filter ids.
-             «IF !targets('3.0')»
-             *
-             * @param array $properties The block properties
-             *
-             * @return array The updated block properties
-             «ENDIF»
              */
-            protected function resolveCategoryIds(array $properties = [])«IF targets('3.0')»: array«ENDIF»
+            protected function resolveCategoryIds(array $properties = []): array
             {
-                «IF targets('3.0')»
-                    $primaryRegistry = $this->categoryHelper->getPrimaryProperty($properties['objectType']);
-                «ELSE»
-                    $categoryHelper = $this->get('«appService».category_helper');
-                    $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);
-                «ENDIF»
+                $primaryRegistry = $this->categoryHelper->getPrimaryProperty($properties['objectType']);
                 if (!isset($properties['categories'])) {
                     $properties['categories'] = [$primaryRegistry => []];
                 } else {
@@ -177,65 +147,63 @@ class BlockList {
                 return $properties;
             }
         «ENDIF»
-        «IF targets('3.0')»
+
+        /**
+         * @required
+         */
+        public function setTwigLoader(LoaderInterface $twigLoader): void
+        {
+            $this->twigLoader = $twigLoader;
+        }
+
+        /**
+         * @required
+         */
+        public function setControllerHelper(ControllerHelper $controllerHelper): void
+        {
+            $this->controllerHelper = $controllerHelper;
+        }
+
+        /**
+         * @required
+         */
+        public function setModelHelper(ModelHelper $modelHelper): void
+        {
+            $this->modelHelper = $modelHelper;
+        }
+
+        /**
+         * @required
+         */
+        public function setPermissionHelper(PermissionHelper $permissionHelper): void
+        {
+            $this->permissionHelper = $permissionHelper;
+        }
+
+        /**
+         * @required
+         */
+        public function setEntityFactory(EntityFactory $entityFactory): void
+        {
+            $this->entityFactory = $entityFactory;
+        }
+        «IF hasCategorisableEntities»
 
             /**
              * @required
              */
-            public function setTwigLoader(LoaderInterface $twigLoader): void
-            {
-                $this->twigLoader = $twigLoader;
+            public function setCategoryDependencies(
+                CategoryHelper $categoryHelper,
+                FeatureActivationHelper $featureActivationHelper
+            ): void {
+                $this->categoryHelper = $categoryHelper;
+                $this->featureActivationHelper = $featureActivationHelper;
             }
-
-            /**
-             * @required
-             */
-            public function setControllerHelper(ControllerHelper $controllerHelper): void
-            {
-                $this->controllerHelper = $controllerHelper;
-            }
-
-            /**
-             * @required
-             */
-            public function setModelHelper(ModelHelper $modelHelper): void
-            {
-                $this->modelHelper = $modelHelper;
-            }
-
-            /**
-             * @required
-             */
-            public function setPermissionHelper(PermissionHelper $permissionHelper): void
-            {
-                $this->permissionHelper = $permissionHelper;
-            }
-
-            /**
-             * @required
-             */
-            public function setEntityFactory(EntityFactory $entityFactory): void
-            {
-                $this->entityFactory = $entityFactory;
-            }
-            «IF hasCategorisableEntities»
-
-                /**
-                 * @required
-                 */
-                public function setCategoryDependencies(
-                    CategoryHelper $categoryHelper,
-                    FeatureActivationHelper $featureActivationHelper
-                ): void {
-                    $this->categoryHelper = $categoryHelper;
-                    $this->featureActivationHelper = $featureActivationHelper;
-                }
-            «ENDIF»
         «ENDIF»
     '''
 
     def private display(Application it) '''
-        public function display(array $properties = [])«IF targets('3.0')»: string«ENDIF»
+        public function display(array $properties = []): string
         {
             «displayImpl»
         }
@@ -251,44 +219,22 @@ class BlockList {
             «initListOfCategorisableEntities»
 
         «ENDIF»
-        «IF !targets('3.0')»
-            // set default values for all params which are not properly set
-            $defaults = $this->getDefaults();
-            $properties = array_merge($defaults, $properties);
-
+        «IF !isSystemModule»
+            $contextArgs = ['name' => 'list'];
         «ENDIF»
-        «IF targets('3.0')»
-            «IF !isSystemModule»
-                $contextArgs = ['name' => 'list'];
-            «ENDIF»
-            $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»);
-            if (
-                !isset($properties['objectType'])
-                || !in_array($properties['objectType'], $allowedObjectTypes, true)
-            ) {
-                $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
-            }
-        «ELSE»
-            $controllerHelper = $this->get('«appService».controller_helper');
-            «IF !isSystemModule»
-                $contextArgs = ['name' => 'list'];
-            «ENDIF»
-            if (
-                !isset($properties['objectType'])
-                || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»), true)
-            ) {
-                $properties['objectType'] = $controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
-            }
-        «ENDIF»
+        $allowedObjectTypes = $this->controllerHelper->getObjectTypes('block'«IF !isSystemModule», $contextArgs«ENDIF»);
+        if (
+            !isset($properties['objectType'])
+            || !in_array($properties['objectType'], $allowedObjectTypes, true)
+        ) {
+            $properties['objectType'] = $this->controllerHelper->getDefaultObjectType('block'«IF !isSystemModule», $contextArgs«ENDIF»);
+        }
 
         $objectType = $properties['objectType'];
         «IF hasCategorisableEntities»
 
-            «IF !targets('3.0')»
-                $featureActivationHelper = $this->get('«appService».feature_activation_helper');
-            «ENDIF»
             $hasCategories = in_array($objectType, $this->categorisableObjectTypes, true)
-                && $«IF targets('3.0')»this->«ENDIF»featureActivationHelper->isEnabled(
+                && $this->featureActivationHelper->isEnabled(
                     FeatureActivationHelper::CATEGORIES,
                     $properties['objectType']
                 )
@@ -298,58 +244,33 @@ class BlockList {
             }
         «ENDIF»
 
-        «IF targets('3.0')»
-            $repository = $this->entityFactory->getRepository($objectType);
+        $repository = $this->entityFactory->getRepository($objectType);
 
-            // create query
-            $orderBy = $this->modelHelper->resolveSortParameter($objectType, $properties['sorting']);
-        «ELSE»
-            $repository = $this->get('«appService».entity_factory')->getRepository($objectType);
-
-            // create query
-            $orderBy = $this->get('«appService».model_helper')->resolveSortParameter($objectType, $properties['sorting']);
-        «ENDIF»
+        // create query
+        $orderBy = $this->modelHelper->resolveSortParameter($objectType, $properties['sorting']);
         $qb = $repository->getListQueryBuilder($properties['filter'] ?? '', $orderBy);
         «IF hasCategorisableEntities»
 
             if ($hasCategories) {
-                «IF targets('3.0')»
-                    // apply category filters
-                    if (is_array($properties['categories']) && 0 < count($properties['categories'])) {
-                        $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
-                    }
-                «ELSE»
-                    $categoryHelper = $this->get('«appService».category_helper');
-                    // apply category filters
-                    if (is_array($properties['categories']) && 0 < count($properties['categories'])) {
-                        $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
-                    }
-                «ENDIF»
+                // apply category filters
+                if (is_array($properties['categories']) && 0 < count($properties['categories'])) {
+                    $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
+                }
             }
         «ENDIF»
 
         // get objects from database
         $currentPage = 1;
         $resultsPerPage = $properties['amount'];
-        «IF targets('3.0')»
-            $paginator = $repository->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
-            $entities = $paginator->getResults();
-        «ELSE»
-            $query = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            try {
-                list($entities, $objectCount) = $repository->retrieveCollectionResult($query, true);
-            } catch (Exception $exception) {
-                $entities = [];
-                $objectCount = 0;
-            }
-        «ENDIF»
+        $paginator = $repository->retrieveCollectionResult($qb, true, $currentPage, $resultsPerPage);
+        $entities = $paginator->getResults();
 
         // filter by permissions
-        $entities = «IF targets('3.0')»$this->permissionHelper«ELSE»$this->get('«appService».permission_helper')«ENDIF»->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
+        $entities = $this->permissionHelper->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
 
         // set a block title
         if (empty($properties['title'])) {
-            $properties['title'] = $this->«IF targets('3.0')»trans«ELSE»__«ENDIF»('«name.formatForDisplayCapital» list'«IF !targets('3.0')», '«appName.formatForDB»'«ENDIF»);
+            $properties['title'] = $this->trans('«name.formatForDisplayCapital» list');
         }
 
         $template = $this->getDisplayTemplate($properties);
@@ -365,7 +286,7 @@ class BlockList {
             }
         «ENDIF»
 
-        $templateParameters = $this->«IF targets('3.0')»controllerHelper«ELSE»get('«appService».controller_helper')«ENDIF»->addTemplateParameters(
+        $templateParameters = $this->controllerHelper->addTemplateParameters(
             $properties['objectType'],
             $templateParameters,
             'block'
@@ -377,14 +298,8 @@ class BlockList {
     def private getDisplayTemplate(Application it) '''
         /**
          * Returns the template used for output.
-         «IF !targets('3.0')»
-         *
-         * @param array $properties The block properties
-         *
-         * @return string the template path
-         «ENDIF»
          */
-        protected function getDisplayTemplate(array $properties = [])«IF targets('3.0')»: string«ENDIF»
+        protected function getDisplayTemplate(array $properties = []): string
         {
             $templateFile = $properties['template'];
             if (
@@ -396,25 +311,16 @@ class BlockList {
             }
 
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $properties['objectType'] . '_', $templateFile);
-            «IF !targets('3.0')»
-                $templating = $this->get('templating');
-            «ENDIF»
 
             $templateOptions = [
-                «IF generateListContentType && !targets('2.0')»
-                    'ContentType/' . $templateForObjectType,
-                «ENDIF»
                 'Block/' . $templateForObjectType,
-                «IF generateListContentType && !targets('2.0')»
-                    'ContentType/' . $templateFile,
-                «ENDIF»
                 'Block/' . $templateFile,
                 'Block/itemlist.html.twig',
             ];
 
             $template = '';
             foreach ($templateOptions as $templatePath) {
-                if («IF targets('3.0')»$this->twigLoader«ELSE»$templating«ENDIF»->exists('@«appName»/' . $templatePath)) {
+                if ($this->twigLoader->exists('@«appName»/' . $templatePath)) {
                     $template = '@«appName»/' . $templatePath;
                     break;
                 }
@@ -425,19 +331,19 @@ class BlockList {
     '''
 
     def private modify(Application it) '''
-        public function getFormClassName()«IF targets('3.0')»: string«ENDIF»
+        public function getFormClassName(): string
         {
             return ItemListBlockType::class;
         }
 
-        public function getFormOptions()«IF targets('3.0')»: array«ENDIF»
+        public function getFormOptions(): array
         {
             $objectType = '«leadingEntity.name.formatForCode»';
             «IF hasCategorisableEntities»
                 «initListOfCategorisableEntities»
             «ENDIF»
-
-            $request = $this->«IF targets('3.0')»requestStack«ELSE»get('request_stack')«ENDIF»->getCurrentRequest();
+            «/* TODO remove the following block */»
+            $request = $this->requestStack->getCurrentRequest();
             if (null !== $request && $request->attributes->has('blockEntity')) {
                 $blockEntity = $request->attributes->get('blockEntity');
                 if (is_object($blockEntity) && method_exists($blockEntity, 'getProperties')) {
@@ -454,12 +360,12 @@ class BlockList {
             return [
                 'object_type' => $objectType«IF hasCategorisableEntities»,
                 'is_categorisable' => in_array($objectType, $this->categorisableObjectTypes, true),
-                'category_helper' => $this->«IF targets('3.0')»categoryHelper«ELSE»get('«appService».category_helper')«ENDIF»,
-                'feature_activation_helper' => $this->«IF targets('3.0')»featureActivationHelper«ELSE»get('«appService».feature_activation_helper')«ENDIF»«ENDIF»,
+                'category_helper' => $this->categoryHelper,
+                'feature_activation_helper' => $this->featureActivationHelper«ENDIF»,
             ];
         }
 
-        public function getFormTemplate()«IF targets('3.0')»: string«ENDIF»
+        public function getFormTemplate(): string
         {
             return '@«appName»/Block/itemlist_modify.html.twig';
         }

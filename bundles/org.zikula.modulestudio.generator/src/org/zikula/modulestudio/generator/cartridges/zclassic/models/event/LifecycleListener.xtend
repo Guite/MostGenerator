@@ -26,17 +26,12 @@ class LifecycleListener {
         namespace «appNamespace»\Listener\Base;
 
         use Doctrine\Common\EventSubscriber;
-        «IF !targets('3.0')»
-            use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-        «ENDIF»
         use Doctrine\ORM\Event\OnFlushEventArgs;
         use Doctrine\ORM\Event\PostFlushEventArgs;
         use Doctrine\ORM\Event\PreFlushEventArgs;
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
-        «IF targets('3.0')»
-            use Doctrine\Persistence\Event\LifecycleEventArgs;
-        «ENDIF»
+        use Doctrine\Persistence\Event\LifecycleEventArgs;
         «IF hasLoggable»
             use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
         «ENDIF»
@@ -44,34 +39,25 @@ class LifecycleListener {
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Symfony\Component\DependencyInjection\ContainerInterface;
-        «IF !targets('3.0')»
-            use Symfony\Component\EventDispatcher\Event;
-        «ENDIF»
-        use Symfony\«IF targets('3.0')»Contracts«ELSE»Component«ENDIF»\EventDispatcher\EventDispatcherInterface;
-        «IF targets('3.0')»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-        «ELSE»
-            use Zikula\Core\Doctrine\EntityAccess;
-        «ENDIF»
-        «IF targets('3.0') && !getUploadEntities.empty»
+        use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        «IF !getUploadEntities.empty»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
-        «IF targets('3.0') && hasLoggable»
+        «IF hasLoggable»
             use Zikula\ExtensionsModule\Api\VariableApi;
         «ENDIF»
-        «IF targets('3.0')»
-            use Zikula\UsersModule\Api\CurrentUserApi;
-        «ENDIF»
+        use Zikula\UsersModule\Api\CurrentUserApi;
         «IF hasLoggable»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
-        «IF targets('3.0') && hasLoggable»
+        «IF hasLoggable»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
-        «IF targets('3.0') && !getUploadEntities.empty»
+        «IF !getUploadEntities.empty»
             use «appNamespace»\Helper\UploadHelper;
         «ENDIF»
-        «IF targets('3.0') && hasLoggable»
+        «IF hasLoggable»
             use «appNamespace»\Listener\LoggableListener;
         «ENDIF»
 
@@ -82,7 +68,7 @@ class LifecycleListener {
         {
             use ContainerAwareTrait;
 
-            «IF targets('3.0') && !getUploadEntities.empty»
+            «IF !getUploadEntities.empty»
                 /**
                  * @var ZikulaHttpKernelInterface
                  */
@@ -100,14 +86,14 @@ class LifecycleListener {
             protected $logger;
 
             public function __construct(
-                «IF targets('3.0') && !getUploadEntities.empty»
+                «IF !getUploadEntities.empty»
                     ZikulaHttpKernelInterface $kernel,
                 «ENDIF»
                 ContainerInterface $container,
                 EventDispatcherInterface $eventDispatcher,
                 LoggerInterface $logger
             ) {
-                «IF targets('3.0') && !getUploadEntities.empty»
+                «IF !getUploadEntities.empty»
                     $this->kernel = $kernel;
                 «ENDIF»
                 $this->setContainer($container);
@@ -141,7 +127,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preflush
              */
-            public function preFlush(PreFlushEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function preFlush(PreFlushEventArgs $args): void
             {
                 «IF hasLoggable»
                     $this->activateCustomLoggableListener();
@@ -154,7 +140,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#onflush
              */
-            public function onFlush(OnFlushEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function onFlush(OnFlushEventArgs $args): void
             {
             }
 
@@ -163,7 +149,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postflush
              */
-            public function postFlush(PostFlushEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function postFlush(PostFlushEventArgs $args): void
             {
             }
 
@@ -173,7 +159,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preremove
              */
-            public function preRemove(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function preRemove(LifecycleEventArgs $args): void
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
@@ -196,7 +182,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
              */
-            public function postRemove(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function postRemove(LifecycleEventArgs $args): void
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
@@ -219,7 +205,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#prepersist
              */
-            public function prePersist(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function prePersist(LifecycleEventArgs $args): void
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
@@ -239,7 +225,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
              */
-            public function postPersist(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function postPersist(LifecycleEventArgs $args): void
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
@@ -258,7 +244,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preupdate
              */
-            public function preUpdate(PreUpdateEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function preUpdate(PreUpdateEventArgs $args): void
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
@@ -277,7 +263,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
              */
-            public function postUpdate(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function postUpdate(LifecycleEventArgs $args): void
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
@@ -301,7 +287,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postload
              */
-            public function postLoad(LifecycleEventArgs $args)«IF targets('3.0')»: void«ENDIF»
+            public function postLoad(LifecycleEventArgs $args): void
             {
                 /** @var EntityAccess $entity */
                 $entity = $args->getObject();
@@ -316,14 +302,8 @@ class LifecycleListener {
 
             /**
              * Checks whether this listener is responsible for the given entity or not.
-             «IF !targets('3.0')»
-             *
-             * @param object $entity The given entity
-             *
-             * @return bool True if entity is managed by this listener, false otherwise
-             «ENDIF»
              */
-            protected function isEntityManagedByThisBundle(object $entity)«IF targets('3.0')»: bool«ENDIF»
+            protected function isEntityManagedByThisBundle(object $entity): bool
             {
                 $entityClassParts = explode('\\', get_class($entity));
 
@@ -339,16 +319,10 @@ class LifecycleListener {
 
             /**
              * Returns a filter event instance for the given entity.
-             «IF !targets('3.0')»
-             *
-             * @param EntityAccess $entity The given entity
-             *
-             * @return Event The created event instance
-             «ENDIF»
              */
-            protected function createFilterEvent(EntityAccess $entity«IF targets('3.0')», string $classSuffix = ''«ENDIF»)
+            protected function createFilterEvent(EntityAccess $entity, string $classSuffix = '')
             {
-                $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\«IF !targets('3.0')»Filter«ENDIF»' . ucfirst($entity->get_objectType()) . «IF targets('3.0')»$classSuffix . «ENDIF»'Event';
+                $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\' . ucfirst($entity->get_objectType()) . $classSuffix . 'Event';
 
                 return new $filterEventClass($entity);
             }
@@ -356,14 +330,10 @@ class LifecycleListener {
 
                 /**
                  * Returns list of upload fields for the given object type.
-                 «IF !targets('3.0')»
-                 *
-                 * @param string $objectType The object type
-                 «ENDIF»
                  *
                  * @return string[] List of upload field names
                  */
-                protected function getUploadFields(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: array«ENDIF»
+                protected function getUploadFields(string $objectType = ''): array
                 {
                     $uploadFields = [];
                     switch ($objectType) {
@@ -381,19 +351,15 @@ class LifecycleListener {
 
                 /**
                  * Purges the version history as configured.
-                 «IF !targets('3.0')»
-                 *
-                 * @param string $objectType The object type
-                 «ENDIF»
                  */
-                protected function purgeHistory(«IF targets('3.0')»string «ENDIF»$objectType = '')«IF targets('3.0')»: void«ENDIF»
+                protected function purgeHistory(string $objectType = ''): void
                 {
                     if (!in_array($objectType, ['«getLoggableEntities.map[name.formatForCode].join('\', \'')»'])) {
                         return;
                     }
 
-                    $entityManager = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager();
-                    $variableApi = $this->container->get(«IF targets('3.0')»VariableApi::class«ELSE»'zikula_extensions_module.api.variable'«ENDIF»);
+                    $entityManager = $this->container->get(EntityFactory::class)->getEntityManager();
+                    $variableApi = $this->container->get(VariableApi::class);
                     $objectTypeCapitalised = ucfirst($objectType);
 
                     $revisionHandling = $variableApi->get(
@@ -408,13 +374,13 @@ class LifecycleListener {
                             'maximumAmountOf' . $objectTypeCapitalised . 'Revisions',
                             25
                         );
-                    }«IF targets('2.0')» elseif ('limitedByDate' === $revisionHandling) {
+                    } elseif ('limitedByDate' === $revisionHandling) {
                         $limitParameter = $variableApi->get(
                             '«appName»',
                             'periodFor' . $objectTypeCapitalised . 'Revisions',
                             'P1Y0M0DT0H0M0S'
                         );
-                    }«ENDIF»
+                    }
 
                     $logEntriesRepository = $entityManager->getRepository(
                         '«appName»:' . $objectTypeCapitalised . 'LogEntryEntity'
@@ -425,11 +391,11 @@ class LifecycleListener {
                 /**
                  * Enables the custom loggable listener.
                  */
-                protected function activateCustomLoggableListener()«IF targets('3.0')»: void«ENDIF»
+                protected function activateCustomLoggableListener(): void
                 {
-                    $entityManager = $this->container->get(«IF targets('3.0')»EntityFactory::class«ELSE»'«appService».entity_factory'«ENDIF»)->getEntityManager();
+                    $entityManager = $this->container->get(EntityFactory::class)->getEntityManager();
                     $eventManager = $entityManager->getEventManager();
-                    $customLoggableListener = $this->container->get(«IF targets('3.0')»LoggableListener::class«ELSE»'«appService».loggable_listener'«ENDIF»);
+                    $customLoggableListener = $this->container->get(LoggableListener::class);
 
                     «IF hasTranslatable»
                         $hasLoggableActivated = false;
@@ -454,8 +420,8 @@ class LifecycleListener {
                         }
                     «ENDIF»
 
-                    $variableApi = $this->container->get(«IF targets('3.0')»VariableApi::class«ELSE»'zikula_extensions_module.api.variable'«ENDIF»);
-                    $currentUserApi = $this->container->get(«IF targets('3.0')»CurrentUserApi::class«ELSE»'zikula_users_module.current_user'«ENDIF»);
+                    $variableApi = $this->container->get(VariableApi::class);
+                    $currentUserApi = $this->container->get(CurrentUserApi::class);
                     $userName = $currentUserApi->isLoggedIn()
                         ? $currentUserApi->get('uname')
                         : $variableApi->get(UsersConstant::MODNAME, UsersConstant::MODVAR_ANONYMOUS_DISPLAY_NAME, 'Guest')
