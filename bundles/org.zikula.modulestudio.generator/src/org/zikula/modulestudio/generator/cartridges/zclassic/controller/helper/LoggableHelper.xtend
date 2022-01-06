@@ -30,6 +30,7 @@ class LoggableHelper {
         «IF hasTrees && !getTreeEntities.filter[loggable].empty»
             use Doctrine\Common\Proxy\Proxy;
         «ENDIF»
+        use Doctrine\ORM\EntityRepository;
         use Doctrine\ORM\Id\AssignedGenerator;
         use Doctrine\ORM\Mapping\ClassMetadata;
         use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -114,7 +115,11 @@ class LoggableHelper {
 
         «undeleteEntity»
 
+        «updateUserName»
+
         «translateActionDescription»
+
+        «getLogEntryRepository»
     '''
 
     def private determineDiffViewParameters(Application it) '''
@@ -192,10 +197,7 @@ class LoggableHelper {
             }
 
             // alternative (with worse performance)
-            $entityManager = $this->entityFactory->getEntityManager();
-            $logEntriesRepository = $entityManager->getRepository(
-                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
-            );
+            $logEntriesRepository = $this->getLogEntryRepository($objectType);
             $logEntries = $logEntriesRepository->getLogEntries($entity);
 
             return 1 < count($logEntries);
@@ -208,10 +210,7 @@ class LoggableHelper {
          */
         public function hasDeletedEntities(string $objectType = ''): bool
         {
-            $entityManager = $this->entityFactory->getEntityManager();
-            $logEntriesRepository = $entityManager->getRepository(
-                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
-            );
+            $logEntriesRepository = $this->getLogEntryRepository($objectType);
 
             return 0 < count($logEntriesRepository->selectDeleted(1));
         }
@@ -223,10 +222,7 @@ class LoggableHelper {
          */
         public function getDeletedEntities(string $objectType = ''): array
         {
-            $entityManager = $this->entityFactory->getEntityManager();
-            $logEntriesRepository = $entityManager->getRepository(
-                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
-            );
+            $logEntriesRepository = $this->getLogEntryRepository($objectType);
 
             return $logEntriesRepository->selectDeleted();
         }
@@ -238,12 +234,7 @@ class LoggableHelper {
          */
         public function revert(EntityAccess $entity, int $requestedVersion = 1, bool $detach = false): EntityAccess
         {
-            $entityManager = $this->entityFactory->getEntityManager();
-            $objectType = $entity->get_objectType();
-
-            $logEntriesRepository = $entityManager->getRepository(
-                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
-            );
+            $logEntriesRepository = $this->getLogEntryRepository($objectType);
             $logEntries = $logEntriesRepository->getLogEntries($entity);
             if (2 > count($logEntries)) {
                 return $entity;
@@ -253,6 +244,7 @@ class LoggableHelper {
             $logEntriesRepository->revert($entity, $requestedVersion);
             if (true === $detach) {
                 // detach the entity to avoid persisting it
+                $entityManager = $this->entityFactory->getEntityManager();
                 $entityManager->detach($entity);
             }
 
@@ -276,10 +268,7 @@ class LoggableHelper {
             $setter = 'set' . ucfirst($idField);
             $entity->$setter($id);
 
-            $entityManager = $this->entityFactory->getEntityManager();
-            $logEntriesRepository = $entityManager->getRepository(
-                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
-            );
+            $logEntriesRepository = $this->getLogEntryRepository($objectType);
             $logEntries = $logEntriesRepository->getLogEntries($entity);
             $lastVersionBeforeDeletion = null;
             foreach ($logEntries as $logEntry) {
@@ -411,6 +400,17 @@ class LoggableHelper {
         }
     '''
 
+    def private updateUserName(Application it) '''
+        /**
+         * Updates a changed user name in all log entries for a given object type.
+         */
+        public function updateUserName(string $objectType, string $oldUserName, string $newUserName): void
+        {
+            $logEntriesRepository = $this->getLogEntryRepository($objectType);
+            $logEntriesRepository->updateUserName($oldUserName, $newUserName);
+        }
+    '''
+
     def private actionDescriptions(Entity it, String constantPrefix, String displayName) '''
         case '«constantPrefix»CREATED':
             $actionTranslated = $this->trans('«displayName» created'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
@@ -444,6 +444,17 @@ class LoggableHelper {
                 $actionTranslated = $this->trans('«displayName» translation deleted'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
                 break;
         «ENDIF»
+    '''
+
+    def private getLogEntryRepository(Application it) '''
+        private function getLogEntryRepository(string $objectType = ''): EntityRepository
+        {
+            $entityManager = $this->entityFactory->getEntityManager();
+
+            return $entityManager->getRepository(
+                '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
+            );
+        }
     '''
 
     def private loggableFunctionsImpl(Application it) '''

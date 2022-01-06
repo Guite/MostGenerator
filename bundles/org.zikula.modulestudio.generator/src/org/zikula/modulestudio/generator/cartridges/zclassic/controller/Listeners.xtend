@@ -331,6 +331,9 @@ class Listeners {
             «IF hasStandardFieldEntities || hasUserFields»
                 use «appNamespace»\Entity\Factory\EntityFactory;
             «ENDIF»
+            «IF hasLoggable»
+                use «appNamespace»\Helper\LoggableHelper;
+            «ENDIF»
         «ENDIF»
 
         /**

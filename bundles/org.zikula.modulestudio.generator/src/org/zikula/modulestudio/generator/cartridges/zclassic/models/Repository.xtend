@@ -113,11 +113,6 @@ class Repository {
                 use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
 
             «ENDIF*/»/**
-             * @var string The main entity class
-             */
-            protected $mainEntityClass = «name.formatForCodeCapital»Entity::class;
-
-            /**
              * @var string The default sorting field/expression
              */
             protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
@@ -235,11 +230,6 @@ class Repository {
          */
         abstract class Abstract«name.formatForCodeCapital»Repository extends «parentType.name.formatForCodeCapital»Repository
         {
-            /**
-             * @var string The main entity class
-             */
-            protected $mainEntityClass = '«entityClassName('', false)»';
-
             /**
              * @return string[]
              */
@@ -533,7 +523,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from($this->mainEntityClass, 'tbl');
+               ->from($this->_entityName, 'tbl');
 
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
@@ -642,7 +632,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from($this->mainEntityClass, 'tbl');
+               ->from($this->_entityName, 'tbl');
 
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);

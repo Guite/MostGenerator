@@ -46,16 +46,26 @@ class UserListener {
             protected $variableApi;
 
         «ENDIF»
+        «IF hasLoggable»
+            /**
+             * @var LoggableHelper
+             */
+            protected $loggableHelper;
+
+        «ENDIF»
         «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
             public function __construct(
                 «IF hasStandardFieldEntities || hasUserFields»
                     TranslatorInterface $translator,
                     EntityFactory $entityFactory,
                     CurrentUserApiInterface $currentUserApi,
-                    LoggerInterface $logger«IF hasUserVariables»,«ENDIF»
+                    LoggerInterface $logger«IF hasUserVariables || hasLoggable»,«ENDIF»
                 «ENDIF»
                 «IF hasUserVariables»
-                    VariableApiInterface $variableApi
+                    VariableApiInterface $variableApi«IF hasLoggable»,«ENDIF»
+                «ENDIF»
+                «IF hasLoggable»
+                    LoggableHelper $loggableHelper
                 «ENDIF»
             ) {
                 «IF hasStandardFieldEntities || hasUserFields»
@@ -66,6 +76,9 @@ class UserListener {
                 «ENDIF»
                 «IF hasUserVariables»
                     $this->variableApi = $variableApi;
+                «ENDIF»
+                «IF hasLoggable»
+                    $this->loggableHelper = $loggableHelper;
                 «ENDIF»
             }
 
@@ -115,6 +128,13 @@ class UserListener {
                 // update changed user name in log entries if needed
                 $oldUser = $event->getOldUser();
                 $user = $event->getUser();
+                if ($user->getUsername() === $oldUser->getUsername()) {
+                    return;
+                }
+
+                «FOR entity : loggableEntities»
+                    $this->loggableHelper->updateUserName('«entity.name.formatForCode»', $oldUser->getUsername(), $user->getUsername());
+                «ENDFOR»
             «ENDIF»
         }
 

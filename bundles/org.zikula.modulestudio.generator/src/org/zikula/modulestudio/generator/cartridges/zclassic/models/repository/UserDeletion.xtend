@@ -56,7 +56,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update($this->mainEntityClass, 'tbl')
+            $qb->update($this->_entityName, 'tbl')
                ->set('tbl.createdBy', $newUserId)
                ->where('tbl.createdBy = :creator')
                ->setParameter('creator', $userId);
@@ -92,7 +92,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update($this->mainEntityClass, 'tbl')
+            $qb->update($this->_entityName, 'tbl')
                ->set('tbl.updatedBy', $newUserId)
                ->where('tbl.updatedBy = :editor')
                ->setParameter('editor', $userId);
@@ -127,7 +127,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete($this->mainEntityClass, 'tbl')
+            $qb->delete($this->_entityName, 'tbl')
                ->where('tbl.createdBy = :creator')
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
@@ -161,7 +161,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete($this->mainEntityClass, 'tbl')
+            $qb->delete($this->_entityName, 'tbl')
                ->where('tbl.updatedBy = :editor')
                ->setParameter('editor', $userId);
             $query = $qb->getQuery();
@@ -200,7 +200,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update($this->mainEntityClass, 'tbl')
+            $qb->update($this->_entityName, 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
@@ -241,7 +241,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete($this->mainEntityClass, 'tbl')
+            $qb->delete($this->_entityName, 'tbl')
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
             $query = $qb->getQuery();

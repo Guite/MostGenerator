@@ -275,6 +275,20 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             // step 3 - push changes into database
             $entityManager->flush();
         }
+
+        /**
+         * Updates a changed user name in all affected log entries.
+         */
+        public function updateUserName(string $oldUserName, string $newUserName): void
+        {
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->update($this->_entityName, 'tbl')
+               ->set('tbl.username', $newUserName)
+               ->where('tbl.username = :oldName')
+               ->setParameter('oldName', $oldUserName);
+            $query = $qb->getQuery();
+            $query->execute();
+        }
     '''
 
     /**
