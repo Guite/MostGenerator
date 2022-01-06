@@ -25,13 +25,13 @@ XPECT generated file composer.json ---
         "psr-4": { "Acme\\SimpleTestModule\\": "" }
     },
     "require": {
-        "php": ">=5.5.9"
+        "php": ">=7.2.5"
     },
     "require-dev": {
     },
     "extra": {
         "zikula": {
-            "core-compatibility": ">=2.0.15 <3.0.0",
+            "core-compatibility": ">=3.0.4 <4.0.0",
             "class": "Acme\\SimpleTestModule\\AcmeSimpleTestModule",
             "displayname": "Simple test",
             "url": "simpletest",
@@ -56,9 +56,6 @@ XPECT generated file composer.json ---
         "vendor-dir": "vendor",
         "preferred-install": "dist",
         "optimize-autoloader": true,
-        "platform": {
-            "php": "7.0.30"
-        },
         "sort-packages": true
     }
 }
@@ -80,7 +77,7 @@ XPECT generated file zikula.manifest.json ---
     },
     "version": {
         "semver": "1.0.0",
-        "compatibility": ">=2.0.15 <3.0.0",
+        "compatibility": ">=3.0.4 <4.0.0",
         "composerpath": "composer.json",
         "description": "Just a simple test application.",
         "keywords": [

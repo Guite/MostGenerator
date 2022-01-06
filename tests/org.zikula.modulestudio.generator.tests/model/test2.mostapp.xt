@@ -12,7 +12,7 @@ XPECT files ---
     zikula.manifest.json
 --- */
 
-application "SimpleNews" targets ZK2DEV {
+application "SimpleNews" targets ZK40 {
     documentation "Simple news extension"
     vendor "Guite"
     author "Axel Guckelsberger"
@@ -26,18 +26,15 @@ application "SimpleNews" targets ZK2DEV {
     amountOfExampleRows 3
     generateAccountApi false
     generateSearchApi false
-    generateMailzApi false
     generateListBlock false
     generateDetailBlock false
     generateModerationBlock false
     generateListContentType false
     generateDetailContentType false
-    generateNewsletterPlugin false
     generateModerationPanel false
     generatePendingContentSupport false
     generateExternalControllerAndFinder false
     generateScribitePlugins false
-    generateTagSupport false
     generateMultiHookNeedles false
     generatePdfSupport true
     authenticationMethod REMOTE

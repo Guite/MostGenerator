@@ -111,6 +111,11 @@ class UserListener {
          */
         public function update(ActiveUserPostUpdatedEvent $event): void
         {
+            «IF hasLoggable»
+                // update changed user name in log entries if needed
+                $oldUser = $event->getOldUser();
+                $user = $event->getUser();
+            «ENDIF»
         }
 
         /**
