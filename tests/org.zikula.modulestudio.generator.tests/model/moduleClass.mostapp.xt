@@ -52,7 +52,7 @@ XPECT generated file AcmeSimpleTestModule.php ---
   
   namespace Acme\SimpleTestModule\Base;
   
-  use Zikula\Core\AbstractModule;
+  use Zikula\ExtensionsModule\AbstractModule;
   
   /\**
    * Module base class.
