@@ -132,7 +132,7 @@ class ItemActions {
                         'Delete this «name.formatForDisplay»'
                     )
                     «app.addLinkClass('danger')»
-                    «app.addIcon('trash-o')»
+                    «app.addIcon('trash')»
                     «IF !app.isSystemModule»
                         ->setExtra('translation_domain', '«name.formatForCode»')
                     «ENDIF»
