@@ -45,11 +45,9 @@ class GeographicalTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\Type(type="numeric")«/* type="float" not possible due to https://github.com/doctrine/orm/issues/9172 */»
-         *
-         * @var float
+         * @Assert\Type(type="numeric")«/* type="float" not possible since decimals are mapped to strings */»
          */
-        protected $latitude = 0.00;
+        protected string $latitude = 0.00;
 
         /**
          * The coordinate's longitude part.
@@ -58,12 +56,10 @@ class GeographicalTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\Type(type="numeric")«/* type="float" not possible due to https://github.com/doctrine/orm/issues/9172 */»
-         *
-         * @var float
+         * @Assert\Type(type="numeric")«/* type="float" not possible since decimals are mapped to strings */»
          */
-        protected $longitude = 0.00;
-        «fh.getterAndSetterMethods(it, 'latitude', 'float', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'longitude', 'float', false, true, true, '', '')»
+        protected string $longitude = 0.00;
+        «fh.getterAndSetterMethods(it, 'latitude', 'string', false, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'longitude', 'string', false, true, true, '', '')»
     '''
 }

@@ -10,7 +10,6 @@ import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
-import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
@@ -431,13 +430,11 @@ class PersistenceTransformer {
             name = 'defaultLatitude'
             defaultValue = '55.88'
             documentation = 'The default latitude.'
-            numberType = NumberFieldType.FLOAT
         ]
         varContainer.fields += factory.createNumberField => [
             name = 'defaultLongitude'
             defaultValue = '12.36'
             documentation = 'The default longitude.'
-            numberType = NumberFieldType.FLOAT
         ]
         varContainer.fields += factory.createIntegerField => [
             name = 'defaultZoomLevel'

@@ -221,13 +221,12 @@ class UploadHelper {
             $destinationFilePath = $basePath . $fileName;
             $targetFile = $file->move($basePath, $fileName);
 
-            «doFileValidation('$destinationFilePath')»
+            «doImageFileValidation('$destinationFilePath')»
 
             // collect data to return
             $result['fileName'] = $fileName;
             $result['metaData'] = $this->readMetaDataForFile($fileName, $destinationFilePath);
 
-            $isImage = in_array($extension, $this->imageFileTypes, true);
             if ($isImage && 'gif' !== $extension) {
                 // fix wrong orientation and shrink too large image if needed
                 @ini_set('memory_limit', '1G');
@@ -329,7 +328,7 @@ class UploadHelper {
         }
     '''
 
-    def private doFileValidation(Application it, String fileVar) '''
+    def private doImageFileValidation(Application it, String fileVar) '''
         // validate image file
         $isImage = in_array($extension, $this->imageFileTypes, true);
         if ($isImage) {
@@ -343,7 +342,7 @@ class UploadHelper {
                     ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]
                 );
 
-                return false;
+                return $result;
             }
         }
     '''
@@ -422,7 +421,7 @@ class UploadHelper {
                         }
                     }
                 } else {
-                    $exifData[$k] = mb_convert_encoding($v, 'UTF-8', 'UTF-8');
+                    $exifData[$k] = mb_convert_encoding((string) $v, 'UTF-8', 'UTF-8');
                     if (false !== mb_strpos($exifData[$k], '????')) {
                         unset($exifData[$k]);
                     }
