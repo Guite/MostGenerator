@@ -325,7 +325,7 @@ class Actions {
         «ENDIF»
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()«/* && $form->isValid() - also allow deletion of entities that are not valid */») {
             if ($form->get('delete')->isClicked()) {
                 «deletionProcess(action)»
             } elseif ($form->get('cancel')->isClicked()) {
@@ -396,17 +396,17 @@ class Actions {
                 «ENDIF»
             );
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
+            «IF !skipHookSubscribers»
+
+                if ($«name.formatForCode»->supportsHookSubscribers()) {
+                    // call form aware processing hooks
+                    $hookHelper->callFormProcessHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_PROCESS_DELETE);
+
+                    // let any ui hooks know that we have deleted the «name.formatForDisplay»
+                    $hookHelper->callProcessHooks($«name.formatForCode», UiHooksCategory::TYPE_PROCESS_DELETE);
+                }
+            «ENDIF»
         }
-        «IF !skipHookSubscribers»
-
-            if ($«name.formatForCode»->supportsHookSubscribers()) {
-                // call form aware processing hooks
-                $hookHelper->callFormProcessHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_PROCESS_DELETE);
-
-                // let any ui hooks know that we have deleted the «name.formatForDisplay»
-                $hookHelper->callProcessHooks($«name.formatForCode», UiHooksCategory::TYPE_PROCESS_DELETE);
-            }
-        «ENDIF»
 
         return $this->redirectToRoute($redirectRoute);
     '''
