@@ -400,10 +400,10 @@ class Association {
         «val isMany = isManySide(useTarget)»
         «val entityClassPrefix = '\\'»
         «IF isMany»
-            «fh.getterAndSetterMethods(it, aliasName, entityClassPrefix + entityClass, true, true, false, '', relationSetterCustomImpl(useTarget, aliasName))»
+            «fh.getterAndSetterMethods(it, aliasName, 'Collection', true, '', relationSetterCustomImpl(useTarget, aliasName))»
             «relationAccessorAdditions(useTarget, aliasName, nameSingle)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, aliasName, entityClassPrefix + entityClass, false, true, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
+            «fh.getterAndSetterMethods(it, aliasName, entityClassPrefix + entityClass, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
         «ENDIF»
         «IF isMany»
             «addMethod(useTarget, aliasName, nameSingle, entityClass)»

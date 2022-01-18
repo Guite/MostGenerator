@@ -44,10 +44,8 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
          * @Gedmo\Slug(«slugDetails»«slugHandler»)
          * @ORM\Column(type="string", length=«IF slugLength <= 190»«slugLength»«ELSE»190«ENDIF», unique=«slugUnique.displayBool»)
          * @Assert\Length(min="1", max="«IF slugLength <= 190»«slugLength»«ELSE»190«ENDIF»")
-         *
-         * @var string
          */
-        protected $slug;
+        protected string $slug;
 
     '''
 
@@ -135,7 +133,6 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper(application)»
-        «fh.getterAndSetterMethods(it, 'slug', 'string', false, true, true, '', '')»
+        «(new FileHelper(application)).getterAndSetterMethods(it, 'slug', 'string', true, '', '')»
     '''
 }

@@ -24,7 +24,6 @@ class LinkTable {
         namespace «app.appNamespace»\Entity\Repository\Base;
 
         use Doctrine\ORM\EntityRepository;
-        use Psr\Log\LoggerInterface;
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.

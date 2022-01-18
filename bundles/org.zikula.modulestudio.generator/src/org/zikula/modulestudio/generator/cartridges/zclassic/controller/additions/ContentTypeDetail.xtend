@@ -45,15 +45,9 @@ class ContentTypeDetail {
     '''
 
     def private contentTypeBaseImpl(Application it) '''
-        /**
-         * @var ControllerHelper
-         */
-        protected $controllerHelper;
+        protected ControllerHelper $controllerHelper;
 
-        /**
-         * @var FragmentHandler
-         */
-        protected $fragmentHandler;
+        protected FragmentHandler $fragmentHandler;
 
         public function getIcon(): string
         {

@@ -12,49 +12,17 @@ class ThirdPartyListener {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it) '''
-        «IF generateScribitePlugins»
-            /**
-             * @var ZikulaHttpKernelInterface
-             */
-            protected $kernel;
-
-            /**
-             * @var Filesystem
-             */
-            protected $filesystem;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-        «ENDIF»
-        «IF needsApproval && generatePendingContentSupport»
-            /**
-             * @var WorkflowHelper
-             */
-            protected $workflowHelper;
-
-        «ENDIF»
         «IF generateScribitePlugins || (needsApproval && generatePendingContentSupport)»
             public function __construct(
                 «IF generateScribitePlugins»
-                    ZikulaHttpKernelInterface $kernel,
-                    Filesystem $filesystem,
-                    RequestStack $requestStack«IF needsApproval && generatePendingContentSupport»,«ENDIF»
+                    protected ZikulaHttpKernelInterface $kernel,
+                    protected Filesystem $filesystem,
+                    protected RequestStack $requestStack«IF needsApproval && generatePendingContentSupport»,«ENDIF»
                 «ENDIF»
                 «IF needsApproval && generatePendingContentSupport»
-                    WorkflowHelper $workflowHelper
+                    protected WorkflowHelper $workflowHelper
                 «ENDIF»
             ) {
-                «IF generateScribitePlugins»
-                    $this->kernel = $kernel;
-                    $this->filesystem = $filesystem;
-                    $this->requestStack = $requestStack;
-                «ENDIF»
-                «IF needsApproval && generatePendingContentSupport»
-                    $this->workflowHelper = $workflowHelper;
-                «ENDIF»
             }
 
         «ENDIF»

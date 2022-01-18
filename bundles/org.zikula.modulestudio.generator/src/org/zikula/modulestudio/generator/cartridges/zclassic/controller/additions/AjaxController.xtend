@@ -1042,13 +1042,13 @@ class AjaxController {
         $subscriberUrl = !empty($subscriberUrl) ? unserialize($subscriberUrl) : [];
 
         $assignment = new HookAssignmentEntity();
-        $assignment->setSubscriberOwner($subscriberOwner);
-        $assignment->setSubscriberAreaId($subscriberAreaId);
-        $assignment->setSubscriberObjectId($subscriberObjectId);
-        $assignment->setSubscriberUrl($subscriberUrl);
-        $assignment->setAssignedEntity($assignedEntity);
-        $assignment->setAssignedId($assignedId);
-        $assignment->setUpdatedDate(new DateTime());
+        $assignment->setSubscriberOwner($subscriberOwner)
+            ->setSubscriberAreaId($subscriberAreaId)
+            ->setSubscriberObjectId($subscriberObjectId)
+            ->setSubscriberUrl($subscriberUrl)
+            ->setAssignedEntity($assignedEntity)
+            ->setAssignedId($assignedId)
+            ->setUpdatedDate(new DateTime());
 
         $entityManager = $entityFactory->getEntityManager();
         $entityManager->persist($assignment);

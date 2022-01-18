@@ -40,15 +40,9 @@ class BlockModeration {
     '''
 
     def private moderationBlockBaseImpl(Application it) '''
-        /**
-         * @var CurrentUserApiInterface
-         */
-        protected $currentUserApi;
+        protected CurrentUserApiInterface $currentUserApi;
 
-        /**
-         * @var WorkflowHelper
-         */
-        protected $workflowHelper;
+        protected WorkflowHelper $workflowHelper;
 
         public function getType(): string
         {

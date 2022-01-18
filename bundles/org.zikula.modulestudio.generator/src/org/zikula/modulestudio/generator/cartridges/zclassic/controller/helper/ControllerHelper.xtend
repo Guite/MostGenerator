@@ -87,122 +87,30 @@ class ControllerHelper {
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-        «IF hasViewActions || hasUiHooksProviders»
-
-            /**
-             * @var RouterInterface
-             */
-            protected $router;
-        «ENDIF»
-        «IF hasViewActions»
-
-            /**
-             * @var FormFactoryInterface
-             */
-            protected $formFactory;
-        «ENDIF»
-        «IF hasViewActions»
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-        «ENDIF»
-        «IF hasGeographical»
-
-            /**
-             * @var LoggerInterface
-             */
-            protected $logger;
-
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-        «ENDIF»
-
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
-
-        /**
-         * @var CollectionFilterHelper
-         */
-        protected $collectionFilterHelper;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-        «IF !getUploadEntities.empty»
-
-            /**
-             * @var ImageHelper
-             */
-            protected $imageHelper;
-        «ENDIF»
-        «IF needsFeatureActivationHelper»
-
-            /**
-             * @var FeatureActivationHelper
-             */
-            protected $featureActivationHelper;
-        «ENDIF»
-
         public function __construct(
             TranslatorInterface $translator,
-            RequestStack $requestStack,
+            protected RequestStack $requestStack,
             «IF hasViewActions || hasUiHooksProviders»
-                RouterInterface $router,
-            «ENDIF»
-            «IF hasAutomaticExpiryHandling»
-                ExpiryHelper $expiryHelper,
+                protected RouterInterface $router,
             «ENDIF»
             «IF hasViewActions»
-                FormFactoryInterface $formFactory,
+                protected FormFactoryInterface $formFactory,
             «ENDIF»
             «IF hasViewActions»
-                VariableApiInterface $variableApi,
+                protected VariableApiInterface $variableApi,
             «ENDIF»
             «IF hasGeographical»
-                LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi,
+                protected LoggerInterface $logger,
+                protected CurrentUserApiInterface $currentUserApi,
             «ENDIF»
-            EntityFactory $entityFactory,
-            CollectionFilterHelper $collectionFilterHelper,
-            PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
-            ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
-            FeatureActivationHelper $featureActivationHelper«ENDIF»
+            protected EntityFactory $entityFactory,
+            protected CollectionFilterHelper $collectionFilterHelper,
+            protected PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
+            protected ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
+            protected FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasAutomaticExpiryHandling»,
+            ExpiryHelper $expiryHelper«ENDIF»
         ) {
             $this->setTranslator($translator);
-            $this->requestStack = $requestStack;
-            «IF hasViewActions || hasUiHooksProviders»
-                $this->router = $router;
-            «ENDIF»
-            «IF hasViewActions»
-                $this->formFactory = $formFactory;
-            «ENDIF»
-            «IF hasViewActions»
-                $this->variableApi = $variableApi;
-            «ENDIF»
-            «IF hasGeographical»
-                $this->logger = $logger;
-                $this->currentUserApi = $currentUserApi;
-            «ENDIF»
-            $this->entityFactory = $entityFactory;
-            $this->collectionFilterHelper = $collectionFilterHelper;
-            $this->permissionHelper = $permissionHelper;
-            «IF !getUploadEntities.empty»
-                $this->imageHelper = $imageHelper;
-            «ENDIF»
-            «IF needsFeatureActivationHelper»
-                $this->featureActivationHelper = $featureActivationHelper;
-            «ENDIF»
             «IF hasAutomaticExpiryHandling»
 
                 $expiryHelper->handleObsoleteObjects(75);

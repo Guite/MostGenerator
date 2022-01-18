@@ -49,50 +49,20 @@ class ImageHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-            /**
-             * @var ZikulaHttpKernelInterface
-             */
-            protected $kernel;
-
-        «ENDIF»
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var VariableApiInterface
-         */
-        protected $variableApi;
-
         /**
          * Name of the application.
-         *
-         * @var string
          */
-        protected $name;
+        protected string $applicationName;
 
         public function __construct(
             «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-                ZikulaHttpKernelInterface $kernel,
+                protected ZikulaHttpKernelInterface $kernel,
             «ENDIF»
-            TranslatorInterface $translator,
-            RequestStack $requestStack,
-            VariableApiInterface $variableApi
+            protected TranslatorInterface $translator,
+            protected RequestStack $requestStack,
+            protected VariableApiInterface $variableApi
         ) {
-            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-                $this->kernel = $kernel;
-            «ENDIF»
-            $this->translator = $translator;
-            $this->requestStack = $requestStack;
-            $this->variableApi = $variableApi;
-            $this->name = '«appName»';
+            $this->applicationName = '«appName»';
         }
 
         «getRuntimeOptions»
@@ -129,16 +99,16 @@ class ImageHelper {
 
                 «IF needsAutoCompletion»
                     if ('ajax' === $args['controller'] && 'getItemListAutoCompletion' === $args['action']) {
-                        $contextName = $this->name . '_ajax_autocomplete';
+                        $contextName = $this->applicationName . '_ajax_autocomplete';
                     } else {
-                        $contextName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
+                        $contextName = $this->applicationName . '_' . $args['controller'] . '_' . $args['action'];
                     }
                 «ELSE»
-                    $contextName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
+                    $contextName = $this->applicationName . '_' . $args['controller'] . '_' . $args['action'];
                 «ENDIF»
             }
             if (empty($contextName)) {
-                $contextName = $this->name . '_default';
+                $contextName = $this->applicationName . '_default';
             }
 
             return $this->getCustomRuntimeOptions($objectType, $fieldName, $contextName, $context, $args);
@@ -169,13 +139,13 @@ class ImageHelper {
             ];
 
             «IF needsAutoCompletion»
-                if ($this->name . '_ajax_autocomplete' === $contextName) {
+                if ($this->applicationName . '_ajax_autocomplete' === $contextName) {
                     $options['thumbnail']['size'] = [100, 75];
 
                     return $options;
                 }
             «ENDIF»
-            if ($this->name . '_relateditem' === $contextName) {
+            if ($this->applicationName . '_relateditem' === $contextName) {
                 $options['thumbnail']['size'] = [100, 75];
             } elseif ('controllerAction' === $context) {
                 if (in_array($args['action'], ['view', 'display', 'edit'])) {

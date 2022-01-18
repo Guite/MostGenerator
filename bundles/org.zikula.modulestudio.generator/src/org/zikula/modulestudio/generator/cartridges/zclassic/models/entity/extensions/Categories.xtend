@@ -34,10 +34,9 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
          *                mappedBy="entity", cascade={"all"},
          *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»
          * )
-         *
-         * @var \«entityClassName('category', false)»
+         * @var Collection<\«entityClassName('category', false)»>
          */
-        protected $categories = null;
+        protected Collection $categories = null;
 
     '''
 
@@ -45,7 +44,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection', true, true, true)»
+        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection', true)»
 
         public function setCategories(Collection $categories): void
         {
@@ -63,10 +62,8 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
 
         /**
          * Checks if a collection contains an element based only on two criteria (categoryRegistryId, category).
-         *
-         * @return bool|int
          */
-        private function categoryCollectionContains(Collection $collection, \«entityClassName('category', false)» $element)
+        private function categoryCollectionContains(Collection $collection, \«entityClassName('category', false)» $element): bool|int
         {
             foreach ($collection as $key => $category) {
                 /** @var \«entityClassName('category', false)» $category */
@@ -119,10 +116,8 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
         /**
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="categories")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
-         *
-         * @var «name.formatForCodeCapital»Entity
          */
-        protected $entity;
+        protected «name.formatForCodeCapital»Entity $entity;
         «extensionClassEntityAccessors»
     '''
 

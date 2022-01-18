@@ -68,80 +68,31 @@ class CollectionFilterHelper {
 
     def private helperBaseImpl(Application it) '''
         /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-        «IF hasStandardFieldEntities»
-
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-        «ENDIF»
-        «IF hasUserFields»
-
-            /**
-             * @var UserRepositoryInterface
-             */
-            protected $userRepository;
-        «ENDIF»
-        «IF hasCategorisableEntities»
-
-            /**
-             * @var CategoryHelper
-             */
-            protected $categoryHelper;
-        «ENDIF»
-        «IF !getAllEntities.filter[ownerPermission].empty»
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-        «ENDIF»
-
-        /**
          * @var bool Fallback value to determine whether only own entries should be selected or not
          */
-        protected $showOnlyOwnEntries = false;
+        protected bool $showOnlyOwnEntries = false;
         «IF supportLocaleFilter»
 
             /**
              * @var bool Whether to apply a locale-based filter or not
              */
-            protected $filterDataByLocale = false;
+            protected bool $filterDataByLocale = false;
         «ENDIF»
 
         public function __construct(
-            RequestStack $requestStack,
-            PermissionHelper $permissionHelper,
+            protected RequestStack $requestStack,
+            protected PermissionHelper $permissionHelper,
             «IF hasStandardFieldEntities»
-                CurrentUserApiInterface $currentUserApi,
+                protected CurrentUserApiInterface $currentUserApi,
             «ENDIF»
             «IF hasUserFields»
-                UserRepositoryInterface $userRepository,
+                protected UserRepositoryInterface $userRepository,
             «ENDIF»
             «IF hasCategorisableEntities»
-                CategoryHelper $categoryHelper,
+                protected CategoryHelper $categoryHelper,
             «ENDIF»
-            VariableApiInterface $variableApi
+            «IF !getAllEntities.filter[ownerPermission].empty»protected «ENDIF»VariableApiInterface $variableApi
         ) {
-            $this->requestStack = $requestStack;
-            $this->permissionHelper = $permissionHelper;
-            «IF hasStandardFieldEntities»
-                $this->currentUserApi = $currentUserApi;
-            «ENDIF»
-            «IF hasUserFields»
-                $this->userRepository = $userRepository;
-            «ENDIF»
-            «IF hasCategorisableEntities»
-                $this->categoryHelper = $categoryHelper;
-            «ENDIF»
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $this->variableApi = $variableApi;
             «ENDIF»

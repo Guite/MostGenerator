@@ -113,8 +113,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     }
 
     def protected extensionClassEntityAccessors(Entity it) '''
-        «(new FileHelper(application)).getterMethod(it, 'entity', name.formatForCodeCapital + 'Entity', false, false, true)»
-        «(new FileHelper(application)).setterMethod(it, 'entity', name.formatForCodeCapital + 'Entity', false, false, false, '', '')»
+        «(new FileHelper(application)).getterAndSetterMethods(it, 'entity', name.formatForCodeCapital + 'Entity', false, '', '')»
     '''
 
     def protected extensionClassImpl(Entity it) '''

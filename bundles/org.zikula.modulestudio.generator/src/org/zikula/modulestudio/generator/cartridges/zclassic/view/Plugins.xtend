@@ -168,123 +168,25 @@ class Plugins {
     def private twigRuntimeBody(Application it) '''
         use TranslatorTrait;
 
-        «IF hasUploads»
-            /**
-             * @var ZikulaHttpKernelInterface
-             */
-            protected $kernel;
-
-        «ENDIF»
-        «IF !getEntitiesWithCounterFields.empty»
-            /**
-             * @var Connection
-             */
-            protected $databaseConnection;
-
-        «ENDIF»
-        «IF hasTrees»
-            /**
-             * @var RouterInterface
-             */
-            protected $router;
-
-        «ENDIF»
-        «IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-        «ENDIF»
-        /**
-         * @var VariableApiInterface
-         */
-        protected $variableApi;
-
-        «IF hasTrees»
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-        «ENDIF»
-        /**
-         * @var EntityDisplayHelper
-         */
-        protected $entityDisplayHelper;
-
-        /**
-         * @var WorkflowHelper
-         */
-        protected $workflowHelper;
-
-        «IF hasListFields»
-            /**
-             * @var ListEntriesHelper
-             */
-            protected $listHelper;
-
-        «ENDIF»
-        «IF hasLoggable»
-            /**
-             * @var LoggableHelper
-             */
-            protected $loggableHelper;
-
-        «ENDIF»
-        «IF hasTrees»
-            /**
-             * @var MenuBuilder
-             */
-            protected $menuBuilder;
-
-        «ENDIF»
         public function __construct(
             «IF hasUploads»
-                ZikulaHttpKernelInterface $kernel,
+                protected ZikulaHttpKernelInterface $kernel,
             «ENDIF»
             TranslatorInterface $translator«IF !getEntitiesWithCounterFields.empty»,
-            Connection $connection«ENDIF»«IF hasTrees»,
-            RouterInterface $router«ENDIF»«IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»,
-            RequestStack $requestStack«ENDIF»,
-            VariableApiInterface $variableApi,
+            protected Connection $databaseConnection«ENDIF»«IF hasTrees»,
+            protected RouterInterface $router«ENDIF»«IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»,
+            protected RequestStack $requestStack«ENDIF»,
+            protected VariableApiInterface $variableApi,
             «IF hasTrees»
-                EntityFactory $entityFactory,
+                protected EntityFactory $entityFactory,
             «ENDIF»
-            EntityDisplayHelper $entityDisplayHelper,
-            WorkflowHelper $workflowHelper«IF hasListFields»,
-            ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
-            LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
-            MenuBuilder $menuBuilder«ENDIF»
+            protected EntityDisplayHelper $entityDisplayHelper,
+            protected WorkflowHelper $workflowHelper«IF hasListFields»,
+            protected ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
+            protected LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
+            protected MenuBuilder $menuBuilder«ENDIF»
         ) {
-            «IF hasUploads»
-                $this->kernel = $kernel;
-            «ENDIF»
             $this->setTranslator($translator);
-            «IF !getEntitiesWithCounterFields.empty»
-                $this->databaseConnection = $connection;
-            «ENDIF»
-            «IF hasTrees»
-                $this->router = $router;
-            «ENDIF»
-            «IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»
-                $this->requestStack = $requestStack;
-            «ENDIF»
-            $this->variableApi = $variableApi;
-            «IF hasTrees»
-                $this->entityFactory = $entityFactory;
-            «ENDIF»
-            $this->entityDisplayHelper = $entityDisplayHelper;
-            $this->workflowHelper = $workflowHelper;
-            «IF hasListFields»
-                $this->listHelper = $listHelper;
-            «ENDIF»
-            «IF hasLoggable»
-                $this->loggableHelper = $loggableHelper;
-            «ENDIF»
-            «IF hasTrees»
-                $this->menuBuilder = $menuBuilder;
-            «ENDIF»
         }
 
         «viewPlugins»

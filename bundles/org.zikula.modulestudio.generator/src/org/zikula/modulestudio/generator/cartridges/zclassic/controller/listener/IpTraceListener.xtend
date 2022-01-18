@@ -7,22 +7,10 @@ class IpTraceListener {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it) '''
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var IpTraceableListener
-         */
-        protected $ipTraceableListener;
-
         public function __construct(
-            IpTraceableListener $ipTraceableListener,
-            RequestStack $requestStack = null
+            protected IpTraceableListener $ipTraceableListener,
+            protected ?RequestStack $requestStack = null
         ) {
-            $this->ipTraceableListener = $ipTraceableListener;
-            $this->requestStack = $requestStack;
         }
 
         public static function getSubscribedEvents()
@@ -33,7 +21,7 @@ class IpTraceListener {
         }
 
         /**
-         * Set the username from the security context by listening on core.request
+         * Set the username from the security context by listening on kernel request event.
          *
          * If you use a cache like Varnish, you may want to set a proxy to Request::getClientIp() method.
          *     $this->request->setTrustedProxies(array('127.0.0.1'));

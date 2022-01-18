@@ -40,50 +40,14 @@ class CategoryHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var LoggerInterface
-         */
-        protected $logger;
-
-        /**
-         * @var CurrentUserApiInterface
-         */
-        protected $currentUserApi;
-
-        /**
-         * @var CategoryRegistryRepositoryInterface
-         */
-        protected $categoryRegistryRepository;
-
-        /**
-         * @var CategoryPermissionApiInterface
-         */
-        protected $categoryPermissionApi;
-
         public function __construct(
-            TranslatorInterface $translator,
-            RequestStack $requestStack,
-            LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi,
-            CategoryRegistryRepositoryInterface $categoryRegistryRepository,
-            CategoryPermissionApiInterface $categoryPermissionApi
+            protected TranslatorInterface $translator,
+            protected RequestStack $requestStack,
+            protected LoggerInterface $logger,
+            protected CurrentUserApiInterface $currentUserApi,
+            protected CategoryRegistryRepositoryInterface $categoryRegistryRepository,
+            protected CategoryPermissionApiInterface $categoryPermissionApi
         ) {
-            $this->translator = $translator;
-            $this->requestStack = $requestStack;
-            $this->logger = $logger;
-            $this->currentUserApi = $currentUserApi;
-            $this->categoryRegistryRepository = $categoryRegistryRepository;
-            $this->categoryPermissionApi = $categoryPermissionApi;
         }
 
         /**

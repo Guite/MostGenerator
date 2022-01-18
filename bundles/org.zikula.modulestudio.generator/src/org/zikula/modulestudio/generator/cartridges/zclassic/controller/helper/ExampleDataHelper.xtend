@@ -86,54 +86,14 @@ class ExampleDataHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var LoggerInterface
-         */
-        protected $logger;
-
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
-
-        /**
-         * @var WorkflowHelper
-         */
-        protected $workflowHelper;
-        «IF hasUserFields»
-
-            /**
-             * @var UserRepositoryInterface
-             */
-            protected $userRepository;
-        «ENDIF»
-
         public function __construct(
-            TranslatorInterface $translator,
-            RequestStack $requestStack,
-            LoggerInterface $logger,
-            EntityFactory $entityFactory,
-            WorkflowHelper $workflowHelper«IF hasUserFields»,
-            UserRepositoryInterface $userRepository«ENDIF»
+            protected TranslatorInterface $translator,
+            protected RequestStack $requestStack,
+            protected LoggerInterface $logger,
+            protected EntityFactory $entityFactory,
+            protected WorkflowHelper $workflowHelper«IF hasUserFields»,
+            protected UserRepositoryInterface $userRepository«ENDIF»
         ) {
-            $this->translator = $translator;
-            $this->requestStack = $requestStack;
-            $this->logger = $logger;
-            $this->entityFactory = $entityFactory;
-            $this->workflowHelper = $workflowHelper;
-            «IF hasUserFields»
-                $this->userRepository = $userRepository;
-            «ENDIF»
         }
 
         /**

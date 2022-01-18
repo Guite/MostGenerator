@@ -45,60 +45,20 @@ class ConfigType {
          */
         abstract class AbstractConfigType extends AbstractType
         {
-            «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                /**
-                 * @var RequestStack
-                 */
-                protected $requestStack;
-
-            «ENDIF»
-            «IF !getAllVariables.filter(ListField).empty»
-                /**
-                 * @var ListEntriesHelper
-                 */
-                protected $listHelper;
-
-            «ENDIF»
-            «IF hasUploadVariables»
-                /**
-                 * @var UploadHelper
-                 */
-                protected $uploadHelper;
-
-            «ENDIF»
-            «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
-                /**
-                 * @var LocaleApiInterface
-                 */
-                protected $localeApi;
-
-            «ENDIF»
             public function __construct(
                 «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                    RequestStack $requestStack«IF !getAllVariables.filter(ListField).empty || hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                    protected RequestStack $requestStack«IF !getAllVariables.filter(ListField).empty || hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
                 «ENDIF»
                 «IF !getAllVariables.filter(ListField).empty»
-                    ListEntriesHelper $listHelper«IF hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                    protected ListEntriesHelper $listHelper«IF hasUploadVariables || !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
                 «ENDIF»
                 «IF hasUploadVariables»
-                    UploadHelper $uploadHelper«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
+                    protected UploadHelper $uploadHelper«IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»,«ENDIF»
                 «ENDIF»
                 «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
-                    LocaleApiInterface $localeApi
+                    protected LocaleApiInterface $localeApi
                 «ENDIF»
             ) {
-                «IF !getAllVariables.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                    $this->requestStack = $requestStack;
-                «ENDIF»
-                «IF !getAllVariables.filter(ListField).empty»
-                    $this->listHelper = $listHelper;
-                «ENDIF»
-                «IF hasUploadVariables»
-                    $this->uploadHelper = $uploadHelper;
-                «ENDIF»
-                «IF !getAllVariables.filter(StringField).filter[role == StringRole.LOCALE].empty»
-                    $this->localeApi = $localeApi;
-                «ENDIF»
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)

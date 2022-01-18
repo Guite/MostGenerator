@@ -17,35 +17,13 @@ class WorkflowEventsListener {
     def generate(Application it) '''
         use TranslatorTrait;
 
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-        «IF needsApproval»
-
-            /**
-             * @var NotificationHelper
-             */
-            protected $notificationHelper;
-        «ENDIF»
-
         public function __construct(
             TranslatorInterface $translator,
-            EntityFactory $entityFactory,
-            PermissionHelper $permissionHelper«IF needsApproval»,
-            NotificationHelper $notificationHelper«ENDIF»
+            protected EntityFactory $entityFactory,
+            protected PermissionHelper $permissionHelper«IF needsApproval»,
+            protected NotificationHelper $notificationHelper«ENDIF»
         ) {
             $this->setTranslator($translator);
-            $this->entityFactory = $entityFactory;
-            $this->permissionHelper = $permissionHelper;
-            «IF needsApproval»
-                $this->notificationHelper = $notificationHelper;
-            «ENDIF»
         }
 
         public static function getSubscribedEvents()

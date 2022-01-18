@@ -32,47 +32,13 @@ class UploadFileTransformer {
          */
         abstract class AbstractUploadFileTransformer implements DataTransformerInterface
         {
-            /**
-             * @var ZikulaHttpKernelInterface
-             */
-            protected $kernel;
-
-            /**
-             * @var EntityAccess
-             */
-            protected $entity = null;
-
-            /**
-             * @var UploadHelper
-             */
-            protected $uploadHelper = '';
-
-            /**
-             * @var string
-             */
-            protected $fieldName = '';
-            «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-
-                /**
-                 * @var boolean
-                 */
-                protected $supportCustomFileName = false;
-            «ENDIF»
-
             public function __construct(
-                ZikulaHttpKernelInterface $kernel,
-                EntityAccess $entity,
-                UploadHelper $uploadHelper,
-                $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»,
-                $customName = false«ENDIF»
+                protected ZikulaHttpKernelInterface $kernel,
+                protected EntityAccess $entity,
+                protected UploadHelper $uploadHelper,
+                protected string $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»,
+                protected bool $supportCustomFileName = false«ENDIF»
             ) {
-                $this->kernel = $kernel;
-                $this->entity = $entity;
-                $this->uploadHelper = $uploadHelper;
-                $this->fieldName = $fieldName;
-                «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-                    $this->supportCustomFileName = $customName;
-                «ENDIF»
             }
 
             /**

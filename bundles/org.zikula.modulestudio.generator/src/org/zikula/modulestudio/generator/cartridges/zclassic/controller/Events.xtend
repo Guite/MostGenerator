@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 
 /**
  * Generates a class for defining custom events.
@@ -19,12 +20,14 @@ class Events {
     extension Utils = new Utils
 
     Application app
+    FileHelper fh
 
     /**
      * Entry point for event definition class.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
+        fh = new FileHelper(it)
 
         fsa.generateClassPair('Event/ItemActionsMenuPreConfigurationEvent.php', menuEventBaseClass('item', 'pre'), menuEventImpl('item', 'pre'))
         fsa.generateClassPair('Event/ItemActionsMenuPostConfigurationEvent.php', menuEventBaseClass('item', 'post'), menuEventImpl('item', 'post'))
@@ -62,45 +65,15 @@ class Events {
          */
         abstract class Abstract«actionType.toFirstUpper»ActionsMenu«eventTimeType.toFirstUpper»ConfigurationEvent
         {
-            /**
-             * @var FactoryInterface
-             */
-            protected $factory;
-
-            /**
-             * @var ItemInterface
-             */
-            protected $menu;
-
-            /**
-             * @var array
-             */
-            protected $options;
-
             public function __construct(
-                FactoryInterface $factory,
-                ItemInterface $menu,
-                array $options = []
+                protected FactoryInterface $factory,
+                protected ItemInterface $menu,
+                protected array $options = []
             ) {
-                $this->factory = $factory;
-                $this->menu = $menu;
-                $this->options = $options;
             }
-
-            public function getFactory(): FactoryInterface
-            {
-                return $this->factory;
-            }
-
-            public function getMenu(): ItemInterface
-            {
-                return $this->menu;
-            }
-
-            public function getOptions(): array
-            {
-                return $this->options;
-            }
+            «fh.getterMethod(it, 'factory', 'FactoryInterface', false)»
+            «fh.getterMethod(it, 'menu', 'ItemInterface', false)»
+            «fh.getterMethod(it, 'options', 'array', false)»
         }
     '''
 
@@ -128,47 +101,12 @@ class Events {
          */
         abstract class Abstract«name.formatForCodeCapital»«classSuffix»Event
         {
-            /**
-             * @var «name.formatForCodeCapital»Entity Reference to treated entity instance
-             */
-            protected $«name.formatForCode»;
-            «IF classSuffix == 'PreUpdate'»
-
-                /**
-                 * @var array Entity change set for preUpdate events
-                 */
-                protected $entityChangeSet = [];
-            «ENDIF»
-
-            public function __construct(«name.formatForCodeCapital»Entity $«name.formatForCode»«IF classSuffix == 'PreUpdate'», array $entityChangeSet = []«ENDIF»)
+            public function __construct(protected «name.formatForCodeCapital»Entity $«name.formatForCode»«IF classSuffix == 'PreUpdate'», protected array $entityChangeSet = []«ENDIF»)
             {
-                $this->«name.formatForCode» = $«name.formatForCode»;
-                «IF classSuffix == 'PreUpdate'»
-                    $this->entityChangeSet = $entityChangeSet;
-                «ENDIF»
             }
-
-            public function get«name.formatForCodeCapital»(): «name.formatForCodeCapital»Entity
-            {
-                return $this->«name.formatForCode»;
-            }
+            «fh.getterMethod(it, name.formatForCode, name.formatForCodeCapital + 'Entity', false)»
             «IF classSuffix == 'PreUpdate'»
-
-                /**
-                 * @return array Entity change set
-                 */
-                public function getEntityChangeSet(): array
-                {
-                    return $this->entityChangeSet;
-                }
-
-                /**
-                 * @param array $changeSet Entity change set
-                 */
-                public function setEntityChangeSet(array $changeSet = []): void
-                {
-                    $this->entityChangeSet = $changeSet;
-                }
+                «fh.getterAndSetterMethods(it, 'entityChangeSet', 'array', false, '[]', '')»
             «ENDIF»
         }
     '''

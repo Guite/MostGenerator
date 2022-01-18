@@ -37,37 +37,26 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         /**
          * @Gedmo\TreeLeft
          * @ORM\Column(type="integer")
-         * @Assert\Type(type="int")
-         *
-         * @var int
          */
-        protected $lft;
+        protected int $lft;
 
         /**
          * @Gedmo\TreeLevel
          * @ORM\Column(type="integer")
-         * @Assert\Type(type="int")
-         *
-         * @var int
          */
-        protected $lvl;
+        protected int $lvl;
 
         /**
          * @Gedmo\TreeRight
          * @ORM\Column(type="integer")
-         * @Assert\Type(type="int")
-         *
-         * @var int
          */
-        protected $rgt;
+        protected int $rgt;
 
         /**
          * @Gedmo\TreeRoot
          * @ORM\Column(type="integer", nullable=true)
-         *
-         * @var int
          */
-        protected $root;
+        protected int $root;
 
         /**
          * Bidirectional - Many children [«name.formatForDisplay»] are linked by one parent [«name.formatForDisplay»] (OWNING SIDE).
@@ -78,20 +67,16 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * @Gedmo\TreeParent
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="children")
          * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKey.name.formatForDisplay»", onDelete="SET NULL")
-         *
-         * @var self
          */
-        protected $parent;
+        protected ?self $parent;
 
         /**
          * Bidirectional - One parent [«name.formatForDisplay»] has many children [«name.formatForDisplay»] (INVERSE SIDE).
          *
          * @ORM\OneToMany(targetEntity="\«entityClassName('', false)»", mappedBy="parent")
          * @ORM\OrderBy({"lft" = "ASC"})
-         *
-         * @var self
          */
-        protected $children;
+        protected Collection $children;
 
     '''
 
@@ -100,12 +85,12 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper(application)»
-        «fh.getterAndSetterMethods(it, 'lft', 'int', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'lvl', 'int', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'rgt', 'int', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'root', 'int', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'parent', 'self', false, true, true, 'null', '')»
-        «fh.getterAndSetterMethods(it, 'children', 'Collection', true, true, true, '', '')»
+        «fh.getterAndSetterMethods(it, 'lft', 'int', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'lvl', 'int', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'rgt', 'int', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'root', 'int', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'parent', 'self', true, 'null', '')»
+        «fh.getterAndSetterMethods(it, 'children', 'Collection', true, '', '')»
     '''
 
     /**

@@ -50,50 +50,17 @@ class TranslatableHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var VariableApiInterface
-         */
-        protected $variableApi;
-
-        /**
-         * @var LocaleApiInterface
-         */
-        protected $localeApi;
-
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
         «IF needsDynamicLoggableEnablement»
+            protected LoggableListener $loggableListener;
 
-            /**
-             * @var LoggableListener
-             */
-            protected $loggableListener;
         «ENDIF»
-
         public function __construct(
-            TranslatorInterface $translator,
-            RequestStack $requestStack,
-            VariableApiInterface $variableApi,
-            LocaleApiInterface $localeApi,
-            EntityFactory $entityFactory
+            protected TranslatorInterface $translator,
+            protected RequestStack $requestStack,
+            protected VariableApiInterface $variableApi,
+            protected LocaleApiInterface $localeApi,
+            protected EntityFactory $entityFactory
         ) {
-            $this->translator = $translator;
-            $this->requestStack = $requestStack;
-            $this->variableApi = $variableApi;
-            $this->localeApi = $localeApi;
-            $this->entityFactory = $entityFactory;
             «IF needsDynamicLoggableEnablement»
                 $this->loggableListener = null;
             «ENDIF»

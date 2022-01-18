@@ -58,15 +58,8 @@ class ContentTypeListType {
         abstract class AbstractItemListType extends AbstractContentFormType
         {
             «IF hasCategorisableEntities»
-                /**
-                 * @var CategoryRepositoryInterface
-                 */
-                protected $categoryRepository;
-
-                public function __construct(
-                    CategoryRepositoryInterface $categoryRepository
-                ) {
-                    $this->categoryRepository = $categoryRepository;
+                public function __construct(protected CategoryRepositoryInterface $categoryRepository)
+                {
                 }
 
             «ENDIF»

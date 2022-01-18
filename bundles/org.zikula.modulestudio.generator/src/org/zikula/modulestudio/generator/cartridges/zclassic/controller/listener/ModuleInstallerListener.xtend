@@ -12,35 +12,15 @@ class ModuleInstallerListener {
     extension Utils = new Utils
 
     def generate(Application it) '''
-        «IF amountOfExampleRows > 0»
-            /**
-             * @var ExampleDataHelper
-             */
-            protected $exampleDataHelper;
-
-        «ENDIF»
-        «IF hasUiHooksProviders»
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-        «ENDIF»
         «IF amountOfExampleRows > 0 || hasUiHooksProviders»
             public function __construct(
                 «IF amountOfExampleRows > 0»
-                    ExampleDataHelper $exampleDataHelper«IF hasUiHooksProviders»,«ENDIF»
+                    protected ExampleDataHelper $exampleDataHelper«IF hasUiHooksProviders»,«ENDIF»
                 «ENDIF»
                 «IF hasUiHooksProviders»
-                    EntityFactory $entityFactory
+                    protected EntityFactory $entityFactory
                 «ENDIF»
             ) {
-                «IF amountOfExampleRows > 0»
-                    $this->exampleDataHelper = $exampleDataHelper;
-                «ENDIF»
-                «IF hasUiHooksProviders»
-                    $this->entityFactory = $entityFactory;
-                «ENDIF»
             }
 
         «ENDIF»

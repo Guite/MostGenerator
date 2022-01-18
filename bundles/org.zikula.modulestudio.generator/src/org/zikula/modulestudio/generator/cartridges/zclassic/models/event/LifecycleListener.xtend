@@ -68,37 +68,15 @@ class LifecycleListener {
         {
             use ContainerAwareTrait;
 
-            «IF !getUploadEntities.empty»
-                /**
-                 * @var ZikulaHttpKernelInterface
-                 */
-                protected $kernel;
-
-            «ENDIF»
-            /**
-             * @var EventDispatcherInterface
-             */
-            protected $eventDispatcher;
-
-            /**
-             * @var LoggerInterface
-             */
-            protected $logger;
-
             public function __construct(
-                «IF !getUploadEntities.empty»
-                    ZikulaHttpKernelInterface $kernel,
-                «ENDIF»
                 ContainerInterface $container,
-                EventDispatcherInterface $eventDispatcher,
-                LoggerInterface $logger
-            ) {
                 «IF !getUploadEntities.empty»
-                    $this->kernel = $kernel;
+                    protected ZikulaHttpKernelInterface $kernel,
                 «ENDIF»
+                protected EventDispatcherInterface $eventDispatcher,
+                protected LoggerInterface $logger
+            ) {
                 $this->setContainer($container);
-                $this->eventDispatcher = $eventDispatcher;
-                $this->logger = $logger;
             }
 
             /**

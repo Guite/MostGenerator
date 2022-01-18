@@ -27,40 +27,24 @@ class ListEntryValidator {
          */
         abstract class AbstractListEntry extends Constraint
         {
-            /**
-             * Entity name.
-             *
-             * @var string
-             */
-            public $entityName = '';
+            public string $entityName = '';
 
-            /**
-             * Property name.
-             *
-             * @var string
-             */
-            public $propertyName = '';
+            public string $propertyName = '';
 
             /**
              * Whether multiple list values are allowed or not.
-             *
-             * @var bool
              */
-            public $multiple = false;
+            public bool $multiple = false;
 
             /**
              * Minimum amount of values for multiple lists.
-             *
-             * @var int
              */
-            public $min;
+            public int $min;
 
             /**
              * Maximum amount of values for multiple lists.
-             *
-             * @var int
              */
-            public $max;
+            public int $max;
         }
     '''
 
@@ -98,15 +82,9 @@ class ListEntryValidator {
         {
             use TranslatorTrait;
 
-            /**
-             * @var ListEntriesHelper
-             */
-            protected $listEntriesHelper;
-
-            public function __construct(TranslatorInterface $translator, ListEntriesHelper $listEntriesHelper)
+            public function __construct(TranslatorInterface $translator, protected ListEntriesHelper $listEntriesHelper)
             {
                 $this->setTranslator($translator);
-                $this->listEntriesHelper = $listEntriesHelper;
             }
 
             public function validate($value, Constraint $constraint)

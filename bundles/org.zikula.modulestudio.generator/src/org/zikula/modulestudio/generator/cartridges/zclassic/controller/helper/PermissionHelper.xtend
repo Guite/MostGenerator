@@ -60,67 +60,17 @@ class PermissionHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var PermissionApiInterface
-         */
-        protected $permissionApi;
-        «IF hasLoggable»
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-        «ENDIF»
-
-        /**
-         * @var CurrentUserApiInterface
-         */
-        protected $currentUserApi;
-
-        /**
-         * @var UserRepositoryInterface
-         */
-        protected $userRepository;
-        «IF hasCategorisableEntities»
-
-            /**
-             * @var FeatureActivationHelper
-             */
-            protected $featureActivationHelper;
-
-            /**
-             * @var CategoryHelper
-             */
-            protected $categoryHelper;
-        «ENDIF»
-
         public function __construct(
-            RequestStack $requestStack,
-            PermissionApiInterface $permissionApi,
+            protected RequestStack $requestStack,
+            protected PermissionApiInterface $permissionApi,
             «IF hasLoggable»
-                VariableApiInterface $variableApi,
+                protected VariableApiInterface $variableApi,
             «ENDIF»
-            CurrentUserApiInterface $currentUserApi,
-            UserRepositoryInterface $userRepository«IF hasCategorisableEntities»,
-            FeatureActivationHelper $featureActivationHelper,
-            CategoryHelper $categoryHelper«ENDIF»
+            protected CurrentUserApiInterface $currentUserApi,
+            protected UserRepositoryInterface $userRepository«IF hasCategorisableEntities»,
+            protected FeatureActivationHelper $featureActivationHelper,
+            protected CategoryHelper $categoryHelper«ENDIF»
         ) {
-            $this->requestStack = $requestStack;
-            $this->permissionApi = $permissionApi;
-            «IF hasLoggable»
-                $this->variableApi = $variableApi;
-            «ENDIF»
-            $this->currentUserApi = $currentUserApi;
-            $this->userRepository = $userRepository;
-            «IF hasCategorisableEntities»
-                $this->featureActivationHelper = $featureActivationHelper;
-                $this->categoryHelper = $categoryHelper;
-            «ENDIF»
         }
 
         «accessMethods»

@@ -52,43 +52,23 @@ class ContentTypeList {
     '''
 
     def private contentTypeBaseImpl(Application it) '''
-        /**
-         * @var ControllerHelper
-         */
-        protected $controllerHelper;
+        protected ControllerHelper $controllerHelper;
 
-        /**
-         * @var ModelHelper
-         */
-        protected $modelHelper;
+        protected ModelHelper $modelHelper;
 
-        /**
-         * @var PermissionHelper
-         */
-        protected $modulePermissionHelper;
+        protected PermissionHelper $modulePermissionHelper;
 
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
+        protected EntityFactory $entityFactory;
 
         «IF hasCategorisableEntities»
-            /**
-             * @var FeatureActivationHelper
-             */
-            protected $featureActivationHelper;
+            protected FeatureActivationHelper $featureActivationHelper;
 
-            /**
-             * @var CategoryHelper
-             */
-            protected $categoryHelper;
+            protected CategoryHelper $categoryHelper;
 
             /**
              * List of object types allowing categorisation.
-             *
-             * @var array
              */
-            protected $categorisableObjectTypes;
+            protected array $categorisableObjectTypes;
 
         «ENDIF»
         public function getIcon(): string

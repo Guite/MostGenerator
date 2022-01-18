@@ -30,29 +30,11 @@ class AutoCompletionRelationTransformer {
          */
         abstract class AbstractAutoCompletionRelationTransformer implements DataTransformerInterface
         {
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var string
-             */
-            protected $objectType;
-
-            /**
-             * @var bool
-             */
-            protected $isMultiple = false;
-
             public function __construct(
-                EntityFactory $entityFactory,
-                string $objectType,
-                bool $isMultiple
+                protected EntityFactory $entityFactory,
+                protected string $objectType,
+                protected bool $isMultiple
             ) {
-                $this->entityFactory = $entityFactory;
-                $this->objectType = $objectType;
-                $this->isMultiple = $isMultiple;
             }
 
             /**

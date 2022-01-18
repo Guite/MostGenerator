@@ -33,10 +33,9 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
          * @ORM\OneToMany(targetEntity="\«entityClassName('attribute', false)»",
          *                mappedBy="entity", cascade={"all"},
          *                orphanRemoval=true, indexBy="name")
-         *
-         * @var \«entityClassName('attribute', false)»
+         * @var Collection<\«entityClassName('attribute', false)»>
          */
-        protected $attributes = null;
+        protected Collection $attributes = null;
 
     '''
 
@@ -45,7 +44,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper(application)»
-        «fh.getterMethod(it, 'attributes', 'Collection', true, true, true)»
+        «fh.getterMethod(it, 'attributes', 'Collection', true)»
         public function setAttribute(string $name, string $value): void
         {
             if (isset($this->attributes[$name])) {
@@ -98,10 +97,8 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
         /**
          * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="attributes")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
-         *
-         * @var «name.formatForCodeCapital»Entity
          */
-        protected $entity;
+        protected «name.formatForCodeCapital»Entity $entity;
         «extensionClassEntityAccessors»
     '''
 

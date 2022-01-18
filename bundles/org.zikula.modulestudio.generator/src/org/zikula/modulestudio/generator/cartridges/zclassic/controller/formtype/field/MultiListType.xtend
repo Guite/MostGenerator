@@ -37,14 +37,8 @@ class MultiListType {
          */
         abstract class AbstractMultiListType extends AbstractType
         {
-            /**
-             * @var ListEntriesHelper
-             */
-            protected $listHelper;
-
-            public function __construct(ListEntriesHelper $listHelper)
+            public function __construct(protected ListEntriesHelper $listHelper)
             {
-                $this->listHelper = $listHelper;
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)

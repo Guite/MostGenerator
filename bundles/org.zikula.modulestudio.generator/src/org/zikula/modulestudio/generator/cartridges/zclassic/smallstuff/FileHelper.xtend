@@ -1,7 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
-import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
@@ -9,6 +7,7 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -16,14 +15,9 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.Application
 
 class FileHelper {
-
-    //Application app
-
-    new(Application it) {
-        //app = it
-    }
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
@@ -32,28 +26,31 @@ class FileHelper {
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
+    new(Application it) {
+    }
+
     def msWeblink() '''
         <p id="poweredByMost" class="text-center">
             Powered by <a href="«msUrl»" title="Get the MOST out of Zikula!">ModuleStudio «msVersion»</a>
         </p>
     '''
 
-    def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint, String init, CharSequence customImpl) '''
-        «getterMethod(name, type, isMany, nullable, useHint)»
-        «setterMethod(name, type, isMany, nullable, useHint, init, customImpl)»
+    def getterAndSetterMethods(Object it, String name, String type, Boolean nullable, String init, CharSequence customImpl) '''
+        «getterMethod(name, type, nullable)»
+        «setterMethod(name, type, nullable, init, customImpl)»
     '''
 
-    def getterMethod(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint) '''
+    def getterMethod(Object it, String name, String type, Boolean nullable) '''
 
-        public function get«name.formatForCodeCapital»()«IF useHint»«IF skipTypeHint»/*«ENDIF»: «IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»«IF skipTypeHint»*/«ENDIF»«ENDIF»
+        public function get«name.formatForCodeCapital»()«IF skipTypeHint»/*«ENDIF»: «IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF»
         {
             return «IF type == 'float'»(float) «ENDIF»$this->«name»;
         }
     '''
 
-    def setterMethod(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint, String init, CharSequence customImpl) '''
+    def private setterMethod(Object it, String name, String type, Boolean nullable, String init, CharSequence customImpl) '''
 
-        public function set«name.formatForCodeCapital»(«IF useHint»«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF» «IF skipTypeHint»*/«ENDIF»«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
+        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
@@ -65,31 +62,19 @@ class FileHelper {
         }
     '''
 
+    def private normalizeTypeHint(String type) '''«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»'''
+
     def private skipTypeHint(Object it) {
         (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) || (it instanceof UserField)
     }
 
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
-        «IF type == 'float'»
-            «IF #['latitude', 'longitude'].contains(name)»
-                $«name» = round((float) $«name», 7);
-            «ENDIF»
-            if ((float) $this->«name» !== $«name») {
-                «IF nullable»
-                    $this->«name» = $«name»;
-                «ELSE»
-                    $this->«name» = $«name» ?? 0.00;
-                «ENDIF»
-            }
-        «ELSE»
-            if ($this->«name» !== $«name») {
-                «IF nullable»
-                    $this->«name» = $«name»;
-                «ELSE»
-                    $this->«name» = $«name» ?? '';
-                «ENDIF»
-            }
+        «IF #['latitude', 'longitude'].contains(name)»
+            $«name» = (string) round((float) $«name», 7);
         «ENDIF»
+        if ($this->«name» !== $«name») {
+            «setterAssignment(name, type, nullable)»
+        }
     '''
 
     def triggerPropertyChangeListeners(DerivedField it, String name) '''
@@ -100,7 +85,7 @@ class FileHelper {
 
     def private dispatch setterMethodImpl(DerivedField it, String name, String type, Boolean nullable) '''
         «IF it instanceof NumberField»
-            $«name» = round((float) $«name», «scale»);
+            $«name» = «IF it.numberType == NumberFieldType::DECIMAL»(string) «ENDIF»round((float) $«name», «scale»);
         «ENDIF»
         if ($this->«name.formatForCode» !== $«name») {
             «triggerPropertyChangeListeners(name)»
@@ -108,13 +93,13 @@ class FileHelper {
         }
     '''
 
-    def private dispatch setterMethodImpl(BooleanField it, String name, String type, Boolean nullable) '''
-        if ((bool) $this->«name.formatForCode» !== $«name») {
-            «triggerPropertyChangeListeners(name)»
-            «setterAssignment(name)»
-        }
+    def private setterAssignment(Object it, String name, String type, Boolean nullable) '''
+        «IF nullable»
+            $this->«name» = $«name»;
+        «ELSE»
+            $this->«name» = $«name» ?? «IF type == 'float'»0.00«ELSEIF type == 'int'»0«ELSE»''«ENDIF»;
+        «ENDIF»
     '''
-
     def private dispatch setterAssignment(DerivedField it, String name) '''
         «IF nullable»
             $this->«name» = $«name»;
@@ -143,6 +128,13 @@ class FileHelper {
         «ENDIF»
     '''
 
+    def private dispatch setterAssignment(IntegerField it, String name) '''
+        «setterAssignmentNumeric(name)»
+    '''
+    def private dispatch setterAssignment(NumberField it, String name) '''
+        «setterAssignmentNumeric(name)»
+    '''
+
     def private setterAssignmentNumeric(DerivedField it, String name) '''
         «val aggregators = getAggregatingRelationships»
         «IF !aggregators.empty»
@@ -155,36 +147,6 @@ class FileHelper {
             «ENDFOR»
         «ENDIF»
     '''
-
-    def private dispatch setterMethodImpl(IntegerField it, String name, String type, Boolean nullable) '''
-        if («numericCast('$this->' + name.formatForCode)» !== »$«name») {
-            «triggerPropertyChangeListeners(name)»
-            «setterAssignmentNumeric(name)»
-        }
-    '''
-    def private dispatch setterMethodImpl(UserField it, String name, String type, Boolean nullable) '''
-        if ($this->«name.formatForCode» !== $«name») {
-            «triggerPropertyChangeListeners(name)»
-            «setterAssignment(name)»
-        }
-    '''
-    def private dispatch setterMethodImpl(NumberField it, String name, String type, Boolean nullable) '''
-        if («numericCast('$this->' + name.formatForCode)» !== $«name») {
-            «triggerPropertyChangeListeners(name)»
-            «setterAssignmentNumeric(name)»
-        }
-    '''
-
-    def private numericCast(DerivedField it, String variable) {
-        if (notOnlyNumericInteger) {
-            return variable
-        }
-        if (it instanceof AbstractIntegerField) {
-            return '(int) ' + variable
-        } else {
-            return '(float) ' + variable
-        }
-    }
 
     def private dispatch setterAssignment(DatetimeField it, String name) '''
         if (

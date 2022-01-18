@@ -57,53 +57,21 @@ class EntityInitialiser {
          */
         abstract class AbstractEntityInitialiser
         {
-            «IF supportLocaleFilter»
-                /**
-                 * @var RequestStack
-                 */
-                protected $requestStack;
-
-            «ENDIF»
-            /**
-             * @var PermissionHelper
-             */
-            protected $permissionHelper;
-
-            «IF hasListFieldsExceptWorkflowState»
-                /**
-                 * @var ListEntriesHelper
-                 */
-                protected $listEntriesHelper;
-
-            «ENDIF»
             «IF hasGeographical»
-                /**
-                 * @var float Default latitude for geographical entities
-                 */
-                protected $defaultLatitude;
+                protected string $defaultLatitude;
 
-                /**
-                 * @var float Default longitude for geographical entities
-                 */
-                protected $defaultLongitude;
+                protected string $defaultLongitude;
 
             «ENDIF»
             public function __construct(
-                «IF supportLocaleFilter»RequestStack $requestStack,«ENDIF»
-                PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
-                ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
+                «IF supportLocaleFilter»protected RequestStack $requestStack,«ENDIF»
+                protected PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
+                protected ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
                 VariableApiInterface $variableApi«ENDIF»
             ) {
-                «IF supportLocaleFilter»
-                    $this->requestStack = $requestStack;
-                «ENDIF»
-                $this->permissionHelper = $permissionHelper;
-                «IF hasListFieldsExceptWorkflowState»
-                    $this->listEntriesHelper = $listEntriesHelper;
-                «ENDIF»
                 «IF hasGeographical»
-                    $this->defaultLatitude = $variableApi->get('«appName»', 'defaultLatitude', 0.00);
-                    $this->defaultLongitude = $variableApi->get('«appName»', 'defaultLongitude', 0.00);
+                    $this->defaultLatitude = $variableApi->get('«appName»', 'defaultLatitude', '0.00');
+                    $this->defaultLongitude = $variableApi->get('«appName»', 'defaultLongitude', '0.00');
                 «ENDIF»
             }
             «FOR entity : getAllEntities»
@@ -153,7 +121,7 @@ class EntityInitialiser {
                 }
             «ENDFOR»
             «IF hasListFieldsExceptWorkflowState»
-                «fh.getterAndSetterMethods(it, 'listEntriesHelper', 'ListEntriesHelper', false, true, true, '', '')»
+                «fh.getterAndSetterMethods(it, 'listEntriesHelper', 'ListEntriesHelper', true, '', '')»
             «ENDIF»
         }
     '''

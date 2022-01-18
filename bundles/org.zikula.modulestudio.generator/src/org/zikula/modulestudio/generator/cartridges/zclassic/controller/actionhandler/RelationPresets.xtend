@@ -22,10 +22,8 @@ class RelationPresets {
 
         /**
          * List of identifiers for predefined relationships.
-         *
-         * @var mixed
          */
-        protected $relationPresets = [];
+        protected array $relationPresets = [];
     '''
 
     def baseMethod(Application it) '''

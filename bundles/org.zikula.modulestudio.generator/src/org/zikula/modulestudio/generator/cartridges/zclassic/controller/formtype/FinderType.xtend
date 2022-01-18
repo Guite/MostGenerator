@@ -65,34 +65,12 @@ class FinderType {
          */
         abstract class Abstract«name.formatForCodeCapital»FinderType extends AbstractType
         {
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-
-            «IF app.needsFeatureActivationHelper»
-                /**
-                 * @var FeatureActivationHelper
-                 */
-                protected $featureActivationHelper;
-
-            «ENDIF»
             public function __construct(
-                RequestStack $requestStack,
-                VariableApiInterface $variableApi«IF app.needsFeatureActivationHelper»,
-                FeatureActivationHelper $featureActivationHelper
+                protected RequestStack $requestStack,
+                protected VariableApiInterface $variableApi«IF app.needsFeatureActivationHelper»,
+                protected FeatureActivationHelper $featureActivationHelper
                 «ENDIF»
             ) {
-                $this->requestStack = $requestStack;
-                $this->variableApi = $variableApi;
-                «IF app.needsFeatureActivationHelper»
-                    $this->featureActivationHelper = $featureActivationHelper;
-                «ENDIF»
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)

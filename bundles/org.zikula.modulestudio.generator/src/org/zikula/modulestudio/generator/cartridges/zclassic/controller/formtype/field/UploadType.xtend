@@ -43,39 +43,15 @@ class UploadType {
          */
         abstract class AbstractUploadType extends AbstractType
         {
-            /**
-             * @var ZikulaHttpKernelInterface
-             */
-            protected $kernel;
+            protected FormBuilderInterface $formBuilder = null;
 
-            /**
-             * @var ImageHelper
-             */
-            protected $imageHelper;
-
-            /**
-             * @var UploadHelper
-             */
-            protected $uploadHelper = '';
-
-            /**
-             * @var FormBuilderInterface
-             */
-            protected $formBuilder = null;
-
-            /**
-             * @var object
-             */
-            protected $entity = null;
+            protected object $entity = null;
 
             public function __construct(
-                ZikulaHttpKernelInterface $kernel,
-                ImageHelper $imageHelper,
-                UploadHelper $uploadHelper
+                protected ZikulaHttpKernelInterface $kernel,
+                protected ImageHelper $imageHelper,
+                protected UploadHelper $uploadHelper
             ) {
-                $this->kernel = $kernel;
-                $this->imageHelper = $imageHelper;
-                $this->uploadHelper = $uploadHelper;
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)
@@ -210,8 +186,8 @@ class UploadType {
                     «ENDIF»
                 ;
             }
-            «new FileHelper(it).getterMethod(null, 'formBuilder', 'FormBuilderInterface', false, false, true)»
-            «new FileHelper(it).getterMethod(null, 'entity', 'object', false, false, true)»
+            «new FileHelper(it).getterMethod(null, 'formBuilder', 'FormBuilderInterface', false)»
+            «new FileHelper(it).getterMethod(null, 'entity', 'object', false)»
 
             public function getBlockPrefix()
             {

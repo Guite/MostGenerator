@@ -43,56 +43,16 @@ class AuthenticationMethod {
          */
         abstract class Abstract«name.formatForCodeCapital»AuthenticationMethod implements «IF authenticationMethod == AuthMethodType.LOCAL»Non«ENDIF»ReEntrantAuthenticationMethodInterface
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-            «IF authenticationMethod == AuthMethodType.REMOTE»
-
-                /**
-                 * @var RouterInterface
-                 */
-                protected $router;
-            «ENDIF»
-
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-
-            /**
-             * @var EncoderFactoryInterface
-             */
-            protected $encoderFactory;
-
             public function __construct(
-                TranslatorInterface $translator,
-                RequestStack $requestStack,
+                protected TranslatorInterface $translator,
+                protected RequestStack $requestStack,
                 «IF authenticationMethod == AuthMethodType.REMOTE»
-                    RouterInterface $router,
+                    protected RouterInterface $router,
                 «ENDIF»
-                EntityFactory $entityFactory,
-                VariableApiInterface $variableApi,
-                EncoderFactoryInterface $encoderFactory
+                protected EntityFactory $entityFactory,
+                protected VariableApiInterface $variableApi,
+                protected EncoderFactoryInterface $encoderFactory
             ) {
-                $this->translator = $translator;
-                $this->requestStack = $requestStack;
-                «IF authenticationMethod == AuthMethodType.REMOTE»
-                    $this->router = $router;
-                «ENDIF»
-                $this->entityFactory = $entityFactory;
-                $this->variableApi = $variableApi;
-                $this->encoderFactory = $encoderFactory;
             }
 
             «authMethodBaseImplCommon»

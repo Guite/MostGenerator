@@ -10,22 +10,10 @@ class ConnectionsMenuListener {
     extension Utils = new Utils
 
     def generate(Application it) '''
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-
-        /**
-         * @var PermissionApiInterface
-         */
-        protected $permissionApi;
-
         public function __construct(
-            TranslatorInterface $translator,
-            PermissionApiInterface $permissionApi
+            protected TranslatorInterface $translator,
+            protected PermissionApiInterface $permissionApi
         ) {
-            $this->translator = $translator;
-            $this->permissionApi = $permissionApi;
         }
 
         public static function getSubscribedEvents()

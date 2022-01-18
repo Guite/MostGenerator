@@ -25,14 +25,8 @@ class ListFieldTransformer {
          */
         abstract class AbstractListFieldTransformer implements DataTransformerInterface
         {
-            /**
-             * @var ListEntriesHelper
-             */
-            protected $listHelper;
-
-            public function __construct(ListEntriesHelper $listHelper)
+            public function __construct(protected ListEntriesHelper $listHelper)
             {
-                $this->listHelper = $listHelper;
             }
 
             /**

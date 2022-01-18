@@ -239,7 +239,7 @@ class Layout {
             {% trans_default_domain 'messages' %}
         «ENDIF»
         <!DOCTYPE html>
-        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
+        <html lang="{{ app.request.locale }}" dir="auto">
         <head>
             <title>{{ block('pageTitle') is defined ? block('pageTitle') : block('title') }}</title>
         </head>
@@ -284,7 +284,7 @@ class Layout {
             {% trans_default_domain 'messages' %}
         «ENDIF»
         <!DOCTYPE html>
-        <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="auto">
+        <html lang="{{ app.request.locale }}" dir="auto">
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
             <title>{{ pageGetVar('title') }}</title>

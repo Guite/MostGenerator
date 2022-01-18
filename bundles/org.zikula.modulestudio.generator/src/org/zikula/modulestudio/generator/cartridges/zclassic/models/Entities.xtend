@@ -234,33 +234,32 @@ class Entities {
 
     def private memberVars(DataObject it) '''
         /**
-         * @var string The tablename this object maps to
+         * The tablename this object maps to
          */
-        protected $_objectType = '«name.formatForCode»';
+        protected string $_objectType = '«name.formatForCode»';
         «IF it instanceof Entity && (it as Entity).hasNotifyPolicy»
 
             /**
-             * @Assert\Type(type="array")
-             * @var array List of change notification listeners
+             * List of change notification listeners
              */
-            protected $_propertyChangedListeners = [];
+            protected array $_propertyChangedListeners = [];
         «ENDIF»
         «IF hasUploadFieldsEntity»
 
             /**
-             * @var string Relative path to upload base folder
+             * Relative path to upload base folder
              */
-            protected $_uploadBasePathRelative = '';
+            protected string $_uploadBasePathRelative = '';
 
             /**
-             * @var string Absolute path to upload base folder
+             * Absolute path to upload base folder
              */
-            protected $_uploadBasePathAbsolute = '';
+            protected string $_uploadBasePathAbsolute = '';
 
             /**
-             * @var string Base URL to upload files
+             * Base URL to upload files
              */
-            protected $_uploadBaseUrl = '';
+            protected string $_uploadBaseUrl = '';
         «ENDIF»
 
         «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
@@ -269,27 +268,26 @@ class Entities {
         «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
         «IF it instanceof Entity && (it as Entity).loggable && (it as Entity).hasTranslatableFields && getDerivedFields.filter(ArrayField).filter[name.equals('translationData')].empty»
             /**
-             * @Assert\Type(type="array")
-             * @var array Log data for refreshing translations during revert to another revision
+             * Log data for refreshing translations during revert to another revision
              */
-            protected $translationData = [];
+            protected array $translationData = [];
 
         «ENDIF»
     '''
 
     def private accessors(DataObject it) '''
-        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, true, '', '')»
+        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, '', '')»
         «IF hasUploadFieldsEntity»
-            «fh.getterAndSetterMethods(it, '_uploadBasePathRelative', 'string', false, false, true, '', '')»
-            «fh.getterAndSetterMethods(it, '_uploadBasePathAbsolute', 'string', false, false, true, '', '')»
-            «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, false, true, '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBasePathRelative', 'string', false, '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBasePathAbsolute', 'string', false, '', '')»
+            «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, '', '')»
         «ENDIF»
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
         «IF it instanceof Entity && (it as Entity).loggable && (it as Entity).hasTranslatableFields && getDerivedFields.filter(ArrayField).filter[name.equals('translationData')].empty»
-            «fh.getterAndSetterMethods(it, 'translationData', 'array', true, true, true, '[]', '')»
+            «fh.getterAndSetterMethods(it, 'translationData', 'array', true, '[]', '')»
         «ENDIF»
     '''
 

@@ -50,10 +50,8 @@ class StandardFieldsTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         *
-         * @var UserEntity
          */
-        protected $createdBy;
+        protected ?UserEntity $createdBy;
 
         /**
          * @ORM\Column(type="datetime")
@@ -61,11 +59,8 @@ class StandardFieldsTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\Type("\DateTimeInterface")
-         *
-         * @var DateTimeInterface
          */
-        protected $createdDate;
+        protected ?DateTimeInterface $createdDate;
 
         /**
          * @Gedmo\Blameable(on="update")
@@ -74,10 +69,8 @@ class StandardFieldsTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         *
-         * @var UserEntity
          */
-        protected $updatedBy;
+        protected ?UserEntity $updatedBy;
 
         /**
          * @ORM\Column(type="datetime")
@@ -85,14 +78,11 @@ class StandardFieldsTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\Type("\DateTimeInterface")
-         *
-         * @var DateTimeInterface
          */
-        protected $updatedDate;
-        «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedDate', 'DateTimeInterface', false, true, true, '', '')»
+        protected ?DateTimeInterface $updatedDate;
+        «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedDate', 'DateTimeInterface', true, '', '')»
     '''
 }

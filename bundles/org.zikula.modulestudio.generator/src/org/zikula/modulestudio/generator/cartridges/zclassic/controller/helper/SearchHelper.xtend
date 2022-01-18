@@ -51,45 +51,15 @@ class SearchHelper {
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
-
-        /**
-         * @var ControllerHelper
-         */
-        protected $controllerHelper;
-
-        /**
-         * @var EntityDisplayHelper
-         */
-        protected $entityDisplayHelper;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-
         public function __construct(
             TranslatorInterface $translator,
-            RequestStack $requestStack,
-            EntityFactory $entityFactory,
-            ControllerHelper $controllerHelper,
-            EntityDisplayHelper $entityDisplayHelper,
-            PermissionHelper $permissionHelper
+            protected RequestStack $requestStack,
+            protected EntityFactory $entityFactory,
+            protected ControllerHelper $controllerHelper,
+            protected EntityDisplayHelper $entityDisplayHelper,
+            protected PermissionHelper $permissionHelper
         ) {
             $this->setTranslator($translator);
-            $this->requestStack = $requestStack;
-            $this->entityFactory = $entityFactory;
-            $this->controllerHelper = $controllerHelper;
-            $this->entityDisplayHelper = $entityDisplayHelper;
-            $this->permissionHelper = $permissionHelper;
         }
 
         «amendForm»

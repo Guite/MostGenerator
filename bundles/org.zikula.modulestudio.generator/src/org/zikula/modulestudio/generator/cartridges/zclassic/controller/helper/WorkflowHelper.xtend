@@ -52,57 +52,15 @@ class WorkflowHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-
-        /**
-         * @var Registry
-         */
-        protected $workflowRegistry;
-
-        /**
-         * @var LoggerInterface
-         */
-        protected $logger;
-
-        /**
-         * @var CurrentUserApiInterface
-         */
-        protected $currentUserApi;
-
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
-
-        /**
-         * @var ListEntriesHelper
-         */
-        protected $listEntriesHelper;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-
         public function __construct(
-            TranslatorInterface $translator,
-            Registry $registry,
-            LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi,
-            EntityFactory $entityFactory,
-            ListEntriesHelper $listEntriesHelper,
-            PermissionHelper $permissionHelper
+            protected TranslatorInterface $translator,
+            protected Registry $workflowRegistry,
+            protected LoggerInterface $logger,
+            protected CurrentUserApiInterface $currentUserApi,
+            protected EntityFactory $entityFactory,
+            protected ListEntriesHelper $listEntriesHelper,
+            protected PermissionHelper $permissionHelper
         ) {
-            $this->translator = $translator;
-            $this->workflowRegistry = $registry;
-            $this->logger = $logger;
-            $this->currentUserApi = $currentUserApi;
-            $this->entityFactory = $entityFactory;
-            $this->listEntriesHelper = $listEntriesHelper;
-            $this->permissionHelper = $permissionHelper;
         }
 
         «getObjectStates»

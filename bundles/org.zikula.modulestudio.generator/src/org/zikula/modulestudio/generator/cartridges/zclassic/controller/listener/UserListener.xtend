@@ -17,69 +17,21 @@ class UserListener {
     extension Utils = new Utils
 
     def generate(Application it) '''
-        «IF hasStandardFieldEntities || hasUserFields»
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-
-            /**
-             * @var LoggerInterface
-             */
-            protected $logger;
-
-        «ENDIF»
-        «IF hasUserVariables»
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-
-        «ENDIF»
-        «IF hasLoggable»
-            /**
-             * @var LoggableHelper
-             */
-            protected $loggableHelper;
-
-        «ENDIF»
         «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
             public function __construct(
                 «IF hasStandardFieldEntities || hasUserFields»
-                    TranslatorInterface $translator,
-                    EntityFactory $entityFactory,
-                    CurrentUserApiInterface $currentUserApi,
-                    LoggerInterface $logger«IF hasUserVariables || hasLoggable»,«ENDIF»
+                    protected TranslatorInterface $translator,
+                    protected EntityFactory $entityFactory,
+                    protected CurrentUserApiInterface $currentUserApi,
+                    protected LoggerInterface $logger«IF hasUserVariables || hasLoggable»,«ENDIF»
                 «ENDIF»
                 «IF hasUserVariables»
-                    VariableApiInterface $variableApi«IF hasLoggable»,«ENDIF»
+                    protected VariableApiInterface $variableApi«IF hasLoggable»,«ENDIF»
                 «ENDIF»
                 «IF hasLoggable»
-                    LoggableHelper $loggableHelper
+                    protected LoggableHelper $loggableHelper
                 «ENDIF»
             ) {
-                «IF hasStandardFieldEntities || hasUserFields»
-                    $this->translator = $translator;
-                    $this->entityFactory = $entityFactory;
-                    $this->currentUserApi = $currentUserApi;
-                    $this->logger = $logger;
-                «ENDIF»
-                «IF hasUserVariables»
-                    $this->variableApi = $variableApi;
-                «ENDIF»
-                «IF hasLoggable»
-                    $this->loggableHelper = $loggableHelper;
-                «ENDIF»
             }
 
         «ENDIF»

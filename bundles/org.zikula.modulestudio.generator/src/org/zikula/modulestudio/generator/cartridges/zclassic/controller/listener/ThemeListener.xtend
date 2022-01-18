@@ -10,15 +10,9 @@ class ThemeListener {
     extension Utils = new Utils
 
     def generate(Application it) '''
-        /**
-         * @var AssetFilter
-         */
-        protected $assetFilter;
-
         public function __construct(
-            AssetFilter $assetFilter
+            protected AssetFilter $assetFilter
         ) {
-            $this->assetFilter = $assetFilter;
         }
 
         public static function getSubscribedEvents()

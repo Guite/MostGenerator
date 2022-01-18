@@ -59,74 +59,35 @@ class UploadHelper {
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
-        /**
-         * @var ZikulaHttpKernelInterface
-         */
-        protected $kernel;
+        protected array $moduleVars;
 
         /**
-         * @var Filesystem
+         * List of object types with upload fields
          */
-        protected $filesystem;
+        protected array $allowedObjectTypes;
 
         /**
-         * @var RequestStack
+         * List of file types to be considered as images
          */
-        protected $requestStack;
+        protected array $imageFileTypes;
 
         /**
-         * @var LoggerInterface
+         * List of dangerous file types to be rejected
          */
-        protected $logger;
-
-        /**
-         * @var CurrentUserApiInterface
-         */
-        protected $currentUserApi;
-
-        /**
-         * @var array
-         */
-        protected $moduleVars;
-
-        /**
-         * @var string
-         */
-        protected $dataDirectory;
-
-        /**
-         * @var array List of object types with upload fields
-         */
-        protected $allowedObjectTypes;
-
-        /**
-         * @var array List of file types to be considered as images
-         */
-        protected $imageFileTypes;
-
-        /**
-         * @var array List of dangerous file types to be rejected
-         */
-        protected $forbiddenFileTypes;
+        protected array $forbiddenFileTypes;
 
         public function __construct(
-            ZikulaHttpKernelInterface $kernel,
+            protected ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
-            Filesystem $filesystem,
-            RequestStack $requestStack,
-            LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi,
+            protected Filesystem $filesystem,
+            protected RequestStack $requestStack,
+            protected LoggerInterface $logger,
+            protected CurrentUserApiInterface $currentUserApi,
             VariableApiInterface $variableApi,
-            string $dataDirectory
+            protected string $dataDirectory
         ) {
-            $this->kernel = $kernel;
             $this->setTranslator($translator);
-            $this->filesystem = $filesystem;
-            $this->requestStack = $requestStack;
-            $this->logger = $logger;
-            $this->currentUserApi = $currentUserApi;
             $this->moduleVars = $variableApi->getAll('«appName»');
-            $this->dataDirectory = $dataDirectory;
 
             $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
             $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'];

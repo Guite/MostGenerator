@@ -199,66 +199,48 @@ class FormHandler {
 
             /**
              * Name of treated object type.
-             *
-             * @var string
              */
-            protected $objectType;
+            protected string $objectType;
 
             /**
              * Name of treated object type starting with upper case.
-             *
-             * @var string
              */
-            protected $objectTypeCapital;
+            protected string $objectTypeCapital;
 
             /**
              * Lower case version.
-             *
-             * @var string
              */
-            protected $objectTypeLower;
+            protected string $objectTypeLower;
 
             /**
              * Reference to treated entity instance.
-             *
-             * @var EntityAccess
              */
-            protected $entityRef;
+            protected EntityAccess $entityRef;
 
             /**
              * Name of primary identifier field.
-             *
-             * @var string
              */
-            protected $idField;
+            protected string $idField;
 
             /**
              * Identifier of treated entity.
-             *
-             * @var int
              */
-            protected $idValue = 0;
+            protected int $idValue = 0;
 
             /**
              * Code defining the redirect goal after command handling.
-             *
-             * @var string
              */
-            protected $returnTo;
+            protected string $returnTo;
 
             /**
              * Whether a create action is going to be repeated or not.
-             *
-             * @var bool
              */
-            protected $repeatCreateAction = false;
+            protected bool $repeatCreateAction = false;
 
             /**
              * Url of current form with all parameters for multiple creations.
-             *
-             * @var string
              */
-            protected $repeatReturnUrl;
+            protected string $repeatReturnUrl;
             «IF !getJoinRelations.empty»
                 «relationPresetsHelper.memberFields(it)»
             «ENDIF»
@@ -266,10 +248,8 @@ class FormHandler {
 
                 /**
                  * Full prefix for related items.
-                 *
-                 * @var string
                  */
-                protected $idPrefix = '';
+                protected string $idPrefix = '';
             «ENDIF»
 
             «locking.memberVars»
@@ -277,195 +257,59 @@ class FormHandler {
 
                 /**
                  * Whether the entity has attributes or not.
-                 *
-                 * @var bool
                  */
-                protected $hasAttributes = false;
+                protected bool $hasAttributes = false;
             «ENDIF»
             «IF hasTranslatable»
 
                 /**
                  * Whether the entity has translatable fields or not.
-                 *
-                 * @var bool
                  */
-                protected $hasTranslatableFields = false;
-            «ENDIF»
-
-            /**
-             * @var ZikulaHttpKernelInterface
-             */
-            protected $kernel;
-
-            /**
-             * @var FormFactoryInterface
-             */
-            protected $formFactory;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            /**
-             * @var RouterInterface
-             */
-            protected $router;
-
-            /**
-             * @var LoggerInterface
-             */
-            protected $logger;
-
-            «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-                /**
-                 * @var VariableApiInterface
-                 */
-                protected $variableApi;
-
-            «ENDIF»
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-
-            «IF needsApproval»
-                /**
-                 * @var GroupApplicationRepository
-                 */
-                protected $groupApplicationRepository;
-
-            «ENDIF»
-            «IF hasNonNullableUserFields»
-                /**
-                 * @var UserRepositoryInterface
-                 */
-                protected $userRepository;
-
-            «ENDIF»
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var ControllerHelper
-             */
-            protected $controllerHelper;
-
-            /**
-             * @var ModelHelper
-             */
-            protected $modelHelper;
-
-            /**
-             * @var PermissionHelper
-             */
-            protected $permissionHelper;
-
-            /**
-             * @var WorkflowHelper
-             */
-            protected $workflowHelper;
-            «IF hasHookSubscribers»
-
-                /**
-                 * @var HookHelper
-                 */
-                protected $hookHelper;
-            «ENDIF»
-            «IF hasTranslatable»
-
-                /**
-                 * @var TranslatableHelper
-                 */
-                protected $translatableHelper;
-            «ENDIF»
-            «IF needsFeatureActivationHelper»
-
-                /**
-                 * @var FeatureActivationHelper
-                 */
-                protected $featureActivationHelper;
+                protected bool $hasTranslatableFields = false;
             «ENDIF»
 
             /**
              * Reference to optional locking api.
-             *
-             * @var LockingApiInterface
              */
-            protected $lockingApi;
+            protected LockingApiInterface $lockingApi;
 
             /**
              * The handled form type.
-             *
-             * @var Form
              */
-            protected $form;
+            protected Form $form;
 
             /**
              * Template parameters.
-             *
-             * @var array
              */
-            protected $templateParameters = [];
+            protected array $templateParameters = [];
 
             public function __construct(
-                ZikulaHttpKernelInterface $kernel,
+                protected ZikulaHttpKernelInterface $kernel,
                 TranslatorInterface $translator,
-                FormFactoryInterface $formFactory,
-                RequestStack $requestStack,
-                RouterInterface $router,
-                LoggerInterface $logger,
+                protected FormFactoryInterface $formFactory,
+                protected RequestStack $requestStack,
+                protected RouterInterface $router,
+                protected LoggerInterface $logger,
                 «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-                    VariableApiInterface $variableApi,
+                    protected VariableApiInterface $variableApi,
                 «ENDIF»
-                CurrentUserApiInterface $currentUserApi,
+                protected CurrentUserApiInterface $currentUserApi,
                 «IF needsApproval»
-                    GroupApplicationRepository $groupApplicationRepository,
+                    protected GroupApplicationRepository $groupApplicationRepository,
                 «ENDIF»
                 «IF hasNonNullableUserFields»
-                    UserRepositoryInterface $userRepository,
+                    protected UserRepositoryInterface $userRepository,
                 «ENDIF»
-                EntityFactory $entityFactory,
-                ControllerHelper $controllerHelper,
-                ModelHelper $modelHelper,
-                PermissionHelper $permissionHelper,
-                WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
-                HookHelper $hookHelper«ENDIF»«IF hasTranslatable»,
-                TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
-                FeatureActivationHelper $featureActivationHelper«ENDIF»
+                protected EntityFactory $entityFactory,
+                protected ControllerHelper $controllerHelper,
+                protected ModelHelper $modelHelper,
+                protected PermissionHelper $permissionHelper,
+                protected WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
+                protected HookHelper $hookHelper«ENDIF»«IF hasTranslatable»,
+                protected TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
+                protected FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
-                $this->kernel = $kernel;
                 $this->setTranslator($translator);
-                $this->formFactory = $formFactory;
-                $this->requestStack = $requestStack;
-                $this->router = $router;
-                $this->logger = $logger;
-                «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-                    $this->variableApi = $variableApi;
-                «ENDIF»
-                $this->currentUserApi = $currentUserApi;
-                «IF needsApproval»
-                    $this->groupApplicationRepository = $groupApplicationRepository;
-                «ENDIF»
-                «IF hasNonNullableUserFields»
-                    $this->userRepository = $userRepository;
-                «ENDIF»
-                $this->entityFactory = $entityFactory;
-                $this->controllerHelper = $controllerHelper;
-                $this->modelHelper = $modelHelper;
-                $this->permissionHelper = $permissionHelper;
-                $this->workflowHelper = $workflowHelper;
-                «IF hasHookSubscribers»
-                    $this->hookHelper = $hookHelper;
-                «ENDIF»
-                «IF hasTranslatable»
-                    $this->translatableHelper = $translatableHelper;
-                «ENDIF»
-                «IF needsFeatureActivationHelper»
-                    $this->featureActivationHelper = $featureActivationHelper;
-                «ENDIF»
             }
 
             «processForm»
@@ -710,7 +554,7 @@ class FormHandler {
         «IF !getJoinRelations.empty»
             «relationPresetsHelper.baseMethod(it)»
         «ENDIF»
-        «fh.getterMethod(it, 'templateParameters', 'array', true, false, true)»
+        «fh.getterMethod(it, 'templateParameters', 'array', false)»
 
         «initEntityForEditing»
 

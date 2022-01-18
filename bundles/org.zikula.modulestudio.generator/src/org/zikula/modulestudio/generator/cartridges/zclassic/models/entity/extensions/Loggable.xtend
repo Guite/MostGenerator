@@ -36,10 +36,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     override properties(Entity it) '''
         /**
          * Description of currently executed action to be persisted in next log entry.
-         *
-         * @var string
          */
-        protected $_actionDescriptionForLogEntry = '';
+        protected string $_actionDescriptionForLogEntry = '';
 
     '''
 
@@ -47,7 +45,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «(new FileHelper(application)).getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, false, true, '', '')»
+        «(new FileHelper(application)).getterAndSetterMethods(it, '_actionDescriptionForLogEntry', 'string', false, '', '')»
     '''
 
     /**
@@ -87,21 +85,18 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             /**
              * Use integer instead of string for increased performance.
              *
-             * @var int
-             *
              * @ORM\Column(name="object_id", type="integer")
              */
-            protected $objectId;
+            protected int $objectId;
 
         «ENDIF»
         /**
          * Extended description of the executed action which produced this log entry.
          *
-         * @var string
          * @ORM\Column(name="action_description", length=255)
          */
-        protected $actionDescription = '';
-        «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, false, true, '', '')»
+        protected string $actionDescription = '';
+        «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, '', '')»
     '''
 
     /**

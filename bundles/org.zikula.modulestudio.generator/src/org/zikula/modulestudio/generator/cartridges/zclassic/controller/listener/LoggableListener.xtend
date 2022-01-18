@@ -8,23 +8,11 @@ class LoggableListener {
     extension FormattingExtensions = new FormattingExtensions
 
     def generate(Application it) '''
-        /**
-         * @var EntityDisplayHelper
-         */
-        protected $entityDisplayHelper;
-
-        /**
-         * @var LoggableHelper
-         */
-        protected $loggableHelper;
-
         public function __construct(
-            EntityDisplayHelper $entityDisplayHelper,
-            LoggableHelper $loggableHelper
+            protected EntityDisplayHelper $entityDisplayHelper,
+            protected LoggableHelper $loggableHelper
         ) {
             parent::__construct();
-            $this->entityDisplayHelper = $entityDisplayHelper;
-            $this->loggableHelper = $loggableHelper;
         }
 
         protected function prePersistLogEntry($logEntry, $object)

@@ -47,7 +47,7 @@ class GeographicalTrait {
          «ENDIF»
          * @Assert\Type(type="numeric")«/* type="float" not possible since decimals are mapped to strings */»
          */
-        protected string $latitude = 0.00;
+        protected string $latitude = '0.00';
 
         /**
          * The coordinate's longitude part.
@@ -58,8 +58,8 @@ class GeographicalTrait {
          «ENDIF»
          * @Assert\Type(type="numeric")«/* type="float" not possible since decimals are mapped to strings */»
          */
-        protected string $longitude = 0.00;
-        «fh.getterAndSetterMethods(it, 'latitude', 'string', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, 'longitude', 'string', false, true, true, '', '')»
+        protected string $longitude = '0.00';
+        «fh.getterAndSetterMethods(it, 'latitude', 'string', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'longitude', 'string', true, '', '')»
     '''
 }

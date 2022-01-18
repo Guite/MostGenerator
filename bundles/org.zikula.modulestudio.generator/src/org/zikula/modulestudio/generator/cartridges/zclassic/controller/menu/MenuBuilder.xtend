@@ -67,91 +67,21 @@ class MenuBuilder {
     '''
 
     def private menuBuilderClassBaseImpl(Application it) '''
-        /**
-         * @var FactoryInterface
-         */
-        protected $factory;
-
-        /**
-         * @var EventDispatcherInterface
-         */
-        protected $eventDispatcher;
-
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-        «IF hasDisplayActions»
-
-            /**
-             * @var EntityDisplayHelper
-             */
-            protected $entityDisplayHelper;
-        «ENDIF»
-        «IF hasLoggable»
-
-            /**
-             * @var LoggableHelper
-             */
-            protected $loggableHelper;
-        «ENDIF»
-
-        /**
-         * @var CurrentUserApiInterface
-         */
-        protected $currentUserApi;
-        «IF hasViewActions»
-
-            /**
-             * @var VariableApiInterface
-             */
-            protected $variableApi;
-        «ENDIF»
-        «IF hasViewActions && hasEditActions»
-
-            /**
-             * @var ModelHelper
-             */
-            protected $modelHelper;
-        «ENDIF»
-
         public function __construct(
-            FactoryInterface $factory,
-            EventDispatcherInterface $eventDispatcher,
-            RequestStack $requestStack,
-            PermissionHelper $permissionHelper,
+            protected FactoryInterface $factory,
+            protected EventDispatcherInterface $eventDispatcher,
+            protected RequestStack $requestStack,
+            protected PermissionHelper $permissionHelper,
             «IF hasDisplayActions»
-                EntityDisplayHelper $entityDisplayHelper,
+                protected EntityDisplayHelper $entityDisplayHelper,
             «ENDIF»
             «IF hasLoggable»
-                LoggableHelper $loggableHelper,
+                protected LoggableHelper $loggableHelper,
             «ENDIF»
-            CurrentUserApiInterface $currentUserApi«IF hasViewActions»,
-            VariableApiInterface $variableApi«ENDIF»«IF hasViewActions && hasEditActions»,
-            ModelHelper $modelHelper«ENDIF»
+            protected CurrentUserApiInterface $currentUserApi«IF hasViewActions»,
+            protected VariableApiInterface $variableApi«ENDIF»«IF hasViewActions && hasEditActions»,
+            protected ModelHelper $modelHelper«ENDIF»
         ) {
-            $this->factory = $factory;
-            $this->eventDispatcher = $eventDispatcher;
-            $this->requestStack = $requestStack;
-            $this->permissionHelper = $permissionHelper;
-            «IF hasDisplayActions»
-                $this->entityDisplayHelper = $entityDisplayHelper;
-            «ENDIF»
-            «IF hasLoggable»
-                $this->loggableHelper = $loggableHelper;
-            «ENDIF»
-            $this->currentUserApi = $currentUserApi;
-            «IF hasViewActions»
-                $this->variableApi = $variableApi;
-            «ENDIF»
-            «IF hasViewActions && hasEditActions»
-                $this->modelHelper = $modelHelper;
-            «ENDIF»
         }
 
         «createMenu('item')»
@@ -178,11 +108,7 @@ class MenuBuilder {
                 $context = $options['context'];
                 «IF hasLoggable»
 
-                    if (\is_callable([$this->requestStack, 'getMainRequest'])) {
-                        $mainRequest = $this->requestStack->getMainRequest(); // symfony 5.3+
-                    } else {
-                        $mainRequest = $this->requestStack->getMasterRequest();
-                    }
+                    $mainRequest = $this->requestStack->get«IF targets('3.1')»Main«ELSE»Master«ENDIF»Request();
                     // return empty menu for preview of deleted items
                     $routeName = $mainRequest->get('_route');
                     if (false !== mb_stripos($routeName, 'displaydeleted')) {

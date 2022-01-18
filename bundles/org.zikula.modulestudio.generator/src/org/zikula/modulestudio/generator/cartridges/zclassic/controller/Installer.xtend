@@ -70,50 +70,9 @@ class Installer {
         /**
          * @var string[]
          */
-        protected $entities = [
+        protected array $entities = [
             «funcListEntityClasses('usage')»
         ];
-
-        /**
-         * @var LoggerInterface
-         */
-        protected $logger;
-        «IF hasUploads || hasCategorisableEntities»
-
-            /**
-             * @var CurrentUserApiInterface
-             */
-            protected $currentUserApi;
-        «ENDIF»
-        «IF hasCategorisableEntities»
-
-            /**
-             * @var CategoryRepositoryInterface
-             */
-            protected $categoryRepository;
-
-            /**
-             * @var CategoryRegistryRepositoryInterface
-             */
-            protected $categoryRegistryRepository;
-
-            /**
-             * @var CategoryPermissionApi
-             */
-            protected $categoryPermissionApi;
-        «ENDIF»
-        «IF hasUploads»
-
-            /**
-             * @var Filesystem
-             */
-            protected $filesystem;
-
-            /**
-             * @var string
-             */
-            protected $dataDirectory;
-        «ENDIF»
     '''
 
     def private installerBaseImpl(Application it) '''
@@ -124,32 +83,16 @@ class Installer {
             RequestStack $requestStack,
             TranslatorInterface $translator,
             VariableApiInterface $variableApi,
-            LoggerInterface $logger«IF hasUploads»,
-            ZikulaHttpKernelInterface $kernel«ENDIF»«IF hasUploads || hasCategorisableEntities»,
-            CurrentUserApiInterface $currentUserApi«ENDIF»«IF hasCategorisableEntities»,
-            CategoryRepositoryInterface $categoryRepository,
-            CategoryRegistryRepositoryInterface $categoryRegistryRepository,
-            CategoryPermissionApi $categoryPermissionApi«ENDIF»«IF hasUploads»,
-            Filesystem $filesystem,
-            string $dataDirectory«ENDIF»
+            protected LoggerInterface $logger«IF hasUploads»,
+            protected ZikulaHttpKernelInterface $kernel«ENDIF»«IF hasUploads || hasCategorisableEntities»,
+            protected CurrentUserApiInterface $currentUserApi«ENDIF»«IF hasCategorisableEntities»,
+            protected CategoryRepositoryInterface $categoryRepository,
+            protected CategoryRegistryRepositoryInterface $categoryRegistryRepository,
+            protected CategoryPermissionApi $categoryPermissionApi«ENDIF»«IF hasUploads»,
+            protected Filesystem $filesystem,
+            protected string $dataDirectory«ENDIF»
         ) {
             parent::__construct($extension, $managerRegistry, $schemaTool, $requestStack, $translator, $variableApi);
-            $this->logger = $logger;
-            «IF hasUploads»
-                $this->kernel = $kernel;
-            «ENDIF»
-            «IF hasUploads || hasCategorisableEntities»
-                $this->currentUserApi = $currentUserApi;
-            «ENDIF»
-            «IF hasCategorisableEntities»
-                $this->categoryRepository = $categoryRepository;
-                $this->categoryRegistryRepository = $categoryRegistryRepository;
-                $this->categoryPermissionApi = $categoryPermissionApi;
-            «ENDIF»
-            «IF hasUploads»
-                $this->filesystem = $filesystem;
-                $this->dataDirectory = $dataDirectory;
-            «ENDIF»
         }
 
         «funcInit»

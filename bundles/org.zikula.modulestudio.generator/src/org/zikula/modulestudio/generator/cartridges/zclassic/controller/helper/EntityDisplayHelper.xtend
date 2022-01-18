@@ -63,26 +63,14 @@ class EntityDisplayHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-        «IF hasListFields»
-
-            /**
-             * @var ListEntriesHelper Helper service for managing list entries
-             */
-            protected $listEntriesHelper;
-        «ENDIF»
         «IF hasAnyDateTimeFields»
-
             /**
              * @var IntlDateFormatter Formatter for dates
              */
             protected $dateFormatter;
+
         «ENDIF»
         «IF hasNumberFields»
-
             /**
              * @var NumberFormatter Formatter for numbers
              */
@@ -92,17 +80,14 @@ class EntityDisplayHelper {
              * @var NumberFormatter Formatter for currencies
              */
             protected $currencyFormatter;
+
         «ENDIF»
 
         public function __construct(
-            TranslatorInterface $translator«IF hasAnyDateTimeFields || hasNumberFields»,
-            RequestStack $requestStack«ENDIF»«IF hasListFields»,
-            ListEntriesHelper $listEntriesHelper«ENDIF»
+            protected TranslatorInterface $translator«IF hasListFields»,
+            protected ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasAnyDateTimeFields || hasNumberFields»,
+            RequestStack $requestStack«ENDIF»
         ) {
-            $this->translator = $translator;
-            «IF hasListFields»
-                $this->listEntriesHelper = $listEntriesHelper;
-            «ENDIF»
             «IF hasAnyDateTimeFields || hasNumberFields»
                 $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : 'en';
             «ENDIF»

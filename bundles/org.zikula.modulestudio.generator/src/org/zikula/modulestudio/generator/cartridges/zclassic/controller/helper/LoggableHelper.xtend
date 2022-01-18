@@ -59,42 +59,14 @@ class LoggableHelper {
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
-
-        /**
-         * @var EntityDisplayHelper
-         */
-        protected $entityDisplayHelper;
-
-        /**
-         * @var EntityLifecycleListener
-         */
-        protected $entityLifecycleListener;
-        «IF hasLoggableTranslatable»
-
-            /**
-             * @var TranslatableHelper
-             */
-            protected $translatableHelper;
-        «ENDIF»
-
         public function __construct(
             TranslatorInterface $translator,
-            EntityFactory $entityFactory,
-            EntityDisplayHelper $entityDisplayHelper,
-            EntityLifecycleListener $entityLifecycleListener«IF hasLoggableTranslatable»,
-            TranslatableHelper $translatableHelper«ENDIF»
+            protected EntityFactory $entityFactory,
+            protected EntityDisplayHelper $entityDisplayHelper,
+            protected EntityLifecycleListener $entityLifecycleListener«IF hasLoggableTranslatable»,
+            protected TranslatableHelper $translatableHelper«ENDIF»
         ) {
             $this->setTranslator($translator);
-            $this->entityFactory = $entityFactory;
-            $this->entityDisplayHelper = $entityDisplayHelper;
-            $this->entityLifecycleListener = $entityLifecycleListener;
-            «IF hasLoggableTranslatable»
-                $this->translatableHelper = $translatableHelper;
-            «ENDIF»
         }
 
         «determineDiffViewParameters»

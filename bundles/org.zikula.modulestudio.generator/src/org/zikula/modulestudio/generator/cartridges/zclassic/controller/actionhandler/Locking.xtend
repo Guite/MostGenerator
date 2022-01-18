@@ -17,10 +17,8 @@ class Locking {
     def memberVars() '''
         /**
          * Whether the PageLock extension is used for this entity type or not.
-         *
-         * @var bool
          */
-        protected $hasPageLockSupport = false;
+        protected bool $hasPageLockSupport = false;
     '''
 
     def addPageLock(Application it) '''
@@ -85,10 +83,7 @@ class Locking {
             «IF hasOptimisticLock»
                 $request = $this->requestStack->getCurrentRequest();
                 if ($request->hasSession() && ($session = $request->getSession())) {
-                    $expectedVersion = $session->get(
-                        '«application.appName»EntityVersion',
-                        1
-                    );
+                    $expectedVersion = $session->get('«application.appName»EntityVersion', 1);
                 } else {
                     $expectedVersion = 1;
                 }

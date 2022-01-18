@@ -39,10 +39,8 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          *
          * @Assert\Locale()
          * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
-         *
-         * @var string
          */
-        protected $locale;
+        protected string $locale;
 
     '''
 
@@ -50,7 +48,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «(new FileHelper(application)).getterAndSetterMethods(it, 'locale', 'string', false, true, false, '', '')»
+        «(new FileHelper(application)).getterAndSetterMethods(it, 'locale', 'string', true, '', '')»
     '''
 
     /**
@@ -89,11 +87,9 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
         /**
          * Use a length of 140 instead of 255 to avoid too long keys for the indexes.
          *
-         * @var string
-         *
          * @ORM\Column(name="object_class", type="string", length=140)
          */
-        protected $objectClass;
+        protected string $objectClass;
 
         «IF primaryKey instanceof AbstractIntegerField»
             /**
@@ -101,11 +97,9 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
              *
              * @see https://github.com/Atlantic18/DoctrineExtensions/issues/1512
              *
-             * @var int
-             *
              * @ORM\Column(name="foreign_key", type="integer")
              */
-            protected $foreignKey;
+            protected int $foreignKey;
 
         «ENDIF»
         /**

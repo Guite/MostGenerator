@@ -59,129 +59,50 @@ class NotificationHelper {
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
 
-        /**
-         * @var RouterInterface
-         */
-        protected $router;
-
-        /**
-         * @var ZikulaHttpKernelInterface
-         */
-        protected $kernel;
-
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var VariableApiInterface
-         */
-        protected $variableApi;
-
-        /**
-         * @var Environment
-         */
-        protected $twig;
-
-        /**
-         * @var MailerInterface
-         */
-        protected $mailer;
-
-        /**
-         * @var LoggerInterface
-         */
-        protected $mailLogger;
-
-        /**
-         * @var bool
-         */
-        protected $mailLoggingEnabled;
-
-        /**
-         * @var GroupRepositoryInterface
-         */
-        protected $groupRepository;
-
-        /**
-         * @var UserRepositoryInterface
-         */
-        protected $userRepository;
-
-        /**
-         * @var EntityDisplayHelper
-         */
-        protected $entityDisplayHelper;
-
-        /**
-         * @var WorkflowHelper
-         */
-        protected $workflowHelper;
+        protected bool $mailLoggingEnabled;
 
         /**
          * List of notification recipients.
-         *
-         * @var array
          */
-        protected $recipients = [];
+        protected array $recipients = [];
 
         /**
          * Which type of recipient is used ("creator", "moderator" or "superModerator").
-         *
-         * @var string recipientType
          */
-        protected $recipientType = '';
+        protected string $recipientType = '';
 
         /**
          * The entity which has been changed before.
-         *
-         * @var EntityAccess entity
          */
-        protected $entity = '';
+        protected EntityAccess $entity = '';
 
         /**
          * Name of workflow action which is being performed.
-         *
-         * @var string action
          */
-        protected $action = '';
+        protected string $action = '';
 
         /**
          * Name of the application.
-         *
-         * @var string
          */
-        protected $name;
+        protected string $applicationName;
 
         public function __construct(
-            ZikulaHttpKernelInterface $kernel,
+            protected ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
-            RouterInterface $router,
-            RequestStack $requestStack,
-            VariableApiInterface $variableApi,
-            Environment $twig,
-            MailerInterface $mailer,
-            LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
-            GroupRepositoryInterface $groupRepository,
-            UserRepositoryInterface $userRepository,
-            EntityDisplayHelper $entityDisplayHelper,
-            WorkflowHelper $workflowHelper
+            protected RouterInterface $router,
+            protected RequestStack $requestStack,
+            protected VariableApiInterface $variableApi,
+            protected Environment $twig,
+            protected MailerInterface $mailer,
+            protected LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
+            protected GroupRepositoryInterface $groupRepository,
+            protected UserRepositoryInterface $userRepository,
+            protected EntityDisplayHelper $entityDisplayHelper,
+            protected WorkflowHelper $workflowHelper
         ) {
-            $this->kernel = $kernel;
             $this->setTranslator($translator);
-            $this->router = $router;
-            $this->requestStack = $requestStack;
-            $this->variableApi = $variableApi;
-            $this->twig = $twig;
-            $this->mailer = $mailer;
-            $this->mailLogger = $mailLogger;
             $this->mailLoggingEnabled = $variableApi->get('ZikulaMailerModule', 'enableLogging', false);
-            $this->groupRepository = $groupRepository;
-            $this->userRepository = $userRepository;
-            $this->entityDisplayHelper = $entityDisplayHelper;
-            $this->workflowHelper = $workflowHelper;
-            $this->name = '«appName»';
+            $this->applicationName = '«appName»';
         }
 
         «process»
@@ -235,7 +156,7 @@ class NotificationHelper {
             $request = $this->requestStack->getCurrentRequest();
             $session = null !== $request && $request->hasSession() ? $request->getSession() : null;
             if (null !== $session) {
-                $session->remove($this->name . 'AdditionalNotificationRemarks');
+                $session->remove($this->applicationName . 'AdditionalNotificationRemarks');
             }
 
             return $result;
@@ -454,7 +375,7 @@ class NotificationHelper {
 
             $request = $this->requestStack->getCurrentRequest();
             $session = null !== $request && $request->hasSession() ? $request->getSession() : null;
-            $remarks = null !== $session ? $session->get($this->name . 'AdditionalNotificationRemarks', '') : '';
+            $remarks = null !== $session ? $session->get($this->applicationName . 'AdditionalNotificationRemarks', '') : '';
 
             $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'], true);
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);

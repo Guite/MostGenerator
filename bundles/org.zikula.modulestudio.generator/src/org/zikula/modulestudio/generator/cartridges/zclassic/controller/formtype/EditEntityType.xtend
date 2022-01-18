@@ -122,108 +122,20 @@ class EditEntityType {
 
                 «ENDIF»
             «ENDIF»
-            «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                /**
-                 * @var RequestStack
-                 */
-                protected $requestStack;
-
-            «ENDIF»
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-            «IF !incoming.empty || !outgoing.empty»
-
-                /**
-                 * @var CollectionFilterHelper
-                 */
-                protected $collectionFilterHelper;
-
-                /**
-                 * @var EntityDisplayHelper
-                 */
-                protected $entityDisplayHelper;
-            «ENDIF»
-            «IF isTranslatable»
-
-                /**
-                 * @var VariableApiInterface
-                 */
-                protected $variableApi;
-
-                /**
-                 * @var TranslatableHelper
-                 */
-                protected $translatableHelper;
-            «ENDIF»
-            «IF hasListFieldsEntity»
-
-                /**
-                 * @var ListEntriesHelper
-                 */
-                protected $listHelper;
-            «ENDIF»
-            «IF hasUploadFieldsEntity»
-
-                /**
-                 * @var UploadHelper
-                 */
-                protected $uploadHelper;
-            «ENDIF»
-            «IF hasLocaleFieldsEntity»
-
-                /**
-                 * @var LocaleApiInterface
-                 */
-                protected $localeApi;
-            «ENDIF»
-            «IF app.needsFeatureActivationHelper»
-
-                /**
-                 * @var FeatureActivationHelper
-                 */
-                protected $featureActivationHelper;
-            «ENDIF»
-
             public function __construct(
                 «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                    RequestStack $requestStack,
+                    protected RequestStack $requestStack,
                 «ENDIF»
-                EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
-                CollectionFilterHelper $collectionFilterHelper,
-                EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
-                VariableApiInterface $variableApi,
-                TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
-                ListEntriesHelper $listHelper«ENDIF»«IF hasUploadFieldsEntity»,
-                UploadHelper $uploadHelper«ENDIF»«IF hasLocaleFieldsEntity»,
-                LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
-                FeatureActivationHelper $featureActivationHelper«ENDIF»
+                protected EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
+                protected CollectionFilterHelper $collectionFilterHelper,
+                protected EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
+                protected VariableApiInterface $variableApi,
+                protected TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
+                protected ListEntriesHelper $listHelper«ENDIF»«IF hasUploadFieldsEntity»,
+                protected UploadHelper $uploadHelper«ENDIF»«IF hasLocaleFieldsEntity»,
+                protected LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
+                protected FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
-                «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                    $this->requestStack = $requestStack;
-                «ENDIF»
-                $this->entityFactory = $entityFactory;
-                «IF !incoming.empty || !outgoing.empty»
-                    $this->collectionFilterHelper = $collectionFilterHelper;
-                    $this->entityDisplayHelper = $entityDisplayHelper;
-                «ENDIF»
-                «IF isTranslatable»
-                    $this->variableApi = $variableApi;
-                    $this->translatableHelper = $translatableHelper;
-                «ENDIF»
-                «IF hasListFieldsEntity»
-                    $this->listHelper = $listHelper;
-                «ENDIF»
-                «IF hasUploadFieldsEntity»
-                    $this->uploadHelper = $uploadHelper;
-                «ENDIF»
-                «IF hasLocaleFieldsEntity»
-                    $this->localeApi = $localeApi;
-                «ENDIF»
-                «IF app.needsFeatureActivationHelper»
-                    $this->featureActivationHelper = $featureActivationHelper;
-                «ENDIF»
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)

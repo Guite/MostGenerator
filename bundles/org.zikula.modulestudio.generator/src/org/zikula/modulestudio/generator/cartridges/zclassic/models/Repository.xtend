@@ -51,7 +51,7 @@ class Repository {
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         app = it
-        fh = new FileHelper(app)
+        fh = new FileHelper(it)
         getAllEntities.forEach(e|e.generate)
 
         val linkTable = new LinkTable
@@ -113,20 +113,14 @@ class Repository {
                 use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
 
             «ENDIF*/»/**
-             * @var string The default sorting field/expression
+             * The default sorting field/expression
              */
-            protected $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
+            protected string $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
 
-            /**
-             * @var CollectionFilterHelper
-             */
-            protected $collectionFilterHelper;
+            protected CollectionFilterHelper $collectionFilterHelper;
             «IF hasTranslatableFields»
 
-                /**
-                 * @var bool Whether translations are enabled or not
-                 */
-                protected $translationsEnabled = true;
+                protected bool $translationsEnabled = true;
             «ENDIF»«/*IF tree != EntityTreeType.NONE»
 
                 /**
@@ -175,10 +169,10 @@ class Repository {
                     «sortingCriteria»
                 ];
             }
-            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, true, true, '', '')»
-            «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', false, true, true, '', '')»
+            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', true, '', '')»
+            «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', true, '', '')»
             «IF hasTranslatableFields»
-                «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, true, true, '', '')»
+                «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', true, '', '')»
             «ENDIF»
             «new UserDeletion().generate(it)»
 

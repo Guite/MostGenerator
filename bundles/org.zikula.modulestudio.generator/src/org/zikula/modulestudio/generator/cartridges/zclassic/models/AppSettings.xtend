@@ -79,32 +79,6 @@ class AppSettings {
     '''
 
     def private appSettingsBaseImplBody(Application it) '''
-        /**
-         * @var VariableApiInterface
-         */
-        protected $variableApi;
-
-        «IF hasUserVariables»
-            /**
-             * @var UserRepositoryInterface
-             */
-            protected $userRepository;
-
-        «ENDIF»
-        «IF hasUserGroupSelectors»
-            /**
-             * @var GroupRepositoryInterface
-             */
-            protected $groupRepository;
-
-        «ENDIF»
-        «IF hasLoggable»
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-        «ENDIF»
         «memberVars»
         «constructor»
         «accessors»
@@ -128,22 +102,11 @@ class AppSettings {
 
     def private constructor(Application it) '''
         public function __construct(
-            VariableApiInterface $variableApi«IF hasUserVariables»,
-            UserRepositoryInterface $userRepository«ENDIF»«IF hasUserGroupSelectors»,
-            GroupRepositoryInterface $groupRepository«ENDIF»«IF hasLoggable»,
-            EntityFactory $entityFactory«ENDIF»
+            protected VariableApiInterface $variableApi«IF hasUserVariables»,
+            protected UserRepositoryInterface $userRepository«ENDIF»«IF hasUserGroupSelectors»,
+            protected GroupRepositoryInterface $groupRepository«ENDIF»«IF hasLoggable»,
+            protected EntityFactory $entityFactory«ENDIF»
         ) {
-            $this->variableApi = $variableApi;
-            «IF hasUserVariables»
-                $this->userRepository = $userRepository;
-            «ENDIF»
-            «IF hasUserGroupSelectors»
-                $this->groupRepository = $groupRepository;
-            «ENDIF»
-            «IF hasLoggable»
-                $this->entityFactory = $entityFactory;
-            «ENDIF»
-
             $this->load();
         }
     '''

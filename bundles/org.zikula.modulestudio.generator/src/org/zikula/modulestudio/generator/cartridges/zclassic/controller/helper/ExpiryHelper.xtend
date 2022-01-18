@@ -54,61 +54,15 @@ class ExpiryHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var LoggerInterface
-         */
-        protected $logger;
-
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-
-        /**
-         * @var WorkflowHelper
-         */
-        protected $workflowHelper;
-        «IF hasHookSubscribers»
-
-            /**
-             * @var HookHelper
-             */
-            protected $hookHelper;
-        «ENDIF»
-
         public function __construct(
-            TranslatorInterface $translator,
-            RequestStack $requestStack,
-            LoggerInterface $logger,
-            EntityFactory $entityFactory,
-            PermissionHelper $permissionHelper,
-            WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
-            HookHelper $hookHelper«ENDIF»
+            protected TranslatorInterface $translator,
+            protected RequestStack $requestStack,
+            protected LoggerInterface $logger,
+            protected EntityFactory $entityFactory,
+            protected PermissionHelper $permissionHelper,
+            protected WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
+            protected HookHelper $hookHelper«ENDIF»
         ) {
-            $this->translator = $translator;
-            $this->requestStack = $requestStack;
-            $this->logger = $logger;
-            $this->entityFactory = $entityFactory;
-            $this->permissionHelper = $permissionHelper;
-            $this->workflowHelper = $workflowHelper;
-            «IF hasHookSubscribers»
-                $this->hookHelper = $hookHelper;
-            «ENDIF»
         }
 
         /**

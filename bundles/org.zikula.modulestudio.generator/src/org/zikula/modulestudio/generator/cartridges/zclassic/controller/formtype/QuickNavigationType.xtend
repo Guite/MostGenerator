@@ -121,81 +121,23 @@ class QuickNavigationType {
          */
         abstract class Abstract«name.formatForCodeCapital»QuickNavType extends AbstractType
         {
-            «IF !incomingRelations.empty || !outgoingRelations.empty»
-                /**
-                 * @var RequestStack
-                 */
-                protected $requestStack;
-
-                /**
-                 * @var EntityFactory
-                 */
-                protected $entityFactory;
-
-                /**
-                 * @var PermissionHelper
-                 */
-                protected $permissionHelper;
-
-                /**
-                 * @var EntityDisplayHelper
-                 */
-                protected $entityDisplayHelper;
-
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                /**
-                 * @var ListEntriesHelper
-                 */
-                protected $listHelper;
-
-            «ENDIF»
-            «IF hasLocaleFieldsEntity»
-                /**
-                 * @var LocaleApiInterface
-                 */
-                protected $localeApi;
-
-            «ENDIF»
-            «IF app.needsFeatureActivationHelper»
-                /**
-                 * @var FeatureActivationHelper
-                 */
-                protected $featureActivationHelper;
-
-            «ENDIF»
             public function __construct(
                 «IF !incomingRelations.empty || !outgoingRelations.empty»
-                    RequestStack $requestStack,
-                    EntityFactory $entityFactory,
-                    PermissionHelper $permissionHelper,
-                    EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
+                    protected RequestStack $requestStack,
+                    protected EntityFactory $entityFactory,
+                    protected PermissionHelper $permissionHelper,
+                    protected EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
                 «ENDIF»
                 «IF hasListFieldsEntity»
-                    ListEntriesHelper $listHelper«IF hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
+                    protected ListEntriesHelper $listHelper«IF hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
                 «ENDIF»
                 «IF hasLocaleFieldsEntity»
-                    LocaleApiInterface $localeApi«IF app.needsFeatureActivationHelper»,«ENDIF»
+                    protected LocaleApiInterface $localeApi«IF app.needsFeatureActivationHelper»,«ENDIF»
                 «ENDIF»
                 «IF app.needsFeatureActivationHelper»
-                    FeatureActivationHelper $featureActivationHelper
+                    protected FeatureActivationHelper $featureActivationHelper
                 «ENDIF»
             ) {
-                «IF !incomingRelations.empty || !outgoingRelations.empty»
-                    $this->requestStack = $requestStack;
-                    $this->entityFactory = $entityFactory;
-                    $this->permissionHelper = $permissionHelper;
-                    $this->entityDisplayHelper = $entityDisplayHelper;
-                «ENDIF»
-                «IF hasListFieldsEntity»
-                    $this->listHelper = $listHelper;
-                «ENDIF»
-                «IF hasLocaleFieldsEntity»
-                    $this->localeApi = $localeApi;
-                «ENDIF»
-                «IF app.needsFeatureActivationHelper»
-                    $this->featureActivationHelper = $featureActivationHelper;
-                «ENDIF»
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)

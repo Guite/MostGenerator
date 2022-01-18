@@ -36,20 +36,8 @@ class AutoCompletionRelationType {
          */
         abstract class AbstractAutoCompletionRelationType extends AbstractType
         {
-            /**
-             * @var RouterInterface
-             */
-            protected $router;
-
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            public function __construct(RouterInterface $router, EntityFactory $entityFactory)
+            public function __construct(protected RouterInterface $router, protected EntityFactory $entityFactory)
             {
-                $this->router = $router;
-                $this->entityFactory = $entityFactory;
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)

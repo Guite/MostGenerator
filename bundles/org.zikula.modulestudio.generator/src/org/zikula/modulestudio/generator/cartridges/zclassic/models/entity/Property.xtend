@@ -172,7 +172,11 @@ class Property {
                 else if (it.nullable) 'null'
                 else '0'
             NumberField:
-                if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
+                if (NumberFieldType.DECIMAL === it.numberType) {
+                    if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'0.00\''
+                } else if (NumberFieldType.FLOAT === it.numberType) {
+                    if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
+                }
             ArrayField: '[]'
             UploadField: 'null'
             ObjectField: 'null'
@@ -190,9 +194,9 @@ class Property {
 
     def private fieldAccessorDefault(DerivedField it) '''
         «IF isIndexByField»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, true)»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), nullable)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable, true, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), nullable, '', '')»
         «ENDIF»
     '''
 
@@ -202,9 +206,9 @@ class Property {
 
     def dispatch fieldAccessor(IntegerField it) '''
         «IF isIndexByField/* || (null !== aggregateFor && !aggregateFor.empty*/»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), false, nullable, true)»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), nullable)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), false, nullable || primaryKey, true, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), nullable || primaryKey, '', '')»
         «ENDIF»
     '''
 
@@ -265,8 +269,8 @@ class Property {
                 $this->set«name.formatForCodeCapital»FileName($this->«name.formatForCode»->getFilename());
             }
         }
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, true, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, true, '[]', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', true, '', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', true, '', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', false, '[]', '')»
     '''
 }

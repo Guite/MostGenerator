@@ -18,7 +18,7 @@ class TechHelper {
 
     def private header(Application it, String language, String title) '''
         <!DOCTYPE html>
-        <html lang="«language»">
+        <html lang="«language»" dir="auto">
         <head>
             <meta charset="utf-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">

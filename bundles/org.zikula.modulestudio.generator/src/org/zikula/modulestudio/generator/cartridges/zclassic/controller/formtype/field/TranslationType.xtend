@@ -29,14 +29,8 @@ class TranslationType {
          */
         abstract class AbstractTranslationType extends AbstractType
         {
-            /**
-             * @var TranslationListener
-             */
-            protected $translationListener;
-
-            public function __construct()
+            public function __construct(protected TranslationListener $translationListener)
             {
-                $this->translationListener = new TranslationListener();
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)

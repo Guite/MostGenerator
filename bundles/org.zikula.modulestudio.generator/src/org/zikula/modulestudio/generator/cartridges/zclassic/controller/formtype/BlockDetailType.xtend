@@ -47,22 +47,10 @@ class BlockDetailType {
          */
         abstract class AbstractItemBlockType extends AbstractType
         {
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var EntityDisplayHelper
-             */
-            protected $entityDisplayHelper;
-
             public function __construct(
-                EntityFactory $entityFactory,
-                EntityDisplayHelper $entityDisplayHelper
+                protected EntityFactory $entityFactory,
+                protected EntityDisplayHelper $entityDisplayHelper
             ) {
-                $this->entityFactory = $entityFactory;
-                $this->entityDisplayHelper = $entityDisplayHelper;
             }
 
             public function buildForm(FormBuilderInterface $builder, array $options)

@@ -114,14 +114,8 @@ class HookHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var HookDispatcherInterface
-         */
-        protected $hookDispatcher;
-
-        public function __construct(HookDispatcherInterface $hookDispatcher)
+        public function __construct(protected HookDispatcherInterface $hookDispatcher)
         {
-            $this->hookDispatcher = $hookDispatcher;
         }
 
         «callValidationHooks»
@@ -235,14 +229,8 @@ class HookHelper {
          */
         abstract class Abstract«name.formatForCodeCapital»«subscriberType»Subscriber implements HookSubscriberInterface
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            public function __construct(TranslatorInterface $translator)
+            public function __construct(protected TranslatorInterface $translator)
             {
-                $this->translator = $translator;
             }
 
             «commonMethods(application, name, category, 'subscriber', nameMultiple.formatForDB)»
@@ -323,14 +311,8 @@ class HookHelper {
          */
         abstract class AbstractFilterHooksProvider implements «providerInterface(filterHookProvider)»
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            public function __construct(TranslatorInterface $translator)
+            public function __construct(protected TranslatorInterface $translator)
             {
-                $this->translator = $translator;
             }
 
             «commonMethods(name, 'FilterHooks', 'provider', name.formatForDB)»
@@ -419,71 +401,20 @@ class HookHelper {
          */
         abstract class Abstract«name.formatForCodeCapital»«providerType»Provider implements «providerInterface(if (category == 'FormAware') formAwareHookProvider else if (category == 'UiHooks') uiHooksProvider else HookProviderMode.ENABLED)»
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
-             * @var RequestStack
-             */
-            protected $requestStack;
-
-            «IF category == 'FormAware'»
-                /**
-                 * @var FormFactoryInterface
-                 */
-                protected $formFactory;
-            «ELSEIF category == 'UiHooks'»
-                /**
-                 * @var EntityFactory
-                 */
-                protected $entityFactory;
-
-                /**
-                 * @var Environment
-                 */
-                protected $templating;
-
-                /**
-                 * @var PermissionHelper
-                 */
-                protected $permissionHelper;
-                «IF !application.getUploadEntities.empty»
-
-                    /**
-                     * @var ImageHelper
-                     */
-                    protected $imageHelper;
-                «ENDIF»
-            «ENDIF»
-
             public function __construct(
-                TranslatorInterface $translator,
-                RequestStack $requestStack,
+                protected TranslatorInterface $translator,
+                protected RequestStack $requestStack,
                 «IF category == 'FormAware'»
-                    FormFactoryInterface $formFactory
+                    protected FormFactoryInterface $formFactory
                 «ELSEIF category == 'UiHooks'»
-                    EntityFactory $entityFactory,
-                    Environment $twig,
-                    PermissionHelper $permissionHelper«IF !application.getUploadEntities.empty»,«ENDIF»
+                    protected EntityFactory $entityFactory,
+                    protected Environment $twig,
+                    protected PermissionHelper $permissionHelper«IF !application.getUploadEntities.empty»,«ENDIF»
                     «IF !application.getUploadEntities.empty»
-                        ImageHelper $imageHelper
+                        protected ImageHelper $imageHelper
                     «ENDIF»
                 «ENDIF»
             ) {
-                $this->translator = $translator;
-                $this->requestStack = $requestStack;
-                «IF category == 'FormAware'»
-                    $this->formFactory = $formFactory;
-                «ELSEIF category == 'UiHooks'»
-                    $this->entityFactory = $entityFactory;
-                    $this->templating = $twig;
-                    $this->permissionHelper = $permissionHelper;
-                    «IF !application.getUploadEntities.empty»
-                        $this->imageHelper = $imageHelper;
-                    «ENDIF»
-                «ENDIF»
             }
 
             «commonMethods(application, name, category, 'provider', nameMultiple.formatForDB)»
@@ -752,7 +683,7 @@ class HookHelper {
                     «ENDIF»
                     $templateParameters['permissionHelper'] = $this->permissionHelper;
 
-                    $output = $this->templating->render($template, $templateParameters);
+                    $output = $this->twig->render($template, $templateParameters);
 
                     return new DisplayHookResponse($this->getAreaName(), $output);
                 }

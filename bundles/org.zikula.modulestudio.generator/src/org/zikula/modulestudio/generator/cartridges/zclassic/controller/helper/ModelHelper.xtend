@@ -42,14 +42,8 @@ class ModelHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
-
-        public function __construct(EntityFactory $entityFactory)
+        public function __construct(protected EntityFactory $entityFactory)
         {
-            $this->entityFactory = $entityFactory;
         }
 
         «canBeCreated»

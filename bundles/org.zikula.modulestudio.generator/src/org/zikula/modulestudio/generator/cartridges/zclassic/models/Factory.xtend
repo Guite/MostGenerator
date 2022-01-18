@@ -47,40 +47,12 @@ class Factory {
          */
         abstract class AbstractEntityFactory
         {
-            /**
-             * @var EntityManagerInterface
-             */
-            protected $entityManager;
-
-            /**
-             * @var EntityInitialiser
-             */
-            protected $entityInitialiser;
-
-            /**
-             * @var CollectionFilterHelper
-             */
-            protected $collectionFilterHelper;
-            «IF hasTranslatable»
-
-                /**
-                 * @var FeatureActivationHelper
-                 */
-                protected $featureActivationHelper;
-            «ENDIF»
-
             public function __construct(
-                EntityManagerInterface $entityManager,
-                EntityInitialiser $entityInitialiser,
-                CollectionFilterHelper $collectionFilterHelper«IF hasTranslatable»,
-                FeatureActivationHelper $featureActivationHelper«ENDIF»
+                protected EntityManagerInterface $entityManager,
+                protected EntityInitialiser $entityInitialiser,
+                protected CollectionFilterHelper $collectionFilterHelper«IF hasTranslatable»,
+                protected FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
-                $this->entityManager = $entityManager;
-                $this->entityInitialiser = $entityInitialiser;
-                $this->collectionFilterHelper = $collectionFilterHelper;
-                «IF hasTranslatable»
-                    $this->featureActivationHelper = $featureActivationHelper;
-                «ENDIF»
             }
 
             /**
@@ -120,8 +92,8 @@ class Factory {
             «ENDFOR»
 
             «getIdField»
-            «fh.getterMethod(it, 'entityManager', 'EntityManagerInterface', false, true, true)»
-            «fh.getterMethod(it, 'entityInitialiser', 'EntityInitialiser', false, true, true)»
+            «fh.getterMethod(it, 'entityManager', 'EntityManagerInterface', false)»
+            «fh.getterMethod(it, 'entityInitialiser', 'EntityInitialiser', false)»
         }
     '''
 

@@ -53,50 +53,27 @@ class BlockList {
     '''
 
     def private listBlockBaseImpl(Application it) '''
-        /**
-         * @var LoaderInterface
-         */
-        protected $twigLoader;
+        protected LoaderInterface $twigLoader;
 
-        /**
-         * @var ControllerHelper
-         */
-        protected $controllerHelper;
+        protected ControllerHelper $controllerHelper;
 
-        /**
-         * @var ModelHelper
-         */
-        protected $modelHelper;
+        protected ModelHelper $modelHelper;
 
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
+        protected PermissionHelper $permissionHelper;
 
-        /**
-         * @var EntityFactory
-         */
-        protected $entityFactory;
+        protected EntityFactory $entityFactory;
 
         «IF hasCategorisableEntities»
-            /**
-             * @var categoryHelper
-             */
-            protected $categoryHelper;
+            protected CategoryHelper $categoryHelper;
 
-            /**
-             * @var FeatureActivationHelper
-             */
-            protected $featureActivationHelper;
+            protected FeatureActivationHelper $featureActivationHelper;
 
         «ENDIF»
         «IF hasCategorisableEntities»
             /**
              * List of object types allowing categorisation.
-             *
-             * @var array
              */
-            protected $categorisableObjectTypes;
+            protected array $categorisableObjectTypes;
 
         «ENDIF»
         public function getType(): string

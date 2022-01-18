@@ -54,83 +54,21 @@ class ViewHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        «IF hasGeographical»
-            /**
-             * @var ZikulaHttpKernelInterface
-             */
-            protected $kernel;
-
-            /**
-             * @var Filesystem
-             */
-            protected $filesystem;
-
-        «ENDIF»
-        /**
-         * @var Environment
-         */
-        protected $twig;
-
-        /**
-         * @var LoaderInterface
-         */
-        protected $twigLoader;
-
-        /**
-         * @var RequestStack
-         */
-        protected $requestStack;
-
-        /**
-         * @var VariableApiInterface
-         */
-        protected $variableApi;
-
-        «IF generatePdfSupport»
-            /**
-             * @var ParameterBag
-             */
-            protected $pageVars;
-
-        «ENDIF»
-        /**
-         * @var ControllerHelper
-         */
-        protected $controllerHelper;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-
         public function __construct(
             «IF hasGeographical»
-                ZikulaHttpKernelInterface $kernel,
-                Filesystem $filesystem,
+                protected ZikulaHttpKernelInterface $kernel,
+                protected Filesystem $filesystem,
             «ENDIF»
-            Environment $twig,
-            LoaderInterface $twigLoader,
-            RequestStack $requestStack,
-            VariableApiInterface $variableApi,
+            protected Environment $twig,
+            protected LoaderInterface $twigLoader,
+            protected RequestStack $requestStack,
+            protected VariableApiInterface $variableApi,
             «IF generatePdfSupport»
-                ParameterBag $pageVars,
+                protected ParameterBag $pageVars,
             «ENDIF»
-            ControllerHelper $controllerHelper,
-            PermissionHelper $permissionHelper
+            protected ControllerHelper $controllerHelper,
+            protected PermissionHelper $permissionHelper
         ) {
-            «IF hasGeographical»
-                $this->kernel = $kernel;
-                $this->filesystem = $filesystem;
-            «ENDIF»
-            $this->twig = $twig;
-            $this->twigLoader = $twigLoader;
-            $this->requestStack = $requestStack;
-            $this->variableApi = $variableApi;
-            «IF generatePdfSupport»
-                $this->pageVars = $pageVars;
-            «ENDIF»
-            $this->controllerHelper = $controllerHelper;
-            $this->permissionHelper = $permissionHelper;
         }
 
         «getViewTemplate»

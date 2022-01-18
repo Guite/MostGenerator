@@ -30,14 +30,8 @@ class EntityTreeType {
          */
         abstract class AbstractEntityTreeType extends AbstractType
         {
-            /**
-             * @var EntityDisplayHelper
-             */
-            protected $entityDisplayHelper;
-
-            public function __construct(EntityDisplayHelper $entityDisplayHelper)
+            public function __construct(protected EntityDisplayHelper $entityDisplayHelper)
             {
-                $this->entityDisplayHelper = $entityDisplayHelper;
             }
 
             public function configureOptions(OptionsResolver $resolver)

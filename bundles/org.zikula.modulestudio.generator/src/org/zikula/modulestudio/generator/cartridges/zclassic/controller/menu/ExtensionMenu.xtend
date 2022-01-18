@@ -39,49 +39,15 @@ class ExtensionMenu {
          */
         abstract class AbstractExtensionMenu implements ExtensionMenuInterface
         {
-            /**
-             * @var FactoryInterface
-             */
-            protected $factory;
-
-            «IF generateAccountApi»
-                /**
-                 * @var VariableApiInterface
-                 */
-                protected $variableApi;
-
-                /**
-                 * @var CurrentUserApiInterface
-                 */
-                protected $currentUserApi;
-
-            «ENDIF»
-            /**
-             * @var ControllerHelper
-             */
-            protected $controllerHelper;
-
-            /**
-             * @var PermissionHelper
-             */
-            protected $permissionHelper;
-
             public function __construct(
-                FactoryInterface $factory,
+                protected FactoryInterface $factory,
                 «IF generateAccountApi»
-                    VariableApiInterface $variableApi,
-                    CurrentUserApiInterface $currentUserApi,
+                    protected VariableApiInterface $variableApi,
+                    protected CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
-                ControllerHelper $controllerHelper,
-                PermissionHelper $permissionHelper
+                protected ControllerHelper $controllerHelper,
+                protected PermissionHelper $permissionHelper
             ) {
-                $this->factory = $factory;
-                «IF generateAccountApi»
-                    $this->variableApi = $variableApi;
-                    $this->currentUserApi = $currentUserApi;
-                «ENDIF»
-                $this->controllerHelper = $controllerHelper;
-                $this->permissionHelper = $permissionHelper;
             }
 
             public function get(string $type = self::TYPE_ADMIN): ?ItemInterface

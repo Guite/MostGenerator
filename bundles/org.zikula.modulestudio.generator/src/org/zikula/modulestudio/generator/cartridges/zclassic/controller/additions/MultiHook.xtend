@@ -51,62 +51,20 @@ class MultiHook {
     '''
 
     def private needleBaseImpl(Entity it) '''
-        /**
-         * @var TranslatorInterface
-         */
-        protected $translator;
-
-        /**
-         * @var RouterInterface
-         */
-        protected $router;
-
-        /**
-         * @var PermissionHelper
-         */
-        protected $permissionHelper;
-
-        «IF hasDisplayAction»
-            /**
-             * @var EntityFactory
-             */
-            protected $entityFactory;
-
-            /**
-             * @var EntityDisplayHelper
-             */
-            protected $entityDisplayHelper;
-
-        «ENDIF»
-        /**
-         * Bundle name.
-         *
-         * @var string
-         */
-        protected $bundleName;
+        protected string $bundleName;
 
         /**
          * The name of this needle.
-         *
-         * @var string
          */
-        protected $name;
+        protected string $name;
 
         public function __construct(
-            TranslatorInterface $translator,
-            RouterInterface $router,
-            PermissionHelper $permissionHelper«IF hasDisplayAction»,
-            EntityFactory $entityFactory,
-            EntityDisplayHelper $entityDisplayHelper«ENDIF»
+            protected TranslatorInterface $translator,
+            protected RouterInterface $router,
+            protected PermissionHelper $permissionHelper«IF hasDisplayAction»,
+            protected EntityFactory $entityFactory,
+            protected EntityDisplayHelper $entityDisplayHelper«ENDIF»
         ) {
-            $this->translator = $translator;
-            $this->router = $router;
-            $this->permissionHelper = $permissionHelper;
-            «IF hasDisplayAction»
-                $this->entityFactory = $entityFactory;
-                $this->entityDisplayHelper = $entityDisplayHelper;
-            «ENDIF»
-
             $nsParts = explode('\\', static::class);
             $vendor = $nsParts[0];
             $nameAndType = $nsParts[1];
