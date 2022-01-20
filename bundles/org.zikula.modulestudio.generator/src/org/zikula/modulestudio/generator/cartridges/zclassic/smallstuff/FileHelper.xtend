@@ -50,7 +50,7 @@ class FileHelper {
 
     def private setterMethod(Object it, String name, String type, Boolean nullable, String init, CharSequence customImpl) '''
 
-        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
+        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF» $«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
