@@ -283,7 +283,7 @@ class LifecycleListener {
              */
             protected function isEntityManagedByThisBundle(object $entity): bool
             {
-                $entityClassParts = explode('\\', get_class($entity));
+                $entityClassParts = explode('\\', $entity::class);
 
                 if ('DoctrineProxy' === $entityClassParts[0] && '__CG__' === $entityClassParts[1]) {
                     array_shift($entityClassParts);
@@ -380,7 +380,7 @@ class LifecycleListener {
                     «ENDIF»
                     foreach ($eventManager->getListeners() as $event => $listeners) {
                         foreach ($listeners as $hash => $listener) {
-                            if (is_object($listener) && 'Gedmo\Loggable\LoggableListener' === get_class($listener)) {
+                            if (is_object($listener) && 'Gedmo\Loggable\LoggableListener' === $listener::class) {
                                 $eventManager->removeEventSubscriber($listener);
                                 «IF hasTranslatable»
                                     $hasLoggableActivated = true;

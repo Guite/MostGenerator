@@ -33,8 +33,8 @@ class ModelWriter extends WorkflowComponentWithSlot {
         resource.URI = fileUri
         try {
             resource.save(Collections.EMPTY_MAP)
-        } catch (IOException e) {
-            throw new WrappedException(e)
+        } catch (IOException exception) {
+            throw new WrappedException(exception)
         }
     }
 }

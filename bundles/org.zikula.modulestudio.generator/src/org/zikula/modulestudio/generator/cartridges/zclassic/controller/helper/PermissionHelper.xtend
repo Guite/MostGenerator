@@ -33,7 +33,7 @@ class PermissionHelper {
         namespace «appNamespace»\Helper\Base;
 
         «IF hasViewActions»
-            use Doctrine\Common\Collections\ArrayCollection;
+            use Doctrine\Common\Collections\Collection;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
@@ -156,10 +156,8 @@ class PermissionHelper {
 
             /**
              * Filters a given collection of entities based on different permission checks.
-             *
-             * @param array|ArrayCollection $entities The given list of entities
              */
-            public function filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, int $permissionLevel, ?int $userId = null): array
+            public function filterCollection(«IF !isSystemModule»string $objectType, «ENDIF»array|Collection $entities, int $permissionLevel, ?int $userId = null): array
             {
                 $filteredEntities = [];
                 foreach ($entities as $entity) {

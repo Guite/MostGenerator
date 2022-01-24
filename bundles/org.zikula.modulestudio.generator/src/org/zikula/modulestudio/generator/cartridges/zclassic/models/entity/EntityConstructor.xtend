@@ -25,12 +25,12 @@ class EntityConstructor {
          *
          «IF isIndexByTarget»
          * @param string $«getIndexByRelation.getIndexByField.formatForCode» Indexing field
-         * @param «getIndexByRelation.source.entityClassName('', false)» $«getRelationAliasName(getIndexByRelation, false).formatForCode» Indexing relationship
+         * @param «getIndexByRelation.source.name.formatForCodeCapital»Entity $«getRelationAliasName(getIndexByRelation, false).formatForCode» Indexing relationship
          «ELSEIF isAggregated»
             «FOR aggregator : getAggregators SEPARATOR ', '»
                 «FOR relation : aggregator.getAggregatingRelationships SEPARATOR ', '»
                     @param string $«relation.getRelationAliasName(false)» Aggregating relationship
-                    @param «relation.source.entityClassName('', false)» $«relation.source.getAggregateFields.head.getAggregateTargetField.name.formatForCode» Aggregate target field
+                    @param «relation.source.name.formatForCodeCapital»Entity $«relation.source.getAggregateFields.head.getAggregateTargetField.name.formatForCode» Aggregate target field
                 «ENDFOR»
             «ENDFOR»
          «ENDIF»
@@ -47,7 +47,7 @@ class EntityConstructor {
             «val indexRelation = getIndexByRelation»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
-            string $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.entityClassName('', false)»«ENDIF» $«sourceAlias.formatForCode»
+            string $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.name.formatForCodeCapital»Entity«ENDIF» $«sourceAlias.formatForCode»
         «ELSEIF isAggregated»
             «FOR aggregator : getAggregators SEPARATOR ', '»
                 «FOR relation : aggregator.getAggregatingRelationships SEPARATOR ', '»
@@ -63,7 +63,7 @@ class EntityConstructor {
 
     def private constructorArgumentsAggregate(OneToManyRelationship it) '''
         «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-        «source.entityClassName('', false)» $«getRelationAliasName(false)», string $«targetField.name.formatForCode»
+        «source.name.formatForCodeCapital»Entity $«getRelationAliasName(false)», string $«targetField.name.formatForCode»
     '''
 
     def private constructorImpl(DataObject it, Boolean isInheriting) '''

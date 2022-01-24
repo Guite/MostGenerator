@@ -42,6 +42,11 @@ class FileHelper {
 
     def getterMethod(Object it, String name, String type, Boolean nullable) '''
 
+        «IF type.definesGeneric»
+            /**
+             * @return «type»
+             */
+        «ENDIF»
         public function get«name.formatForCodeCapital»()«IF skipTypeHint»/*«ENDIF»: «IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF»
         {
             return «IF type == 'float'»(float) «ENDIF»$this->«name»;
@@ -50,6 +55,11 @@ class FileHelper {
 
     def private setterMethod(Object it, String name, String type, Boolean nullable, String init, CharSequence customImpl) '''
 
+        «IF type.definesGeneric»
+            /**
+             * @param «type» $«name»
+             */
+        «ENDIF»
         public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF» $«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
         {
             «IF null !== customImpl && customImpl != ''»
@@ -62,7 +72,9 @@ class FileHelper {
         }
     '''
 
-    def private normalizeTypeHint(String type) '''«IF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»'''
+    def private normalizeTypeHint(String type) '''«IF type.definesGeneric»«type.split('<').head»«ELSEIF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»'''
+
+    def private definesGeneric(String type) { type.contains('Collection<') }
 
     def private skipTypeHint(Object it) {
         (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) || (it instanceof UserField)

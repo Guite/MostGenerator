@@ -102,7 +102,7 @@ class ViewHelper {
 
             // check whether a special template is used
             $request = $this->requestStack->getCurrentRequest();
-            $tpl = null !== $request ? $request->query->getAlnum('tpl') : '';
+            $tpl = $request?->query->getAlnum('tpl');
             if (!empty($tpl)) {
                 // check if custom template exists
                 $customTemplate = $template . ucfirst($tpl);

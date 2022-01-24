@@ -127,7 +127,7 @@ class EntityInitialiser {
     '''
 
     def private setDefaultValue(DatetimeField it) {
-        val hasDefaultValue = it.defaultValue !== null && !it.defaultValue.empty && it.defaultValue.length > 0
+        val hasDefaultValue = null !== it.defaultValue && !it.defaultValue.empty && 0 < it.defaultValue.length
         if (it.mandatory || hasDefaultValue) {
             if (hasDefaultValue && 'now' != it.defaultValue) {
                 '''$entity->set«name.formatForCodeCapital»(new DateTime«IF immutable»Immutable«ENDIF»('«it.defaultValue»'));'''

@@ -158,7 +158,7 @@ class Installer {
                                 $this->trans(
                                     'Error! Could not create a category registry for the %entity% entity. If you want to use categorisation, register at least one registry in the Categories administration.',
                                     ['%entity%' => '«entity.name.formatForDisplay»']
-                                )
+                                ) . ' ' . $exception->getMessage()
                             );
                         }
                         $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();

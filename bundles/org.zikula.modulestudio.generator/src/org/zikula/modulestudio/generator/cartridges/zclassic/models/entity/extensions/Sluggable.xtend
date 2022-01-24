@@ -116,10 +116,10 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
     def private inversedRelativeSlugHandlerImpl(Entity it, JoinRelationship relation) '''
         *     @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\InversedRelativeSlugHandler", options={
         «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
-            «slugHandlerOption('relationClass', relation.target.entityClassName('', false))»
+            «slugHandlerOption('relationClass', relation.target.name.formatForCodeCapital + 'Entity')»
             «slugHandlerOption('mappedBy', relation.getRelationAliasName(true).formatForCodeCapital)»
         «ELSEIF relation instanceof ManyToOneRelationship»
-            «slugHandlerOption('relationClass', relation.source.entityClassName('', false))»
+            «slugHandlerOption('relationClass', relation.source.name.formatForCodeCapital + 'Entity')»
             «slugHandlerOption('mappedBy', relation.getRelationAliasName(false).formatForCodeCapital)»
         «ENDIF»
         «slugHandlerOption('inverseSlugField', 'slug')»

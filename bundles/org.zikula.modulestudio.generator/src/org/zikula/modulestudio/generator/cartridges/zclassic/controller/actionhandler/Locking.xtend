@@ -123,7 +123,7 @@ class Locking {
                 ];
                 $this->logger->error(
                     '{app}: User {user} tried to edit the {entity} with id {id},'
-                        . ' but failed as someone else has already changed it.',
+                        . ' but failed as someone else has already changed it. ' . $exception->getMessage(),
                     $logArgs
                 );
         «ENDIF»

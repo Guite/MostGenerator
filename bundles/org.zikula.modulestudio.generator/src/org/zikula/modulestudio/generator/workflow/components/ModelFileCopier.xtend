@@ -132,9 +132,9 @@ class ModelFileCopier implements IWorkflowComponent {
                 sourceChannel?.close
                 destinationChannel?.close
             }
-        } catch (IOException e) {
-            //ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
-            println(e.message)
+        } catch (IOException exception) {
+            //ModuleStudioGeneratorActivator.log(IStatus.ERROR, exception.message, exception)
+            println(exception.message)
         }
     }
 

@@ -89,19 +89,19 @@ class Main
         try {
             workflow.run
             println('Code generation finished. The output is located in the "' + outputFolder + '" folder.')
-        } catch (M2TFailedGeneratorResourceNotFound e) {
+        } catch (M2TFailedGeneratorResourceNotFound exception) {
             System.err.println('Error: Generator resource could not be found.')
-            e.printStackTrace
-        } catch (M2TUnknownException e) {
+            exception.printStackTrace
+        } catch (M2TUnknownException exception) {
             System.err.println('Error: A M2T exception occurred during the workflow.')
-            e.printStackTrace
-        } catch (ExceptionBase e) {
+            exception.printStackTrace
+        } catch (ExceptionBase exception) {
             System.err.println('Error: A general exception occurred during the workflow.')
-            e.printStackTrace
-        } catch (InvocationTargetException e) {
-            e.printStackTrace
-        } catch (InterruptedException e) {
-            e.printStackTrace
+            exception.printStackTrace
+        } catch (InvocationTargetException exception) {
+            exception.printStackTrace
+        } catch (InterruptedException exception) {
+            exception.printStackTrace
         }
     }
 }

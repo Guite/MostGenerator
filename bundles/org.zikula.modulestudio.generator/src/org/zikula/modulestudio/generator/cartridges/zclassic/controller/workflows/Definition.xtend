@@ -273,8 +273,8 @@ class Definition {
         } else if (transitionsTo.get(uniqueKey) != nextState) {
             try {
                 throw new Exception('Invalid workflow structure: transition "' + id + '" (' + uniqueKey + ') has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').')
-            } catch (Exception exc) {
-                throw new RuntimeException('Invalid workflow structure detected: transition "' + id + '" (' + uniqueKey + ') has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').', exc)
+            } catch (Exception exception) {
+                throw new RuntimeException('Invalid workflow structure detected: transition "' + id + '" (' + uniqueKey + ') has two different target states (' + nextState + ', ' + transitionsTo.get(id) + ').', exception)
             }
         }
     }

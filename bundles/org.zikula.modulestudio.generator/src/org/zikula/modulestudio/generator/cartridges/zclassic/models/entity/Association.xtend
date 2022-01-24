@@ -14,6 +14,9 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
+import java.util.ArrayList
+import de.guite.modulestudio.metamodel.Application
 
 class Association {
 
@@ -21,8 +24,33 @@ class Association {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     FileHelper fh
+    ArrayList<String> importedEntities
+
+    new() {
+        importedEntities = newArrayList
+    }
+
+    /**
+     * If we have an outgoing association useTarget is true; for an incoming one it is false.
+     */
+    def importRelatedEntity(JoinRelationship it, Boolean useTarget) {
+        val entityClassName = (if (useTarget) target else source).simpleEntityClassName
+        if (!importedEntities.contains(entityClassName)) {
+            importedEntities += entityClassName
+            return importStatement(application, entityClassName)
+        }
+    }
+
+    def private importStatement(Application it, String entityClassName) '''
+        use «appNamespace»\Entity\«entityClassName»;
+    '''
+
+    def private simpleEntityClassName(DataObject it) {
+        name.formatForCodeCapital + 'Entity'
+    }
 
     /**
      * If we have an outgoing association useTarget is true; for an incoming one it is false.
@@ -31,7 +59,7 @@ class Association {
         fh = new FileHelper(application)
         val sourceName = getRelationAliasName(false).toFirstLower
         val targetName = getRelationAliasName(true).toFirstLower
-        val entityClass = (if (useTarget) target else source).entityClassName('', false)
+        val entityClass = (if (useTarget) target else source).simpleEntityClassName
         directionSwitch(useTarget, sourceName, targetName, entityClass)
     }
 
@@ -78,10 +106,11 @@ class Association {
             «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
             «' '»* @Assert\Valid()*/»
         «ENDIF»
-         *
-         * @var \«entityClass»«IF isManySide(false)»[]«ENDIF»
+        «IF isManySide(false)»
+            «' '»* @var Collection<int, «entityClass»>
+        «ENDIF»
          */
-        protected $«sourceName»;
+        protected «IF nullable»?«ENDIF»«IF isManySide(false)»Collection«ELSE»«entityClass»«ENDIF» $«sourceName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -121,7 +150,7 @@ class Association {
          «IF primaryKey»
              * @ORM\Id
          «ENDIF»
-         * @ORM\OneToOne(targetEntity="«/*\*/»«entityClass»")
+         * @ORM\OneToOne(targetEntity="«entityClass»::class")
         «joinDetails(false)»
         «IF !nullable»
             «val aliasName = getRelationAliasName(false).toFirstLower»
@@ -129,10 +158,8 @@ class Association {
         «ENDIF»
          * @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
          * @Assert\Valid()*/»
-         *
-         * @var \«entityClass»
          */
-        protected $«sourceName»;
+        protected «IF nullable»?«ENDIF»«entityClass» $«sourceName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -144,7 +171,7 @@ class Association {
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
              * @ORM\ManyToMany(
-             *     targetEntity="«/*\*/»«entityClass»",
+             *     targetEntity="«entityClass»::class",
              *     mappedBy="«targetName»"«additionalOptions(true)»
              * )
              «IF null !== orderByReverse && !orderByReverse.empty»
@@ -157,10 +184,9 @@ class Association {
             «IF maxSource > 0»
                 «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
             «ENDIF»
-             *
-             * @var \«entityClass»[]
+             * @var Collection<int, «entityClass»>
              */
-            protected $«sourceName» = null;
+            protected «IF nullable»?«ENDIF»Collection $«sourceName»«IF nullable» = null«ENDIF»;
         «ENDIF»
     '''
 
@@ -174,7 +200,7 @@ class Association {
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
          * @ORM\«outgoingMappingType»(
-         *     targetEntity="«/*\*/»«entityClass»"«IF bidirectional»,
+         *     targetEntity="«entityClass»::class"«IF bidirectional»,
          *     mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»
          * )
         «joinDetails(true)»
@@ -193,10 +219,8 @@ class Association {
             «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
             «' '»* @Assert\Valid()*/»
         «ENDIF»
-         *
-         * @var \«entityClass»
          */
-        protected $«targetName»;
+        protected «IF nullable»?«ENDIF»«entityClass» $«targetName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -226,11 +250,11 @@ class Association {
          *
          «IF !bidirectional»
           * @ORM\ManyToMany(
-          *     targetEntity="«/*\*/»«entityClass»"«additionalOptions(false)»
+          *     targetEntity="«entityClass»::class"«additionalOptions(false)»
           * )
          «ELSE»
           * @ORM\OneToMany(
-          *     targetEntity="«/*\*/»«entityClass»",
+          *     targetEntity="«entityClass»::class",
           *     mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
           * )
          «ENDIF»
@@ -246,9 +270,9 @@ class Association {
             «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
         «ENDIF»
          *
-         * @var \«entityClass»[]
+         * @var Collection<int, «entityClass»>
          */
-        protected $«targetName» = null;
+        protected «IF nullable»?«ENDIF»Collection $«targetName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -259,7 +283,7 @@ class Association {
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
          * @ORM\ManyToMany(
-         *     targetEntity="«/*\*/»«entityClass»"«IF bidirectional»,
+         *     targetEntity="«entityClass»::class"«IF bidirectional»,
          *     inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»
          * )
         «joinDetails(true)»
@@ -274,9 +298,9 @@ class Association {
             «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
         «ENDIF»
          *
-         * @var \«entityClass»[]
+         * @var Collection<int, «entityClass»>
          */
-        protected $«targetName» = null;
+        protected «IF nullable»?«ENDIF»Collection $«targetName»«IF nullable» = null«ENDIF»;
     '''
 
     def private dispatch outgoingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «sourceName» [«source.getDisplayNameDependingOnType»] have many «targetName» [«target.getDisplayNameDependingOnType»] (OWNING SIDE)'''
@@ -395,15 +419,14 @@ class Association {
     '''
 
     def private relationAccessorImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
-        «val entityClass = { (if (useTarget) target else source).entityClassName('', false) }»
+        «val entityClass = { (if (useTarget) target else source).simpleEntityClassName }»
         «val nameSingle = { (if (useTarget) target else source).name }»
         «val isMany = isManySide(useTarget)»
-        «val entityClassPrefix = '\\'»
         «IF isMany»
-            «fh.getterAndSetterMethods(it, aliasName, 'Collection', true, '', relationSetterCustomImpl(useTarget, aliasName))»
+            «fh.getterAndSetterMethods(it, aliasName, 'Collection<int, ' + entityClass + '>', true, '', relationSetterCustomImpl(useTarget, aliasName))»
             «relationAccessorAdditions(useTarget, aliasName, nameSingle)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, aliasName, entityClassPrefix + entityClass, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
+            «fh.getterAndSetterMethods(it, aliasName, entityClass, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
         «ENDIF»
         «IF isMany»
             «addMethod(useTarget, aliasName, nameSingle, entityClass)»
@@ -458,7 +481,7 @@ class Association {
     def private addMethod(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
 
         /**
-         * Adds an instance of \«type» to the list of «name.formatForDisplay».
+         * Adds an instance of «type» to the list of «name.formatForDisplay».
          */
         «addMethodImpl(useTarget, name, nameSingle, type)»
     '''
@@ -471,12 +494,12 @@ class Association {
     }
 
     def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
-        \«type» $«name»'''
+        «type» $«name»'''
     def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type) '''
         «IF !useTarget && !source.getAggregateFields.empty»
             «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-            \«targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode»
-        «ELSE»\«type» $«name»«ENDIF»'''
+            «targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode»
+        «ELSE»«type» $«name»«ENDIF»'''
 
     def private addMethodSignature(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»): self'''
@@ -559,9 +582,9 @@ class Association {
     def private removeMethod(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
 
         /**
-         * Removes an instance of \«type» from the list of «name.formatForDisplay».
+         * Removes an instance of «type» from the list of «name.formatForDisplay».
          */
-        public function remove«name.toFirstUpper»(\«type» $«nameSingle»): self
+        public function remove«name.toFirstUpper»(«type» $«nameSingle»): self
         {
             if ($this->«name»->contains($«nameSingle»)) {
                 $this->«name»->removeElement($«nameSingle»);

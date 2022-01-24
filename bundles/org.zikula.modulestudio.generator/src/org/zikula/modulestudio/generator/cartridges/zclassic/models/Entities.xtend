@@ -21,14 +21,13 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exten
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.StandardFieldsTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.LifecycleListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 
 class Entities {
 
@@ -38,7 +37,6 @@ class Entities {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     FileHelper fh
@@ -184,6 +182,27 @@ class Entities {
             «IF isInheriting»
                 use «application.appNamespace»\Entity\«parentType.name.formatForCodeCapital»Entity as BaseEntity;
             «ENDIF»
+            «IF attributable»
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»AttributeEntity;
+            «ENDIF»
+            «IF categorisable»
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity;
+            «ENDIF»
+            «IF tree !== EntityTreeType.NONE»
+                «IF tree === EntityTreeType.CLOSURE»
+                    use «application.appNamespace»\Entity\«name.formatForCodeCapital»ClosureEntity;
+                «ENDIF»
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+            «ENDIF»
+            «IF loggable»
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»LogEntryEntity;
+            «ENDIF»
+            «IF hasTranslatableFields»
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»TranslationEntity;
+            «ENDIF»
+            use «application.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository;
+            «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.importRelatedEntity(relation, false)»«ENDFOR»
+            «FOR relation : getOutgoingJoinRelations»«thAssoc.importRelatedEntity(relation, true)»«ENDFOR»
         «ENDIF»
     '''
 
@@ -331,7 +350,7 @@ class Entities {
     '''
 
     def dispatch private classAnnotation(Entity it) '''
-        «' '»* @ORM\Entity(repositoryClass="«application.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository"«IF readOnly», readOnly=true«ENDIF»)
+        «' '»* @ORM\Entity(repositoryClass="«name.formatForCodeCapital»Repository::class"«IF readOnly», readOnly=true«ENDIF»)
     '''
 
     def private entityImplClassDocblockAdditions(Entity it, Application app) '''
@@ -354,7 +373,7 @@ class Entities {
          «IF isTopSuperClass»
          «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
          «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-         «' '»* @ORM\DiscriminatorMap({"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations», «relation.discriminatorInfo»«ENDFOR»})
+         «' '»* @ORM\DiscriminatorMap({"«name.formatForCode»" = "«name.formatForCodeCapital»Entity::class"«FOR relation : getChildRelations», «relation.discriminatorInfo»«ENDFOR»})
          «ENDIF»
          «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
          «' '»* @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
@@ -367,6 +386,6 @@ class Entities {
     def private indexField(EntityIndexItem it) '''"«indexItemForEntity»"'''
 
     def private discriminatorInfo(InheritanceRelationship it) '''
-        "«source.name.formatForCode»" = "«source.entityClassName('', false)»"
+        "«source.name.formatForCode»" = "«source.name.formatForCodeCapital»Entity::class"
     '''
 }

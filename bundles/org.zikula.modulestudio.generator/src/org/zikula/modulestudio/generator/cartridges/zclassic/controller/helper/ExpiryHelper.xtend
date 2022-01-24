@@ -174,7 +174,7 @@ class ExpiryHelper {
 
             try {
                 return $query->getResult();
-            } catch (TableNotFoundException $exception) {
+            } catch (TableNotFoundException) {
                 // module has just been uninstalled
                 return [];
             }

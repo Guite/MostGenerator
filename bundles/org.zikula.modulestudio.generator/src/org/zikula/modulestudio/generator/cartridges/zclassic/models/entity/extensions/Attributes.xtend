@@ -30,12 +30,12 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override properties(Entity it) '''
         /**
-         * @ORM\OneToMany(targetEntity="\«entityClassName('attribute', false)»",
+         * @ORM\OneToMany(targetEntity="«name.formatForCodeCapital»AttributeEntity::class",
          *                mappedBy="entity", cascade={"all"},
          *                orphanRemoval=true, indexBy="name")
-         * @var Collection<\«entityClassName('attribute', false)»>
+         * @var Collection<string, «name.formatForCodeCapital»AttributeEntity>
          */
-        protected Collection $attributes = null;
+        protected ?Collection $attributes = null;
 
     '''
 
@@ -43,8 +43,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper(application)»
-        «fh.getterMethod(it, 'attributes', 'Collection', true)»
+        «(new FileHelper(application)).getterMethod(it, 'attributes', 'Collection<string, ' + name.formatForCodeCapital + 'AttributeEntity>', true)»
         public function setAttribute(string $name, string $value): void
         {
             if (isset($this->attributes[$name])) {
@@ -54,7 +53,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
                     $this->attributes[$name]->setValue($value);
                 }
             } else {
-                $this->attributes[$name] = new \«entityClassName('attribute', false)»($name, $value, $this);
+                $this->attributes[$name] = new «name.formatForCodeCapital»AttributeEntity($name, $value, $this);
             }
         }
 
@@ -74,6 +73,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
         use Doctrine\ORM\Mapping as ORM;
         use Zikula\Bundle\CoreBundle\Doctrine\Entity\«extensionBaseClass»;
         use «entityClassName('', false)»;
+        use «repositoryClass(extensionClassType)»;
     '''
 
     /**
@@ -95,7 +95,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassBaseImplementation(Entity it) '''
         /**
-         * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="attributes")
+         * @ORM\ManyToOne(targetEntity="«name.formatForCodeCapital»Entity::class", inversedBy="attributes")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
          */
         protected «name.formatForCodeCapital»Entity $entity;
@@ -106,7 +106,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="\«repositoryClass(extensionClassType)»")
+         «' '»* @ORM\Entity(repositoryClass="«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class")
          «' '»* @ORM\Table(name="«fullEntityTableName»_attribute",
          «' '»*     uniqueConstraints={
          «' '»*         @ORM\UniqueConstraint(name="cat_unq", columns={"name", "entityId"})

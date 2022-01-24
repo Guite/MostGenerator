@@ -675,7 +675,7 @@ class HookHelper {
                         $templateParameters['subscriberAreaId'] = $hook->getAreaId();
                         $templateParameters['subscriberObjectId'] = $hook->getId();
                         $url = method_exists($hook, 'getUrl') ? $hook->getUrl() : null;
-                        $templateParameters['subscriberUrl'] = (null !== $url && is_object($url)) ? $url->serialize() : serialize([]);
+                        $templateParameters['subscriberUrl'] = null !== $url && is_object($url) ? $url->serialize() : serialize([]);
                     }
                     «IF !application.getUploadEntities.empty»
 

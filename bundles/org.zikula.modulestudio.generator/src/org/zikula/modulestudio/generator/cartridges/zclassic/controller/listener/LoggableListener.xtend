@@ -85,7 +85,7 @@ class LoggableListener {
          */
         protected function isEntityManagedByThisBundle(object $entity): bool
         {
-            $entityClassParts = explode('\\', get_class($entity));
+            $entityClassParts = explode('\\', $entity::class);
 
             if ('DoctrineProxy' === $entityClassParts[0] && '__CG__' === $entityClassParts[1]) {
                 array_shift($entityClassParts);

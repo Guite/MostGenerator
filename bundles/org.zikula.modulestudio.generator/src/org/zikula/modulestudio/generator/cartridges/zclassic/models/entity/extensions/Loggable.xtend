@@ -7,19 +7,17 @@ import de.guite.modulestudio.metamodel.ObjectField
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
 
     /**
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         * @Gedmo\Loggable(logEntryClass="\«entityClassName('logEntry', false)»")
+         * @Gedmo\Loggable(logEntryClass="«name.formatForCodeCapital»LogEntryEntity::class")
     '''
 
     /**
@@ -61,6 +59,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassImports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Loggable\Entity\MappedSuperclass\«extensionBaseClass»;
+        use «repositoryClass(extensionClassType)»;
     '''
 
     /**
@@ -290,7 +289,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="«repositoryClass(extensionClassType)»")
+         «' '»* @ORM\Entity(repositoryClass="«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class")
          «' '»* @ORM\Table(
          «' '»*     name="«fullEntityTableName»_log_entry",
          «' '»*     options={"row_format":"DYNAMIC"},

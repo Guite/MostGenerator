@@ -222,7 +222,7 @@ class SearchHelper {
                         ->setText($description)
                         ->setModule($this->getBundleName())
                         ->setCreated($created)
-                        ->setSesid(null !== $session ? $session->getId() : null)
+                        ->setSesid($session?->getId())
                     ;
                     if (null !== $displayUrl) {
                         $result->setUrl($displayUrl);

@@ -194,7 +194,7 @@ class ImageHelper {
                     $fs->mkdir($parentDirectory);
                 }
                 $fs->mkdir($cacheDirectory);
-            } catch (IOExceptionInterface $exception) {
+            } catch (IOExceptionInterface) {
                 «warningAboutCacheDirectory»
             }
         }

@@ -30,7 +30,7 @@ class IpTraceListener {
          */
         public function onKernelRequest(RequestEvent $event): void
         {
-            $request = null !== $this->requestStack ? $this->requestStack->getCurrentRequest() : null;
+            $request = $this->requestStack?->getCurrentRequest();
             if (null === $request) {
                 return;
             }

@@ -296,7 +296,7 @@ class WorkflowEventsListener {
                 return false;
             }
 
-            $entityClassParts = explode('\\', get_class($entity));
+            $entityClassParts = explode('\\', $entity::class);
 
             if ('DoctrineProxy' === $entityClassParts[0] && '__CG__' === $entityClassParts[1]) {
                 array_shift($entityClassParts);

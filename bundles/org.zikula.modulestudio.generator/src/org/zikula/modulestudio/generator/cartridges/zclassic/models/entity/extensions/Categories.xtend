@@ -30,13 +30,12 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override properties(Entity it) '''
         /**
-         * @ORM\OneToMany(targetEntity="\«entityClassName('category', false)»",
+         * @ORM\OneToMany(targetEntity="«name.formatForCodeCapital»CategoryEntity::class",
          *                mappedBy="entity", cascade={"all"},
-         *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»
-         * )
-         * @var Collection<\«entityClassName('category', false)»>
+         *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»)
+         * @var Collection<int, «name.formatForCodeCapital»CategoryEntity>
          */
-        protected Collection $categories = null;
+        protected ?Collection $categories = null;
 
     '''
 
@@ -44,8 +43,11 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection', true)»
+        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection<int, ' + name.formatForCodeCapital + 'CategoryEntity>', true)»
 
+        /**
+         * @param Collection<int, «name.formatForCodeCapital»CategoryEntity> $categories
+         */
         public function setCategories(Collection $categories): void
         {
             foreach ($this->categories as $category) {
@@ -62,11 +64,12 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
 
         /**
          * Checks if a collection contains an element based only on two criteria (categoryRegistryId, category).
+         *
+         * @param Collection<int, «name.formatForCodeCapital»CategoryEntity> $collection
          */
-        private function categoryCollectionContains(Collection $collection, \«entityClassName('category', false)» $element): bool|int
+        private function categoryCollectionContains(Collection $collection, «name.formatForCodeCapital»CategoryEntity $element): bool|int
         {
             foreach ($collection as $key => $category) {
-                /** @var \«entityClassName('category', false)» $category */
                 if (
                     $category->getCategoryRegistryId() === $element->getCategoryRegistryId()
                     && $category->getCategory() === $element->getCategory()
@@ -93,6 +96,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
         use Doctrine\ORM\Mapping as ORM;
         use Zikula\CategoriesModule\Entity\«extensionBaseClass»;
         use «entityClassName('', false)»;
+        use «repositoryClass(extensionClassType)»;
     '''
 
     /**
@@ -114,7 +118,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassBaseImplementation(Entity it) '''
         /**
-         * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="categories")
+         * @ORM\ManyToOne(targetEntity="«name.formatForCodeCapital»Entity::class", inversedBy="categories")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
          */
         protected «name.formatForCodeCapital»Entity $entity;
@@ -125,7 +129,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="\«repositoryClass(extensionClassType)»")
+         «' '»* @ORM\Entity(repositoryClass="«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class")
          «' '»* @ORM\Table(name="«fullEntityTableName»_category",
          «' '»*     uniqueConstraints={
          «' '»*         @ORM\UniqueConstraint(name="cat_unq", columns={"registryId", "categoryId", "entityId"})

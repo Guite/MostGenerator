@@ -6,13 +6,11 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Tree extends AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension NamingExtensions = new NamingExtensions
 
     /**
      * Generates additional annotations on class level.
@@ -20,7 +18,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
     override classAnnotations(Entity it) '''
         * @Gedmo\Tree(type="«tree.literal.toLowerCase»")
         «IF tree == EntityTreeType.CLOSURE»
-             * @Gedmo\TreeClosure(class="\«entityClassName('closure', false)»")
+             * @Gedmo\TreeClosure(class="«name.formatForCodeCapital»ClosureEntity::class")
         «ENDIF»
     '''
 
@@ -65,18 +63,19 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
              * @Gedmo\Versioned
          «ENDIF»
          * @Gedmo\TreeParent
-         * @ORM\ManyToOne(targetEntity="\«entityClassName('', false)»", inversedBy="children")
+         * @ORM\ManyToOne(targetEntity="«name.formatForCodeCapital»Entity::class", inversedBy="children")
          * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKey.name.formatForDisplay»", onDelete="SET NULL")
          */
-        protected ?self $parent;
+        protected ?self $parent = null;
 
         /**
          * Bidirectional - One parent [«name.formatForDisplay»] has many children [«name.formatForDisplay»] (INVERSE SIDE).
          *
-         * @ORM\OneToMany(targetEntity="\«entityClassName('', false)»", mappedBy="parent")
+         * @ORM\OneToMany(targetEntity="«name.formatForCodeCapital»Entity::class", mappedBy="parent")
          * @ORM\OrderBy({"lft" = "ASC"})
+         * @var Collection<int, «name.formatForCodeCapital»Entity>
          */
-        protected Collection $children;
+        protected ?Collection $children = null;
 
     '''
 
@@ -85,12 +84,12 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper(application)»
-        «fh.getterAndSetterMethods(it, 'lft', 'int', true, '', '')»
-        «fh.getterAndSetterMethods(it, 'lvl', 'int', true, '', '')»
-        «fh.getterAndSetterMethods(it, 'rgt', 'int', true, '', '')»
-        «fh.getterAndSetterMethods(it, 'root', 'int', true, '', '')»
-        «fh.getterAndSetterMethods(it, 'parent', 'self', true, 'null', '')»
-        «fh.getterAndSetterMethods(it, 'children', 'Collection', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'lft', 'int', false, '', '')»
+        «fh.getterAndSetterMethods(it, 'lvl', 'int', false, '', '')»
+        «fh.getterAndSetterMethods(it, 'rgt', 'int', false, '', '')»
+        «fh.getterAndSetterMethods(it, 'root', 'int', false, '', '')»
+        «fh.getterAndSetterMethods(it, 'parent', name.formatForCodeCapital + 'Entity', true, 'null', '')»
+        «fh.getterAndSetterMethods(it, 'children', 'Collection<int, ' + name.formatForCodeCapital + 'Entity>', true, '', '')»
     '''
 
     /**
