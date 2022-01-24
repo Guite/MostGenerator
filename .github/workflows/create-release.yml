@@ -22,7 +22,7 @@ jobs:
 
     # see https://github.com/peter-evans/repository-dispatch
     - name: Dispatch downstream job
-      uses: peter-evans/repository-dispatch@master
+      uses: peter-evans/repository-dispatch@main
       with:
         token: ${{ secrets.DISPATCH_TOKEN }}
         repository: Guite/MostProduct
