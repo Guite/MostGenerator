@@ -60,7 +60,7 @@ class ControllerAction {
          «ENDIF»
         «IF isBase»«actionDocMethodDocumentation»
         «ELSE»
-        «new Annotations(app).generate(it, entity, isAdmin)»
+        «new Annotations(app).generate(it, entity, isAdmin, true)»
         «ENDIF»
         «IF isBase»
          *
@@ -78,6 +78,9 @@ class ControllerAction {
          «ENDIF»
         «ENDIF»
          */
+        «IF !isBase»
+            «new Annotations(app).generate(it, entity, isAdmin, false)»
+        «ENDIF»
     '''
 
     def private actionDocMethodDescription(Action it, Boolean isAdmin) {

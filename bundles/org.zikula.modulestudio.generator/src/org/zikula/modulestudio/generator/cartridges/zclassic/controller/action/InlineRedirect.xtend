@@ -32,17 +32,17 @@ class InlineRedirect {
     '''
 
     def private handleInlineRedirectDocBlock(Entity it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * This method cares for a redirect within an inline frame.
-         «ELSE»
-         * @Route("/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
-         *        requirements = {"id" = "\d+"},
-         *        defaults = {"commandName" = "", "id" = 0},
-         *        methods = {"GET"}
-         * )
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * This method cares for a redirect within an inline frame.
+             */
+        «ELSE»
+            #[Route('/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}',
+                requirements: ['id' => '\d+'],
+                defaults: ['commandName' => '', 'id' => 0],
+                methods: ['GET']
+            )]
+        «ENDIF»
     '''
 
     def private handleInlineRedirectSignature(Entity it) '''

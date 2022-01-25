@@ -94,22 +94,21 @@ class Association {
          *     inversedBy="«targetName»"«additionalOptions(true)»
          * )
         «joinDetails(false)»
-        «IF !nullable»
-            «val aliasName = getRelationAliasName(false).toFirstLower»
-            «IF !isManySide(false)»
-                «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
-            «ELSE»
-                «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
-            «ENDIF»
-        «ENDIF»
-        «IF !isManySide(false)»
-            «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
-            «' '»* @Assert\Valid()*/»
-        «ENDIF»
         «IF isManySide(false)»
             «' '»* @var Collection<int, «entityClass»>
         «ENDIF»
          */
+        «IF !nullable»
+            «val aliasName = getRelationAliasName(false).toFirstLower»
+            «IF !isManySide(false)»
+                #[Assert\NotNull(message: 'Choosing a «aliasName.formatForDisplay» is required.')]
+            «ELSE»
+                #[Assert\NotNull(message: 'Choosing at least one of the «aliasName.formatForDisplay» is required.')]
+            «ENDIF»
+        «ENDIF»«/* disabled due to problems with upload fields
+        IF !isManySide(false)»
+            #[Assert\Valid]
+        «ENDIF*/»
         protected «IF nullable»?«ENDIF»«IF isManySide(false)»Collection«ELSE»«entityClass»«ENDIF» $«sourceName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
@@ -152,13 +151,12 @@ class Association {
          «ENDIF»
          * @ORM\OneToOne(targetEntity="«entityClass»::class")
         «joinDetails(false)»
+         */
         «IF !nullable»
             «val aliasName = getRelationAliasName(false).toFirstLower»
-            «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
-        «ENDIF»
-         * @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
-         * @Assert\Valid()*/»
-         */
+            #[Assert\NotNull(message: 'Choosing a «aliasName.formatForDisplay» is required.')]
+        «ENDIF»«/* disabled due to problems with upload fields
+        #[Assert\Valid]*/»
         protected «IF nullable»?«ENDIF»«entityClass» $«sourceName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
@@ -177,15 +175,15 @@ class Association {
              «IF null !== orderByReverse && !orderByReverse.empty»
               * @ORM\OrderBy({«orderByDetails(orderByReverse)»})
              «ENDIF»
-            «IF !nullable»
-                «val aliasName = getRelationAliasName(false).toFirstLower»
-                «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
-            «ENDIF»
-            «IF maxSource > 0»
-                «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
-            «ENDIF»
              * @var Collection<int, «entityClass»>
              */
+            «IF !nullable»
+                «val aliasName = getRelationAliasName(false).toFirstLower»
+                #[Assert\NotNull(message: 'Choosing at least one of the «aliasName.formatForDisplay» is required.')]
+            «ENDIF»
+            «IF maxSource > 0»
+                #[Assert\Count(min: «minSource», max: «maxSource»)]
+            «ENDIF»
             protected «IF nullable»?«ENDIF»Collection $«sourceName»«IF nullable» = null«ENDIF»;
         «ENDIF»
     '''
@@ -204,22 +202,21 @@ class Association {
          *     mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»
          * )
         «joinDetails(true)»
-        «IF !nullable»
-            «val aliasName = getRelationAliasName(true).toFirstLower»
-            «IF !isManySide(true)»
-                «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
-            «ELSE»
-                «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
-            «ENDIF»
-        «ENDIF»
         «IF it instanceof ManyToOneRelationship && (it as ManyToOneRelationship).sortableGroup»
             «' '»* @Gedmo\SortableGroup
         «ENDIF»
-        «IF !isManySide(true)»
-            «' '»* @Assert\Type(type="«/*\*/»«entityClass»")«/* disabled due to problems with upload fields
-            «' '»* @Assert\Valid()*/»
-        «ENDIF»
          */
+        «IF !nullable»
+            «val aliasName = getRelationAliasName(true).toFirstLower»
+            «IF !isManySide(true)»
+                #[Assert\NotNull(message: 'Choosing a «aliasName.formatForDisplay» is required.')]
+            «ELSE»
+                #[Assert\NotNull(message: 'Choosing at least one of the «aliasName.formatForDisplay» is required.')]
+            «ENDIF»
+        «ENDIF»«/* disabled due to problems with upload fields
+        IF !isManySide(true)»
+            #[Assert\Valid]
+        «ENDIF*/»
         protected «IF nullable»?«ENDIF»«entityClass» $«targetName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
@@ -262,16 +259,15 @@ class Association {
          «IF null !== orderBy && !orderBy.empty»
           * @ORM\OrderBy({«orderByDetails(orderBy)»})
          «ENDIF»
-        «IF !nullable»
-            «val aliasName = getRelationAliasName(true).toFirstLower»
-            «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
-        «ENDIF»
-        «IF maxTarget > 0»
-            «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
-        «ENDIF»
-         *
          * @var Collection<int, «entityClass»>
          */
+        «IF !nullable»
+            «val aliasName = getRelationAliasName(true).toFirstLower»
+            #[Assert\NotNull(message: 'Choosing at least one of the «aliasName.formatForDisplay» is required.')]
+        «ENDIF»
+        «IF maxTarget > 0»
+            #[Assert\Count(min: «minTarget», max: «maxTarget»)]
+        «ENDIF»
         protected «IF nullable»?«ENDIF»Collection $«targetName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
@@ -290,16 +286,15 @@ class Association {
          «IF null !== orderBy && !orderBy.empty»
           * @ORM\OrderBy({«orderByDetails(orderBy)»})
          «ENDIF»
-        «IF !nullable»
-            «val aliasName = getRelationAliasName(true).toFirstLower»
-            «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
-        «ENDIF»
-        «IF maxTarget > 0»
-            «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
-        «ENDIF»
-         *
          * @var Collection<int, «entityClass»>
          */
+        «IF !nullable»
+            «val aliasName = getRelationAliasName(true).toFirstLower»
+            #[Assert\NotNull(message: 'Choosing at least one of the «aliasName.formatForDisplay» is required.')]
+        «ENDIF»
+        «IF maxTarget > 0»
+            #[Assert\Count(min: «minTarget», max: «maxTarget»)]
+        «ENDIF»
         protected «IF nullable»?«ENDIF»Collection $«targetName»«IF nullable» = null«ENDIF»;
     '''
 

@@ -53,17 +53,13 @@ class BlockModeration {
 
         «getDisplayTemplate»
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setCurrentUserApi(CurrentUserApiInterface $currentUserApi): void
         {
             $this->currentUserApi = $currentUserApi;
         }
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setWorkflowHelper(WorkflowHelper $workflowHelper): void
         {
             $this->workflowHelper = $workflowHelper;

@@ -49,27 +49,29 @@ class LoggableHistory {
     '''
 
     def private loggableHistoryDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
-        /**
-         «IF isBase»
-         * This method provides a change history for a given «name.formatForDisplay».
-         *
-         * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}",
-         «IF hasSluggableFields && slugUnique»
-         *        requirements = {"slug" = "«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»"},
-         «ELSE»
-         *        requirements = {"id" = "\d+"},
-         *        defaults = {"id" = 0},
-         «ENDIF»
-         *        methods = {"GET"}
-         * )
-         «IF isAdmin»
-              * @Theme("admin")
-         «ENDIF»
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * This method provides a change history for a given «name.formatForDisplay».
+             *
+             * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            «IF isAdmin»
+                /**
+                 * @Theme("admin")
+                 */
+            «ENDIF»
+            #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
+                «IF hasSluggableFields && slugUnique»
+                requirements: ['slug' => '«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»'],
+                «ELSE»
+                requirements: ['id' => '\d+'],
+                defaults: ['id' => 0],
+                «ENDIF»
+                methods: ['GET']
+            )]
+        «ENDIF»
     '''
 
     def private loggableHistoryArguments(Entity it, Boolean internalMethod) '''

@@ -146,17 +146,13 @@ class ContentTypeDetail {
             return $options;
         }
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setControllerHelper(ControllerHelper $controllerHelper): void
         {
             $this->controllerHelper = $controllerHelper;
         }
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setFragmentHandler(FragmentHandler $fragmentHandler): void
         {
             $this->fragmentHandler = $fragmentHandler;

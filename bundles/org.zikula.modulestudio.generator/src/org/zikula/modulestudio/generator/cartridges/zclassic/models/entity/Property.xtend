@@ -51,7 +51,7 @@ class Property {
 
     def dispatch persistentProperty(UploadField it) '''
         /**
-         * «name.formatForDisplayCapital» meta data array.
+         * «name.formatForDisplayCapital» meta data.
          *
          «IF null !== entity»
          * @ORM\Column(type="array")
@@ -59,31 +59,22 @@ class Property {
           * @Gedmo\Translatable
          «ENDIF»
          «ENDIF»
-         * @Assert\Type(type="array")
-         *
-         * @var array
          */
-        protected $«name.formatForCode»Meta = [];
+        protected array $«name.formatForCode»Meta = [];
 
         «persistentProperty(name.formatForCode + 'FileName', fieldTypeAsString(true), fieldTypeAsString(false), '')»
         /**
          * Full «name.formatForDisplay» path as url.
-         *
-         * @Assert\Type(type="string")
-         «/* * @Assert\Url() disabled due to problems with space chars in file names
-         */»*
-         * @var string
          */
-        protected $«name.formatForCode»Url = '';
+        «/* * #[Assert\Url] disabled due to problems with space chars in file names
+         */»protected string $«name.formatForCode»Url = '';
 
         /**
          * «name.formatForDisplayCapital» file object.
          *
         «thVal.uploadFileAnnotations(it)»
-         *
-         * @var File
          */
-        protected $«name.formatForCode» = null;
+        protected ?File $«name.formatForCode» = null;
         «/* this last line is on purpose */»
     '''
 
@@ -119,10 +110,8 @@ class Property {
             «persistentPropertyAdditions»
         «ENDIF»
         «thVal.fieldAnnotations(it)»
-         *
-         * @var «IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF»
          */
-        «modifier» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
+        «modifier» «IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -241,10 +230,10 @@ class Property {
         /**
          * Sets the «name.formatForDisplay».
          */
-        public function set«name.formatForCodeCapital»(?File $«name.formatForCode» = null): void
+        public function set«name.formatForCodeCapital»(?File $«name.formatForCode» = null): self
         {
             if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
-                return;
+                return $this;
             }
             if (
                 null !== $this->«name.formatForCode»
@@ -252,14 +241,10 @@ class Property {
                 && $this->«name.formatForCode» instanceof File
                 && $this->«name.formatForCode»->getRealPath() === $«name.formatForCode»->getRealPath()
             ) {
-                return;
+                return $this;
             }
             «fh.triggerPropertyChangeListeners(it, name)»
-            «IF nullable»
-                $this->«name.formatForCode» = $«name.formatForCode»;
-            «ELSE»
-                $this->«name.formatForCode» = $«name.formatForCode» ?? '';
-            «ENDIF»
+            $this->«name.formatForCode» = $«name.formatForCode»«IF !nullable» ?? ''«ENDIF»;
 
             if (null === $this->«name.formatForCode» || '' === $this->«name.formatForCode») {
                 $this->set«name.formatForCodeCapital»FileName('');
@@ -268,6 +253,8 @@ class Property {
             } else {
                 $this->set«name.formatForCodeCapital»FileName($this->«name.formatForCode»->getFilename());
             }
+
+            return $this;
         }
         «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', true, '', '')»
         «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', true, '', '')»

@@ -45,8 +45,8 @@ class GeographicalTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\Type(type="numeric")«/* type="float" not possible since decimals are mapped to strings */»
          */
+        #[Assert\Type(type: 'numeric')]«/* type="float" not possible since decimals are mapped to strings */»
         protected string $latitude = '0.00';
 
         /**
@@ -56,8 +56,8 @@ class GeographicalTrait {
          «IF isLoggable»
           * @Gedmo\Versioned
          «ENDIF»
-         * @Assert\Type(type="numeric")«/* type="float" not possible since decimals are mapped to strings */»
          */
+        #[Assert\Type(type: 'numeric')]«/* type="float" not possible since decimals are mapped to strings */»
         protected string $longitude = '0.00';
         «fh.getterAndSetterMethods(it, 'latitude', 'string', true, '', '')»
         «fh.getterAndSetterMethods(it, 'longitude', 'string', true, '', '')»

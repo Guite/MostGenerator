@@ -28,8 +28,8 @@ class Annotations {
         this.app = app
     }
 
-    def generate(Action it, Entity entity, Boolean isAdmin) '''
-        «actionRoute(entity, isAdmin)»«/*IF null !== entity»
+    def generate(Action it, Entity entity, Boolean isAdmin, Boolean isLegacy) '''
+        «IF !isLegacy»«actionRoute(entity, isAdmin)»«ELSE»«/*IF null !== entity»
             «IF it instanceof MainAction»
                 «' '»* @Cache(expires="+7 days", public=true)
             «ELSEIF it instanceof ViewAction»
@@ -46,33 +46,33 @@ class Annotations {
         «ENDIF*/»
         «IF isAdmin»
             «' '»* @Theme("admin")
-        «ENDIF»
+        «ENDIF»«ENDIF»
     '''
 
     def private dispatch actionRoute(Action it, Entity entity, Boolean isAdmin) '''
     '''
 
     def private dispatch actionRoute(MainAction it, Entity entity, Boolean isAdmin) '''
-         «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»",
-         «' '»*        methods = {"GET"}
-         «' '»* )
+        #[Route('/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»',
+            methods: ['GET']
+        )]
     '''
 
     def private dispatch actionRoute(ViewAction it, Entity entity, Boolean isAdmin) '''
-         «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{page}/{num}.{_format}",
-         «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "page" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»"},
-         «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "page" = 1, "num" = 10, "_format" = "html"},
-         «' '»*        methods = {"GET"}
-         «' '»* )
+        #[Route('/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{page}/{num}.{_format}',
+            requirements: ['sortdir' => 'asc|desc|ASC|DESC', 'page' => '\d+', 'num' => '\d+', '_format' = 'html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»'],
+            defaults: ['sort' => '', 'sortdir' => 'asc', 'page' => 1, 'num' => 10, '_format' => 'html'],
+            methods: ['GET']
+        )]
     '''
 
     def private actionRouteForSingleEntity(Entity it, Action action, Boolean isAdmin) '''
-         «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
-         «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«app.getListOfDisplayFormats.join('|')»«ENDIF»"},
-         «' '»*        defaults = {«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»"_format" = "html"},
-         «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}«IF tree != EntityTreeType.NONE»,
-         «' '»*        options={"expose"=true}«ENDIF»
-         «' '»* )
+        #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}',
+            requirements: [«actionRouteRequirementsForSingleEntity(action)», '_format' => 'html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«app.getListOfDisplayFormats.join('|')»«ENDIF»'],
+            defaults: [«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»'_format' => 'html'],
+            methods: ['GET'«IF action instanceof EditAction || action instanceof DeleteAction», 'POST'«ENDIF»]«IF tree != EntityTreeType.NONE»,
+            options: ['expose' => true]«ENDIF»
+        )]
     '''
 
     def private actionRouteParamsForSingleEntity(Entity it, Action action) {
@@ -92,13 +92,13 @@ class Annotations {
     def private actionRouteRequirementsForSingleEntity(Entity it, Action action) {
         var output = ''
         if (hasSluggableFields && !(action instanceof EditAction)) {
-            output = '''"slug" = "«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»"'''
+            output = '''«''»'slug' => '«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»'«''»'''
             if (slugUnique) {
                 return output
             }
             output = output + ', '
         }
-        output = output + '''"«getPrimaryKey.name.formatForCode»" = "\d+"'''
+        output = output + '''«''»'«getPrimaryKey.name.formatForCode»' => '\d+'«''»'''
 
         output
     }
@@ -106,13 +106,13 @@ class Annotations {
     def private actionRouteDefaultsForSingleEntity(Entity it, Action action) {
         var output = ''
         if (hasSluggableFields && action instanceof DisplayAction) {
-            output = '''"slug" = ""'''
+            output = '''«''»'slug' => ''«''»'''
             if (slugUnique) {
                 return output
             }
             output = output + ', '
         }
-        output = output + '''"«getPrimaryKey.name.formatForCode»" = "0"'''
+        output = output + '''«''»'«getPrimaryKey.name.formatForCode»' => 0'''
 
         output
     }
@@ -130,8 +130,8 @@ class Annotations {
     '''
 
     def private dispatch actionRoute(CustomAction it, Entity entity, Boolean isAdmin) '''
-         «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/«name.formatForCode»",
-         «' '»*        methods = {"GET", "POST"}
-         «' '»* )
+        #[Route('/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/«name.formatForCode»',
+            methods: ['GET', 'POST']
+        )]
     '''
 }

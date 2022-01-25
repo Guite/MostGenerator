@@ -77,17 +77,17 @@ class ExternalController {
     '''
 
     def private displayDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Displays one item of a certain object type using a separate template for external usages.
+        «IF isBase»
+            /**
+             * Displays one item of a certain object type using a separate template for external usages.
+             */
          «ELSE»
-         * @Route("/display/{objectType}/{id}/{source}/{displayMode}",
-         *        requirements = {"id" = "\d+", "source" = "block|contentType|scribite", "displayMode" = "link|embed"},
-         *        defaults = {"source" = "contentType", "displayMode" = "embed"},
-         *        methods = {"GET"}
-         * )
+             #[Route('/display/{objectType}/{id}/{source}/{displayMode}',
+                 requirements: ['id' => '\d+', 'source' => 'block|contentType|scribite', 'displayMode' => 'link|embed'],
+                 defaults: ['source' => 'contentType', 'displayMode' => 'embed'],
+                 methods: ['GET']
+             )]
          «ENDIF»
-         */
     '''
 
     def private displaySignature(Application it) '''
@@ -160,21 +160,21 @@ class ExternalController {
     '''
 
     def private finderDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Popup selector for Scribite plugins.
-         * Finds items of a certain object type.
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{page}/{num}",
-         *        requirements = {"editor" = "ckeditor|quill|summernote|tinymce", "sortdir" = "asc|desc", "page" = "\d+", "num" = "\d+"},
-         *        defaults = {"sort" = "dummy«/* will be replaced by default field */»", "sortdir" = "asc", "page" = 1, "num" = 0},
-         *        methods = {"GET"},
-         *        options={"expose"=true}
-         * )
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Popup selector for Scribite plugins.
+             * Finds items of a certain object type.
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            #[Route('/finder/{objectType}/{editor}/{sort}/{sortdir}/{page}/{num}',
+                requirements: ['editor' => 'ckeditor|quill|summernote|tinymce', 'sortdir' => 'asc|desc', 'page' => '\d+', 'num' => '\d+'],
+                defaults: ['sort' => 'dummy«/* will be replaced by default field */»', 'sortdir' => 'asc', 'page' => 1, 'num' => 0],
+                methods: ['GET'],
+                options: ['expose' => true]
+            )]
+        «ENDIF»
     '''
 
     def private finderSignature(Application it) '''
@@ -346,9 +346,8 @@ class ExternalController {
 
         /**
          * Controller for external calls implementation class.
-         *
-         * @Route("/external")
          */
+        #[Route('/external')]
         class ExternalController extends AbstractExternalController
         {
             «displayImpl»

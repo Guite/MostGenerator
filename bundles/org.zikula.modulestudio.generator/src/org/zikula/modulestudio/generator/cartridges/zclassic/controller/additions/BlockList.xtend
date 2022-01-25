@@ -125,50 +125,38 @@ class BlockList {
             }
         «ENDIF»
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setTwigLoader(LoaderInterface $twigLoader): void
         {
             $this->twigLoader = $twigLoader;
         }
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setControllerHelper(ControllerHelper $controllerHelper): void
         {
             $this->controllerHelper = $controllerHelper;
         }
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setModelHelper(ModelHelper $modelHelper): void
         {
             $this->modelHelper = $modelHelper;
         }
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setPermissionHelper(PermissionHelper $permissionHelper): void
         {
             $this->permissionHelper = $permissionHelper;
         }
 
-        /**
-         * @required
-         */
+        #[Required]
         public function setEntityFactory(EntityFactory $entityFactory): void
         {
             $this->entityFactory = $entityFactory;
         }
         «IF hasCategorisableEntities»
 
-            /**
-             * @required
-             */
+            #[Required]
             public function setCategoryDependencies(
                 CategoryHelper $categoryHelper,
                 FeatureActivationHelper $featureActivationHelper

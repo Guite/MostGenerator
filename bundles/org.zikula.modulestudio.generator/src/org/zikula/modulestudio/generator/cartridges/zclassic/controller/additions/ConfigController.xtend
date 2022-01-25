@@ -55,18 +55,18 @@ class ConfigController {
     '''
 
     def private configDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * This method takes care of the application configuration.
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/config",
-         *        methods = {"GET", "POST"}
-         * )
-         * @Theme("admin")
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * This method takes care of the application configuration.
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            /**
+             * @Theme("admin")
+             */
+            #[Route('/config', methods: ['GET', 'POST'])]
+        «ENDIF»
     '''
 
     def private configBaseImpl(Application it) '''
@@ -118,9 +118,8 @@ class ConfigController {
 
         /**
          * Config controller implementation class.
-         *
-         * @Route("/config")
          */
+        #[Route('/config')]
         class ConfigController extends AbstractConfigController
         {
             «configAction(false)»

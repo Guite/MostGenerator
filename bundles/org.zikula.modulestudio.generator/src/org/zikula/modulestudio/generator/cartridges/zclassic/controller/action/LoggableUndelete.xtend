@@ -47,23 +47,25 @@ class LoggableUndelete {
     '''
 
     def private undeleteDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
-        /**
-         * «IF hasDisplayAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
-         *
-         «IF isBase»
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
-         «ELSE»
-         * @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}",
-         *        requirements = {"id" = "\d+", "_format" = "html"},
-         *        defaults = {"_format" = "html"},
-         *        methods = {"GET"}
-         * )
-         «IF isAdmin»
-         * @Theme("admin")
-         «ENDIF»
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * «IF hasDisplayAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
+             */
+        «ELSE»
+            «IF isAdmin»
+                /**
+                 * @Theme("admin")
+                 */
+            «ENDIF»
+            #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}',
+                requirements: ['id' => '\d+', '_format' => 'html'],
+                defaults: ['_format' => 'html'],
+                methods: ['GET']
+            )]
+        «ENDIF»
     '''
 
     def private undeleteArguments(Entity it, Boolean internalMethod) '''

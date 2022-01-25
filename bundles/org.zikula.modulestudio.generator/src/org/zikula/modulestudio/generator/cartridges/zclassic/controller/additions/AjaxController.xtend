@@ -139,13 +139,13 @@ class AjaxController {
     '''
 
     def private getItemListFinderDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Retrieve item list for finder selections, for example used in Scribite editor plug-ins.
-         «ELSE»
-         * @Route("/getItemListFinder", methods = {"GET"}, options={"expose"=true})
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Retrieve item list for finder selections, for example used in Scribite editor plug-ins.
+             */
+        «ELSE»
+            #[Route('/getItemListFinder', methods: ['GET'], options: ['expose' => true])]
+        «ENDIF»
     '''
 
     def private getItemListFinderSignature(Application it) '''
@@ -263,13 +263,13 @@ class AjaxController {
     '''
 
     def private getItemListAutoCompletionDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Searches for entities for auto completion usage.
-         «ELSE»
-         * @Route("/getItemListAutoCompletion", methods = {"GET"}, options={"expose"=true})
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Searches for entities for auto completion usage.
+             */
+        «ELSE»
+            #[Route('/getItemListAutoCompletion', methods: ['GET'], options: ['expose' => true])]
+        «ENDIF»
     '''
 
     def private getItemListAutoCompletionSignature(Application it) '''
@@ -379,15 +379,15 @@ class AjaxController {
     '''
 
     def private checkForDuplicateDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Checks whether a field value is a duplicate or not.
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/checkForDuplicate", methods = {"GET"}, options={"expose"=true})
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Checks whether a field value is a duplicate or not.
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            #[Route('/checkForDuplicate', methods: ['GET'], options: ['expose' => true])]
+        «ENDIF»
     '''
 
     def private checkForDuplicateSignature(Application it) '''
@@ -478,15 +478,15 @@ class AjaxController {
     '''
 
     def private toggleFlagDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Changes a given flag (boolean field) by switching between true and false.
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/toggleFlag", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Changes a given flag (boolean field) by switching between true and false.
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            #[Route('/toggleFlag', methods: ['POST'], options: ['expose' => true])]
+        «ENDIF»
     '''
 
     def private toggleFlagSignature(Application it) '''
@@ -559,15 +559,15 @@ class AjaxController {
     '''
 
     def private handleTreeOperationDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Performs different operations on tree hierarchies.
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/handleTreeOperation", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Performs different operations on tree hierarchies.
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            #[Route('/handleTreeOperation', methods: ['POST'], options: ['expose' => true])]
+        «ENDIF»
     '''
 
     def private handleTreeOperationSignature(Application it) '''
@@ -905,15 +905,15 @@ class AjaxController {
     '''
 
     def private updateSortPositionsDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Updates the sort positions for a given list of entities.
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/updateSortPositions", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Updates the sort positions for a given list of entities.
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            #[Route('/updateSortPositions', methods: ['POST'], options: ['expose' => true])]
+        «ENDIF»
     '''
 
     def private updateSortPositionsSignature(Application it) '''
@@ -984,27 +984,27 @@ class AjaxController {
     '''
 
     def private attachHookObjectDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Attachs a given hook assignment by creating the corresponding assignment data record.
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/attachHookObject", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Attachs a given hook assignment by creating the corresponding assignment data record.
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            #[Route('/attachHookObject', methods: ['POST'], options: ['expose' => true])]
+        «ENDIF»
     '''
 
     def private detachHookObjectDocBlock(Application it, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * Detachs a given hook assignment by removing the corresponding assignment data record.
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «ELSE»
-         * @Route("/detachHookObject", methods = {"POST"}, options={"expose"=true})
-         «ENDIF»
-         */
+        «IF isBase»
+            /**
+             * Detachs a given hook assignment by removing the corresponding assignment data record.
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             */
+        «ELSE»
+            #[Route('/detachHookObject', methods: ['POST'], options: ['expose' => true])]
+        «ENDIF»
     '''
 
     def private attachHookObjectSignature(Application it) '''
@@ -1229,9 +1229,8 @@ class AjaxController {
 
         /**
          * Ajax controller implementation class.
-         *
-         * @Route("/ajax")
          */
+        #[Route('/ajax')]
         class AjaxController extends AbstractAjaxController
         {
             «additionalAjaxFunctions»
