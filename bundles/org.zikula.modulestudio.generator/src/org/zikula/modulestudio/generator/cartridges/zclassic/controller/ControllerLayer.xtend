@@ -107,6 +107,9 @@ class ControllerLayer {
         «IF hasViewAction || hasDisplayAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
             use «app.appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
+        «IF loggable»
+            use «app.appNamespace»\Entity\«name.formatForCodeCapital»LogEntryEntity;
+        «ENDIF»
         «IF hasEditAction»
             use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;
         «ENDIF»

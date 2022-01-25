@@ -116,7 +116,7 @@ class LoggableHistory {
 
         $routeArea = $isAdmin ? 'admin' : '';
         $entityManager = $entityFactory->getEntityManager();
-        $logEntriesRepository = $entityManager->getRepository('«application.appName»:«name.formatForCodeCapital»LogEntryEntity');
+        $logEntriesRepository = $entityManager->getRepository(«name.formatForCodeCapital»LogEntryEntity::class);
         $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
 
         $revertToVersion = $request->query->getInt('revert');

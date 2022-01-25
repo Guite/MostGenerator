@@ -1075,7 +1075,7 @@ class AjaxController {
         }
 
         $qb = $entityFactory->getEntityManager()->createQueryBuilder();
-        $qb->delete('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
+        $qb->delete(HookAssignmentEntity::class, 'tbl')
            ->where('tbl.id = :identifier')
            ->setParameter('identifier', $id);
         

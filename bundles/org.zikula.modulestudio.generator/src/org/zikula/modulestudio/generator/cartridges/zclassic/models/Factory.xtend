@@ -60,7 +60,7 @@ class Factory {
              */
             public function getRepository(string $objectType): EntityRepository
             {
-                $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
 
                 /** @var EntityRepository $repository */
                 $repository = $this->getEntityManager()->getRepository($entityClass);

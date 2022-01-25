@@ -131,6 +131,7 @@ class Listeners {
             use Zikula\ExtensionsModule\Event\ExtensionPostUpgradeEvent;
             «IF hasUiHooksProviders»
                 use «appNamespace»\Entity\Factory\EntityFactory;
+                use «appNamespace»\Entity\HookAssignmentEntity;
             «ENDIF»
             «IF amountOfExampleRows > 0»
                 use «appNamespace»\Helper\ExampleDataHelper;

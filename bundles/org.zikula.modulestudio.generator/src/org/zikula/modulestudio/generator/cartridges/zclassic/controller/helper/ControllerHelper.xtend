@@ -63,6 +63,9 @@ class ControllerHelper {
             use Zikula\UsersModule\Entity\UserEntity;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
+        «IF hasDisplayActions && hasUiHooksProviders»
+            use «appNamespace»\Entity\HookAssignmentEntity;
+        «ENDIF»
         use «appNamespace»\Helper\CollectionFilterHelper;
         «IF hasAutomaticExpiryHandling»
             use «appNamespace»\Helper\ExpiryHelper;
@@ -431,7 +434,7 @@ class ControllerHelper {
                 if (in_array($objectType, ['«getAllEntities.filter[uiHooksProvider != HookProviderMode.DISABLED].map[name.formatForCode].join('\', \'')»'], true)) {
                     $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->select('tbl')
-                       ->from('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
+                       ->from(HookAssignmentEntity::class, 'tbl')
                        ->where('tbl.assignedEntity = :objectType')
                        ->setParameter('objectType', $objectType)
                        ->andWhere('tbl.assignedId = :entityId')

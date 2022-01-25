@@ -390,6 +390,7 @@ class HookHelper {
             use «application.appNamespace»\Form\Type\Hook\Edit«name.formatForCodeCapital»Type;
         «ELSEIF category == 'UiHooks'»
             use «application.appNamespace»\Entity\Factory\EntityFactory;
+            use «application.appNamespace»\Entity\HookAssignmentEntity;
             «IF !application.getUploadEntities.empty»
                 use «application.appNamespace»\Helper\ImageHelper;
             «ENDIF»
@@ -546,7 +547,7 @@ class HookHelper {
                     // update url information for assignments of updated data object
                     $qb = $entityManager->createQueryBuilder();
                     $qb->select('tbl')
-                       ->from($this->getHookAssignmentEntity(), 'tbl');
+                       ->from(HookAssignmentEntity::class, 'tbl');
                     $qb = $this->addContextFilters($qb, $hook);
 
                     $query = $qb->getQuery();
@@ -583,19 +584,11 @@ class HookHelper {
                 {
                     // delete assignments of removed data object
                     $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
-                    $qb->delete($this->getHookAssignmentEntity(), 'tbl');
+                    $qb->delete(HookAssignmentEntity::class, 'tbl');
                     $qb = $this->addContextFilters($qb, $hook);
 
                     $query = $qb->getQuery();
                     $query->execute();
-                }
-
-                /**
-                 * Returns the entity for hook assignment data.
-                 */
-                protected function getHookAssignmentEntity(): string
-                {
-                    return '«application.vendor.formatForCodeCapital + '\\' + application.name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»';
                 }
 
                 /**
@@ -638,7 +631,7 @@ class HookHelper {
                 {
                     $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->select('tbl')
-                       ->from($this->getHookAssignmentEntity(), 'tbl');
+                       ->from(HookAssignmentEntity::class, 'tbl');
                     $qb = $this->addContextFilters($qb, $hook);
                     $qb->add('orderBy', 'tbl.updatedDate DESC');
 

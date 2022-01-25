@@ -107,7 +107,7 @@ class ModuleInstallerListener {
 
                 // delete any existing hook assignments for the removed extension
                 $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
-                $qb->delete('«vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»', 'tbl')
+                $qb->delete(HookAssignmentEntity::class, 'tbl')
                    ->where('tbl.subscriberOwner = :extensionName')
                    ->setParameter('extensionName', $extension->getName());
 
