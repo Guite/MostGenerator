@@ -1,6 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -67,6 +69,7 @@ class ServiceDefinitions {
                     arguments:
                         $secret: '%kernel.secret%'
             «ENDIF»
+            «repositoryBindings»
     '''
 
     def private specificServices(Application it) '''
@@ -148,4 +151,15 @@ class ServiceDefinitions {
                     - { name: doctrine.event_subscriber, connection: default }
         «ENDIF»
     '''
+
+    def private repositoryBindings(Application it) '''
+        «FOR entity : getAllEntities»
+            «entity.repoPath»Interface: '@«entity.repoPath»'
+        «ENDFOR»«/*FOR relation : getJoinRelations.filter(ManyToManyRelationship)»
+            «relation.repoPath»Interface: '@«relation.repoPath»'
+        «ENDFOR*/»
+    '''
+
+    def private dispatch repoPath(Entity it) '''«application.appNamespace»\Repository\«name.formatForCodeCapital»Repository'''
+    def private dispatch repoPath(ManyToManyRelationship it) '''«application.appNamespace»\Repository\«refClass.formatForCodeCapital»Repository'''
 }

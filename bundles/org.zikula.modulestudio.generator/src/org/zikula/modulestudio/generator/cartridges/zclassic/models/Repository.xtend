@@ -65,17 +65,24 @@ class Repository {
      */
     def private generate(Entity it) {
         ('Generating repository classes for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
-        val repositoryPath = 'Entity/Repository/'
+        val repositoryPath = 'Repository/'
         var fileSuffix = 'Repository'
 
         sortRelationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]
         sortRelationsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]
 
-        var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
-        val content = if (!isInheriting || parentType instanceof MappedSuperClass) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
+        var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + 'Interface.php'
+        var content = if (!isInheriting || parentType instanceof MappedSuperClass) modelRepositoryInterfaceBaseImpl else modelChildRepositoryInterfaceBaseImpl
+        fsa.generateFile(repositoryPath + fileName, content)
+
+        fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
+        content = if (!isInheriting || parentType instanceof MappedSuperClass) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
         fsa.generateFile(repositoryPath + fileName, content)
 
         if (!app.generateOnlyBaseClasses) {
+            fileName = name.formatForCodeCapital + fileSuffix + 'Interface.php'
+            fsa.generateFile(repositoryPath + fileName, modelRepositoryInterfaceImpl)
+
             fileName = name.formatForCodeCapital + fileSuffix + '.php'
             fsa.generateFile(repositoryPath + fileName, modelRepositoryImpl)
         }
@@ -100,19 +107,159 @@ class Repository {
         }
     }
 
+    def private modelRepositoryInterfaceBaseImpl(Entity it) '''
+        «imports(true)»
+        /**
+         * Repository interface for «name.formatForDisplay» entities.
+         *
+        «methodAnnotations»
+         */
+        interface Abstract«name.formatForCodeCapital»RepositoryInterface extends ObjectRepository
+        {
+            /**
+             * Retrieves an array with all fields which can be used for sorting instances.
+             *
+             * @return string[] List of sorting field names
+             */
+            public function getAllowedSortingFields(): array;
+
+            public function getDefaultSortingField(): string;
+
+            public function setDefaultSortingField(string $defaultSortingField): self;
+
+            public function getCollectionFilterHelper(): string;
+
+            public function setCollectionFilterHelper(CollectionFilterHelper $collectionFilterHelper): self;
+            «IF hasTranslatableFields»
+
+                public function getTranslationsEnabled(): bool;
+
+                public function setTranslationsEnabled(bool $translationsEnabled): self;
+            «ENDIF»
+            «new UserDeletion().generateInterface(it)»
+
+            public function selectById(
+                $id = 0,
+                bool $useJoins = true,
+                bool $slimMode = false
+            ): ?«name.formatForCodeCapital»Entity;
+
+            public function selectByIdList(
+                array $idList = [0],
+                bool $useJoins = true,
+                bool $slimMode = false
+            ): ?array;
+            «IF hasSluggableFields && slugUnique»
+
+                public function selectBySlug(
+                    string $slugTitle = '',
+                    bool $useJoins = true,
+                    bool $slimMode = false,
+                    int $excludeId = 0
+                ): ?«name.formatForCodeCapital»Entity;
+            «ENDIF»
+
+            public function getListQueryBuilder(
+                string $where = '',
+                string $orderBy = '',
+                bool $useJoins = true,
+                bool $slimMode = false
+            ): QueryBuilder;
+
+            public function selectWhere(
+                string $where = '',
+                string $orderBy = '',
+                bool $useJoins = true,
+                bool $slimMode = false
+            ): array;
+
+            public function selectWherePaginated(
+                string $where = '',
+                string $orderBy = '',
+                int $currentPage = 1,
+                int $resultsPerPage = 25,
+                bool $useJoins = true,
+                bool $slimMode = false
+            ): PaginatorInterface;
+
+            public function selectSearch(
+                string $fragment = '',
+                array $exclude = [],
+                string $orderBy = '',
+                int $currentPage = 1,
+                int $resultsPerPage = 25,
+                bool $useJoins = true
+            ): \Traversable;
+
+            public function retrieveCollectionResult(
+                QueryBuilder $qb,
+                bool $isPaginated = false,
+                int $currentPage = 1,
+                int $resultsPerPage = 25
+            ): PaginatorInterface|array;
+
+            public function getCountQuery(string $where = '', bool $useJoins = false): QueryBuilder;
+
+            public function selectCount(string $where = '', bool $useJoins = false, array $parameters = []): int;
+            «new Tree().generateInterface(it, app)»
+
+            public function detectUniqueState(string $fieldName, string $fieldValue, int $excludeId = 0): bool;
+
+            public function genericBaseQuery(
+                string $where = '',
+                string $orderBy = '',
+                bool $useJoins = true,
+                bool $slimMode = false
+            ): QueryBuilder;
+
+            /**
+             * Retrieves Doctrine query from query builder.
+             */
+            public function getQueryFromBuilder(QueryBuilder $qb): Query;
+        }
+    '''
+
+    def private modelChildRepositoryInterfaceBaseImpl(Entity it) '''
+        namespace «app.appNamespace»\Repository\Base;
+
+        «IF !incoming.empty || !outgoing.empty»
+            use Doctrine\ORM\QueryBuilder;
+        «ENDIF»
+        use «app.appNamespace»\Repository\«parentType.name.formatForCodeCapital»RepositoryInterface;
+
+        /**
+         * Repository interface for «name.formatForDisplay» entities.
+         */
+        interface Abstract«name.formatForCodeCapital»RepositoryInterface extends «parentType.name.formatForCodeCapital»RepositoryInterface
+        {
+            // nothing additional
+        }
+    '''
+
     def private modelRepositoryBaseImpl(Entity it) '''
-        «imports»
+        «imports(false)»
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *
          * This is the base repository class for «name.formatForDisplay» entities.
+         *
+        «methodAnnotations»
          */
-        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»ServiceEntityRepository«ENDIF» implements Abstract«name.formatForCodeCapital»RepositoryInterface«IF tree != EntityTreeType.NONE || hasSortableFields», ServiceEntityRepositoryInterface«ENDIF»
         {
-            «/*IF tree != EntityTreeType.NONE»
-                use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
+            «IF tree != EntityTreeType.NONE || hasSortableFields»
+                public function __construct(EntityManagerInterface $manager)
+                {
+                    parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»Entity::class));
+                }
+            «ELSEIF canDirectlyExtendServiceRepo»
+                public function __construct(ManagerRegistry $registry)
+                {
+                    parent::__construct($registry, «name.formatForCodeCapital»Entity::class);
+                }
+            «ENDIF»
 
-            «ENDIF*/»/**
+            /**
              * The default sorting field/expression
              */
             protected string $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
@@ -121,48 +268,8 @@ class Repository {
             «IF hasTranslatableFields»
 
                 protected bool $translationsEnabled = true;
-            «ENDIF»«/*IF tree != EntityTreeType.NONE»
+            «ENDIF»
 
-                /**
-                 * «name.formatForCodeCapital»Repository constructor.
-                 *
-                 * @param EntityManager $entityManager The entity manager
-                 * @param ClassMetadata $class         The class meta data
-                 * /
-                public function __construct(EntityManager $entityManager, ClassMetadata $class)
-                {
-                    parent::__construct($entityManager, $class);
-
-                    $this->initializeTreeRepository($entityManager, $class);
-                }
-                «IF tree == EntityTreeType.NESTED»
-
-                    /**
-                     * Call interceptor.
-                     *
-                     * @param string $method Name of called method
-                     * @param array  $args   List of additional arguments
-                     *
-                     * @return mixed $result
-                     * /
-                    public function __call($method, array $args = [])
-                    {
-                        $result = $this->callTreeUtilMethods($method, $args);
-
-                        if (null !== $result) {
-                            return $result;
-                        }
-
-                        return parent::__call($method, $args);
-                    }
-                «ENDIF»
-            «ENDIF*/»
-
-            /**
-             * Retrieves an array with all fields which can be used for sorting instances.
-             *
-             * @return string[] List of sorting field names
-             */
             public function getAllowedSortingFields(): array
             {
                 return [
@@ -244,30 +351,44 @@ class Repository {
         }
     '''
 
-    def private imports(Entity it) '''
+    def private canDirectlyExtendServiceRepo(Entity it) {
+        tree == EntityTreeType.NONE && !hasSortableFields
+    }
+
+    def private imports(Entity it, Boolean isInterface) '''
         namespace «app.appNamespace»\Repository\Base;
 
-        «/*IF tree != EntityTreeType.NONE»
-            use Doctrine\ORM\EntityManager;
-        «ENDIF*/»«IF tree == EntityTreeType.NONE && !hasSortableFields»
-            use Doctrine\ORM\EntityRepository;
-        «ENDIF»«/*IF tree != EntityTreeType.NONE»
-            use Doctrine\ORM\Mapping\ClassMetadata;
-        «ENDIF*/»
-        use Doctrine\ORM\Query;
-        use Doctrine\ORM\QueryBuilder;
-        «IF hasPessimisticReadLock || hasPessimisticWriteLock»
-            use Doctrine\DBAL\LockMode;
-        «ENDIF»
-        «IF tree == EntityTreeType.NONE && hasSortableFields»
-            use Gedmo\Sortable\Entity\Repository\SortableRepository;
-        «ENDIF»
-        «IF tree != EntityTreeType.NONE»
-            use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;«/*
-            use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait; */»
-        «ENDIF»
-        «IF hasTranslatableFields»
-            use Gedmo\Translatable\Query\TreeWalker\TranslationWalker;
+        «IF isInterface»
+            use Doctrine\ORM\Query;
+            use Doctrine\ORM\QueryBuilder;
+            use Doctrine\Persistence\ObjectRepository;
+        «ELSE»
+            «IF canDirectlyExtendServiceRepo»
+                use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+            «ELSE»
+                use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
+            «ENDIF»
+            «IF hasPessimisticReadLock || hasPessimisticWriteLock»
+                use Doctrine\DBAL\LockMode;
+            «ENDIF»
+            «IF !canDirectlyExtendServiceRepo»
+                use Doctrine\ORM\EntityManagerInterface;
+                use Doctrine\ORM\Mapping\ClassMetadata;
+            «ENDIF»
+            use Doctrine\ORM\Query;
+            use Doctrine\ORM\QueryBuilder;
+            «IF canDirectlyExtendServiceRepo»
+                use Doctrine\Persistence\ManagerRegistry;
+            «ENDIF»
+            «IF tree == EntityTreeType.NONE && hasSortableFields»
+                use Gedmo\Sortable\Entity\Repository\SortableRepository;
+            «ENDIF»
+            «IF tree != EntityTreeType.NONE»
+                use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
+            «ENDIF»
+            «IF hasTranslatableFields»
+                use Gedmo\Translatable\Query\TreeWalker\TranslationWalker;
+            «ENDIF»
         «ENDIF»
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
@@ -278,6 +399,14 @@ class Repository {
         use «entityClassName('', false)»;
         use «app.appNamespace»\Helper\CollectionFilterHelper;
 
+    '''
+
+    def private methodAnnotations(Entity it) '''
+        «' '»* @method «name.formatForCodeCapital»Entity|null find($id, $lockMode = null, $lockVersion = null)
+        «' '»* @method «name.formatForCodeCapital»Entity[] findAll()
+        «' '»* @method «name.formatForCodeCapital»Entity[] findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
+        «' '»* @method «name.formatForCodeCapital»Entity|null findOneBy(array $criteria, ?array $orderBy = null)
+        «' '»* @method int count(array $criteria)
     '''
 
     def private selectById(Entity it) '''
@@ -309,14 +438,12 @@ class Repository {
          * @param bool $useJoins Whether to include joining related objects (optional) (default=true)
          * @param bool $slimMode If activated only some basic fields are selected without using any joins
          *                       (optional) (default=false)
-         *
-         * @return array|«name.formatForCodeCapital»Entity Retrieved data array or «name.formatForCode»Entity instance
          */
         public function selectById(
             $id = 0,
             bool $useJoins = true,
             bool $slimMode = false
-        ) {
+        ): ?«name.formatForCodeCapital»Entity {
             $results = $this->selectByIdList(is_array($id) ? $id : [$id], $useJoins, $slimMode);
 
             return null !== $results && 0 < count($results) ? $results[0] : null;
@@ -492,7 +619,7 @@ class Repository {
             bool $isPaginated = false,
             int $currentPage = 1,
             int $resultsPerPage = 25
-        ) {
+        ): PaginatorInterface|array {
             if (!$isPaginated) {
                 $query = $this->getQueryFromBuilder($qb);
 
@@ -746,9 +873,6 @@ class Repository {
     }
 
     def private getQueryFromBuilder(Entity it) '''
-        /**
-         * Retrieves Doctrine query from query builder.
-         */
         public function getQueryFromBuilder(QueryBuilder $qb): Query
         {
             $query = $qb->getQuery();
@@ -813,6 +937,20 @@ class Repository {
         «ENDIF»
     '''
 
+    def private modelRepositoryInterfaceImpl(Entity it) '''
+        namespace «app.appNamespace»\Repository;
+
+        use «app.appNamespace»\Repository\Base\Abstract«name.formatForCodeCapital»RepositoryInterface;
+
+        /**
+         * Repository interface for «name.formatForDisplay» entities.
+         */
+        interface «name.formatForCodeCapital»RepositoryInterface extends Abstract«name.formatForCodeCapital»RepositoryInterface
+        {
+            // feel free to add your own interface methods
+        }
+    '''
+
     def private modelRepositoryImpl(Entity it) '''
         namespace «app.appNamespace»\Repository;
 
@@ -823,7 +961,7 @@ class Repository {
          *
          * This is the concrete repository class for «name.formatForDisplay» entities.
          */
-        class «name.formatForCodeCapital»Repository extends Abstract«name.formatForCodeCapital»Repository
+        class «name.formatForCodeCapital»Repository extends Abstract«name.formatForCodeCapital»Repository implements «name.formatForCodeCapital»RepositoryInterface
         {
             // feel free to add your own methods here, like for example reusable DQL queries
         }

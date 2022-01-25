@@ -155,7 +155,7 @@ class ControllerHelper {
          */
         public function getObjectTypes(string $context = ''«IF !isSystemModule», array $args = []«ENDIF»): array
         {
-            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
+            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType'];
             if (!in_array($context, $allowedContexts, true)) {
                 $context = 'controllerAction';
             }
@@ -175,7 +175,7 @@ class ControllerHelper {
          */
         public function getDefaultObjectType(string $context = ''«IF !isSystemModule», array $args = []«ENDIF»): string
         {
-            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
+            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType'];
             if (!in_array($context, $allowedContexts, true)) {
                 $context = 'controllerAction';
             }
@@ -329,7 +329,7 @@ class ControllerHelper {
             $sortdir = $sortableColumns->getSortDirection();*/»
             $sortableColumns->setAdditionalUrlParameters($urlParameters);
             «IF hasCategorisableEntities»
-                $useJoins = in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»']);
+                $useJoins = in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true);
             «ENDIF»
 
             $where = '';
@@ -541,7 +541,7 @@ class ControllerHelper {
             string $context = '',
             array $args = []
         ): array {
-            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType', 'mailz'];
+            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType'];
             if (!in_array($context, $allowedContexts, true)) {
                 $context = 'controllerAction';
             }
@@ -552,7 +552,7 @@ class ControllerHelper {
                     $routeNameParts = explode('_', $routeName);
                     $args['action'] = end($routeNameParts);
                 }
-                if (in_array($args['action'], ['index', 'view'])) {
+                if (in_array($args['action'], ['index', 'view'], true)) {
                     $parameters = array_merge(
                         $parameters,
                         $this->collectionFilterHelper->getViewQuickNavParameters($objectType«IF !isSystemModule», $context, $args«ENDIF»)

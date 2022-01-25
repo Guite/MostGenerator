@@ -1,13 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleInstallerListener {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 

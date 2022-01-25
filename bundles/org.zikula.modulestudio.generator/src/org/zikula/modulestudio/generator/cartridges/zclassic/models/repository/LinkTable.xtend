@@ -15,10 +15,27 @@ class LinkTable {
      * Creates a reference table class file for every many-to-many relationship instance.
      */
     def generate(ManyToManyRelationship it, Application app, IMostFileSystemAccess fsa) {
+        fsa.generateClassPair('Repository/' + refClass.formatForCodeCapital + 'RepositoryInterface.php',
+            modelRefRepositoryInterfaceBaseImpl(app), modelRefRepositoryInterfaceImpl(app)
+        )
         fsa.generateClassPair('Repository/' + refClass.formatForCodeCapital + 'Repository.php',
             modelRefRepositoryBaseImpl(app), modelRefRepositoryImpl(app)
         )
     }
+
+    def private modelRefRepositoryInterfaceBaseImpl(ManyToManyRelationship it, Application app) '''
+        namespace «app.appNamespace»\Repository\Base;
+
+        use Doctrine\Persistence\ObjectRepository;
+
+        /**
+         * Repository interface for the many to many relationship between «source.name.formatForDisplay» and «target.name.formatForDisplay» entities.
+         */
+        interface Abstract«refClass.formatForCodeCapital»RepositoryInterface extends ObjectRepository
+        {
+            // nothing
+        }
+    '''
 
     def private modelRefRepositoryBaseImpl(ManyToManyRelationship it, Application app) '''
         namespace «app.appNamespace»\Repository\Base;
@@ -31,8 +48,23 @@ class LinkTable {
          * This is the base repository class for the many to many relationship
          * between «source.name.formatForDisplay» and «target.name.formatForDisplay» entities.
          */
-        class Abstract«refClass.formatForCodeCapital»Repository extends EntityRepository
+        class Abstract«refClass.formatForCodeCapital»Repository extends EntityRepository implements Abstract«refClass.formatForCodeCapital»RepositoryInterface
         {
+            // nothing
+        }
+    '''
+
+    def private modelRefRepositoryInterfaceImpl(ManyToManyRelationship it, Application app) '''
+        namespace «app.appNamespace»\Repository;
+
+        use «app.appNamespace»\Repository\Base\Abstract«refClass.formatForCodeCapital»RepositoryInterface;
+
+        /**
+         * Repository interface for the many to many relationship between «source.name.formatForDisplay» and «target.name.formatForDisplay» entities.
+         */
+        interface «refClass.formatForCodeCapital»RepositoryInterface extends Abstract«refClass.formatForCodeCapital»RepositoryInterface
+        {
+            // feel free to add your own interface methods
         }
     '''
 
@@ -47,7 +79,7 @@ class LinkTable {
          * This is the concrete repository class for the many to many relationship
          * between «source.name.formatForDisplay» and «target.name.formatForDisplay» entities.
          */
-        class «refClass.formatForCodeCapital»Repository extends Abstract«refClass.formatForCodeCapital»Repository
+        class «refClass.formatForCodeCapital»Repository extends Abstract«refClass.formatForCodeCapital»Repository implements «refClass.formatForCodeCapital»RepositoryInterface
         {
             // feel free to add your own methods here, like for example reusable DQL queries
         }

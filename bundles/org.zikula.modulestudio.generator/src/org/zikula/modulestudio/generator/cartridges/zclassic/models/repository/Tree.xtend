@@ -9,6 +9,21 @@ class Tree {
 
     extension FormattingExtensions = new FormattingExtensions
 
+    def generateInterface(Entity it, Application app) '''
+        «IF tree != EntityTreeType.NONE»
+
+            /**
+             * Selects tree of «nameMultiple.formatForCode».
+             */
+            public function selectTree(int $rootId = 0, bool $useJoins = true): array;
+
+            /**
+             * Selects all trees at once.
+             */
+            public function selectAllTrees(bool $useJoins = true): array;
+        «ENDIF»
+    '''
+
     def generate(Entity it, Application app) '''
         «IF tree != EntityTreeType.NONE»
 
@@ -19,9 +34,6 @@ class Tree {
     '''
 
     def private selectTree(Entity it) '''
-        /**
-         * Selects tree of «nameMultiple.formatForCode».
-         */
         public function selectTree(int $rootId = 0, bool $useJoins = true): array
         {
             if (0 === $rootId) {
@@ -40,9 +52,6 @@ class Tree {
     '''
 
     def private selectAllTrees(Entity it) '''
-        /**
-         * Selects all trees at once.
-         */
         public function selectAllTrees(bool $useJoins = true): array
         {
             $trees = [];

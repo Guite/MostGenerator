@@ -11,6 +11,90 @@ class UserDeletion {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
+    def generateInterface(Entity it) '''
+        «IF standardFields»
+
+            /**
+             * Updates the creator of all objects created by a certain user.
+             *
+             * @throws InvalidArgumentException Thrown if invalid parameters are received
+             */
+            public function updateCreator(
+                int $userId,
+                int $newUserId,
+                TranslatorInterface $translator,
+                LoggerInterface $logger,
+                CurrentUserApiInterface $currentUserApi
+            ): void;
+
+            /**
+             * Updates the last editor of all objects updated by a certain user.
+             *
+             * @throws InvalidArgumentException Thrown if invalid parameters are received
+             */
+            public function updateLastEditor(
+                int $userId,
+                int $newUserId,
+                TranslatorInterface $translator,
+                LoggerInterface $logger,
+                CurrentUserApiInterface $currentUserApi
+            ): void;
+
+            /**
+             * Deletes all objects created by a certain user.
+             *
+             * @throws InvalidArgumentException Thrown if invalid parameters are received
+             */
+            public function deleteByCreator(
+                int $userId,
+                TranslatorInterface $translator,
+                LoggerInterface $logger,
+                CurrentUserApiInterface $currentUserApi
+            ): void;
+
+            /**
+             * Deletes all objects updated by a certain user.
+             *
+             * @throws InvalidArgumentException Thrown if invalid parameters are received
+             */
+            public function deleteByLastEditor(
+                int $userId,
+                TranslatorInterface $translator,
+                LoggerInterface $logger,
+                CurrentUserApiInterface $currentUserApi
+            ): void;
+        «ENDIF»
+        «IF hasUserFieldsEntity»
+
+            /**
+             * Updates a user field value of all objects affected by a certain user.
+             *
+             * @throws InvalidArgumentException Thrown if invalid parameters are received
+             */
+            public function updateUserField(
+                string $userFieldName,
+                int $userId,
+                int $newUserId,
+                TranslatorInterface $translator,
+                LoggerInterface $logger,
+                CurrentUserApiInterface $currentUserApi
+            ): void;
+
+            /**
+             * Deletes all objects referencing a certain user in a specific field.
+             *
+             * @throws InvalidArgumentException Thrown if invalid parameters are received
+             */
+            public function deleteByUserField(
+                string $userFieldName,
+                int $userId,
+                TranslatorInterface $translator,
+                LoggerInterface $logger,
+                CurrentUserApiInterface $currentUserApi
+            ): void;
+        «ENDIF»
+    '''
+
     def generate(Entity it) '''
         «IF standardFields»
             «userDeletionStandardFields»
@@ -39,11 +123,6 @@ class UserDeletion {
     '''
 
     def private updateCreator(Entity it) '''
-        /**
-         * Updates the creator of all objects created by a certain user.
-         *
-         * @throws InvalidArgumentException Thrown if invalid parameters are received
-         */
         public function updateCreator(
             int $userId,
             int $newUserId,
@@ -75,11 +154,6 @@ class UserDeletion {
     '''
 
     def private updateLastEditor(Entity it) '''
-        /**
-         * Updates the last editor of all objects updated by a certain user.
-         *
-         * @throws InvalidArgumentException Thrown if invalid parameters are received
-         */
         public function updateLastEditor(
             int $userId,
             int $newUserId,
@@ -111,11 +185,6 @@ class UserDeletion {
     '''
 
     def private deleteByCreator(Entity it) '''
-        /**
-         * Deletes all objects created by a certain user.
-         *
-         * @throws InvalidArgumentException Thrown if invalid parameters are received
-         */
         public function deleteByCreator(
             int $userId,
             TranslatorInterface $translator,
@@ -145,11 +214,6 @@ class UserDeletion {
     '''
 
     def private deleteByLastEditor(Entity it) '''
-        /**
-         * Deletes all objects updated by a certain user.
-         *
-         * @throws InvalidArgumentException Thrown if invalid parameters are received
-         */
         public function deleteByLastEditor(
             int $userId,
             TranslatorInterface $translator,
@@ -179,11 +243,6 @@ class UserDeletion {
     '''
 
     def private updateUserField(Entity it) '''
-        /**
-         * Updates a user field value of all objects affected by a certain user.
-         *
-         * @throws InvalidArgumentException Thrown if invalid parameters are received
-         */
         public function updateUserField(
             string $userFieldName,
             int $userId,
@@ -221,11 +280,6 @@ class UserDeletion {
     '''
 
     def private deleteByUserField(Entity it) '''
-        /**
-         * Deletes all objects updated by a certain user.
-         *
-         * @throws InvalidArgumentException Thrown if invalid parameters are received
-         */
         public function deleteByUserField(
             string $userFieldName,
             int $userId,
