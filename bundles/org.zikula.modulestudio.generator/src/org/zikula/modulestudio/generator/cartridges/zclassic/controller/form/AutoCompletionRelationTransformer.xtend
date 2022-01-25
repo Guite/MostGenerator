@@ -89,7 +89,7 @@ class AutoCompletionRelationTransformer {
                 $repository = $this->entityFactory->getRepository($this->objectType);
 
                 $qb = $repository->genericBaseQuery('', '', false);
-                $qb = $this->buildWhereClause($value, $qb);
+                $this->applyFilter($qb, $value);
 
                 $query = $repository->getQueryFromBuilder($qb);
 
@@ -104,15 +104,15 @@ class AutoCompletionRelationTransformer {
                 return $this->isMultiple ? $entities : $entities[0];
             }
 
-            «buildWhereClause»
+            «applyFilter»
         }
     '''
 
-    def private buildWhereClause(Application it) '''
+    def private applyFilter(Application it) '''
         /**
-         * Builds the where clause for selecting matches for the current search.
+         * Adds the filter for selecting matches for the current search to the given query builder.
          */
-        protected function buildWhereClause(array $inputValues = [], QueryBuilder $qb): QueryBuilder
+        protected function applyFilter(QueryBuilder $qb, array $inputValues = []): void
         {
             // remove empty option if it has been selected
             foreach ($inputValues as $k => $v) {
@@ -134,8 +134,6 @@ class AutoCompletionRelationTransformer {
                 $qb->andWhere('tbl.' . $idField . ' = :' . $idField)
                    ->setParameter($idField, $inputValues[0]);
             }
-
-            return $qb;
         }
     '''
 

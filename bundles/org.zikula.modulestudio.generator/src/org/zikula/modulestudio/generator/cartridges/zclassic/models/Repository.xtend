@@ -210,12 +210,12 @@ class Repository {
     '''
 
     def private modelChildRepositoryBaseImpl(Entity it) '''
-        namespace «app.appNamespace»\Entity\Repository\Base;
+        namespace «app.appNamespace»\Repository\Base;
 
         «IF !incoming.empty || !outgoing.empty»
             use Doctrine\ORM\QueryBuilder;
         «ENDIF»
-        use «app.appNamespace»\Entity\Repository\«parentType.name.formatForCodeCapital»Repository;
+        use «app.appNamespace»\Repository\«parentType.name.formatForCodeCapital»Repository;
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -227,7 +227,7 @@ class Repository {
             /**
              * @return string[]
              */
-            public function getAllowedSortingFields()
+            public function getAllowedSortingFields(): array
             {
                 $parentFields = parent::getAllowedSortingFields();
 
@@ -245,7 +245,7 @@ class Repository {
     '''
 
     def private imports(Entity it) '''
-        namespace «app.appNamespace»\Entity\Repository\Base;
+        namespace «app.appNamespace»\Repository\Base;
 
         «/*IF tree != EntityTreeType.NONE»
             use Doctrine\ORM\EntityManager;
@@ -282,11 +282,11 @@ class Repository {
 
     def private selectById(Entity it) '''
         /**
-         * Adds an array of id filters to given query instance.
+         * Adds a list of identifier filters to given query builder.
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        protected function addIdListFilter(array $idList, QueryBuilder $qb): QueryBuilder
+        protected function addIdListFilter(QueryBuilder $qb, array $idList): void
         {
             $orX = $qb->expr()->orX();
 
@@ -300,8 +300,6 @@ class Repository {
             }
 
             $qb->andWhere($orX);
-
-            return $qb;
         }
 
         /**
@@ -340,7 +338,7 @@ class Repository {
             bool $slimMode = false
         ): ?array {
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
-            $qb = $this->addIdListFilter($idList, $qb);
+            $this->addIdListFilter($qb, $idList);
 
             if (null !== $this->collectionFilterHelper) {
                 $qb = $this->collectionFilterHelper->applyDefaultFilters('«name.formatForCode»', $qb);
@@ -375,8 +373,8 @@ class Repository {
             $qb->andWhere('tbl.slug = :slug')
                ->setParameter('slug', $slugTitle);
 
-            if ($excludeId > 0) {
-                $qb = $this->addExclusion($qb, [$excludeId]);
+            if (0 < $excludeId) {
+                $this->addExclusion($qb, [$excludeId]);
             }
 
             if (null !== $this->collectionFilterHelper) {
@@ -387,22 +385,20 @@ class Repository {
 
             $results = $query->getResult();
 
-            return null !== $results && count($results) > 0 ? $results[0] : null;
+            return null !== $results && 0 < count($results) ? $results[0] : null;
         }
     '''
 
     def private addExclusion(Entity it) '''
         /**
-         * Adds where clauses excluding desired identifiers from selection.
+         * Adds a filter excluding desired identifiers from selection.
          */
-        protected function addExclusion(QueryBuilder $qb, array $exclusions = []): QueryBuilder
+        protected function addExclusion(QueryBuilder $qb, array $exclusions = []): void
         {
             if (0 < count($exclusions)) {
                 $qb->andWhere('tbl.«getPrimaryKey.name.formatForCode» NOT IN (:excludedIdentifiers)')
                    ->setParameter('excludedIdentifiers', $exclusions);
             }
-
-            return $qb;
         }
     '''
 
@@ -473,7 +469,7 @@ class Repository {
         ): \Traversable {
             $qb = $this->getListQueryBuilder('', $orderBy, $useJoins);
             if (0 < count($exclude)) {
-                $qb = $this->addExclusion($qb, $exclude);
+                $this->addExclusion($qb, $exclude);
             }
 
             // $fragment is currently not used because getListQueryBuilder calls CollectionFilterHelper
@@ -562,7 +558,7 @@ class Repository {
             $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
                ->setParameter($fieldName, $fieldValue);
 
-            if ($excludeId > 0) {
+            if (0 < $excludeId) {
                 $qb = $this->addExclusion($qb, [$excludeId]);
             }
 
@@ -655,14 +651,14 @@ class Repository {
         /**
          * Adds ORDER BY clause to given query builder.
          */
-        protected function genericBaseQueryAddOrderBy(QueryBuilder $qb, string $orderBy = ''): QueryBuilder
+        protected function genericBaseQueryAddOrderBy(QueryBuilder $qb, string $orderBy = ''): void
         {
             if ('RAND()' === $orderBy) {
                 // random selection
                 $qb->addSelect('MOD(tbl.«getPrimaryKey.name.formatForCode», ' . random_int(2, 15) . ') AS HIDDEN randomIdentifiers')
                    ->orderBy('randomIdentifiers');
 
-                return $qb;
+                return;
             }
 
             if (empty($orderBy)) {
@@ -670,7 +666,7 @@ class Repository {
             }
 
             if (empty($orderBy)) {
-                return $qb;
+                return;
             }
 
             «IF !sortRelationsIn.empty || !sortRelationsOut.empty»
@@ -700,7 +696,7 @@ class Repository {
             «ENDIF»
             $qb->add('orderBy', $orderBy);
 
-            return $qb;
+            return;
         }
         «IF !sortRelationsIn.empty || !sortRelationsOut.empty»
 
@@ -818,9 +814,9 @@ class Repository {
     '''
 
     def private modelRepositoryImpl(Entity it) '''
-        namespace «app.appNamespace»\Entity\Repository;
+        namespace «app.appNamespace»\Repository;
 
-        use «app.appNamespace»\Entity\Repository\Base\Abstract«name.formatForCodeCapital»Repository;
+        use «app.appNamespace»\Repository\Base\Abstract«name.formatForCodeCapital»Repository;
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.

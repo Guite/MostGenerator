@@ -522,7 +522,7 @@ class EditEntityType {
                     $collectionFilterHelper = $this->collectionFilterHelper;
                     $queryBuilder = function (EntityRepository $er) use ($collectionFilterHelper) {
                         $qb = $this->entityFactory->getRepository('«relatedEntity.name.formatForCode»')->getListQueryBuilder('', '', false);
-                        $qb = $collectionFilterHelper->addCreatorFilter($qb);
+                        $collectionFilterHelper->addCreatorFilter($qb);
 
                         return $qb;
                     };

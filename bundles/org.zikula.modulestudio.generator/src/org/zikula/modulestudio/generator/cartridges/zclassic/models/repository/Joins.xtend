@@ -34,22 +34,20 @@ class Joins {
         }
 
         /**
-         * Helper method to add joins to from clause.
+         * Adds joins to from clause.
          */
-        protected function addJoinsToFrom(QueryBuilder $qb): QueryBuilder
+        protected function addJoinsToFrom(QueryBuilder $qb): void
         {
             «IF isInheriting || !getBidirectionalIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty || categorisable»
                 «IF isInheriting»
-                    $qb = parent::addJoinsToFrom($qb);
+                    parent::addJoinsToFrom($qb);
                 «ENDIF»
                 «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'from')»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'from')»«ENDFOR»
                 «IF categorisable»
                     $qb->leftJoin('tbl.categories', 'tblCategories');
                 «ENDIF»
-
             «ENDIF»
-            return $qb;
         }
     '''
 

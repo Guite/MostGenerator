@@ -304,7 +304,7 @@ class ExternalController {
         «ENDIF»
 
         if ('' !== $searchTerm) {
-            $qb = $collectionFilterHelper->addSearchFilter($objectType, $qb, $searchTerm);
+            $collectionFilterHelper->addSearchFilter($objectType, $qb, $searchTerm);
         }
 
         $paginator = $repository->retrieveCollectionResult($qb, true, $page, $resultsPerPage);

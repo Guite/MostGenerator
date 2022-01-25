@@ -200,7 +200,7 @@ class Entities {
             «IF hasTranslatableFields»
                 use «application.appNamespace»\Entity\«name.formatForCodeCapital»TranslationEntity;
             «ENDIF»
-            use «application.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository;
+            use «application.appNamespace»\Repository\«name.formatForCodeCapital»Repository;
             «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.importRelatedEntity(relation, false)»«ENDFOR»
             «FOR relation : getOutgoingJoinRelations»«thAssoc.importRelatedEntity(relation, true)»«ENDFOR»
         «ENDIF»

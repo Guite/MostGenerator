@@ -548,7 +548,7 @@ class HookHelper {
                     $qb = $entityManager->createQueryBuilder();
                     $qb->select('tbl')
                        ->from(HookAssignmentEntity::class, 'tbl');
-                    $qb = $this->addContextFilters($qb, $hook);
+                    $this->applyContextFilter($qb, $hook);
 
                     $query = $qb->getQuery();
                     $assignments = $query->getResult();
@@ -585,7 +585,7 @@ class HookHelper {
                     // delete assignments of removed data object
                     $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->delete(HookAssignmentEntity::class, 'tbl');
-                    $qb = $this->addContextFilters($qb, $hook);
+                    $this->applyContextFilter($qb, $hook);
 
                     $query = $qb->getQuery();
                     $query->execute();
@@ -594,7 +594,7 @@ class HookHelper {
                 /**
                  * Adds common hook-based filters to a given query builder.
                  */
-                protected function addContextFilters(QueryBuilder $qb, Hook $hook): QueryBuilder
+                protected function applyContextFilter(QueryBuilder $qb, Hook $hook): void
                 {
                     $qb->where('tbl.subscriberOwner = :moduleName')
                        ->setParameter('moduleName', $hook->getCaller())
@@ -605,8 +605,6 @@ class HookHelper {
                        ->andWhere('tbl.assignedEntity = :objectType')
                        ->setParameter('objectType', '«name.formatForCode»')
                    ;
-
-                    return $qb;
                 }
 
                 /**
@@ -632,7 +630,7 @@ class HookHelper {
                     $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
                     $qb->select('tbl')
                        ->from(HookAssignmentEntity::class, 'tbl');
-                    $qb = $this->addContextFilters($qb, $hook);
+                    $this->applyContextFilter($qb, $hook);
                     $qb->add('orderBy', 'tbl.updatedDate DESC');
 
                     $query = $qb->getQuery();

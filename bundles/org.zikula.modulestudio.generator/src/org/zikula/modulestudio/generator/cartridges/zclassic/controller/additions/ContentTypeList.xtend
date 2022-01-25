@@ -157,8 +157,8 @@ class ContentTypeList {
                 if (in_array($objectType, $this->categorisableObjectTypes, true)) {
                     if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                         // apply category filters
-                        if (is_array($this->data['categories']) && count($this->data['categories']) > 0) {
-                            $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $this->data['categories']);
+                        if (is_array($this->data['categories']) && 0 < count($this->data['categories'])) {
+                            $this->categoryHelper->applyFilters($qb, $objectType, $this->data['categories']);
                         }
                     }
                 }

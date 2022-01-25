@@ -219,7 +219,7 @@ class BlockList {
             if ($hasCategories) {
                 // apply category filters
                 if (is_array($properties['categories']) && 0 < count($properties['categories'])) {
-                    $qb = $this->categoryHelper->buildFilterClauses($qb, $objectType, $properties['categories']);
+                    $this->categoryHelper->applyFilters($qb, $objectType, $properties['categories']);
                 }
             }
         «ENDIF»

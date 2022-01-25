@@ -132,13 +132,13 @@ class CategoryHelper {
         }
 
         /**
-         * Adds a list of where clauses for a certain list of categories to a given query builder.
+         * Adds a list of filters for a certain list of categories to a given query builder.
          */
-        public function buildFilterClauses(
+        public function applyFilters(
             QueryBuilder $queryBuilder,
             string $objectType = '',
             array $catIds = []
-        ): QueryBuilder {
+        ): void {
             $qb = $queryBuilder;
 
             $properties = $this->getAllProperties($objectType);
@@ -185,8 +185,6 @@ class CategoryHelper {
                        ->setParameter('categories' . $propertyName, $filterValue);
                 }
             }
-
-            return $qb;
         }
 
         /**

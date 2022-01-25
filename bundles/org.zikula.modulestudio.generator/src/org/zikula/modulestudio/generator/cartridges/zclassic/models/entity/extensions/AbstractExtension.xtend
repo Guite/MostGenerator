@@ -146,11 +146,11 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         if (null === app) {
             app = application
         }
-        app.appNamespace + '\\Entity\\Repository\\' + name.formatForCodeCapital + classType.formatForCodeCapital + 'Repository'
+        app.appNamespace + '\\Repository\\' + name.formatForCodeCapital + classType.formatForCodeCapital + 'Repository'
     }
 
     def protected extensionClassRepositoryBaseImpl(Entity it) '''
-        namespace «app.appNamespace»\Entity\Repository\Base;
+        namespace «app.appNamespace»\Repository\Base;
 
         «IF 'translation' == classType»
             use Gedmo\Translatable\Entity\Repository\TranslationRepository;
@@ -182,9 +182,9 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     }
 
     def protected extensionClassRepositoryImpl(Entity it) '''
-        namespace «app.appNamespace»\Entity\Repository;
+        namespace «app.appNamespace»\Repository;
 
-        use «app.appNamespace»\Entity\Repository\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Repository;
+        use «app.appNamespace»\Repository\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Repository;
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.

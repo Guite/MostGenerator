@@ -291,14 +291,14 @@ class CollectionFilterHelper {
                         // multi category filter«/* old 
                         $qb->andWhere('tblCategories.category IN (:categories)')
                            ->setParameter('categories', $v);*/»
-                        $qb = $this->categoryHelper->buildFilterClauses($qb, '«name.formatForCode»', $v);
+                        $this->categoryHelper->applyFilters($qb, '«name.formatForCode»', $v);
                         continue;
                     }
                 «ENDIF»
                 if (in_array($k, ['q', 'searchterm'], true)) {
                     // quick search
                     if (!empty($v)) {
-                        $qb = $this->addSearchFilter('«name.formatForCode»', $qb, $v);
+                        $this->addSearchFilter('«name.formatForCode»', $qb, $v);
                     }
                     continue;
                 }
@@ -413,7 +413,7 @@ class CollectionFilterHelper {
                     }
                 «ENDIF»
                 if ($showOnlyOwnEntries) {
-                    $qb = $this->addCreatorFilter($qb);
+                    $this->addCreatorFilter($qb);
                 }
             «ENDIF»
 
@@ -456,7 +456,7 @@ class CollectionFilterHelper {
             «ENDIF»
             «IF hasStartOrEndDateField»
 
-                $qb = $this->applyDateRangeFilterFor«name.formatForCodeCapital»($qb);
+                $this->applyDateRangeFilterFor«name.formatForCodeCapital»($qb);
             «ENDIF»
             «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addDateRangeFilterForJoin(false)»«ENDFOR»
             «FOR relation : getOutgoingJoinRelations»«relation.addDateRangeFilterForJoin(true)»«ENDFOR»
@@ -471,7 +471,7 @@ class CollectionFilterHelper {
             val aliasName = 'tbl' + getRelationAliasName(useTarget).formatForCodeCapital
             '''
                 if (in_array('«aliasName»', $qb->getAllAliases(), true)) {
-                    $qb = $this->applyDateRangeFilterFor«relatedEntity.name.formatForCodeCapital»($qb, '«aliasName»');
+                    $this->applyDateRangeFilterFor«relatedEntity.name.formatForCodeCapital»($qb, '«aliasName»');
                 }
             '''
         }
@@ -481,7 +481,7 @@ class CollectionFilterHelper {
         /**
          * Applies «IF hasStartDateField»start «IF hasEndDateField»and «ENDIF»«ENDIF»«IF hasEndDateField»end «ENDIF»date filters for selecting «nameMultiple.formatForDisplay».
          */
-        protected function applyDateRangeFilterFor«name.formatForCodeCapital»(QueryBuilder $qb, string $alias = 'tbl'): QueryBuilder
+        protected function applyDateRangeFilterFor«name.formatForCodeCapital»(QueryBuilder $qb, string $alias = 'tbl'): void
         {
             $request = $this->requestStack->getCurrentRequest();
             «IF hasStartDateField»
@@ -497,19 +497,17 @@ class CollectionFilterHelper {
                 $qb->andWhere(«endDateField.whereClauseForDateRangeFilter('>=', 'endDate')»)
                    ->setParameter('endDate', $endDate);
             «ENDIF»
-
-            return $qb;
         }
     '''
 
     def private addSearchFilter(Application it) '''
         /**
-         * Adds a where clause for search query.
+         * Adds a filter for search query.
          */
-        public function addSearchFilter(string $objectType, QueryBuilder $qb, string $fragment = ''): QueryBuilder
+        public function addSearchFilter(string $objectType, QueryBuilder $qb, string $fragment = ''): void
         {
             if ('' === $fragment) {
-                return $qb;
+                return;
             }
 
             $filters = [];
@@ -537,8 +535,6 @@ class CollectionFilterHelper {
             foreach ($parameters as $parameterName => $parameterValue) {
                 $qb->setParameter($parameterName, $parameterValue);
             }
-
-            return $qb;
         }
     '''
 
@@ -546,7 +542,7 @@ class CollectionFilterHelper {
         /**
          * Adds a filter for the createdBy field.
          */
-        public function addCreatorFilter(QueryBuilder $qb, ?int $userId = null): QueryBuilder
+        public function addCreatorFilter(QueryBuilder $qb, ?int $userId = null): void
         {
             if (null === $userId) {
                 $userId = $this->currentUserApi->isLoggedIn()
@@ -557,8 +553,6 @@ class CollectionFilterHelper {
 
             $qb->andWhere('tbl.createdBy = :userId')
                ->setParameter('userId', $userId);
-
-            return $qb;
         }
     '''
 

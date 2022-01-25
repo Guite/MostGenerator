@@ -15,13 +15,13 @@ class LinkTable {
      * Creates a reference table class file for every many-to-many relationship instance.
      */
     def generate(ManyToManyRelationship it, Application app, IMostFileSystemAccess fsa) {
-        fsa.generateClassPair('Entity/Repository/' + refClass.formatForCodeCapital + 'Repository.php',
+        fsa.generateClassPair('Repository/' + refClass.formatForCodeCapital + 'Repository.php',
             modelRefRepositoryBaseImpl(app), modelRefRepositoryImpl(app)
         )
     }
 
     def private modelRefRepositoryBaseImpl(ManyToManyRelationship it, Application app) '''
-        namespace «app.appNamespace»\Entity\Repository\Base;
+        namespace «app.appNamespace»\Repository\Base;
 
         use Doctrine\ORM\EntityRepository;
 
@@ -37,9 +37,9 @@ class LinkTable {
     '''
 
     def private modelRefRepositoryImpl(ManyToManyRelationship it, Application app) '''
-        namespace «app.appNamespace»\Entity\Repository;
+        namespace «app.appNamespace»\Repository;
 
-        use «app.appNamespace»\Entity\Repository\Base\Abstract«refClass.formatForCodeCapital»Repository;
+        use «app.appNamespace»\Repository\Base\Abstract«refClass.formatForCodeCapital»Repository;
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
