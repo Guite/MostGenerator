@@ -39,7 +39,7 @@ class TreeData {
             ];
             foreach ($tree as $node) {
                 if (1 > $node->getLvl() || $rootId === $node->getKey()) {
-                    list($nodes, $actions) = $this->processTreeItemWithChildren(
+                    [$nodes, $actions] = $this->processTreeItemWithChildren(
                         $objectType,
                         $node,
                         $routeArea,
@@ -103,7 +103,7 @@ class TreeData {
             if (0 < count($node->getChildren())) {
                 $nodeItem .= '<ul>';
                 foreach ($node->getChildren() as $childNode) {
-                    list($subNodes, $subActions) = $this->processTreeItemWithChildren(
+                    [$subNodes, $subActions] = $this->processTreeItemWithChildren(
                         $objectType,
                         $childNode,
                         $routeArea,

@@ -62,7 +62,12 @@ interface EntityExtensionInterface {
     def String extensionClassImplAnnotations(Entity it)
 
     /**
-     * Returns the extension repository base class implementation.
+     * Returns the extension repository interface base implementation.
+     */
+    def String extensionRepositoryInterfaceBaseImplementation(Entity it)
+
+    /**
+     * Returns the extension repository class base implementation.
      */
     def String extensionRepositoryClassBaseImplementation(Entity it)
 }

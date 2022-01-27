@@ -22,7 +22,6 @@ class UserDeletion {
             public function updateCreator(
                 int $userId,
                 int $newUserId,
-                TranslatorInterface $translator,
                 LoggerInterface $logger,
                 CurrentUserApiInterface $currentUserApi
             ): void;
@@ -35,7 +34,6 @@ class UserDeletion {
             public function updateLastEditor(
                 int $userId,
                 int $newUserId,
-                TranslatorInterface $translator,
                 LoggerInterface $logger,
                 CurrentUserApiInterface $currentUserApi
             ): void;
@@ -47,7 +45,6 @@ class UserDeletion {
              */
             public function deleteByCreator(
                 int $userId,
-                TranslatorInterface $translator,
                 LoggerInterface $logger,
                 CurrentUserApiInterface $currentUserApi
             ): void;
@@ -59,7 +56,6 @@ class UserDeletion {
              */
             public function deleteByLastEditor(
                 int $userId,
-                TranslatorInterface $translator,
                 LoggerInterface $logger,
                 CurrentUserApiInterface $currentUserApi
             ): void;
@@ -75,7 +71,6 @@ class UserDeletion {
                 string $userFieldName,
                 int $userId,
                 int $newUserId,
-                TranslatorInterface $translator,
                 LoggerInterface $logger,
                 CurrentUserApiInterface $currentUserApi
             ): void;
@@ -88,7 +83,6 @@ class UserDeletion {
             public function deleteByUserField(
                 string $userFieldName,
                 int $userId,
-                TranslatorInterface $translator,
                 LoggerInterface $logger,
                 CurrentUserApiInterface $currentUserApi
             ): void;
@@ -126,12 +120,11 @@ class UserDeletion {
         public function updateCreator(
             int $userId,
             int $newUserId,
-            TranslatorInterface $translator,
             LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi
         ): void {
             if (0 === $userId || 0 === $newUserId) {
-                throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
+                throw new InvalidArgumentException('Invalid user identifier received.');
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -157,12 +150,11 @@ class UserDeletion {
         public function updateLastEditor(
             int $userId,
             int $newUserId,
-            TranslatorInterface $translator,
             LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi
         ): void {
             if (0 === $userId || 0 === $newUserId) {
-                throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
+                throw new InvalidArgumentException('Invalid user identifier received.');
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -187,12 +179,11 @@ class UserDeletion {
     def private deleteByCreator(Entity it) '''
         public function deleteByCreator(
             int $userId,
-            TranslatorInterface $translator,
             LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi
         ): void {
             if (0 === $userId) {
-                throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
+                throw new InvalidArgumentException('Invalid user identifier received.');
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -216,12 +207,11 @@ class UserDeletion {
     def private deleteByLastEditor(Entity it) '''
         public function deleteByLastEditor(
             int $userId,
-            TranslatorInterface $translator,
             LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi
         ): void {
             if (0 === $userId) {
-                throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
+                throw new InvalidArgumentException('Invalid user identifier received.');
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -247,15 +237,14 @@ class UserDeletion {
             string $userFieldName,
             int $userId,
             int $newUserId,
-            TranslatorInterface $translator,
             LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi
         ): void {
             if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
-                throw new InvalidArgumentException($translator->trans('Invalid user field name received.'));
+                throw new InvalidArgumentException('Invalid user field name received.');
             }
             if (0 === $userId || 0 === $newUserId) {
-                throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
+                throw new InvalidArgumentException('Invalid user identifier received.');
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -283,15 +272,14 @@ class UserDeletion {
         public function deleteByUserField(
             string $userFieldName,
             int $userId,
-            TranslatorInterface $translator,
             LoggerInterface $logger,
             CurrentUserApiInterface $currentUserApi
         ): void {
             if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
-                throw new InvalidArgumentException($translator->trans('Invalid user field name received.'));
+                throw new InvalidArgumentException('Invalid user field name received.');
             }
             if (0 === $userId) {
-                throw new InvalidArgumentException($translator->trans('Invalid user identifier received.'));
+                throw new InvalidArgumentException('Invalid user identifier received.');
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();

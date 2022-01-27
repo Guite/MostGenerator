@@ -156,7 +156,7 @@ class ControllerAction {
         PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
-        EntityFactory $entityFactory,
+        «name.formatForCodeCapital»RepositoryInterface $repository,
         «IF loggable»
             LoggableHelper $loggableHelper,
         «ENDIF»
@@ -173,7 +173,7 @@ class ControllerAction {
             $permissionHelper,
             $controllerHelper,
             $viewHelper,
-            $entityFactory,«IF loggable»
+            $repository,«IF loggable»
             $loggableHelper,«ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField»
             $entityDisplayHelper,«ENDIF»
             $«name.formatForCode»,
@@ -207,7 +207,7 @@ class ControllerAction {
         PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
-        EntityFactory $entityFactory,
+        «name.formatForCodeCapital»RepositoryInterface $repository,
         CurrentUserApiInterface $currentUserApi,
         WorkflowHelper $workflowHelper,
         «IF !skipHookSubscribers»
@@ -223,7 +223,7 @@ class ControllerAction {
             $permissionHelper,
             $controllerHelper,
             $viewHelper,
-            $entityFactory,
+            $repository,
             $currentUserApi,
             $workflowHelper,«IF !skipHookSubscribers»
             $hookHelper,«ENDIF»

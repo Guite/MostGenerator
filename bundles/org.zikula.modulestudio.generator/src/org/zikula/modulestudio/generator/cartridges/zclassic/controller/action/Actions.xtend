@@ -41,10 +41,10 @@ class Actions {
         «IF action instanceof DisplayAction || action instanceof DeleteAction»
             «IF action instanceof DisplayAction»
                 if (null === $«name.formatForCode») {
-                    $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+                    $«name.formatForCode» = $repository->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
                 }
             «ELSEIF action instanceof DeleteAction»
-                $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+                $«name.formatForCode» = $repository->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
             «ENDIF»
             if (null === $«name.formatForCode») {
                 throw new NotFoundHttpException(

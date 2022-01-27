@@ -104,9 +104,6 @@ class ControllerLayer {
 
     def private commonAppImports(Entity it) '''
         use «entityClassName('', false)»;
-        «IF hasViewAction || hasDisplayAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
-            use «app.appNamespace»\Entity\Factory\EntityFactory;
-        «ENDIF»
         «IF loggable»
             use «app.appNamespace»\Entity\«name.formatForCodeCapital»LogEntryEntity;
         «ENDIF»
@@ -134,6 +131,12 @@ class ControllerLayer {
         «ENDIF»
         «IF hasViewAction || hasDeleteAction || loggable»
             use «app.appNamespace»\Helper\WorkflowHelper;
+        «ENDIF»
+        «IF hasViewAction || hasDisplayAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
+            use «app.appNamespace»\Repository\«name.formatForCodeCapital»RepositoryInterface;
+            «IF loggable»
+                use «app.appNamespace»\Repository\«name.formatForCodeCapital»LogEntryRepositoryInterface;
+            «ENDIF»
         «ENDIF»
     '''
 

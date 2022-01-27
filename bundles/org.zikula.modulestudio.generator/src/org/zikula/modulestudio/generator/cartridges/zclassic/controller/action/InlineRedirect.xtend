@@ -21,7 +21,7 @@ class InlineRedirect {
                 «handleInlineRedirectBaseImpl»
             «ELSE»
                 return parent::handleInlineRedirect«IF !application.targets('3.1')»Action«ENDIF»(
-                    $entityFactory,
+                    $repository,
                     $entityDisplayHelper,
                     $idPrefix,
                     $commandName,
@@ -47,7 +47,7 @@ class InlineRedirect {
 
     def private handleInlineRedirectSignature(Entity it) '''
         public function handleInlineRedirect«IF !application.targets('3.1')»Action«ENDIF»(
-            EntityFactory $entityFactory,
+            «name.formatForCodeCapital»RepositoryInterface $repository,
             EntityDisplayHelper $entityDisplayHelper,
             string $idPrefix,
             string $commandName,
@@ -63,7 +63,6 @@ class InlineRedirect {
         $searchTerm = '';
         «IF hasStringFieldsEntity»
             if (!empty($id)) {
-                $repository = $entityFactory->getRepository('«name.formatForCode»');
                 «IF hasSluggableFields && slugUnique»
                     $«name.formatForCode» = null;
                     if (!is_numeric($id)) {

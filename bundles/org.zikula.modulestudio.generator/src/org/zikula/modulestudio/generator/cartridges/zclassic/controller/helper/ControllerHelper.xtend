@@ -207,7 +207,7 @@ class ControllerHelper {
             $repository = $this->entityFactory->getRepository($objectType);
 
             // parameter for used sorting field
-            list($sort, $sortdir) = $this->determineDefaultViewSorting($objectType);
+            [$sort, $sortdir] = $this->determineDefaultViewSorting($objectType);
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = mb_strtolower($sortdir);
             «IF hasTrees»

@@ -20,7 +20,6 @@ class UserListener {
         «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
             public function __construct(
                 «IF hasStandardFieldEntities || hasUserFields»
-                    protected TranslatorInterface $translator,
                     protected EntityFactory $entityFactory,
                     protected CurrentUserApiInterface $currentUserApi,
                     protected LoggerInterface $logger«IF hasUserVariables || hasLoggable»,«ENDIF»
@@ -135,7 +134,6 @@ class UserListener {
                     $repo->updateCreator(
                         $userId,
                         «application.adhUid(onAccountDeletionCreator)»,
-                        $this->translator,
                         $this->logger,
                         $this->currentUserApi
                     );
@@ -143,7 +141,6 @@ class UserListener {
                     // delete all «nameMultiple.formatForDisplay» created by this user
                     $repo->deleteByCreator(
                         $userId,
-                        $this->translator,
                         $this->logger,
                         $this->currentUserApi
                     );
@@ -154,7 +151,6 @@ class UserListener {
                     $repo->updateLastEditor(
                         $userId,
                         «application.adhUid(onAccountDeletionLastEditor)»,
-                        $this->translator,
                         $this->logger,
                         $this->currentUserApi
                     );
@@ -162,7 +158,6 @@ class UserListener {
                     // delete all «nameMultiple.formatForDisplay» recently updated by this user
                     $repo->deleteByLastEditor(
                         $userId,
-                        $this->translator,
                         $this->logger,
                         $this->currentUserApi
                     );
@@ -194,7 +189,6 @@ class UserListener {
                     '«name.formatForCode»',
                     $userId,
                     «application.adhUid(onAccountDeletion)»,
-                    $this->translator,
                     $this->logger,
                     $this->currentUserApi
                 );
@@ -203,7 +197,6 @@ class UserListener {
                 $repo->deleteByUserField(
                     '«name.formatForCode»',
                     $userId,
-                    $this->translator,
                     $this->logger,
                     $this->currentUserApi
                 );

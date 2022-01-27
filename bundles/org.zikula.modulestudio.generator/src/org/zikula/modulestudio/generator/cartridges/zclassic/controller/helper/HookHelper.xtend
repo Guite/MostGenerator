@@ -395,6 +395,7 @@ class HookHelper {
                 use «application.appNamespace»\Helper\ImageHelper;
             «ENDIF»
             use «application.appNamespace»\Helper\PermissionHelper;
+            use «application.appNamespace»\Repository\«name.formatForCodeCapital»RepositoryInterface;
         «ENDIF»
 
         /**
@@ -409,6 +410,7 @@ class HookHelper {
                     protected FormFactoryInterface $formFactory
                 «ELSEIF category == 'UiHooks'»
                     protected EntityFactory $entityFactory,
+                    protected «name.formatForCodeCapital»RepositoryInterface $repository,
                     protected Environment $twig,
                     protected PermissionHelper $permissionHelper«IF !application.getUploadEntities.empty»,«ENDIF»
                     «IF !application.getUploadEntities.empty»
@@ -612,12 +614,12 @@ class HookHelper {
                  */
                 protected function selectAssignedEntities(Hook $hook): array
                 {
-                    list($assignments, $assignedIds) = $this->selectAssignedIds($hook);
+                    [$assignments, $assignedIds] = $this->selectAssignedIds($hook);
                     if (!count($assignedIds)) {
                         return [[], []];
                     }
 
-                    $entities = $this->entityFactory->getRepository('«name.formatForCode»')->selectByIdList($assignedIds);
+                    $entities = $this->repository->selectByIdList($assignedIds);
 
                     return [$assignments, $entities];
                 }
@@ -649,7 +651,7 @@ class HookHelper {
                  */
                 protected function renderDisplayHookResponse(Hook $hook, string $context): DisplayHookResponse
                 {
-                    list($assignments, $assignedEntities) = $this->selectAssignedEntities($hook);
+                    [$assignments, $assignedEntities] = $this->selectAssignedEntities($hook);
                     $template = '@«application.appName»/«name.formatForCodeCapital»/includeDisplayItemListMany.html.twig';
 
                     $templateParameters = [

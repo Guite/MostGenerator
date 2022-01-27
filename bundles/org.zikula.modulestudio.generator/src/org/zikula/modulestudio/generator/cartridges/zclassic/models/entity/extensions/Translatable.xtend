@@ -142,4 +142,17 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          «' '»*     }
          «' '»* )
     '''
+
+    /**
+     * Returns the extension repository interface base implementation.
+     */
+    override extensionRepositoryInterfaceBaseImplementation(Entity it) '''
+        public function translate($entity, $field, $locale, $value);
+
+        public function findTranslations($entity);
+
+        public function findObjectByTranslatedField($field, $value, $class);
+
+        public function findTranslationsByObjectId($id);
+    '''
 }

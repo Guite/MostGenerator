@@ -26,11 +26,11 @@ class MassHandling {
             ): RedirectResponse {
                 return $this->handleSelectedEntriesInternal(
                     $request,
-                    $logger,
-                    $entityFactory,
+                    $repository,
                     $workflowHelper,«IF !skipHookSubscribers»
                     $hookHelper,«ENDIF»
                     $currentUserApi,
+                    $logger,
                     «isAdmin.displayBool»
                 );
             }
@@ -66,19 +66,17 @@ class MassHandling {
 
     def private handleSelectedObjectsArguments(Entity it, Boolean internalMethod) '''
         Request $request,
-        LoggerInterface $logger,
-        EntityFactory $entityFactory,
+        «name.formatForCodeCapital»RepositoryInterface $repository,
         WorkflowHelper $workflowHelper,
         «IF !skipHookSubscribers»
             HookHelper $hookHelper,
         «ENDIF»
-        CurrentUserApiInterface $currentUserApi«IF internalMethod»,
+        CurrentUserApiInterface $currentUserApi,
+        LoggerInterface $logger«IF internalMethod»,
         bool $isAdmin = false«ENDIF»
     '''
 
     def private handleSelectedObjectsBaseImpl(Entity it) '''
-        $objectType = '«name.formatForCode»';
-
         // get parameters
         $action = $request->request->get('action');
         $items = $request->request->get('items');
@@ -88,7 +86,6 @@ class MassHandling {
 
         $action = mb_strtolower($action);
 
-        $repository = $entityFactory->getRepository($objectType);
         $userName = $currentUserApi->get('uname');
 
         // process each item

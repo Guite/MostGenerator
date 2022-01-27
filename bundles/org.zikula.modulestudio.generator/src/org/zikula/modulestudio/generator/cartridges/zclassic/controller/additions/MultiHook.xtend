@@ -36,10 +36,12 @@ class MultiHook {
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\ExtensionsModule\ModuleInterface\MultiHook\NeedleInterface;
         «IF hasDisplayAction»
-            use «app.appNamespace»\Entity\Factory\EntityFactory;
             use «app.appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
         use «app.appNamespace»\Helper\PermissionHelper;
+        «IF hasDisplayAction»
+            use «app.appNamespace»\Repository\«name.formatForCodeCapital»RepositoryInterface;
+        «ENDIF»
 
         /**
          * «name.formatForCodeCapital»Needle base class.
@@ -62,7 +64,7 @@ class MultiHook {
             protected TranslatorInterface $translator,
             protected RouterInterface $router,
             protected PermissionHelper $permissionHelper«IF hasDisplayAction»,
-            protected EntityFactory $entityFactory,
+            protected «name.formatForCodeCapital»RepositoryInterface $repository,
             protected EntityDisplayHelper $entityDisplayHelper«ENDIF»
         ) {
             $nsParts = explode('\\', static::class);
@@ -159,8 +161,7 @@ class MultiHook {
                     return $cache[$needleId];
                 }
 
-                $repository = $this->entityFactory->getRepository('«name.formatForCode»');
-                $entity = $repository->selectById($entityId, false);
+                $entity = $this->repository->selectById($entityId, false);
                 if (null === $entity) {
                     $notFoundMessage = $this->translator->trans(
                         '«name.formatForDisplayCapital» with id %id% could not be found',

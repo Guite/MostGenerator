@@ -314,9 +314,6 @@ class Listeners {
                 use Psr\Log\LoggerInterface;
             «ENDIF»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            «IF hasStandardFieldEntities || hasUserFields»
-                use Symfony\Contracts\Translation\TranslatorInterface;
-            «ENDIF»
             «IF hasUserVariables»
                 use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
             «ENDIF»

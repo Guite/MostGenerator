@@ -99,7 +99,24 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     '''
 
     /**
-     * Returns the extension repository base class implementation.
+     * Returns the extension repository interface base implementation.
+     */
+    override extensionRepositoryInterfaceBaseImplementation(Entity it) '''
+        public function getLogEntries($entity);
+
+        public function getLogEntriesQuery($entity);
+
+        public function revert($entity, $version = 1);
+
+        public function selectDeleted(?int $limit = null): array;
+
+        public function purgeHistory(string $revisionHandling = 'unlimited', string $limitParameter = ''): void;
+
+        public function updateUserName(string $oldUserName, string $newUserName): void;
+    '''
+
+    /**
+     * Returns the extension repository class base implementation.
      */
     override extensionRepositoryClassBaseImplementation(Entity it) '''
         /**

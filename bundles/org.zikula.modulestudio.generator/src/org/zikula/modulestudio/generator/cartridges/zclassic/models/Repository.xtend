@@ -252,7 +252,7 @@ class Repository {
                 {
                     parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»Entity::class));
                 }
-            «ELSEIF canDirectlyExtendServiceRepo»
+            «ELSE»
                 public function __construct(ManagerRegistry $registry)
                 {
                     parent::__construct($registry, «name.formatForCodeCapital»Entity::class);
@@ -373,7 +373,6 @@ class Repository {
             «ENDIF»
             «IF !canDirectlyExtendServiceRepo»
                 use Doctrine\ORM\EntityManagerInterface;
-                use Doctrine\ORM\Mapping\ClassMetadata;
             «ENDIF»
             use Doctrine\ORM\Query;
             use Doctrine\ORM\QueryBuilder;
@@ -392,7 +391,6 @@ class Repository {
         «ENDIF»
         use InvalidArgumentException;
         use Psr\Log\LoggerInterface;
-        use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\Bundle\CoreBundle\Doctrine\Paginator;
         use Zikula\Bundle\CoreBundle\Doctrine\PaginatorInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
@@ -728,7 +726,7 @@ class Repository {
                 if (true !== $useJoins) {
                     $orderByField = $orderBy;
                     if (false !== mb_strpos($orderByField, ' ')) {
-                        list($orderByField, $direction) = explode(' ', $orderByField, 2);
+                        [$orderByField, $direction] = explode(' ', $orderByField, 2);
                     }
                     if (
                         «IF !sortRelationsIn.empty»
@@ -833,7 +831,7 @@ class Repository {
             protected function resolveOrderByForRelation(string $orderBy): string
             {
                 if (false !== mb_strpos($orderBy, ' ')) {
-                    list($orderBy, $direction) = explode(' ', $orderBy, 2);
+                    [$orderBy, $direction] = explode(' ', $orderBy, 2);
                 } else {
                     $direction = 'ASC';
                 }

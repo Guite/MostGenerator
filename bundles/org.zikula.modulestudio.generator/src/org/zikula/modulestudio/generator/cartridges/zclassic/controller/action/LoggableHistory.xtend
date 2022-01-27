@@ -30,7 +30,8 @@ class LoggableHistory {
                 return $this->loggableHistoryInternal(
                     $request,
                     $permissionHelper,
-                    $entityFactory,
+                    $repository,
+                    $logEntryRepository,
                     $loggableHelper,«IF hasTranslatableFields»
                     $translatableHelper,«ENDIF»
                     $workflowHelper,
@@ -77,7 +78,8 @@ class LoggableHistory {
     def private loggableHistoryArguments(Entity it, Boolean internalMethod) '''
         Request $request,
         PermissionHelper $permissionHelper,
-        EntityFactory $entityFactory,
+        «name.formatForCodeCapital»RepositoryInterface $repository,
+        «name.formatForCodeCapital»LogEntryRepositoryInterface $logEntryRepository,
         LoggableHelper $loggableHelper,
         «IF hasTranslatableFields»
             TranslatableHelper $translatableHelper,
@@ -98,7 +100,7 @@ class LoggableHistory {
             );
         }
 
-        $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
+        $«name.formatForCode» = $repository->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException(
                 $this->trans(
@@ -115,9 +117,7 @@ class LoggableHistory {
         }
 
         $routeArea = $isAdmin ? 'admin' : '';
-        $entityManager = $entityFactory->getEntityManager();
-        $logEntriesRepository = $entityManager->getRepository(«name.formatForCodeCapital»LogEntryEntity::class);
-        $logEntries = $logEntriesRepository->getLogEntries($«name.formatForCode»);
+        $logEntries = $this->logEntryRepository->getLogEntries($«name.formatForCode»);
 
         $revertToVersion = $request->query->getInt('revert');
         if (0 < $revertToVersion && 1 < count($logEntries)) {
@@ -165,7 +165,7 @@ class LoggableHistory {
             }
             «IF hasSluggableFields && slugUnique»
 
-                $«name.formatForCode» = $entityFactory->getRepository('«name.formatForCode»')->selectById($«name.formatForCode»Id);
+                $«name.formatForCode» = $repository->selectById($«name.formatForCode»Id);
             «ENDIF»
 
             return $this->redirectToRoute(
@@ -205,11 +205,11 @@ class LoggableHistory {
         ];
 
         if (true === $isDiffView) {
-            list(
+            [
                 $minVersion,
                 $maxVersion,
                 $diffValues
-            ) = $loggableHelper->determineDiffViewParameters($logEntries, $versions);
+            ] = $loggableHelper->determineDiffViewParameters($logEntries, $versions);
             $templateParameters['minVersion'] = $minVersion;
             $templateParameters['maxVersion'] = $maxVersion;
             $templateParameters['diffValues'] = $diffValues;
