@@ -98,7 +98,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
              *
              * @ORM\Column(name="foreign_key", type="integer")
              */
-            protected int $foreignKey;
+            protected «/* no type allowed because we override a parent field */»$foreignKey;
 
         «ENDIF»
         /**
