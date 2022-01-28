@@ -166,7 +166,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          *
         «methodAnnotations»
          */
-        abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»RepositoryInterface extends ObjectRepository
+        interface Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»RepositoryInterface extends ObjectRepository
         {
             «extensionRepositoryInterfaceBaseImplementation»
         }
