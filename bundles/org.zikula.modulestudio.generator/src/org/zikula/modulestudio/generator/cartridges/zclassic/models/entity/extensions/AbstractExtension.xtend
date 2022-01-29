@@ -41,7 +41,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         val entitySuffix = 'Entity'
         val repositorySuffix = 'Repository'
         var classPrefix = name.formatForCodeCapital + classType.formatForCodeCapital
-        val repositoryPath = entityPath + 'Repository/'
+        val repositoryPath = 'Repository/'
         var fileName = ''
 
         fileName = 'Base/Abstract' + classPrefix + entitySuffix + '.php'
