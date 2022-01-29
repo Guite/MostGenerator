@@ -77,7 +77,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          *
          * This is the base «classType.formatForDisplay» class for «it.name.formatForDisplay» entities.
          */
-        abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends «extensionBaseClass»
+        abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends «extensionBaseClass» implements Abstract«app.name.formatForCodeCapital»EntityInterface
         {
             «extensionClassBaseImplementation»
         }
@@ -135,7 +135,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          *
         «extensionClassImplAnnotations»
          */
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends BaseEntity
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends BaseEntity implements «app.name.formatForCodeCapital»EntityInterface
         {
             // feel free to add your own methods here
         }

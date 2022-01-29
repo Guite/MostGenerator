@@ -49,6 +49,7 @@ class Entities {
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         fh = new FileHelper(it)
+        fsa.generateClassPair('Entity/' + name.formatForCodeCapital + 'EntityInterface.php', entityInterfaceBaseImpl, entityInterfaceImpl)
         entities.forEach(e|e.generate(it, fsa))
 
         new LifecycleListener().generate(it, fsa)
@@ -75,6 +76,32 @@ class Entities {
         }
     }
 
+    def private entityInterfaceBaseImpl(Application it) '''
+        namespace «appNamespace»\Entity\Base;
+
+        /**
+         * Entity interface for the «name.formatForDisplay» application.
+         */
+        interface Abstract«name.formatForCodeCapital»EntityInterface
+        {
+            // nothing
+        }
+    '''
+
+    def private entityInterfaceImpl(Application it) '''
+        namespace «appNamespace»\Entity;
+
+        use «appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital»EntityInterface;
+
+        /**
+         * Entity interface for the «name.formatForDisplay» application.
+         */
+        interface «name.formatForCodeCapital»EntityInterface extends Abstract«name.formatForCodeCapital»EntityInterface
+        {
+            // feel free to add your own interface methods
+        }
+    '''
+
     /**
      * Creates an entity class file for every Entity instance.
      */
@@ -84,18 +111,7 @@ class Entities {
             extMan = new ExtensionManager(it)
         }
         thProp = new Property(app, extMan)
-        val entityPath = 'Entity/'
-        val entityClassSuffix = 'Entity'
-        val entityFileName = name.formatForCodeCapital + entityClassSuffix
-        var fileName = ''
-
-        fileName = 'Abstract' + entityFileName + '.php'
-        fsa.generateFile(entityPath + 'Base/' + fileName, modelEntityBaseImpl(app))
-
-        if (!app.generateOnlyBaseClasses) {
-            fileName = entityFileName + '.php'
-            fsa.generateFile(entityPath + fileName, modelEntityImpl(app))
-        }
+        fsa.generateClassPair('Entity/' + name.formatForCodeCapital + 'Entity.php', modelEntityBaseImpl(app), modelEntityImpl(app))
     }
 
     def private dispatch imports(MappedSuperClass it, Boolean isBase) '''
@@ -224,7 +240,7 @@ class Entities {
          *
          * @ORM\MappedSuperclass
          */
-        abstract class Abstract«name.formatForCodeCapital»Entity extends «IF isInheriting»BaseEntity«ELSE»EntityAccess«ENDIF»«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Entity extends «IF isInheriting»BaseEntity«ELSE»EntityAccess«ENDIF» implements Abstract«app.name.formatForCodeCapital»EntityInterface«IF (it as Entity).hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields», Translatable«ENDIF»
         {
             «IF it instanceof Entity && (it as Entity).geographical»
                 /**
@@ -317,7 +333,7 @@ class Entities {
         «imports(false)»
 
         «entityImplClassDocblock(app)»
-        class «name.formatForCodeCapital»Entity extends BaseEntity
+        class «name.formatForCodeCapital»Entity extends BaseEntity implements «app.name.formatForCodeCapital»EntityInterface
         {
             // feel free to add your own methods here
         }

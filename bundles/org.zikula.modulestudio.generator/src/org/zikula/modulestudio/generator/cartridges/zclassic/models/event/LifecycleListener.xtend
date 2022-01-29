@@ -54,6 +54,7 @@ class LifecycleListener {
         «IF hasLoggable»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
+        use «appNamespace»\Entity\«name.formatForCodeCapital»EntityInterface;
         «IF !getUploadEntities.empty»
             use «appNamespace»\Helper\UploadHelper;
         «ENDIF»
@@ -283,16 +284,7 @@ class LifecycleListener {
              */
             protected function isEntityManagedByThisBundle(object $entity): bool
             {
-                $entityClassParts = explode('\\', $entity::class);
-
-                if ('DoctrineProxy' === $entityClassParts[0] && '__CG__' === $entityClassParts[1]) {
-                    array_shift($entityClassParts);
-                    array_shift($entityClassParts);
-                }
-
-                return '«vendor.formatForCodeCapital»' === $entityClassParts[0]
-                    && '«name.formatForCodeCapital»Module' === $entityClassParts[1]
-                ;
+                return $entity instanceof «name.formatForCodeCapital»EntityInterface;
             }
 
             /**
