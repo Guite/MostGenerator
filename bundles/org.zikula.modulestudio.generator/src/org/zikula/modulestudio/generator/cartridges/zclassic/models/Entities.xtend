@@ -240,7 +240,7 @@ class Entities {
          *
          * @ORM\MappedSuperclass
          */
-        abstract class Abstract«name.formatForCodeCapital»Entity extends «IF isInheriting»BaseEntity«ELSE»EntityAccess«ENDIF» implements Abstract«app.name.formatForCodeCapital»EntityInterface«IF (it as Entity).hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields», Translatable«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Entity extends «IF isInheriting»BaseEntity«ELSE»EntityAccess«ENDIF» implements Abstract«app.name.formatForCodeCapital»EntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
         {
             «IF it instanceof Entity && (it as Entity).geographical»
                 /**
