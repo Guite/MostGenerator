@@ -276,10 +276,10 @@ class Repository {
                     «sortingCriteria»
                 ];
             }
-            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', true, '', '')»
-            «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', true, '', '')»
+            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, '', '')»
+            «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', false, '', '')»
             «IF hasTranslatableFields»
-                «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', true, '', '')»
+                «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, '', '')»
             «ENDIF»
             «new UserDeletion().generate(it)»
 
