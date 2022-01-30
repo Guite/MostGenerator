@@ -74,7 +74,7 @@ class NotificationHelper {
         /**
          * The entity which has been changed before.
          */
-        protected EntityAccess $entity = '';
+        protected EntityAccess $entity;
 
         /**
          * Name of workflow action which is being performed.
