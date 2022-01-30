@@ -43,7 +43,7 @@ class UploadType {
          */
         abstract class AbstractUploadType extends AbstractType
         {
-            protected FormBuilderInterface $formBuilder = null;
+            protected FormBuilderInterface $formBuilder;
 
             protected object $entity = null;
 
