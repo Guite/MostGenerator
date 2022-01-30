@@ -45,7 +45,7 @@ class UploadType {
         {
             protected FormBuilderInterface $formBuilder;
 
-            protected object $entity = null;
+            protected object $entity;
 
             public function __construct(
                 protected ZikulaHttpKernelInterface $kernel,
