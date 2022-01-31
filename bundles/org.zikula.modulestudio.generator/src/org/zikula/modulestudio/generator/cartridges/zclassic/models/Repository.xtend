@@ -127,7 +127,7 @@ class Repository {
 
             public function setDefaultSortingField(string $defaultSortingField): self;
 
-            public function getCollectionFilterHelper(): string;
+            public function getCollectionFilterHelper(): CollectionFilterHelper;
 
             public function setCollectionFilterHelper(CollectionFilterHelper $collectionFilterHelper): self;
             «IF hasTranslatableFields»
