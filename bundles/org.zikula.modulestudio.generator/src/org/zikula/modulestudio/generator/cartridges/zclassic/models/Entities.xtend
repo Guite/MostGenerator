@@ -240,7 +240,7 @@ class Entities {
          *
          * @ORM\MappedSuperclass
          */
-        abstract class Abstract«name.formatForCodeCapital»Entity«IF isInheriting» extends BaseEntity«ENDIF» implements Abstract«app.name.formatForCodeCapital»EntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Entity«IF isInheriting» extends BaseEntity«ENDIF» implements AbstractEntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
         {
             «IF it instanceof Entity && (it as Entity).geographical»
                 /**
@@ -333,7 +333,7 @@ class Entities {
         «imports(false)»
 
         «entityImplClassDocblock(app)»
-        class «name.formatForCodeCapital»Entity extends BaseEntity implements «app.name.formatForCodeCapital»EntityInterface
+        class «name.formatForCodeCapital»Entity extends BaseEntity implements EntityInterface
         {
             // feel free to add your own methods here
         }
