@@ -25,10 +25,10 @@ class CategoryHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\CategoriesModule\Api\ApiInterface\CategoryPermissionApiInterface;
         use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use «appNamespace»\Entity\EntityInterface;
 
         /**
          * Category helper base class.
@@ -260,7 +260,7 @@ class CategoryHelper {
         /**
          * Checks whether permissions are granted to the given categories or not.
          */
-        public function hasPermission(EntityAccess $entity): bool
+        public function hasPermission(EntityInterface $entity): bool
         {
             $requireAccessForAll = $this->requireAccessForAll($entity);
 
@@ -280,7 +280,7 @@ class CategoryHelper {
          * Returning true only allows access if the user has access
          * to all selected categories.
          */
-        protected function requireAccessForAll(EntityAccess $entity): bool
+        protected function requireAccessForAll(EntityInterface $entity): bool
         {
             return false;
         }

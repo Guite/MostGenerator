@@ -17,7 +17,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLogoutListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserRegistrationListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.WorkflowEventsListener
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -26,7 +25,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Listeners {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -485,8 +483,7 @@ class Listeners {
         «ELSE»
             use Gedmo\Loggable\LoggableListener as BaseListener;
             use Gedmo\Loggable\Mapping\Event\LoggableAdapter;
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            use «appNamespace»\Entity\«name.formatForCodeCapital»EntityInterface;
+            use «appNamespace»\Entity\EntityInterface;
             use «appNamespace»\Helper\EntityDisplayHelper;
             use «appNamespace»\Helper\LoggableHelper;
         «ENDIF»
@@ -517,10 +514,9 @@ class Listeners {
                 use Symfony\Component\Workflow\TransitionBlocker;
             «ENDIF»
             use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
+            use «appNamespace»\Entity\EntityInterface;
             use «appNamespace»\Entity\Factory\EntityFactory;
-            use «appNamespace»\Entity\«name.formatForCodeCapital»EntityInterface;
             use «appNamespace»\Helper\PermissionHelper;
             «IF needsApproval»
                 use «appNamespace»\Helper\NotificationHelper;

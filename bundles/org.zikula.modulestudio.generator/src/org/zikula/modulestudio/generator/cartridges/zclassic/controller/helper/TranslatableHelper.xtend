@@ -35,9 +35,9 @@ class TranslatableHelper {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
+        use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
 
         /**
@@ -158,7 +158,7 @@ class TranslatableHelper {
          *
          * @return array Collected translations for each language code
          */
-        public function prepareEntityForEditing(EntityAccess $entity): array
+        public function prepareEntityForEditing(EntityInterface $entity): array
         {
             $translations = [];
             $objectType = $entity->get_objectType();
@@ -214,7 +214,7 @@ class TranslatableHelper {
         /**
          * Post-editing method persisting translated fields.
          */
-        public function processEntityAfterEditing(EntityAccess $entity, FormInterface $form): void
+        public function processEntityAfterEditing(EntityInterface $entity, FormInterface $form): void
         {
             «IF needsDynamicLoggableEnablement»
                 $this->toggleLoggable(false);
@@ -301,7 +301,7 @@ class TranslatableHelper {
          * Sets values for translatable fields of given entity from it's stored
          * translation data.
          */
-        public function setEntityFieldsFromLogData(EntityAccess $entity): EntityAccess
+        public function setEntityFieldsFromLogData(EntityInterface $entity): EntityInterface
         {
             // check if this revision has translation data for current locale
             $translationData = $entity->getTranslationData();
@@ -332,7 +332,7 @@ class TranslatableHelper {
          *
          * The logic of this method is similar to processEntityAfterEditing above.
          */
-        public function refreshTranslationsFromLogData(EntityAccess $entity): void
+        public function refreshTranslationsFromLogData(EntityInterface $entity): void
         {
             «IF needsDynamicLoggableEnablement»
                 $this->toggleLoggable(false);

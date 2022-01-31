@@ -21,8 +21,8 @@ class UploadFileTransformer {
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Helper\UploadHelper;
 
         /**
@@ -34,7 +34,7 @@ class UploadFileTransformer {
         {
             public function __construct(
                 protected ZikulaHttpKernelInterface $kernel,
-                protected EntityAccess $entity,
+                protected EntityInterface $entity,
                 protected UploadHelper $uploadHelper,
                 protected string $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»,
                 protected bool $supportCustomFileName = false«ENDIF»

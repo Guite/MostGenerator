@@ -36,7 +36,6 @@ class PermissionHelper {
             use Doctrine\Common\Collections\Collection;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «IF hasLoggable»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
@@ -45,6 +44,7 @@ class PermissionHelper {
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         use Zikula\UsersModule\Entity\UserEntity;
+        use «appNamespace»\Entity\EntityInterface;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
             use «appNamespace»\Helper\FeatureActivationHelper;
@@ -82,7 +82,7 @@ class PermissionHelper {
         /**
          * Checks if the given entity instance may be read.
          */
-        public function mayRead(EntityAccess $entity, ?int $userId = null): bool
+        public function mayRead(EntityInterface $entity, ?int $userId = null): bool
         {
             return $this->hasEntityPermission($entity, ACCESS_READ, $userId);
         }
@@ -90,7 +90,7 @@ class PermissionHelper {
         /**
          * Checks if the given entity instance may be edited.
          */
-        public function mayEdit(EntityAccess $entity, ?int $userId = null): bool
+        public function mayEdit(EntityInterface $entity, ?int $userId = null): bool
         {
             return $this->hasEntityPermission($entity, ACCESS_EDIT, $userId);
         }
@@ -99,7 +99,7 @@ class PermissionHelper {
             /**
              * Checks if the given entity instance may be deleted.
              */
-            public function mayAccessHistory(EntityAccess $entity, ?int $userId = null): bool
+            public function mayAccessHistory(EntityInterface $entity, ?int $userId = null): bool
             {
                 $objectType = $entity->get_objectType();
 
@@ -110,7 +110,7 @@ class PermissionHelper {
         /**
          * Checks if the given entity instance may be deleted.
          */
-        public function mayDelete(EntityAccess $entity, ?int $userId = null): bool
+        public function mayDelete(EntityInterface $entity, ?int $userId = null): bool
         {
             return $this->hasEntityPermission($entity, ACCESS_DELETE, $userId);
         }
@@ -118,7 +118,7 @@ class PermissionHelper {
         /**
          * Checks if a certain permission level is granted for the given entity instance.
          */
-        public function hasEntityPermission(EntityAccess $entity, int $permissionLevel, ?int $userId = null): bool
+        public function hasEntityPermission(EntityInterface $entity, int $permissionLevel, ?int $userId = null): bool
         {
             $objectType = $entity->get_objectType();
             $instance = $entity->getKey() . '::';

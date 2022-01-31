@@ -49,7 +49,7 @@ class Entities {
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         fh = new FileHelper(it)
-        fsa.generateClassPair('Entity/' + name.formatForCodeCapital + 'EntityInterface.php', entityInterfaceBaseImpl, entityInterfaceImpl)
+        fsa.generateClassPair('Entity/EntityInterface.php', entityInterfaceBaseImpl, entityInterfaceImpl)
         entities.forEach(e|e.generate(it, fsa))
 
         new LifecycleListener().generate(it, fsa)
@@ -82,7 +82,7 @@ class Entities {
         /**
          * Entity interface for the «name.formatForDisplay» application.
          */
-        interface Abstract«name.formatForCodeCapital»EntityInterface
+        interface AbstractEntityInterface
         {
             // nothing
         }
@@ -91,12 +91,12 @@ class Entities {
     def private entityInterfaceImpl(Application it) '''
         namespace «appNamespace»\Entity;
 
-        use «appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital»EntityInterface;
+        use «appNamespace»\Entity\Base\AbstractEntityInterface;
 
         /**
          * Entity interface for the «name.formatForDisplay» application.
          */
-        interface «name.formatForCodeCapital»EntityInterface extends Abstract«name.formatForCodeCapital»EntityInterface
+        interface EntityInterface extends AbstractEntityInterface
         {
             // feel free to add your own interface methods
         }
@@ -136,10 +136,10 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF isBase»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
+            use «application.appNamespace»\Entity\EntityInterface;
             «IF hasListFieldsEntity»
                 use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
             «ENDIF»
@@ -180,20 +180,11 @@ class Entities {
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
         «IF isBase»
-            «IF !isInheriting»
-                use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-            «ENDIF»
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
-            «IF geographical»
-                use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»GeographicalTrait;
-            «ENDIF»
-            «IF standardFields»
-                use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»StandardFieldsTrait;
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
+            «IF !isInheriting»
+                use «application.appNamespace»\Entity\EntityInterface;
             «ENDIF»
             «IF isInheriting»
                 use «application.appNamespace»\Entity\«parentType.name.formatForCodeCapital»Entity as BaseEntity;
@@ -216,9 +207,18 @@ class Entities {
             «IF hasTranslatableFields»
                 use «application.appNamespace»\Entity\«name.formatForCodeCapital»TranslationEntity;
             «ENDIF»
-            use «application.appNamespace»\Repository\«name.formatForCodeCapital»Repository;
             «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.importRelatedEntity(relation, false)»«ENDFOR»
             «FOR relation : getOutgoingJoinRelations»«thAssoc.importRelatedEntity(relation, true)»«ENDFOR»
+            use «application.appNamespace»\Repository\«name.formatForCodeCapital»Repository;
+            «IF geographical»
+                use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»GeographicalTrait;
+            «ENDIF»
+            «IF standardFields»
+                use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»StandardFieldsTrait;
+            «ENDIF»
+            «IF hasListFieldsEntity»
+                use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -240,7 +240,7 @@ class Entities {
          *
          * @ORM\MappedSuperclass
          */
-        abstract class Abstract«name.formatForCodeCapital»Entity extends «IF isInheriting»BaseEntity«ELSE»EntityAccess«ENDIF» implements Abstract«app.name.formatForCodeCapital»EntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Entity«IF isInheriting» extends BaseEntity«ENDIF» implements Abstract«app.name.formatForCodeCapital»EntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
         {
             «IF it instanceof Entity && (it as Entity).geographical»
                 /**

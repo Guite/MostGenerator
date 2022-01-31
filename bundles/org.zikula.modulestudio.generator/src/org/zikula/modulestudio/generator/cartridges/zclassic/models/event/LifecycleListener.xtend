@@ -40,7 +40,6 @@ class LifecycleListener {
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Symfony\Component\DependencyInjection\ContainerInterface;
         use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «IF !getUploadEntities.empty»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
@@ -51,10 +50,10 @@ class LifecycleListener {
         «IF hasLoggable»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
+        use «appNamespace»\Entity\EntityInterface;
         «IF hasLoggable»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
-        use «appNamespace»\Entity\«name.formatForCodeCapital»EntityInterface;
         «IF !getUploadEntities.empty»
             use «appNamespace»\Helper\UploadHelper;
         «ENDIF»
@@ -140,7 +139,7 @@ class LifecycleListener {
              */
             public function preRemove(LifecycleEventArgs $args): void
             {
-                /** @var EntityAccess $entity */
+                /** @var EntityInterface $entity */
                 $entity = $args->getObject();
                 if (
                     !$this->isEntityManagedByThisBundle($entity)
@@ -163,7 +162,7 @@ class LifecycleListener {
              */
             public function postRemove(LifecycleEventArgs $args): void
             {
-                /** @var EntityAccess $entity */
+                /** @var EntityInterface $entity */
                 $entity = $args->getObject();
                 if (
                     !$this->isEntityManagedByThisBundle($entity)
@@ -186,7 +185,7 @@ class LifecycleListener {
              */
             public function prePersist(LifecycleEventArgs $args): void
             {
-                /** @var EntityAccess $entity */
+                /** @var EntityInterface $entity */
                 $entity = $args->getObject();
                 if (
                     !$this->isEntityManagedByThisBundle($entity)
@@ -206,7 +205,7 @@ class LifecycleListener {
              */
             public function postPersist(LifecycleEventArgs $args): void
             {
-                /** @var EntityAccess $entity */
+                /** @var EntityInterface $entity */
                 $entity = $args->getObject();
                 if (
                     !$this->isEntityManagedByThisBundle($entity)
@@ -225,7 +224,7 @@ class LifecycleListener {
              */
             public function preUpdate(PreUpdateEventArgs $args): void
             {
-                /** @var EntityAccess $entity */
+                /** @var EntityInterface $entity */
                 $entity = $args->getObject();
                 if (
                     !$this->isEntityManagedByThisBundle($entity)
@@ -244,7 +243,7 @@ class LifecycleListener {
              */
             public function postUpdate(LifecycleEventArgs $args): void
             {
-                /** @var EntityAccess $entity */
+                /** @var EntityInterface $entity */
                 $entity = $args->getObject();
                 if (
                     !$this->isEntityManagedByThisBundle($entity)
@@ -268,7 +267,7 @@ class LifecycleListener {
              */
             public function postLoad(LifecycleEventArgs $args): void
             {
-                /** @var EntityAccess $entity */
+                /** @var EntityInterface $entity */
                 $entity = $args->getObject();
                 if (
                     !$this->isEntityManagedByThisBundle($entity)
@@ -284,13 +283,13 @@ class LifecycleListener {
              */
             protected function isEntityManagedByThisBundle(object $entity): bool
             {
-                return $entity instanceof «name.formatForCodeCapital»EntityInterface;
+                return $entity instanceof EntityInterface;
             }
 
             /**
              * Returns a filter event instance for the given entity.
              */
-            protected function createFilterEvent(EntityAccess $entity, string $classSuffix = '')
+            protected function createFilterEvent(EntityInterface $entity, string $classSuffix = '')
             {
                 $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\' . ucfirst($entity->get_objectType()) . $classSuffix . 'Event';
 

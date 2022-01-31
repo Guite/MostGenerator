@@ -45,7 +45,7 @@ class EntityDisplayHelper {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        use «appNamespace»\Entity\EntityInterface;
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
@@ -103,7 +103,7 @@ class EntityDisplayHelper {
         /**
          * Returns the formatted title for a given entity.
          */
-        public function getFormattedTitle(EntityAccess $entity): string
+        public function getFormattedTitle(EntityInterface $entity): string
         {
             «FOR entity : getAllEntities»
                 if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
@@ -117,7 +117,7 @@ class EntityDisplayHelper {
         /**
          * Returns an additional description for a given entity.
          */
-        public function getDescription(EntityAccess $entity): string
+        public function getDescription(EntityInterface $entity): string
         {
             «FOR entity : getAllEntities»
                 if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {

@@ -149,7 +149,6 @@ class FormHandler {
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «IF hasHookSubscribers»
             use Zikula\Bundle\CoreBundle\RouteUrl;
@@ -174,6 +173,7 @@ class FormHandler {
         «IF hasNonNullableUserFields»
             use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         «ENDIF»
+        use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF needsFeatureActivationHelper»
             use «appNamespace»\Helper\FeatureActivationHelper;
@@ -215,7 +215,7 @@ class FormHandler {
             /**
              * Reference to treated entity instance.
              */
-            protected EntityAccess $entityRef;
+            protected EntityInterface $entityRef;
 
             /**
              * Name of primary identifier field.
@@ -584,7 +584,7 @@ class FormHandler {
         /**
          * Initialise existing entity for editing.
          */
-        protected function initEntityForEditing(): ?EntityAccess
+        protected function initEntityForEditing(): ?EntityInterface
         {
             return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
         }
@@ -594,7 +594,7 @@ class FormHandler {
         /**
          * Initialise new entity for creation.
          */
-        protected function initEntityForCreation(): ?EntityAccess
+        protected function initEntityForCreation(): ?EntityInterface
         {
             $request = $this->requestStack->getCurrentRequest();
             $templateId = $request->query->getInt('astemplate');
@@ -1130,12 +1130,14 @@ class FormHandler {
         use Symfony\Component\HttpFoundation\RedirectResponse;
         «IF ownerPermission»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «ENDIF»
         «IF ownerPermission || !fields.filter(UserField).filter[!nullable].empty»
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         use «entityClassName('', false)»;
+        «IF ownerPermission»
+            use «app.appNamespace»\Entity\EntityInterface;
+        «ENDIF»
         «IF attributable»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -1156,7 +1158,7 @@ class FormHandler {
     '''
 
     def private formHandlerBaseInitEntityForEditing(Entity it) '''
-        protected function initEntityForEditing(): ?EntityAccess
+        protected function initEntityForEditing(): ?EntityInterface
         {
             $entity = parent::initEntityForEditing();
             if (null === $entity) {

@@ -60,7 +60,7 @@ class TreeData {
          */
         protected function processTreeItemWithChildren(
             string $objectType,
-            EntityAccess $node,
+            EntityInterface $node,
             string $routeArea,
             int $rootId,
             string $descriptionFieldName,

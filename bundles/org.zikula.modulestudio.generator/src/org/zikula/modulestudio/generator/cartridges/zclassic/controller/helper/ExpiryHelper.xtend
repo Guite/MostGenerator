@@ -32,11 +32,11 @@ class ExpiryHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\Bundle\CoreBundle\RouteUrl;
         «IF hasHookSubscribers»
             use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
         «ENDIF»
+        use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasHookSubscribers»
             use «appNamespace»\Helper\HookHelper;
@@ -184,7 +184,7 @@ class ExpiryHelper {
             /**
              * Archives a single entity.
              */
-            protected function archiveSingleObject(EntityAccess $entity): bool
+            protected function archiveSingleObject(EntityInterface $entity): bool
             {
                 return $this->handleSingleObject($entity, 'archive');
             }
@@ -194,7 +194,7 @@ class ExpiryHelper {
             /**
              * Deletes a single entity.
              */
-            protected function deleteSingleObject(EntityAccess $entity): bool
+            protected function deleteSingleObject(EntityInterface $entity): bool
             {
                 return $this->handleSingleObject($entity, 'delete');
             }
@@ -203,7 +203,7 @@ class ExpiryHelper {
         /**
          * Archives or deletes a single entity.
          */
-        protected function handleSingleObject(EntityAccess $entity, string $action): bool
+        protected function handleSingleObject(EntityInterface $entity, string $action): bool
         {
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;

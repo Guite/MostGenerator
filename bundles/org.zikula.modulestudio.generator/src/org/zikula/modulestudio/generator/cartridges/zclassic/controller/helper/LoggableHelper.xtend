@@ -38,8 +38,8 @@ class LoggableHelper {
         use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
         use Gedmo\Loggable\LoggableListener;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
+        use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\EntityDisplayHelper;
         «IF hasLoggableTranslatable»
@@ -157,7 +157,7 @@ class LoggableHelper {
         /**
          * Checks whether a history may be shown for the given entity instance.
          */
-        public function hasHistoryItems(EntityAccess $entity): bool
+        public function hasHistoryItems(EntityInterface $entity): bool
         {
             $objectType = $entity->get_objectType();
             $versionFieldName = $this->getVersionFieldName($objectType);
@@ -204,7 +204,7 @@ class LoggableHelper {
         /**
          * Sets the given entity to back to a specific version.
          */
-        public function revert(EntityAccess $entity, int $requestedVersion = 1, bool $detach = false): EntityAccess
+        public function revert(EntityInterface $entity, int $requestedVersion = 1, bool $detach = false): EntityInterface
         {
             $logEntriesRepository = $this->getLogEntryRepository($objectType);
             $logEntries = $logEntriesRepository->getLogEntries($entity);
@@ -228,7 +228,7 @@ class LoggableHelper {
         /**
          * Resets a deleted entity back to the last version before it's deletion.
          */
-        public function restoreDeletedEntity(string $objectType = '', int $id = 0): ?EntityAccess
+        public function restoreDeletedEntity(string $objectType = '', int $id = 0): ?EntityInterface
         {
             if (!$id) {
                 return null;
@@ -275,7 +275,7 @@ class LoggableHelper {
         /**
          * Performs actions after reverting an entity to a previous revision.
          */
-        protected function revertPostProcess(EntityAccess $entity): EntityAccess
+        protected function revertPostProcess(EntityInterface $entity): EntityInterface
         {
             $objectType = $entity->get_objectType();
 
@@ -312,7 +312,7 @@ class LoggableHelper {
          *
          * @throws Exception If something goes wrong
          */
-        public function undelete(EntityAccess $entity): void
+        public function undelete(EntityInterface $entity): void
         {
             $entityManager = $this->entityFactory->getEntityManager();
 

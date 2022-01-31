@@ -78,12 +78,12 @@ class Plugins {
         «ENDIF»
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Twig\Extension\RuntimeExtensionInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         «IF hasUploads»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use «appNamespace»\Entity\EntityInterface;
         «IF hasTrees»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
@@ -256,7 +256,7 @@ class Plugins {
          * Example:
          *     {{ myPost|«appName.formatForDB»_formattedTitle }}.
          */
-        public function getFormattedEntityTitle(EntityAccess $entity): string
+        public function getFormattedEntityTitle(EntityInterface $entity): string
         {
             return $this->entityDisplayHelper->getFormattedTitle($entity);
         }

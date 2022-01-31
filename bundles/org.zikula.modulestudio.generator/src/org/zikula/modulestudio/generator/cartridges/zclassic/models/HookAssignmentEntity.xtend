@@ -74,7 +74,6 @@ class HookAssignmentEntity {
 
         use Doctrine\ORM\Mapping as ORM;
         use Symfony\Component\Validator\Constraints as Assert;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
 
         /**
          * Entity base class for hooked object assignments.
@@ -84,7 +83,7 @@ class HookAssignmentEntity {
          *
          * @ORM\MappedSuperclass
          */
-        abstract class AbstractHookAssignmentEntity extends EntityAccess
+        abstract class AbstractHookAssignmentEntity implements AbstractEntityInterface
         {
             «FOR field : entity.getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
             «FOR field : entity.getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
@@ -103,7 +102,7 @@ class HookAssignmentEntity {
          * @ORM\Entity()
          * @ORM\Table(name="«entity.fullEntityTableName»")
          */
-        class HookAssignmentEntity extends AbstractHookAssignmentEntity
+        class HookAssignmentEntity extends AbstractHookAssignmentEntity implements EntityInterface
         {
             // feel free to add your own methods here
         }

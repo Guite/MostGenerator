@@ -19,7 +19,7 @@ class TreeSelection {
          */
         public function getTreeSelection(
             string $objectType,
-            EntityAccess $node,
+            EntityInterface $node,
             string $target,
             bool $skipRootNode = true
         ): array {

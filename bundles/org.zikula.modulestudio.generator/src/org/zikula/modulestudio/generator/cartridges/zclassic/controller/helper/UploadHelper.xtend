@@ -41,11 +41,11 @@ class UploadHelper {
         use Symfony\Component\HttpFoundation\File\UploadedFile;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use «appNamespace»\Entity\EntityInterface;
 
         /**
          * Helper base class for upload handling.
@@ -577,7 +577,7 @@ class UploadHelper {
         /**
          * Deletes an existing upload file.
          */
-        public function deleteUploadFile(EntityAccess $entity, string $fieldName): EntityAccess
+        public function deleteUploadFile(EntityInterface $entity, string $fieldName): EntityInterface
         {
             $objectType = $entity->get_objectType();
             if (!in_array($objectType, $this->allowedObjectTypes, true)) {

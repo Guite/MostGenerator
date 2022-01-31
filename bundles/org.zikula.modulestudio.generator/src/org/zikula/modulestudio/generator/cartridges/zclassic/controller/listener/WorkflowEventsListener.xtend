@@ -69,7 +69,7 @@ class WorkflowEventsListener {
          */
         public function onLeave(Event $event): void
         {
-            /** @var EntityAccess $entity */
+            /** @var EntityInterface $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -85,7 +85,7 @@ class WorkflowEventsListener {
          */
         public function onTransition(Event $event): void
         {
-            /** @var EntityAccess $entity */
+            /** @var EntityInterface $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -101,7 +101,7 @@ class WorkflowEventsListener {
          */
         public function onEnter(Event $event): void
         {
-            /** @var EntityAccess $entity */
+            /** @var EntityInterface $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -118,7 +118,7 @@ class WorkflowEventsListener {
          */
         public function onEntered(Event $event): void
         {
-            /** @var EntityAccess $entity */
+            /** @var EntityInterface $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -133,7 +133,7 @@ class WorkflowEventsListener {
          */
         public function onCompleted(Event $event): void
         {
-            /** @var EntityAccess $entity */
+            /** @var EntityInterface $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -149,7 +149,7 @@ class WorkflowEventsListener {
          */
         public function onAnnounce(Event $event): void
         {
-            /** @var EntityAccess $entity */
+            /** @var EntityInterface $entity */
             $entity = $event->getSubject();
             if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                 return;
@@ -201,7 +201,7 @@ class WorkflowEventsListener {
     '''
 
     def private guardImpl(Application it) '''
-        /** @var EntityAccess $entity */
+        /** @var EntityInterface $entity */
         $entity = $event->getSubject();
         if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
             return;
@@ -292,7 +292,7 @@ class WorkflowEventsListener {
          */
         protected function isEntityManagedByThisBundle(object $entity): bool
         {
-            return $entity instanceof «name.formatForCodeCapital»EntityInterface;
+            return $entity instanceof EntityInterface;
         }
     '''
 

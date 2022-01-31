@@ -1,11 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class LoggableListener {
-
-    extension FormattingExtensions = new FormattingExtensions
 
     def generate(Application it) '''
         public function __construct(
@@ -17,7 +14,7 @@ class LoggableListener {
 
         protected function prePersistLogEntry($logEntry, $object)
         {
-            /** @var EntityAccess $object */
+            /** @var EntityInterface $object */
             if (!$this->isEntityManagedByThisBundle($object) || !method_exists($object, 'get_objectType')) {
                 return;
             }
@@ -85,7 +82,7 @@ class LoggableListener {
          */
         protected function isEntityManagedByThisBundle(object $entity): bool
         {
-            return $entity instanceof «name.formatForCodeCapital»EntityInterface;
+            return $entity instanceof EntityInterface;
         }
     '''
 }

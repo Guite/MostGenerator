@@ -22,7 +22,7 @@ class EntityTreeType {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\OptionsResolver\Options;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
+        use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Helper\EntityDisplayHelper;
 
         /**
@@ -106,16 +106,16 @@ class EntityTreeType {
              * Determines whether a certain list item should be included or not.
              * Allows to exclude undesired items after the selection has happened.
              */
-            protected function isIncluded(EntityAccess $item, EntityRepository $repository, Options $options): bool
+            protected function isIncluded(EntityInterface $entity, EntityRepository $repository, Options $options): bool
             {
-                $nodeLevel = $item->getLvl();
+                $nodeLevel = $entity->getLvl();
 
                 if (0 === $nodeLevel && !$options['include_root_nodes']) {
                     // if we do not include the root node skip it
                     return false;
                 }
 
-                if (!$options['include_leaf_nodes'] && 0 === $repository->childCount($item)) {
+                if (!$options['include_leaf_nodes'] && 0 === $repository->childCount($entity)) {
                     // if we do not include leaf nodes skip them
                     return false;
                 }

@@ -43,9 +43,6 @@ class ControllerHelper {
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
         use Symfony\Contracts\Translation\TranslatorInterface;
-        «IF hasViewActions»
-            use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
-        «ENDIF»
         «IF (hasViewActions || hasDisplayActions || hasEditActions || hasDeleteActions) && hasHookSubscribers»
             use Zikula\Bundle\CoreBundle\RouteUrl;
         «ENDIF»
@@ -61,6 +58,9 @@ class ControllerHelper {
         «ENDIF»
         «IF hasViewActions && hasUserFields»
             use Zikula\UsersModule\Entity\UserEntity;
+        «ENDIF»
+        «IF hasViewActions»
+            use «appNamespace»\Entity\EntityInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasDisplayActions && hasUiHooksProviders»
@@ -314,7 +314,7 @@ class ControllerHelper {
                             }
                         «ENDIF»
                         $request->query->set($fieldName, $fieldValue);
-                        if ($fieldValue instanceof EntityAccess) {
+                        if ($fieldValue instanceof EntityInterface) {
                             $fieldValue = $fieldValue->getKey();
                         }
                         $urlParameters[$fieldName] = $fieldValue;

@@ -94,7 +94,6 @@ class HookHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Symfony\Component\Form\FormInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\Bundle\CoreBundle\UrlInterface;
         use Zikula\Bundle\HookBundle\Dispatcher\HookDispatcherInterface;
         use Zikula\Bundle\HookBundle\FormAwareHook\FormAwareHook;
@@ -103,6 +102,7 @@ class HookHelper {
         use Zikula\Bundle\HookBundle\Hook\ProcessHook;
         use Zikula\Bundle\HookBundle\Hook\ValidationHook;
         use Zikula\Bundle\HookBundle\Hook\ValidationProviders;
+        use «appNamespace»\Entity\EntityInterface;
 
         /**
          * Helper base class for hook related methods.
@@ -135,7 +135,7 @@ class HookHelper {
          *
          * @return string[] List of error messages returned by validators
          */
-        public function callValidationHooks(EntityAccess $entity, string $hookType): array
+        public function callValidationHooks(EntityInterface $entity, string $hookType): array
         {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
@@ -150,7 +150,7 @@ class HookHelper {
         /**
          * Calls process hooks.
          */
-        public function callProcessHooks(EntityAccess $entity, string $hookType, ?UrlInterface $routeUrl = null): void
+        public function callProcessHooks(EntityInterface $entity, string $hookType, ?UrlInterface $routeUrl = null): void
         {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
@@ -163,7 +163,7 @@ class HookHelper {
         /**
          * Calls form aware display hooks.
          */
-        public function callFormDisplayHooks(FormInterface $form, EntityAccess $entity, string $hookType): FormAwareHook
+        public function callFormDisplayHooks(FormInterface $form, EntityInterface $entity, string $hookType): FormAwareHook
         {
             $hookAreaPrefix = $entity->getHookAreaPrefix();
             $hookAreaPrefix = str_replace('.ui_hooks.', '.form_aware_hook.', $hookAreaPrefix);
@@ -181,7 +181,7 @@ class HookHelper {
          */
         public function callFormProcessHooks(
             FormInterface $form,
-            EntityAccess $entity,
+            EntityInterface $entity,
             string $hookType,
             ?UrlInterface $routeUrl = null
         ): void {

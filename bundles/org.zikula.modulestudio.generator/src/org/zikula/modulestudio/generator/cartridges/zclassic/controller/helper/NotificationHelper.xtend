@@ -36,7 +36,6 @@ class NotificationHelper {
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Twig\Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\GroupsModule\Constant as GroupsConstant;
@@ -44,6 +43,7 @@ class NotificationHelper {
         use Zikula\UsersModule\Constant as UsersConstant;
         use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
         use Zikula\UsersModule\Entity\UserEntity;
+        use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
 
@@ -74,7 +74,7 @@ class NotificationHelper {
         /**
          * The entity which has been changed before.
          */
-        protected EntityAccess $entity;
+        protected EntityInterface $entity;
 
         /**
          * Name of workflow action which is being performed.

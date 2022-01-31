@@ -36,8 +36,8 @@ class WorkflowHelper {
         «IF needsApproval»
             use Translation\Extractor\Annotation\Desc;
         «ENDIF»
-        use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\ListEntriesHelper;
         use «appNamespace»\Helper\PermissionHelper;
@@ -145,7 +145,7 @@ class WorkflowHelper {
         /**
          * Retrieve the available actions for a given entity object.
          */
-        public function getActionsForObject(EntityAccess $entity): array
+        public function getActionsForObject(EntityInterface $entity): array
         {
             $workflow = $this->workflowRegistry->get($entity);
             $wfActions = $workflow->getEnabledTransitions($entity);
@@ -326,7 +326,7 @@ class WorkflowHelper {
         /**
          * Executes a certain workflow action for a given entity object.
          */
-        public function executeAction(EntityAccess $entity, string $actionId = '', bool $recursive = false): bool
+        public function executeAction(EntityInterface $entity, string $actionId = '', bool $recursive = false): bool
         {
             $workflow = $this->workflowRegistry->get($entity);
             if (!$workflow->can($entity, $actionId)) {

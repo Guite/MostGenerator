@@ -22,7 +22,7 @@ class IncreaseCounter {
          * Example:
          *     {{ «appName.formatForDB»_increaseCounter(«getEntitiesWithCounterFields.head.name.formatForCode», '«getEntitiesWithCounterFields.head.getCounterFields.head.name.formatForCode»') }}.
          */
-        public function increaseCounter(EntityAccess $entity, string $fieldName = ''): void
+        public function increaseCounter(EntityInterface $entity, string $fieldName = ''): void
         {
             $entityId = $entity->getId();
             $objectType = $entity->get_objectType();
