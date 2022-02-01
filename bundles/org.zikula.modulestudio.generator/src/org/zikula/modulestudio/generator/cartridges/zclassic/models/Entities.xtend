@@ -179,7 +179,17 @@ class Entities {
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
             use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         «ENDIF»
-        «IF isBase»
+        «IF !isBase»
+            «IF tree === EntityTreeType.CLOSURE»
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»ClosureEntity;
+            «ENDIF»
+            «IF loggable»
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»LogEntryEntity;
+            «ENDIF»
+            «IF hasTranslatableFields»
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»TranslationEntity;
+            «ENDIF»
+        «ELSE»
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
@@ -196,16 +206,7 @@ class Entities {
                 use «application.appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity;
             «ENDIF»
             «IF tree !== EntityTreeType.NONE»
-                «IF tree === EntityTreeType.CLOSURE»
-                    use «application.appNamespace»\Entity\«name.formatForCodeCapital»ClosureEntity;
-                «ENDIF»
                 use «application.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
-            «ENDIF»
-            «IF loggable»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»LogEntryEntity;
-            «ENDIF»
-            «IF hasTranslatableFields»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»TranslationEntity;
             «ENDIF»
             «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.importRelatedEntity(relation, false)»«ENDFOR»
             «FOR relation : getOutgoingJoinRelations»«thAssoc.importRelatedEntity(relation, true)»«ENDFOR»
