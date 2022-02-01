@@ -71,9 +71,8 @@ class Property {
 
         /**
          * «name.formatForDisplayCapital» file object.
-         *
-        «thVal.uploadFileAnnotations(it)»
          */
+        «thVal.uploadFileAnnotations(it)»
         protected ?File $«name.formatForCode» = null;
         «/* this last line is on purpose */»
     '''
@@ -109,8 +108,8 @@ class Property {
              «ENDIF»
             «persistentPropertyAdditions»
         «ENDIF»
-        «thVal.fieldAnnotations(it)»
          */
+        «thVal.fieldAnnotations(it)»
         «modifier» «IF nullable»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''

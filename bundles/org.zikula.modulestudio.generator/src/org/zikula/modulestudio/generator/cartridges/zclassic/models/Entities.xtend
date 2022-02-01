@@ -350,8 +350,8 @@ class Entities {
         «IF it instanceof Entity»
             «entityImplClassDocblockAdditions(app)»
         «ENDIF»
-        «new ValidationConstraints().classAnnotations(it)»
          */
+        «new ValidationConstraints().classAnnotations(it)»
     '''
 
     def dispatch private classAnnotation(DataObject it) '''
