@@ -256,13 +256,13 @@ class ValidationConstraints {
             «FOR constraint : getUploadConstraints»
         «' '»    «constraint»,
             «ENDFOR»
-        )
+        )]
         «IF isOnlyImageField»
             #[Assert\Image(
                 «FOR constraint : getUploadImageConstraints»
             «' '»    «constraint»,
                 «ENDFOR»
-            )
+            )]
         «ENDIF»
     '''
     def private getUploadConstraints(UploadField it) {
