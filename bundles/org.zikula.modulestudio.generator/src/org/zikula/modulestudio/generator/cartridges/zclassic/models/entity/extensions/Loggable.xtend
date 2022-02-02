@@ -17,7 +17,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         * @Gedmo\Loggable(logEntryClass="«name.formatForCodeCapital»LogEntryEntity::class")
+         * @Gedmo\Loggable(logEntryClass=«name.formatForCodeCapital»LogEntryEntity::class)
     '''
 
     /**
@@ -306,7 +306,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class")
+         «' '»* @ORM\Entity(repositoryClass=«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)
          «' '»* @ORM\Table(
          «' '»*     name="«fullEntityTableName»_log_entry",
          «' '»*     options={"row_format":"DYNAMIC"},

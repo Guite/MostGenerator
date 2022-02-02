@@ -16,7 +16,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         * @Gedmo\TranslationEntity(class="«name.formatForCodeCapital»TranslationEntity::class")
+         * @Gedmo\TranslationEntity(class=«name.formatForCodeCapital»TranslationEntity::class)
     '''
 
     /**
@@ -126,7 +126,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class")
+         «' '»* @ORM\Entity(repositoryClass=«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)
          «' '»* @ORM\Table(
          «' '»*     name="«fullEntityTableName»_translation",
          «' '»*     options={"row_format":"DYNAMIC"},

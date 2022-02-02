@@ -90,7 +90,7 @@ class Association {
          *
         «incomingMappingDetails»
          * @ORM\«incomingMappingType»(
-         *     targetEntity="«/*\*/»«entityClass»",
+         *     targetEntity=«entityClass»::class,
          *     inversedBy="«targetName»"«additionalOptions(true)»
          * )
         «joinDetails(false)»
@@ -149,7 +149,7 @@ class Association {
          «IF primaryKey»
              * @ORM\Id
          «ENDIF»
-         * @ORM\OneToOne(targetEntity="«entityClass»::class")
+         * @ORM\OneToOne(targetEntity=«entityClass»::class)
         «joinDetails(false)»
          */
         «IF !nullable»
@@ -169,7 +169,7 @@ class Association {
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
              * @ORM\ManyToMany(
-             *     targetEntity="«entityClass»::class",
+             *     targetEntity=«entityClass»::class,
              *     mappedBy="«targetName»"«additionalOptions(true)»
              * )
              «IF null !== orderByReverse && !orderByReverse.empty»
@@ -198,7 +198,7 @@ class Association {
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
          * @ORM\«outgoingMappingType»(
-         *     targetEntity="«entityClass»::class"«IF bidirectional»,
+         *     targetEntity=«entityClass»::class«IF bidirectional»,
          *     mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»
          * )
         «joinDetails(true)»
@@ -247,11 +247,11 @@ class Association {
          *
          «IF !bidirectional»
           * @ORM\ManyToMany(
-          *     targetEntity="«entityClass»::class"«additionalOptions(false)»
+          *     targetEntity=«entityClass»::class«additionalOptions(false)»
           * )
          «ELSE»
           * @ORM\OneToMany(
-          *     targetEntity="«entityClass»::class",
+          *     targetEntity=«entityClass»::class,
           *     mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
           * )
          «ENDIF»
@@ -279,7 +279,7 @@ class Association {
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
          * @ORM\ManyToMany(
-         *     targetEntity="«entityClass»::class"«IF bidirectional»,
+         *     targetEntity=«entityClass»::class«IF bidirectional»,
          *     inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»
          * )
         «joinDetails(true)»
