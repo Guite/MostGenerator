@@ -189,6 +189,7 @@ class Entities {
             «IF hasTranslatableFields»
                 use «application.appNamespace»\Entity\«name.formatForCodeCapital»TranslationEntity;
             «ENDIF»
+            use «application.appNamespace»\Repository\«name.formatForCodeCapital»Repository;
         «ELSE»
             «IF hasUserFieldsEntity»
                 use Zikula\UsersModule\Entity\UserEntity;
