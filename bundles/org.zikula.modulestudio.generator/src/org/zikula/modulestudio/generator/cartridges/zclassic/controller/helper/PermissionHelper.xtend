@@ -34,6 +34,7 @@ class PermissionHelper {
 
         «IF hasViewActions»
             use ArrayIterator;
+            use Doctrine\Common\Collections\Collection;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasLoggable»
@@ -157,7 +158,7 @@ class PermissionHelper {
             /**
              * Filters a given collection of entities based on different permission checks.
              */
-            public function filterCollection(«IF !isSystemModule»string $objectType, «ENDIF»ArrayIterator $entities, int $permissionLevel, ?int $userId = null): array
+            public function filterCollection(«IF !isSystemModule»string $objectType, «ENDIF»array|Collection|ArrayIterator $entities, int $permissionLevel, ?int $userId = null): array
             {
                 $filteredEntities = [];
                 foreach ($entities as $entity) {
