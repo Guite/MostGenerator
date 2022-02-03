@@ -264,7 +264,7 @@ class Repository {
              */
             protected string $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
 
-            protected CollectionFilterHelper $collectionFilterHelper;
+            protected ?CollectionFilterHelper $collectionFilterHelper = null;
             «IF hasTranslatableFields»
 
                 protected bool $translationsEnabled = true;
