@@ -368,7 +368,7 @@ class Entities {
     '''
 
     def dispatch private classAnnotation(Entity it) '''
-        «' '»* @ORM\Entity(repositoryClass="«name.formatForCodeCapital»Repository::class"«IF readOnly», readOnly=true«ENDIF»)
+        «' '»* @ORM\Entity(repositoryClass=«name.formatForCodeCapital»Repository::class«IF readOnly», readOnly=true«ENDIF»)
     '''
 
     def private entityImplClassDocblockAdditions(Entity it, Application app) '''
