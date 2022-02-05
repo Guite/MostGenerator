@@ -63,7 +63,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
              * @Gedmo\Versioned
          «ENDIF»
          * @Gedmo\TreeParent
-         * @ORM\ManyToOne(targetEntity="«name.formatForCodeCapital»Entity::class", inversedBy="children")
+         * @ORM\ManyToOne(targetEntity=«name.formatForCodeCapital»Entity::class, inversedBy="children")
          * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKey.name.formatForDisplay»", onDelete="SET NULL")
          */
         protected ?self $parent = null;
@@ -71,7 +71,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Bidirectional - One parent [«name.formatForDisplay»] has many children [«name.formatForDisplay»] (INVERSE SIDE).
          *
-         * @ORM\OneToMany(targetEntity="«name.formatForCodeCapital»Entity::class", mappedBy="parent")
+         * @ORM\OneToMany(targetEntity=«name.formatForCodeCapital»Entity::class, mappedBy="parent")
          * @ORM\OrderBy({"lft" = "ASC"})
          * @var Collection<int, «name.formatForCodeCapital»Entity>
          */

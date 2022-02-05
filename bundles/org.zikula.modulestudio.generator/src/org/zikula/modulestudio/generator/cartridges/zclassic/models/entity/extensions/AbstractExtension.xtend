@@ -125,8 +125,11 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     def protected extensionClassImpl(Entity it) '''
         namespace «app.appNamespace»\Entity;
 
-        use «app.appNamespace»\Entity\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Entity as BaseEntity;
         use Doctrine\ORM\Mapping as ORM;
+        use «app.appNamespace»\Entity\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Entity as BaseEntity;
+        «IF classType != 'closure'»
+            use «app.appNamespace»\Repository\«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository;
+        «ENDIF»
 
         /**
          * «extensionClassDescription»

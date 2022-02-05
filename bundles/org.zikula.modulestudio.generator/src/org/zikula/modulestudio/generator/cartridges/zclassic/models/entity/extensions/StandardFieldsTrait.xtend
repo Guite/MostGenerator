@@ -45,7 +45,7 @@ class StandardFieldsTrait {
     def private traitImpl(Application it) '''
         /**
          * @Gedmo\Blameable(on="create")
-         * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+         * @ORM\ManyToOne(targetEntity=UserEntity::class)
          * @ORM\JoinColumn(referencedColumnName="uid")
          «IF isLoggable»
           * @Gedmo\Versioned
@@ -64,7 +64,7 @@ class StandardFieldsTrait {
 
         /**
          * @Gedmo\Blameable(on="update")
-         * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+         * @ORM\ManyToOne(targetEntity=UserEntity::class)
          * @ORM\JoinColumn(referencedColumnName="uid")
          «IF isLoggable»
           * @Gedmo\Versioned

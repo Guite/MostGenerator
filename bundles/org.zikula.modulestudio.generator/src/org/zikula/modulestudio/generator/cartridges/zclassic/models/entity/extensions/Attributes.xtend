@@ -30,7 +30,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override properties(Entity it) '''
         /**
-         * @ORM\OneToMany(targetEntity="«name.formatForCodeCapital»AttributeEntity::class",
+         * @ORM\OneToMany(targetEntity=«name.formatForCodeCapital»AttributeEntity::class,
          *                mappedBy="entity", cascade={"all"},
          *                orphanRemoval=true, indexBy="name")
          * @var Collection<string, «name.formatForCodeCapital»AttributeEntity>
@@ -95,7 +95,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassBaseImplementation(Entity it) '''
         /**
-         * @ORM\ManyToOne(targetEntity="«name.formatForCodeCapital»Entity::class", inversedBy="attributes")
+         * @ORM\ManyToOne(targetEntity=«name.formatForCodeCapital»Entity::class, inversedBy="attributes")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
          */
         protected «name.formatForCodeCapital»Entity $entity;

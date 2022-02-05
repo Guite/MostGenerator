@@ -144,7 +144,7 @@ class Property {
                 '''
             UserField:
                 '''
-                    «' '»* @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+                    «' '»* @ORM\ManyToOne(targetEntity=UserEntity::class)
                     «' '»* @ORM\JoinColumn(referencedColumnName="uid"«IF nullable», nullable=true«ENDIF»)
                 '''
         }

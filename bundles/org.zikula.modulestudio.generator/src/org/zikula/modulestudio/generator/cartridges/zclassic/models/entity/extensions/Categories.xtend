@@ -30,7 +30,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override properties(Entity it) '''
         /**
-         * @ORM\OneToMany(targetEntity="«name.formatForCodeCapital»CategoryEntity::class",
+         * @ORM\OneToMany(targetEntity=«name.formatForCodeCapital»CategoryEntity::class,
          *                mappedBy="entity", cascade={"all"},
          *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»)
          * @var Collection<int, «name.formatForCodeCapital»CategoryEntity>
@@ -118,7 +118,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassBaseImplementation(Entity it) '''
         /**
-         * @ORM\ManyToOne(targetEntity="«name.formatForCodeCapital»Entity::class", inversedBy="categories")
+         * @ORM\ManyToOne(targetEntity=«name.formatForCodeCapital»Entity::class, inversedBy="categories")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
          */
         protected «name.formatForCodeCapital»Entity $entity;
