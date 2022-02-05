@@ -149,10 +149,8 @@ class Entities {
     def private dispatch imports(Entity it, Boolean isBase) '''
         use Doctrine\ORM\Mapping as ORM;
         «IF isBase»
-            «IF hasCollections || attributable || categorisable»
+            «IF hasCollections || attributable || categorisable || EntityTreeType.NONE != tree»
                 use Doctrine\Common\Collections\ArrayCollection;
-            «ENDIF»
-            «IF attributable || categorisable || EntityTreeType.NONE != tree»
                 use Doctrine\Common\Collections\Collection;
             «ENDIF»
         «ENDIF»
