@@ -230,7 +230,7 @@ class FormHandler {
             /**
              * Code defining the redirect goal after command handling.
              */
-            protected string $returnTo;
+            protected ?string $returnTo = null;
 
             /**
              * Whether a create action is going to be repeated or not.
