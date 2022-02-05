@@ -99,10 +99,15 @@ class FileHelper {
         «IF it instanceof NumberField»
             $«name» = «IF it.numberType == NumberFieldType::DECIMAL»(string) «ENDIF»round((float) $«name», «scale»);
         «ENDIF»
-        if ($this->«name.formatForCode» !== $«name») {
+        «IF it instanceof DatetimeField && !nullable»«/* skip comparison to avoid "$foo must not be accessed before initialization" */»
             «triggerPropertyChangeListeners(name)»
             «setterAssignment(name)»
-        }
+        «ELSE»
+            if ($this->«name.formatForCode» !== $«name») {
+                «triggerPropertyChangeListeners(name)»
+                «setterAssignment(name)»
+            }
+        «ENDIF»
     '''
 
     def private setterAssignment(Object it, String name, String type, Boolean nullable) '''
