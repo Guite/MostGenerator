@@ -40,20 +40,28 @@ class EventAction {
 
                 // determine meta data if it does not exist
                 foreach ($uploadFields as $fieldName) {
-                    if (empty(«entityVar»[$fieldName])) {
+                    $getter = 'get' . ucfirst($fieldName);
+                    $uploadFile = «entityVar»->$getter();
+                    if (empty($uploadFile)) {
                         continue;
                     }
 
-                    if (is_array(«entityVar»[$fieldName . 'Meta']) && count(«entityVar»[$fieldName . 'Meta'])) {
+                    $getter = 'get' . ucfirst($fieldName) . 'Meta';
+                    $metaData = «entityVar»->$getter();
+                    if (is_array($metaData) && count($metaData)) {
                         continue;
                     }
+
                     $basePath = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
-                    $fileName = «entityVar»[$fieldName . 'FileName'];
+                    $getter = 'get' . ucfirst($fieldName) . 'FileName';
+                    $fileName = «entityVar»->$getter();
                     $filePath = $this->kernel->getProjectDir() . '/' . $basePath . $fileName;
                     if (!file_exists($filePath)) {
                         continue;
                     }
-                    «entityVar»[$fieldName . 'Meta'] = $uploadHelper->readMetaDataForFile($fileName, $filePath);
+
+                    $setter = 'set' . ucfirst($fieldName) . 'Meta';
+                    «entityVar»->$setter($uploadHelper->readMetaDataForFile($fileName, $filePath));
                 }
             }
         «ENDIF»
@@ -139,7 +147,9 @@ class EventAction {
             if (0 < count($uploadFields)) {
                 $uploadHelper = $this->container->get(UploadHelper::class);
                 foreach ($uploadFields as $fieldName) {
-                    if (empty(«entityVar»[$fieldName])) {
+                    $getter = 'get' . ucfirst($fieldName);
+                    $uploadFile = «entityVar»->$getter();
+                    if (empty($uploadFile)) {
                         continue;
                     }
 
