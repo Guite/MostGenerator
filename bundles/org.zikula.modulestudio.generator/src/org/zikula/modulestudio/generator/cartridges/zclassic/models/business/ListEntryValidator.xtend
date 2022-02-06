@@ -39,12 +39,30 @@ class ListEntryValidator {
             /**
              * Minimum amount of values for multiple lists.
              */
-            public int $min;
+            public ?int $min = null;
 
             /**
              * Maximum amount of values for multiple lists.
              */
-            public int $max;
+            public ?int $max = null;
+
+            public function __construct(
+                array $options = null,
+                string $entityName = '',
+                string $propertyName = '',
+                bool $multiple = false,
+                ?int $min = null,
+                ?int $max = null,
+                array $groups = null,
+                $payload = null
+            ) {
+                parent::__construct($options, $groups, $payload);
+                $this->entityName = $entityName;
+                $this->propertyName = $propertyName;
+                $this->multiple = $multiple;
+                $this->min = $min;
+                $this->max = $max;
+            }
         }
     '''
 
