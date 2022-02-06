@@ -83,8 +83,9 @@ class UploadFileTransformer {
                 $entity = $this->entity;
                 $objectType = $entity->get_objectType();
                 $fieldName = $this->fieldName;
+                $getter = 'get' . ucfirst($fieldName);
 
-                $oldFile = $entity[$fieldName];
+                $oldFile = $entity->$getter();
 
                 // check if an existing file must be deleted
                 $hasOldFile = !empty($oldFile);
