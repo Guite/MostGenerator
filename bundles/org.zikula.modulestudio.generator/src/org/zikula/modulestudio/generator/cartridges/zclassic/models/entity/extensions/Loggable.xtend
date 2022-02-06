@@ -84,7 +84,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
             /**
              * Use integer instead of string for increased performance.
              *
-             * @ORM\Column(name="object_id", type="integer")
+             * @ORM\Column(name="object_id", type="integer", nullable=true)
              */
             protected «/* no type allowed because we override a parent field */»$objectId;
 
