@@ -89,6 +89,8 @@ class Property {
         persistentProperty(name, typePhp, typeDoctrine, init, 'protected')
     }
 
+    // NOTE: DateTime fields are always treated as nullable (for PHP, not for Doctrine) enforcing a default value
+    // in order to to avoid "$foo must not be accessed before initialization"
     def persistentProperty(DerivedField it, String name, String typePhp, String typeDoctrine, String init, String modifier) '''
         /**
          «IF null !== documentation && !documentation.empty»
@@ -110,7 +112,7 @@ class Property {
         «ENDIF»
          */
         «thVal.fieldAnnotations(it)»
-        «modifier» «IF nullable»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF !(it instanceof DatetimeField)» = «defaultFieldData»«ENDIF»«ENDIF»;
+        «modifier» «IF nullable || it instanceof DatetimeField»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
