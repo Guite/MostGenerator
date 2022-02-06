@@ -55,9 +55,8 @@ class ListEntryValidator {
 
         /**
          * List entry validation constraint.
-         *
-         * @Annotation
          */
+        #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
         class ListEntry extends AbstractListEntry
         {
             // here you can customise the constraint
