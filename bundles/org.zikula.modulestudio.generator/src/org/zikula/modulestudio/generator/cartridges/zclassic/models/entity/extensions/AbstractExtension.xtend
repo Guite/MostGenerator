@@ -47,23 +47,19 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         fileName = 'Base/Abstract' + classPrefix + entitySuffix + '.php'
         fsa.generateFile(entityPath + fileName, extensionClassBaseImpl)
 
-        if (classType != 'closure') {
-            fileName = 'Base/Abstract' + classPrefix + repositorySuffix + 'Interface.php'
-            fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryInterfaceBaseImpl)
-            fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.php'
-            fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseImpl)
-        }
+        fileName = 'Base/Abstract' + classPrefix + repositorySuffix + 'Interface.php'
+        fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryInterfaceBaseImpl)
+        fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.php'
+        fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseImpl)
 
         if (!app.generateOnlyBaseClasses) {
             fileName = classPrefix + entitySuffix + '.php'
             fsa.generateFile(entityPath + fileName, extensionClassImpl)
 
-            if (classType != 'closure') {
-                fileName = classPrefix + repositorySuffix + 'Interface.php'
-                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryInterfaceImpl)
-                fileName = classPrefix + repositorySuffix + '.php'
-                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryImpl)
-            }
+            fileName = classPrefix + repositorySuffix + 'Interface.php'
+            fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryInterfaceImpl)
+            fileName = classPrefix + repositorySuffix + '.php'
+            fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryImpl)
         }
     }
 
@@ -127,9 +123,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
 
         use Doctrine\ORM\Mapping as ORM;
         use «app.appNamespace»\Entity\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Entity as BaseEntity;
-        «IF classType != 'closure'»
-            use «app.appNamespace»\Repository\«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository;
-        «ENDIF»
+        use «app.appNamespace»\Repository\«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository;
 
         /**
          * «extensionClassDescription»

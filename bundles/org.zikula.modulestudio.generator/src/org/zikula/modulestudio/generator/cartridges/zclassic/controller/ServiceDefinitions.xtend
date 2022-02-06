@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -154,12 +154,27 @@ class ServiceDefinitions {
 
     def private repositoryBindings(Application it) '''
         «FOR entity : getAllEntities»
-            «entity.repoPath»Interface: '@«entity.repoPath»'
+            «entity.repoPath('')»Interface: '@«entity.repoPath('')»'
+            «IF entity.attributable»
+                «entity.repoPath('attribute')»Interface: '@«entity.repoPath('attribute')»'
+            «ENDIF»
+            «IF entity.categorisable»
+                «entity.repoPath('category')»Interface: '@«entity.repoPath('category')»'
+            «ENDIF»
+            «IF entity.tree == EntityTreeType.CLOSURE»
+                «entity.repoPath('closure')»Interface: '@«entity.repoPath('closure')»'
+            «ENDIF»
+            «IF entity.loggable»
+                «entity.repoPath('logEntry')»Interface: '@«entity.repoPath('logEntry')»'
+            «ENDIF»
+            «IF entity.hasTranslatableFields»
+                «entity.repoPath('translation')»Interface: '@«entity.repoPath('translation')»'
+            «ENDIF»
         «ENDFOR»«/*FOR relation : getJoinRelations.filter(ManyToManyRelationship)»
             «relation.repoPath»Interface: '@«relation.repoPath»'
         «ENDFOR*/»
     '''
 
-    def private dispatch repoPath(Entity it) '''«application.appNamespace»\Repository\«name.formatForCodeCapital»Repository'''
-    def private dispatch repoPath(ManyToManyRelationship it) '''«application.appNamespace»\Repository\«refClass.formatForCodeCapital»Repository'''
+    def private repoPath(Entity it, String extensionName) '''«application.appNamespace»\Repository\«name.formatForCodeCapital»«extensionName.formatForCodeCapital»Repository'''
+    //def private repoPath(ManyToManyRelationship it) '''«application.appNamespace»\Repository\«refClass.formatForCodeCapital»Repository'''
 }
