@@ -271,7 +271,7 @@ class FormHandler {
             /**
              * Reference to optional locking api.
              */
-            protected LockingApiInterface $lockingApi;
+            protected ?LockingApiInterface $lockingApi = null;
 
             /**
              * The handled form type.
