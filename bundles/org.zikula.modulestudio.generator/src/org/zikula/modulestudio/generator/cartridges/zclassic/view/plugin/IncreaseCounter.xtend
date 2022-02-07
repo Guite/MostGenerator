@@ -41,7 +41,8 @@ class IncreaseCounter {
                 return;
             }
 
-            $counterValue = $entity[$fieldName] + 1;
+            $getter = 'get' . ucfirst($fieldName);
+            $counterValue = $entity->$getter() + 1;
 
             $this->databaseConnection->update(
                 '«vendor.formatForDB + '_' + prefix()»_' . mb_strtolower($objectType),
