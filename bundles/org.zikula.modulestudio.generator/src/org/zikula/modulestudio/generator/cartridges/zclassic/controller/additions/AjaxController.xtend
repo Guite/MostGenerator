@@ -82,6 +82,9 @@ class AjaxController {
         «ENDIF»
         use Zikula\Bundle\CoreBundle\Controller\AbstractController;
         «commonSystemImports»
+        «IF generateExternalControllerAndFinder»
+            use «appNamespace»\Entity\EntityInterface;
+        «ENDIF»
         «IF hasUiHooksProviders»
             use «appNamespace»\Entity\HookAssignmentEntity;
         «ENDIF»
@@ -196,17 +199,15 @@ class AjaxController {
         }
 
         $slimItems = [];
-        foreach ($entities as $item) {
+        foreach ($entities as $entity) {
             if (!$permissionHelper->mayRead($item)) {
                 continue;
             }
-            $itemId = $item->getKey();
             $slimItems[] = $this->prepareSlimItem(
                 $controllerHelper,
                 $repository,
                 $entityDisplayHelper,
-                $item,
-                $itemId
+                $entity
             );
         }
 
@@ -222,12 +223,11 @@ class AjaxController {
             ControllerHelper $controllerHelper,
             EntityRepository $repository,
             EntityDisplayHelper $entityDisplayHelper,
-            $item,
-            string $itemId
+            EntityInterface $entity
         ): array {
-            $objectType = $item->get_objectType();
+            $objectType = $entity->get_objectType();
             $previewParameters = [
-                $objectType => $item,
+                $objectType => $entity,
             ];
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
             $previewParameters = $controllerHelper->addTemplateParameters(
@@ -243,11 +243,11 @@ class AjaxController {
             );
             $previewInfo = base64_encode($previewInfo);
 
-            $title = $entityDisplayHelper->getFormattedTitle($item);
-            $description = $entityDisplayHelper->getDescription($item);
+            $title = $entityDisplayHelper->getFormattedTitle($entity);
+            $description = $entityDisplayHelper->getDescription($entity);
 
             return [
-                'id' => $itemId,
+                'id' => $entity->getKey(),
                 'title' => str_replace('&amp;', '&', $title),
                 'description' => $description,
                 'previewInfo' => $previewInfo,
@@ -349,7 +349,8 @@ class AjaxController {
 
                     // check for preview image
                     if (!empty($previewFieldName) && !empty($item[$previewFieldName])) {
-                        $imagePath = $item[$previewFieldName]->getPathname();
+                        $getter = 'get' . ucfirst($previewFieldName);
+                        $imagePath = $item->$getter()->getPathname();
                         $imagePath = str_replace($item->get_uploadBasePathAbsolute(), $item->get_uploadBasePathRelative(), $imagePath);
                         $thumbImagePath = $imagineCacheManager->getBrowserPath($imagePath, 'zkroot', $thumbRuntimeOptions);
                         $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" class="mr-1" />';
