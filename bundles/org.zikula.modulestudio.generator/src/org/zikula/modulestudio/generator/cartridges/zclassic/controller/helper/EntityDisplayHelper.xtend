@@ -273,7 +273,7 @@ class EntityDisplayHelper {
                 if (matchedFields.head instanceof UploadField) {
                     formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(is_array($entity->get' + patternPart.toFirstUpper + '()) ? $entity->get' + patternPart.toFirstUpper + '()[\'' + patternPart + '\'] : $entity->get' + patternPart.toFirstUpper + '())'
                 } else {
-                    formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(' + (if (matchedFields.head instanceof AbstractStringField) '' else '(string) ') + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '())')
+                    formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(' + (if (matchedFields.head instanceof AbstractStringField) '' else '(string) ') + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()') + ')'
                 }
             } else if (geographical && #['latitude', 'longitude'].contains(patternPart)) {
                 // geo field referencing part
