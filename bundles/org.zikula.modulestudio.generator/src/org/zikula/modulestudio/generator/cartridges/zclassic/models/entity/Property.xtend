@@ -26,12 +26,14 @@ import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 
 class Property {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -112,9 +114,13 @@ class Property {
         «ENDIF»
          */
         «thVal.fieldAnnotations(it)»
-        «modifier» «IF nullable || it instanceof DatetimeField»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
+        «modifier» «IF nullable || it instanceof DatetimeField»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSEIF !skipTypeHint»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''
+
+    def private skipTypeHint(Object it) {
+        (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) || (it instanceof UserField)
+    }
 
     def private persistentPropertyImpl(DerivedField it, String type) {
         switch it {
