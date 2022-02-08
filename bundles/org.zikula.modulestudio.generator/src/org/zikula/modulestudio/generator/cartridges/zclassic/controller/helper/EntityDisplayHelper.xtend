@@ -164,11 +164,9 @@ class EntityDisplayHelper {
         protected function get«name.formatForCodeCapital»Description(«name.formatForCodeCapital»Entity $entity): string
         {
             $descriptionFieldName = $this->getDescriptionFieldName($entity->get_objectType());
+            $getter = 'get' . ucfirst($descriptionFieldName);
 
-            return isset($entity[$descriptionFieldName]) && !empty($entity[$descriptionFieldName])
-                ? $entity[$descriptionFieldName]
-                : ''
-            ;
+            return $entity->$getter() ?? '';
         }
     '''
 
