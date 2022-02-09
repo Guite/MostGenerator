@@ -206,6 +206,7 @@ class LoggableHelper {
          */
         public function revert(EntityInterface $entity, int $requestedVersion = 1, bool $detach = false): EntityInterface
         {
+            $objectType = $entity->get_objectType();
             $logEntriesRepository = $this->getLogEntryRepository($objectType);
             $logEntries = $logEntriesRepository->getLogEntries($entity);
             if (2 > count($logEntries)) {
