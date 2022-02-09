@@ -383,7 +383,7 @@ class FormHandler {
             // retrieve identifier of the object we wish to edit
             $routeParams = $request->get('_route_params', []);
             if (array_key_exists($this->idField, $routeParams)) {
-                $this->idValue = (int) !empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0;
+                $this->idValue = (int) (!empty($routeParams[$this->idField]) ? $routeParams[$this->idField] : 0);
             }
             if (0 === $this->idValue) {
                 $this->idValue = $request->query->getInt($this->idField);
