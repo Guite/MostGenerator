@@ -117,7 +117,7 @@ class LoggableHistory {
         }
 
         $routeArea = $isAdmin ? 'admin' : '';
-        $logEntries = $this->logEntryRepository->getLogEntries($«name.formatForCode»);
+        $logEntries = $logEntryRepository->getLogEntries($«name.formatForCode»);
 
         $revertToVersion = $request->query->getInt('revert');
         if (0 < $revertToVersion && 1 < count($logEntries)) {
