@@ -9,14 +9,13 @@ import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationFetchType
+import java.util.ArrayList
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import java.util.ArrayList
-import de.guite.modulestudio.metamodel.Application
 
 class Association {
 
@@ -36,16 +35,12 @@ class Association {
     /**
      * If we have an outgoing association useTarget is true; for an incoming one it is false.
      */
-    def importRelatedEntity(JoinRelationship it, Boolean useTarget) {
-        val entityClassName = (if (useTarget) target else source).simpleEntityClassName
-        if (!importedEntities.contains(entityClassName)) {
-            importedEntities += entityClassName
-            return importStatement(application, entityClassName)
-        }
-    }
-
-    def private importStatement(Application it, String entityClassName) '''
-        use «appNamespace»\Entity\«entityClassName»;
+    def importRelatedEntity(JoinRelationship it, Boolean useTarget) '''
+        «val entityClassName = (if (useTarget) target else source).simpleEntityClassName»
+        «IF !importedEntities.contains(entityClassName)»
+            «{importedEntities += entityClassName; ''}»
+            use «application.appNamespace»\Entity\«entityClassName»;
+        «ENDIF»
     '''
 
     def private simpleEntityClassName(DataObject it) {
