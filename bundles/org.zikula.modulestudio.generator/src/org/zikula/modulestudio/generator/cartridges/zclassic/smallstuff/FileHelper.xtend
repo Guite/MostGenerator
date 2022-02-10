@@ -60,8 +60,13 @@ class FileHelper {
              * @param «type» $«name»
              */
         «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF» $«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
+        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF type.definesGeneric»|array«ENDIF»«IF skipTypeHint»*/«ENDIF» $«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
         {
+            «IF type.definesGeneric»«/* array may be set by Forms */»
+                if (is_array($«name»)) {
+                    $«name» = new ArrayCollection($«name»);
+                }
+            «ENDIF»
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
             «ELSE»
