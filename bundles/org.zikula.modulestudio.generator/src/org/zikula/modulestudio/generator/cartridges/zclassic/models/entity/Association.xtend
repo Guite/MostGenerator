@@ -29,6 +29,10 @@ class Association {
     ArrayList<String> importedEntities
 
     new() {
+        resetImports
+    }
+
+    def resetImports() {
         importedEntities = newArrayList
     }
 

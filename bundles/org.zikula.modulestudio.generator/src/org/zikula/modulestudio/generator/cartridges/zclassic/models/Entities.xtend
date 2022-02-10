@@ -111,6 +111,7 @@ class Entities {
             extMan = new ExtensionManager(it)
         }
         thProp = new Property(app, extMan)
+        thAssoc.resetImports
         fsa.generateClassPair('Entity/' + name.formatForCodeCapital + 'Entity.php', modelEntityBaseImpl(app), modelEntityImpl(app))
     }
 
