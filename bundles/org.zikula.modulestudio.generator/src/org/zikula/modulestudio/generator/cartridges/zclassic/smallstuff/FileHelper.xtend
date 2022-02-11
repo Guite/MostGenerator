@@ -47,7 +47,7 @@ class FileHelper {
              * @return «type»
              */
         «ENDIF»
-        public function get«name.formatForCodeCapital»()«IF skipTypeHint»/*«ENDIF»: «IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF»
+        public function get«name.formatForCodeCapital»()«IF skipTypeHint(type)»/*«ENDIF»: «IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint(type)»*/«ENDIF»
         {
             return «IF type == 'float'»(float) «ENDIF»$this->«name»;
         }
@@ -60,7 +60,7 @@ class FileHelper {
              * @param «type» $«name»
              */
         «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF nullable && !type.definesGeneric»?«ENDIF»«normalizeTypeHint(type)»«IF type.definesGeneric»|array«IF nullable»|null«ENDIF»«ENDIF»«IF skipTypeHint»*/«ENDIF» $«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
+        public function set«name.formatForCodeCapital»(«IF skipTypeHint(type)»/*«ENDIF»«IF nullable && !type.definesGeneric»?«ENDIF»«normalizeTypeHint(type)»«IF type.definesGeneric»|array«IF nullable»|null«ENDIF»«ENDIF»«IF skipTypeHint(type)»*/ «ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
         {
             «IF type.definesGeneric»«/* array may be set by Forms */»
                 if (is_array($«name»)) {
@@ -81,8 +81,10 @@ class FileHelper {
 
     def private definesGeneric(String type) { type.contains('Collection<') }
 
-    def private skipTypeHint(Object it) {
-        (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) || (it instanceof UserField)
+    // skip type hint for collections (definesGeneric) because "Collection|array|null" breaks Doctrine ProxyGenerator with:
+    // Attempted to call an undefined method named "getName" of class "ReflectionUnionType".
+    def private skipTypeHint(Object it, String type) {
+        (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) || (it instanceof UserField) || type.definesGeneric
     }
 
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
