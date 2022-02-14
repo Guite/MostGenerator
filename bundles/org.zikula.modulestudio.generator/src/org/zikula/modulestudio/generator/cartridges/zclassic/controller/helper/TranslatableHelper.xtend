@@ -51,7 +51,7 @@ class TranslatableHelper {
 
     def private helperBaseImpl(Application it) '''
         «IF needsDynamicLoggableEnablement»
-            protected LoggableListener $loggableListener;
+            protected ?LoggableListener $loggableListener = null;
 
         «ENDIF»
         public function __construct(
@@ -61,9 +61,6 @@ class TranslatableHelper {
             protected LocaleApiInterface $localeApi,
             protected EntityFactory $entityFactory
         ) {
-            «IF needsDynamicLoggableEnablement»
-                $this->loggableListener = null;
-            «ENDIF»
         }
 
         «getTranslatableFieldsImpl»
