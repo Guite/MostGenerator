@@ -49,7 +49,7 @@ class FileHelper {
         «ENDIF»
         public function get«name.formatForCodeCapital»()«IF skipTypeHint(type)»/*«ENDIF»: «IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint(type)»*/«ENDIF»
         {
-            return «IF type == 'float'»(float) «ENDIF»$this->«name»;
+            return «IF type == 'float'»(float) «ENDIF»$this->«name»«IF nullable && type.contains('Entity')» = null«ENDIF»;
         }
     '''
 
@@ -60,7 +60,7 @@ class FileHelper {
              * @param «type» $«name»
              */
         «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF skipTypeHint(type)»/*«ENDIF»«IF nullable && !type.definesGeneric»?«ENDIF»«normalizeTypeHint(type)»«IF type.definesGeneric»|array«IF nullable»|null«ENDIF»«ENDIF»«IF skipTypeHint(type)»*/ «ENDIF»$«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
+        public function set«name.formatForCodeCapital»(«IF skipTypeHint(type)»/*«ENDIF»«IF nullable && !type.definesGeneric»?«ENDIF»«normalizeTypeHint(type)»«IF type.definesGeneric»|array«IF nullable»|null«ENDIF»«ENDIF»«IF skipTypeHint(type)»*/«ENDIF» $«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
         {
             «IF type.definesGeneric»«/* array may be set by Forms */»
                 if (is_array($«name»)) {
