@@ -88,7 +88,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          *
          * @ORM\Column(name="object_class", type="string", length=140)
          */
-        protected string $objectClass;
+        protected «/* no type allowed because we override a parent field */»$objectClass;
 
         «IF primaryKey instanceof AbstractIntegerField»
             /**
