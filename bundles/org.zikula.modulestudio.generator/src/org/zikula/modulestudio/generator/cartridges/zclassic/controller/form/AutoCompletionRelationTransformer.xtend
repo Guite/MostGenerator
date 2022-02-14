@@ -42,6 +42,9 @@ class AutoCompletionRelationTransformer {
             public function transform($entities)
             {
                 $result = '';
+                if (null === $entities) {
+                    return $result;
+                }
 
                 if ($this->isMultiple && !count($entities) || !$this->isMultiple && null === $entities) {
                     return $result;
