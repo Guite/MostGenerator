@@ -108,7 +108,7 @@ class Association {
         IF !isManySide(false)»
             #[Assert\Valid]
         «ENDIF*/»
-        protected «IF nullable»?«ENDIF»«IF isManySide(false)»Collection«ELSE»«entityClass»«ENDIF» $«sourceName»«IF nullable» = null«ENDIF»;
+        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»«IF isManySide(false)»Collection«ELSE»«entityClass»«ENDIF» $«sourceName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -156,7 +156,7 @@ class Association {
             #[Assert\NotNull(message: 'Choosing a «aliasName.formatForDisplay» is required.')]
         «ENDIF»«/* disabled due to problems with upload fields
         #[Assert\Valid]*/»
-        protected «IF nullable»?«ENDIF»«entityClass» $«sourceName»«IF nullable» = null«ENDIF»;
+        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»«entityClass» $«sourceName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -216,7 +216,7 @@ class Association {
         IF !isManySide(true)»
             #[Assert\Valid]
         «ENDIF*/»
-        protected «IF nullable»?«ENDIF»«entityClass» $«targetName»«IF nullable» = null«ENDIF»;
+        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»«entityClass» $«targetName»«IF nullable» = null«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
