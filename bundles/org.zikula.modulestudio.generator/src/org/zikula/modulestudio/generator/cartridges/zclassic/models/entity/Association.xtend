@@ -183,7 +183,7 @@ class Association {
             «IF maxSource > 0»
                 #[Assert\Count(min: «minSource», max: «maxSource»)]
             «ENDIF»
-            protected «IF nullable»?«ENDIF»Collection $«sourceName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+            protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»Collection $«sourceName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
         «ENDIF»
     '''
 
@@ -267,7 +267,7 @@ class Association {
         «IF maxTarget > 0»
             #[Assert\Count(min: «minTarget», max: «maxTarget»)]
         «ENDIF»
-        protected «IF nullable»?«ENDIF»Collection $«targetName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»Collection $«targetName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
         «/* this last line is on purpose */»
     '''
 
@@ -294,7 +294,7 @@ class Association {
         «IF maxTarget > 0»
             #[Assert\Count(min: «minTarget», max: «maxTarget»)]
         «ENDIF»
-        protected «IF nullable»?«ENDIF»Collection $«targetName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»Collection $«targetName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
     '''
 
     def private dispatch outgoingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «sourceName» [«source.getDisplayNameDependingOnType»] have many «targetName» [«target.getDisplayNameDependingOnType»] (OWNING SIDE)'''
