@@ -1041,6 +1041,7 @@ class FormHandler {
             $roles['is_creator'] = 'create' === $this->templateParameters['mode']
                 || (
                     method_exists($this->entityRef, 'getCreatedBy')
+                    && null !== $this->entityRef->getCreatedBy()
                     && $this->entityRef->getCreatedBy()->getUid() === $currentUserId
                 )
             ;
