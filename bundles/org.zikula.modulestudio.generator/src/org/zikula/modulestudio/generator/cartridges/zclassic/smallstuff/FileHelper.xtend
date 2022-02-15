@@ -49,7 +49,7 @@ class FileHelper {
         «ENDIF»
         public function get«name.formatForCodeCapital»()«IF skipTypeHint(type)»/*«ENDIF»: «IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint(type)»*/«ENDIF»
         {
-            return «IF type == 'float'»(float) «ENDIF»$this->«name»«IF nullable && type.contains('Entity')» = null«ENDIF»;
+            return «IF type == 'float'»(float) «ENDIF»$this->«name»;
         }
     '''
 
