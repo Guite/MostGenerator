@@ -379,7 +379,7 @@ class ValidationConstraints {
         #[Assert\IsTrue(message: 'This value must be a valid user id.')]
         public function is«name.formatForCodeCapital»UserValid(): bool
         {
-            return «IF !mandatory && nullable»null === $this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»'] instanceof UserEntity;
+            return «IF !mandatory && nullable»null === $this->get«name.formatForCodeCapital»() || «ENDIF»$this->get«name.formatForCodeCapital»() instanceof UserEntity;
         }
     '''
 
@@ -395,7 +395,7 @@ class ValidationConstraints {
             {
                 $format = 'His';
 
-                return «IF !mandatory»!$this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»']->format($format) < date($format);
+                return «IF !mandatory»!$this->get«name.formatForCodeCapital»() || «ENDIF»$this->get«name.formatForCodeCapital»()->format($format) < date($format);
             }
         «ELSEIF future»
             /**
@@ -407,7 +407,7 @@ class ValidationConstraints {
             {
                 $format = 'His';
 
-                return «IF !mandatory»!$this['«name.formatForCode»'] || «ENDIF»$this['«name.formatForCode»']->format($format) > date($format);
+                return «IF !mandatory»!$this->get«name.formatForCodeCapital»() || «ENDIF»$this->get«name.formatForCodeCapital»()->format($format) > date($format);
             }
         «ENDIF»
         «ENDIF»
