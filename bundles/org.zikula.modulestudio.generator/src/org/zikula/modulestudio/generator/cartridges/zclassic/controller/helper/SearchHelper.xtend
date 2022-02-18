@@ -202,18 +202,25 @@ class SearchHelper {
                     if (!$this->permissionHelper->mayRead($entity)) {
                         continue;
                     }
-
-                    $description = !empty($descriptionFieldName) ? strip_tags($entity[$descriptionFieldName]) : '';
-                    $created = $entity['createdDate'] ?? null;
+    
+                    $description = '';
+                    if (!empty($descriptionFieldName)) {
+                        $getter = 'get' . ucfirst($descriptionFieldName);
+                        $description = strip_tags($entity->$getter());
+                    }
+                    $created = $entity->getCreatedDate() ?? null;
 
                     $formattedTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
                     $displayUrl = null;
                     if ($hasDisplayAction) {
                         $urlArgs = $entity->createUrlArgs();
-                        $urlArgs['_locale'] = null !== $languageField && !empty($entity[$languageField])
-                            ? $entity[$languageField]
-                            : $request->getLocale()
-                        ;
+                        $urlArgs['_locale'] = $request->getLocale();
+                        if (null !== $languageField) {
+                            $getter = 'get' . ucfirst($languageField);
+                            if (!empty($entity->$getter())) {
+                                $urlArgs['_locale'] = $entity->$getter();
+                            }
+                        }
                         $displayUrl = new RouteUrl('«appName.formatForDB»_' . mb_strtolower($objectType) . '_display', $urlArgs);
                     }
 
