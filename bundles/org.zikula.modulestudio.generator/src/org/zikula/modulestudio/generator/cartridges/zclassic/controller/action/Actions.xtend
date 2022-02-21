@@ -72,7 +72,7 @@ class Actions {
         «ENDIF»
         «IF action instanceof DisplayAction || action instanceof DeleteAction»
             if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
-                «IF ownerPermission && standardFields && action instanceof DeleteAction»
+                «IF ownerPermission && action instanceof DeleteAction»
                     if ($isAdmin) {
                         throw new AccessDeniedException();
                     }

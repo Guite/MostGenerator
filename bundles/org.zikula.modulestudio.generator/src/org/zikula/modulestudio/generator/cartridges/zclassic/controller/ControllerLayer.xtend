@@ -187,7 +187,7 @@ class ControllerLayer {
         «IF hasViewAction || hasDeleteAction»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
-        «IF ownerPermission && standardFields && hasDeleteAction»
+        «IF ownerPermission && hasDeleteAction»
             use Zikula\UsersModule\Constant\UsersConstant;
         «ENDIF»
         «commonAppImports»
