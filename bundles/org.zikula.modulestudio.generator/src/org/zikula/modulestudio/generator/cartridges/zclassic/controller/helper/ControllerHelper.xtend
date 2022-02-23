@@ -297,9 +297,8 @@ class ControllerHelper {
                     }
                     if (in_array($fieldName, ['all', 'own', 'num'], true)) {
                         $templateParameters[$fieldName] = (int) $fieldValue;
-                        $urlParameters[$fieldName] = $fieldValue;
                     } elseif ('sort' === $fieldName && !empty($fieldValue)) {
-                        $sort = $fieldValue;
+                       $sort = $fieldValue;
                     } elseif ('sortdir' === $fieldName && !empty($fieldValue)) {
                         $sortdir = $fieldValue;
                     } elseif (
@@ -317,8 +316,8 @@ class ControllerHelper {
                         if ($fieldValue instanceof EntityInterface) {
                             $fieldValue = $fieldValue->getKey();
                         }
-                        $urlParameters[$fieldName] = $fieldValue;
                     }
+                    $urlParameters[$fieldName] = $fieldValue;
                 }
             }
             $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), mb_strtoupper($sortdir));
