@@ -128,6 +128,7 @@ class Actions {
         $request->query->set('sort', $sort);
         $request->query->set('sortdir', $sortdir);
         $request->query->set('page', $page);
+        $request->query->set('num', $num);
 
         $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view';
         $sortableColumns = new SortableColumns($router, $routeName, 'sort', 'sortdir');
