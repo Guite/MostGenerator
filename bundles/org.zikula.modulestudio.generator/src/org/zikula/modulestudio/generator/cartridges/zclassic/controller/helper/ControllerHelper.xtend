@@ -298,7 +298,7 @@ class ControllerHelper {
                     if (in_array($fieldName, ['all', 'own', 'num'], true)) {
                         $templateParameters[$fieldName] = (int) $fieldValue;
                     } elseif ('sort' === $fieldName && !empty($fieldValue)) {
-                       $sort = $fieldValue;
+                        $sort = $fieldValue;
                     } elseif ('sortdir' === $fieldName && !empty($fieldValue)) {
                         $sortdir = $fieldValue;
                     } elseif (
