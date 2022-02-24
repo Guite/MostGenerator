@@ -269,7 +269,7 @@ class EntityDisplayHelper {
             if (!matchedFields.empty) {
                 // field referencing part
                 if (matchedFields.head instanceof UploadField) {
-                    formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(is_array($entity->get' + patternPart.toFirstUpper + '()) ? $entity->get' + patternPart.toFirstUpper + '()[\'' + patternPart + '\'] : $entity->get' + patternPart.toFirstUpper + '())'
+                    formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars((is_array($entity->get' + patternPart.toFirstUpper + '()) ? $entity->get' + patternPart.toFirstUpper + '()[\'' + patternPart + '\'] : $entity->get' + patternPart.toFirstUpper + '())->getFilename())'
                 } else {
                     formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(' + (if (matchedFields.head instanceof AbstractStringField) '' else '(string) ') + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()') + ')'
                 }
