@@ -70,7 +70,7 @@ class TreeData {
             $title = '';
             if ('' !== $descriptionFieldName) {
                 $getter = 'get' . ucfirst($descriptionFieldName);
-                $title = $node->$getter() ?? '';
+                $title = strip_tags($node->$getter() ?? '');
             }
 
             $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
