@@ -700,10 +700,12 @@ class AjaxController {
     def private treeOperationAddRootNode(Application it) '''
         $entity = $entityFactory->$createMethod();
         if (!empty($titleFieldName)) {
-            $entity[$titleFieldName] = $this->trans('New root node');
+            $setter = 'set' . ucfirst($titleFieldName);
+            $entity->$setter($this->trans('New root node'));
         }
         if (!empty($descriptionFieldName)) {
-            $entity[$descriptionFieldName] = $this->trans('This is a new root node');
+            $setter = 'set' . ucfirst($descriptionFieldName);
+            $entity->$setter($this->trans('This is a new root node'));
         }
         «IF hasStandardFieldEntities»
             if (method_exists($entity, 'setCreatedBy')) {
@@ -743,9 +745,11 @@ class AjaxController {
         }
 
         $childEntity = $entityFactory->$createMethod();
-        $childEntity[$titleFieldName] = $this->trans('New child node');
+        $setter = 'set' . ucfirst($titleFieldName);
+        $childEntity->$setter($this->trans('New child node'));
         if (!empty($descriptionFieldName)) {
-            $childEntity[$descriptionFieldName] = $this->trans('This is a new child node');
+            $setter = 'set' . ucfirst($descriptionFieldName);
+            $childEntity->$setter($this->trans('This is a new child node'));
         }
         «IF hasStandardFieldEntities»
             if (method_exists($childEntity, 'setCreatedBy')) {
