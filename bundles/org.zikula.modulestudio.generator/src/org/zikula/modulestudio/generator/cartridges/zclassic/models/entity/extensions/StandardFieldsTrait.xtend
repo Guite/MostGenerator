@@ -51,7 +51,7 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          */
-        protected ?UserEntity $createdBy;
+        protected ?UserEntity $createdBy = null;
 
         /**
          * @ORM\Column(type="datetime")
@@ -60,7 +60,7 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          */
-        protected ?DateTimeInterface $createdDate;
+        protected ?DateTimeInterface $createdDate = null;
 
         /**
          * @Gedmo\Blameable(on="update")
@@ -70,7 +70,7 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          */
-        protected ?UserEntity $updatedBy;
+        protected ?UserEntity $updatedBy = null;
 
         /**
          * @ORM\Column(type="datetime")
@@ -79,7 +79,7 @@ class StandardFieldsTrait {
           * @Gedmo\Versioned
          «ENDIF»
          */
-        protected ?DateTimeInterface $updatedDate;
+        protected ?DateTimeInterface $updatedDate = null;
         «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', true, '', '')»
         «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', true, '', '')»
         «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', true, '', '')»
