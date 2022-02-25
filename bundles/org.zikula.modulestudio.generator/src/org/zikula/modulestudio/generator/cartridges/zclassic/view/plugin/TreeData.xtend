@@ -67,7 +67,11 @@ class TreeData {
             bool $hasEditAction
         ): array {
             $idPrefix = 'tree' . $rootId . 'node_' . $node->getKey();
-            $title = '' !== $descriptionFieldName ? strip_tags($node[$descriptionFieldName]) : '';
+            $title = '';
+            if ('' !== $descriptionFieldName) {
+                $getter = 'get' . ucfirst($descriptionFieldName);
+                $title = $node->$getter() ?? '';
+            }
 
             $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
             $urlArgs = $needsArg ? $node->createUrlArgs(true) : $node->createUrlArgs();
