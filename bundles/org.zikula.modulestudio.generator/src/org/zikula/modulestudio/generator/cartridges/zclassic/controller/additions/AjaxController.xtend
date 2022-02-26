@@ -348,12 +348,14 @@ class AjaxController {
                 «IF hasImageFields»
 
                     // check for preview image
-                    if (!empty($previewFieldName) && !empty($item[$previewFieldName])) {
+                    if (!empty($previewFieldName)) {
                         $getter = 'get' . ucfirst($previewFieldName);
-                        $imagePath = $item->$getter()->getPathname();
-                        $imagePath = str_replace($item->get_uploadBasePathAbsolute(), $item->get_uploadBasePathRelative(), $imagePath);
-                        $thumbImagePath = $imagineCacheManager->getBrowserPath($imagePath, 'zkroot', $thumbRuntimeOptions);
-                        $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" class="mr-1" />';
+                        if (!empty($item->$getter())) {
+                            $imagePath = $item->$getter()->getPathname();
+                            $imagePath = str_replace($item->get_uploadBasePathAbsolute(), $item->get_uploadBasePathRelative(), $imagePath);
+                            $thumbImagePath = $imagineCacheManager->getBrowserPath($imagePath, 'zkroot', $thumbRuntimeOptions);
+                            $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" class="mr-1" />';
+                        }
                     }
                 «ENDIF»
 
