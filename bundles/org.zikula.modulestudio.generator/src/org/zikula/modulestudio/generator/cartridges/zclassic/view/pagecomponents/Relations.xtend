@@ -156,9 +156,7 @@ class Relations {
         «ENDIF»
     '''
 
-    def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity, Boolean isAdmin) '''
-        «val incoming = (if (target == relatedEntity && source != relatedEntity) true else false)»«/* use outgoing mode for self relations #547 */»
-        «val useTarget = !incoming»
+    def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity, Boolean isAdmin, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode.toFirstLower»
         «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCode»
         «val otherEntity = (if (!useTarget) source else target) as Entity»

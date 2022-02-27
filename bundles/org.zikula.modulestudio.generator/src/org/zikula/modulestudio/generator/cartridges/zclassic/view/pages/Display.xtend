@@ -61,8 +61,15 @@ class Display {
     }
 
     def private getReferredElements(Entity it) {
-        getOutgoingJoinRelations.filter[r|r.target instanceof Entity && r.target.application == it.application]
-        + incoming.filter(ManyToManyRelationship).filter[r|r.bidirectional && r.source instanceof Entity && r.source.application == it.application]
+        outgoingReferredElements + incomingReferredElements
+    }
+
+    def private getOutgoingReferredElements(Entity it) {
+        outgoingJoinRelations.filter[r|r.target instanceof Entity && r.target.application == it.application]
+    }
+
+    def private getIncomingReferredElements(Entity it) {
+        incoming.filter(ManyToManyRelationship).filter[r|r.bidirectional && r.source instanceof Entity && r.source.application == it.application]
     }
 
     def private displayView(Entity it, String appName, Boolean isAdmin) '''
@@ -107,16 +114,15 @@ class Display {
         {% endblock %}
         «val refedElems = getReferredElements»
         «IF !refedElems.empty»
-            «val relationHelper = new Relations»
             {% block related_items %}
                 {% set isQuickView = app.request.query.getBoolean('raw', false) %}
                 «IF useGroupingTabs('display')»
                     <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
                         <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}</h3>
-                        «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it, isAdmin)»«ENDFOR»
+                        «displayRelatedItems(appName, isAdmin)»
                     </div>
                 «ELSE»
-                    «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it, isAdmin)»«ENDFOR»
+                    «displayRelatedItems(appName, isAdmin)»
                 «ENDIF»
             {% endblock %}
         «ENDIF»
@@ -133,6 +139,16 @@ class Display {
                 «includeLeaflet('display', objName)»
             {% endblock %}
         «ENDIF»
+    '''
+
+    def private displayRelatedItems(Entity it, String appName, Boolean isAdmin) '''
+        «val relationHelper = new Relations»
+        «FOR elem : outgoingReferredElements»
+            «relationHelper.displayRelatedItems(elem, appName, it, isAdmin, true)»
+        «ENDFOR»
+        «FOR elem : incomingReferredElements»
+            «relationHelper.displayRelatedItems(elem, appName, it, isAdmin, false)»
+        «ENDFOR»
     '''
 
     def private content(Entity it, String appName, Boolean isAdmin) '''
