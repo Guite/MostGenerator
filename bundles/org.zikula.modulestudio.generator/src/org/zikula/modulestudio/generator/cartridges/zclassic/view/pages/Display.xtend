@@ -143,11 +143,11 @@ class Display {
 
     def private displayRelatedItems(Entity it, String appName, Boolean isAdmin) '''
         «val relationHelper = new Relations»
-        «FOR elem : outgoingReferredElements»
-            «relationHelper.displayRelatedItems(elem, appName, it, isAdmin, true)»
-        «ENDFOR»
         «FOR elem : incomingReferredElements»
             «relationHelper.displayRelatedItems(elem, appName, it, isAdmin, false)»
+        «ENDFOR»
+        «FOR elem : outgoingReferredElements»
+            «relationHelper.displayRelatedItems(elem, appName, it, isAdmin, true)»
         «ENDFOR»
     '''
 
