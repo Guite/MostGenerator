@@ -47,6 +47,13 @@ class ModelBehaviourExtensions {
     }
 
     /**
+     * Checks whether a specific entity needs functionality of the feature activation helper.
+     */
+    def needsFeatureActivationHelperEntity(Entity it) {
+        categorisable || attributable || hasTranslatableFields || tree != EntityTreeType.NONE
+    }
+
+    /**
      * Checks whether the application contains at least one entity with the loggable extension enabled.
      */
     def hasLoggable(Application it) {

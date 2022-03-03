@@ -56,7 +56,7 @@ class FinderType {
             use Zikula\CategoriesModule\Form\Type\CategoriesType;
         «ENDIF»
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        «IF app.needsFeatureActivationHelper»
+        «IF needsFeatureActivationHelperEntity»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
 
@@ -67,7 +67,7 @@ class FinderType {
         {
             public function __construct(
                 protected RequestStack $requestStack,
-                protected VariableApiInterface $variableApi«IF app.needsFeatureActivationHelper»,
+                protected VariableApiInterface $variableApi«IF needsFeatureActivationHelperEntity»,
                 protected FeatureActivationHelper $featureActivationHelper
                 «ENDIF»
             ) {

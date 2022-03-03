@@ -106,7 +106,7 @@ class QuickNavigationType {
         «IF !incomingRelations.empty || !outgoingRelations.empty»
             use «app.appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
-        «IF app.needsFeatureActivationHelper»
+        «IF needsFeatureActivationHelperEntity»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
         «IF hasListFieldsEntity»
@@ -126,15 +126,15 @@ class QuickNavigationType {
                     protected RequestStack $requestStack,
                     protected EntityFactory $entityFactory,
                     protected PermissionHelper $permissionHelper,
-                    protected EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
+                    protected EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
                 «ENDIF»
                 «IF hasListFieldsEntity»
-                    protected ListEntriesHelper $listHelper«IF hasLocaleFieldsEntity || app.needsFeatureActivationHelper»,«ENDIF»
+                    protected ListEntriesHelper $listHelper«IF hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
                 «ENDIF»
                 «IF hasLocaleFieldsEntity»
-                    protected LocaleApiInterface $localeApi«IF app.needsFeatureActivationHelper»,«ENDIF»
+                    protected LocaleApiInterface $localeApi«IF needsFeatureActivationHelperEntity»,«ENDIF»
                 «ENDIF»
-                «IF app.needsFeatureActivationHelper»
+                «IF needsFeatureActivationHelperEntity»
                     protected FeatureActivationHelper $featureActivationHelper
                 «ENDIF»
             ) {
