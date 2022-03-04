@@ -269,7 +269,7 @@ class CollectionFilterHelper {
                 return $qb;
             }
             $routeName = $request->get('_route', '');
-            if (false !== mb_strpos($routeName, 'edit')) {«/* fix for #547 */»
+            if (str_ends_with($routeName, 'edit')) {«/* fix for #547 */»
                 return $qb;
             }
 
