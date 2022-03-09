@@ -58,6 +58,11 @@ class Tree {
 
             // get all root nodes
             $qb = $this->genericBaseQuery('tbl.lvl = 0', '', $useJoins);
+
+            if (null !== $this->collectionFilterHelper) {
+                $qb = $this->collectionFilterHelper->applyDefaultFilters('«name.formatForCode»', $qb);
+            }
+
             $query = $this->getQueryFromBuilder($qb);
             $rootNodes = $query->getResult();
 
