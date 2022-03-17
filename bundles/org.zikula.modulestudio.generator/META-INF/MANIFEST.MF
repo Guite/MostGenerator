@@ -4,8 +4,8 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.zikula.modulestudio.generator; singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Require-Bundle: de.guite.modulestudio.mostdsl;bundle-version="1.5.0",
- org.apache.log4j;bundle-version="1.2.15",
- org.eclipse.core.runtime;bundle-version="3.24.0",
+ org.apache.log4j;bundle-version="1.2.19",
+ org.eclipse.core.runtime;bundle-version="3.24.100",
  org.eclipse.emf.mwe2.launch;bundle-version="2.12.2",
  org.eclipse.emf.mwe.utils;bundle-version="1.6.2",
  org.eclipse.xtend.core;bundle-version="2.26.0",
