@@ -231,10 +231,14 @@ class ViewHelper {
                 return $templateExtension;
             }
 
-            $extensions = $this->availableExtensions($type, $func);
             $request = $this->requestStack->getCurrentRequest();
             if (null === $request) {
                 return $templateExtension;
+            }
+
+            $extensions = $this->availableExtensions($type, $func);
+            if ($request->query->has('_format') && in_array($customFormat = $request->query->get('_format'), $extensions, true)) {
+                $request->setRequestFormat($customFormat);
             }
 
             $format = $request->getRequestFormat();
