@@ -68,7 +68,7 @@ class Xml {
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        <?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
+        <?xml version="1.0" encoding="{{ pageGetVar('meta.charset')|default('utf-8') }}" ?>
         <«nameMultiple.formatForCode»>
         {% for «name.formatForCode» in items %}
             {{ include('@«application.appName»/«name.formatForCodeCapital»/include.xml.twig') }}
