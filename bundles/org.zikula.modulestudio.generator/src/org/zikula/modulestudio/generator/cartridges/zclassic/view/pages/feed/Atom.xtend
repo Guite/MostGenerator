@@ -39,7 +39,7 @@ class Atom {
         «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
+        <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset|default('utf-8') }}{% endif %}" ?>
         <feed xmlns="http://www.w3.org/2005/Atom">
             <title type="text">{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}</title>
             <subtitle type="text">{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %} - {{ getSystemVar('slogan') }}</subtitle>

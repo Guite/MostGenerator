@@ -39,7 +39,7 @@ class Rss {
         «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset }}{% endif %}" ?>
+        <?xml version="1.0" encoding="{% set charset = pageGetVar('meta.charset') %}{% if charset == 'ISO-8859-15' %}ISO-8859-1{% else %}{{ charset|default('utf-8') }}{% endif %}" ?>
         <rss version="2.0"
             xmlns:dc="http://purl.org/dc/elements/1.1/"
             xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
