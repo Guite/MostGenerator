@@ -66,7 +66,7 @@ class SimpleFields {
 
     def dispatch displayField(UserField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml') '''«IF !mandatory»{% if «realName»|default and «realName».getUid() > 0 %}«ENDIF»{{ «realName».getUname() }}«IF !mandatory»{% endif %}«ENDIF»'''
+        if (page == 'viewcsv' || page == 'viewxml' || page == 'viewjson') '''«IF !mandatory»{% if «realName»|default and «realName».getUid() > 0 %}«ENDIF»{{ «realName».getUname() }}«IF !mandatory»{% endif %}«ENDIF»'''
         else '''
             «IF !mandatory»
                 {% if «realName»|default and «realName».getUid() > 0 %}
@@ -116,7 +116,7 @@ class SimpleFields {
 
     def dispatch displayField(EmailField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml') '''{{ «realName» }}'''
+        if (page == 'viewcsv' || page == 'viewxml' || page == 'viewjson') '''{{ «realName» }}'''
         else '''
             «IF !mandatory»
                 {% if «realName» is not empty %}
@@ -138,7 +138,7 @@ class SimpleFields {
 
     def dispatch displayField(UrlField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml') '''{{ «realName» }}'''
+        if (page == 'viewcsv' || page == 'viewxml' || page == 'viewjson') '''{{ «realName» }}'''
         else '''
             «IF !mandatory»
                 {% if «realName» is not empty %}
@@ -164,6 +164,18 @@ class SimpleFields {
         if (page == 'viewcsv') '''{{ «realName» }}'''
         else if (page == 'viewxml') '''
             {% if «realName» is not empty and «realName»Meta|default %} extension="{{ «realName»Meta.extension }}" size="{{ «realName»Meta.size }}" isImage="{% if «realName»Meta.isImage %}true{% else %}false{% endif %}"{% if «realName»Meta.isImage %} width="{{ «realName»Meta.width }}" height="{{ «realName»Meta.height }}" format="{{ «realName»Meta.format }}"{% endif %}{% endif %}>{{ «realName» }}'''
+        else if (page == 'viewjson') '''
+            "path": "{{ «realName» }}",
+            {% if «realName» is not empty and «realName»Meta|default %}
+                "extension": "{{ «realName»Meta.extension }}",
+                "size": "{{ «realName»Meta.size }}",
+                "isImage": {% if «realName»Meta.isImage %}true{% else %}false{% endif %}{% if «realName»Meta.isImage %},
+                    "width": "{{ «realName»Meta.width }}",
+                    "height": "{{ «realName»Meta.height }}",
+                    "format": "{{ «realName»Meta.format }}"
+                {% endif %}
+            {% endif %}
+        '''
         else '''
             «IF !mandatory»
                 {% if «realName» is not empty and «realName»Meta|default %}
@@ -191,11 +203,11 @@ class SimpleFields {
         if (page == 'viewcsv') return '''{% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}{% set firstItem = true %}{{ «objName».«name.formatForCode»|filter(e => e is not iterable)|join(', ') }}{% endif %}'''
         else return '''
             {% if «objName».«name.formatForCode» is iterable and «objName».«name.formatForCode»|length > 0 %}
-                «IF page == 'viewxml'»
+                «IF page == 'viewxml' || page == 'viewjson'»
                     {{ «objName».«name.formatForCode»|filter(e => e is not iterable)|join(', ') }}
                 «ELSE»
                     <ul>
-                    {% for entry in «objName».«name.formatForCode»«IF page == 'viewcsv' || page == 'viewxml'»|filter(e => e is not iterable)«ENDIF» %}
+                    {% for entry in «objName».«name.formatForCode»«IF page == 'viewcsv' || page == 'viewxml' || page == 'viewjson'»|filter(e => e is not iterable)«ENDIF» %}
                         <li>{{ entry }}</li>
                     {% endfor %}
                     </ul>

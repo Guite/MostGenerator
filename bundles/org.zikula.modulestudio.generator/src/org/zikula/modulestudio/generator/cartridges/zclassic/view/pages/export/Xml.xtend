@@ -92,7 +92,7 @@ class Xml {
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        <«name.formatForDB» «getPrimaryKey.name.formatForCode»="{{ «name.formatForCode».get«getPrimaryKey.name.formatForCodeCapital»() }}"«IF standardFields» createdon="{{ «name.formatForCode».createdDate|format_datetime('medium', 'short') }}" updatedon="{{ «name.formatForCode».updatedDate|format_datetime('medium', 'short') }}"«ENDIF»>
+        <«name.formatForDB» «getPrimaryKey.name.formatForCode»="{{ «name.formatForCode».get«getPrimaryKey.name.formatForCodeCapital»() }}"«IF standardFields» createdOn="{{ «name.formatForCode».createdDate|format_datetime('medium', 'short') }}" updatedOn="{{ «name.formatForCode».updatedDate|format_datetime('medium', 'short') }}"«ENDIF»>
             «FOR field : getDerivedFields.filter[primaryKey]»«field.displayEntry»«ENDFOR»
             «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»«field.displayEntry»«ENDFOR»
             «IF geographical»
@@ -116,7 +116,7 @@ class Xml {
     '''
 
     def private dispatch displayEntry(BooleanField it) '''
-        <«name.formatForCode»>{% if not «entity.name.formatForCode».«name.formatForCode» %}0{% else %}1{% endif %}</«name.formatForCode»>
+        <«name.formatForCode»>{% if «entity.name.formatForCode».«name.formatForCode» %}1{% else %}0{% endif %}</«name.formatForCode»>
     '''
 
     def private displayEntryCdata(DerivedField it) '''
