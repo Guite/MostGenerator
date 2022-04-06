@@ -137,7 +137,8 @@ class Json {
                 {% for relatedItem in «relObjName» %}
                     {
                         "key": "{{ relatedItem.getKey() }}",
-                        "title": "{{ relatedItem|«application.appName.formatForDB»_formattedTitle }}"{% if not loop.last %},{% endif %}
+                        "title": "{{ relatedItem|«application.appName.formatForDB»_formattedTitle }}"
+                    }{% if not loop.last %},{% endif %}
                 {% endfor %}
             {% endif %}
         ]
