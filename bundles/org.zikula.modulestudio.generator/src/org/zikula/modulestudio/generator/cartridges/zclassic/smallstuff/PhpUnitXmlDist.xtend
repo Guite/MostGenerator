@@ -28,7 +28,20 @@ class PhpUnitXmlDist {
                  beStrictAboutOutputDuringTests="true"
                  beStrictAboutTodoAnnotatedTests="true"
                  verbose="true"
+                 testdox="true"
         >
+            <php>
+                <ini name="display_errors" value="1"/>
+                <ini name="error_reporting" value="-1"/>
+                <env name="KERNEL_CLASS" value="App\Kernel"/>
+                <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/><!-- avoid deprecation warnings in test output -->
+                <server name="APP_ENV" value="test" force="true"/>
+                <server name="SHELL_VERBOSITY" value="-1"/>
+                <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
+                «IF targets('3.1')»
+                    <server name="SYMFONY_PHPUNIT_VERSION" value="9.3"/>
+                «ENDIF»
+            </php>
             <testsuites>
                 <testsuite name="«appName» Test Suite">
                     <directory>./Tests</directory>
@@ -36,16 +49,17 @@ class PhpUnitXmlDist {
                     <exclude>./vendor/</exclude>
                 </testsuite>
             </testsuites>
-            <filter>
-                <whitelist>
-                    <directory>./</directory>
-                    <exclude>
-                        <directory>./Resources</directory>
-                        <directory>./Tests</directory>
-                        <directory>./vendor</directory>
-                    </exclude>
-                </whitelist>
-            </filter>
+            <coverage pathCoverage="true">
+                <include>
+                    <directory suffix=".php">./</directory>
+                </include>
+                <exclude>
+                    <directory suffix=".php">./Tests/</directory>
+                </exclude>
+            </coverage>
+            <listeners>
+                <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
+            </listeners>
         </phpunit>
     '''
 }
