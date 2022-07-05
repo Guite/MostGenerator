@@ -21,7 +21,6 @@ class Config {
     extension NamingExtensions = new NamingExtensions
     extension SharedFormElements = new SharedFormElements
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         val templatePath = getViewPath + 'Config/'
@@ -66,10 +65,6 @@ class Config {
                                 «ENDIF»
                             </li>
                         «ENDFOR»
-                        {% set tabTitle = 'Workflows'|trans %}
-                        <li class="nav-item" role="presentation">
-                            <a id="workflowsTab" href="#tabWorkflows" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{{ tabTitle }}</a>
-                        </li>
                     </ul>
 
                     {{ form_errors(form) }}
@@ -101,19 +96,6 @@ class Config {
 
     def private configSections(Application it) '''
         «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(it, varContainer == getSortedVariableContainers.head)»«ENDFOR»
-        <div role="tabpanel" class="tab-pane fade" id="tabWorkflows" aria-labelledby="workflowsTab">
-            {% set tabTitle = 'Workflows'|trans %}
-            <fieldset>
-                <legend>{{ tabTitle }}</legend>
-
-                <p class="alert alert-info">{% trans %}Here you can inspect and amend the existing workflows.{% endtrans %}</p>
-
-                «FOR entity : getAllEntities»
-                    <h4>{% trans %}«entity.nameMultiple.formatForDisplayCapital»{% endtrans %}</h4>
-                    <p><a href="{{ path('zikula_workflow_editor_index', {workflow: '«appName.formatForDB»_«entity.workflow.textualName»'}) }}" title="{{ 'Edit workflow for «entity.nameMultiple.formatForDisplay»'|trans|e('html_attr') }}" target="_blank"><i class="fas fa-cubes"></i> {% trans %}Edit «entity.nameMultiple.formatForDisplay» workflow{% endtrans %}</a>
-                «ENDFOR»
-            </fieldset>
-        </div>
     '''
 
     def private configSection(Variables it, Application app, Boolean isPrimaryVarContainer) '''
