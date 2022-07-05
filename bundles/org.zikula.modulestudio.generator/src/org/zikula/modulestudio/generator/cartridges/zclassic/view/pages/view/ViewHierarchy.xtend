@@ -64,13 +64,8 @@ class ViewHierarchy {
                 {% endfor %}
 
                 <br style="clear: left" />
-                «IF !skipHookSubscribers»
-
-                    {{ block('display_hooks') }}
-                «ENDIF»
             </div>
         {% endblock %}
-        «(new ViewPagesHelper).callDisplayHooks(it)»
         {% block footer %}
             {{ parent() }}
             {{ pageAddAsset('stylesheet', asset('jstree/dist/themes/default/style.min.css')) }}

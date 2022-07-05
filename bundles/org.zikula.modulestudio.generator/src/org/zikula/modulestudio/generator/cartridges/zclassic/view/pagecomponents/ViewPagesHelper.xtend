@@ -6,12 +6,10 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewPagesHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension Utils = new Utils
 
     def commonHeader(Entity it) '''
         «docsWithVariables(application)»
@@ -35,25 +33,5 @@ class ViewPagesHelper {
         {% if all != 1 %}
             {{ include(paginator.template) }}
         {% endif %}
-    '''
-
-    def callDisplayHooks(Entity it) '''
-        «IF !skipHookSubscribers»
-            {% block display_hooks %}
-                «displayHooksImpl»
-            {% endblock %}
-        «ENDIF»
-    '''
-
-    def private displayHooksImpl(Entity it) '''
-        {# here you can activate calling display hooks for the view page if you need it #}
-        {# % if routeArea != 'admin' %}
-            {% set hooks = notifyDisplayHooks(eventName='«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', urlObject=currentUrlObject, outputAsArray=true) %}
-            {% if hooks is iterable and hooks|length > 0 %}
-                {% for area, hook in hooks %}
-                    <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endif % #}
     '''
 }

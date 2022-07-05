@@ -3,20 +3,16 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExpiryHelper {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -33,14 +29,8 @@ class ExpiryHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\Bundle\CoreBundle\RouteUrl;
-        «IF hasHookSubscribers»
-            use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
-        «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
-        «IF hasHookSubscribers»
-            use «appNamespace»\Helper\HookHelper;
-        «ENDIF»
         use «appNamespace»\Helper\PermissionHelper;
         use «appNamespace»\Helper\WorkflowHelper;
 
@@ -60,8 +50,7 @@ class ExpiryHelper {
             protected LoggerInterface $logger,
             protected EntityFactory $entityFactory,
             protected PermissionHelper $permissionHelper,
-            protected WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
-            protected HookHelper $hookHelper«ENDIF»
+            protected WorkflowHelper $workflowHelper
         ) {
         }
 
@@ -207,26 +196,6 @@ class ExpiryHelper {
         {
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;
-            «IF hasHookSubscribers»
-                if ($entity->supportsHookSubscribers()) {
-                    // let any hooks perform additional validation actions
-                    $hookType = 'delete' === $action
-                        ? UiHooksCategory::TYPE_VALIDATE_DELETE
-                        : UiHooksCategory::TYPE_VALIDATE_EDIT
-                    ;
-                    $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
-                    if (0 < count($validationErrors)) {
-                        if (null !== $session) {
-                            foreach ($validationErrors as $message) {
-                                $session->getFlashBag()->add('error', $message);
-                            }
-                        }
-
-                        return false;
-                    }
-                }
-
-            «ENDIF»
             $success = false;
             try {
                 // execute the workflow action
@@ -246,28 +215,6 @@ class ExpiryHelper {
             if (!$success) {
                 return false;
             }
-            «IF hasHookSubscribers»
-
-                if ($entity->supportsHookSubscribers()) {
-                    // let any hooks know that we have updated an item
-                    $objectType = $entity->get_objectType();
-                    $url = null;
-
-                    $hasDisplayPage = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»']);
-                    if ($hasDisplayPage) {
-                        $urlArgs = $entity->createUrlArgs();
-                        if (null !== $request) {
-                            $urlArgs['_locale'] = $request->getLocale();
-                        }
-                        $url = new RouteUrl('«appName.formatForDB»_' . mb_strtolower($objectType) . '_display', $urlArgs);
-                    }
-                    $hookType = 'delete' === $action
-                        ? UiHooksCategory::TYPE_PROCESS_DELETE
-                        : UiHooksCategory::TYPE_PROCESS_EDIT
-                    ;
-                    $this->hookHelper->callProcessHooks($entity, $hookType, $url);
-                }
-            «ENDIF»
 
             return $success;
         }

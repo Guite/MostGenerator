@@ -45,7 +45,6 @@ application "SimpleNews" targets ZK40 {
     generateIcsTemplates true
     generatePdfSupport true
     authenticationMethod NONE
-    filterHookProvider DISABLED
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles true
     versionAllGeneratedFiles true

@@ -81,10 +81,8 @@ class TechStructureSettings {
             <td headers="hSettingValue2" class="text-center"></td>
         </tr>
         <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Anbieter für Filter-Hooks«ELSE»Filter hooks provider«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«filterHookProvider.literal» &ndash; «helper.hookProviderDescription(filterHookProvider, language)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»Separate Admin-Templates«ELSE»Separate admin templates«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(it, separateAdminTemplates)»</td>
+            <td headers="hSettingName1">«IF language == 'de'»Separate Admin-Templates«ELSE»Separate admin templates«ENDIF»</td>
+            <td headers="hSettingValue1" class="text-center">«helper.flag(it, separateAdminTemplates)»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»RSS-Templates«ELSE»RSS templates«ENDIF»</td>

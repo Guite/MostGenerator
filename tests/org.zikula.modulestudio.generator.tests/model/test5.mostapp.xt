@@ -68,7 +68,6 @@ application "SimpleNews" {
             nameMultiple "articles2"
             identifierStrategy AUTO
             lockType PAGELOCK_OPTIMISTIC
-            skipHookSubscribers true
             fields {
                 integer "integ1" nullable readonly sortableGroup {
                     dbName "integ1"
@@ -97,8 +96,6 @@ application "SimpleNews" {
         entity "article3" categorisable attributable {
             nameMultiple "articles3"
             tree NESTED
-            formAwareHookProvider ENABLED
-            uiHooksProvider ENABLED_SELF
             fields {
                 number "num1" nullable readonly sortableGroup {
                     dbName "num1"

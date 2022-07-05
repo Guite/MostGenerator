@@ -67,7 +67,7 @@ class Rss {
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             <item>
-                <title><![CDATA[{{ «objName»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}]]></title>
+                <title><![CDATA[{{ «objName»|«app.appName.formatForDB»_formattedTitle }}]]></title>
                 <link>{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</link>
                 <guid>{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}</guid>
                 «IF standardFields»

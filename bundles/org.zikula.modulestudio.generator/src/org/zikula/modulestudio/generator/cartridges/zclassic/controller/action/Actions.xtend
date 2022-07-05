@@ -138,8 +138,7 @@ class Actions {
                 $templateParameters = $controllerHelper->processViewActionParameters(
                     $objectType,
                     $sortableColumns,
-                    $templateParameters«IF app.hasHookSubscribers»,
-                    «(!skipHookSubscribers).displayBool»«ENDIF»
+                    $templateParameters
                 );
 
                 // fetch and return the appropriate template
@@ -152,8 +151,7 @@ class Actions {
         $templateParameters = $controllerHelper->processViewActionParameters(
             $objectType,
             $sortableColumns,
-            $templateParameters«IF app.hasHookSubscribers»,
-            «(!skipHookSubscribers).displayBool»«ENDIF»
+            $templateParameters
         );
 
         // filter by permissions
@@ -224,11 +222,7 @@ class Actions {
             $objectType => $«name.formatForCode»,
         ];
 
-        $templateParameters = $controllerHelper->processDisplayActionParameters(
-            $objectType,
-            $templateParameters«IF app.hasHookSubscribers»,
-            $«name.formatForCode»->supportsHookSubscribers()«ENDIF»
-        );
+        $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters);
 
         «processDisplayOutput»
     '''
@@ -265,11 +259,7 @@ class Actions {
 
         $templateParameters = $formHandler->getTemplateParameters();
 
-        $templateParameters = $controllerHelper->processEditActionParameters(
-            $objectType,
-            $templateParameters«IF app.hasHookSubscribers»,
-            $templateParameters['«name.formatForCode»']->supportsHookSubscribers()«ENDIF»
-        );
+        $templateParameters = $controllerHelper->processEditActionParameters($objectType, $templateParameters);
 
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'edit', $templateParameters);
@@ -318,12 +308,6 @@ class Actions {
         }
 
         $form = $this->createForm(DeletionType::class, $«name.formatForCode»);
-        «IF !skipHookSubscribers»
-            if ($«name.formatForCode»->supportsHookSubscribers()) {
-                // call form aware display hooks
-                $formHook = $hookHelper->callFormDisplayHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_DELETE);
-            }
-        «ENDIF»
 
         $form->handleRequest($request);
         if ($form->isSubmitted()«/* && $form->isValid() - also allow deletion of entities that are not valid */») {
@@ -341,17 +325,8 @@ class Actions {
             'deleteForm' => $form->createView(),
             $objectType => $«name.formatForCode»,
         ];
-        «IF !skipHookSubscribers»
-            if ($«name.formatForCode»->supportsHookSubscribers()) {
-                $templateParameters['formHookTemplates'] = $formHook->getTemplates();
-            }
-        «ENDIF»
 
-        $templateParameters = $controllerHelper->processDeleteActionParameters(
-            $objectType,
-            $templateParameters«IF app.hasHookSubscribers»,
-            $«name.formatForCode»->supportsHookSubscribers()«ENDIF»
-        );
+        $templateParameters = $controllerHelper->processDeleteActionParameters($objectType, $templateParameters);
 
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'delete', $templateParameters);
@@ -361,23 +336,7 @@ class Actions {
         «IF loggable»
             $«name.formatForCode»->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_DELETED');
         «ENDIF»
-        «IF !skipHookSubscribers»
-            if ($«name.formatForCode»->supportsHookSubscribers()) {
-                // let any ui hooks perform additional validation actions
-                $validationErrors = $hookHelper->callValidationHooks($«name.formatForCode», UiHooksCategory::TYPE_VALIDATE_DELETE);
-                if (0 < count($validationErrors)) {
-                    foreach ($validationErrors as $message) {
-                        $this->addFlash('error', $message);
-                    }
-                } else {
-                    «performDeletionAndRedirect(action)»
-                }
-            } else {
-                «performDeletionAndRedirect(action)»
-            }
-        «ELSE»
-            «performDeletionAndRedirect(action)»
-        «ENDIF»
+        «performDeletionAndRedirect(action)»
     '''
 
     def private performDeletionAndRedirect(Entity it, DeleteAction action) '''
@@ -397,16 +356,6 @@ class Actions {
                 «ENDIF»
             );
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
-            «IF !skipHookSubscribers»
-
-                if ($«name.formatForCode»->supportsHookSubscribers()) {
-                    // call form aware processing hooks
-                    $hookHelper->callFormProcessHooks($form, $«name.formatForCode», FormAwareCategory::TYPE_PROCESS_DELETE);
-
-                    // let any ui hooks know that we have deleted the «name.formatForDisplay»
-                    $hookHelper->callProcessHooks($«name.formatForCode», UiHooksCategory::TYPE_PROCESS_DELETE);
-                }
-            «ENDIF»
         }
 
         return $this->redirectToRoute($redirectRoute);

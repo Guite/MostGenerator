@@ -293,9 +293,6 @@ class Installer {
                     use «entity.entityClassName('category', false)»;
                 «ENDIF»
             «ENDFOR»
-            «IF hasUiHooksProviders»
-                use «vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Entity\\HookAssignmentEntity'»;
-            «ENDIF»
         «ELSEIF 'usage' == context»
             «FOR entity : getAllEntities»
                 «entity.entityClassUsage('')»,
@@ -315,9 +312,6 @@ class Installer {
                     «entity.entityClassUsage('category')»,
                 «ENDIF»
             «ENDFOR»
-            «IF hasUiHooksProviders»
-                HookAssignmentEntity::class,
-            «ENDIF»
         «ENDIF»
     '''
 

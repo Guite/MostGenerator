@@ -73,7 +73,7 @@ class ModelJoinExtensions {
      * Whether the application requires auto completion components.
      */
     def needsAutoCompletion(Application it) {
-        hasAutoCompletionRelation || hasUiHooksProviders
+        hasAutoCompletionRelation
     }
 
     /**

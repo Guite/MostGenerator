@@ -9,7 +9,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.E
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ExampleDataHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ExpiryHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.FeatureActivationHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.HookHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ImageHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ListEntriesHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.LoggableHelper
@@ -52,7 +51,6 @@ class HelperServices {
         if (needsFeatureActivationHelper) {
             new FeatureActivationHelper().generate(it, fsa)
         }
-        new HookHelper().generate(it, fsa)
         if (hasUploads) {
             new ImageHelper().generate(it, fsa)
             new UploadHelper().generate(it, fsa)

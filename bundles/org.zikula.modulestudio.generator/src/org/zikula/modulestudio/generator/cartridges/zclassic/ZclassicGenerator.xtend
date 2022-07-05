@@ -26,7 +26,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.AppSettings
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.HookAssignmentEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ListEntryValidator
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
@@ -116,10 +115,6 @@ class ZclassicGenerator implements IGenerator {
 
         if (hasListFields) {
             new ListEntryValidator().generate(it, fsa)
-        }
-
-        if (hasUiHooksProviders) {
-            new HookAssignmentEntity().generate(it, fsa)
         }
     }
 

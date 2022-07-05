@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -11,7 +10,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class AutoCompletion {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -38,10 +36,6 @@ class AutoCompletion {
         «removeRelatedItem»
 
         «selectResultItem»
-        «IF hasUiHooksProviders»
-
-            «selectHookItem»
-        «ENDIF»
 
         «initAutoCompletion»
 
@@ -164,29 +158,12 @@ class AutoCompletion {
         }
     '''
 
-    def private selectHookItem(Application it) '''
-        /**
-         * Adds a hook assignment item to selection which has been chosen by auto completion.
-         */
-        function «vendorAndName»SelectHookItem(objectType, idPrefix, selectedListItem) {
-            «vendorAndName»ResetAutoCompletion(idPrefix);
-            «vendorAndName»AttachHookObject(jQuery('#' + idPrefix + 'AddLink'), selectedListItem.id);
-        }
-    '''
-
     def private initAutoCompletion(Application it) '''
         /**
          * Initialises auto completion for a relation field.
          */
         function «vendorAndName»InitAutoCompletion(objectType, alias, idPrefix, includeEditing) {
-            var acOptions, acDataSet, acUrl«IF hasUiHooksProviders», isHookAttacher«ENDIF»;
-            «IF hasUiHooksProviders»
-
-                isHookAttacher = idPrefix.startsWith('hookAssignment');
-                if (isHookAttacher) {
-                    idPrefix = alias;
-                }
-            «ENDIF»
+            var acOptions, acDataSet, acUrl;
 
             // update identifier of hidden field for easier usage in JS
             jQuery('#' + idPrefix + 'Multiple').prev().attr('id', idPrefix);
@@ -252,15 +229,7 @@ class AutoCompletion {
                         return false;
                     },
                     select: function (event, ui) {
-                        «IF hasUiHooksProviders»
-                            if (true === isHookAttacher) {
-                                «vendorAndName»SelectHookItem(objectType, idPrefix, ui.item);
-                            } else {
-                                «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item, includeEditing);
-                            }
-                        «ELSE»
-                            «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item, includeEditing);
-                        «ENDIF»
+                        «vendorAndName»SelectResultItem(objectType, idPrefix, ui.item, includeEditing);
 
                         return false;
                     }

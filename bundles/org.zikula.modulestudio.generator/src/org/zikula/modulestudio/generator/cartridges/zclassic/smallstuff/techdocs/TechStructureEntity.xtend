@@ -268,14 +268,6 @@ class TechStructureEntity {
         <tr>
             <th id="h«name.formatForCodeCapital»BehaviourStandardFields" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Standardfelder«ELSE»Standard fields«ENDIF»</th>
             <td headers="h«name.formatForCodeCapital»BehaviourStandardFields h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, standardFields)»</td>
-            <th id="h«name.formatForCodeCapital»BehaviourHookSubscribers" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Hook-Abonnenten«ELSE»Hook subscribers«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourHookSubscribers h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, !skipHookSubscribers)»</td>
-        </tr>
-        <tr>
-            <th id="h«name.formatForCodeCapital»BehaviourFormAwareHookProvider" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Anbieter für Formular-Hooks«ELSE»Form aware hooks provider«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourFormAwareHookProvider h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«formAwareHookProvider.literal» &ndash; «helper.hookProviderDescription(formAwareHookProvider, language)»</td>
-            <th id="h«name.formatForCodeCapital»BehaviourUiHooksProvider" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Anbieter für UI-Hooks«ELSE»UI hooks provider«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourUiHooksProvider h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«uiHooksProvider.literal» &ndash; «helper.hookProviderDescription(uiHooksProvider, language)»</td>
         </tr>
     '''
 

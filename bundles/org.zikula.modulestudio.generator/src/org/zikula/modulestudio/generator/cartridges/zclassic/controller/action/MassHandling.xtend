@@ -27,8 +27,7 @@ class MassHandling {
                 return $this->handleSelectedEntriesInternal(
                     $request,
                     $repository,
-                    $workflowHelper,«IF !skipHookSubscribers»
-                    $hookHelper,«ENDIF»
+                    $workflowHelper,
                     $currentUserApi,
                     $logger,
                     «isAdmin.displayBool»
@@ -68,9 +67,6 @@ class MassHandling {
         Request $request,
         «name.formatForCodeCapital»RepositoryInterface $repository,
         WorkflowHelper $workflowHelper,
-        «IF !skipHookSubscribers»
-            HookHelper $hookHelper,
-        «ENDIF»
         CurrentUserApiInterface $currentUserApi,
         LoggerInterface $logger«IF internalMethod»,
         bool $isAdmin = false«ENDIF»
@@ -104,23 +100,6 @@ class MassHandling {
                 continue;
             }
 
-            «IF !skipHookSubscribers»
-                if ($entity->supportsHookSubscribers()) {
-                    // let any ui hooks perform additional validation actions
-                    $hookType = 'delete' === $action
-                        ? UiHooksCategory::TYPE_VALIDATE_DELETE
-                        : UiHooksCategory::TYPE_VALIDATE_EDIT
-                    ;
-                    $validationErrors = $hookHelper->callValidationHooks($entity, $hookType);
-                    if (count($validationErrors) > 0) {
-                        foreach ($validationErrors as $message) {
-                            $this->addFlash('error', $message);
-                        }
-                        continue;
-                    }
-                }
-
-            «ENDIF»
             $success = false;
             try {
                 // execute the workflow action
@@ -197,25 +176,6 @@ class MassHandling {
                     ]
                 );
             }
-            «IF !skipHookSubscribers»
-
-                if ($entity->supportsHookSubscribers()) {
-                    // let any ui hooks know that we have updated or deleted an item
-                    $hookType = 'delete' === $action
-                        ? UiHooksCategory::TYPE_PROCESS_DELETE
-                        : UiHooksCategory::TYPE_PROCESS_EDIT
-                    ;
-                    $url = null;
-                    «IF hasDisplayAction»
-                        if ('delete' !== $action) {
-                            $urlArgs = $entity->createUrlArgs();
-                            $urlArgs['_locale'] = $request->getLocale();
-                            $url = new RouteUrl('«application.appName.formatForDB»_«name.formatForDB»_display', $urlArgs);
-                        }
-                    «ENDIF»
-                    $hookHelper->callProcessHooks($entity, $hookType, $url);
-                }
-            «ENDIF»
         }
 
         return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«getPrimaryAction»');

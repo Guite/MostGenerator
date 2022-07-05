@@ -4,11 +4,9 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Emails
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.HookProviderView
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.ModerationPanel
@@ -83,9 +81,6 @@ class Views {
         if (needsApproval) {
             new Emails().generate(it, fsa)
         }
-        if (hasFormAwareHookProviders || hasUiHooksProviders) {
-            new HookProviderView().generate(it, fsa)
-        }
         if (generatePdfSupport) {
             layoutHelper.pdfHeaderFile(it)
         }
@@ -147,7 +142,7 @@ class Views {
         // reverse logic like in the display template because we are treating the included template here
         val refedElems = entity.outgoing.filter(ManyToManyRelationship).filter[r|r.target instanceof Entity && r.target.application == entity.application]
                        + entity.getIncomingJoinRelations.filter[r|r.source instanceof Entity && r.source.application == entity.application]
-        if (!refedElems.empty || entity.uiHooksProvider != HookProviderMode.DISABLED) {
+        if (!refedElems.empty) {
             relationHelper.displayItemList(entity, it, false, fsa)
             relationHelper.displayItemList(entity, it, true, fsa)
         }

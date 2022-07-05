@@ -116,9 +116,6 @@ class ControllerLayer {
         «IF (hasDisplayAction && app.generateIcsTemplates && hasStartAndEndDateField) || (hasEditAction && app.needsInlineEditing)»
             use «app.appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
-        «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
-            use «app.appNamespace»\Helper\HookHelper;
-        «ENDIF»
         «IF loggable»
             use «app.appNamespace»\Helper\LoggableHelper;
         «ENDIF»
@@ -168,21 +165,12 @@ class ControllerLayer {
         «IF hasDeleteAction»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType;
         «ENDIF»
-        «IF (hasViewAction || hasDeleteAction) && !skipHookSubscribers»
-            «IF hasDeleteAction»
-                use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
-            «ENDIF»
-            use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
-        «ENDIF»
         «IF hasViewAction»
             use Zikula\Component\SortableColumns\Column;
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
         «IF hasEditAction && app.needsInlineEditing»
             use Zikula\Bundle\CoreBundle\Response\PlainResponse;
-        «ENDIF»
-        «IF hasViewAction && hasDisplayAction && !skipHookSubscribers»
-            use Zikula\Bundle\CoreBundle\RouteUrl;
         «ENDIF»
         «IF hasViewAction || hasDeleteAction»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;

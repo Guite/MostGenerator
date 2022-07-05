@@ -42,7 +42,7 @@ class AjaxController {
     '''
 
     def private commonAppImports(Application it) '''
-        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
+        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
         «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck»
@@ -65,9 +65,6 @@ class AjaxController {
     def private ajaxControllerBaseClass(Application it) '''
         namespace «appNamespace»\Controller\Base;
 
-        «IF hasUiHooksProviders»
-            use DateTime;
-        «ENDIF»
         «IF hasTrees»
             use Exception;
         «ENDIF»
@@ -77,16 +74,13 @@ class AjaxController {
         «IF hasTrees && hasEditActions»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
-        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable || hasUiHooksProviders»
+        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         use Zikula\Bundle\CoreBundle\Controller\AbstractController;
         «commonSystemImports»
         «IF generateExternalControllerAndFinder»
             use «appNamespace»\Entity\EntityInterface;
-        «ENDIF»
-        «IF hasUiHooksProviders»
-            use «appNamespace»\Entity\HookAssignmentEntity;
         «ENDIF»
         «commonAppImports»
 
@@ -123,12 +117,6 @@ class AjaxController {
         «IF hasSortable»
 
             «updateSortPositionsBase»
-        «ENDIF»
-        «IF hasUiHooksProviders»
-
-            «attachHookObjectBase»
-
-            «detachHookObjectBase»
         «ENDIF»
     '''
 
@@ -976,125 +964,6 @@ class AjaxController {
         ]);
     '''
 
-    def private attachHookObjectBase(Application it) '''
-        «attachHookObjectDocBlock(true)»
-        «attachHookObjectSignature» {
-            «attachHookObjectBaseImpl»
-        }
-    '''
-
-    def private detachHookObjectBase(Application it) '''
-        «detachHookObjectDocBlock(true)»
-        «detachHookObjectSignature» {
-            «detachHookObjectBaseImpl»
-        }
-    '''
-
-    def private attachHookObjectDocBlock(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Attachs a given hook assignment by creating the corresponding assignment data record.
-             *
-             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-             */
-        «ELSE»
-            #[Route('/attachHookObject', methods: ['POST'], options: ['expose' => true])]
-        «ENDIF»
-    '''
-
-    def private detachHookObjectDocBlock(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Detachs a given hook assignment by removing the corresponding assignment data record.
-             *
-             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-             */
-        «ELSE»
-            #[Route('/detachHookObject', methods: ['POST'], options: ['expose' => true])]
-        «ENDIF»
-    '''
-
-    def private attachHookObjectSignature(Application it) '''
-        public function attachHookObject«IF !targets('3.1')»Action«ENDIF»(
-            Request $request,
-            EntityFactory $entityFactory
-        ): JsonResponse'''
-
-    def private detachHookObjectSignature(Application it) '''
-        public function detachHookObject«IF !targets('3.1')»Action«ENDIF»(
-            Request $request,
-            EntityFactory $entityFactory
-        ): JsonResponse'''
-
-    def private attachHookObjectBaseImpl(Application it) '''
-        if (!$request->isXmlHttpRequest()) {
-            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            throw new AccessDeniedException();
-        }
-
-        $subscriberOwner = $request->request->get('owner');
-        $subscriberAreaId = $request->request->get('areaId');
-        $subscriberObjectId = $request->request->getInt('objectId');
-        $subscriberUrl = $request->request->get('url');
-        $assignedEntity = $request->request->get('assignedEntity');
-        $assignedId = $request->request->getInt('assignedId');
-
-        if (!$subscriberOwner || !$subscriberAreaId || !$subscriberObjectId || !$assignedEntity || !$assignedId) {
-            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        $subscriberUrl = !empty($subscriberUrl) ? unserialize($subscriberUrl) : [];
-
-        $assignment = new HookAssignmentEntity();
-        $assignment->setSubscriberOwner($subscriberOwner)
-            ->setSubscriberAreaId($subscriberAreaId)
-            ->setSubscriberObjectId($subscriberObjectId)
-            ->setSubscriberUrl($subscriberUrl)
-            ->setAssignedEntity($assignedEntity)
-            ->setAssignedId($assignedId)
-            ->setUpdatedDate(new DateTime());
-
-        $entityManager = $entityFactory->getEntityManager();
-        $entityManager->persist($assignment);
-        $entityManager->flush();
-
-        // return response
-        return $this->json([
-            'id' => $assignment->getId(),
-        ]);
-    '''
-
-    def private detachHookObjectBaseImpl(Application it) '''
-        if (!$request->isXmlHttpRequest()) {
-            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            throw new AccessDeniedException();
-        }
-
-        $id = $request->request->getInt('id', 0);
-        if (!$id) {
-            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        $qb = $entityFactory->getEntityManager()->createQueryBuilder();
-        $qb->delete(HookAssignmentEntity::class, 'tbl')
-           ->where('tbl.id = :identifier')
-           ->setParameter('identifier', $id);
-        
-        $query = $qb->getQuery();
-        $query->execute();
-
-        // return response
-        return $this->json([
-            'id' => $id,
-        ]);
-    '''
-
     def additionalAjaxFunctions(Application it) '''
         «IF generateExternalControllerAndFinder»
 
@@ -1119,12 +988,6 @@ class AjaxController {
         «IF hasSortable»
 
             «updateSortPositionsImpl»
-        «ENDIF»
-        «IF hasUiHooksProviders»
-
-            «attachHookObjectImpl»
-
-            «detachHookObjectImpl»
         «ENDIF»
     '''
 
@@ -1198,26 +1061,6 @@ class AjaxController {
         «updateSortPositionsDocBlock(false)»
         «updateSortPositionsSignature» {
             return parent::updateSortPositions«IF !targets('3.1')»Action«ENDIF»(
-                $request,
-                $entityFactory
-            );
-        }
-    '''
-
-    def private attachHookObjectImpl(Application it) '''
-        «attachHookObjectDocBlock(false)»
-        «attachHookObjectSignature» {
-            return parent::attachHookObject«IF !targets('3.1')»Action«ENDIF»(
-                $request,
-                $entityFactory
-            );
-        }
-    '''
-
-    def private detachHookObjectImpl(Application it) '''
-        «detachHookObjectDocBlock(false)»
-        «detachHookObjectSignature» {
-            return parent::detachHookObject«IF !targets('3.1')»Action«ENDIF»(
                 $request,
                 $entityFactory
             );

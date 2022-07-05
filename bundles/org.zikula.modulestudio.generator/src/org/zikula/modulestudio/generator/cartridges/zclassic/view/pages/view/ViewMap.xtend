@@ -58,10 +58,6 @@ class ViewMap {
                 <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
                 </div>
                 «(new ViewPagesHelper).pagerCall(it)»
-                «IF !skipHookSubscribers»
-
-                    {{ block('display_hooks') }}
-                «ENDIF»
                 {% for «name.formatForCode» in items|filter(i => i.latitude|default != 0 and i.longitude|default != 0) %}
                     <div class="map-marker-definition" data-latitude="{{ «name.formatForCode».latitude|e('html_attr') }}" data-longitude="{{ «name.formatForCode».longitude|e('html_attr') }}" data-title="{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('html_attr') }}" data-image="«IF null !== getMapImageField»{% if «name.formatForCode».«getMapImageField.name.formatForCode» is not empty and «name.formatForCode».«getMapImageField.name.formatForCode»Meta|default %}{{ «name.formatForCode».«getMapImageField.name.formatForCode»Url|e('html_attr') }}{% endif %}«ENDIF»" data-detail-url="«IF hasDisplayAction»{{ path('«appName.formatForDB»_«name.formatForCode»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)»)|e('html_attr') }}«ENDIF»"></div>
                 {% endfor %}
@@ -72,7 +68,6 @@ class ViewMap {
             «includeLeaflet('view', name.formatForCode)»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».ViewMap.js')) }}
         {% endblock %}
-        «(new ViewPagesHelper).callDisplayHooks(it)»
     '''
 
     def private getMapImageField(Entity it) {

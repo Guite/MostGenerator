@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.GeoFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HistoryFunctions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.HookAssignment
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.InlineEditing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.RawPageFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
@@ -55,9 +54,6 @@ class JavaScriptFiles {
         }
         if (hasLoggable) {
             new HistoryFunctions().generate(it, fsa)
-        }
-        if (hasUiHooksProviders) {
-            new HookAssignment().generate(it, fsa)
         }
         if (hasTrees) {
             new TreeFunctions().generate(it, fsa)

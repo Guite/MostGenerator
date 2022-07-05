@@ -89,13 +89,8 @@ class ViewTable {
                 {{ include('@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewQuickNav.html.twig'«IF !hasVisibleWorkflow», {workflowStateFilter: false}«ENDIF») }}{# see template file for available options #}
 
                 «viewForm»
-                «IF !skipHookSubscribers»
-
-                    {{ block('display_hooks') }}
-                «ENDIF»
             </div>
         {% endblock %}
-        «(new ViewPagesHelper).callDisplayHooks(it)»
     '''
 
     def private viewForm(Entity it) '''
@@ -366,7 +361,7 @@ class ViewTable {
     '''
 
     def private displayLeadingEntry(DerivedField it) {
-        '''{{ «entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyFilters('«application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»')|safeHtml«ENDIF» }}'''
+        '''{{ «entity.name.formatForCode».«name.formatForCode» }}'''
     }
 
     def private dispatch displayEntryInner(JoinRelationship it, Boolean useTarget) '''

@@ -42,9 +42,6 @@ application "SimpleNews" targets ZK40 {
             hasArchive false
             hasTray false
             ownerPermission false
-            skipHookSubscribers true
-            formAwareHookProvider DISABLED
-            uiHooksProvider ENABLED_SELF
             fields {
                 string "title" {
                     sluggablePosition 1

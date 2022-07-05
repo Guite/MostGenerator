@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.HookProviderMode
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -127,15 +126,4 @@ class TechHelper {
             <td headers="hBasicValue hGenerated">«IF language == 'de'»durch«ELSE»by«ENDIF» <a href="«msUrl»«IF language != 'de'»/en/«ENDIF»" title="«IF language == 'de'»Internetseite von ModuleStudio«ELSE»ModuleStudio website«ENDIF»" target="_blank">ModuleStudio</a>«IF versionAllGeneratedFiles» «msVersion»«ENDIF»«IF timestampAllGeneratedFiles» «IF language == 'de'»am«ELSE»at«ENDIF» «timestamp»«ENDIF»</td>
         </tr>
     '''
-
-    def hookProviderDescription(HookProviderMode it, String language) {
-        switch it {
-            case DISABLED:
-                return if (language == 'de') 'kein Hook-Anbieter verfügbar' else 'no hook provider available'
-            case ENABLED:
-                return if (language == 'de') 'Hook-Anbieter verfügbar' else 'hook provider available'
-            case ENABLED_SELF:
-                return if (language == 'de') 'Hook-Anbieter verfügbar, der auch an eigene Abonnenten angehängt werden kann' else 'hook provider available which may hook to its own subscribers'
-        }
-    }
 }

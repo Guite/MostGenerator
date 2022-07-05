@@ -299,6 +299,6 @@ class ControllerExtensions {
      * Checks whether inline editing is required or not.
      */
     def needsInlineEditing(Application it) {
-        hasUiHooksProviders || !getJoinRelations.filter[getEditStageCode(false) == 2 || getEditStageCode(true) == 2].empty
+        !getJoinRelations.filter[getEditStageCode(false) == 2 || getEditStageCode(true) == 2].empty
     }
 }

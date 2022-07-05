@@ -38,7 +38,6 @@ application "SimpleNews" targets ZK40 {
     generateMultiHookNeedles false
     generatePdfSupport true
     authenticationMethod REMOTE
-    filterHookProvider ENABLED
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles false
     versionAllGeneratedFiles false

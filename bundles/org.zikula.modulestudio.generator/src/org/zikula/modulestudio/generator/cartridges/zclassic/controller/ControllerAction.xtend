@@ -210,9 +210,6 @@ class ControllerAction {
         «name.formatForCodeCapital»RepositoryInterface $repository,
         CurrentUserApiInterface $currentUserApi,
         WorkflowHelper $workflowHelper,
-        «IF !skipHookSubscribers»
-            HookHelper $hookHelper,
-        «ENDIF»
         «IF hasUniqueSlug»string $slug«ELSE»int $id«ENDIF»«IF internalMethod»,
         bool $isAdmin = false«ENDIF»
     '''
@@ -225,8 +222,7 @@ class ControllerAction {
             $viewHelper,
             $repository,
             $currentUserApi,
-            $workflowHelper,«IF !skipHookSubscribers»
-            $hookHelper,«ENDIF»
+            $workflowHelper,
             $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»,
             «isAdmin.displayBool»
         '''

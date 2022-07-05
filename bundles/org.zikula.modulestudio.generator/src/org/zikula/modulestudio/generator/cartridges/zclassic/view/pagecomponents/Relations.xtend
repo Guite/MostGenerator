@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.JoinRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -37,39 +36,13 @@ class Relations {
     }
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
-        {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay»«IF uiHooksProvider != HookProviderMode.DISABLED» or hook assignments«ENDIF» #}
+        {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay» #}
         «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
-        «IF many && uiHooksProvider != HookProviderMode.DISABLED»
-            {#
-                You can use the context variable to check for the context of this list:
-                    - 'display': list of related «nameMultiple.formatForDisplay» included in a display template
-                    - 'hookDisplayView': list of «nameMultiple.formatForDisplay» assigned using an UI hook (display/view template)
-                    - 'hookDisplayEdit': list of «nameMultiple.formatForDisplay» assigned using an UI hook (edit template)
-                    - 'hookDisplayDelete': list of «nameMultiple.formatForDisplay» assigned using an UI hook (delete template)
-            #}
-        «ENDIF»
         {% set hasAdminPermission = permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_ADD')) %}
-        «IF ownerPermission || uiHooksProvider != HookProviderMode.DISABLED»
+        «IF ownerPermission»
             {% set hasEditPermission = permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
-        «ENDIF»
-        «IF many && uiHooksProvider != HookProviderMode.DISABLED»
-            {% if context != 'display' %}
-                <h3>{% trans«IF !app.isSystemModule» from 'hooks'«ENDIF» %}Assigned «nameMultiple.formatForDisplay»{% endtrans %}</h3>
-                {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
-                {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/custom.css'), 120) }}
-                {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
-                {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js'), constant('Zikula\\ThemeModule\\Engine\\AssetBag::WEIGHT_JQUERY_UI')) }}
-                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».js'), 99) }}
-                {% if context == 'hookDisplayView' and hasEditPermission %}
-                    {% set entityNameTranslated = '«name.formatForDisplay»'|trans %}
-                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».HookAssignment.js'), 99) }}
-                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js'), 99) }}
-                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
-                    {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
-                {% endif %}
-            {% endif %}
         «ENDIF»
         «IF hasDisplayAction»
             {% if noLink is not defined %}
@@ -108,51 +81,11 @@ class Relations {
             {% endif %}
         «ENDIF»
         «IF many»
-            «IF uiHooksProvider != HookProviderMode.DISABLED»
-                {% if context == 'hookDisplayView' and hasEditPermission %}
-                    {% set assignmentId = '' %}
-                    {% for assignment in assignments if assignment.getAssignedId() == item.getKey() %}
-                        {% set assignmentId = assignment.getId() %}
-                    {% endfor %}
-                    <p>
-                        {% set removeLinkText = 'Detach %name%'|trans({'%name%': entityNameTranslated}) %}
-                        <a href="javascript:void(0);" title="{{ removeLinkText|e('html_attr') }}" class="detach-«app.appName.formatForDB»-object d-none" data-assignment-id="{{ assignmentId|e('html_attr') }}"><i class="fas fa-unlink"></i> {{ removeLinkText }}</a>
-                    </p>
-                {% endif %}
-            «ENDIF»
                 </li>
                 {% endif %}
             {% endfor %}
             </ul>
             {% endif %}
-            «IF uiHooksProvider != HookProviderMode.DISABLED»
-                {% if context == 'hookDisplayView' and hasEditPermission %}
-                    {% set idPrefix = 'hookAssignment«name.formatForCodeCapital»' %}
-                    {% set addLinkText = 'Attach %name%'|trans({'%name%': entityNameTranslated}) %}
-                    {% set findLinkText = 'Find %name%'|trans({'%name%': entityNameTranslated}) %}
-                    {% set searchLinkText = 'Search %name%'|trans({'%name%': entityNameTranslated}) %}
-                    «IF hasEditAction»
-                        {% set createNewLinkText = 'Create new %name%'|trans({'%name%': entityNameTranslated}) %}
-                    «ENDIF»
-                    <div id="{{ idPrefix }}LiveSearch" class="«app.appName.toLowerCase»-add-hook-assignment">
-                        <a id="{{ idPrefix }}AddLink" href="javascript:void(0);" title="{{ addLinkText|e('html_attr') }}" class="attach-«app.appName.formatForDB»-object d-none" data-owner="{{ subscriberOwner|e('html_attr') }}" data-area-id="{{ subscriberAreaId|e('html_attr') }}" data-object-id="{{ subscriberObjectId|e('html_attr') }}" data-url="{{ subscriberUrl|e('html_attr') }}" data-assigned-entity="«name.formatForCode»"><i class="fas fa-link"></i> {{ addLinkText }}</a>
-                        <div id="{{ idPrefix }}AddFields" class="«app.appName.toLowerCase»-autocomplete«IF hasImageFieldsEntity»-with-image«ENDIF»">
-                            <label for="{{ idPrefix }}Selector">{{ findLinkText }}</label>
-                            <br />
-                            <i class="fas fa-search" title="{{ searchLinkText|e('html_attr') }}"></i>
-                            <input type="hidden" name="{{ idPrefix }}" id="{{ idPrefix }}" value="{% for assignment in assignments %}{% if not loop.first %},{% endif %}{{ assignment.getAssignedId() }}{% endfor %}" />
-                            <input type="hidden" name="{{ idPrefix }}Multiple" id="{{ idPrefix }}Multiple" value="0" />
-                            <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" autocomplete="off" />
-                            <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{% trans %}Cancel{% endtrans %}" class="btn btn-secondary «app.appName.toLowerCase»-inline-button" />
-                            «IF hasEditAction»
-                                <a id="{{ idPrefix }}SelectorDoNew" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit') }}" title="{{ createNewLinkText|e('html_attr') }}" class="btn btn-secondary «app.appName.toLowerCase»-inline-button"><i class="fas fa-plus"></i> {% trans %}Create{% endtrans %}</a>
-                            «ENDIF»
-                            <noscript><p>{% trans %}This function requires JavaScript activated!{% endtrans %}</p></noscript>
-                        </div>
-                    </div>
-                    <div class="relation-editing-definition" data-object-type="«name.formatForCode»" data-alias="{{ idPrefix|e('html_attr') }}" data-prefix="{{ idPrefix|e('html_attr') }}SelectorDoNew" data-inline-prefix="{{ idPrefix|e('html_attr') }}SelectorDoNew" data-module-name="«app.appName»" data-include-editing="«IF hasEditAction»1«ELSE»0«ENDIF»" data-input-type="autocomplete" data-create-url="«IF hasEditAction»{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'edit')|e('html_attr') }}«ENDIF»"></div>
-                {% endif %}
-            «ENDIF»
         «ENDIF»
     '''
 
@@ -189,7 +122,7 @@ class Relations {
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
                 '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
-                {item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»«IF otherEntity.uiHooksProvider != HookProviderMode.DISABLED», context: 'display'«ENDIF»}
+                {item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»}
             ) }}
         {% endif %}
         «IF otherEntity.hasEditAction»

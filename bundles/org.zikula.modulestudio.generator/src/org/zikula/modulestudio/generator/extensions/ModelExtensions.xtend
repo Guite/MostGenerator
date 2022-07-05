@@ -18,7 +18,6 @@ import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.FieldDisplayType
-import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
@@ -65,65 +64,6 @@ class ModelExtensions {
      */
     def getLeadingEntity(Application it) {
         getAllEntities.findFirst[leading]
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with hook subscribers.
-     */
-    def hasHookSubscribers(Application it) {
-        !getAllEntities.filter[e|!e.skipHookSubscribers].empty
-    }
-
-    /**
-     * Checks whether the application supports any kind of hook provider.
-     */
-    def hasHookProviders(Application it) {
-        hasFilterHookProvider || hasFormAwareHookProviders || hasUiHooksProviders
-    }
-
-    /**
-     * Checks whether the application supports a filter hook provider.
-     */
-    def hasFilterHookProvider(Application it) {
-        filterHookProvider != HookProviderMode.DISABLED
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with a form aware hook provider.
-     */
-    def hasFormAwareHookProviders(Application it) {
-        !getAllEntities.filter[e|e.formAwareHookProvider != HookProviderMode.DISABLED].empty
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with a UI hooks provider.
-     */
-    def hasUiHooksProviders(Application it) {
-        !getAllEntities.filter[e|e.uiHooksProvider != HookProviderMode.DISABLED].empty
-    }
-
-    /**
-     * Returns the interface class for a given hook provider mode.
-     */
-    def providerInterface(HookProviderMode it) {
-        if (it == HookProviderMode.ENABLED) {
-            return 'HookProviderInterface'
-        }
-        if (it == HookProviderMode.ENABLED_SELF) {
-            return 'HookSelfAllowedProviderInterface'
-        }
-        return ''
-    }
-
-    /**
-     * Returns a hash map with supported hook types.
-     */
-    def getHookTypes(Application it) {
-        newHashMap(
-            'FilterHooks' -> 'FilterHooks',
-            'FormAware' -> 'FormAwareHook',
-            'UiHooks' -> 'UiHooks'
-        )
     }
 
     /**

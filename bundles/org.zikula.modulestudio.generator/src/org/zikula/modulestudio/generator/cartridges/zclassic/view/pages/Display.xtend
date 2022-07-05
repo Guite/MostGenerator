@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.HookProviderMode
 import de.guite.modulestudio.metamodel.ItemActionsPosition
 import de.guite.modulestudio.metamodel.ItemActionsStyle
 import de.guite.modulestudio.metamodel.JoinRelationship
@@ -126,13 +125,6 @@ class Display {
                 «ENDIF»
             {% endblock %}
         «ENDIF»
-        «IF !skipHookSubscribers»
-            {% block display_hooks %}
-                {% if «name.formatForCode».supportsHookSubscribers() %}
-                    «callDisplayHooks(appName)»
-                {% endif %}
-            {% endblock %}
-        «ENDIF»
         «IF geographical»
             {% block footer %}
                 {{ parent() }}
@@ -217,19 +209,9 @@ class Display {
                         </li>
                     {% endif %}
                 «ENDIF»
-                «IF uiHooksProvider != HookProviderMode.DISABLED»
-                    <li class="nav-item" role="presentation">
-                        <a id="assignmentsTab" href="#tabAssignments" title="{{ 'Hook assignments'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}</a>
-                    </li>
-                «ENDIF»
                 «IF standardFields»
                     <li class="nav-item" role="presentation">
                         <a id="standardFieldsTab" href="#tabStandardFields" title="{{ 'Creation and update'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF» }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Creation and update{% endtrans %}</a>
-                    </li>
-                «ENDIF»
-                «IF !skipHookSubscribers»
-                    <li class="nav-item" role="presentation">
-                        <a id="hooksTab" href="#tabHooks" title="{{ 'Hooks'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hooks{% endtrans %}</a>
                     </li>
                 «ENDIF»
             </ul>
@@ -260,7 +242,7 @@ class Display {
         </dl>
     '''
 
-    def private templateHeading(Entity it, String appName) '''{{ templateTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')|safeHtml«ENDIF» }}«IF hasVisibleWorkflow»{% if routeArea == 'admin' %} <small>({{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }})</small>{% endif %}«ENDIF»'''
+    def private templateHeading(Entity it, String appName) '''{{ templateTitle }}«IF hasVisibleWorkflow»{% if routeArea == 'admin' %} <small>({{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }})</small>{% endif %}«ENDIF»'''
 
     def private dispatch displayEntry(DerivedField it) '''
         {% if «entity.name.formatForCode».«name.formatForCode» is not empty«IF name == 'workflowState'» and routeArea == 'admin'«ENDIF» %}
@@ -349,56 +331,16 @@ class Display {
                 «ENDIF»
             {% endif %}
         «ENDIF»
-        «IF uiHooksProvider != HookProviderMode.DISABLED»
-            «IF useGroupingTabs('display')»
-            <div role="tabpanel" class="tab-pane fade" id="tabAssignments" aria-labelledby="assignmentsTab">
-                <h3>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}</h3>
-            «ELSE»
-            <h3 class="hook-assignments">{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hook assignments{% endtrans %}</h3>
-            «ENDIF»
-                {% if hookAssignments|length > 0 %}
-                    <p>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}This «name.formatForDisplay» is assigned to the following data objects:{% endtrans %}</p>
-                    <ul>
-                    {% for assignment in hookAssignments %}
-                        <li><a href="{{ assignment.url|e('html_attr') }}" title="{{ 'View this object'|trans«IF !application.isSystemModule»({}, 'hooks')«ENDIF»|e('html_attr') }}">{{ assignment.date|format_datetime('medium', 'short') }} - {{ assignment.text }}</a></li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}This «name.formatForDisplay» is not assigned to any data objects yet.{% endtrans %}</p>
-                {% endif %}
-            «IF useGroupingTabs('display')»
-            </div>
-            «ENDIF»
-        «ENDIF»
         «IF standardFields»
             {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
         «ENDIF»
     '''
 
     def private displayAdditions(Entity it) '''
-        «IF !skipHookSubscribers»
-            {{ block('display_hooks') }}
-        «ENDIF»
         «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.displayActionsPosition)»
             {% if not isQuickView %}
                 «new MenuViews().itemActions(it, 'display', 'End')»
             {% endif %}
-        «ENDIF»
-    '''
-
-    def private callDisplayHooks(Entity it, String appName) '''
-        «IF useGroupingTabs('display')»
-            <div role="tabpanel" class="tab-pane fade" id="tabHooks" aria-labelledby="hooksTab">
-                <h3>{% trans«IF !application.isSystemModule» from 'hooks'«ENDIF» %}Hooks{% endtrans %}</h3>
-        «ENDIF»
-        {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
-        {% if hooks is iterable and hooks|length > 0 %}
-            {% for area, hook in hooks %}
-                <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
-            {% endfor %}
-        {% endif %}
-        «IF useGroupingTabs('display')»
-            </div>
         «ENDIF»
     '''
 

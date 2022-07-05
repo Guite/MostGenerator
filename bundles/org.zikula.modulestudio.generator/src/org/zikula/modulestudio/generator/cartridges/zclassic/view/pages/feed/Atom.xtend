@@ -58,7 +58,7 @@ class Atom {
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             <entry>
-                <title type="html">{{ «objName»|«app.appName.formatForDB»_formattedTitle«IF !skipHookSubscribers»|notifyFilters('«app.appName.formatForDB».filterhook.«nameMultiple.formatForDB»')|safeHtml«ENDIF» }}</title>
+                <title type="html">{{ «objName»|«app.appName.formatForDB»_formattedTitle }}</title>
                 <link rel="alternate" type="text/html" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}" />
                 {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}{% endset %}
                 <id>{{ uniqueID }}</id>

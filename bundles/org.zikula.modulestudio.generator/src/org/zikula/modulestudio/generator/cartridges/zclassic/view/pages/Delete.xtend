@@ -51,15 +51,6 @@ class Delete {
                 {{ form_start(deleteForm) }}
                 {{ form_errors(deleteForm) }}
 
-                «IF !skipHookSubscribers»
-                    {% if «name.formatForCode».supportsHookSubscribers() and formHookTemplates|length > 0 %}
-                        <fieldset>
-                            {% for hookTemplate in formHookTemplates %}
-                                {{ include(hookTemplate.0, hookTemplate.1, ignore_missing = true) }}
-                            {% endfor %}
-                        </fieldset>
-                    {% endif %}
-                «ENDIF»
                 <fieldset>
                     <legend>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Confirmation prompt{% endtrans %}</legend>
                     <div class="form-group row">
@@ -70,27 +61,7 @@ class Delete {
                     </div>
                 </fieldset>
                 {{ form_end(deleteForm) }}
-                «IF !skipHookSubscribers»
-
-                    {{ block('display_hooks') }}
-                «ENDIF»
             </div>
         {% endblock %}
-        «IF !skipHookSubscribers»
-            {% block display_hooks %}
-                {% if «name.formatForCode».supportsHookSubscribers() %}
-                    «callDisplayHooks(app.appName)»
-                {% endif %}
-            {% endblock %}
-        «ENDIF»
-    '''
-
-    def private callDisplayHooks(Entity it, String appName) '''
-        {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
-        {% if hooks is iterable and hooks|length > 0 %}
-            {% for area, hook in hooks %}
-                <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
-            {% endfor %}
-        {% endif %}
     '''
 }

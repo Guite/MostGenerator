@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class EntityMethods {
 
@@ -21,7 +20,6 @@ class EntityMethods {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def dispatch generate(DataObject it, Application app, Property thProp) '''
         «validationMethods»
@@ -41,14 +39,6 @@ class EntityMethods {
 
         «getKey»
 
-        «IF app.hasHookSubscribers»
-            «supportsHookSubscribers»
-
-            «IF !skipHookSubscribers»
-                «getHookAreaPrefix»
-
-            «ENDIF»
-        «ENDIF»
         «relatedObjectsImpl(app)»
 
         «toStringImpl(app)»
@@ -135,26 +125,6 @@ class EntityMethods {
         public function getKey(): ?int
         {
             return $this->get«getPrimaryKey.name.formatForCodeCapital»();
-        }
-    '''
-
-    def private supportsHookSubscribers(Entity it) '''
-        /**
-         * Determines whether this entity supports hook subscribers or not.
-         */
-        public function supportsHookSubscribers(): bool
-        {
-            return «IF !skipHookSubscribers»true«ELSE»false«ENDIF»;
-        }
-    '''
-
-    def private getHookAreaPrefix(Entity it) '''
-        /**
-         * Return lower case name of multiple items needed for hook areas.
-         */
-        public function getHookAreaPrefix(): string
-        {
-            return '«application.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
         }
     '''
 

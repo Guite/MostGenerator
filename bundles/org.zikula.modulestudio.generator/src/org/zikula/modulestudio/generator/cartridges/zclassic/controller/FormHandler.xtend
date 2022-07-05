@@ -150,14 +150,7 @@ class FormHandler {
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «IF hasHookSubscribers»
-            use Zikula\Bundle\CoreBundle\RouteUrl;
-        «ENDIF»
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «IF hasHookSubscribers»
-            use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
-            use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
-        «ENDIF»
         «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
             use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
@@ -179,9 +172,6 @@ class FormHandler {
             use «appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
-        «IF hasHookSubscribers»
-            use «appNamespace»\Helper\HookHelper;
-        «ENDIF»
         use «appNamespace»\Helper\ModelHelper;
         use «appNamespace»\Helper\PermissionHelper;
         «IF hasTranslatable»
@@ -304,8 +294,7 @@ class FormHandler {
                 protected ControllerHelper $controllerHelper,
                 protected ModelHelper $modelHelper,
                 protected PermissionHelper $permissionHelper,
-                protected WorkflowHelper $workflowHelper«IF hasHookSubscribers»,
-                protected HookHelper $hookHelper«ENDIF»«IF hasTranslatable»,
+                protected WorkflowHelper $workflowHelper«IF hasTranslatable»,
                 protected TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
                 protected FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
@@ -501,14 +490,6 @@ class FormHandler {
             if (!is_object($this->form)) {
                 return false;
             }
-            «IF hasHookSubscribers»
-
-                if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
-                    // call form aware display hooks
-                    $formHook = $this->hookHelper->callFormDisplayHooks($this->form, $entity, FormAwareCategory::TYPE_EDIT);
-                    $this->templateParameters['formHookTemplates'] = $formHook->getTemplates();
-                }
-            «ENDIF»
 
             // handle form request and check validity constraints of edited entity
             $this->form->handleRequest($request);
@@ -743,7 +724,7 @@ class FormHandler {
                 $args['commandName'] = 'submit';
                 $this->repeatCreateAction = true;
             }
-            «IF hasTranslatable || hasHookSubscribers»
+            «IF hasTranslatable»
 
                 $action = $args['commandName'];
                 «IF hasTranslatable»
@@ -786,30 +767,6 @@ class FormHandler {
                     }
                 }
             «ENDIF»
-            «IF hasHookSubscribers»
-
-                // get treated entity reference from persisted member var
-                $entity = $this->entityRef;
-
-                if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
-                    // let any ui hooks perform additional validation actions
-                    $hookType = 'delete' === $action
-                        ? UiHooksCategory::TYPE_VALIDATE_DELETE
-                        : UiHooksCategory::TYPE_VALIDATE_EDIT
-                    ;
-                    $validationErrors = $this->hookHelper->callValidationHooks($entity, $hookType);
-                    if (0 < count($validationErrors)) {
-                        $request = $this->requestStack->getCurrentRequest();
-                        if ($request->hasSession() && ($session = $request->getSession())) {
-                            foreach ($validationErrors as $message) {
-                                $session->getFlashBag()->add('error', $message);
-                            }
-                        }
-
-                        return false;
-                    }
-                }
-            «ENDIF»
 
             $success = $this->applyAction($args);
             if (!$success) {
@@ -827,34 +784,6 @@ class FormHandler {
                     )
                 ) {
                     $this->processTranslationsForUpdate();
-                }
-            «ENDIF»
-            «IF hasHookSubscribers»
-
-                if (method_exists($entity, 'supportsHookSubscribers') && $entity->supportsHookSubscribers()) {
-                    $entitiesWithDisplayAction = ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'];
-                    $hasDisplayAction = in_array($this->objectType, $entitiesWithDisplayAction, true);
-
-                    $routeUrl = null;
-                    if ($hasDisplayAction && 'delete' !== $action) {
-                        $urlArgs = $entity->createUrlArgs();
-                        $urlArgs['_locale'] = $this->requestStack->getCurrentRequest()->getLocale();
-                        $routeUrl = new RouteUrl('«appName.formatForDB»_' . $this->objectTypeLower . '_display', $urlArgs);
-                    }
-
-                    // call form aware processing hooks
-                    $hookType = 'delete' === $action
-                        ? FormAwareCategory::TYPE_PROCESS_DELETE
-                        : FormAwareCategory::TYPE_PROCESS_EDIT
-                    ;
-                    $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
-
-                    // let any ui hooks know that we have created, updated or deleted an item
-                    $hookType = 'delete' === $action
-                        ? UiHooksCategory::TYPE_PROCESS_DELETE
-                        : UiHooksCategory::TYPE_PROCESS_EDIT
-                    ;
-                    $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
                 }
             «ENDIF»
 
@@ -1245,11 +1174,6 @@ class FormHandler {
 
             // assign data to template
             $this->templateParameters[$this->objectType] = $this->entityRef;
-            «IF skipHookSubscribers»
-                $this->templateParameters['supportsHookSubscribers'] = false;
-            «ELSE»
-                $this->templateParameters['supportsHookSubscribers'] = $this->entityRef->supportsHookSubscribers();
-            «ENDIF»
 
             return $result;
         }

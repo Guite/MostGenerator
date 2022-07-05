@@ -1,24 +1,16 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleInstallerListener {
 
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
-        «IF amountOfExampleRows > 0 || hasUiHooksProviders»
-            public function __construct(
-                «IF amountOfExampleRows > 0»
-                    protected ExampleDataHelper $exampleDataHelper«IF hasUiHooksProviders»,«ENDIF»
-                «ENDIF»
-                «IF hasUiHooksProviders»
-                    protected EntityFactory $entityFactory
-                «ENDIF»
-            ) {
+        «IF amountOfExampleRows > 0»
+            public function __construct(protected ExampleDataHelper $exampleDataHelper)
+            {
             }
 
         «ENDIF»
@@ -97,21 +89,6 @@ class ModuleInstallerListener {
          */
         public function extensionRemoved(ExtensionPostRemoveEvent $event): void
         {
-            «IF hasUiHooksProviders»
-                $extension = $event->getExtensionBundle();
-                if (null === $extension || '«appName»' === $extension->getName()) {
-                    return;
-                }
-
-                // delete any existing hook assignments for the removed extension
-                $qb = $this->entityFactory->getEntityManager()->createQueryBuilder();
-                $qb->delete(HookAssignmentEntity::class, 'tbl')
-                   ->where('tbl.subscriberOwner = :extensionName')
-                   ->setParameter('extensionName', $extension->getName());
-
-                $query = $qb->getQuery();
-                $query->execute();
-            «ENDIF»
         }
     '''
 }

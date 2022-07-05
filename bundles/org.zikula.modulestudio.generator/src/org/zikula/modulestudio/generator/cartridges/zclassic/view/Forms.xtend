@@ -165,10 +165,6 @@ class Forms {
 
         «submitActions»
         {{ form_end(form) }}
-        «IF !skipHookSubscribers»
-            «displayHooks(app)»
-
-        «ENDIF»
     '''
 
     def fieldDetails(Entity it, String subElem) '''
@@ -322,17 +318,6 @@ class Forms {
         {% endfor %}
         {{ form_widget(form.reset) }}
         {{ form_widget(form.cancel) }}
-    '''
-
-    def private displayHooks(Entity it, Application app) '''
-        {% if supportsHookSubscribers %}
-            {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=«name.formatForCode».getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
-            {% if hooks is iterable and hooks|length > 0 %}
-                {% for area, hook in hooks %}
-                    <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endif %}
     '''
 
     def private entityInlineRedirectHandlerFile(Entity it) {

@@ -146,7 +146,7 @@ class Styles {
 
     def private autoCompletion(Application it) '''
         «val joinRelations = getJoinRelations»
-        «IF !joinRelations.empty || hasUiHooksProviders»
+        «IF !joinRelations.empty»
 
             /* edit pages */
             «IF !joinRelations.empty»
