@@ -21,35 +21,23 @@ class Custom {
         this.app = app
 
         var templateFilePath = templateFile(entity, name.formatForCode)
-        fsa.generateFile(templateFilePath, customView(it, entity, false))
-
-        if (app.separateAdminTemplates) {
-            templateFilePath = templateFile(entity, 'Admin/' + name.formatForCode)
-            fsa.generateFile(templateFilePath, customView(it, entity, true))
-        }
+        fsa.generateFile(templateFilePath, customView(it, entity))
     }
 
-    def private customView(CustomAction it, Entity controller, Boolean isAdmin) '''
-        «IF app.separateAdminTemplates»
-            {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» area #}
-            {% extends «IF isAdmin»'@«app.appName»/adminBase.html.twig'«ELSE»'@«app.appName»/base.html.twig'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area #}
-            {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
-        «ENDIF»
+    def private customView(CustomAction it, Entity controller) '''
+        {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area #}
+        {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
         «IF !app.isSystemModule»
             {% trans_default_domain '«controller.name.formatForCode»' %}
         «ENDIF»
         {% block title '«name.formatForDisplayCapital»'|trans %}
-        «IF !app.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'square' %}
-        «ENDIF»
+        {% block admin_page_icon 'square' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«controller.name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-                <p class="alert alert-info">Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«relativeTemplatePath(controller, isAdmin)»</em> to either <em>/themes/YourTheme/Resources/«app.vendor.formatForCodeCapital»/«app.name.formatForCodeCapital»Module/views/«relativeTemplatePath(controller, isAdmin)»</em> or <em>/templates/bundles/«app.appName»/«relativeTemplatePath(controller, isAdmin)»</em>.</p>
+                <p class="alert alert-info">Please override this template by moving it from <em>/«app.relativeAppRootPath»/«app.getViewPath»«relativeTemplatePath(controller)»</em> to either <em>/themes/YourTheme/Resources/«app.vendor.formatForCodeCapital»/«app.name.formatForCodeCapital»Module/views/«relativeTemplatePath(controller)»</em> or <em>/templates/bundles/«app.appName»/«relativeTemplatePath(controller)»</em>.</p>
             </div>
         {% endblock %}
     '''
 
-    def private relativeTemplatePath(CustomAction it, Entity controller, Boolean isAdmin) '''«entity.name.formatForCodeCapital»/«IF app.separateAdminTemplates && isAdmin»Admin/«ENDIF»«name.formatForCode.toFirstLower».html.twig'''
+    def private relativeTemplatePath(CustomAction it, Entity controller) '''«entity.name.formatForCodeCapital»/«name.formatForCode.toFirstLower».html.twig'''
 }

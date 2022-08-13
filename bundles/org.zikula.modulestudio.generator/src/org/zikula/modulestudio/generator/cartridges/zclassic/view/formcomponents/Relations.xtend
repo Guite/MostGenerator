@@ -29,15 +29,13 @@ class Relations {
 
     IMostFileSystemAccess fsa
     Application app
-    Boolean isSeparateAdminTemplate
 
     /**
      * Constructor
      */
-    new(IMostFileSystemAccess fsa, Application app, Boolean isAdmin) {
+    new(IMostFileSystemAccess fsa, Application app) {
         this.fsa = fsa
         this.app = app
-        this.isSeparateAdminTemplate = isAdmin
     }
 
     /**
@@ -100,13 +98,6 @@ class Relations {
         var templateFileNameItemList = templateFile(ownEntity, templateNameItemList)
         fsa.generateFile(templateFileName, includedEditTemplate(ownEntity, otherEntity, hasEdit, many))
         fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, hasEdit))
-
-        if (app.separateAdminTemplates) {
-            templateFileName = templateFile(ownEntity, 'Admin/' + templateName)
-            templateFileNameItemList = templateFile(ownEntity, 'Admin/' + templateNameItemList)
-            fsa.generateFile(templateFileName, includedEditTemplate(ownEntity, otherEntity, hasEdit, many))
-            fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, hasEdit))
-        }
     }
 
     def private getTemplateName(JoinRelationship it, Boolean useTarget, String editSnippet) {
@@ -135,7 +126,7 @@ class Relations {
 
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean useTarget, String relationAliasName, String uniqueNameForJs) '''
         {{ include(
-            '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«IF isSeparateAdminTemplate»Admin/«ENDIF»«templateName».html.twig',
+            '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
             {group: '«linkingEntity.name.formatForDB»', heading: '«getRelationAliasName(useTarget).formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF», alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForCode»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(!useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
         ) }}
     '''
@@ -194,7 +185,7 @@ class Relations {
 
     def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean includeEditing) {
         '''
-            '@«application.appName»/«targetEntity.name.formatForCodeCapital»/«IF isSeparateAdminTemplate»Admin/«ENDIF»includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
+            '@«application.appName»/«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
     }
 
     def private component_ItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean includeEditing) '''

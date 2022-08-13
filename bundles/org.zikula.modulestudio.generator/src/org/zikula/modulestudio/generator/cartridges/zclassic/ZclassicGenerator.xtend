@@ -22,7 +22,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockModeration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeDetail
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeList
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.AppSettings
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
@@ -177,7 +176,6 @@ class ZclassicGenerator implements IGenerator {
     def private generateIntegration(Application it) {
         generateIntegrationBlocks
         generateIntegrationContentTypes
-        generateIntegrationThirdParty
         if (authenticationMethod != AuthMethodType.NONE) {
             new AuthenticationMethod().generate(it, fsa)
         }
@@ -211,14 +209,6 @@ class ZclassicGenerator implements IGenerator {
             if (needsDetailContentType) {
                 new ContentTypeDetail().generate(it, fsa)
             }
-        }
-    }
-
-    def private generateIntegrationThirdParty(Application it) {
-        if (generateMultiHookNeedles) {
-            pm?.subTask('Integration: MultiHook needles')
-            'Generating MultiHook needles'.printIfNotTesting(fsa)
-            new MultiHook().generate(it, fsa)
         }
     }
 

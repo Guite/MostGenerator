@@ -20,7 +20,6 @@ application "SimpleNews" targets ZK40 {
     url "https://guite.de"
     license "GPL"
     prefix "sinew"
-    generateMultiHookNeedles true
     entities {
         entity "article" leading {
             documentation "My article"

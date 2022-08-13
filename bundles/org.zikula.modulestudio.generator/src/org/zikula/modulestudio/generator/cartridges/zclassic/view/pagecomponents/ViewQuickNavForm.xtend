@@ -23,11 +23,6 @@ class ViewQuickNavForm {
 
         var templatePath = templateFile('viewQuickNav')
         fsa.generateFile(templatePath, quickNavForm)
-
-        if (application.separateAdminTemplates) {
-            templatePath = templateFile('Admin/viewQuickNav')
-            fsa.generateFile(templatePath, quickNavForm)
-        }
     }
 
     def private quickNavForm(Entity it) '''

@@ -27,11 +27,6 @@ class Ics {
 
         var templateFilePath = templateFileWithExtension('display', 'ics')
         fsa.generateFile(templateFilePath, icsDisplay)
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFileWithExtension('Admin/display', 'ics')
-            fsa.generateFile(templateFilePath, icsDisplay)
-        }
     }
 
     def private icsDisplay(Entity it) '''

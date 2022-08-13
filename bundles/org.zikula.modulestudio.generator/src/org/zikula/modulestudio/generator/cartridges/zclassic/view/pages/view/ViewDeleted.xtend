@@ -20,29 +20,17 @@ class ViewDeleted {
         ('Generating deleted view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFile('viewDeleted')
-        fsa.generateFile(templateFilePath, viewViewDeleted(false))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFile('Admin/viewDeleted')
-            fsa.generateFile(templateFilePath, viewViewDeleted(true))
-        }
+        fsa.generateFile(templateFilePath, viewViewDeleted)
     }
 
-    def private viewViewDeleted(Entity it, Boolean isAdmin) '''
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: «IF isAdmin»admin«ELSE»user«ENDIF» list view of deleted «nameMultiple.formatForDisplay» #}
-            {% extends «IF isAdmin»'@«application.appName»/adminBase.html.twig'«ELSE»'@«application.appName»/base.html.twig'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
-            {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
-        «ENDIF»
+    def private viewViewDeleted(Entity it) '''
+        {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
+        {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         {% block title 'Deleted «nameMultiple.formatForDisplay»'|trans %}
-        «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'trash-alt' %}
-        «ENDIF»
+        {% block admin_page_icon 'trash-alt' %}
         {% block content %}
             <div class="«application.appName.toLowerCase»-«name.formatForDB» «application.appName.toLowerCase»-viewdeleted">
                 {{ block('page_nav_links') }}«/*new ViewPagesHelper().commonHeader(it)*/»

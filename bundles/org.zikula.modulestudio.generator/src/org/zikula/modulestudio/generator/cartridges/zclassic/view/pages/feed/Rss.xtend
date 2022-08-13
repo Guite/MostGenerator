@@ -27,11 +27,6 @@ class Rss {
 
         var templateFilePath = templateFileWithExtension('view', 'rss')
         fsa.generateFile(templateFilePath, rssView(application))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFileWithExtension('Admin/view', 'rss')
-            fsa.generateFile(templateFilePath, rssView(application))
-        }
     }
 
     def private rssView(Entity it, Application app) '''

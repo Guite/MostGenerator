@@ -132,7 +132,7 @@ class AjaxController {
     def private getItemListFinderDocBlock(Application it, Boolean isBase) '''
         «IF isBase»
             /**
-             * Retrieve item list for finder selections, for example used in Scribite editor plug-ins.
+             * Retrieve item list for finder selections.
              */
         «ELSE»
             #[Route('/getItemListFinder', methods: ['GET'], options: ['expose' => true])]

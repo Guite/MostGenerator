@@ -27,20 +27,10 @@ class Kml {
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'kml')
             fsa.generateFile(templateFilePath, kmlView)
-
-            if (application.separateAdminTemplates) {
-                templateFilePath = templateFileWithExtension('Admin/view', 'kml')
-                fsa.generateFile(templateFilePath, kmlView)
-            }
         }
         if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'kml')
             fsa.generateFile(templateFilePath, kmlDisplay)
-
-            if (application.separateAdminTemplates) {
-                templateFilePath = templateFileWithExtension('Admin/display', 'kml')
-                fsa.generateFile(templateFilePath, kmlDisplay)
-            }
         }
     }
 

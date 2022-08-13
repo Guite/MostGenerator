@@ -63,26 +63,10 @@ class TechStructureSettings {
             <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateModerationPanel)»</td>
         </tr>
         <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Support für wartende Inhalte«ELSE»Pending content support«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generatePendingContentSupport)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»MultiHook Needles«ELSE»MultiHook needles«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateMultiHookNeedles)»</td>
-        </tr>
-        <tr>
             <td headers="hSettingName1">«IF language == 'de'»Externe Aufrufe und Finder«ELSE»External calls and Finder«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateExternalControllerAndFinder)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»WYSIWYG-Plugins«ELSE»WYSIWYG plugins«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateScribitePlugins)»</td>
-        </tr>
-        <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Authentifizierungsmethode«ELSE»Authentication method«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«authenticationMethod.literal» &ndash; «authenticationMethod.authMethodDescription»</td>
-            <td headers="hSettingName2"></td>
-            <td headers="hSettingValue2" class="text-center"></td>
-        </tr>
-        <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Separate Admin-Templates«ELSE»Separate admin templates«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(it, separateAdminTemplates)»</td>
+            <td headers="hSettingName2">«IF language == 'de'»Authentifizierungsmethode«ELSE»Authentication method«ENDIF»</td>
+            <td headers="hSettingValue2" class="text-center">«authenticationMethod.literal» &ndash; «authenticationMethod.authMethodDescription»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»RSS-Templates«ELSE»RSS templates«ENDIF»</td>

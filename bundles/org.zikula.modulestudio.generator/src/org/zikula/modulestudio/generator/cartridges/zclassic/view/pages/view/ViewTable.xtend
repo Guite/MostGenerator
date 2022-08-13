@@ -56,33 +56,22 @@ class ViewTable {
         this.appName = appName
 
         var templateFilePath = templateFile('view')
-        fsa.generateFile(templateFilePath, viewView(false))
+        fsa.generateFile(templateFilePath, viewView)
 
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFile('Admin/view')
-            fsa.generateFile(templateFilePath, viewView(true))
-        }
         new ViewQuickNavForm().generate(it, appName, fsa)
         if (loggable) {
             new ViewDeleted().generate(it, appName, fsa)
         }
     }
 
-    def private viewView(Entity it, Boolean isAdmin) '''
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» list view #}
-            {% extends «IF isAdmin»'@«application.appName»/adminBase.html.twig'«ELSE»'@«application.appName»/base.html.twig'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
-            {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
-        «ENDIF»
+    def private viewView(Entity it) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
+        {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
-        «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'list-alt' %}
-        «ENDIF»
+        {% block admin_page_icon 'list-alt' %}
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
                 «(new ViewPagesHelper).commonHeader(it)»

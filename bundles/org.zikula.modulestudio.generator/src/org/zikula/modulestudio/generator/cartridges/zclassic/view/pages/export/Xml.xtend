@@ -39,28 +39,13 @@ class Xml {
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'xml')
             fsa.generateFile(templateFilePath, xmlView)
-
-            if (application.separateAdminTemplates) {
-                templateFilePath = templateFileWithExtension('Admin/view', 'xml')
-                fsa.generateFile(templateFilePath, xmlView)
-            }
         }
         if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'xml')
             fsa.generateFile(templateFilePath, xmlDisplay)
-
-            if (application.separateAdminTemplates) {
-                templateFilePath = templateFileWithExtension('Admin/display', 'xml')
-                fsa.generateFile(templateFilePath, xmlDisplay)
-            }
         }
         templateFilePath = templateFileWithExtension('include', 'xml')
         fsa.generateFile(templateFilePath, xmlInclude)
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFileWithExtension('Admin/include', 'xml')
-            fsa.generateFile(templateFilePath, xmlInclude)
-        }
     }
 
     def private xmlView(Entity it) '''

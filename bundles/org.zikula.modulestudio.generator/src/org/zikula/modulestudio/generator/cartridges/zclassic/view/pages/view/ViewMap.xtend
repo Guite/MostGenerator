@@ -27,29 +27,17 @@ class ViewMap {
         ('Generating map view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFile('viewMap')
-        fsa.generateFile(templateFilePath, mapView(appName, false))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFile('Admin/viewMap')
-            fsa.generateFile(templateFilePath, mapView(appName, true))
-        }
+        fsa.generateFile(templateFilePath, mapView(appName))
     }
 
-    def private mapView(Entity it, String appName, Boolean isAdmin) '''
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree view #}
-            {% extends «IF isAdmin»'@«appName»/adminBase.html.twig'«ELSE»'@«appName»/base.html.twig'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: «nameMultiple.formatForDisplay» map view #}
-            {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
-        «ENDIF»
+    def private mapView(Entity it, String appName) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» map view #}
+        {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
          {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
-        «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'map' %}
-        «ENDIF»
+        {% block admin_page_icon 'map' %}
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view «appName.toLowerCase»-map">
                 «(new ViewPagesHelper).commonHeader(it)»

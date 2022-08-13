@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.MailerListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleInstallerListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThemeListener
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThirdPartyListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLoginListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLogoutListener
@@ -33,7 +32,6 @@ class Listeners {
 
     IMostFileSystemAccess fsa
     Boolean isBase
-    Boolean needsThirdPartyListener
 
     String listenerPath
     String listenerSuffix
@@ -44,8 +42,6 @@ class Listeners {
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         listenerSuffix = 'Listener.php'
-
-        needsThirdPartyListener = (needsApproval && generatePendingContentSupport) || generateScribitePlugins
 
         'Generating event listener base classes'.printIfNotTesting(fsa)
         listenerPath = 'Listener/Base/'
@@ -75,9 +71,6 @@ class Listeners {
         listenerFile('UserRegistration', listenersUserRegistrationFile)
         listenerFile('Group', listenersGroupFile)
 
-        if (needsThirdPartyListener) {
-            listenerFile('ThirdParty', listenersThirdPartyFile)
-        }
         if (!getAllEntities.filter[hasIpTraceableFields].empty) {
             listenerFile('IpTrace', listenersIpTraceFile)
         }
@@ -395,47 +388,6 @@ class Listeners {
         {
             «IF isBase»
                 «new GroupListener().generate(it)»
-            «ELSE»
-                // feel free to enhance the parent methods
-            «ENDIF»
-        }
-    '''
-
-    def private listenersThirdPartyFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractThirdPartyListener;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            «IF generateScribitePlugins»
-                use Symfony\Component\Filesystem\Filesystem;
-                use Symfony\Component\HttpFoundation\RequestStack;
-            «ENDIF»
-            «IF needsApproval && generatePendingContentSupport»
-                use Zikula\BlocksModule\Collectible\PendingContentCollectible;
-                use Zikula\BlocksModule\Event\PendingContentEvent;
-                use Zikula\Bundle\CoreBundle\Collection\Container;
-            «ENDIF»
-            «IF generateScribitePlugins»
-                use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-            «ENDIF»
-            «IF needsApproval && generatePendingContentSupport»
-                use «appNamespace»\Helper\WorkflowHelper;
-            «ENDIF»
-            «IF generateScribitePlugins»
-                use Zikula\ScribiteModule\Event\EditorHelperEvent;
-                use Zikula\ScribiteModule\Event\LoadExternalPluginsEvent;
-            «ENDIF»
-        «ENDIF»
-
-        /**
-         * Event handler implementation class for special purposes and 3rd party api support.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThirdPartyListener«IF !isBase» extends AbstractThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «IF isBase»
-                «new ThirdPartyListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»

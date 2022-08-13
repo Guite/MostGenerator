@@ -33,7 +33,6 @@ class Forms {
 
     IMostFileSystemAccess fsa
     Application app
-    Boolean isSeparateAdminTemplate
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
@@ -51,38 +50,21 @@ class Forms {
      */
     def private generate(Entity it, String actionName) {
         ('Generating edit form templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
-        isSeparateAdminTemplate = false
         var templatePath = editTemplateFile(actionName)
         fsa.generateFile(templatePath, formTemplate(actionName))
 
-        if (app.separateAdminTemplates) {
-            isSeparateAdminTemplate = true
-            templatePath = editTemplateFile('Admin/' + actionName)
-            fsa.generateFile(templatePath, formTemplate(actionName))
-        }
-
-        new Relations(fsa, app, false).generateInclusionTemplate(it)
-        if (app.separateAdminTemplates) {
-            new Relations(fsa, app, true).generateInclusionTemplate(it)
-        }
+        new Relations(fsa, app).generateInclusionTemplate(it)
     }
 
     def private formTemplate(Entity it, String actionName) '''
-        «IF app.separateAdminTemplates»
-            {# purpose of this template: build the «IF isSeparateAdminTemplate»admin«ELSE»user«ENDIF» form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
-            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : «IF isSeparateAdminTemplate»'adminBase'«ELSE»'base'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
-            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
-        «ENDIF»
+        {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
+        {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         {% extends '@«app.appName»/' ~ baseTemplate ~ '.html.twig' %}
         «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         {% block title mode == 'create' ? 'Create «name.formatForDisplay»'|trans : 'Edit «name.formatForDisplay»'|trans %}
-        «IF !app.separateAdminTemplates || isSeparateAdminTemplate»
-            {% block admin_page_icon mode == 'create' ? 'plus' : 'edit' %}
-        «ENDIF»
+        {% block admin_page_icon mode == 'create' ? 'plus' : 'edit' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
                 «formTemplateBody(actionName)»
@@ -119,7 +101,7 @@ class Forms {
                             <a id="mapTab" href="#tabMap" title="{{ 'Map'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</a>
                         </li>
                     «ENDIF»
-                    «new Relations(fsa, app, isSeparateAdminTemplate).generateTabTitles(it)»
+                    «new Relations(fsa, app).generateTabTitles(it)»
                     «IF attributable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
                             <li class="nav-item" role="presentation">
@@ -154,13 +136,13 @@ class Forms {
                         <h3>{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</h3>
                         «fieldDetails('')»
                     </div>
-                    «new Section().generate(it, app, fsa, isSeparateAdminTemplate)»
+                    «new Section().generate(it, app, fsa)»
                 </div>
             </div>
         «ELSE»
             {{ form_errors(form) }}
             «fieldDetails('')»
-            «new Section().generate(it, app, fsa, isSeparateAdminTemplate)»
+            «new Section().generate(it, app, fsa)»
         «ENDIF»
 
         «submitActions»

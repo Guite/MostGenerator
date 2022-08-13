@@ -27,11 +27,6 @@ class Atom {
 
         var templateFilePath = templateFileWithExtension('view', 'atom')
         fsa.generateFile(templateFilePath, atomView(application))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFileWithExtension('Admin/view', 'atom')
-            fsa.generateFile(templateFilePath, atomView(application))
-        }
     }
 
     def private atomView(Entity it, Application app) '''

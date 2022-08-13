@@ -35,28 +35,13 @@ class Json {
         if (hasViewAction) {
             templateFilePath = templateFileWithExtension('view', 'json')
             fsa.generateFile(templateFilePath, jsonView)
-
-            if (application.separateAdminTemplates) {
-                templateFilePath = templateFileWithExtension('Admin/view', 'json')
-                fsa.generateFile(templateFilePath, jsonView)
-            }
         }
         if (hasDisplayAction) {
             templateFilePath = templateFileWithExtension('display', 'json')
             fsa.generateFile(templateFilePath, jsonDisplay)
-
-            if (application.separateAdminTemplates) {
-                templateFilePath = templateFileWithExtension('Admin/display', 'json')
-                fsa.generateFile(templateFilePath, jsonDisplay)
-            }
         }
         templateFilePath = templateFileWithExtension('include', 'json')
         fsa.generateFile(templateFilePath, jsonInclude)
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFileWithExtension('Admin/include', 'json')
-            fsa.generateFile(templateFilePath, jsonInclude)
-        }
     }
 
     def private jsonView(Entity it) '''

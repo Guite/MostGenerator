@@ -19,7 +19,7 @@ class ModerationObjects {
     def private moderationObjectsImpl(Application it) '''
         /**
          * The «appName.formatForDB»_moderationObjects function determines the amount of «IF hasWorkflow(EntityWorkflowType::ENTERPRISE)»unaccepted and «ENDIF»unapproved objects.
-         * It uses the same logic as the moderation block and the pending content listener.
+         * It uses the same logic as the moderation block.
          */
         public function getModerationObjects(): array
         {

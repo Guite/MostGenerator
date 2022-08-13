@@ -402,7 +402,7 @@ class PersistenceTransformer {
 
         val listField = factory.createListField => [
             name = 'enabledFinderTypes'
-            documentation = 'Which sections are supported in the Finder component (used by Scribite plug-ins).'
+            documentation = 'Which sections are supported in the Finder component.'
             mandatory = false
             multiple = true
         ]

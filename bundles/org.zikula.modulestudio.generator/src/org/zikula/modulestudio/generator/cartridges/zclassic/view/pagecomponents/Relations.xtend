@@ -28,11 +28,6 @@ class Relations {
     def displayItemList(Entity it, Application app, Boolean many, IMostFileSystemAccess fsa) {
         var templatePath = templateFile('includeDisplayItemList' + (if (many) 'Many' else 'One'))
         fsa.generateFile(templatePath, inclusionTemplate(app, many))
-
-        if (application.separateAdminTemplates) {
-            templatePath = templateFile('Admin/includeDisplayItemList' + (if (many) 'Many' else 'One'))
-            fsa.generateFile(templatePath, inclusionTemplate(app, many))
-        }
     }
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
@@ -89,7 +84,7 @@ class Relations {
         «ENDIF»
     '''
 
-    def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity, Boolean isAdmin, Boolean useTarget) '''
+    def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode.toFirstLower»
         «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCode»
         «val otherEntity = (if (!useTarget) source else target) as Entity»
@@ -121,7 +116,7 @@ class Relations {
         {% endif %}
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
-                '@«application.appName»/«otherEntity.name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
+                '@«application.appName»/«otherEntity.name.formatForCodeCapital»/includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
                 {item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»}
             ) }}
         {% endif %}

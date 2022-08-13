@@ -83,7 +83,7 @@ class ExternalController {
              */
          «ELSE»
              #[Route('/display/{objectType}/{id}/{source}/{displayMode}',
-                 requirements: ['id' => '\d+', 'source' => 'block|contentType|scribite', 'displayMode' => 'link|embed'],
+                 requirements: ['id' => '\d+', 'source' => 'block|contentType', 'displayMode' => 'link|embed'],
                  defaults: ['source' => 'contentType', 'displayMode' => 'embed'],
                  methods: ['GET']
              )]
@@ -162,7 +162,7 @@ class ExternalController {
     def private finderDocBlock(Application it, Boolean isBase) '''
         «IF isBase»
             /**
-             * Popup selector for Scribite plugins.
+             * Popup selector for specific items.
              * Finds items of a certain object type.
              *
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions

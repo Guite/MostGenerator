@@ -92,10 +92,10 @@ class ViewHelper {
         /**
          * Determines the view template for a certain method with given parameters.
          */
-        public function getViewTemplate(string $type, string $func«IF separateAdminTemplates», bool $isAdmin = false«ENDIF»): string
+        public function getViewTemplate(string $type, string $func): string
         {
             // create the base template name
-            $template = '@«appName»/' . ucfirst($type) . '/' . «IF separateAdminTemplates»($isAdmin ? 'Admin/' : '') . «ENDIF»$func;
+            $template = '@«appName»/' . ucfirst($type) . '/' . $func;
 
             // check for template extension
             $templateExtension = '.' . $this->determineExtension($type, $func);
@@ -129,10 +129,7 @@ class ViewHelper {
         ): Response {
             $templateExtension = $this->determineExtension($type, $func);
             if (empty($template)) {
-                «IF separateAdminTemplates»
-                    $isAdmin = isset($templateParameters['routeArea']) && 'admin' === $templateParameters['routeArea'];
-                «ENDIF»
-                $template = $this->getViewTemplate($type, $func«IF separateAdminTemplates», $isAdmin«ENDIF»);
+                $template = $this->getViewTemplate($type, $func);
             }
             «IF hasGeographical»
                 $this->copyLeafletAssets();

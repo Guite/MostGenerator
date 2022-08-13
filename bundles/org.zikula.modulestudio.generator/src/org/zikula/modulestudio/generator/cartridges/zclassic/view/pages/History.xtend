@@ -22,23 +22,13 @@ class History {
         ('Generating history templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFile('history')
-        fsa.generateFile(templateFilePath, historyView(false))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFile('Admin/history')
-            fsa.generateFile(templateFilePath, historyView(true))
-        }
+        fsa.generateFile(templateFilePath, historyView)
     }
 
-    def private historyView(Entity it, Boolean isAdmin) '''
+    def private historyView(Entity it) '''
         «val app = application»
-        «IF app.separateAdminTemplates»
-            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» change history view #}
-            {% extends «IF isAdmin»'@«app.appName»/adminBase.html.twig'«ELSE»'@«app.appName»/base.html.twig'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
-            {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
-        «ENDIF»
+        {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
+        {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
         «IF !app.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
@@ -53,9 +43,7 @@ class History {
             </ul>
         {% endmacro %}
         {% block title isDiffView == true ? 'Compare versions of %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}«IF !app.isSystemModule», 'messages'«ENDIF») : '«name.formatForDisplayCapital» change history for %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) %}
-        «IF !app.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon isDiffView == true ? 'arrows-alt-h' : 'history' %}
-        «ENDIF»
+        {% block admin_page_icon isDiffView == true ? 'arrows-alt-h' : 'history' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-history">
                 {% if isDiffView != true %}

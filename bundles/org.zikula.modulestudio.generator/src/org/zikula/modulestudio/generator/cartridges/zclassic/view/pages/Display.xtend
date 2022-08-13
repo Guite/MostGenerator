@@ -41,21 +41,11 @@ class Display {
         ('Generating display templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFile('display')
-        fsa.generateFile(templateFilePath, displayView(appName, false))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFile('Admin/display')
-            fsa.generateFile(templateFilePath, displayView(appName, true))
-        }
+        fsa.generateFile(templateFilePath, displayView(appName))
 
         if (tree != EntityTreeType.NONE) {
             templateFilePath = templateFile('displayTreeRelatives')
-            fsa.generateFile(templateFilePath, treeRelatives(appName, false))
-
-            if (application.separateAdminTemplates) {
-                templateFilePath = templateFile('Admin/displayTreeRelatives')
-                fsa.generateFile(templateFilePath, treeRelatives(appName, true))
-            }
+            fsa.generateFile(templateFilePath, treeRelatives(appName))
         }
     }
 
@@ -71,15 +61,10 @@ class Display {
         incoming.filter(ManyToManyRelationship).filter[r|r.bidirectional && r.source instanceof Entity && r.source.application == it.application]
     }
 
-    def private displayView(Entity it, String appName, Boolean isAdmin) '''
+    def private displayView(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» display view #}
-            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : «IF isAdmin»'adminBase'«ELSE»'base'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
-            {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
-        «ENDIF»
+        {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
+        {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         {% extends '@«application.appName»/' ~ baseTemplate ~ '.html.twig' %}
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
@@ -97,13 +82,11 @@ class Display {
                 {% endif %}
             «ENDIF»
         {% endblock %}
-        «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'eye' %}
-        «ENDIF»
+        {% block admin_page_icon 'eye' %}
         {% block content %}
             {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display">
-                «content(appName, isAdmin)»
+                «content(appName)»
             </div>
             «IF hasCounterFieldsEntity»
                 «FOR counterField : getCounterFields»
@@ -118,10 +101,10 @@ class Display {
                 «IF useGroupingTabs('display')»
                     <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
                         <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}</h3>
-                        «displayRelatedItems(appName, isAdmin)»
+                        «displayRelatedItems(appName)»
                     </div>
                 «ELSE»
-                    «displayRelatedItems(appName, isAdmin)»
+                    «displayRelatedItems(appName)»
                 «ENDIF»
             {% endblock %}
         «ENDIF»
@@ -133,17 +116,17 @@ class Display {
         «ENDIF»
     '''
 
-    def private displayRelatedItems(Entity it, String appName, Boolean isAdmin) '''
+    def private displayRelatedItems(Entity it, String appName) '''
         «val relationHelper = new Relations»
         «FOR elem : incomingReferredElements»
-            «relationHelper.displayRelatedItems(elem, appName, it, isAdmin, false)»
+            «relationHelper.displayRelatedItems(elem, appName, it, false)»
         «ENDFOR»
         «FOR elem : outgoingReferredElements»
-            «relationHelper.displayRelatedItems(elem, appName, it, isAdmin, true)»
+            «relationHelper.displayRelatedItems(elem, appName, it, true)»
         «ENDFOR»
     '''
 
-    def private content(Entity it, String appName, Boolean isAdmin) '''
+    def private content(Entity it, String appName) '''
         «val refedElems = getReferredElements»
         «IF useGroupingTabs('display')»
             «tabs»
@@ -151,14 +134,14 @@ class Display {
                 <div role="tabpanel" class="tab-pane fade show active" id="tabFields" aria-labelledby="fieldsTab">
                     «fieldSection(true)»
                 </div>
-                «displayExtensions(name.formatForCode, isAdmin)»
+                «displayExtensions(name.formatForCode)»
                 «displayAdditions»
             </div>
         «ELSEIF !refedElems.empty»
             <div class="row">
                 <div class="col-md-9">
                     «fieldSection(false)»
-                    «displayExtensions(name.formatForCode, isAdmin)»
+                    «displayExtensions(name.formatForCode)»
                     «displayAdditions»
                 </div>
                 <div class="col-md-3">
@@ -167,7 +150,7 @@ class Display {
             </div>
         «ELSE»
             «fieldSection(false)»
-            «displayExtensions(name.formatForCode, isAdmin)»
+            «displayExtensions(name.formatForCode)»
             «displayAdditions»
         «ENDIF»
     '''
@@ -287,7 +270,7 @@ class Display {
         {% endif %}
     '''
 
-    def private displayExtensions(Entity it, String objName, Boolean isAdmin) '''
+    def private displayExtensions(Entity it, String objName) '''
         «IF geographical»
             «IF useGroupingTabs('display')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
@@ -323,7 +306,7 @@ class Display {
                 <h3 class="relatives">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}</h3>
                 «ENDIF»
                     {{ include(
-                        '@«application.appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»displayTreeRelatives.html.twig',
+                        '@«application.appName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
                         {allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true}
                     ) }}
                 «IF useGroupingTabs('display')»
@@ -344,14 +327,10 @@ class Display {
         «ENDIF»
     '''
 
-    def private treeRelatives(Entity it, String appName, Boolean isAdmin) '''
+    def private treeRelatives(Entity it, String appName) '''
         «val objName = name.formatForCode»
         «val pluginPrefix = application.appName.formatForDB»
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: show different forms of relatives for a given tree node in «IF isAdmin»admin«ELSE»user«ENDIF» area #}
-        «ELSE»
-            {# purpose of this template: show different forms of relatives for a given tree node #}
-        «ENDIF»
+        {# purpose of this template: show different forms of relatives for a given tree node #}
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»

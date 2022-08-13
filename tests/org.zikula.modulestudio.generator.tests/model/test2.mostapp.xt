@@ -32,16 +32,12 @@ application "SimpleNews" targets ZK40 {
     generateListContentType false
     generateDetailContentType false
     generateModerationPanel false
-    generatePendingContentSupport false
     generateExternalControllerAndFinder false
-    generateScribitePlugins false
-    generateMultiHookNeedles false
     generatePdfSupport true
     authenticationMethod REMOTE
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles false
     versionAllGeneratedFiles false
-    separateAdminTemplates true
     generatePoweredByBacklinksIntoFooterTemplates false
     generateTests false
     writeModelToDocs false

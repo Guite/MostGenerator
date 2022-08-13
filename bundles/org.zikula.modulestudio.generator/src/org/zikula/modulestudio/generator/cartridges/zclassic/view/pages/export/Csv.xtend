@@ -35,11 +35,6 @@ class Csv {
 
         var templateFilePath = templateFileWithExtension('view', 'csv')
         fsa.generateFile(templateFilePath, csvView)
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFileWithExtension('Admin/view', 'csv')
-            fsa.generateFile(templateFilePath, csvView)
-        }
     }
 
     def private csvView(Entity it) '''

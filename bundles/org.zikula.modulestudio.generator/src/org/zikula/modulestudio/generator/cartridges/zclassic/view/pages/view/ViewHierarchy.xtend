@@ -23,44 +23,27 @@ class ViewHierarchy {
         ('Generating tree view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFile('viewTree')
-        fsa.generateFile(templateFilePath, hierarchyView(appName, false))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFile('Admin/viewTree')
-            fsa.generateFile(templateFilePath, hierarchyView(appName, true))
-        }
+        fsa.generateFile(templateFilePath, hierarchyView(appName))
 
         templateFilePath = templateFile('viewTreeItems')
-        fsa.generateFile(templateFilePath, hierarchyItemsView(appName, false))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFile('Admin/viewTreeItems')
-            fsa.generateFile(templateFilePath, hierarchyItemsView(appName, true))
-        }
+        fsa.generateFile(templateFilePath, hierarchyItemsView(appName))
     }
 
-    def private hierarchyView(Entity it, String appName, Boolean isAdmin) '''
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree view #}
-            {% extends «IF isAdmin»'@«appName»/adminBase.html.twig'«ELSE»'@«appName»/base.html.twig'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
-            {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
-        «ENDIF»
+    def private hierarchyView(Entity it, String appName) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
+        {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         {% block title '«name.formatForDisplayCapital» hierarchy'|trans %}
-        «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'code-branch' %}
-        «ENDIF»
+        {% block admin_page_icon 'code-branch' %}
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
                 «(new ViewPagesHelper).commonHeader(it)»
                 {% for rootId, treeNodes in trees %}
-                    {{ include('@«appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewTreeItems.html.twig', {rootId: rootId, items: treeNodes}) }}
+                    {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', {rootId: rootId, items: treeNodes}) }}
                 {% else %}
-                    {{ include('@«appName»/«name.formatForCodeCapital»/«IF isAdmin»Admin/«ENDIF»viewTreeItems.html.twig', {rootId: 1, items: null}) }}
+                    {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', {rootId: 1, items: null}) }}
                 {% endfor %}
 
                 <br style="clear: left" />
@@ -74,12 +57,8 @@ class ViewHierarchy {
         {% endblock %}
     '''
 
-    def private hierarchyItemsView(Entity it, String appName, Boolean isAdmin) '''
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» tree items #}
-        «ELSE»
-            {# purpose of this template: «nameMultiple.formatForDisplay» tree items #}
-        «ENDIF»
+    def private hierarchyItemsView(Entity it, String appName) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» tree items #}
         {% set hasNodes = items|default and items is iterable and items|length > 0 %}
         {% set idPrefix = '«name.formatForCode.toFirstLower»Tree' ~ rootId %}
 

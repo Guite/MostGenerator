@@ -95,8 +95,6 @@ class ExternalView {
                 ... detail block
             {% elseif source == 'contentType' %}
                 ... detail content type
-            {% elseif source == 'scribite' %}
-                ...
             {% endif % #}
             «IF hasAbstractStringFieldsEntity || categorisable»
 
@@ -166,7 +164,7 @@ class ExternalView {
     '''
 
     def private findTemplate(Entity it, Application app) '''
-        {# purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» for scribite integration #}
+        {# purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» #}
         {% set useFinder = true %}
         {% extends '@«app.appName»/raw.html.twig' %}
         «IF !app.isSystemModule»

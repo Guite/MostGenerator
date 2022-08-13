@@ -16,30 +16,18 @@ class Delete {
         ('Generating delete templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
         var templateFilePath = templateFile('delete')
-        fsa.generateFile(templateFilePath, deleteView(false))
-
-        if (application.separateAdminTemplates) {
-            templateFilePath = templateFile('Admin/delete')
-            fsa.generateFile(templateFilePath, deleteView(true))
-        }
+        fsa.generateFile(templateFilePath, deleteView)
     }
 
-    def private deleteView(Entity it, Boolean isAdmin) '''
+    def private deleteView(Entity it) '''
         «val app = application»
-        «IF application.separateAdminTemplates»
-            {# purpose of this template: «nameMultiple.formatForDisplay» «IF isAdmin»admin«ELSE»user«ENDIF» delete confirmation view #}
-            {% extends «IF isAdmin»'@«application.appName»/adminBase.html.twig'«ELSE»'@«application.appName»/base.html.twig'«ENDIF» %}
-        «ELSE»
-            {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
-            {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
-        «ENDIF»
+        {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
+        {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
         «IF !application.isSystemModule»
             {% trans_default_domain '«name.formatForCode»' %}
         «ENDIF»
         {% block title 'Delete «name.formatForDisplay»'|trans %}
-        «IF !application.separateAdminTemplates || isAdmin»
-            {% block admin_page_icon 'trash-alt' %}
-        «ENDIF»
+        {% block admin_page_icon 'trash-alt' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-delete">
                 <p class="alert alert-warning">{% trans with {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle} %}Do you really want to delete this «name.formatForDisplay»: "%name%" ?{% endtrans %}</p>

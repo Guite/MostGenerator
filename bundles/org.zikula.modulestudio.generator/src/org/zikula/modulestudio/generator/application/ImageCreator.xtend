@@ -13,9 +13,7 @@ import javax.imageio.ImageIO
 import org.eclipse.core.runtime.FileLocator
 
 /**
- * The image creator serves for generating custom images for an application.
- *
- * It creates admin images as well as Scribite editor plugin images.
+ * The image creator serves for generating custom admin images for an application.
  */
 class ImageCreator {
 
