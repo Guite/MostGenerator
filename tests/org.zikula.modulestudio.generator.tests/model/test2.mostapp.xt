@@ -86,7 +86,7 @@ application "SimpleNews" targets ZK40 {
             nameMultiple "images"
             displayPattern "#title#"
             changeTrackingPolicy DEFERRED_EXPLICIT
-            lockType PAGELOCK_OPTIMISTIC
+            lockType OPTIMISTIC
             onAccountDeletionCreator DELETE
             onAccountDeletionLastEditor DELETE
             fields {

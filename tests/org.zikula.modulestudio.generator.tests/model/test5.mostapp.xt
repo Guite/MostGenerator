@@ -67,7 +67,7 @@ application "SimpleNews" {
         entity "article2" loggable {
             nameMultiple "articles2"
             identifierStrategy AUTO
-            lockType PAGELOCK_OPTIMISTIC
+            lockType OPTIMISTIC
             fields {
                 integer "integ1" nullable readonly sortableGroup {
                     dbName "integ1"
@@ -423,7 +423,7 @@ application "SimpleNews" {
         },
         entity "article8" {
             nameMultiple "articles8"
-            lockType PAGELOCK
+            lockType NONE
             slugStyle CAMEL
             tree NONE
             fields {
@@ -452,7 +452,7 @@ application "SimpleNews" {
         },
         entity "article9" {
             nameMultiple "articles9"
-            lockType PAGELOCK_OPTIMISTIC
+            lockType OPTIMISTIC
             tree NESTED
             fields {
                 integer "myVersion" version,
@@ -507,7 +507,7 @@ application "SimpleNews" {
         },
         entity "article10" {
             nameMultiple "articles10"
-            lockType PAGELOCK_PESSIMISTIC_READ
+            lockType PESSIMISTIC_READ
             tree CLOSURE
             fields {
                 list "list1" nullable readonly sortableGroup {
@@ -553,7 +553,7 @@ application "SimpleNews" {
         },
         entity "article11" {
             nameMultiple "articles11"
-            lockType PAGELOCK_PESSIMISTIC_WRITE
+            lockType PESSIMISTIC_WRITE
             fields {
                 array "arr1" nullable readonly sortableGroup {
                     dbName "arr1"

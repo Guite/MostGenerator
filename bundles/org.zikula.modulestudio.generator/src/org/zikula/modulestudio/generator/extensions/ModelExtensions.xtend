@@ -729,10 +729,6 @@ class ModelExtensions {
             case OPTIMISTIC                 : 'OPTIMISTIC'
             case PESSIMISTIC_READ           : 'PESSIMISTIC_READ'
             case PESSIMISTIC_WRITE          : 'PESSIMISTIC_WRITE'
-            case PAGELOCK                   : ''
-            case PAGELOCK_OPTIMISTIC        : 'OPTIMISTIC'
-            case PAGELOCK_PESSIMISTIC_READ  : 'PESSIMISTIC_READ'
-            case PAGELOCK_PESSIMISTIC_WRITE : 'PESSIMISTIC_WRITE'
             default: ''
         }
     }
@@ -748,26 +744,19 @@ class ModelExtensions {
      * Checks whether this entity has enabled optimistic locking.
      */
     def hasOptimisticLock(Entity it) {
-        lockType == EntityLockType.OPTIMISTIC || lockType == EntityLockType.PAGELOCK_OPTIMISTIC
+        lockType == EntityLockType.OPTIMISTIC
     }
     /**
      * Checks whether this entity has enabled pessimistic read locking.
      */
     def hasPessimisticReadLock(Entity it) {
-        lockType == EntityLockType.PESSIMISTIC_READ || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_READ
+        lockType == EntityLockType.PESSIMISTIC_READ
     }
     /**
      * Checks whether this entity has enabled pessimistic write locking.
      */
     def hasPessimisticWriteLock(Entity it) {
-        lockType == EntityLockType.PESSIMISTIC_WRITE || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_WRITE
-    }
-    /**
-     * Checks whether this entity has enabled support for the PageLock module.
-     */
-    def hasPageLockSupport(Entity it) {
-        lockType == EntityLockType.PAGELOCK || lockType == EntityLockType.PAGELOCK_OPTIMISTIC
-            || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_READ || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_WRITE
+        lockType == EntityLockType.PESSIMISTIC_WRITE
     }
 
     /**

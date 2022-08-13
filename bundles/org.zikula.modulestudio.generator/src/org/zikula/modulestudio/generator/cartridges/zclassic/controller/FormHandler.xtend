@@ -158,7 +158,6 @@ class FormHandler {
             use Zikula\GroupsModule\Constant as GroupsConstant;
             use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
         «ENDIF»
-        use Zikula\PageLockModule\Api\ApiInterface\LockingApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         «IF needsApproval»
             use Zikula\UsersModule\Constant as UsersConstant;
@@ -241,8 +240,6 @@ class FormHandler {
                  */
                 protected string $idPrefix = '';
             «ENDIF»
-
-            «locking.memberVars»
             «IF hasAttributableEntities»
 
                 /**
@@ -257,11 +254,6 @@ class FormHandler {
                  */
                 protected bool $hasTranslatableFields = false;
             «ENDIF»
-
-            /**
-             * Reference to optional locking api.
-             */
-            protected ?LockingApiInterface $lockingApi = null;
 
             /**
              * The handled form type.
@@ -314,14 +306,6 @@ class FormHandler {
 
                 «prepareWorkflowAdditions»
             «ENDIF»
-
-            /**
-             * Sets optional locking api reference.
-             */
-            public function setLockingApi(LockingApiInterface $lockingApi): void
-            {
-                $this->lockingApi = $lockingApi;
-            }
         }
     '''
 
@@ -387,7 +371,6 @@ class FormHandler {
             if ('edit' === $this->templateParameters['mode']) {
                 $entity = $this->initEntityForEditing();
                 if (null !== $entity) {
-                    «locking.addPageLock(it)»
                     if (!$this->permissionHelper->mayEdit($entity)) {
                         throw new AccessDeniedException();
                     }
@@ -495,8 +478,6 @@ class FormHandler {
             $this->form->handleRequest($request);
             if ($this->form->isSubmitted()) {
                 if ($this->form->has('cancel') && $this->form->get('cancel')->isClicked()) {
-                    «locking.releasePageLock(it)»
-
                     return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
                 }
                 if ($this->form->isValid()) {
@@ -787,8 +768,6 @@ class FormHandler {
                 }
             «ENDIF»
 
-            «locking.releasePageLock(it)»
-
             return new RedirectResponse($this->getRedirectUrl($args), 302);
         }
         «IF hasAttributableEntities»
@@ -1078,7 +1057,6 @@ class FormHandler {
         $this->objectTypeCapital = '«name.formatForCodeCapital»';
         $this->objectTypeLower = '«name.formatForDB»';
 
-        «locking.memberVarAssignments(it)»
         «IF app.hasAttributableEntities»
             $this->hasAttributes = «attributable.displayBool»;
         «ENDIF»

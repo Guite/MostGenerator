@@ -14,40 +14,6 @@ class Locking {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def memberVars() '''
-        /**
-         * Whether the PageLock extension is used for this entity type or not.
-         */
-        protected bool $hasPageLockSupport = false;
-    '''
-
-    def addPageLock(Application it) '''
-        if (
-            true === $this->hasPageLockSupport
-            && null !== $this->lockingApi
-            && $this->kernel->isBundle('ZikulaPageLockModule')
-        ) {
-            // save entity reference for later reuse
-            $this->entityRef = $entity;
-
-            // try to guarantee that only one person at a time can be editing this entity
-            $lockName = '«appName»' . $this->objectTypeCapital . $entity->getKey();
-            $this->lockingApi->addLock($lockName, $this->getRedirectUrl(['commandName' => '']));
-        }
-    '''
-
-    def releasePageLock(Application it) '''
-        if (
-            true === $this->hasPageLockSupport
-            && null !== $this->lockingApi
-            && 'edit' === $this->templateParameters['mode']
-            && $this->kernel->isBundle('ZikulaPageLockModule')
-        ) {
-            $lockName = '«appName»' . $this->objectTypeCapital . $this->entityRef->getKey();
-            $this->lockingApi->releaseLock($lockName);
-        }
-    '''
-
     def imports(Entity it) '''
         «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
             use Doctrine\DBAL\LockMode;
@@ -55,10 +21,6 @@ class Locking {
                 use Doctrine\ORM\OptimisticLockException;
             «ENDIF»
         «ENDIF»
-    '''
-
-    def memberVarAssignments(Entity it) '''
-        $this->hasPageLockSupport = «hasPageLockSupport.displayBool»;
     '''
 
     def setVersion(Entity it) '''

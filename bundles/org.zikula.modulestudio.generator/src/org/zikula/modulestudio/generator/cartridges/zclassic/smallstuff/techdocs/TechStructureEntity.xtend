@@ -333,14 +333,6 @@ class TechStructureEntity {
                 return if (language == 'de') 'Pessimistische Lesesperre.' else 'Pessimistic read locking.'
             case PESSIMISTIC_WRITE:
                 return if (language == 'de') 'Pessimistische Schreibsperre.' else 'Pessimistic write locking.'
-            case PAGELOCK:
-                return if (language == 'de') 'Verwendet das PageLock-Modul.' else 'Uses the PageLock module.'
-            case PAGELOCK_OPTIMISTIC:
-                return if (language == 'de') 'Verwendet das PageLock-Modul kombiniert mit optimistischer Sperre.' else 'Uses the PageLock module combined with optimistic locking.'
-            case PAGELOCK_PESSIMISTIC_READ:
-                return if (language == 'de') 'Verwendet das PageLock-Modul kombiniert mit pessimistischer Lesesperre.' else 'Uses the PageLock module combined with pessimistic read locking.'
-            case PAGELOCK_PESSIMISTIC_WRITE:
-                return if (language == 'de') 'Verwendet das PageLock-Modul kombiniert mit pessimistischer Schreibsperre.' else 'Uses the PageLock module combined with pessimistic write locking.'
         }
     }
 

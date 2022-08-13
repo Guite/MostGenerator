@@ -23,7 +23,7 @@ application "SimpleNews" {
         entity "house" leading {
             nameMultiple "houses"
             displayPattern "#title#"
-            lockType PAGELOCK_PESSIMISTIC_READ
+            lockType PESSIMISTIC_READ
             fields {
                 string "title",
                 integer "myValidAggregator1" {

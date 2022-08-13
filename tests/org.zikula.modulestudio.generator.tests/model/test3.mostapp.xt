@@ -29,7 +29,7 @@ application "SimpleNews" targets ZK30 {
             displayPattern "#title#"
             identifierStrategy IDENTITY
             changeTrackingPolicy NOTIFY
-            lockType PAGELOCK_PESSIMISTIC_WRITE
+            lockType PESSIMISTIC_WRITE
             slugLength 50
             slugUpdatable true
             slugUnique true

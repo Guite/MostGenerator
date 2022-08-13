@@ -89,13 +89,6 @@ class ServiceDefinitions {
                         $fragmentHandler: '@fragment.handler'
             «ENDIF*/»
         «ENDIF»
-        «IF hasEditActions»
-
-            «appNamespace»\Form\Handler\:
-                resource: '../../Form/Handler'
-                calls:
-                    - setLockingApi: ['@?Zikula\PageLockModule\Api\LockingApi']
-        «ENDIF»
         «IF hasUploads»
 
             «appNamespace»\«name.formatForCodeCapital»ModuleInstaller:
