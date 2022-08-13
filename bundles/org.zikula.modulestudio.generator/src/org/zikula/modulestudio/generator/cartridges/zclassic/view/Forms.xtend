@@ -261,7 +261,7 @@ class Forms {
                 <div class="field-editing-definition" data-field-type="user" data-field-name="«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator"></div>
             {% endif %}
         «ENDIF»
-        «new Relations(fsa, app, false).jsInitDefinitions(it)»
+        «new Relations(fsa, app).jsInitDefinitions(it)»
     '''
 
     def private fieldWrapper(DerivedField it, String subElem) '''
