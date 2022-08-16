@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler
 
-import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
