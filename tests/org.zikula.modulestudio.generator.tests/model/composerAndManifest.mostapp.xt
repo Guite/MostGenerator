@@ -46,7 +46,6 @@ XPECT generated file composer.json ---
             },
             "securityschema": {
                 "AcmeSimpleTestModule::": "::",
-                "AcmeSimpleTestModule:ItemListBlock:": "Block title::",
                 "AcmeSimpleTestModule:Article:": "Article ID::",
                 "AcmeSimpleTestModule:Image:": "Image ID::",
                 "AcmeSimpleTestModule::Ajax": "::"
