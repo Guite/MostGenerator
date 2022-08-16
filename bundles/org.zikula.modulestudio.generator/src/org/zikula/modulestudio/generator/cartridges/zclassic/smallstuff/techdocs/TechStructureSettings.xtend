@@ -41,24 +41,6 @@ class TechStructureSettings {
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Benutzerkonto«ELSE»Account panel«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateAccountApi)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»Suche«ELSE»Search integration«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateSearchApi)»</td>
-        </tr>
-        <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Block für Listenansichten«ELSE»List view block«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateListBlock)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»Block für Detailansichten«ELSE»Detail view block«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateDetailBlock)»</td>
-        </tr>
-        <tr>
-            <td headers="hSettingName1">«IF language == 'de'»ContentType für Listenansichten«ELSE»List view content type«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateListContentType)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»ContentType für Detailansichten«ELSE»Detail view content type«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateDetailContentType)»</td>
-        </tr>
-        <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Block zur Moderation«ELSE»Moderation block«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateModerationBlock)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Panel zur Moderation«ELSE»Moderation panel«ENDIF»</td>
             <td headers="hSettingValue2" class="text-center">«helper.flag(it, generateModerationPanel)»</td>
         </tr>

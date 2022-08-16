@@ -108,7 +108,7 @@ class CollectionFilterHelper {
         public function getViewQuickNavParameters(string $objectType = ''«IF !isSystemModule», string $context = '', array $args = []«ENDIF»): array
         {
             «IF !isSystemModule»
-                if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'], true)) {
+                if (!in_array($context, ['controllerAction', 'api', 'actionHandler'], true)) {
                     $context = 'controllerAction';
                 }
 

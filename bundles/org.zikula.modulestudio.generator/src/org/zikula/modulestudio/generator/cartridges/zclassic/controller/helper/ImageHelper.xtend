@@ -84,7 +84,7 @@ class ImageHelper {
                 $this->checkIfImagineCacheDirectoryExists();
 
             «ENDIF»
-            if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'])) {
+            if (!in_array($context, ['controllerAction', 'api', 'actionHandler'], true)) {
                 $context = 'controllerAction';
             }
 

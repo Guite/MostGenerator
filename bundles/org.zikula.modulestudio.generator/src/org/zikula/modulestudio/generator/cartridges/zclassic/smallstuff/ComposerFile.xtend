@@ -13,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ComposerFile {
 
@@ -23,7 +22,6 @@ class ComposerFile {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         fsa.generateFile('composer.json', composerFile)
@@ -94,15 +92,6 @@ class ComposerFile {
                 },
                 "securityschema": {
                     "«appName»::": "::",
-                    «IF generateListBlock»
-                        "«appName»:ItemListBlock:": "Block title::",
-                    «ENDIF»
-                    «IF hasDisplayActions && generateDetailBlock»
-                        "«appName»:ItemBlock:": "Block title::",
-                    «ENDIF»
-                    «IF needsApproval && generateModerationBlock»
-                        "«appName»:ModerationBlock:": "Block title::",
-                    «ENDIF»
                     «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
                     "«appName»::Ajax": "::"
                 }

@@ -15,7 +15,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.L
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.ModelHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.NotificationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.PermissionHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.SearchHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.SlugTransliterator
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.TranslatableHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper.UploadHelper
@@ -64,9 +63,6 @@ class HelperServices {
         new ModelHelper().generate(it, fsa)
         if (needsApproval) {
             new NotificationHelper().generate(it, fsa)
-        }
-        if (generateSearchApi && !entities.filter[hasAbstractStringFieldsEntity].empty) {
-            new SearchHelper().generate(it, fsa)
         }
         if (hasSluggable) {
             new SlugTransliterator().generate(it, fsa)

@@ -5,7 +5,6 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.AutoCompletion
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.BacklinkIntegrator
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ConfigFunctions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.ContentTypeListJs
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
@@ -59,9 +58,6 @@ class JavaScriptFiles {
             new TreeFunctions().generate(it, fsa)
         }
         new Validation().generate(it, fsa)
-        if (generateListContentType) {
-            new ContentTypeListJs().generate(it, fsa)
-        }
         if (generatePoweredByBacklinksIntoFooterTemplates) {
             new BacklinkIntegrator().generate(it, fsa)
         }

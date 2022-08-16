@@ -89,13 +89,6 @@ class ExternalView {
                 {% set displayPage = displayPage[1]|split('</body>') %}
                 {{ displayPage[0]|raw }#}
             «ENDIF»
-
-            {# you can distinguish the context like this: #}
-            {# % if source == 'block' %}
-                ... detail block
-            {% elseif source == 'contentType' %}
-                ... detail content type
-            {% endif % #}
             «IF hasAbstractStringFieldsEntity || categorisable»
 
             {# you can enable more details about the item: #}

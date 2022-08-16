@@ -148,7 +148,7 @@ class ControllerHelper {
          */
         public function getObjectTypes(string $context = ''«IF !isSystemModule», array $args = []«ENDIF»): array
         {
-            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType'];
+            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler'];
             if (!in_array($context, $allowedContexts, true)) {
                 $context = 'controllerAction';
             }
@@ -168,7 +168,7 @@ class ControllerHelper {
          */
         public function getDefaultObjectType(string $context = ''«IF !isSystemModule», array $args = []«ENDIF»): string
         {
-            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType'];
+            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler'];
             if (!in_array($context, $allowedContexts, true)) {
                 $context = 'controllerAction';
             }
@@ -447,7 +447,7 @@ class ControllerHelper {
             string $context = '',
             array $args = []
         ): array {
-            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler', 'block', 'contentType'];
+            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler'];
             if (!in_array($context, $allowedContexts, true)) {
                 $context = 'controllerAction';
             }

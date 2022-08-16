@@ -25,7 +25,6 @@ class ServiceDefinitions {
     extension Utils = new Utils
 
     IMostFileSystemAccess fsa
-    Boolean needsDetailContentType
 
     def private generateServiceFile(Application it, String fileName, CharSequence content) {
         val definitionFilePath = getResourcesPath + 'config/' + fileName + '.yaml'
@@ -38,7 +37,6 @@ class ServiceDefinitions {
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
-        needsDetailContentType = generateDetailContentType && hasDisplayActions
 
         generateServiceFile('services', mainServiceFile)
     }
@@ -76,19 +74,6 @@ class ServiceDefinitions {
         # public because EntityLifecycleListener accesses this using container
         «appNamespace»\Entity\Factory\EntityFactory:
             public: true
-        «IF generateListContentType || needsDetailContentType»
-
-            _instanceof:
-                Zikula\ExtensionsModule\ModuleInterface\Content\ContentTypeInterface:
-                    bind:
-                        $permissionHelper: '@?Zikula\ContentModule\Helper\PermissionHelper'
-            «/*IF needsDetailContentType»
-
-                «appNamespace»\ContentType\ItemType:
-                    arguments:
-                        $fragmentHandler: '@fragment.handler'
-            «ENDIF*/»
-        «ENDIF»
         «IF hasUploads»
 
             «appNamespace»\«name.formatForCodeCapital»ModuleInstaller:

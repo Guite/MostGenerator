@@ -25,12 +25,6 @@ application "SimpleNews" targets ZK40 {
     isSystemModule false
     amountOfExampleRows 3
     generateAccountApi false
-    generateSearchApi false
-    generateListBlock false
-    generateDetailBlock false
-    generateModerationBlock false
-    generateListContentType false
-    generateDetailContentType false
     generateModerationPanel false
     generateExternalControllerAndFinder false
     generatePdfSupport true

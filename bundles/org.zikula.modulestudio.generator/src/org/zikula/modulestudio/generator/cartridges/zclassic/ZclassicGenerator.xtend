@@ -17,11 +17,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceD
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AuthenticationMethod
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockDetail
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockList
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.BlockModeration
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeDetail
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ContentTypeList
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.AppSettings
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
@@ -42,17 +37,13 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Images
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Plugins
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ZclassicGenerator implements IGenerator {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     IMostFileSystemAccess fsa
     IProgressMonitor pm
@@ -174,41 +165,8 @@ class ZclassicGenerator implements IGenerator {
     }
 
     def private generateIntegration(Application it) {
-        generateIntegrationBlocks
-        generateIntegrationContentTypes
         if (authenticationMethod != AuthMethodType.NONE) {
             new AuthenticationMethod().generate(it, fsa)
-        }
-    }
-
-    def private generateIntegrationBlocks(Application it) {
-        val needsModerationBlock = generateModerationBlock && needsApproval
-        if (generateListBlock || needsModerationBlock) {
-            pm?.subTask('Integration: Blocks')
-            'Generating blocks'.printIfNotTesting(fsa)
-            if (generateListBlock) {
-                new BlockList().generate(it, fsa)
-            }
-            if (generateDetailBlock && hasDisplayActions) {
-                new BlockDetail().generate(it, fsa)
-            }
-            if (needsModerationBlock) {
-                new BlockModeration().generate(it, fsa)
-            }
-        }
-    }
-
-    def private generateIntegrationContentTypes(Application it) {
-        val needsDetailContentType = generateDetailContentType && hasDisplayActions
-        if (generateListContentType || needsDetailContentType) {
-            pm?.subTask('Integration: Content types')
-            'Generating content types'.printIfNotTesting(fsa)
-            if (generateListContentType) {
-                new ContentTypeList().generate(it, fsa)
-            }
-            if (needsDetailContentType) {
-                new ContentTypeDetail().generate(it, fsa)
-            }
         }
     }
 

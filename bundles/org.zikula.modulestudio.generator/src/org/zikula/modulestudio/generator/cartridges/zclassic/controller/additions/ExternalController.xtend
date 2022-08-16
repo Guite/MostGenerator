@@ -82,9 +82,9 @@ class ExternalController {
              * Displays one item of a certain object type using a separate template for external usages.
              */
          «ELSE»
-             #[Route('/display/{objectType}/{id}/{source}/{displayMode}',
-                 requirements: ['id' => '\d+', 'source' => 'block|contentType', 'displayMode' => 'link|embed'],
-                 defaults: ['source' => 'contentType', 'displayMode' => 'embed'],
+             #[Route('/display/{objectType}/{id}/{displayMode}',
+                 requirements: ['id' => '\d+', 'displayMode' => 'link|embed'],
+                 defaults: ['displayMode' => 'embed'],
                  methods: ['GET']
              )]
          «ENDIF»
@@ -99,7 +99,6 @@ class ExternalController {
             ViewHelper $viewHelper,
             string $objectType,
             int $id,
-            string $source,
             string $displayMode
         ): Response'''
 
@@ -130,7 +129,6 @@ class ExternalController {
 
         $templateParameters = [
             'objectType' => $objectType,
-            'source' => $source,
             $objectType => $entity,
             'displayMode' => $displayMode,
         ];
@@ -369,7 +367,6 @@ class ExternalController {
                 $viewHelper,
                 $objectType,
                 $id,
-                $source,
                 $displayMode
             );
         }
