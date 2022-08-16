@@ -9,7 +9,6 @@ test which files are contained in the output
 XPECT files ---
     .gitignore
     !composer.json
-    !zikula.manifest.json
     !AcmeSimpleTestModule.php
     AcmeSimpleTestModule.generated.php
     Base/AbstractAcmeSimpleTestModule.php
@@ -30,7 +29,6 @@ application "SimpleTest" {
     prefix "simtest"
     skipFiles "
         composer.json,
-        zikula.manifest.json,
         Resources/views/Article/delete.html.twig
     "
     markFiles "

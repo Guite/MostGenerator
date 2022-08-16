@@ -9,7 +9,6 @@ test which files are contained in the output
 XPECT files ---
     .gitignore
     composer.json
-    zikula.manifest.json
 --- */
 
 application "SimpleNews" targets ZK40 {
