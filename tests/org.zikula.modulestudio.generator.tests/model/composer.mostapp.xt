@@ -60,40 +60,6 @@ XPECT generated file composer.json ---
     }
 }
 
----
-
-test generating zikula.manifest.json
-XPECT generated file zikula.manifest.json ---
-{
-    "vendor": {
-        "title": "Acme",
-        "url": "http://example.org",
-        "logo": ""
-    },
-    "extension": {
-        "name": "Simple test",
-        "url": "http://example.org",
-        "icon": ""
-    },
-    "version": {
-        "semver": "1.0.0",
-        "compatibility": ">=3.0.4 <4.0.0",
-        "composerpath": "composer.json",
-        "description": "Just a simple test application.",
-        "keywords": [
-        ]
-    },
-    "urls": {
-        "version": "",
-        "docs": "",
-        "demo": "",
-        "download": "",
-        "issues": ""
-    },
-    "dependencies": [
-    ]
-}
-
 --- */
 
 application "SimpleTest" {
