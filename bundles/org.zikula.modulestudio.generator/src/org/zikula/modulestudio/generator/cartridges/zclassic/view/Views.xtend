@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Emails
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.ModerationPanel
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.StandardFields
@@ -61,9 +60,6 @@ class Views {
         }
 
         // helper templates
-        if (hasAttributableEntities) {
-            new Attributes().generate(it, fsa)
-        }
         if (hasCategorisableEntities) {
             new Categories().generate(it, fsa)
         }

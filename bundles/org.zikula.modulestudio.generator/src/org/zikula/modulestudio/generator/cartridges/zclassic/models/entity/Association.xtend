@@ -392,9 +392,6 @@ class Association {
         «FOR relation : getOutgoingCollections»«relation.initCollection(true)»«ENDFOR»
         «FOR relation : getIncomingCollections»«relation.initCollection(false)»«ENDFOR»
         «IF it instanceof Entity»
-            «IF attributable»
-                $this->attributes = new ArrayCollection();
-            «ENDIF»
             «IF categorisable»
                 $this->categories = new ArrayCollection();
             «ENDIF»

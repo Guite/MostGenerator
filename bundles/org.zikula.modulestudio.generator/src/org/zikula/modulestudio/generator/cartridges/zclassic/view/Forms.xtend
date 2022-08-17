@@ -102,13 +102,6 @@ class Forms {
                         </li>
                     «ENDIF»
                     «new Relations(fsa, app).generateTabTitles(it)»
-                    «IF attributable»
-                        {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                            <li class="nav-item" role="presentation">
-                                <a id="attributesTab" href="#tabAttributes" title="{{ 'Attributes'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Attributes{% endtrans %}</a>
-                            </li>
-                        {% endif %}
-                    «ENDIF»
                     «IF categorisable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             <li class="nav-item" role="presentation">

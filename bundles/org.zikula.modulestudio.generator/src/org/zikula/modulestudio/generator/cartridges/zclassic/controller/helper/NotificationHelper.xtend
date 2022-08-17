@@ -101,7 +101,11 @@ class NotificationHelper {
             protected WorkflowHelper $workflowHelper
         ) {
             $this->setTranslator($translator);
-            $this->mailLoggingEnabled = $variableApi->get('ZikulaMailerModule', 'enableLogging', false);
+            «IF targets('4.0')»
+                $this->mailLoggingEnabled = (bool) $variableApi->getSystemVar('enableMailLogging', false);
+            «ELSE»
+                $this->mailLoggingEnabled = (bool) $variableApi->get('ZikulaMailerModule', 'enableLogging', false);
+            «ENDIF»
             $this->applicationName = '«appName»';
         }
 

@@ -240,13 +240,6 @@ class FormHandler {
                  */
                 protected string $idPrefix = '';
             «ENDIF»
-            «IF hasAttributableEntities»
-
-                /**
-                 * Whether the entity has attributes or not.
-                 */
-                protected bool $hasAttributes = false;
-            «ENDIF»
             «IF hasTranslatable»
 
                 /**
@@ -522,18 +515,9 @@ class FormHandler {
 
         «initEntityForCreation»
         «initTranslationsForEditing»
-        «initAttributesForEditing»
     '''
 
     def private initialiseExtensions(Application it) '''
-        «IF hasAttributableEntities»
-
-            if (true === $this->hasAttributes) {
-                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
-                    $this->initAttributesForEditing();
-                }
-            }
-        «ENDIF»
         «IF hasTranslatable»
 
             if (true === $this->hasTranslatableFields) {
@@ -645,43 +629,6 @@ class FormHandler {
         «ENDIF»
     '''
 
-    def private initAttributesForEditing(Application it) '''
-        «IF hasAttributableEntities»
-
-            /**
-             * Initialise attributes.
-             */
-            protected function initAttributesForEditing(): void
-            {
-                $entity = $this->entityRef;
-
-                $entityData = [];
-
-                // overwrite attributes array entry with a form compatible format
-                $attributes = [];
-                foreach ($this->getAttributeFieldNames() as $fieldName) {
-                    $attributes[$fieldName] = $entity->getAttributes()->get($fieldName) ? $entity->getAttributes()->get($fieldName)->getValue() : '';
-                }
-                $entityData['attributes'] = $attributes;
-
-                $this->templateParameters['attributes'] = $attributes;
-            }
-
-            /**
-             * Return list of attribute field names.
-             * To be customised in sub classes as needed.
-             *
-             * @return string[] List of attribute names
-             */
-            protected function getAttributeFieldNames(): array
-            {
-                return [
-                    'field1', 'field2', 'field3',
-                ];
-            }
-        «ENDIF»
-    '''
-
     def private dispatch handleCommand(Application it) '''
         /**
          * Command event handler.
@@ -770,23 +717,6 @@ class FormHandler {
 
             return new RedirectResponse($this->getRedirectUrl($args), 302);
         }
-        «IF hasAttributableEntities»
-
-            /**
-             * Prepare update of attributes.
-             */
-            protected function processAttributesForUpdate()
-            {
-                $entity = $this->entityRef;
-                foreach ($this->getAttributeFieldNames() as $fieldName) {
-                    $value = $this->form['attributes' . $fieldName]->getData();
-                    $entity->setAttribute($fieldName, (string) $value);
-                }«/*
-                $entity->setAttribute('url', 'http://www.example.com');
-                $entity->setAttribute('url', null); // remove
-                */»
-            }
-        «ENDIF»
         «IF hasTranslatable»
 
             /**
@@ -907,14 +837,6 @@ class FormHandler {
                             '«appName»AdditionalNotificationRemarks',
                             $this->form['additionalNotificationRemarks']->getData()
                         );
-                    }
-                }
-            «ENDIF»
-            «IF hasAttributableEntities»
-
-                if (true === $this->hasAttributes) {
-                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
-                        $this->processAttributesForUpdate();
                     }
                 }
             «ENDIF»
@@ -1047,20 +969,14 @@ class FormHandler {
         «IF ownerPermission»
             use «app.appNamespace»\Entity\EntityInterface;
         «ENDIF»
-        «IF attributable»
-            use «app.appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
     '''
 
     def private memberVarAssignments(Entity it) '''
         $this->objectType = '«name.formatForCode»';
         $this->objectTypeCapital = '«name.formatForCodeCapital»';
         $this->objectTypeLower = '«name.formatForDB»';
-
-        «IF app.hasAttributableEntities»
-            $this->hasAttributes = «attributable.displayBool»;
-        «ENDIF»
         «IF app.hasTranslatable»
+
             $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;
         «ENDIF»
     '''
@@ -1192,11 +1108,6 @@ class FormHandler {
                     'inline_usage' => $this->templateParameters['inlineUsage'],
                 «ENDIF»
             ];
-            «IF attributable»
-                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
-                    $options['attributes'] = $this->templateParameters['attributes'];
-                }
-            «ENDIF»
             «IF workflow != EntityWorkflowType.NONE»
 
                 $workflowRoles = $this->prepareWorkflowAdditions(«(workflow == EntityWorkflowType.ENTERPRISE).displayBool»);

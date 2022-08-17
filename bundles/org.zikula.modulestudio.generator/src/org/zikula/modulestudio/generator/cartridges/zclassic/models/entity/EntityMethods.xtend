@@ -240,17 +240,6 @@ class EntityMethods {
                         $newCat->setEntity($this);
                     }
                 «ENDIF»
-                «IF attributable»
-
-                    // clone attributes
-                    $attributes = $this->attributes;
-                    $this->attributes = new ArrayCollection();
-                    foreach ($attributes as $a) {
-                        $newAttr = clone $a;
-                        $this->attributes->add($newAttr);
-                        $newAttr->setEntity($this);
-                    }
-                «ENDIF»
             «ENDIF»
         }
         «IF it instanceof Entity && (it as Entity).loggable && hasUploadFieldsEntity»

@@ -113,8 +113,6 @@ class SharedFormTypeFields {
         «ENDIF»
         «IF (null !== dataObject && dataObject instanceof Entity &&
                 (
-                    (dataObject as Entity).attributable
-                    ||
                     ((dataObject as Entity).hasSluggableFields && (dataObject as Entity).slugUpdatable)
                 )
             )

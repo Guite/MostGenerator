@@ -286,9 +286,6 @@ class Installer {
                 «IF entity.hasTranslatableFields»
                     use «entity.entityClassName('translation', false)»;
                 «ENDIF»
-                «IF entity.attributable»
-                    use «entity.entityClassName('attribute', false)»;
-                «ENDIF»
                 «IF entity.categorisable»
                     use «entity.entityClassName('category', false)»;
                 «ENDIF»
@@ -304,9 +301,6 @@ class Installer {
                 «ENDIF»
                 «IF entity.hasTranslatableFields»
                     «entity.entityClassUsage('translation')»,
-                «ENDIF»
-                «IF entity.attributable»
-                    «entity.entityClassUsage('attribute')»,
                 «ENDIF»
                 «IF entity.categorisable»
                     «entity.entityClassUsage('category')»,

@@ -92,7 +92,7 @@ application "SimpleNews" {
                 }
             }
         },
-        entity "article3" categorisable attributable {
+        entity "article3" categorisable {
             nameMultiple "articles3"
             tree NESTED
             fields {

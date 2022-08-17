@@ -205,12 +205,6 @@ class ExampleDataHelper {
                 // create category assignment
                 $«entityName»«number»->getCategories()->add(new «name.formatForCodeCapital»CategoryEntity($categoryRegistry->getId(), $category, $«entityName»«number»));
             «ENDIF»
-            «IF attributable»
-                // create example attributes
-                $«entityName»«number»->setAttribute('field1', 'first value');
-                $«entityName»«number»->setAttribute('field2', 'second value');
-                $«entityName»«number»->setAttribute('field3', 'third value');
-            «ENDIF»
         «ENDFOR»
         «/* this last line is on purpose */»
     '''

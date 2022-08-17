@@ -57,7 +57,6 @@ class EditEntityType {
         }
         if (it instanceof Entity) {
             if (hasTranslatableFields) extensions.add('translatable')
-            if (attributable) extensions.add('attributes')
             if (categorisable) extensions.add('categories')
         }
         app = it.application
@@ -163,11 +162,6 @@ class EditEntityType {
                         'data_class' => «name.formatForCodeCapital»Entity::class
                     ]);
                 «ENDIF»
-                «IF extensions.contains('attributes')»
-                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, '«name.formatForCode»')) {
-                        $this->addAttributeFields($builder, $options);
-                    }
-                «ENDIF»
                 «IF extensions.contains('categories')»
                     if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, '«name.formatForCode»')) {
                         $this->addCategoriesField($builder, $options);
@@ -201,10 +195,6 @@ class EditEntityType {
 
             «IF it instanceof Entity && (it as Entity).geographical»
                 «addGeographicalFields(it as Entity)»
-
-            «ENDIF»
-            «IF extensions.contains('attributes')»
-                «addAttributeFields(it as Entity)»
 
             «ENDIF»
             «IF extensions.contains('categories')»
@@ -262,9 +252,6 @@ class EditEntityType {
                             «ENDIF»
                         ],
                         'mode' => 'create',
-                        «IF extensions.contains('attributes')»
-                            'attributes' => [],
-                        «ENDIF»
                         «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                             'is_moderator' => false,
                             «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
@@ -288,9 +275,6 @@ class EditEntityType {
                     ])
                     ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
                     ->setAllowedTypes('mode', 'string')
-                    «IF extensions.contains('attributes')»
-                        ->setAllowedTypes('attributes', 'array')
-                    «ENDIF»
                     «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                         ->setAllowedTypes('is_moderator', 'bool')
                         «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
@@ -422,27 +406,6 @@ class EditEntityType {
                     'required' => false
                 ]);
             «ENDFOR»
-        }
-    '''
-
-    def private addAttributeFields(Entity it) '''
-        /**
-         * Adds fields for attributes.
-         */
-        public function addAttributeFields(FormBuilderInterface $builder, array $options = []): void
-        {
-            foreach ($options['attributes'] as $attributeName => $attributeValue) {
-                $builder->add('attributes' . $attributeName, TextType::class, [
-                    'mapped' => false,
-                    /** @Ignore */
-                    'label' => $attributeName,
-                    'attr' => [
-                        'maxlength' => 255,
-                    ],
-                    'data' => $attributeValue,
-                    'required' => false,
-                ]);
-            }
         }
     '''
 

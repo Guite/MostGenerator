@@ -41,13 +41,6 @@ class FeatureActivationHelper {
             public const CATEGORIES = 'categories';
 
         «ENDIF»
-        «IF hasAttributableEntities»
-            /**
-             * Attribution feature.
-             */
-            public const ATTRIBUTES = 'attributes';
-
-        «ENDIF»
         «IF hasTranslatable»
             /**
              * Translation feature.
@@ -78,16 +71,6 @@ class FeatureActivationHelper {
                     }
 
                     return in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true);
-                }
-            «ENDIF»
-            «IF hasAttributableEntities»
-                if (self::ATTRIBUTES === $feature) {
-                    $method = 'hasAttributes';
-                    if (method_exists($this, $method)) {
-                        return $this->$method($objectType);
-                    }
-
-                    return in_array($objectType, ['«getAttributableEntities.map[name.formatForCode].join('\', \'')»'], true);
                 }
             «ENDIF»
             «IF hasTranslatable»

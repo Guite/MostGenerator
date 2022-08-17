@@ -171,13 +171,6 @@ class Display {
                         <a id="relationsTab" href="#tabRelations" title="{{ 'Related data'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}</a>
                     </li>
                 «ENDIF»
-                «IF attributable»
-                    {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                        <li class="nav-item" role="presentation">
-                            <a id="attributesTab" href="#tabAttributes" title="{{ 'Attributes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Attributes{% endtrans %}</a>
-                        </li>
-                    {% endif %}
-                «ENDIF»
                 «IF categorisable»
                     {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                         <li class="nav-item" role="presentation">
@@ -286,11 +279,6 @@ class Display {
         «ENDIF»
         «IF useGroupingTabs('display')»
             {{ block('related_items') }}
-        «ENDIF»
-        «IF attributable»
-            {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
-                {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
-            {% endif %}
         «ENDIF»
         «IF categorisable»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}

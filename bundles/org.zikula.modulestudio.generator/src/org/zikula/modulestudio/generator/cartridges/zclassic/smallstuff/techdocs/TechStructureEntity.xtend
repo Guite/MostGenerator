@@ -242,8 +242,8 @@ class TechStructureEntity {
 
     def private entityBehaviourContent(Entity it) '''
         <tr>
-            <th id="h«name.formatForCodeCapital»BehaviourAttributable" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Attributierbar«ELSE»Attributable«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourAttributable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, attributable)»</td>
+            <th id="h«name.formatForCodeCapital»BehaviourStandardFields" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Standardfelder«ELSE»Standard fields«ENDIF»</th>
+            <td headers="h«name.formatForCodeCapital»BehaviourStandardFields h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, standardFields)»</td>
             <th id="h«name.formatForCodeCapital»BehaviourLoggable" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Versionierbar«ELSE»Versionable«ENDIF»</th>
             <td headers="h«name.formatForCodeCapital»BehaviourLoggable h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, loggable)»</td>
         </tr>
@@ -261,13 +261,9 @@ class TechStructureEntity {
         </tr>
         <tr>
             <th id="h«name.formatForCodeCapital»BehaviourTree" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Baum«ELSE»Tree«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourAttributable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«tree.literal»</td>
+            <td headers="h«name.formatForCodeCapital»BehaviourTree h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«tree.literal»</td>
             <th id="h«name.formatForCodeCapital»BehaviourGeographical" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Geografisch«ELSE»Geographical«ENDIF»</th>
             <td headers="h«name.formatForCodeCapital»BehaviourGeographical h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, geographical)»</td>
-        </tr>
-        <tr>
-            <th id="h«name.formatForCodeCapital»BehaviourStandardFields" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Standardfelder«ELSE»Standard fields«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourStandardFields h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, standardFields)»</td>
         </tr>
     '''
 

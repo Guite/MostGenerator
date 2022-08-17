@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Blameable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.EntityExtensionInterface
@@ -52,9 +51,6 @@ class ExtensionManager {
         }
         if (entity.tree != EntityTreeType.NONE) {
             this.extensions += new Tree
-        }
-        if (entity.attributable) {
-            this.extensions += new Attributes
         }
         if (entity.categorisable) {
             this.extensions += new Categories

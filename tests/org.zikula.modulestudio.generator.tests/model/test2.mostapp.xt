@@ -71,7 +71,7 @@ application "SimpleNews" targets ZK40 {
                 deleteAction "Delete"
             }
         },
-        entity "image" loggable geographical attributable {
+        entity "image" loggable geographical {
             nameMultiple "images"
             displayPattern "#title#"
             changeTrackingPolicy DEFERRED_EXPLICIT
