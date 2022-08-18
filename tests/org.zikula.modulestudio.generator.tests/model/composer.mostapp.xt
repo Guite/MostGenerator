@@ -37,17 +37,17 @@ XPECT generated file composer.json ---
             "icon": "fas fa-database",
             "capabilities": {
                 "admin": {
-                    "route": "acmesimpletestmodule_article_adminindex"
+                    "route": "acmesimpletestbundle_article_adminindex"
                 },
                 "user": {
-                    "route": "acmesimpletestmodule_article_index"
+                    "route": "acmesimpletestbundle_article_index"
                 }
             },
             "securityschema": {
-                "AcmeSimpleTestModule::": "::",
-                "AcmeSimpleTestModule:Article:": "Article ID::",
-                "AcmeSimpleTestModule:Image:": "Image ID::",
-                "AcmeSimpleTestModule::Ajax": "::"
+                "AcmeSimpleTestBundle::": "::",
+                "AcmeSimpleTestBundle:Article:": "Article ID::",
+                "AcmeSimpleTestBundle:Image:": "Image ID::",
+                "AcmeSimpleTestBundle::Ajax": "::"
             }
         }
     },
