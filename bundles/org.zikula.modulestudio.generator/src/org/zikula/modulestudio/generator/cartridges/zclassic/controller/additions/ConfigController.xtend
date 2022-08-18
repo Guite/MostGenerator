@@ -100,7 +100,7 @@ class ConfigController {
         ];
 
         // render the config form
-        return $this->render('@«appName»/Config/config.html.twig', $templateParameters);
+        return $this->render('@«vendorAndName»/Config/config.html.twig', $templateParameters);
     '''
 
     def private configControllerImpl(Application it) '''

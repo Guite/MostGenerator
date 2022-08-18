@@ -226,7 +226,7 @@ class AjaxController {
             );
 
             $previewInfo = $this->renderView(
-                '@«appName»/External/' . ucfirst($objectType) . '/info.html.twig',
+                '@«vendorAndName»/External/' . ucfirst($objectType) . '/info.html.twig',
                 $previewParameters
             );
             $previewInfo = base64_encode($previewInfo);

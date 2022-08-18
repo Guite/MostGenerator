@@ -104,7 +104,7 @@ class Layout {
 
     def adminBaseTemplate(Application it) '''
         {# purpose of this template: admin area base layout #}
-        {% extends '@«appName»/base.html.twig' %}
+        {% extends '@«vendorAndName»/base.html.twig' %}
         {% trans_default_domain 'messages' %}
         {% block appTitle %}{# empty on purpose #}{% endblock %}
         {% block titleArea %}

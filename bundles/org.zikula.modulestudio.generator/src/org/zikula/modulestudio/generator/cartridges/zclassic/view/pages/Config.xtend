@@ -30,14 +30,14 @@ class Config {
 
     def private configView(Application it) '''
         {# purpose of this template: module configuration page #}
-        {% extends '@«appName»/adminBase.html.twig' %}
+        {% extends '@«vendorAndName»/adminBase.html.twig' %}
         {% trans_default_domain 'config' %}
         {% block title 'Settings'|trans %}
         {% block admin_page_icon 'wrench' %}
         {% block content %}
             <div class="«appName.toLowerCase»-config">
                 {% form_theme form with [
-                    '@«appName»/Form/bootstrap_4.html.twig',
+                    '@«vendorAndName»/Form/bootstrap_4.html.twig',
                     '@ZikulaFormExtension/Form/form_div_layout.html.twig'
                 ] only %}
                 {{ form_start(form) }}

@@ -294,7 +294,7 @@ class NotificationHelper {
                     continue;
                 }
 
-                $body = $this->twig->render('@«appName»/' . $template, [
+                $body = $this->twig->render('@«vendorAndName»/' . $template, [
                     'recipient' => $recipient,
                     'mailData' => $mailData,
                 ]);

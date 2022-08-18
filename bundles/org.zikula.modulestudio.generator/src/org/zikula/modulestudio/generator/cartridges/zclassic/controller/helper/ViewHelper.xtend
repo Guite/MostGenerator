@@ -95,7 +95,7 @@ class ViewHelper {
         public function getViewTemplate(string $type, string $func): string
         {
             // create the base template name
-            $template = '@«appName»/' . ucfirst($type) . '/' . $func;
+            $template = '@«vendorAndName»/' . ucfirst($type) . '/' . $func;
 
             // check for template extension
             $templateExtension = '.' . $this->determineExtension($type, $func);
@@ -293,7 +293,7 @@ class ViewHelper {
             );
 
             // then the surrounding
-            $output = $this->twig->render('@«appName»/includePdfHeader.html.twig') . $output . '</body></html>';
+            $output = $this->twig->render('@«vendorAndName»/includePdfHeader.html.twig') . $output . '</body></html>';
 
             // create name of the pdf output file
             $siteName = $this->variableApi->getSystemVar('sitename');
