@@ -80,7 +80,6 @@ class ComposerFile {
         «ENDIF»
         "extra": {
             "zikula": {
-                "core-compatibility": ">=«targetSemVer(true)» <«IF targets('4.0')»5«ELSE»4«ENDIF».0.0",
                 "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\«appName»",
                 "displayname": "«name.formatForDisplayCapital»",
                 "url": "«name.formatForDB»",

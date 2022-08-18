@@ -31,8 +31,7 @@ XPECT generated file composer.json ---
     },
     "extra": {
         "zikula": {
-            "core-compatibility": ">=3.0.4 <4.0.0",
-            "class": "Acme\\SimpleTestBundle\\AcmeSimpleTestModule",
+            "class": "Acme\\SimpleTestBundle\\AcmeSimpleTestBundle",
             "displayname": "Simple test",
             "url": "simpletest",
             "icon": "fas fa-database",
