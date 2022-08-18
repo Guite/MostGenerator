@@ -32,7 +32,7 @@ class ViewMap {
 
     def private mapView(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» map view #}
-        {% extends routeArea == 'admin' ? '@«vendorAndName»/adminBase.html.twig' : '@«vendorAndName»/base.html.twig' %}
+        {% extends routeArea == 'admin' ? '@«application.vendorAndName»/adminBase.html.twig' : '@«application.vendorAndName»/base.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
         {% block admin_page_icon 'map' %}
