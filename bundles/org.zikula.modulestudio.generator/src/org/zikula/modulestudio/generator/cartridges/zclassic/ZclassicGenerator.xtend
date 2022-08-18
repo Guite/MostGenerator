@@ -27,7 +27,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Composer
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.DependencyInjection
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.GitIgnore
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ModuleFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.PhpUnitXmlDist
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.zclassic.tests.Tests
@@ -38,6 +37,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.BundleFile
 
 class ZclassicGenerator implements IGenerator {
 
@@ -73,7 +73,7 @@ class ZclassicGenerator implements IGenerator {
     def private generateBasicFiles(Application it) {
         pm?.subTask('Basic information')
         'Generating basic information'.printIfNotTesting(fsa)
-        new ModuleFile().generate(it, fsa)
+        new BundleFile().generate(it, fsa)
         new DependencyInjection().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
         new GitIgnore().generate(it, fsa)

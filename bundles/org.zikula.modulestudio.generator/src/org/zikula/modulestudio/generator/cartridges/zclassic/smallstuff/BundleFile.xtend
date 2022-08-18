@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ModuleFile {
+class BundleFile {
 
     extension Utils = new Utils
 
