@@ -21,7 +21,6 @@ application "SimpleNews" targets ZK40 {
     license "My license"
     prefix "sinew"
     capabilities "foo, bar"
-    isSystemModule false
     amountOfExampleRows 3
     generateAccountApi false
     generateModerationPanel false

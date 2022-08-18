@@ -29,11 +29,9 @@ class History {
         «val app = application»
         {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
         {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
-        «IF !app.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% macro outputSimpleValue(input) %}
-            {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|format_datetime('long', 'medium') : input|default('an empty value'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF») }}
+            {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|format_datetime('long', 'medium') : input|default('an empty value'|trans({}, 'messages')) }}
         {% endmacro %}
         {% macro outputArray(input«IF hasTranslatableFields», keysAreLanguages«ENDIF») %}
             <ul>
@@ -42,7 +40,7 @@ class History {
                 {% endfor %}
             </ul>
         {% endmacro %}
-        {% block title isDiffView == true ? 'Compare versions of %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}«IF !app.isSystemModule», 'messages'«ENDIF») : '«name.formatForDisplayCapital» change history for %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) %}
+        {% block title isDiffView == true ? 'Compare versions of %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}, 'messages') : '«name.formatForDisplayCapital» change history for %entityTitle%'|trans({'%entityTitle%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle}) %}
         {% block admin_page_icon isDiffView == true ? 'arrows-alt-h' : 'history' %}
         {% block content %}
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-history">
@@ -67,7 +65,7 @@ class History {
                     «historyTable»
                 </div>
                 <p>
-                    <button id="compareButton" type="submit" value="compare" class="btn btn-primary" disabled="disabled"><i class="fas fa-arrows-alt-h"></i> {% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Compare selected versions{% endtrans %}</button>
+                    <button id="compareButton" type="submit" value="compare" class="btn btn-primary" disabled="disabled"><i class="fas fa-arrows-alt-h"></i> {% trans from 'messages' %}Compare selected versions{% endtrans %}</button>
                 </p>
             </form>
         {% endblock %}
@@ -81,9 +79,9 @@ class History {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th id="hFieldName" scope="col" class="unsorted">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Field name{% endtrans %}</th>
-                            <th id="hMinVersion" scope="col" class="unsorted">{% trans with {'%version%': minVersion}«IF !app.isSystemModule» from 'messages'«ENDIF» %}Version %version%{% endtrans %}</th>
-                            <th id="hMaxVersion" scope="col" class="unsorted">{% trans with {'%version%': maxVersion}«IF !app.isSystemModule» from 'messages'«ENDIF» %}Version %version%{% endtrans %}</th>
+                            <th id="hFieldName" scope="col" class="unsorted">{% trans from 'messages' %}Field name{% endtrans %}</th>
+                            <th id="hMinVersion" scope="col" class="unsorted">{% trans with {'%version%': minVersion} from 'messages' %}Version %version%{% endtrans %}</th>
+                            <th id="hMaxVersion" scope="col" class="unsorted">{% trans with {'%version%': maxVersion} from 'messages' %}Version %version%{% endtrans %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -101,7 +99,7 @@ class History {
                                                 {{ _self.outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
                                         {% else %}
-                                            {% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}an empty collection{% endtrans %}
+                                            {% trans from 'messages' %}an empty collection{% endtrans %}
                                         {% endif %}
                                     {% else %}
                                         {{ _self.outputSimpleValue(values.old) }}
@@ -116,7 +114,7 @@ class History {
                                                 {{ _self.outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
                                         {% else %}
-                                            {% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}an empty collection{% endtrans %}
+                                            {% trans from 'messages' %}an empty collection{% endtrans %}
                                         {% endif %}
                                     {% else %}
                                         {{ _self.outputSimpleValue(values.new) }}
@@ -144,13 +142,13 @@ class History {
             </colgroup>
             <thead>
                 <tr>
-                    <th id="hSelect" scope="col" class="unsorted">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Select{% endtrans %}</th>
-                    <th id="hVersion" scope="col" class="unsorted">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Version{% endtrans %}</th>
-                    <th id="hDate" scope="col" class="unsorted">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Date{% endtrans %}</th>
-                    <th id="hUser" scope="col" class="unsorted">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}User{% endtrans %}</th>
-                    <th id="hOperation" scope="col" class="unsorted" colspan="2">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Operation{% endtrans %}</th>
-                    <th id="hChanges" scope="col" class="unsorted">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Changes{% endtrans %}</th>
-                    <th id="hActions" scope="col" class="unsorted">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}</th>
+                    <th id="hSelect" scope="col" class="unsorted">{% trans from 'messages' %}Select{% endtrans %}</th>
+                    <th id="hVersion" scope="col" class="unsorted">{% trans from 'messages' %}Version{% endtrans %}</th>
+                    <th id="hDate" scope="col" class="unsorted">{% trans from 'messages' %}Date{% endtrans %}</th>
+                    <th id="hUser" scope="col" class="unsorted">{% trans from 'messages' %}User{% endtrans %}</th>
+                    <th id="hOperation" scope="col" class="unsorted" colspan="2">{% trans from 'messages' %}Operation{% endtrans %}</th>
+                    <th id="hChanges" scope="col" class="unsorted">{% trans from 'messages' %}Changes{% endtrans %}</th>
+                    <th id="hActions" scope="col" class="unsorted">{% trans from 'messages' %}Actions{% endtrans %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -159,7 +157,7 @@ class History {
                         <td headers="hSelect hVersion{{ logEntry.version|e('html_attr') }}" class="text-center">
                             <input type="checkbox" name="versions[]" value="{{ logEntry.version }}" class="«app.vendorAndName.toLowerCase»-toggle-checkbox" />
                         </td>
-                        <th id="hVersion{{ logEntry.version|e('html_attr') }}" headers="hVersion" scope="row" class="text-center">{{ logEntry.version }}{% if loop.first %} ({% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}latest{% endtrans %}){% endif %}</td>
+                        <th id="hVersion{{ logEntry.version|e('html_attr') }}" headers="hVersion" scope="row" class="text-center">{{ logEntry.version }}{% if loop.first %} ({% trans from 'messages' %}latest{% endtrans %}){% endif %}</td>
                         <td headers="hDate hVersion{{ logEntry.version|e('html_attr') }}">
                             {{ logEntry.loggedAt|format_datetime('long', 'medium') }}
                         </td>
@@ -170,11 +168,11 @@ class History {
                         </td>
                         <td headers="hOperation hVersion{{ logEntry.version|e('html_attr') }}">
                             {% if logEntry.action == constant('Gedmo\\Loggable\\LoggableListener::ACTION_CREATE') %}
-                                {% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Created{% endtrans %}
+                                {% trans from 'messages' %}Created{% endtrans %}
                             {% elseif logEntry.action == constant('Gedmo\\Loggable\\LoggableListener::ACTION_UPDATE') %}
-                                {% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Updated{% endtrans %}
+                                {% trans from 'messages' %}Updated{% endtrans %}
                             {% elseif logEntry.action == constant('Gedmo\\Loggable\\LoggableListener::ACTION_REMOVE') %}
-                                {% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Removed{% endtrans %}
+                                {% trans from 'messages' %}Removed{% endtrans %}
                             {% endif %}
                         </td>
                         <td headers="hOperation hVersion{{ logEntry.version|e('html_attr') }}">
@@ -183,7 +181,7 @@ class History {
                         <td headers="hChanges hVersion{{ logEntry.version|e('html_attr') }}">
                             {% if logEntry.data is not empty %}
                                 <a role="button" data-toggle="collapse" href="#changes{{ logEntry.version }}" aria-expanded="false" aria-controls="changes{{ logEntry.version }}">
-                                    {{ '{0} No fields updated|{1} One field updated|]1,Inf[ %count% fields updated'|trans({'%count%': logEntry.data|length}«IF !app.isSystemModule», 'messages'«ENDIF») }}
+                                    {{ '{0} No fields updated|{1} One field updated|]1,Inf[ %count% fields updated'|trans({'%count%': logEntry.data|length}, 'messages') }}
                                 </a>
                                 <div id="changes{{ logEntry.version }}" class="collapse">
                                     <ul>
@@ -192,32 +190,32 @@ class History {
                                                 {% if value|length > 0 %}
                                                     <li>
                                                     {% if field in ['createdBy', 'updatedBy'] and value.uid is defined %}
-                                                        {{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': userAvatar(value.uid, {rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()}«IF !app.isSystemModule», 'messages'«ENDIF»)|raw }}
+                                                        {{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': userAvatar(value.uid, {rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()}, 'messages')|raw }}
                                                     {% else %}
-                                                        {{ '%field% set to:'|trans({'%field%': field|humanize}«IF !app.isSystemModule», 'messages'«ENDIF») }}
+                                                        {{ '%field% set to:'|trans({'%field%': field|humanize}, 'messages') }}
                                                         {{ _self.outputArray(value«IF hasTranslatableFields», (field == 'translationData')«ENDIF») }}
                                                     {% endif %}
                                                     </li>
                                                 {% else %}
-                                                    <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': 'an empty collection'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»}«IF !app.isSystemModule», 'messages'«ENDIF»)|raw }}</li>
+                                                    <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': 'an empty collection'|trans({}, 'messages')}, 'messages')|raw }}</li>
                                                 {% endif %}
                                             {% else %}
-                                                <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': _self.outputSimpleValue(value)}«IF !app.isSystemModule», 'messages'«ENDIF»)|raw }}</li>
+                                                <li>{{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': _self.outputSimpleValue(value)}, 'messages')|raw }}</li>
                                             {% endif %}
                                         {% endfor %}
                                     </ul>
                                 </div>
                             {% else %}
-                                {% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}None{% endtrans %}
+                                {% trans from 'messages' %}None{% endtrans %}
                             {% endif %}
                         </td>
                         <td headers="hActions hVersion{{ logEntry.version|e('html_attr') }}" class="actions">
                             «IF hasDisplayAction»
-                                {% set linkTitle = 'Preview version %version%'|trans({'%version%': logEntry.version}«IF !app.isSystemModule», 'messages'«ENDIF») %}
-                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ 'version'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF» ~ ' ' ~ logEntry.version }}"><i class="fas fa-id-card"></i></a>
+                                {% set linkTitle = 'Preview version %version%'|trans({'%version%': logEntry.version}, 'messages') %}
+                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ 'version'|trans({}, 'messages') ~ ' ' ~ logEntry.version }}"><i class="fas fa-id-card"></i></a>
                             «ENDIF»
                             {% if not loop.first %}
-                                {% set linkTitle = 'Revert to version %version%'|trans({'%version%': logEntry.version}«IF !app.isSystemModule», 'messages'«ENDIF») %}
+                                {% set linkTitle = 'Revert to version %version%'|trans({'%version%': logEntry.version}, 'messages') %}
                                 <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i></a>
                             {% endif %}
                         </td>
@@ -231,7 +229,7 @@ class History {
         «IF hasViewAction || hasDisplayAction»
             <p>
                 {% if isDiffView == true %}
-                    {% set linkTitle = 'Back to history'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF» %}
+                    {% set linkTitle = 'Back to history'|trans({}, 'messages') %}
                     <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields && slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i> {{ linkTitle }}</a>
                 {% else %}
                     «IF hasViewAction»
@@ -240,7 +238,7 @@ class History {
                     «ENDIF»
                 {% endif %}
                 «IF hasDisplayAction»
-                    {% set linkTitle = 'Back to detail view'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF» %}
+                    {% set linkTitle = 'Back to detail view'|trans({}, 'messages') %}
                     <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-eye"></i> {{ linkTitle }}</a>
                 «ENDIF»
             </p>

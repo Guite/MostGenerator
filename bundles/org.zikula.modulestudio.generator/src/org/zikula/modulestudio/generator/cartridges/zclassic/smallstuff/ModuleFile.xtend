@@ -19,16 +19,12 @@ class ModuleFile {
     '''
 
     def private moduleBaseImpl(Application it) '''
-        «IF isSystemModule»
-            use Zikula\ExtensionsModule\AbstractCoreModule;
-        «ELSE»
-            use Zikula\ExtensionsModule\AbstractModule;
-        «ENDIF»
+        use Zikula\ExtensionsModule\AbstractModule;
 
         /**
-         * Module base class.
+         * Bundle base class.
          */
-        abstract class Abstract«appName» extends Abstract«IF isSystemModule»Core«ENDIF»Module
+        abstract class Abstract«appName» extends AbstractModule
         {
         }
     '''
@@ -39,7 +35,7 @@ class ModuleFile {
         use «appNamespace»\Base\Abstract«appName»;
 
         /**
-         * Module implementation class.
+         * Bundle implementation class.
          */
         class «appName» extends Abstract«appName»
         {

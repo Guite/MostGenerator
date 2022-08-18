@@ -32,9 +32,7 @@ class Relations {
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''
         {# purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay» #}
-        «IF !app.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% set hasAdminPermission = permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_ADD')) %}
         «IF ownerPermission»
             {% set hasEditPermission = permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
@@ -97,12 +95,12 @@ class Relations {
                 {% set mayManage = permissionHelper.hasComponentPermission('«otherEntity.name.formatForCode»', constant('ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF otherEntity.workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
                 {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
                     {% set createLink = path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».get«IF relatedEntity.hasSluggableFields && relatedEntity.slugUnique»Slug«ELSE»Key«ENDIF»()}) %}
-                    {% set createTitle = 'Create «otherEntity.name.formatForDisplay»'|trans«IF !application.isSystemModule»({}, '«otherEntity.name.formatForCode»')«ENDIF» %}
+                    {% set createTitle = 'Create «otherEntity.name.formatForDisplay»'|trans({}, '«otherEntity.name.formatForCode»') %}
                 {% endif %}
             {% endif %}
         «ENDIF»
         {% set sectionTitle %}
-            {% trans«IF !application.isSystemModule» from '«otherEntity.name.formatForCode»'«ENDIF» %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}
+            {% trans from '«otherEntity.name.formatForCode»' %}«getRelationAliasName(useTarget).formatForDisplayCapital»{% endtrans %}
             «IF otherEntity.hasEditAction»
                 {% if creationPossible and createLink|default %}
                     «createLink('')»

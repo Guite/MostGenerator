@@ -262,8 +262,8 @@ class Installer {
                     'status',
                     $this->trans(
                         'The upload directories at "%path%" can be removed manually.',
-                        ['%path%' => $uploadPath]«IF !isSystemModule»,
-                        'config'«ENDIF»
+                        ['%path%' => $uploadPath],
+                        'config'
                     )
                 );
             «ENDIF»

@@ -39,9 +39,7 @@ class Csv {
 
     def private csvView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{% trans %}«geoFieldName.formatForDisplayCapital»{% endtrans %}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{% trans %}Workflow state{% endtrans %}"«ENDIF»«headerLinesRelations»
         «val objName = name.formatForCode»
         {% for «objName» in items %}

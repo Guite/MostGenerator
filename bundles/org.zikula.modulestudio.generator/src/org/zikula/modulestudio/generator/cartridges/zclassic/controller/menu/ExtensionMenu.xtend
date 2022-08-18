@@ -52,10 +52,8 @@ class ExtensionMenu {
 
             public function get(string $type = self::TYPE_ADMIN): ?ItemInterface
             {
-                «IF !isSystemModule»
-                    $contextArgs = ['api' => 'extensionMenu', 'action' => 'get'];
-                «ENDIF»
-                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api'«IF !isSystemModule», $contextArgs«ENDIF»);
+                $contextArgs = ['api' => 'extensionMenu', 'action' => 'get'];
+                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api', $contextArgs);
         
                 $permLevel = self::TYPE_ADMIN === $type ? ACCESS_ADMIN : ACCESS_READ;
 
@@ -86,9 +84,7 @@ class ExtensionMenu {
                                         'routeParameters' => $routeParameters,
                                     ])
                                         ->setAttribute('icon', 'fas fa-list-alt')
-                                        «IF !isSystemModule»
-                                            ->setExtra('translation_domain', '«entity.name.formatForCode»')
-                                        «ENDIF»
+                                        ->setExtra('translation_domain', '«entity.name.formatForCode»')
                                     ;
                                 }
                             }

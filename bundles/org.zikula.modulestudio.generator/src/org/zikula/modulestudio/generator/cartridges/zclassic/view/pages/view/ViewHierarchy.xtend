@@ -32,9 +32,7 @@ class ViewHierarchy {
     def private hierarchyView(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
         {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% block title '«name.formatForDisplayCapital» hierarchy'|trans %}
         {% block admin_page_icon 'code-branch' %}
         {% block content %}
@@ -63,14 +61,14 @@ class ViewHierarchy {
         {% set idPrefix = '«name.formatForCode.toFirstLower»Tree' ~ rootId %}
 
         <p>
-            <label for="{{ idPrefix }}SearchTerm">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Quick search{% endtrans %}:</label>
+            <label for="{{ idPrefix }}SearchTerm">{% trans from 'messages' %}Quick search{% endtrans %}:</label>
             <input type="search" id="{{ idPrefix }}SearchTerm" value="" />
         </p>
 
-        <div class="btn-toolbar" role="toolbar" aria-label="{{ 'Tree button toolbar'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">
+        <div class="btn-toolbar" role="toolbar" aria-label="{{ 'Tree button toolbar'|trans({}, 'messages')|e('html_attr') }}">
             <div class="btn-group btn-group-sm" role="group" aria-label="«name.formatForDB» buttons">
-                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-secondary" title="{{ 'Expand all nodes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"><i class="fas fa-expand"></i> {% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Expand all{% endtrans %}</button>
-                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-secondary" title="{{ 'Collapse all nodes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"><i class="fas fa-compress"></i> {% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Collapse all{% endtrans %}</button>
+                <button type="button" id="{{ idPrefix }}Expand" class="btn btn-secondary" title="{{ 'Expand all nodes'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-expand"></i> {% trans from 'messages' %}Expand all{% endtrans %}</button>
+                <button type="button" id="{{ idPrefix }}Collapse" class="btn btn-secondary" title="{{ 'Collapse all nodes'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-compress"></i> {% trans from 'messages' %}Collapse all{% endtrans %}</button>
             </div>
         </div>
         <div class="clearfix">

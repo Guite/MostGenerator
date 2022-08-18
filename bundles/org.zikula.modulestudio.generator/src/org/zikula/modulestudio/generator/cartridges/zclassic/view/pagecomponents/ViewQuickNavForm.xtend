@@ -27,9 +27,7 @@ class ViewQuickNavForm {
 
     def private quickNavForm(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view filter form #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% macro renderQuickNavEntry(quickNavForm, fieldName, isVisible) %}
             {% if attribute(quickNavForm, fieldName) is defined %}
                 {% if not isVisible %}

@@ -116,7 +116,7 @@ class Relations {
     def private tabTitleForEditTemplate(JoinRelationship it, Entity ownEntity, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
         <li class="nav-item" role="presentation">
-            <a id="«ownEntityName.formatForCode»Tab" href="#tab«ownEntityName.formatForCodeCapital»" title="{{ '«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from '«ownEntity.name.formatForCode»'«ENDIF» %}«ownEntityName.formatForDisplayCapital»{% endtrans %}</a>
+            <a id="«ownEntityName.formatForCode»Tab" href="#tab«ownEntityName.formatForCodeCapital»" title="{{ '«ownEntityName.formatForDisplayCapital»'|trans({}, '«ownEntity.name.formatForCode»')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from '«ownEntity.name.formatForCode»' %}«ownEntityName.formatForDisplayCapital»{% endtrans %}</a>
         </li>
     '''
 
@@ -127,7 +127,7 @@ class Relations {
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean useTarget, String relationAliasName, String uniqueNameForJs) '''
         {{ include(
             '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
-            {group: '«linkingEntity.name.formatForDB»', heading: '«getRelationAliasName(useTarget).formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF», alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForCode»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(!useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
+            {group: '«linkingEntity.name.formatForDB»', heading: '«getRelationAliasName(useTarget).formatForDisplayCapital»'|trans({}, '«ownEntity.name.formatForCode»'), alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForCode»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(!useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
         ) }}
     '''
 
@@ -140,11 +140,11 @@ class Relations {
             {% endif %}
             {% if tabs|default(false) == true %}
                 <div role="tabpanel" class="tab-pane fade" id="tab«ownEntityName.formatForCodeCapital»" aria-labelledby="«ownEntityName.formatForCode»Tab">
-                    <h3>{{ heading|default ? heading : '«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF» }}</h3>
+                    <h3>{{ heading|default ? heading : '«ownEntityName.formatForDisplayCapital»'|trans({}, '«ownEntity.name.formatForCode»') }}</h3>
             {% else %}
                 <fieldset class="«ownEntityName.formatForDB»">
             {% endif %}
-                <legend>{{ heading|default ? heading : '«ownEntityName.formatForDisplayCapital»'|trans«IF !application.isSystemModule»({}, '«ownEntity.name.formatForCode»')«ENDIF» }}</legend>
+                <legend>{{ heading|default ? heading : '«ownEntityName.formatForDisplayCapital»'|trans({}, '«ownEntity.name.formatForCode»') }}</legend>
                 «IF app.needsInlineEditing»
                     <div id="{{ alias }}InlineEditingContainer">
                         «includedEditTemplateBody(ownEntity, linkingEntity, hasEdit, many)»

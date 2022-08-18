@@ -81,7 +81,7 @@ class ConfigController {
                 $appSettings = $form->getData();
                 $appSettings->save();
 
-                $this->addFlash('status', «IF isSystemModule»'Done! Configuration updated.'«ELSE»$this->trans('Done! Configuration updated.', [], 'config')«ENDIF»);
+                $this->addFlash('status', $this->trans('Done! Configuration updated.', [], 'config'));
                 $userName = $currentUserApi->get('uname');
                 $logger->notice(
                     '{app}: User {user} updated the configuration.',

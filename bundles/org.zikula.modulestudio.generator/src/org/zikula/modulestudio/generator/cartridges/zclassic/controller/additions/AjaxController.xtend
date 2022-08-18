@@ -159,8 +159,8 @@ class AjaxController {
 
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListFinder'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
         $repository = $entityFactory->getRepository($objectType);
@@ -281,8 +281,8 @@ class AjaxController {
 
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListAutoCompletion'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
         $repository = $entityFactory->getRepository($objectType);
@@ -431,8 +431,8 @@ class AjaxController {
     def private prepareDuplicateCheckParameters(Application it) '''
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
         $contextArgs = ['controller' => 'ajax', 'action' => 'checkForDuplicate'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
         $fieldName = $request->query->getAlnum('fn');

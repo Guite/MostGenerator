@@ -27,9 +27,7 @@ class MenuLinksHelperFunctions {
                 ])
                     ->setAttribute('icon', 'fas fa-wrench')
                     ->setLinkAttribute('title', 'Manage settings for this application')
-                    «IF !isSystemModule»
-                        ->setExtra('translation_domain', 'config')
-                    «ENDIF»
+                    ->setExtra('translation_domain', 'config')
                 ;
             }
         «ENDIF»
@@ -45,9 +43,7 @@ class MenuLinksHelperFunctions {
                 'routeParameters' => ['tpl' => 'tree']«ENDIF*/»
             ])
                 ->setLinkAttribute('title', '«nameMultiple.formatForDisplayCapital» list')
-                «IF !application.isSystemModule»
-                    ->setExtra('translation_domain', '«name.formatForCode»')
-                «ENDIF»
+                ->setExtra('translation_domain', '«name.formatForCode»')
             ;
         }
     '''

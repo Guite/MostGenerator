@@ -50,9 +50,7 @@ class Xml {
 
     def private xmlView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view xml view #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="{{ pageGetVar('meta.charset')|default('utf-8') }}" ?>
         <«nameMultiple.formatForCode»>
         {% for «name.formatForCode» in items %}
@@ -65,18 +63,14 @@ class Xml {
 
     def private xmlDisplay(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» display xml view #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
         {{ include('@«application.appName»/«name.formatForCodeCapital»/include.xml.twig') }}
     '''
 
     def private xmlInclude(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» xml inclusion template #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         <«name.formatForDB» «getPrimaryKey.name.formatForCode»="{{ «name.formatForCode».get«getPrimaryKey.name.formatForCodeCapital»() }}"«IF standardFields» createdOn="{{ «name.formatForCode».createdDate|format_datetime('medium', 'short') }}" updatedOn="{{ «name.formatForCode».updatedDate|format_datetime('medium', 'short') }}"«ENDIF»>
             «FOR field : getDerivedFields.filter[primaryKey]»«field.displayEntry»«ENDFOR»
             «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»«field.displayEntry»«ENDFOR»

@@ -93,9 +93,9 @@ class LoggableHistory {
         if (empty(«IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»)) {
             throw new NotFoundHttpException(
                 $this->trans(
-                    'No such «name.formatForDisplay» found.'«IF !application.isSystemModule»,
+                    'No such «name.formatForDisplay» found.',
                     [],
-                    '«name.formatForCode»'«ENDIF»
+                    '«name.formatForCode»'
                 )
             );
         }
@@ -104,9 +104,9 @@ class LoggableHistory {
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException(
                 $this->trans(
-                    'No such «name.formatForDisplay» found.'«IF !application.isSystemModule»,
+                    'No such «name.formatForDisplay» found.',
                     [],
-                    '«name.formatForCode»'«ENDIF»
+                    '«name.formatForCode»'
                 )
             );
         }
@@ -140,8 +140,8 @@ class LoggableHistory {
                         'status',
                         $this->trans(
                             'Done! Reverted «name.formatForDisplay» to version %version%.',
-                            ['%version%' => $revertToVersion]«IF !application.isSystemModule»,
-                            '«name.formatForCode»'«ENDIF»
+                            ['%version%' => $revertToVersion],
+                            '«name.formatForCode»'
                         )
                     );
                 } else {
@@ -149,8 +149,8 @@ class LoggableHistory {
                         'error',
                         $this->trans(
                             'Error! Reverting «name.formatForDisplay» to version %version% failed.',
-                            ['%version%' => $revertToVersion]«IF !application.isSystemModule»,
-                            '«name.formatForCode»'«ENDIF»
+                            ['%version%' => $revertToVersion],
+                            '«name.formatForCode»'
                         )
                     );
                 }

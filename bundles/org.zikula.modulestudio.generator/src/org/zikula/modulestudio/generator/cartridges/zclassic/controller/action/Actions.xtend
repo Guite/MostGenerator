@@ -49,9 +49,9 @@ class Actions {
             if (null === $«name.formatForCode») {
                 throw new NotFoundHttpException(
                     $this->trans(
-                        'No such «name.formatForDisplay» found.'«IF !application.isSystemModule»,
+                        'No such «name.formatForDisplay» found.',
                         [],
-                        '«name.formatForCode»'«ENDIF»
+                        '«name.formatForCode»'
                     )
                 );
             }
@@ -156,9 +156,7 @@ class Actions {
 
         // filter by permissions
         $templateParameters['items'] = $permissionHelper->filterCollection(
-            «IF !app.isSystemModule»
-                $objectType,
-            «ENDIF»
+            $objectType,
             $templateParameters['items'],
             $permLevel
         );
@@ -292,15 +290,11 @@ class Actions {
         if (!$deleteAllowed) {
             $this->addFlash(
                 'error',
-                «IF application.isSystemModule»
-                    'Error! It is not allowed to delete this «name.formatForDisplay».'
-                «ELSE»
-                    $this->trans(
-                        'Error! It is not allowed to delete this «name.formatForDisplay».',
-                        [],
-                        '«name.formatForCode»'
-                    )
-                «ENDIF»
+                $this->trans(
+                    'Error! It is not allowed to delete this «name.formatForDisplay».',
+                    [],
+                    '«name.formatForCode»'
+                )
             );
             $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
 
@@ -345,15 +339,11 @@ class Actions {
         if ($success) {
             $this->addFlash(
                 'status',
-                «IF application.isSystemModule»
-                    'Done! «name.formatForDisplayCapital» deleted.'
-                «ELSE»
-                    $this->trans(
-                        'Done! «name.formatForDisplayCapital» deleted.',
-                        [],
-                        '«name.formatForCode»'
-                    )
-                «ENDIF»
+                $this->trans(
+                    'Done! «name.formatForDisplayCapital» deleted.',
+                    [],
+                    '«name.formatForCode»'
+                )
             );
             $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
         }

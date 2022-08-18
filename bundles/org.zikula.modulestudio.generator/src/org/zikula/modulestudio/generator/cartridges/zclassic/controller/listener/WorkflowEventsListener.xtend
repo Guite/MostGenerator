@@ -261,7 +261,7 @@ class WorkflowEventsListener {
                                 if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»() && 0 < count($entity->get«relation.targetAlias.formatForCodeCapital»())) {
                                     $event->addTransitionBlocker(
                                         new TransitionBlocker(
-                                            $this->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
+                                            $this->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!', [], '«entity.name.formatForCode»'),
                                             '0'
                                         )
                                     );
@@ -271,7 +271,7 @@ class WorkflowEventsListener {
                                 if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»()) {
                                     $event->addTransitionBlocker(
                                         new TransitionBlocker(
-                                            $this->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!'«IF !isSystemModule», [], '«entity.name.formatForCode»'«ENDIF»),
+                                            $this->__('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains a «relation.targetAlias.formatForDisplay»!', [], '«entity.name.formatForCode»'),
                                             '0'
                                         )
                                     );

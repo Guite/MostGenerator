@@ -33,22 +33,22 @@ class SimpleFields {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {% set itemId = «objName».getKey() %}
             <a id="toggle«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle d-none" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId|e('html_attr') }}">
-                <i class="fas fa-check text-success{% if not «objName».«name.formatForCode» %} d-none{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ 'This setting is enabled. Click here to disable it.'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"></i>
-                <i class="fas fa-times text-danger{% if «objName».«name.formatForCode» %} d-none{% endif %}" id="no«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ 'This setting is disabled. Click here to enable it.'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"></i>
+                <i class="fas fa-check text-success{% if not «objName».«name.formatForCode» %} d-none{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ 'This setting is enabled. Click here to disable it.'|trans({}, 'messages')|e('html_attr') }}"></i>
+                <i class="fas fa-times text-danger{% if «objName».«name.formatForCode» %} d-none{% endif %}" id="no«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ 'This setting is disabled. Click here to enable it.'|trans({}, 'messages')|e('html_attr') }}"></i>
             </a>
             <noscript><div id="noscript«name.formatForCodeCapital»{{ itemId|e('html_attr') }}">
                 {% if «objName».«name.formatForCode» %}
-                    <i class="fas fa-check text-success" title="{{ 'Yes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"></i>
+                    <i class="fas fa-check text-success" title="{{ 'Yes'|trans({}, 'messages')|e('html_attr') }}"></i>
                 {% else %}
-                    <i class="fas fa-times text-danger" title="{{ 'No'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"></i>
+                    <i class="fas fa-times text-danger" title="{{ 'No'|trans({}, 'messages')|e('html_attr') }}"></i>
                 {% endif %}
             </div></noscript>
         '''
         else '''
             {% if «objName».«name.formatForCode» %}
-                <i class="fas fa-check text-success" title="{{ 'Yes'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"></i>
+                <i class="fas fa-check text-success" title="{{ 'Yes'|trans({}, 'messages')|e('html_attr') }}"></i>
             {% else %}
-                <i class="fas fa-times text-danger" title="{{ 'No'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"></i>
+                <i class="fas fa-times text-danger" title="{{ 'No'|trans({}, 'messages')|e('html_attr') }}"></i>
             {% endif %}
         '''
     }
@@ -73,7 +73,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}{% set linkTitle = 'Send private message to %userName%'|trans({'%userName%': «realName».uname}«IF !application.isSystemModule», 'messages'«ENDIF») %}<a href="{{ sendMessageUrl }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-envelope"></i></a>{% endif %}{% endif %}
+                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}{% set linkTitle = 'Send private message to %userName%'|trans({'%userName%': «realName».uname}, 'messages') %}<a href="{{ sendMessageUrl }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-envelope"></i></a>{% endif %}{% endif %}
                 <span class="avatar">{{ userAvatar(«realName».uid, {rating: 'g'}) }}</span>
             «IF page == 'display'»
                 {% else %}
@@ -123,7 +123,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="mailto:{{ «realName»|protectMail }}" title="{{ 'Send an email'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"><i class="fas fa-envelope"></i></a>
+            <a href="mailto:{{ «realName»|protectMail }}" title="{{ 'Send an email'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-envelope"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName»|protectMail }}
@@ -145,7 +145,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-            <a href="{{ «realName» }}" title="{{ 'Visit this page'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"><i class="fas fa-external-link-square-alt"></i></a>
+            <a href="{{ «realName» }}" title="{{ 'Visit this page'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-external-link-square-alt"></i></a>
             «IF page == 'display'»
                 {% else %}
                     {{ «realName» }}
@@ -185,7 +185,7 @@ class SimpleFields {
                 {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
                 <img src="«IF application.generatePdfSupport»{% if app.request.requestFormat == 'pdf' %}{{ «realName».getPathname() }}{% else %}«ENDIF»{{ «realName».getPathname()|«application.appName.formatForDB»_relativePath|imagine_filter('zkroot', thumbOptions) }}«IF application.generatePdfSupport»{% endif %}«ENDIF»" alt="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
             {% else %}
-                {% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Download{% endtrans %} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
+                {% trans from 'messages' %}Download{% endtrans %} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
             {% endif %}
             </a>
             «IF !mandatory»

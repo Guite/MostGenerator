@@ -144,14 +144,14 @@ class EntityDisplayHelper {
         protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital»Entity $entity): string
         {
             «IF displayPatternParts.length < 2»«/* no field references, just pass to translator */»
-                return $this->translator->trans('«getUsedDisplayPattern.formatForCodeCapital»'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                return $this->translator->trans('«getUsedDisplayPattern.formatForCodeCapital»', [], '«name.formatForCode»');
             «ELSE»
                 return $this->translator->trans(
                     '«getUsedDisplayPattern.replaceAll('#', '%')»',
                     [
                         «displayPatternArguments»
-                    ]«IF !application.isSystemModule»,
-                    '«name.formatForCode»'«ENDIF»
+                    ],
+                    '«name.formatForCode»'
                 );
             «ENDIF»
         }

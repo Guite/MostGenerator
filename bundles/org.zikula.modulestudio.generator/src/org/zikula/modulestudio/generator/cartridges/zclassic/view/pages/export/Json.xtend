@@ -46,9 +46,7 @@ class Json {
 
     def private jsonView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view json view #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         [
         {% for «name.formatForCode» in items %}
             {% if not loop.first %},{% endif %}
@@ -61,9 +59,7 @@ class Json {
 
     def private jsonDisplay(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {
             {{ include('@«application.appName»/«name.formatForCodeCapital»/include.json.twig') }}
         }
@@ -71,9 +67,7 @@ class Json {
 
     def private jsonInclude(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» json inclusion template #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         «FOR field : getDerivedFields.filter[primaryKey]»«field.displayEntry»,«ENDFOR»
         «IF standardFields»
             "createdOn": "{{ «name.formatForCode».createdDate|format_datetime('medium', 'short') }}",

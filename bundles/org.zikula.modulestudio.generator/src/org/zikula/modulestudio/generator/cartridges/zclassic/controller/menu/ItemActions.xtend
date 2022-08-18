@@ -133,9 +133,7 @@ class ItemActions {
                     )
                     «app.addLinkClass('danger')»
                     «app.addIcon('trash-alt')»
-                    «IF !app.isSystemModule»
-                        ->setExtra('translation_domain', '«name.formatForCode»')
-                    «ENDIF»
+                    ->setExtra('translation_domain', '«name.formatForCode»')
                 ;
             }
         «ENDIF»
@@ -149,9 +147,7 @@ class ItemActions {
                 ])
                     «app.addLinkClass('secondary')»
                     «app.addIcon('reply')»
-                    «IF !app.isSystemModule»
-                        ->setExtra('translation_domain', '«name.formatForCode»')
-                    «ENDIF»
+                    ->setExtra('translation_domain', '«name.formatForCode»')
                 ;
             }
         «ENDIF»
@@ -179,9 +175,7 @@ class ItemActions {
                             ])
                                 «app.addLinkClass('secondary')»
                                 «app.addIcon('plus')»
-                                «IF !app.isSystemModule»
-                                    ->setExtra('translation_domain', '«name.formatForCode»')
-                                «ENDIF»
+                                ->setExtra('translation_domain', '«name.formatForCode»')
                             ;
                         }
                     «ELSE»
@@ -191,9 +185,7 @@ class ItemActions {
                         ])
                             «app.addLinkClass('secondary')»
                             «app.addIcon('plus')»
-                            «IF !app.isSystemModule»
-                                ->setExtra('translation_domain', '«name.formatForCode»')
-                            «ENDIF»
+                            ->setExtra('translation_domain', '«name.formatForCode»')
                         ;
                     «ENDIF»
                 }
@@ -213,9 +205,7 @@ class ItemActions {
                 )
                 «application.addLinkClass('secondary')»
                 «application.addIcon('edit')»
-                «IF !application.isSystemModule»
-                    ->setExtra('translation_domain', '«name.formatForCode»')
-                «ENDIF»
+                ->setExtra('translation_domain', '«name.formatForCode»')
             ;
         «ENDIF»
         $menu->addChild('Reuse', [
@@ -228,9 +218,7 @@ class ItemActions {
             )
             «application.addLinkClass('secondary')»
             «application.addIcon('copy')»
-            «IF !application.isSystemModule»
-                ->setExtra('translation_domain', '«name.formatForCode»')
-            «ENDIF»
+            ->setExtra('translation_domain', '«name.formatForCode»')
         ;
         «IF tree != EntityTreeType.NONE»
             if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
@@ -244,9 +232,7 @@ class ItemActions {
                     )
                     «application.addLinkClass('secondary')»
                     «application.addIcon('child')»
-                    «IF !application.isSystemModule»
-                        ->setExtra('translation_domain', '«name.formatForCode»')
-                    «ENDIF»
+                    ->setExtra('translation_domain', '«name.formatForCode»')
                 ;
             }
         «ENDIF»

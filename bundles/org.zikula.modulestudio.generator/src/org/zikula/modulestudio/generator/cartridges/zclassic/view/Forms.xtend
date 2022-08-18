@@ -60,9 +60,7 @@ class Forms {
         {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
         {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         {% extends '@«app.appName»/' ~ baseTemplate ~ '.html.twig' %}
-        «IF !app.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% block title mode == 'create' ? 'Create «name.formatForDisplay»'|trans : 'Edit «name.formatForDisplay»'|trans %}
         {% block admin_page_icon mode == 'create' ? 'plus' : 'edit' %}
         {% block content %}
@@ -94,31 +92,31 @@ class Forms {
             <div class="zikula-bootstrap-tab-container">
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a id="fieldsTab" href="#tabFields" title="{{ 'Fields'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link active">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</a>
+                        <a id="fieldsTab" href="#tabFields" title="{{ 'Fields'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link active">{% trans from 'messages' %}Fields{% endtrans %}</a>
                     </li>
                     «IF geographical»
                         <li class="nav-item" role="presentation">
-                            <a id="mapTab" href="#tabMap" title="{{ 'Map'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</a>
+                            <a id="mapTab" href="#tabMap" title="{{ 'Map'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Map{% endtrans %}</a>
                         </li>
                     «ENDIF»
                     «new Relations(fsa, app).generateTabTitles(it)»
                     «IF categorisable»
                         {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             <li class="nav-item" role="presentation">
-                                <a id="categoriesTab" href="#tabCategories" title="{{ 'Categories'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Categories{% endtrans %}</a>
+                                <a id="categoriesTab" href="#tabCategories" title="{{ 'Categories'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Categories{% endtrans %}</a>
                             </li>
                         {% endif %}
                     «ENDIF»
                     «IF standardFields»
                         {% if mode != 'create' %}
                             <li class="nav-item" role="presentation">
-                                <a id="standardFieldsTab" href="#tabStandardFields" title="{{ 'Creation and update'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Creation and update{% endtrans %}</a>
+                                <a id="standardFieldsTab" href="#tabStandardFields" title="{{ 'Creation and update'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Creation and update{% endtrans %}</a>
                             </li>
                         {% endif %}
                     «ENDIF»
                     {% if form.moderationSpecificCreator is defined or form.moderationSpecificCreationDate is defined %}
                         <li class="nav-item" role="presentation">
-                            <a id="moderationTab" href="#tabModeration" title="{{ 'Moderation options'|trans«IF !app.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Moderation{% endtrans %}</a>
+                            <a id="moderationTab" href="#tabModeration" title="{{ 'Moderation options'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Moderation{% endtrans %}</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -126,7 +124,7 @@ class Forms {
                 {{ form_errors(form) }}
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade show active" id="tabFields" aria-labelledby="fieldsTab">
-                        <h3>{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</h3>
+                        <h3>{% trans from 'messages' %}Fields{% endtrans %}</h3>
                         «fieldDetails('')»
                     </div>
                     «new Section().generate(it, app, fsa)»
@@ -162,7 +160,7 @@ class Forms {
                             <li class="nav-item" role="presentation">
                                 <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}" class="nav-link{% if language == app.request.locale %} active{% endif %}">
                                     {% if language != app.request.locale and form[language]|default and not form[language].vars.valid %}
-                                        <span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> <span class="sr-only">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Errors{% endtrans %}</span></span>
+                                        <span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> <span class="sr-only">{% trans from 'messages' %}Errors{% endtrans %}</span></span>
                                     {% endif %}
                                     {% set hasRequiredFields = language in localesWithMandatoryFields %}
                                     {% if hasRequiredFields %}<span class="required">{% endif %}{{ language|language_name }}{% if hasRequiredFields %}</span>{% endif %}
@@ -204,7 +202,7 @@ class Forms {
 
     def private fieldDetailsFurtherOptions(Entity it, String subElem) '''
         <fieldset>
-            <legend>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»{% endtrans %}</legend>
+            <legend>{% trans from 'messages' %}«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»{% endtrans %}</legend>
             «IF tree != EntityTreeType.NONE»
                 {% if mode == 'create' and form.parent is defined %}
                     {{ form_row(form.parent) }}

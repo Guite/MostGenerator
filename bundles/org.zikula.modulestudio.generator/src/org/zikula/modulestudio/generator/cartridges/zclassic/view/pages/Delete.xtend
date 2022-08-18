@@ -23,9 +23,7 @@ class Delete {
         «val app = application»
         {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
         {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% block title 'Delete «name.formatForDisplay»'|trans %}
         {% block admin_page_icon 'trash-alt' %}
         {% block content %}
@@ -40,7 +38,7 @@ class Delete {
                 {{ form_errors(deleteForm) }}
 
                 <fieldset>
-                    <legend>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Confirmation prompt{% endtrans %}</legend>
+                    <legend>{% trans from 'messages' %}Confirmation prompt{% endtrans %}</legend>
                     <div class="form-group row">
                         <div class="col-md-9 offset-md-3">
                             {{ form_widget(deleteForm.delete) }}

@@ -224,9 +224,7 @@ class EditEntityType {
                     ->setDefaults([
                         // define class for underlying data (required for embedding forms)
                         'data_class' => «name.formatForCodeCapital»Entity::class,
-                        «IF !app.isSystemModule»
-                            'translation_domain' => '«name.formatForCode»',
-                        «ENDIF»
+                        'translation_domain' => '«name.formatForCode»',
                         'empty_data' => function (FormInterface $form) {
                             return $this->entityFactory->create«name.formatForCodeCapital»();
                         },

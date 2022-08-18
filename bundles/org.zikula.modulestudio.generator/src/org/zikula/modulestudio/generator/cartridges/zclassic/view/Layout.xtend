@@ -52,9 +52,7 @@ class Layout {
 
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
-        «IF !isSystemModule»
-            {% trans_default_domain 'messages' %}
-        «ENDIF»
+        {% trans_default_domain 'messages' %}
         {% block header %}
         {% endblock %}
 
@@ -107,9 +105,7 @@ class Layout {
     def adminBaseTemplate(Application it) '''
         {# purpose of this template: admin area base layout #}
         {% extends '@«appName»/base.html.twig' %}
-        «IF !isSystemModule»
-            {% trans_default_domain 'messages' %}
-        «ENDIF»
+        {% trans_default_domain 'messages' %}
         {% block appTitle %}{# empty on purpose #}{% endblock %}
         {% block titleArea %}
             <h3><i class="fas fa-{% block admin_page_icon %}{% endblock %}"></i> {% block title %}{% endblock %}</h3>
@@ -119,9 +115,7 @@ class Layout {
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
         {% extends '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
-        «IF !isSystemModule»
-            {% trans_default_domain 'messages' %}
-        «ENDIF»
+        {% trans_default_domain 'messages' %}
         «IF !getAllEntities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
 
             {%- block datetime_widget -%}
@@ -235,9 +229,7 @@ class Layout {
 
     def rawPageImpl(Application it) '''
         {# purpose of this template: display pages without the theme #}
-        «IF !isSystemModule»
-            {% trans_default_domain 'messages' %}
-        «ENDIF»
+        {% trans_default_domain 'messages' %}
         <!DOCTYPE html>
         <html lang="{{ app.request.locale }}" dir="auto">
         <head>
@@ -280,9 +272,7 @@ class Layout {
 
     def private pdfHeaderImpl(Application it) '''
         {# purpose of this template: export pages to PDF #}
-        «IF !isSystemModule»
-            {% trans_default_domain 'messages' %}
-        «ENDIF»
+        {% trans_default_domain 'messages' %}
         <!DOCTYPE html>
         <html lang="{{ app.request.locale }}" dir="auto">
         <head>

@@ -67,9 +67,7 @@ class ViewTable {
     def private viewView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
         {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
         {% block admin_page_icon 'list-alt' %}
         {% block content %}
@@ -148,18 +146,18 @@ class ViewTable {
                         </th>
                     {% endif %}
                     «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsStart" scope="col">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}</th>
+                        <th id="hItemActionsStart" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
                     «ENDIF»
                     «IF hasSortableFields»
                         {% if activateSortable %}
-                            <th id="hSortable" scope="col">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Sorting{% endtrans %}</th>
+                            <th id="hSortable" scope="col">{% trans from 'messages' %}Sorting{% endtrans %}</th>
                         {% endif %}
                     «ENDIF»
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
                     «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
-                        <th id="hItemActionsEnd" scope="col">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}</th>
+                        <th id="hItemActionsEnd" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
                     «ENDIF»
                 </tr>
                 </thead>
@@ -187,7 +185,7 @@ class ViewTable {
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <td headers="hSortable" class="text-center">
-                            <i class="fas fa-arrows-alt sort-handle pointer" title="{{ 'Drag to reorder'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}"></i>
+                            <i class="fas fa-arrows-alt sort-handle pointer" title="{{ 'Drag to reorder'|trans({}, 'messages')|e('html_attr') }}"></i>
                         </td>
                     {% endif %}
                 «ENDIF»
@@ -247,30 +245,30 @@ class ViewTable {
         <label for="«appName.toFirstLower»Action" class="col-md-3 col-form-label">{% trans %}With selected «nameMultiple.formatForDisplay»{% endtrans %}</label>
         <div class="col-md-6">
             <select id="«appName.toFirstLower»Action" name="action" class="form-control form-control-sm">
-                <option value="">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Choose action{% endtrans %}</option>
+                <option value="">{% trans from 'messages' %}Choose action{% endtrans %}</option>
                 «IF workflow != EntityWorkflowType.NONE»
                     «IF workflow == EntityWorkflowType.ENTERPRISE»
-                        <option value="accept" title="{{ '«getWorkflowActionDescription(workflow, 'Accept')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Accept{% endtrans %}</option>
+                        <option value="accept" title="{{ '«getWorkflowActionDescription(workflow, 'Accept')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Accept{% endtrans %}</option>
                         «IF ownerPermission»
-                            <option value="reject" title="{{ '«getWorkflowActionDescription(workflow, 'Reject')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Reject{% endtrans %}</option>
+                            <option value="reject" title="{{ '«getWorkflowActionDescription(workflow, 'Reject')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Reject{% endtrans %}</option>
                         «ENDIF»
-                        <option value="demote" title="{{ '«getWorkflowActionDescription(workflow, 'Demote')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Demote{% endtrans %}</option>
+                        <option value="demote" title="{{ '«getWorkflowActionDescription(workflow, 'Demote')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Demote{% endtrans %}</option>
                     «ENDIF»
-                    <option value="approve" title="{{ '«getWorkflowActionDescription(workflow, 'Approve')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Approve{% endtrans %}</option>
+                    <option value="approve" title="{{ '«getWorkflowActionDescription(workflow, 'Approve')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Approve{% endtrans %}</option>
                 «ENDIF»
                 «IF hasTray»
-                    <option value="publish" title="{{ '«getWorkflowActionDescription(workflow, 'Publish')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Publish{% endtrans %}</option>
-                    <option value="unpublish" title="{{ '«getWorkflowActionDescription(workflow, 'Unpublish')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Unpublish{% endtrans %}</option>
+                    <option value="publish" title="{{ '«getWorkflowActionDescription(workflow, 'Publish')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Publish{% endtrans %}</option>
+                    <option value="unpublish" title="{{ '«getWorkflowActionDescription(workflow, 'Unpublish')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Unpublish{% endtrans %}</option>
                 «ENDIF»
                 «IF hasArchive»
-                    <option value="archive" title="{{ '«getWorkflowActionDescription(workflow, 'Archive')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Archive{% endtrans %}</option>
-                    <option value="unarchive" title="{{ '«getWorkflowActionDescription(workflow, 'Unarchive')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Unarchive{% endtrans %}</option>
+                    <option value="archive" title="{{ '«getWorkflowActionDescription(workflow, 'Archive')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Archive{% endtrans %}</option>
+                    <option value="unarchive" title="{{ '«getWorkflowActionDescription(workflow, 'Unarchive')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Unarchive{% endtrans %}</option>
                 «ENDIF»
-                <option value="delete" title="{{ '«getWorkflowActionDescription(workflow, 'Delete')»'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Delete{% endtrans %}</option>
+                <option value="delete" title="{{ '«getWorkflowActionDescription(workflow, 'Delete')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Delete{% endtrans %}</option>
             </select>
         </div>
         <div class="col-md-3">
-            <input type="submit" value="{{ 'Submit'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" class="btn btn-secondary btn-sm" />
+            <input type="submit" value="{{ 'Submit'|trans({}, 'messages')|e('html_attr') }}" class="btn btn-secondary btn-sm" />
         </div>
     '''
 
@@ -305,7 +303,7 @@ class ViewTable {
     '''
 
     def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        <a href="{{ sort.«fieldName».url }}" title="{{ 'Sort by %fieldName%'|trans({'%fieldName%': '«label.formatForDisplay»'}«IF !entity.application.isSystemModule», 'messages'«ENDIF»)|e('html_attr') }}" class="{{ sort.«fieldName».class }}">{% trans %}«label.formatForDisplayCapital»{% endtrans %}</a>
+        <a href="{{ sort.«fieldName».url }}" title="{{ 'Sort by %fieldName%'|trans({'%fieldName%': '«label.formatForDisplay»'}, 'messages')|e('html_attr') }}" class="{{ sort.«fieldName».class }}">{% trans %}«label.formatForDisplayCapital»{% endtrans %}</a>
     '''
 
     def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''
@@ -338,7 +336,7 @@ class ViewTable {
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF #['name', 'title'].contains(name)»
             «IF entity instanceof Entity && (entity as Entity).hasDisplayAction»
-                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}">«displayLeadingEntry»</a>
+                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayLeadingEntry»</a>
             «ELSE»
                 «displayLeadingEntry»
             «ENDIF»
@@ -365,10 +363,10 @@ class ViewTable {
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDisplayAction»
                 {% endapply %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
             «ENDIF»
         {% else %}
-            {% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Not set{% endtrans %}
+            {% trans from 'messages' %}Not set{% endtrans %}
         {% endif %}
     '''
 

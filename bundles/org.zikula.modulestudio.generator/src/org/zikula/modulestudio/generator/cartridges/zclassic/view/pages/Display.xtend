@@ -66,9 +66,7 @@ class Display {
         {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
         {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
         {% extends '@«application.appName»/' ~ baseTemplate ~ '.html.twig' %}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) }}{% endblock %}
         {% block title %}
             «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
@@ -100,7 +98,7 @@ class Display {
                 {% set isQuickView = app.request.query.getBoolean('raw', false) %}
                 «IF useGroupingTabs('display')»
                     <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
-                        <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}</h3>
+                        <h3>{% trans from 'messages' %}Related data{% endtrans %}</h3>
                         «displayRelatedItems(appName)»
                     </div>
                 «ELSE»
@@ -159,35 +157,35 @@ class Display {
         <div class="zikula-bootstrap-tab-container">
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <a id="fieldsTab" href="#tabFields" title="{{ 'Fields'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link active">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</a>
+                    <a id="fieldsTab" href="#tabFields" title="{{ 'Fields'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link active">{% trans from 'messages' %}Fields{% endtrans %}</a>
                 </li>
                 «IF geographical»
                     <li class="nav-item" role="presentation">
-                        <a id="mapTab" href="#tabMap" title="{{ 'Map'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</a>
+                        <a id="mapTab" href="#tabMap" title="{{ 'Map'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Map{% endtrans %}</a>
                     </li>
                 «ENDIF»
                 «IF !getReferredElements.empty»
                     <li class="nav-item" role="presentation">
-                        <a id="relationsTab" href="#tabRelations" title="{{ 'Related data'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Related data{% endtrans %}</a>
+                        <a id="relationsTab" href="#tabRelations" title="{{ 'Related data'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Related data{% endtrans %}</a>
                     </li>
                 «ENDIF»
                 «IF categorisable»
                     {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                         <li class="nav-item" role="presentation">
-                            <a id="categoriesTab" href="#tabCategories" title="{{ 'Categories'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Categories{% endtrans %}</a>
+                            <a id="categoriesTab" href="#tabCategories" title="{{ 'Categories'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Categories{% endtrans %}</a>
                         </li>
                     {% endif %}
                 «ENDIF»
                 «IF tree != EntityTreeType.NONE»
                     {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
                         <li class="nav-item" role="presentation">
-                            <a id="relativesTab" href="#tabRelatives" title="{{ 'Relatives'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}</a>
+                            <a id="relativesTab" href="#tabRelatives" title="{{ 'Relatives'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Relatives{% endtrans %}</a>
                         </li>
                     {% endif %}
                 «ENDIF»
                 «IF standardFields»
                     <li class="nav-item" role="presentation">
-                        <a id="standardFieldsTab" href="#tabStandardFields" title="{{ 'Creation and update'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF» }}" role="tab" data-toggle="tab" class="nav-link">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Creation and update{% endtrans %}</a>
+                        <a id="standardFieldsTab" href="#tabStandardFields" title="{{ 'Creation and update'|trans({}, 'messages') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Creation and update{% endtrans %}</a>
                     </li>
                 «ENDIF»
             </ul>
@@ -201,14 +199,14 @@ class Display {
             {% endif %}
         «ENDIF»
         «IF withHeading»
-            <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Fields{% endtrans %}</h3>
+            <h3>{% trans from 'messages' %}Fields{% endtrans %}</h3>
         «ENDIF»
         <dl>
             «FOR field : getFieldsForDisplayPage»«field.displayEntry»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     {% if «name.formatForCode».«geoFieldName» is not empty %}
-                        <dt>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}«geoFieldName.toFirstUpper»{% endtrans %}</dt>
+                        <dt>{% trans from 'messages' %}«geoFieldName.toFirstUpper»{% endtrans %}</dt>
                         <dd>{{ «name.formatForCode».«geoFieldName»|«application.appName.formatForDB»_geoData }}</dd>
                     {% endif %}
                 «ENDFOR»
@@ -245,7 +243,7 @@ class Display {
         «val linkEntity = (if (useTarget) target else source) as Entity»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {% if «relObjName»|default %}
-            <dt>{% trans«IF !application.isSystemModule» from '«linkEntity.name.formatForCode»'«ENDIF» %}«relationAliasName.formatForDisplayCapital»{% endtrans %}</dt>
+            <dt>{% trans from '«linkEntity.name.formatForCode»' %}«relationAliasName.formatForDisplayCapital»{% endtrans %}</dt>
             <dd>
               {% if not isQuickView %}
                   «IF linkEntity.hasDisplayAction»
@@ -254,7 +252,7 @@ class Display {
                     {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
                   «IF linkEntity.hasDisplayAction»
                     {% endapply %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF»|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
@@ -267,9 +265,9 @@ class Display {
         «IF geographical»
             «IF useGroupingTabs('display')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
-                    <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</h3>
+                    <h3>{% trans from 'messages' %}Map{% endtrans %}</h3>
             «ELSE»
-                <h3 class="«application.appName.toLowerCase»-map">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</h3>
+                <h3 class="«application.appName.toLowerCase»-map">{% trans from 'messages' %}Map{% endtrans %}</h3>
             «ENDIF»
             <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
             </div>
@@ -289,9 +287,9 @@ class Display {
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
                 «IF useGroupingTabs('display')»
                 <div role="tabpanel" class="tab-pane fade" id="tabRelatives" aria-labelledby="relativesTab">
-                    <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}</h3>
+                    <h3>{% trans from 'messages' %}Relatives{% endtrans %}</h3>
                 «ELSE»
-                <h3 class="relatives">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Relatives{% endtrans %}</h3>
+                <h3 class="relatives">{% trans from 'messages' %}Relatives{% endtrans %}</h3>
                 «ENDIF»
                     {{ include(
                         '@«application.appName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
@@ -319,22 +317,20 @@ class Display {
         «val objName = name.formatForCode»
         «val pluginPrefix = application.appName.formatForDB»
         {# purpose of this template: show different forms of relatives for a given tree node #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {#<h3>{% trans %}Related «nameMultiple.formatForDisplay»{% endtrans %}</h3>#}
         {% if «objName».lvl > 0 %}
             {% if allParents is not defined or allParents == true %}
                 {% set parents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
                 {% if parents is not null and parents is iterable and parents|length > 0 %}
-                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}All parents{% endtrans %}</h4>
+                    <h4>{% trans from 'messages' %}All parents{% endtrans %}</h4>
                     {{ _self.list_relatives(parents, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if directParent is not defined or directParent == true %}
                 {% set parents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directParent') %}
                 {% if parents is not null and parents is iterable and parents|length > 0 %}
-                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Direct parent{% endtrans %}</h4>
+                    <h4>{% trans from 'messages' %}Direct parent{% endtrans %}</h4>
                     {{ _self.list_relatives(parents, routeArea) }}
                 {% endif %}
             {% endif %}
@@ -342,14 +338,14 @@ class Display {
         {% if allChildren is not defined or allChildren == true %}
             {% set allChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allChildren') %}
             {% if allChildren is not null and allChildren is iterable and allChildren|length > 0 %}
-                <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}All children{% endtrans %}</h4>
+                <h4>{% trans from 'messages' %}All children{% endtrans %}</h4>
                 {{ _self.list_relatives(allChildren, routeArea) }}
             {% endif %}
         {% endif %}
         {% if directChildren is not defined or directChildren == true %}
             {% set directChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directChildren') %}
             {% if directChildren is not null and directChildren is iterable and directChildren|length > 0 %}
-                <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Direct children{% endtrans %}</h4>
+                <h4>{% trans from 'messages' %}Direct children{% endtrans %}</h4>
                 {{ _self.list_relatives(directChildren, routeArea) }}
             {% endif %}
         {% endif %}
@@ -357,21 +353,21 @@ class Display {
             {% if predecessors is not defined or predecessors == true %}
                 {% set predecessors = «pluginPrefix»_treeSelection('«objName»', node=«objName», target='predecessors') %}
                 {% if predecessors is not null and predecessors is iterable and predecessors|length > 0 %}
-                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Predecessors{% endtrans %}</h4>
+                    <h4>{% trans from 'messages' %}Predecessors{% endtrans %}</h4>
                     {{ _self.list_relatives(predecessors, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if successors is not defined or successors == true %}
                 {% set successors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='successors') %}
                 {% if successors is not null and successors is iterable and successors|length > 0 %}
-                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Successors{% endtrans %}</h4>
+                    <h4>{% trans from 'messages' %}Successors{% endtrans %}</h4>
                     {{ _self.list_relatives(successors, routeArea) }}
                 {% endif %}
             {% endif %}
             {% if preandsuccessors is not defined or preandsuccessors == true %}
                 {% set preandsuccessors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='preandsuccessors') %}
                 {% if preandsuccessors is not null and preandsuccessors is iterable and preandsuccessors|length > 0 %}
-                    <h4>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Siblings{% endtrans %}</h4>
+                    <h4>{% trans from 'messages' %}Siblings{% endtrans %}</h4>
                     {{ _self.list_relatives(preandsuccessors, routeArea) }}
                 {% endif %}
             {% endif %}

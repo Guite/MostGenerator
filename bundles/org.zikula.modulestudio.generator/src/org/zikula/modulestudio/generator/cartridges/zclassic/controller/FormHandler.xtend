@@ -1040,15 +1040,11 @@ class FormHandler {
                 if ($request->hasSession() && ($session = $request->getSession())) {
                     $session->getFlashBag()->add(
                         'error',
-                        «IF app.isSystemModule»
-                            'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'
-                        «ELSE»
-                            $this->trans(
-                                'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!',
-                                [],
-                                '«name.formatForCode»'
-                            )
-                        «ENDIF»
+                        $this->trans(
+                            'Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!',
+                            [],
+                            '«name.formatForCode»'
+                        )
                     );
                 }
                 $logArgs = [
@@ -1164,9 +1160,9 @@ class FormHandler {
                 «ENDIF»
                 case 'submit':
                     if ('create' === $this->templateParameters['mode']) {
-                        $message = $this->trans('Done! «name.formatForDisplayCapital» created.'«IF !app.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                        $message = $this->trans('Done! «name.formatForDisplayCapital» created.', [], '«name.formatForCode»');
                     } else {
-                        $message = $this->trans('Done! «name.formatForDisplayCapital» updated.'«IF !app.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                        $message = $this->trans('Done! «name.formatForDisplayCapital» updated.', [], '«name.formatForCode»');
                     }
                     «IF EntityWorkflowType.NONE !== workflow»
                         if ('waiting' === $this->entityRef->getWorkflowState()) {
@@ -1175,10 +1171,10 @@ class FormHandler {
                     «ENDIF»
                     break;
                 case 'delete':
-                    $message = $this->trans('Done! «name.formatForDisplayCapital» deleted.'«IF !app.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                    $message = $this->trans('Done! «name.formatForDisplayCapital» deleted.', [], '«name.formatForCode»');
                     break;
                 default:
-                    $message = $this->trans('Done! «name.formatForDisplayCapital» updated.'«IF !app.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                    $message = $this->trans('Done! «name.formatForDisplayCapital» updated.', [], '«name.formatForCode»');
                     break;
             }
 

@@ -33,10 +33,8 @@ class TechStructureSettings {
 
     def private settingsContent(Application it) '''
         <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Systemmodul«ELSE»System module«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«helper.flag(it, isSystemModule)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»Anzahl Beispielsätze«ELSE»Amount of example rows«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«amountOfExampleRows»</td>
+            <td headers="hSettingName1">«IF language == 'de'»Anzahl Beispielsätze«ELSE»Amount of example rows«ENDIF»</td>
+            <td headers="hSettingValue1" class="text-center">«amountOfExampleRows»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Benutzerkonto«ELSE»Account panel«ENDIF»</td>

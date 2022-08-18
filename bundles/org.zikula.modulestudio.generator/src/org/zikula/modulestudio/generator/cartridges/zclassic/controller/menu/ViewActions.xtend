@@ -93,9 +93,7 @@ class ViewActions {
                             'routeParameters' => ['deleted' => 1],
                         ])
                             ->setAttribute('icon', 'fas fa-trash-alt')
-                            «IF !app.isSystemModule»
-                                ->setExtra('translation_domain', '«name.formatForCode»')
-                            «ENDIF»
+                            ->setExtra('translation_domain', '«name.formatForCode»')
                         ;
                     }
                 }
@@ -116,9 +114,7 @@ class ViewActions {
                     'route' => $routePrefix . $routeArea . 'edit',
                 ])
                     ->setAttribute('icon', 'fas fa-plus')
-                    «IF !application.isSystemModule»
-                        ->setExtra('translation_domain', '«name.formatForCode»')
-                    «ENDIF»
+                    ->setExtra('translation_domain', '«name.formatForCode»')
                 ;
             }
         }

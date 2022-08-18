@@ -46,9 +46,7 @@ class ExternalView {
 
     def private displayTemplate(Entity it, Application app) '''
         {# purpose of this template: Display one certain «name.formatForDisplay» within an external context #}
-        «IF !app.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         «IF hasImageFieldsEntity»
             {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
             {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
@@ -137,9 +135,7 @@ class ExternalView {
 
     def private itemInfoTemplate(Entity it, Application app) '''
         {# purpose of this template: Display item information for previewing from other modules #}
-        «IF !app.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         <dl id="«name.formatForCode»{{ «name.formatForCode».getKey() }}">
         <dt>{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}</dt>
         «IF hasImageFieldsEntity»
@@ -160,9 +156,7 @@ class ExternalView {
         {# purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» #}
         {% set useFinder = true %}
         {% extends '@«app.appName»/raw.html.twig' %}
-        «IF !app.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% block title 'Search and select «name.formatForDisplay»'|trans %}
         {% block content %}
             <div class="container">

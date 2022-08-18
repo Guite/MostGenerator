@@ -40,10 +40,8 @@ class Docs {
         fileName = 'install.md'
         fsa.generateFile(docPath + fileName, Install)
 
-        if (!isSystemModule) {
-            fileName = 'translation.md'
-            fsa.generateFile(docPath + fileName, Translation)
-        }
+        fileName = 'translation.md'
+        fsa.generateFile(docPath + fileName, Translation)
 
         fileName = 'LICENSE'
         fsa.generateFile(getAppLicencePath + fileName, License)
@@ -90,11 +88,7 @@ class Docs {
         «IF needsComposerInstall»
             0. If the application's root folder does not contain a `vendor/` folder yet, run `composer install --no-dev` to install dependencies.
         «ENDIF»
-        «IF isSystemModule»
-            1. Copy «appName» into your `system` directory. Afterwards you should have a folder named `«relativeAppRootPath»/Resources`.
-        «ELSE»
-            1. Copy «appName» into your `modules` directory. Afterwards you should have a folder named `«relativeAppRootPath»/Resources`.
-        «ENDIF»
+        1. Copy «appName» into your `extensions` directory. Afterwards you should have a folder named `«relativeAppRootPath»/Resources`.
         2. Initialize and activate «appName» in the extensions administration.
         «IF hasUploads»
             3. Move or copy the directory `Resources/userdata/«appName»/` to `/public/uploads/«appName»/`.

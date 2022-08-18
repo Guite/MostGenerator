@@ -19,7 +19,7 @@ class PhpUnitXmlDist {
         <?xml version="1.0" encoding="UTF-8"?>
         <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="«IF targets('3.1')»../../../vendor/phpunit/phpunit/«ELSE»https://schema.phpunit.de/8.3/«ENDIF»phpunit.xsd"
-                 bootstrap="../../../«IF!isSystemModule»../«ENDIF»«IF targets('3.1')»tests/bootstrap.php«ELSE»vendor/autoload.php«ENDIF»"
+                 bootstrap="../../../../«IF targets('3.1')»tests/bootstrap.php«ELSE»vendor/autoload.php«ENDIF»"
                  colors="true"
                  convertDeprecationsToExceptions="false"
                  executionOrder="depends,defects"

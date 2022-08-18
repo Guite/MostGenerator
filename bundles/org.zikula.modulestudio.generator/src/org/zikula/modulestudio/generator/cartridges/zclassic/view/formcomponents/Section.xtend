@@ -29,11 +29,11 @@ class Section {
         «IF geographical»
             «IF useGroupingTabs('edit')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
-                    <h3>{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</h3>
+                    <h3>{% trans from 'messages' %}Map{% endtrans %}</h3>
             «ELSE»
                 <fieldset class="«app.appName.toLowerCase»-map">
             «ENDIF»
-                <legend>{% trans«IF !app.isSystemModule» from 'messages'«ENDIF» %}Map{% endtrans %}</legend>
+                <legend>{% trans from 'messages' %}Map{% endtrans %}</legend>
                 <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
                 <br />
@@ -63,7 +63,7 @@ class Section {
     def private additionalRemark(Entity it) '''
         «IF workflow != EntityWorkflowType.NONE»
             <fieldset>
-                <legend>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Communication{% endtrans %}</legend>
+                <legend>{% trans from 'messages' %}Communication{% endtrans %}</legend>
                 {{ form_row(form.additionalNotificationRemarks) }}
             </fieldset>
 
@@ -75,7 +75,7 @@ class Section {
             {% if form.moderationSpecificCreator is defined or form.moderationSpecificCreationDate is defined %}
                 «IF useGroupingTabs('edit')»
                     <div role="tabpanel" class="tab-pane fade" id="tabModeration" aria-labelledby="moderationTab">
-                        <h3>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Moderation{% endtrans %}</h3>
+                        <h3>{% trans from 'messages' %}Moderation{% endtrans %}</h3>
                         {% if form.moderationSpecificCreator is defined %}
                             {{ form_row(form.moderationSpecificCreator) }}
                         {% endif %}
@@ -85,7 +85,7 @@ class Section {
                     </div>
                 «ELSE»
                     <fieldset id="moderationFieldsSection">
-                        <legend>{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Moderation{% endtrans %} <i class="fas fa-expand"></i></legend>
+                        <legend>{% trans from 'messages' %}Moderation{% endtrans %} <i class="fas fa-expand"></i></legend>
                         <div id="moderationFieldsContent">
                             {% if form.moderationSpecificCreator is defined %}
                                 {{ form_row(form.moderationSpecificCreator) }}

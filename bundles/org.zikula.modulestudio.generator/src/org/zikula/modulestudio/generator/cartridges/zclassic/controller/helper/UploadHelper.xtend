@@ -726,8 +726,8 @@ class UploadHelper {
                             'error',
                             $this->trans(
                                 'The upload directory "%path%" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.',
-                                ['%path%' => $exception->getPath()]«IF !isSystemModule»,
-                                'config'«ENDIF»
+                                ['%path%' => $exception->getPath()],
+                                'config'
                             )
                         );
                     }
@@ -752,8 +752,8 @@ class UploadHelper {
                             'warning',
                             $this->trans(
                                 'Warning! The upload directory at "%path%" exists but is not writable by the webserver.',
-                                ['%path%' => $exception->getPath()]«IF !isSystemModule»,
-                                'config'«ENDIF»
+                                ['%path%' => $exception->getPath()],
+                                'config'
                             )
                         );
                     }
@@ -784,8 +784,8 @@ class UploadHelper {
                             'error',
                             $this->trans(
                                 'An error occured during creation of the .htaccess file in directory "%path%".',
-                                ['%path%' => $exception->getPath()]«IF !isSystemModule»,
-                                'config'«ENDIF»
+                                ['%path%' => $exception->getPath()],
+                                'config'
                             )
                         );
                     }

@@ -14,8 +14,6 @@ class Translations {
      * Entry point for module translations.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!isSystemModule) {
-            fsa.createPlaceholder(getAppLocalePath)
-        }
+        fsa.createPlaceholder(getAppLocalePath)
     }
 }

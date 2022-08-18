@@ -23,12 +23,12 @@ class MenuViews {
 
     def private markup(Entity it, String context, String idSuffix) '''
         «IF application.useStyle(context, ItemActionsStyle.BUTTON_GROUP)»
-            <div class="btn-group«IF context == 'view'»-vertical«ENDIF» btn-group-sm item-actions" role="group" aria-label="{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}">
+            <div class="btn-group«IF context == 'view'»-vertical«ENDIF» btn-group-sm item-actions" role="group" aria-label="{% trans from 'messages' %}Actions{% endtrans %}">
                 «application.renderItemActionsMenu(context)»
             </div>
         «ELSEIF application.useStyle(context, ItemActionsStyle.DROPDOWN)»
             <div class="dropdown item-actions">
-                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="d-none dropdown-toggle"><i class="fas fa-tasks"></i>«IF context == 'display'» {% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Actions{% endtrans %}«ENDIF»</a>
+                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="d-none dropdown-toggle"><i class="fas fa-tasks"></i>«IF context == 'display'» {% trans from 'messages' %}Actions{% endtrans %}«ENDIF»</a>
                 «application.renderItemActionsMenu(context)»
             </div>
         «ELSE»

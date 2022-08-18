@@ -207,8 +207,8 @@ class ImageHelper {
                 'warning',
                 $this->translator->trans(
                     'The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.',
-                    ['%directory%' => $cacheDirectory]«IF !isSystemModule»,
-                    'config'«ENDIF»
+                    ['%directory%' => $cacheDirectory],
+                    'config'
                 )
             );
         }

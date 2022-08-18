@@ -133,15 +133,11 @@ class MassHandling {
             if ('delete' === $action) {
                 $this->addFlash(
                     'status',
-                    «IF application.isSystemModule»
-                        'Done! «name.formatForDisplayCapital» deleted.'
-                    «ELSE»
-                        $this->trans(
-                            'Done! «name.formatForDisplayCapital» deleted.',
-                            [],
-                            '«name.formatForCode»'
-                        )
-                    «ENDIF»
+                    $this->trans(
+                        'Done! «name.formatForDisplayCapital» deleted.',
+                        [],
+                        '«name.formatForCode»'
+                    )
                 );
                 $logger->notice(
                     '{app}: User {user} deleted the {entity} with id {id}.',
@@ -155,15 +151,11 @@ class MassHandling {
             } else {
                 $this->addFlash(
                     'status',
-                    «IF application.isSystemModule»
-                        'Done! «name.formatForDisplayCapital» updated.'
-                    «ELSE»
-                        $this->trans(
-                            'Done! «name.formatForDisplayCapital» updated.',
-                            [],
-                            '«name.formatForCode»'
-                        )
-                    «ENDIF»
+                    $this->trans(
+                        'Done! «name.formatForDisplayCapital» updated.',
+                        [],
+                        '«name.formatForCode»'
+                    )
                 );
                 $logger->notice(
                     '{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.',

@@ -110,17 +110,15 @@ class CollectionFilterHelper {
         /**
          * Returns an array of additional template variables for view quick navigation forms.
          */
-        public function getViewQuickNavParameters(string $objectType = ''«IF !isSystemModule», string $context = '', array $args = []«ENDIF»): array
+        public function getViewQuickNavParameters(string $objectType = '', string $context = '', array $args = []): array
         {
-            «IF !isSystemModule»
-                if (!in_array($context, ['controllerAction', 'api', 'actionHandler'], true)) {
-                    $context = 'controllerAction';
-                }
+            if (!in_array($context, ['controllerAction', 'api', 'actionHandler'], true)) {
+                $context = 'controllerAction';
+            }
 
-            «ENDIF»
             «FOR entity : getAllEntities»
                 if ('«entity.name.formatForCode»' === $objectType) {
-                    return $this->getViewQuickNavParametersFor«entity.name.formatForCodeCapital»(«IF !isSystemModule»$context, $args«ENDIF»);
+                    return $this->getViewQuickNavParametersFor«entity.name.formatForCodeCapital»($context, $args);
                 }
             «ENDFOR»
 
@@ -182,7 +180,7 @@ class CollectionFilterHelper {
         /**
          * Returns an array of additional template variables for view quick navigation forms.
          */
-        protected function getViewQuickNavParametersFor«name.formatForCodeCapital»(«IF !application.isSystemModule»string $context = '', array $args = []«ENDIF»): array
+        protected function getViewQuickNavParametersFor«name.formatForCodeCapital»(string $context = '', array $args = []): array
         {
             $parameters = [];
             $request = $this->requestStack->getCurrentRequest();

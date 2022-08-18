@@ -146,7 +146,7 @@ class ControllerHelper {
          *
          * @return string[] List of allowed object types
          */
-        public function getObjectTypes(string $context = ''«IF !isSystemModule», array $args = []«ENDIF»): array
+        public function getObjectTypes(string $context = '', array $args = []): array
         {
             $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler'];
             if (!in_array($context, $allowedContexts, true)) {
@@ -166,7 +166,7 @@ class ControllerHelper {
         /**
          * Returns the default object type in «appName».
          */
-        public function getDefaultObjectType(string $context = ''«IF !isSystemModule», array $args = []«ENDIF»): string
+        public function getDefaultObjectType(string $context = '', array $args = []): string
         {
             $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler'];
             if (!in_array($context, $allowedContexts, true)) {
@@ -188,7 +188,7 @@ class ControllerHelper {
             array $templateParameters = []
         ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'view'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
                 throw new Exception($this->trans('Error! Invalid object type received.'));
             }
 
@@ -395,7 +395,7 @@ class ControllerHelper {
             array $templateParameters = []
         ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'display'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
                 throw new Exception($this->trans('Error! Invalid object type received.'));
             }
 
@@ -412,7 +412,7 @@ class ControllerHelper {
             array $templateParameters = []
         ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
                 throw new Exception($this->trans('Error! Invalid object type received.'));
             }
 
@@ -429,7 +429,7 @@ class ControllerHelper {
             array $templateParameters = []
         ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
+            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
                 throw new Exception($this->trans('Error! Invalid object type received.'));
             }
 
@@ -461,7 +461,7 @@ class ControllerHelper {
                 if (in_array($args['action'], ['index', 'view'], true)) {
                     $parameters = array_merge(
                         $parameters,
-                        $this->collectionFilterHelper->getViewQuickNavParameters($objectType«IF !isSystemModule», $context, $args«ENDIF»)
+                        $this->collectionFilterHelper->getViewQuickNavParameters($objectType, $context, $args)
                     );
                 }
                 «IF !getUploadEntities.empty»

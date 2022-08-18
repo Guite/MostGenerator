@@ -99,11 +99,7 @@ class NamingExtensions {
      * Returns the relative path to the application's root directory.
      */
     def relativeAppRootPath(Application it) {
-        if (isSystemModule) {
-            'system/' + name.formatForCodeCapital + 'Module'
-        } else {
-            'extensions/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
-        }
+        'extensions/' + vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module'
     }
 
     /**

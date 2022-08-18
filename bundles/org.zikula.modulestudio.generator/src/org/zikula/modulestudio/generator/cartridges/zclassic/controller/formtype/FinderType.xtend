@@ -146,9 +146,7 @@ class FinderType {
                     ->setDefaults([
                         'object_type' => '«app.leadingEntity.name.formatForCode»',
                         'editor_name' => 'ckeditor',
-                        «IF !app.isSystemModule»
-                            'translation_domain' => '«name.formatForCode»',
-                        «ENDIF»
+                        'translation_domain' => '«name.formatForCode»',
                     ])
                     ->setRequired(['object_type', 'editor_name'])
                     ->setAllowedTypes('object_type', 'string')

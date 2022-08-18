@@ -149,16 +149,14 @@ class WorkflowHelper {
         {
             $workflow = $this->workflowRegistry->get($entity);
             $wfActions = $workflow->getEnabledTransitions($entity);
-            «IF !isSystemModule»
-                $currentState = $entity->getWorkflowState();
-            «ENDIF»
+            $currentState = $entity->getWorkflowState();
 
             $actions = [];
             foreach ($wfActions as $action) {
                 $actionId = $action->getName();
                 $actions[$actionId] = [
                     'id' => $actionId,
-                    'title' => $this->getTitleForAction(«IF !isSystemModule»$currentState, «ENDIF»$actionId),
+                    'title' => $this->getTitleForAction($currentState, $actionId),
                     'buttonClass' => $this->getButtonClassForAction($actionId),
                 ];
             }
@@ -169,7 +167,7 @@ class WorkflowHelper {
         /**
          * Returns a translatable title for a certain action.
          */
-        protected function getTitleForAction(«IF !isSystemModule»string $currentState, «ENDIF»string $actionId): string
+        protected function getTitleForAction(string $currentState, string $actionId): string
         {
             $title = '';
             switch ($actionId) {
@@ -378,10 +376,8 @@ class WorkflowHelper {
                 } else {
                     $this->logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
                 }
-                «IF !isIsSystemModule»
-                    // uncomment to reveal Doctrine/SQL error
-                    // die($exception->getMessage());
-                «ENDIF»
+                // uncomment to reveal Doctrine/SQL error
+                // die($exception->getMessage());
                 throw new RuntimeException($exception->getMessage());
             }
 
@@ -440,15 +436,15 @@ class WorkflowHelper {
             if (0 < $amount) {
                 $amounts[] = [
                     'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
-                    'description' => $this->translator->trans('«nameMultiple.formatForCodeCapital» pending «requiredAction»'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»),
+                    'description' => $this->translator->trans('«nameMultiple.formatForCodeCapital» pending «requiredAction»', [], '«name.formatForCode»'),
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
                     /** @Desc("{count, plural,\n  one   {One «name.formatForDisplay» is waiting for «requiredAction».}\n  other {# «nameMultiple.formatForDisplay» are waiting for «requiredAction».}\n}") */
                     'message' => $this->translator->trans(
                         'plural_n.«nameMultiple.formatForDB».waiting_for_«requiredAction»',
-                        ['%count%' => $amount]«IF !application.isSystemModule»,
-                        '«name.formatForCode»'«ENDIF»
+                        ['%count%' => $amount],
+                        '«name.formatForCode»'
                     ),
                 ];
 

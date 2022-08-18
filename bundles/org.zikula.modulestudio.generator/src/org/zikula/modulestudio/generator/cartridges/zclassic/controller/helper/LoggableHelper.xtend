@@ -386,10 +386,10 @@ class LoggableHelper {
 
     def private actionDescriptions(Entity it, String constantPrefix, String displayName) '''
         case '«constantPrefix»CREATED':
-            $actionTranslated = $this->trans('«displayName» created'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» created', [], '«name.formatForCode»');
             break;
         case '«constantPrefix»UPDATED':
-            $actionTranslated = $this->trans('«displayName» updated'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» updated', [], '«name.formatForCode»');
             break;
         case '«constantPrefix»CLONED':
             if (isset($parameters['%«name.formatForCode»%']) && is_numeric($parameters['%«name.formatForCode»%'])) {
@@ -398,23 +398,23 @@ class LoggableHelper {
                     $parameters['%«name.formatForCode»%'] = $this->entityDisplayHelper->getFormattedTitle($originalEntity);
                 }
             }
-            $actionTranslated = $this->trans('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»%"', $parameters«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» cloned from «name.formatForDisplay» "%«name.formatForCode»%"', $parameters, [], '«name.formatForCode»');
             break;
         case '«constantPrefix»RESTORED':
-            $actionTranslated = $this->trans('«displayName» restored from version "%version%"', $parameters«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» restored from version "%version%"', $parameters, [], '«name.formatForCode»');
             break;
         case '«constantPrefix»DELETED':
-            $actionTranslated = $this->trans('«displayName» deleted'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+            $actionTranslated = $this->trans('«displayName» deleted', [], '«name.formatForCode»');
             break;
         «IF hasTranslatableFields»«/* currently not used by default but provided for convenience */»
             case '«constantPrefix»TRANSLATION_CREATED':
-                $actionTranslated = $this->trans('«displayName» translation created'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                $actionTranslated = $this->trans('«displayName» translation created', [], '«name.formatForCode»');
                 break;
             case '«constantPrefix»TRANSLATION_UPDATED':
-                $actionTranslated = $this->trans('«displayName» translation updated'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                $actionTranslated = $this->trans('«displayName» translation updated', [], '«name.formatForCode»');
                 break;
             case '«constantPrefix»TRANSLATION_DELETED':
-                $actionTranslated = $this->trans('«displayName» translation deleted'«IF !application.isSystemModule», [], '«name.formatForCode»'«ENDIF»);
+                $actionTranslated = $this->trans('«displayName» translation deleted', [], '«name.formatForCode»');
                 break;
         «ENDIF»
     '''

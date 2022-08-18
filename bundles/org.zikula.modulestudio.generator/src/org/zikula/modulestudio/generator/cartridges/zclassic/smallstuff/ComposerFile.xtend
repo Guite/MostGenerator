@@ -37,7 +37,7 @@ class ComposerFile {
         "name": "«vendor.formatForDB»/«name.formatForDB»-module",
         "version": "«version»",
         "description": "«appDescription»",
-        "type": "zikula-«IF isSystemModule»system-«ENDIF»module",
+        "type": "zikula-module",
         "license": "«licenseSPDX»",
         "authors": [
             {
@@ -68,10 +68,8 @@ class ComposerFile {
                 «ENDFOR»
             «ENDIF»
         },
-        «IF !isSystemModule»
-            "require-dev": {
-            },
-        «ENDIF»
+        "require-dev": {
+        },
         «{ dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
         «IF !dependencies.empty»
             "suggest": {

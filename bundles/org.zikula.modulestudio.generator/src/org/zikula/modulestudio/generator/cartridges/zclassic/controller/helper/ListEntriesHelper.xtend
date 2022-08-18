@@ -239,8 +239,8 @@ class ListEntriesHelper {
     def private entryInfo(ListFieldItem it, Application app, String domain) '''
         $states[] = [
             'value' => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text' => $this->trans('«name.toFirstUpper.replace("'", "")»'«IF !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
-            'title' => «IF null !== documentation && !documentation.empty»$this->trans('«documentation.replace("'", "")»'«IF !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
+            'text' => $this->trans('«name.toFirstUpper.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
+            'title' => «IF null !== documentation && !documentation.empty»$this->trans('«documentation.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
             'image' => '«IF null !== image && !image.empty»«image»«ENDIF»',
             'default' => «^default.displayBool»,
         ];
@@ -249,8 +249,8 @@ class ListEntriesHelper {
     def private entryInfoNegative(ListFieldItem it, Application app, String domain) '''
         $states[] = [
             'value' => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text' => $this->trans('All except «name.toFirstLower.replace("'", "")»'«IF !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
-            'title' => $this->trans('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF !app.isSystemModule && !domain.empty», [], '«domain»'«ENDIF»),
+            'text' => $this->trans('All except «name.toFirstLower.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
+            'title' => $this->trans('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
             'image' => '',
             'default' => false,
         ];

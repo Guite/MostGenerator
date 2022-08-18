@@ -94,9 +94,9 @@ class LoggableUndelete {
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException(
                 $this->trans(
-                    'No such «name.formatForDisplay» found.'«IF !application.isSystemModule»,
+                    'No such «name.formatForDisplay» found.',
                     [],
-                    '«name.formatForCode»'«ENDIF»
+                    '«name.formatForCode»'
                 )
             );
         }
@@ -146,15 +146,11 @@ class LoggableUndelete {
             $loggableHelper->undelete($«name.formatForCode»);
             $this->addFlash(
                 'status',
-                «IF application.isSystemModule»
-                    'Done! «name.formatForDisplayCapital» undeleted.'
-                «ELSE»
-                    $this->trans(
-                        'Done! «name.formatForDisplayCapital» undeleted.',
-                        [],
-                        '«name.formatForCode»'
-                    )
-                «ENDIF»
+                $this->trans(
+                    'Done! «name.formatForDisplayCapital» undeleted.',
+                    [],
+                    '«name.formatForCode»'
+                )
             );
         } catch (Exception $exception) {
             $this->addFlash(

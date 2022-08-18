@@ -37,9 +37,7 @@ class Kml {
     def private kmlView(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» view kml view #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
@@ -63,9 +61,7 @@ class Kml {
     def private kmlDisplay(Entity it) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display kml view #}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>

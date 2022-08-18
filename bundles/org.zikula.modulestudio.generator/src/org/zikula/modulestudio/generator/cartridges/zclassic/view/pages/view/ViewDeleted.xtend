@@ -26,9 +26,7 @@ class ViewDeleted {
     def private viewViewDeleted(Entity it) '''
         {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
         {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
-        «IF !application.isSystemModule»
-            {% trans_default_domain '«name.formatForCode»' %}
-        «ENDIF»
+        {% trans_default_domain '«name.formatForCode»' %}
         {% block title 'Deleted «nameMultiple.formatForDisplay»'|trans %}
         {% block admin_page_icon 'trash-alt' %}
         {% block content %}
@@ -43,7 +41,7 @@ class ViewDeleted {
         {% endblock %}
         {% block page_nav_links %}
             <p>
-                {% set linkTitle = 'Back to overview'|trans«IF !application.isSystemModule»({}, 'messages')«ENDIF» %}
+                {% set linkTitle = 'Back to overview'|trans({}, 'messages') %}
                 <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-reply"></i> {{ linkTitle }}</a>
             </p>
         {% endblock %}
@@ -60,11 +58,11 @@ class ViewDeleted {
                 </colgroup>
                 <thead>
                     <tr>
-                        <th id="hId" scope="col" class="unsorted">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}ID{% endtrans %}</th>
-                        <th id="hTitle" scope="col" class="unsorted">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Title{% endtrans %}</th>
-                        <th id="hDate" scope="col" class="unsorted">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Date{% endtrans %}</th>
-                        <th id="hUser" scope="col" class="unsorted">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}User{% endtrans %}</th>
-                        <th id="hActions" scope="col" class="unsorted">{% trans«IF !application.isSystemModule» from 'messages'«ENDIF» %}Action{% endtrans %}</th>
+                        <th id="hId" scope="col" class="unsorted">{% trans from 'messages' %}ID{% endtrans %}</th>
+                        <th id="hTitle" scope="col" class="unsorted">{% trans from 'messages' %}Title{% endtrans %}</th>
+                        <th id="hDate" scope="col" class="unsorted">{% trans from 'messages' %}Date{% endtrans %}</th>
+                        <th id="hUser" scope="col" class="unsorted">{% trans from 'messages' %}User{% endtrans %}</th>
+                        <th id="hActions" scope="col" class="unsorted">{% trans from 'messages' %}Action{% endtrans %}</th>
                     </tr>
                 </thead>
                 <tbody>

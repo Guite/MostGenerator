@@ -20,9 +20,9 @@ class ViewPagesHelper {
     def docsWithVariables(NamedObject it, Application app) '''
         «IF null !== documentation && !documentation.replaceAll('\\s+', '').empty»
             «IF !documentation.containedTwigVariables.empty»
-                <p class="alert alert-info">{% trans with {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»}«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»{% endtrans %}</p>
+                <p class="alert alert-info">{% trans with {«documentation.containedTwigVariables.map[v|'\'%' + v + '%\': ' + v + '|default'].join(', ')»} from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»' %}«documentation.replace('\'', '\\\'').replaceTwigVariablesForTranslation»{% endtrans %}</p>
             «ELSE»
-                <p class="alert alert-info">{% trans«IF !app.isSystemModule» from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»'«ENDIF» %}«documentation.replace('\'', '\\\'')»{% endtrans %}</p>
+                <p class="alert alert-info">{% trans from '«IF it instanceof Variables»config«ELSEIF it instanceof DataObject»«name.formatForCode»«ELSE»messages«ENDIF»' %}«documentation.replace('\'', '\\\'')»{% endtrans %}</p>
             «ENDIF»
 
         «ENDIF»

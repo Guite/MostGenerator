@@ -103,11 +103,9 @@ class ExternalController {
         ): Response'''
 
     def private displayBaseImpl(Application it) '''
-        «IF !isSystemModule»
-            $contextArgs = ['controller' => 'external', 'action' => 'display'];
-        «ENDIF»
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»), true)) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction'«IF !isSystemModule», $contextArgs«ENDIF»);
+        $contextArgs = ['controller' => 'external', 'action' => 'display'];
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
 
         $repository = $entityFactory->getRepository($objectType);
@@ -313,7 +311,7 @@ class ExternalController {
         $entities = $paginator->getResults();
 
         // filter by permissions
-        $entities = $permissionHelper->filterCollection(«IF !isSystemModule»$objectType, «ENDIF»$entities, ACCESS_READ);
+        $entities = $permissionHelper->filterCollection($objectType, $entities, ACCESS_READ);
 
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();

@@ -257,8 +257,8 @@ class QuickNavigationType {
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver->setDefaults([
-                    'csrf_protection' => false«IF !app.isSystemModule»,
-                    'translation_domain' => '«name.formatForCode»'«ENDIF»,
+                    'csrf_protection' => false,
+                    'translation_domain' => '«name.formatForCode»',
                 ]);
             }
         }
@@ -571,13 +571,7 @@ class QuickNavigationType {
         $entities = $this->entityFactory->getRepository($objectType)->selectWhere('', '', false);
         $permLevel = «(if (useTarget) target else source).getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createViewAction)»;
 
-        $entities = $this->permissionHelper->filterCollection(
-            «IF !app.isSystemModule»
-                $objectType,
-            «ENDIF»
-            $entities,
-            $permLevel
-        );
+        $entities = $this->permissionHelper->filterCollection($objectType, $entities, $permLevel);
         $choices = [];
         foreach ($entities as $entity) {
             $choices[$entity->getId()] = $entity;
