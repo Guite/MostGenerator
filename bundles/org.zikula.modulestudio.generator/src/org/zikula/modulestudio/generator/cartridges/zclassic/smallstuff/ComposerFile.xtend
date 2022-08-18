@@ -61,7 +61,7 @@ class ComposerFile {
             «IF hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
                 "egulias/email-validator": "^2",
             «ENDIF»
-            "php": "^8.«IF targets('3.1')»1«ELSE»0«ENDIF»"«IF !dependencies.empty»,«ENDIF»
+            "php": "^8.1"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»

@@ -65,7 +65,7 @@ class ExampleDataHelper {
         «ENDIF»
         «IF hasUserFields»
             use Zikula\UsersModule\Constant as UsersConstant;
-            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+            use Zikula\UsersModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\UserRepositoryInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         «FOR entity : getExampleEntities»

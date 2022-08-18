@@ -39,10 +39,15 @@ class NotificationHelper {
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         use Zikula\GroupsModule\Constant as GroupsConstant;
-        use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
+        use Zikula\GroupsModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\GroupRepositoryInterface;
         use Zikula\UsersModule\Constant as UsersConstant;
-        use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+        «IF !targets('4.0')»
+            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+        «ENDIF»
         use Zikula\UsersModule\Entity\UserEntity;
+        «IF targets('4.0')»
+            use Zikula\UsersModule\Repository\UserRepositoryInterface;
+        «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;

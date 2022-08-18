@@ -17,14 +17,15 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         * @Gedmo\Loggable(logEntryClass=«name.formatForCodeCapital»LogEntryEntity::class)
+         #[Gedmo\Loggable(logEntryClass: «name.formatForCodeCapital»LogEntryEntity::class)]
     '''
 
     /**
      * Additional field annotations.
      */
     override columnAnnotations(DerivedField it) '''
-        «IF entity instanceof Entity && (entity as Entity).loggable && !(it instanceof ObjectField) && !translatable»«/* if loggable and translatable are combined we add store this into a translationData array field instead */» * @Gedmo\Versioned
+        «IF entity instanceof Entity && (entity as Entity).loggable && !(it instanceof ObjectField) && !translatable»«/* if loggable and translatable are combined we add store this into a translationData array field instead */»
+            #[Gedmo\Versioned]
         «ENDIF»
     '''
 
@@ -57,6 +58,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
+        use Doctrine\DBAL\Types\Types;
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Loggable\Entity\MappedSuperclass\«extensionBaseClass»;
         use «repositoryClass(extensionClassType)»;
@@ -83,17 +85,15 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
         «IF primaryKey instanceof AbstractIntegerField»
             /**
              * Use integer instead of string for increased performance.
-             *
-             * @ORM\Column(name="object_id", type="integer", nullable=true)
              */
+            #[ORM\Column(name: 'object_id', type: Types::INTEGER, nullable: true)]
             protected «/* no type allowed because we override a parent field */»$objectId;
 
         «ENDIF»
         /**
          * Extended description of the executed action which produced this log entry.
-         *
-         * @ORM\Column(name="action_description", length=255)
          */
+        #[ORM\Column(name: 'action_description', length: 255)]
         protected string $actionDescription = '';
         «(new FileHelper(application)).getterAndSetterMethods(it, 'actionDescription', 'string', false, '', '')»
     '''
@@ -306,17 +306,14 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass=«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)
-         «' '»* @ORM\Table(
-         «' '»*     name="«fullEntityTableName»_log_entry",
-         «' '»*     options={"row_format":"DYNAMIC"},
-         «' '»*     indexes={
-         «' '»*         @ORM\Index(name="log_class_lookup_idx", columns={"object_class"}),
-         «' '»*         @ORM\Index(name="log_date_lookup_idx", columns={"logged_at"}),
-         «' '»*         @ORM\Index(name="log_user_lookup_idx", columns={"username"}),
-         «' '»*         @ORM\Index(name="log_version_lookup_idx", columns={"object_id", "object_class", "version"}),
-         «' '»*         @ORM\Index(name="log_object_id_lookup_idx", columns={"object_id"})
-         «' '»*     }
-         «' '»* )
+        #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)]
+        #[ORM\Table(name: '«fullEntityTableName»_log_entry', options: ['row_format' => 'DYNAMIC'])]
+        #[
+            ORM\Index(fields: ['objectClass'], name: 'log_class_lookup_idx'),
+            ORM\Index(fields: ['loggedAt'], name: 'log_date_lookup_idx'),
+            ORM\Index(fields: ['username'], name: 'log_user_lookup_idx'),
+            ORM\Index(fields: ['objectId', 'objectClass', 'version'], name: 'log_version_lookup_idx'),
+            ORM\Index(fields: ['objectId'], name: 'log_object_id_lookup_idx')
+        ]
     '''
 }

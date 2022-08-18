@@ -54,14 +54,13 @@ class Property {
     def dispatch persistentProperty(UploadField it) '''
         /**
          * «name.formatForDisplayCapital» meta data.
-         *
-         «IF null !== entity»
-         * @ORM\Column(type="array")
-         «IF translatable»
-          * @Gedmo\Translatable
-         «ENDIF»
-         «ENDIF»
          */
+        «IF null !== entity»
+            #[ORM\Column]
+            «IF translatable»
+                #[Gedmo\Translatable]
+            «ENDIF»
+        «ENDIF»
         protected array $«name.formatForCode»Meta = [];
 
         «persistentProperty(name.formatForCode + 'FileName', fieldTypeAsString(true), fieldTypeAsString(false), '')»
@@ -97,22 +96,21 @@ class Property {
         /**
          «IF null !== documentation && !documentation.empty»
           * «documentation»«IF !documentation.endsWith('.')».«ENDIF»
-          *
          «ENDIF»
+         */
         «IF null !== entity»
-             «IF primaryKey»
-                 * @ORM\Id
-                 «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy.NONE»
-                     * @ORM\GeneratedValue(strategy="«(entity as Entity).identifierStrategy.literal»")
-                 «ENDIF»
-             «ENDIF»
+            «IF primaryKey»
+                #[ORM\Id]
+                «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy.NONE»
+                    #[ORM\GeneratedValue(strategy: '«(entity as Entity).identifierStrategy.literal»')]
+                «ENDIF»
+            «ENDIF»
             «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
-             «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
-             * @ORM\Column(«IF null !== dbName && !dbName.empty»name="«dbName.formatForCode»", «ELSEIF it instanceof UploadField»name="«it.name.formatForCode»", «ENDIF»«persistentPropertyImpl(typeDoctrine.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
-             «ENDIF»
+            «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
+                #[ORM\Column(«IF null !== dbName && !dbName.empty»name: '«dbName.formatForCode»', «ELSEIF it instanceof UploadField»name: '«it.name.formatForCode»', «ENDIF»«persistentPropertyImpl(typeDoctrine.toLowerCase)»«IF unique», unique: true«ENDIF»«IF nullable», nullable: true«ENDIF»)]
+            «ENDIF»
             «persistentPropertyAdditions»
         «ENDIF»
-         */
         «thVal.fieldAnnotations(it)»
         «modifier» «IF nullable || it instanceof UploadField || it instanceof DatetimeField»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSEIF !skipTypeHint»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
@@ -124,23 +122,23 @@ class Property {
 
     def private persistentPropertyImpl(DerivedField it, String type) {
         switch it {
-            NumberField: '''type="«type»"«IF numberType == NumberFieldType.DECIMAL», precision=«it.length», scale=«it.scale»«ENDIF»'''
-            TextField: '''type="«type»", length=«it.length»'''
+            NumberField: '''type: '«type»'«IF numberType == NumberFieldType.DECIMAL», precision: «it.length», scale: «it.scale»«ENDIF»'''
+            TextField: '''type: '«type»', length: «it.length»'''
             StringField:
                 '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type="dateinterval"«ELSE»«/*type="«type»", */»length=«it.length»«ENDIF»'''
             EmailField:
-                '''«/*type="«type»", */»length=«it.length»'''
+                '''length: «it.length»'''
             UrlField:
-                '''«/*type="«type»", */»length=«it.length»'''
+                '''length: «it.length»'''
             ArrayField:
-                '''type="«IF ArrayType.JSON_ARRAY == arrayType»json«ELSE»«arrayType.literal.toLowerCase»«ENDIF»"«/*», length=«it.length*/»'''
+                '''type: '«IF ArrayType.JSON_ARRAY == arrayType»json«ELSE»«arrayType.literal.toLowerCase»«ENDIF»'«/*», length: «it.length*/»'''
             UploadField:
-                '''«/*type="«type»", */»length=«it.length»'''
+                '''length: «it.length»'''
             ListField:
-                '''«/*type="«type»", */»length=«it.length»'''
+                '''length: «it.length»'''
             DatetimeField:
-                '''type="«/*utc*/»«type»«IF (null !== entity || null !== varContainer) && immutable»_immutable«ENDIF»"'''
-            default: '''type="«type»"'''
+                '''type: '«/*utc*/»«type»«IF (null !== entity || null !== varContainer) && immutable»_immutable«ENDIF»'«''»'''
+            default: '''type: '«type»'«''»'''
         }
     }
 
@@ -148,12 +146,12 @@ class Property {
         switch it {
             IntegerField:
                 if (it.version && entity instanceof Entity && (entity as Entity).hasOptimisticLock) '''
-                    «''» * @ORM\Version
+                    #[ORM\Version]
                 '''
             UserField:
                 '''
-                    «' '»* @ORM\ManyToOne(targetEntity=UserEntity::class)
-                    «' '»* @ORM\JoinColumn(referencedColumnName="uid"«IF nullable», nullable=true«ENDIF»)
+                    #[ORM\ManyToOne(targetEntity=UserEntity::class)]
+                    #[ORM\JoinColumn(referencedColumnName: 'uid'«IF nullable», nullable: true«ENDIF»)]
                 '''
         }
     }

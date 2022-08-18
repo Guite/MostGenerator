@@ -36,7 +36,7 @@ class AjaxController {
             «ENDIF»
             use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
             «IF hasTrees»
-                use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+                use Zikula\UsersModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\UserRepositoryInterface;
             «ENDIF»
         «ENDIF»
     '''

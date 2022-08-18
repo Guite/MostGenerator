@@ -21,11 +21,11 @@ class Blameable extends AbstractExtension implements EntityExtensionInterface {
      */
     override columnAnnotations(DerivedField it) '''
         «IF it instanceof UserField && (it as UserField).blameable != EntityBlameableType.NONE»
-            «' '»* @Gedmo\Blameable(on="«(it as UserField).blameable.literal.toLowerCase»"«(it as UserField).blameableDetails»)
+            #[Gedmo\Blameable(on: '«(it as UserField).blameable.literal.toLowerCase»'«(it as UserField).blameableDetails»)]
         «ENDIF»
     '''
 
-    def private blameableDetails(UserField it) '''«IF blameable == EntityBlameableType.CHANGE», field="«blameableChangeTriggerField.formatForCode»"«IF null !== blameableChangeTriggerValue && !blameableChangeTriggerValue.empty», value="«blameableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
+    def private blameableDetails(UserField it) '''«IF blameable == EntityBlameableType.CHANGE», field: '«blameableChangeTriggerField.formatForCode»'«IF null !== blameableChangeTriggerValue && !blameableChangeTriggerValue.empty», value: '«blameableChangeTriggerValue.formatForCode»'«ENDIF»«ENDIF»'''
 
     /**
      * Generates additional entity properties.

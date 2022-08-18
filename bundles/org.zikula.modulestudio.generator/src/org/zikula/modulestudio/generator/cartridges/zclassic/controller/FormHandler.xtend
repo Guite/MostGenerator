@@ -163,7 +163,7 @@ class FormHandler {
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         «IF hasNonNullableUserFields»
-            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+            use Zikula\UsersModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\UserRepositoryInterface;
         «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;

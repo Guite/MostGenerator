@@ -17,10 +17,10 @@ class Sortable extends AbstractExtension implements EntityExtensionInterface {
      */
     override columnAnnotations(DerivedField it) '''
         «IF sortableGroup»
-            «' '»* @Gedmo\SortableGroup
+            #[Gedmo\SortableGroup]
         «ENDIF»
         «IF it instanceof AbstractIntegerField && (it as AbstractIntegerField).sortablePosition»
-            «' '»* @Gedmo\SortablePosition
+            #[Gedmo\SortablePosition]
         «ENDIF»
     '''
 

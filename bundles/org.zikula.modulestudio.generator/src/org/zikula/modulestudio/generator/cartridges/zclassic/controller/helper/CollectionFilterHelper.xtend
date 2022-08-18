@@ -49,8 +49,13 @@ class CollectionFilterHelper {
             use Zikula\UsersModule\Constant as UsersConstant;
         «ENDIF»
         «IF hasUserFields»
-            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+            «IF !targets('4.0')»
+                use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+            «ENDIF»
             use Zikula\UsersModule\Entity\UserEntity;
+            «IF targets('4.0')»
+                use Zikula\UsersModule\Repository\UserRepositoryInterface;
+            «ENDIF»
         «ENDIF»
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;

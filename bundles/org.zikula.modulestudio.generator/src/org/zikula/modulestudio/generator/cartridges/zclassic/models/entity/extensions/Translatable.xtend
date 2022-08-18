@@ -16,14 +16,15 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         * @Gedmo\TranslationEntity(class=«name.formatForCodeCapital»TranslationEntity::class)
+         #[Gedmo\TranslationEntity(class: «name.formatForCodeCapital»TranslationEntity::class)]
     '''
 
     /**
      * Additional field annotations.
      */
     override columnAnnotations(DerivedField it) '''
-        «IF translatable» * @Gedmo\Translatable
+        «IF translatable»
+            #[Gedmo\Translatable]
         «ENDIF»
     '''
 
@@ -34,9 +35,8 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
         /**
          * Used locale to override Translation listener's locale.
          * This is not a mapped field of entity metadata, just a simple property.
-         *
-         * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
          */
+        #[Gedmo\Locale]«/*the same as Gedmo\Language*/»
         #[Assert\Locale]
         protected string $locale = '';
 
@@ -60,6 +60,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
+        use Doctrine\DBAL\Types\Types;
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Translatable\Entity\MappedSuperclass\«extensionBaseClass»;
         use «repositoryClass(extensionClassType)»;
@@ -85,19 +86,17 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
     override extensionClassBaseImplementation(Entity it) '''
         /**
          * Use a length of 140 instead of 255 to avoid too long keys for the indexes.
-         *
-         * @ORM\Column(name="object_class", type="string", length=140)
          */
+        #[ORM\Column(name: 'object_class', type: Types::STRING, length: 140)]
         protected «/* no type allowed because we override a parent field */»$objectClass;
 
         «IF primaryKey instanceof AbstractIntegerField»
             /**
              * Use integer instead of string for increased performance.
              *
-             * @see https://github.com/Atlantic18/DoctrineExtensions/issues/1512
-             *
-             * @ORM\Column(name="foreign_key", type="integer")
+             * @see https://github.com/doctrine-extensions/DoctrineExtensions/issues/1512
              */
+            #[ORM\Column(name: 'foreign_key', type: Types::INTEGER)]
             protected «/* no type allowed because we override a parent field */»$foreignKey;
 
         «ENDIF»
@@ -126,21 +125,10 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass=«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)
-         «' '»* @ORM\Table(
-         «' '»*     name="«fullEntityTableName»_translation",
-         «' '»*     options={"row_format":"DYNAMIC"},
-         «' '»*     indexes={
-         «' '»*         @ORM\Index(name="translations_lookup_idx", columns={
-         «' '»*             "locale", "object_class", "foreign_key"
-         «' '»*         })
-         «' '»*     },
-         «' '»*     uniqueConstraints={
-         «' '»*         @ORM\UniqueConstraint(name="lookup_unique_idx", columns={
-         «' '»*             "locale", "object_class", "field", "foreign_key"
-         «' '»*         })
-         «' '»*     }
-         «' '»* )
+        #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)]
+        #[ORM\Table(name: '«fullEntityTableName»_translation', options: ['row_format' => 'DYNAMIC'])]
+        #[ORM\Index(fields: ['locale', 'objectClass', 'foreignKey'], name: 'translations_lookup_idx')]
+        #[ORM\UniqueConstraint(columns: ['locale', 'object_class', 'field', 'foreignKey'], name: 'lookup_unique_idx')]
     '''
 
     /**

@@ -29,10 +29,13 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
+        #[ORM\OneToMany(
+            targetEntity: «name.formatForCodeCapital»CategoryEntity::class,
+            mappedBy: 'entity',
+            cascade: ['all'],
+            orphanRemoval: true«/*commented out as this causes only one category to be selected (#349)   , indexBy: 'categoryRegistryId'*/»
+        )]
         /**
-         * @ORM\OneToMany(targetEntity=«name.formatForCodeCapital»CategoryEntity::class,
-         *                mappedBy="entity", cascade={"all"},
-         *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»)
          * @var Collection<int, «name.formatForCodeCapital»CategoryEntity>
          */
         protected ?Collection $categories = null;
@@ -117,10 +120,8 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class implementation.
      */
     override extensionClassBaseImplementation(Entity it) '''
-        /**
-         * @ORM\ManyToOne(targetEntity=«name.formatForCodeCapital»Entity::class, inversedBy="categories")
-         * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKey.name.formatForCode»")
-         */
+        #[ORM\ManyToOne(inversedBy: 'categories')]
+        #[ORM\JoinColumn(name: 'entityId', referencedColumnName: '«getPrimaryKey.name.formatForCode»')]
         protected «name.formatForCodeCapital»Entity $entity;
         «extensionClassEntityAccessors»
     '''
@@ -129,11 +130,8 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass=«name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)
-         «' '»* @ORM\Table(name="«fullEntityTableName»_category",
-         «' '»*     uniqueConstraints={
-         «' '»*         @ORM\UniqueConstraint(name="cat_unq", columns={"registryId", "categoryId", "entityId"})
-         «' '»*     }
-         «' '»* )
+        #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)]
+        #[ORM\Table(name: '«fullEntityTableName»_category')]
+        #[ORM\UniqueConstraint(columns: ['registryId', 'categoryId', 'entityId'], name: 'cat_unq')]
     '''
 }

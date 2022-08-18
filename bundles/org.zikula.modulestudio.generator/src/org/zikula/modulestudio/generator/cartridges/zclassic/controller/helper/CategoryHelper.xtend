@@ -26,7 +26,7 @@ class CategoryHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\CategoriesModule\Api\ApiInterface\CategoryPermissionApiInterface;
-        use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
+        use Zikula\CategoriesModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\CategoryRegistryRepositoryInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\EntityInterface;
 

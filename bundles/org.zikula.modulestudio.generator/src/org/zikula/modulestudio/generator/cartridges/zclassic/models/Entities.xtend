@@ -162,6 +162,14 @@ class Entities {
         «IF isBase || loggable || hasTranslatableFields || tree != EntityTreeType.NONE»
             use Gedmo\Mapping\Annotation as Gedmo;
         «ENDIF»
+        «IF hasSluggableFields»
+            «IF tree != EntityTreeType.NONE»
+                use Gedmo\Sluggable\Handler\TreeSlugHandler;
+            «ELSEIF needsRelativeOrInversedRelativeSlugHandler»
+                use Gedmo\Sluggable\Handler\InversedRelativeSlugHandler;
+                use Gedmo\Sluggable\Handler\RelativeSlugHandler;
+            «ENDIF»
+        «ENDIF»
         «IF isBase»
             «IF hasTranslatableFields»
                 use Gedmo\Translatable\Translatable;
@@ -235,9 +243,8 @@ class Entities {
          * This is the base entity class for «name.formatForDisplay» entities.
          * The following annotation marks it as a mapped superclass so subclasses
          * inherit orm properties.
-         *
-         * @ORM\MappedSuperclass
          */
+        #[ORM\MappedSuperclass]
         abstract class Abstract«name.formatForCodeCapital»Entity«IF isInheriting» extends BaseEntity«ENDIF» implements AbstractEntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
         {
             «IF it instanceof Entity && (it as Entity).geographical»
@@ -356,50 +363,45 @@ class Entities {
     '''
 
     def dispatch private classAnnotation(MappedSuperClass it) '''
-        «' '»* @ORM\MappedSuperclass«/*IF isTopSuperClass»
-        «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
-        «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"* /»)
-        «' '»* @ORM\DiscriminatorMap({«FOR relation : getChildRelations SEPARATOR ', '»«relation.discriminatorInfo»«ENDFOR»})
+        #[ORM\MappedSuperclass]«/*IF isTopSuperClass»
+        #[ORM\InheritanceType('«getChildRelations.head.strategy.literal»')]
+        #[ORM\DiscriminatorColumn(name: '«getChildRelations.head.discriminatorColumn.formatForCode»'«/*, type: 'string'* /»)]
+        #[ORM\DiscriminatorMap([«FOR relation : getChildRelations SEPARATOR ', '»«relation.discriminatorInfo»«ENDFOR»])]
         «ENDIF*/»
     '''
 
     def dispatch private classAnnotation(Entity it) '''
-        «' '»* @ORM\Entity(repositoryClass=«name.formatForCodeCapital»Repository::class«IF readOnly», readOnly=true«ENDIF»)
+        #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»Repository::class«IF readOnly», readOnly: true«ENDIF»)]
     '''
 
     def private entityImplClassDocblockAdditions(Entity it, Application app) '''
-         «IF indexes.empty»
-         «' '»* @ORM\Table(name="«fullEntityTableName»")
-         «ELSE»
-          * @ORM\Table(name="«fullEntityTableName»",
-         «IF hasNormalIndexes»
-          *     indexes={
-         «FOR index : getNormalIndexes SEPARATOR ','»«index.index('Index')»«ENDFOR»
-          *     }«IF hasUniqueIndexes»,«ENDIF»
-         «ENDIF»
-         «IF hasUniqueIndexes»
-          *     uniqueConstraints={
-         «FOR index : getUniqueIndexes SEPARATOR ','»«index.index('UniqueConstraint')»«ENDFOR»
-          *     }
-         «ENDIF»
-          * )
-         «ENDIF»
-         «IF isTopSuperClass»
-         «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
-         «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-         «' '»* @ORM\DiscriminatorMap({"«name.formatForCode»" = "«name.formatForCodeCapital»Entity::class"«FOR relation : getChildRelations», «relation.discriminatorInfo»«ENDFOR»})
-         «ENDIF»
-         «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
-         «' '»* @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
-         «ENDIF»
+        #[ORM\Table(name: '«fullEntityTableName»')
+        «IF !indexes.empty»
+        «IF hasNormalIndexes»
+            #[
+                «FOR index : getNormalIndexes SEPARATOR ','»«index.index('Index')»«ENDFOR»
+            ]
+        «ENDIF»
+        «IF hasUniqueIndexes»
+            «FOR index : getUniqueIndexes SEPARATOR ','»«index.index('UniqueConstraint')»«ENDFOR»
+        «ENDIF»
+        «ENDIF»
+        «IF isTopSuperClass»
+            #[ORM\InheritanceType('«getChildRelations.head.strategy.literal»')]
+            #[ORM\DiscriminatorColumn(name: '«getChildRelations.head.discriminatorColumn.formatForCode»'«/*, type: 'string'*/»)]
+            #[ORM\DiscriminatorMap(['«name.formatForCode»' => «name.formatForCodeCapital»Entity::class«FOR relation : getChildRelations», «relation.discriminatorInfo»«ENDFOR»])]
+        «ENDIF»
+        «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
+            #[ORM\ChangeTrackingPolicy('«changeTrackingPolicy.literal»')]
+        «ENDIF»
     '''
 
     def private index(EntityIndex it, String indexType) '''
-         «' '»*         @ORM\«indexType.toFirstUpper»(name="«name.formatForDB»", columns={«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»})
+        #[ORM\«indexType.toFirstUpper»(name: '«name.formatForDB»', «/*IF 'index' == indexType»fields«ELSE*/»columns«/*ENDIF*/»: [«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»])]
     '''
     def private indexField(EntityIndexItem it) '''"«indexItemForEntity»"'''
 
     def private discriminatorInfo(InheritanceRelationship it) '''
-        "«source.name.formatForCode»" = "«source.name.formatForCodeCapital»Entity::class"
+        '«source.name.formatForCode»' => «source.name.formatForCodeCapital»Entity::class
     '''
 }

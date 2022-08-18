@@ -43,8 +43,13 @@ class PermissionHelper {
         use Zikula\GroupsModule\Entity\GroupEntity;
         use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
         use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-        use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+        «IF !targets('4.0')»
+            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+        «ENDIF»
         use Zikula\UsersModule\Entity\UserEntity;
+        «IF targets('4.0')»
+            use Zikula\UsersModule\Repository\UserRepositoryInterface;
+        «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;

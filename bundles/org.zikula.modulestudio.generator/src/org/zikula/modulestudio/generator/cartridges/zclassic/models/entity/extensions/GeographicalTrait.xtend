@@ -22,6 +22,7 @@ class GeographicalTrait {
     def private traitFile(Application it) '''
         namespace «appNamespace»\Traits;
 
+        use Doctrine\DBAL\Types\Types;
         use Doctrine\ORM\Mapping as ORM;
         «IF isLoggable»
             use Gedmo\Mapping\Annotation as Gedmo;
@@ -40,23 +41,21 @@ class GeographicalTrait {
     def private traitImpl(Application it) '''
         /**
          * The coordinate's latitude part.
-         *
-         * @ORM\Column(type="decimal", precision=12, scale=7)
-         «IF isLoggable»
-          * @Gedmo\Versioned
-         «ENDIF»
          */
+        #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 7)]
+        «IF isLoggable»
+            #[Gedmo\Versioned]
+        «ENDIF»
         #[Assert\Type(type: 'numeric')]«/* type="float" not possible since decimals are mapped to strings */»
         protected string $latitude = '0.00';
 
         /**
          * The coordinate's longitude part.
-         *
-         * @ORM\Column(type="decimal", precision=12, scale=7)
-         «IF isLoggable»
-          * @Gedmo\Versioned
-         «ENDIF»
          */
+        #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 7)]
+        «IF isLoggable»
+            #[Gedmo\Versioned]
+        «ENDIF»
         #[Assert\Type(type: 'numeric')]«/* type="float" not possible since decimals are mapped to strings */»
         protected string $longitude = '0.00';
         «fh.getterAndSetterMethods(it, 'latitude', 'string', true, '', '')»

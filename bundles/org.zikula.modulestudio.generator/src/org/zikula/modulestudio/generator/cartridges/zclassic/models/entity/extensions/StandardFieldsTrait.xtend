@@ -28,6 +28,7 @@ class StandardFieldsTrait {
         namespace «appNamespace»\Traits;
 
         use DateTimeInterface;
+        use Doctrine\DBAL\Types\Types;
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Mapping\Annotation as Gedmo;
         use Symfony\Component\Validator\Constraints as Assert;
@@ -43,42 +44,31 @@ class StandardFieldsTrait {
     '''
 
     def private traitImpl(Application it) '''
-        /**
-         * @Gedmo\Blameable(on="create")
-         * @ORM\ManyToOne(targetEntity=UserEntity::class)
-         * @ORM\JoinColumn(referencedColumnName="uid")
-         «IF isLoggable»
-          * @Gedmo\Versioned
-         «ENDIF»
-         */
+        #[ORM\ManyToOne]
+        #[ORM\JoinColumn(referencedColumnName: 'uid')]
+        #[Gedmo\Blameable(on: 'create')]
+        «IF isLoggable»
+            #[Gedmo\Versioned]
+        «ENDIF»
         protected ?UserEntity $createdBy = null;
 
-        /**
-         * @ORM\Column(type="datetime")
-         * @Gedmo\Timestampable(on="create")
-         «IF isLoggable»
-          * @Gedmo\Versioned
-         «ENDIF»
-         */
+        #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+        #[Gedmo\Timestampable(on: 'create')]
+        «IF isLoggable»
+            #[Gedmo\Versioned]
+        «ENDIF»
         protected ?DateTimeInterface $createdDate = null;
 
-        /**
-         * @Gedmo\Blameable(on="update")
-         * @ORM\ManyToOne(targetEntity=UserEntity::class)
-         * @ORM\JoinColumn(referencedColumnName="uid")
-         «IF isLoggable»
-          * @Gedmo\Versioned
-         «ENDIF»
-         */
+        #[ORM\ManyToOne]
+        #[ORM\JoinColumn(referencedColumnName: 'uid')]
+        #[Gedmo\Blameable(on: 'update')]
         protected ?UserEntity $updatedBy = null;
 
-        /**
-         * @ORM\Column(type="datetime")
-         * @Gedmo\Timestampable(on="update")
-         «IF isLoggable»
-          * @Gedmo\Versioned
-         «ENDIF»
-         */
+        #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+        #[Gedmo\Timestampable(on: 'update')]
+        «IF isLoggable»
+            #[Gedmo\Versioned]
+        «ENDIF»
         protected ?DateTimeInterface $updatedDate = null;
         «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', true, '', '')»
         «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', true, '', '')»

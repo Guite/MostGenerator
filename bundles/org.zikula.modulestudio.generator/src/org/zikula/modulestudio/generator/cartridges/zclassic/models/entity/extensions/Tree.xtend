@@ -16,9 +16,9 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-        * @Gedmo\Tree(type="«tree.literal.toLowerCase»")
+        #[Gedmo\Tree(type: '«tree.literal.toLowerCase»')]
         «IF tree == EntityTreeType.CLOSURE»
-             * @Gedmo\TreeClosure(class=«name.formatForCodeCapital»ClosureEntity::class)
+             #[Gedmo\TreeClosure(class: «name.formatForCodeCapital»ClosureEntity::class)]
         «ENDIF»
     '''
 
@@ -32,47 +32,39 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
-        /**
-         * @Gedmo\TreeLeft
-         * @ORM\Column(type="integer")
-         */
+        #[ORM\Column]
+        #[Gedmo\TreeLeft]
         protected int $lft;
 
-        /**
-         * @Gedmo\TreeLevel
-         * @ORM\Column(type="integer")
-         */
+        #[ORM\Column]
+        #[Gedmo\TreeLevel]
         protected int $lvl;
 
-        /**
-         * @Gedmo\TreeRight
-         * @ORM\Column(type="integer")
-         */
+        #[ORM\Column]
+        #[Gedmo\TreeRight]
         protected int $rgt;
 
-        /**
-         * @Gedmo\TreeRoot
-         * @ORM\Column(type="integer", nullable=true)
-         */
+        #[ORM\Column(nullable: true)]
+        #[Gedmo\TreeRoot]
         protected int $root;
 
         /**
          * Bidirectional - Many children [«name.formatForDisplay»] are linked by one parent [«name.formatForDisplay»] (OWNING SIDE).
-         *
-         «IF loggable»
-             * @Gedmo\Versioned
-         «ENDIF»
-         * @Gedmo\TreeParent
-         * @ORM\ManyToOne(targetEntity=«name.formatForCodeCapital»Entity::class, inversedBy="children")
-         * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKey.name.formatForDisplay»", onDelete="SET NULL")
          */
+        #[ORM\ManyToOne(targetEntity: «name.formatForCodeCapital»Entity::class, inversedBy: 'children')]
+        #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: '«getPrimaryKey.name.formatForDisplay»', onDelete: 'SET NULL')]
+        #[Gedmo\TreeParent]
+        «IF loggable»
+            #[Gedmo\Versioned]
+        «ENDIF»
         protected ?self $parent = null;
 
         /**
          * Bidirectional - One parent [«name.formatForDisplay»] has many children [«name.formatForDisplay»] (INVERSE SIDE).
-         *
-         * @ORM\OneToMany(targetEntity=«name.formatForCodeCapital»Entity::class, mappedBy="parent")
-         * @ORM\OrderBy({"lft" = "ASC"})
+         */
+        #[ORM\OneToMany(targetEntity: «name.formatForCodeCapital»Entity::class, mappedBy: 'parent')]
+        #[ORM\OrderBy(['lft' => 'ASC'])]
+        /**
          * @var Collection<int, «name.formatForCodeCapital»Entity>
          */
         protected ?Collection $children = null;

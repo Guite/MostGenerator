@@ -43,11 +43,11 @@ class AppSettings {
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
         «IF hasUserVariables»
             use Zikula\UsersModule\Constant as UsersConstant;
-            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
+            use Zikula\UsersModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\UserRepositoryInterface;
         «ENDIF»
         «IF hasUserGroupSelectors»
             use Zikula\GroupsModule\Constant as GroupsConstant;
-            use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
+            use Zikula\GroupsModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\GroupRepositoryInterface;
         «ENDIF»
         «IF hasUserVariables»
             use Zikula\UsersModule\Entity\UserEntity;

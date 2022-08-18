@@ -21,11 +21,11 @@ class IpTraceable extends AbstractExtension implements EntityExtensionInterface 
      */
     override columnAnnotations(DerivedField it) '''
         «IF it instanceof StringField && (it as StringField).ipTraceable != EntityIpTraceableType.NONE»
-            «' '»* @Gedmo\IpTraceable(on="«(it as StringField).ipTraceable.literal.toLowerCase»"«(it as StringField).ipTraceableDetails»)
+            #[Gedmo\IpTraceable(on: '«(it as StringField).ipTraceable.literal.toLowerCase»'«(it as StringField).ipTraceableDetails»)]
         «ENDIF»
     '''
 
-    def private ipTraceableDetails(StringField it) '''«IF ipTraceable == EntityIpTraceableType.CHANGE», field="«ipTraceableChangeTriggerField.formatForCode»"«IF null !== ipTraceableChangeTriggerValue && !ipTraceableChangeTriggerValue.empty», value="«ipTraceableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
+    def private ipTraceableDetails(StringField it) '''«IF ipTraceable == EntityIpTraceableType.CHANGE», field: '«ipTraceableChangeTriggerField.formatForCode»'«IF null !== ipTraceableChangeTriggerValue && !ipTraceableChangeTriggerValue.empty», value: '«ipTraceableChangeTriggerValue.formatForCode»'«ENDIF»«ENDIF»'''
 
     /**
      * Generates additional entity properties.

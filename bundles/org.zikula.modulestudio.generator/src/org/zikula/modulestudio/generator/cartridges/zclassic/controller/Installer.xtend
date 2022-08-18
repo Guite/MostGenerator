@@ -44,8 +44,8 @@ class Installer {
         «IF hasCategorisableEntities»
             use Zikula\CategoriesModule\Api\CategoryPermissionApi;
             use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
-            use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRegistryRepositoryInterface;
-            use Zikula\CategoriesModule\Entity\RepositoryInterface\CategoryRepositoryInterface;
+            use Zikula\CategoriesModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\CategoryRegistryRepositoryInterface;
+            use Zikula\CategoriesModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\CategoryRepositoryInterface;
         «ENDIF»
         use Zikula\ExtensionsModule\AbstractExtension;
         use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;

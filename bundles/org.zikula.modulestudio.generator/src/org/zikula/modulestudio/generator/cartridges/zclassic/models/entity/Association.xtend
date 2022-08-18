@@ -86,17 +86,13 @@ class Association {
     def private dispatch incoming(JoinRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
          * Bidirectional - «incomingMappingDescription(it, sourceName, targetName)».
-         *
-        «incomingMappingDetails»
-         * @ORM\«incomingMappingType»(
-         *     targetEntity=«entityClass»::class,
-         *     inversedBy="«targetName»"«additionalOptions(true)»
-         * )
-        «joinDetails(false)»
         «IF isManySide(false)»
             «' '»* @var Collection<int, «entityClass»>
         «ENDIF»
          */
+        «incomingMappingDetails»
+        #[ORM\«incomingMappingType»(targetEntity: «entityClass»::class, inversedBy: '«targetName»'«additionalOptions(true)»)]
+        «joinDetails(false)»
         «IF !nullable»
             «val aliasName = getRelationAliasName(false).toFirstLower»
             «IF !isManySide(false)»
@@ -129,7 +125,7 @@ class Association {
     }
     def private incomingMappingDetails(JoinRelationship it) {
         switch it {
-            OneToOneRelationship case it.primaryKey: ''' * @ORM\Id'''
+            OneToOneRelationship case it.primaryKey: '''#[ORM\Id]'''
             default: ''
         }
     }
@@ -144,13 +140,12 @@ class Association {
     def private dispatch incoming(ManyToOneRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
          * Bidirectional - «incomingMappingDescription(it, sourceName, targetName)».
-         *
-         «IF primaryKey»
-             * @ORM\Id
-         «ENDIF»
-         * @ORM\OneToOne(targetEntity=«entityClass»::class)
-        «joinDetails(false)»
          */
+        «IF primaryKey»
+            #[ORM\Id]
+        «ENDIF»
+        #[ORM\OneToOne]
+        «joinDetails(false)»
         «IF !nullable»
             «val aliasName = getRelationAliasName(false).toFirstLower»
             #[Assert\NotNull(message: 'Choosing a «aliasName.formatForDisplay» is required.')]
@@ -166,16 +161,12 @@ class Association {
         «IF bidirectional»
             /**
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
-             *
-             * @ORM\ManyToMany(
-             *     targetEntity=«entityClass»::class,
-             *     mappedBy="«targetName»"«additionalOptions(true)»
-             * )
-             «IF null !== orderByReverse && !orderByReverse.empty»
-              * @ORM\OrderBy({«orderByDetails(orderByReverse)»})
-             «ENDIF»
              * @var Collection<int, «entityClass»>
              */
+            #[ORM\ManyToMany(targetEntity: «entityClass»::class, mappedBy: '«targetName»'«additionalOptions(true)»)]
+            «IF null !== orderByReverse && !orderByReverse.empty»
+                #[ORM\OrderBy([«orderByDetails(orderByReverse)»])]
+            «ENDIF»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(false).toFirstLower»
                 #[Assert\NotNull(message: 'Choosing at least one of the «aliasName.formatForDisplay» is required.')]
@@ -195,16 +186,12 @@ class Association {
     def private dispatch outgoing(JoinRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
-         *
-         * @ORM\«outgoingMappingType»(
-         *     targetEntity=«entityClass»::class«IF bidirectional»,
-         *     mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»
-         * )
+         */
+        #[ORM\«outgoingMappingType»(targetEntity: «entityClass»::class«IF bidirectional», mappedBy: '«sourceName»'«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»)]
         «joinDetails(true)»
         «IF it instanceof ManyToOneRelationship && (it as ManyToOneRelationship).sortableGroup»
-            «' '»* @Gedmo\SortableGroup
+            #[Gedmo\SortableGroup]
         «ENDIF»
-         */
         «IF !nullable»
             «val aliasName = getRelationAliasName(true).toFirstLower»
             «IF !isManySide(true)»
@@ -236,30 +223,24 @@ class Association {
     }
 
     def private dispatch outgoingMappingAdditions(JoinRelationship it) ''''''
-    def private dispatch outgoingMappingAdditions(OneToOneRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»'''
-    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy="«indexBy»"«ENDIF»)'''
-    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy="«indexBy»"«ENDIF»'''
+    def private dispatch outgoingMappingAdditions(OneToOneRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»'''
+    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy: '«indexBy»'«ENDIF»)'''
+    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy: '«indexBy»'«ENDIF»'''
 
     def private dispatch outgoing(OneToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
-         *
-         «IF !bidirectional»
-          * @ORM\ManyToMany(
-          *     targetEntity=«entityClass»::class«additionalOptions(false)»
-          * )
-         «ELSE»
-          * @ORM\OneToMany(
-          *     targetEntity=«entityClass»::class,
-          *     mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
-          * )
-         «ENDIF»
-        «joinDetails(true)»
-         «IF null !== orderBy && !orderBy.empty»
-          * @ORM\OrderBy({«orderByDetails(orderBy)»})
-         «ENDIF»
          * @var Collection<int, «entityClass»>
          */
+        «IF !bidirectional»
+            #[ORM\ManyToMany(targetEntity: «entityClass»::class«additionalOptions(false)»)]
+        «ELSE»
+            #[ORM\OneToMany(targetEntity: «entityClass»::class, mappedBy: '«sourceName»'«additionalOptions(false)»«outgoingMappingAdditions»)]
+        «ENDIF»
+        «joinDetails(true)»
+        «IF null !== orderBy && !orderBy.empty»
+            #[ORM\OrderBy([«orderByDetails(orderBy)»])]
+        «ENDIF»
         «IF !nullable»
             «val aliasName = getRelationAliasName(true).toFirstLower»
             #[Assert\NotNull(message: 'Choosing at least one of the «aliasName.formatForDisplay» is required.')]
@@ -276,17 +257,13 @@ class Association {
     def private dispatch outgoing(ManyToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
-         *
-         * @ORM\ManyToMany(
-         *     targetEntity=«entityClass»::class«IF bidirectional»,
-         *     inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»
-         * )
-        «joinDetails(true)»
-         «IF null !== orderBy && !orderBy.empty»
-          * @ORM\OrderBy({«orderByDetails(orderBy)»})
-         «ENDIF»
          * @var Collection<int, «entityClass»>
          */
+        #[ORM\ManyToMany(targetEntity: «entityClass»::class«IF bidirectional», inversedBy: '«sourceName»'«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)]
+        «joinDetails(true)»
+        «IF null !== orderBy && !orderBy.empty»
+            #[ORM\OrderBy([«orderByDetails(orderBy)»])]
+        «ENDIF»
         «IF !nullable»
             «val aliasName = getRelationAliasName(true).toFirstLower»
             #[Assert\NotNull(message: 'Choosing at least one of the «aliasName.formatForDisplay» is required.')]
@@ -307,12 +284,13 @@ class Association {
         val joinColumnsForeign = { if (useTarget) getTargetFields else getSourceFields }
         val foreignTableName = fullJoinTableName(useTarget, joinedEntityForeign)
         if (it instanceof OneToOneRelationship && !bidirectional) {
-            ''' * «joinColumn(it, joinColumnsForeign.head, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget)»'''
+            '''«joinColumn(it, joinColumnsForeign.head, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget, false)»'''
         } else if (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal)
-           && !unique && nullable && onDelete.empty) ''' * @ORM\JoinTable(name="«foreignTableName»")'''
-        else ''' * @ORM\JoinTable(name="«foreignTableName»",
+           && !unique && nullable && onDelete.empty) '''#[ORM\JoinTable(name: '«foreignTableName»')]'''
+        else '''
+#[ORM\JoinTable(name: '«foreignTableName»')
 «joinTableDetails(useTarget)»
- * )'''
+'''
     }
 
     def private joinTableDetails(JoinRelationship it, Boolean useTarget) '''
@@ -323,17 +301,17 @@ class Association {
         «IF (joinColumnsForeign.size > 1)»«joinColumnsMultiple(useTarget, joinedEntityLocal, joinColumnsLocal)»
         «ELSE»«joinColumnsSingle(useTarget, joinedEntityLocal, joinColumnsLocal)»
         «ENDIF»
-        «IF (joinColumnsForeign.size > 1)» *      inverseJoinColumns={«FOR joinColumnForeign : joinColumnsForeign SEPARATOR ', '»«joinColumn(joinColumnForeign, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget)»«ENDFOR»}
-        «ELSE» *      inverseJoinColumns={«joinColumn(joinColumnsForeign.head, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget)»}
+        «IF (joinColumnsForeign.size > 1)»«FOR joinColumnForeign : joinColumnsForeign SEPARATOR ', '»«joinColumn(joinColumnForeign, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget, true)»«ENDFOR»
+        «ELSE»«joinColumn(joinColumnsForeign.head, joinedEntityForeign.getPrimaryKey.name.formatForDB, useTarget, true)»
         «ENDIF»
     '''
 
-    def private joinColumnsMultiple(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«FOR joinColumnLocal : joinColumnsLocal SEPARATOR ', '»«joinColumn(joinColumnLocal, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget)»«ENDFOR»},'''
+    def private joinColumnsMultiple(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) '''«FOR joinColumnLocal : joinColumnsLocal»«joinColumn(joinColumnLocal, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget, false)»«ENDFOR»'''
 
-    def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget)»},'''
+    def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) '''«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget, false)»'''
 
-    def private joinColumn(JoinRelationship it, String columnName, String referencedColumnName, Boolean useTarget) '''
-        @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF !onDelete.empty», onDelete="«onDelete»"«ENDIF»)'''
+    def private joinColumn(JoinRelationship it, String columnName, String referencedColumnName, Boolean useTarget, Boolean inverse) '''
+        #[ORM\«IF inverse»Inverse«ENDIF»JoinColumn(name: '«joinColumnName(columnName, useTarget)»', referencedColumnName: '«referencedColumnName»'«IF unique», unique: true«ENDIF»«IF !nullable», nullable: false«ENDIF»«IF !onDelete.empty», onDelete: '«onDelete»'«ENDIF»)]'''
 
     def private joinColumnName(JoinRelationship it, String columnName, Boolean useTarget) {
         switch it {
@@ -347,28 +325,28 @@ class Association {
     def private cascadeOptions(JoinRelationship it, Boolean useReverse) {
         val cascadeProperty = { if (useReverse) cascadeReverse else cascade }
         if (cascadeProperty == CascadeType.NONE) ''
-        else ''', cascade={«cascadeOptionsImpl(useReverse)»}'''
+        else ''', cascade: [«cascadeOptionsImpl(useReverse)»]'''
     }
 
-    def private fetchTypeTag(JoinRelationship it) { if (fetchType != RelationFetchType.LAZY) ''', fetch="«fetchType.literal»"''' }
+    def private fetchTypeTag(JoinRelationship it) { if (fetchType != RelationFetchType.LAZY) ''', fetch: '«fetchType.literal»'«''»''' }
 
     def private cascadeOptionsImpl(JoinRelationship it, Boolean useReverse) {
         val cascadeProperty = { if (useReverse) cascadeReverse else cascade }
-        if (cascadeProperty == CascadeType.PERSIST) '"persist"'
-        else if (cascadeProperty == CascadeType.REMOVE) '"remove"'
-        else if (cascadeProperty == CascadeType.MERGE) '"merge"'
-        else if (cascadeProperty == CascadeType.DETACH) '"detach"'
-        else if (cascadeProperty == CascadeType.PERSIST_REMOVE) '"persist", "remove"'
-        else if (cascadeProperty == CascadeType.PERSIST_MERGE) '"persist", "merge"'
-        else if (cascadeProperty == CascadeType.PERSIST_DETACH) '"persist", "detach"'
-        else if (cascadeProperty == CascadeType.REMOVE_MERGE) '"remove", "merge"'
-        else if (cascadeProperty == CascadeType.REMOVE_DETACH) '"remove", "detach"'
-        else if (cascadeProperty == CascadeType.MERGE_DETACH) '"merge", "detach"'
-        else if (cascadeProperty == CascadeType.PERSIST_REMOVE_MERGE) '"persist", "remove", "merge"'
-        else if (cascadeProperty == CascadeType.PERSIST_REMOVE_DETACH) '"persist", "remove", "detach"'
-        else if (cascadeProperty == CascadeType.PERSIST_MERGE_DETACH) '"persist", "merge", "detach"'
-        else if (cascadeProperty == CascadeType.REMOVE_MERGE_DETACH) '"remove", "merge", "detach"'
-        else if (cascadeProperty == CascadeType.ALL) '"all"'
+        if (cascadeProperty == CascadeType.PERSIST) '\'persist\''
+        else if (cascadeProperty == CascadeType.REMOVE) '\'remove\''
+        else if (cascadeProperty == CascadeType.MERGE) '\'merge\''
+        else if (cascadeProperty == CascadeType.DETACH) '\'detach\''
+        else if (cascadeProperty == CascadeType.PERSIST_REMOVE) '\'persist\', \'remove\''
+        else if (cascadeProperty == CascadeType.PERSIST_MERGE) '\'persist\', \'merge\''
+        else if (cascadeProperty == CascadeType.PERSIST_DETACH) '\'persist\', \'detach\''
+        else if (cascadeProperty == CascadeType.REMOVE_MERGE) '\'remove\', \'merge\''
+        else if (cascadeProperty == CascadeType.REMOVE_DETACH) '\'remove\', \'detach\''
+        else if (cascadeProperty == CascadeType.MERGE_DETACH) '\'merge\', \'detach\''
+        else if (cascadeProperty == CascadeType.PERSIST_REMOVE_MERGE) '\'persist\', \'remove\', \'merge\''
+        else if (cascadeProperty == CascadeType.PERSIST_REMOVE_DETACH) '\'persist\', \'remove\', \'detach\''
+        else if (cascadeProperty == CascadeType.PERSIST_MERGE_DETACH) '\'persist\', \'merge\', \'detach\''
+        else if (cascadeProperty == CascadeType.REMOVE_MERGE_DETACH) '\'remove\', \'merge\', \'detach\''
+        else if (cascadeProperty == CascadeType.ALL) '\'all\''
     }
 
     def private orderByDetails(String orderBy) {
