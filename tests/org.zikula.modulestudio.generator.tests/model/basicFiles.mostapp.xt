@@ -9,8 +9,8 @@ test which files are contained in the output
 XPECT files ---
     .gitignore
     composer.json
-    AcmeSimpleTestModule.php
-    Base/AbstractAcmeSimpleTestModule.php
+    AcmeSimpleTestBundle.php
+    Base/AbstractAcmeSimpleTestBundle.php
     !this/file/not.foo
     !also/NOT/this/file.html
 --- */
