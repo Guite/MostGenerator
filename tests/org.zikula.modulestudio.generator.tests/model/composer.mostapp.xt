@@ -8,7 +8,7 @@
 test generating composer.json
 XPECT generated file composer.json ---
 {
-    "name": "acme/simpletest-module",
+    "name": "acme/simpletest-bundle",
     "version": "1.0.0",
     "description": "Just a simple test application.",
     "type": "zikula-module",
