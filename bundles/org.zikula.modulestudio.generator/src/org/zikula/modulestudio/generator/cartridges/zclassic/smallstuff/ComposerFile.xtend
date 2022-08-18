@@ -37,7 +37,7 @@ class ComposerFile {
         "name": "«vendor.formatForDB»/«name.formatForDB»-bundle",
         "version": "«version»",
         "description": "«appDescription»",
-        "type": "zikula-module",
+        "type": "symfony-bundle",
         "license": "«licenseSPDX»",
         "authors": [
             {
