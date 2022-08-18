@@ -138,7 +138,7 @@ class Entities {
         «ENDIF»
         «IF isBase»
             «IF hasUserFieldsEntity»
-                use Zikula\UsersModule\Entity\UserEntity;
+                use Zikula\UsersBundle\Entity\UserEntity;
             «ENDIF»
             use «application.appNamespace»\Entity\EntityInterface;
             «IF hasListFieldsEntity»
@@ -199,7 +199,7 @@ class Entities {
             use «application.appNamespace»\Repository\«name.formatForCodeCapital»Repository;
         «ELSE»
             «IF hasUserFieldsEntity»
-                use Zikula\UsersModule\Entity\UserEntity;
+                use Zikula\UsersBundle\Entity\UserEntity;
             «ENDIF»
             «IF !isInheriting»
                 use «application.appNamespace»\Entity\EntityInterface;

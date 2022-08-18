@@ -47,13 +47,13 @@ class ControllerHelper {
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
         «IF hasViewActions»
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         «IF hasGeographical»
-            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF hasViewActions && hasUserFields»
-            use Zikula\UsersModule\Entity\UserEntity;
+            use Zikula\UsersBundle\Entity\UserEntity;
         «ENDIF»
         «IF hasViewActions»
             use «appNamespace»\Entity\EntityInterface;

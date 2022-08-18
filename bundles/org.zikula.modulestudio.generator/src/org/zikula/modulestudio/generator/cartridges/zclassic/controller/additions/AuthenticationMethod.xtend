@@ -30,11 +30,11 @@ class AuthenticationMethod {
         «ENDIF»
         use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        use Zikula\UsersModule\AuthenticationMethodInterface\«IF authenticationMethod == AuthMethodType.LOCAL»Non«ENDIF»ReEntrantAuthenticationMethodInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
+        use Zikula\UsersBundle\AuthenticationMethodInterface\«IF authenticationMethod == AuthMethodType.LOCAL»Non«ENDIF»ReEntrantAuthenticationMethodInterface;
         «IF authenticationMethod == AuthMethodType.LOCAL»
-            use Zikula\ZAuthModule\Form\Type\RegistrationType;
-            use Zikula\ZAuthModule\Form\Type\UnameLoginType;
+            use Zikula\ZAuthBundle\Form\Type\RegistrationType;
+            use Zikula\ZAuthBundle\Form\Type\UnameLoginType;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
 

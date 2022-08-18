@@ -38,18 +38,13 @@ class PermissionHelper {
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasLoggable»
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
-        use Zikula\GroupsModule\Entity\GroupEntity;
-        use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-        «IF !targets('4.0')»
-            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
-        «ENDIF»
-        use Zikula\UsersModule\Entity\UserEntity;
-        «IF targets('4.0')»
-            use Zikula\UsersModule\Repository\UserRepositoryInterface;
-        «ENDIF»
+        use Zikula\GroupsBundle\Entity\GroupEntity;
+        use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\UsersBundle\Entity\UserEntity;
+        use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         use «appNamespace»\Entity\EntityInterface;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;

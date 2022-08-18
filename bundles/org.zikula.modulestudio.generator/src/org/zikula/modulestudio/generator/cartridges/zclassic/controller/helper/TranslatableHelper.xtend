@@ -35,8 +35,8 @@ class TranslatableHelper {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
+        use Zikula\SettingsBundle\Api\ApiInterface\LocaleApiInterface;
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
 

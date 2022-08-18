@@ -82,7 +82,7 @@ class Plugins {
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         use «appNamespace»\Entity\EntityInterface;
         «IF hasTrees»
             use «appNamespace»\Entity\Factory\EntityFactory;

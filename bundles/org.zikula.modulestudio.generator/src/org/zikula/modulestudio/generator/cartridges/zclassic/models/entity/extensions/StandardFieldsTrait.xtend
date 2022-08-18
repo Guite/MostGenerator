@@ -32,7 +32,7 @@ class StandardFieldsTrait {
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Mapping\Annotation as Gedmo;
         use Symfony\Component\Validator\Constraints as Assert;
-        use Zikula\UsersModule\Entity\UserEntity;
+        use Zikula\UsersBundle\Entity\UserEntity;
 
         /**
          * «IF isLoggable»Loggable s«ELSE»S«ENDIF»tandard fields trait.

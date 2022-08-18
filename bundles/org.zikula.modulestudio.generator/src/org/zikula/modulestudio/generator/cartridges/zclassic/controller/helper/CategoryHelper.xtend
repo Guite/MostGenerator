@@ -25,9 +25,9 @@ class CategoryHelper {
         use Psr\Log\LoggerInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\CategoriesModule\Api\ApiInterface\CategoryPermissionApiInterface;
-        use Zikula\CategoriesModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\CategoryRegistryRepositoryInterface;
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\CategoriesBundle\Api\ApiInterface\CategoryPermissionApiInterface;
+        use Zikula\CategoriesBundle\Repository\CategoryRegistryRepositoryInterface;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\EntityInterface;
 
         /**

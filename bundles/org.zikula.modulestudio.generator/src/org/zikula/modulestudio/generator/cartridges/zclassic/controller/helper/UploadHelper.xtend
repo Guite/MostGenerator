@@ -43,8 +43,8 @@ class UploadHelper {
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\EntityInterface;
 
         /**

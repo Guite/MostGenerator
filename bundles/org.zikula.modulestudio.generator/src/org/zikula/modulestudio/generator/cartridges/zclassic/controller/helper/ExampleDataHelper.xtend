@@ -61,11 +61,11 @@ class ExampleDataHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
         «IF hasCategorisableEntities»
-            use Zikula\CategoriesModule\Entity\CategoryEntity;
+            use Zikula\CategoriesBundle\Entity\CategoryEntity;
         «ENDIF»
         «IF hasUserFields»
-            use Zikula\UsersModule\Constant as UsersConstant;
-            use Zikula\UsersModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\UserRepositoryInterface;
+            use Zikula\UsersBundle\Constant as UsersConstant;
+            use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         «FOR entity : getExampleEntities»

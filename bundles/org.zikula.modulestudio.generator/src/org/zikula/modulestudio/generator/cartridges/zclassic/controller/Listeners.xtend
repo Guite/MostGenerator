@@ -116,12 +116,12 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractInstallerListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\ExtensionsModule\Event\ExtensionPostCacheRebuildEvent;
-            use Zikula\ExtensionsModule\Event\ExtensionPostDisabledEvent;
-            use Zikula\ExtensionsModule\Event\ExtensionPostEnabledEvent;
-            use Zikula\ExtensionsModule\Event\ExtensionPostInstallEvent;
-            use Zikula\ExtensionsModule\Event\ExtensionPostRemoveEvent;
-            use Zikula\ExtensionsModule\Event\ExtensionPostUpgradeEvent;
+            use Zikula\ExtensionsBundle\Event\ExtensionPostCacheRebuildEvent;
+            use Zikula\ExtensionsBundle\Event\ExtensionPostDisabledEvent;
+            use Zikula\ExtensionsBundle\Event\ExtensionPostEnabledEvent;
+            use Zikula\ExtensionsBundle\Event\ExtensionPostInstallEvent;
+            use Zikula\ExtensionsBundle\Event\ExtensionPostRemoveEvent;
+            use Zikula\ExtensionsBundle\Event\ExtensionPostUpgradeEvent;
             «IF amountOfExampleRows > 0»
                 use «appNamespace»\Helper\ExampleDataHelper;
             «ENDIF»
@@ -178,8 +178,8 @@ class Listeners {
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\ExtensionsModule\Event\ConnectionsMenuEvent;
-            use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+            use Zikula\ExtensionsBundle\Event\ConnectionsMenuEvent;
+            use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
         «ENDIF»
 
         /**
@@ -227,9 +227,9 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\Event\ResponseEvent;
             use Symfony\Component\HttpKernel\KernelEvents;
-            use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
-            use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
-            use Zikula\ThemeModule\Engine\AssetFilter;
+            use Zikula\ThemeBundle\Bridge\Event\TwigPostRenderEvent;
+            use Zikula\ThemeBundle\Bridge\Event\TwigPreRenderEvent;
+            use Zikula\ThemeBundle\Engine\AssetFilter;
         «ENDIF»
 
         /**
@@ -252,9 +252,9 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserLoginListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\UsersModule\Event\UserPostLoginFailureEvent;
-            use Zikula\UsersModule\Event\UserPostLoginSuccessEvent;
-            use Zikula\UsersModule\Event\UserPreLoginSuccessEvent;
+            use Zikula\UsersBundle\Event\UserPostLoginFailureEvent;
+            use Zikula\UsersBundle\Event\UserPostLoginSuccessEvent;
+            use Zikula\UsersBundle\Event\UserPreLoginSuccessEvent;
         «ENDIF»
 
         /**
@@ -277,7 +277,7 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserLogoutListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\UsersModule\Event\UserPostLogoutSuccessEvent;
+            use Zikula\UsersBundle\Event\UserPostLogoutSuccessEvent;
         «ENDIF»
 
         /**
@@ -304,17 +304,17 @@ class Listeners {
             «ENDIF»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF hasUserVariables»
-                use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+                use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
             «ENDIF»
             «IF hasStandardFieldEntities || hasUserFields»
-                use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+                use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
             «ENDIF»
             «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
-                use Zikula\UsersModule\Constant as UsersConstant;
+                use Zikula\UsersBundle\Constant as UsersConstant;
             «ENDIF»
-            use Zikula\UsersModule\Event\ActiveUserPostCreatedEvent;
-            use Zikula\UsersModule\Event\ActiveUserPostDeletedEvent;
-            use Zikula\UsersModule\Event\ActiveUserPostUpdatedEvent;
+            use Zikula\UsersBundle\Event\ActiveUserPostCreatedEvent;
+            use Zikula\UsersBundle\Event\ActiveUserPostDeletedEvent;
+            use Zikula\UsersBundle\Event\ActiveUserPostUpdatedEvent;
             «IF hasStandardFieldEntities || hasUserFields»
                 use «appNamespace»\Entity\Factory\EntityFactory;
             «ENDIF»
@@ -343,12 +343,12 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractUserRegistrationListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\UsersModule\Event\ActiveUserPreCreatedEvent;
-            use Zikula\UsersModule\Event\RegistrationPostApprovedEvent;
-            use Zikula\UsersModule\Event\RegistrationPostCreatedEvent;
-            use Zikula\UsersModule\Event\RegistrationPostDeletedEvent;
-            use Zikula\UsersModule\Event\RegistrationPostSuccessEvent;
-            use Zikula\UsersModule\Event\RegistrationPostUpdatedEvent;
+            use Zikula\UsersBundle\Event\ActiveUserPreCreatedEvent;
+            use Zikula\UsersBundle\Event\RegistrationPostApprovedEvent;
+            use Zikula\UsersBundle\Event\RegistrationPostCreatedEvent;
+            use Zikula\UsersBundle\Event\RegistrationPostDeletedEvent;
+            use Zikula\UsersBundle\Event\RegistrationPostSuccessEvent;
+            use Zikula\UsersBundle\Event\RegistrationPostUpdatedEvent;
         «ENDIF»
 
         /**
@@ -371,14 +371,14 @@ class Listeners {
             use «appNamespace»\Listener\Base\AbstractGroupListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\GroupsModule\Event\GroupApplicationPostCreatedEvent;
-            use Zikula\GroupsModule\Event\GroupApplicationPostProcessedEvent;
-            use Zikula\GroupsModule\Event\GroupPostCreatedEvent;
-            use Zikula\GroupsModule\Event\GroupPostDeletedEvent;
-            use Zikula\GroupsModule\Event\GroupPostUpdatedEvent;
-            use Zikula\GroupsModule\Event\GroupPostUserAddedEvent;
-            use Zikula\GroupsModule\Event\GroupPostUserRemovedEvent;
-            use Zikula\GroupsModule\Event\GroupPreDeletedEvent;
+            use Zikula\GroupsBundle\Event\GroupApplicationPostCreatedEvent;
+            use Zikula\GroupsBundle\Event\GroupApplicationPostProcessedEvent;
+            use Zikula\GroupsBundle\Event\GroupPostCreatedEvent;
+            use Zikula\GroupsBundle\Event\GroupPostDeletedEvent;
+            use Zikula\GroupsBundle\Event\GroupPostUpdatedEvent;
+            use Zikula\GroupsBundle\Event\GroupPostUserAddedEvent;
+            use Zikula\GroupsBundle\Event\GroupPostUserRemovedEvent;
+            use Zikula\GroupsBundle\Event\GroupPreDeletedEvent;
         «ENDIF»
 
         /**

@@ -23,7 +23,7 @@ class ConfigController {
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Zikula\Bundle\CoreBundle\Controller\AbstractController;
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\AppSettings;
         use «appNamespace»\Form\Type\ConfigType;
         use «appNamespace»\Helper\PermissionHelper;
@@ -110,8 +110,8 @@ class ConfigController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
-        use Zikula\ThemeModule\Engine\Annotation\Theme;
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\ThemeBundle\Engine\Annotation\Theme;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\AppSettings;
         use «appNamespace»\Controller\Base\AbstractConfigController;
         use «appNamespace»\Helper\PermissionHelper;

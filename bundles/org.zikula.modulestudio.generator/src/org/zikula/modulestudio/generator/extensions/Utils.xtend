@@ -80,7 +80,7 @@ class Utils {
      * @return String The formatted name
      */
     def String appName(Application it) {
-        vendor.formatForCodeCapital + name.formatForCodeCapital + 'Module'
+        vendor.formatForCodeCapital + name.formatForCodeCapital + 'Bundle'
     }
 
     /**
@@ -91,18 +91,7 @@ class Utils {
      * @return String The formatted namespace
      */
     def appNamespace(Application it) {
-        vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module'
-    }
-
-    /**
-     * Returns prefix for service names for this application.
-     *
-     * @param it The {@link Application} instance
-     *
-     * @return String The formatted service prefix
-     */
-    def String appService(Application it) {
-        vendor.formatForDB + '_' + name.formatForDB + '_module'
+        vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Bundle'
     }
 
     /**

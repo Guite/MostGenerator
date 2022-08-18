@@ -393,7 +393,7 @@ class Repository {
         use Psr\Log\LoggerInterface;
         use Zikula\Bundle\CoreBundle\Doctrine\Paginator;
         use Zikula\Bundle\CoreBundle\Doctrine\PaginatorInterface;
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «entityClassName('', false)»;
         use «app.appNamespace»\Helper\CollectionFilterHelper;
 

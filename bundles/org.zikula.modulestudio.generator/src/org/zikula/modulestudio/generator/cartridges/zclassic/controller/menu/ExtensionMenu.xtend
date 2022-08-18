@@ -25,11 +25,11 @@ class ExtensionMenu {
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
         «IF generateAccountApi»
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
-        use Zikula\MenuModule\ExtensionMenu\ExtensionMenuInterface;
+        use Zikula\MenuBundle\ExtensionMenu\ExtensionMenuInterface;
         «IF generateAccountApi»
-            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
         use «appNamespace»\Helper\PermissionHelper;

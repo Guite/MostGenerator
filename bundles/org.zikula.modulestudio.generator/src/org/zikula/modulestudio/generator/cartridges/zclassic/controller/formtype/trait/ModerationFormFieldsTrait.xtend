@@ -24,7 +24,7 @@ class ModerationFormFieldsTrait {
 
         use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
         use Symfony\Component\Form\FormBuilderInterface;
-        use Zikula\UsersModule\Form\Type\UserLiveSearchType;
+        use Zikula\UsersBundle\Form\Type\UserLiveSearchType;
 
         /**
          * Moderation form fields trait.

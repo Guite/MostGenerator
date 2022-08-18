@@ -34,9 +34,9 @@ class AjaxController {
             «IF hasTrees»
                 use Symfony\Component\Routing\RouterInterface;
             «ENDIF»
-            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
             «IF hasTrees»
-                use Zikula\UsersModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\UserRepositoryInterface;
+                use Zikula\UsersBundle\Repository\UserRepositoryInterface;
             «ENDIF»
         «ENDIF»
     '''

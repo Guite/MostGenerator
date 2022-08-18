@@ -19,7 +19,7 @@ class ModuleFile {
     '''
 
     def private moduleBaseImpl(Application it) '''
-        use Zikula\ExtensionsModule\AbstractModule;
+        use Zikula\ExtensionsBundle\AbstractModule;
 
         /**
          * Bundle base class.

@@ -37,7 +37,7 @@ class ImageHelper {
         «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
 
         /**
          * Helper base class for image methods.

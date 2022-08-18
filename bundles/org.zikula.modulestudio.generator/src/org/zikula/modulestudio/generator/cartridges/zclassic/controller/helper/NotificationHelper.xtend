@@ -37,17 +37,12 @@ class NotificationHelper {
         use Twig\Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        use Zikula\GroupsModule\Constant as GroupsConstant;
-        use Zikula\GroupsModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\GroupRepositoryInterface;
-        use Zikula\UsersModule\Constant as UsersConstant;
-        «IF !targets('4.0')»
-            use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
-        «ENDIF»
-        use Zikula\UsersModule\Entity\UserEntity;
-        «IF targets('4.0')»
-            use Zikula\UsersModule\Repository\UserRepositoryInterface;
-        «ENDIF»
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
+        use Zikula\GroupsBundle\Constant as GroupsConstant;
+        use Zikula\GroupsBundle\Repository\GroupRepositoryInterface;
+        use Zikula\UsersBundle\Constant as UsersConstant;
+        use Zikula\UsersBundle\Entity\UserEntity;
+        use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;

@@ -89,13 +89,13 @@ class QuickNavigationType {
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
         «IF categorisable»
-            use Zikula\CategoriesModule\Form\Type\CategoriesType;
+            use Zikula\CategoriesBundle\Form\Type\CategoriesType;
         «ENDIF»
         «IF hasLocaleFieldsEntity»
-            use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
+            use Zikula\SettingsBundle\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
         «IF !fields.filter(UserField).empty»
-            use Zikula\UsersModule\Entity\UserEntity;
+            use Zikula\UsersBundle\Entity\UserEntity;
         «ENDIF»
         «IF !incomingRelations.empty || !outgoingRelations.empty»
             use «app.appNamespace»\Entity\Factory\EntityFactory;

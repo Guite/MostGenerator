@@ -94,7 +94,7 @@ class ExternalView {
                 <p class="«app.appName.toLowerCase»-external-description">
                     «displayDescription('', '<br />')»
                     «IF categorisable»
-                        {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                        {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             «displayCategories»
                         {% endif %}
                     «ENDIF»
@@ -143,7 +143,7 @@ class ExternalView {
         «ENDIF»
         «displayDescription('<dd>', '</dd>')»
         «IF categorisable»
-            {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+            {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                 <dd>
                     «displayCategories»
                 </dd>
@@ -173,7 +173,7 @@ class ExternalView {
                         {{ form_row(finderForm.language) }}
                     {% endif %}
                     «IF categorisable»
-                        {% if finderForm.categories is defined and featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                        {% if finderForm.categories is defined and featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             {{ form_row(finderForm.categories) }}
                         {% endif %}
                     «ENDIF»
@@ -328,7 +328,7 @@ class ExternalView {
             {#
             <div class="«app.appName.toLowerCase»-finderform">
                 <fieldset>
-                    {{ render(controller('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Controller\\«name.formatForCodeCapital»Controller::editAction')) }}
+                    {{ render(controller('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Bundle\\Controller\\«name.formatForCodeCapital»Controller::editAction')) }}
                 </fieldset>
             </div>
             #}

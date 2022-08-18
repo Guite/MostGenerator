@@ -36,7 +36,7 @@ class WorkflowHelper {
         «IF needsApproval»
             use Translation\Extractor\Annotation\Desc;
         «ENDIF»
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\ListEntriesHelper;

@@ -37,9 +37,9 @@ class ViewHelper {
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
         use Zikula\Bundle\CoreBundle\Response\PlainResponse;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «IF generatePdfSupport»
-            use Zikula\ThemeModule\Engine\ParameterBag;
+            use Zikula\ThemeBundle\Engine\ParameterBag;
         «ENDIF»
         use «appNamespace»\Helper\ControllerHelper;
         use «appNamespace»\Helper\PermissionHelper;

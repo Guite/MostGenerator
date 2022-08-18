@@ -42,16 +42,16 @@ class Installer {
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
         «IF hasCategorisableEntities»
-            use Zikula\CategoriesModule\Api\CategoryPermissionApi;
-            use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
-            use Zikula\CategoriesModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\CategoryRegistryRepositoryInterface;
-            use Zikula\CategoriesModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\CategoryRepositoryInterface;
+            use Zikula\CategoriesBundle\Api\CategoryPermissionApi;
+            use Zikula\CategoriesBundle\Entity\CategoryRegistryEntity;
+            use Zikula\CategoriesBundle\Repository\CategoryRegistryRepositoryInterface;
+            use Zikula\CategoriesBundle\Repository\CategoryRepositoryInterface;
         «ENDIF»
-        use Zikula\ExtensionsModule\AbstractExtension;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-        use Zikula\ExtensionsModule\Installer\AbstractExtensionInstaller;
+        use Zikula\ExtensionsBundle\AbstractExtension;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
+        use Zikula\ExtensionsBundle\Installer\AbstractExtensionInstaller;
         «IF hasUploads || hasCategorisableEntities»
-            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «funcListEntityClasses('import')»
 

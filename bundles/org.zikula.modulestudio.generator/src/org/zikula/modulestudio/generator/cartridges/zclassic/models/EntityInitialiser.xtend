@@ -42,7 +42,7 @@ class EntityInitialiser {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «IF hasGeographical»
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;

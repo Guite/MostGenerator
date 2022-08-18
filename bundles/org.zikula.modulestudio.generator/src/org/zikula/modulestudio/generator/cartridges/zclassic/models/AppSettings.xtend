@@ -40,17 +40,17 @@ class AppSettings {
             use Symfony\Component\HttpFoundation\File\File;
         «ENDIF»
         use Symfony\Component\Validator\Constraints as Assert;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «IF hasUserVariables»
-            use Zikula\UsersModule\Constant as UsersConstant;
-            use Zikula\UsersModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\UserRepositoryInterface;
+            use Zikula\UsersBundle\Constant as UsersConstant;
+            use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         «ENDIF»
         «IF hasUserGroupSelectors»
-            use Zikula\GroupsModule\Constant as GroupsConstant;
-            use Zikula\GroupsModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\GroupRepositoryInterface;
+            use Zikula\GroupsBundle\Constant as GroupsConstant;
+            use Zikula\GroupsBundle\Repository\GroupRepositoryInterface;
         «ENDIF»
         «IF hasUserVariables»
-            use Zikula\UsersModule\Entity\UserEntity;
+            use Zikula\UsersBundle\Entity\UserEntity;
         «ENDIF»
         «IF hasLoggable»
             use «appNamespace»\Entity\Factory\EntityFactory;

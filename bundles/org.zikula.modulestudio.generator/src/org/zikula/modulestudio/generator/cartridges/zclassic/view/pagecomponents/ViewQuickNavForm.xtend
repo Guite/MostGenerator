@@ -58,7 +58,7 @@ class ViewQuickNavForm {
     def private formContent(Entity it) '''
         <h3>{% trans %}Quick navigation{% endtrans %}</h3>
         «IF categorisable»
-            {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+            {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
         «ENDIF»
         «formFields»
         {{ form_widget(quickNavForm.updateview) }}

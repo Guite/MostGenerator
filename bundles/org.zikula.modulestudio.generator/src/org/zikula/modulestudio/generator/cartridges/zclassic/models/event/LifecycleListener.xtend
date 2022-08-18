@@ -44,11 +44,11 @@ class LifecycleListener {
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
         «IF hasLoggable»
-            use Zikula\ExtensionsModule\Api\VariableApi;
+            use Zikula\ExtensionsBundle\Api\VariableApi;
         «ENDIF»
-        use Zikula\UsersModule\Api\CurrentUserApi;
+        use Zikula\UsersBundle\Api\CurrentUserApi;
         «IF hasLoggable»
-            use Zikula\UsersModule\Constant as UsersConstant;
+            use Zikula\UsersBundle\Constant as UsersConstant;
         «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         «IF hasLoggable»
@@ -291,7 +291,7 @@ class LifecycleListener {
              */
             protected function createFilterEvent(EntityInterface $entity, string $classSuffix = '')
             {
-                $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\' . ucfirst($entity->get_objectType()) . $classSuffix . 'Event';
+                $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\Event\\' . ucfirst($entity->get_objectType()) . $classSuffix . 'Event';
 
                 return new $filterEventClass($entity);
             }

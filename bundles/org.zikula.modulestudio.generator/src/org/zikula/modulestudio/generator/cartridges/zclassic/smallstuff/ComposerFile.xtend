@@ -34,7 +34,7 @@ class ComposerFile {
     '''
 
     def private composerContent(Application it) '''
-        "name": "«vendor.formatForDB»/«name.formatForDB»-module",
+        "name": "«vendor.formatForDB»/«name.formatForDB»-bundle",
         "version": "«version»",
         "description": "«appDescription»",
         "type": "zikula-module",
@@ -48,7 +48,7 @@ class ComposerFile {
             }
         ],
         "autoload": {
-            "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\": "" }
+            "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\": "" }
         },
         "require": {
             «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
@@ -81,7 +81,7 @@ class ComposerFile {
         "extra": {
             "zikula": {
                 "core-compatibility": ">=«targetSemVer(true)» <«IF targets('4.0')»5«ELSE»4«ENDIF».0.0",
-                "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«appName»",
+                "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\«appName»",
                 "displayname": "«name.formatForDisplayCapital»",
                 "url": "«name.formatForDB»",
                 "icon": "fas fa-database",
@@ -118,7 +118,7 @@ class ComposerFile {
             "categorizable": {
                 "entities": [
                     «FOR entity : getCategorisableEntities»
-                        "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
+                        "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
                     «ENDFOR»
                 ]
             }«IF null !== capabilities && !capabilities.empty»,«ENDIF»

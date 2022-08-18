@@ -31,11 +31,11 @@ class MenuBuilder {
         use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasViewActions»
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «IF (!getAllEntities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
-            use Zikula\UsersModule\Constant as UsersConstant;
+            use Zikula\UsersBundle\Constant as UsersConstant;
         «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;

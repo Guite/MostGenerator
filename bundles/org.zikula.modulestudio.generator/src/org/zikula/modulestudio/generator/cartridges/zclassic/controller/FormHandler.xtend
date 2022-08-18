@@ -152,18 +152,18 @@ class FormHandler {
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         «IF needsApproval»
-            use Zikula\GroupsModule\Constant as GroupsConstant;
-            use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
+            use Zikula\GroupsBundle\Constant as GroupsConstant;
+            use Zikula\GroupsBundle\Repository\GroupApplicationRepositoryInterface;
         «ENDIF»
-        use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «IF needsApproval»
-            use Zikula\UsersModule\Constant as UsersConstant;
+            use Zikula\UsersBundle\Constant as UsersConstant;
         «ENDIF»
         «IF hasNonNullableUserFields»
-            use Zikula\UsersModule\«IF targets('4.0')»Repository«ELSE»Entity\RepositoryInterface«ENDIF»\UserRepositoryInterface;
+            use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -270,7 +270,7 @@ class FormHandler {
                 «ENDIF»
                 protected CurrentUserApiInterface $currentUserApi,
                 «IF needsApproval»
-                    protected GroupApplicationRepository $groupApplicationRepository,
+                    protected GroupApplicationRepositoryInterface $groupApplicationRepository,
                 «ENDIF»
                 «IF hasNonNullableUserFields»
                     protected UserRepositoryInterface $userRepository,
@@ -963,7 +963,7 @@ class FormHandler {
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         «IF ownerPermission || !fields.filter(UserField).filter[!nullable].empty»
-            use Zikula\UsersModule\Constant as UsersConstant;
+            use Zikula\UsersBundle\Constant as UsersConstant;
         «ENDIF»
         use «entityClassName('', false)»;
         «IF ownerPermission»

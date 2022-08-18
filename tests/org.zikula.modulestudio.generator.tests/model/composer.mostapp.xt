@@ -22,7 +22,7 @@ XPECT generated file composer.json ---
         }
     ],
     "autoload": {
-        "psr-4": { "Acme\\SimpleTestModule\\": "" }
+        "psr-4": { "Acme\\SimpleTestBundle\\": "" }
     },
     "require": {
         "php": "^8.1"
@@ -32,7 +32,7 @@ XPECT generated file composer.json ---
     "extra": {
         "zikula": {
             "core-compatibility": ">=3.0.4 <4.0.0",
-            "class": "Acme\\SimpleTestModule\\AcmeSimpleTestModule",
+            "class": "Acme\\SimpleTestBundle\\AcmeSimpleTestModule",
             "displayname": "Simple test",
             "url": "simpletest",
             "icon": "fas fa-database",

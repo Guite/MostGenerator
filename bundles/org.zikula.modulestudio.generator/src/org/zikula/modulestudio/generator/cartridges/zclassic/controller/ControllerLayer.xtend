@@ -167,10 +167,10 @@ class ControllerLayer {
             use Zikula\Bundle\CoreBundle\Response\PlainResponse;
         «ENDIF»
         «IF hasViewAction || hasDeleteAction»
-            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF ownerPermission && hasDeleteAction»
-            use Zikula\UsersModule\Constant\UsersConstant;
+            use Zikula\UsersBundle\Constant\UsersConstant;
         «ENDIF»
         «commonAppImports»
 
@@ -192,9 +192,9 @@ class ControllerLayer {
         «IF hasViewAction»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
-        use Zikula\ThemeModule\Engine\Annotation\Theme;
+        use Zikula\ThemeBundle\Engine\Annotation\Theme;
         «IF hasViewAction || hasDeleteAction»
-            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «commonAppImports»
 

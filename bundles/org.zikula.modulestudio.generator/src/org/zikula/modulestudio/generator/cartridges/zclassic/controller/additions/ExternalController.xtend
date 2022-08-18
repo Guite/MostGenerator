@@ -30,8 +30,8 @@ class ExternalController {
 
     def private commonSystemImports(Application it) '''
         use Symfony\Component\Routing\RouterInterface;
-        use Zikula\ThemeModule\Engine\Asset;
-        use Zikula\ThemeModule\Engine\AssetBag;
+        use Zikula\ThemeBundle\Engine\Asset;
+        use Zikula\ThemeBundle\Engine\AssetBag;
     '''
 
     def private commonAppImports(Application it) '''

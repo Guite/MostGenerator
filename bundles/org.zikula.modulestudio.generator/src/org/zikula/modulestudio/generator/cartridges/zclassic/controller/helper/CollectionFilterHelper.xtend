@@ -43,19 +43,14 @@ class CollectionFilterHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «IF hasStandardFieldEntities»
-            use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
-            use Zikula\UsersModule\Constant as UsersConstant;
+            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
+            use Zikula\UsersBundle\Constant as UsersConstant;
         «ENDIF»
         «IF hasUserFields»
-            «IF !targets('4.0')»
-                use Zikula\UsersModule\Entity\RepositoryInterface\UserRepositoryInterface;
-            «ENDIF»
-            use Zikula\UsersModule\Entity\UserEntity;
-            «IF targets('4.0')»
-                use Zikula\UsersModule\Repository\UserRepositoryInterface;
-            «ENDIF»
+            use Zikula\UsersBundle\Entity\UserEntity;
+            use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         «ENDIF»
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;

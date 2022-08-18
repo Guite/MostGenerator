@@ -155,16 +155,16 @@ class SharedFormTypeFields {
             use Zikula\Bundle\FormExtensionBundle\Form\Type\IconType;
         «ENDIF»
         «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).categorisable»
-            use Zikula\CategoriesModule\Form\Type\CategoriesType;
+            use Zikula\CategoriesBundle\Form\Type\CategoriesType;
         «ENDIF»
         «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).hasTranslatableFields»
-            use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         «IF !fields.filter(IntegerField).filter[isUserGroupSelector].empty»
-            use Zikula\GroupsModule\Entity\GroupEntity;
+            use Zikula\GroupsBundle\Entity\GroupEntity;
         «ENDIF»
         «IF (null !== dataObject && dataObject.hasLocaleFieldsEntity) || (null === dataObject && !fields.filter(StringField).filter[role == StringRole.LOCALE].empty)»
-            use Zikula\SettingsModule\Api\ApiInterface\LocaleApiInterface;
+            use Zikula\SettingsBundle\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
         «IF null !== dataObject»
             use «app.appNamespace»\Entity\Factory\EntityFactory;
@@ -185,7 +185,7 @@ class SharedFormTypeFields {
             use «app.appNamespace»\Form\Type\Field\UploadType;
         «ENDIF»
         «IF !fields.filter(UserField).empty»
-            use Zikula\UsersModule\Form\Type\UserLiveSearchType;
+            use Zikula\UsersBundle\Form\Type\UserLiveSearchType;
         «ENDIF»
     '''
 

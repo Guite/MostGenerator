@@ -53,9 +53,9 @@ class FinderType {
         use Translation\Extractor\Annotation\Ignore;
         use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «IF categorisable»
-            use Zikula\CategoriesModule\Form\Type\CategoriesType;
+            use Zikula\CategoriesBundle\Form\Type\CategoriesType;
         «ENDIF»
-        use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «IF needsFeatureActivationHelperEntity»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»

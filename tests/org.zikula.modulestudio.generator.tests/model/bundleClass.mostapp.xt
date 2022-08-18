@@ -5,9 +5,9 @@
 /* XPECT_SETUP org.zikula.modulestudio.generator.tests.MostGeneratorTest END_SETUP */
 
 /*
-test generating module class AcmeSimpleTestModule.php
-XPECT generated file AcmeSimpleTestModule.php ---
--- AcmeSimpleTestModule.php --
+test generating bundle class AcmeSimpleTestBundle.php
+XPECT generated file AcmeSimpleTestBundle.php ---
+-- AcmeSimpleTestBundle.php --
   <?php
   /\**
    * SimpleTest.
@@ -24,20 +24,20 @@ XPECT generated file AcmeSimpleTestModule.php ---
   
   declare(strict_types=1);
   
-  namespace Acme\SimpleTestModule;
+  namespace Acme\SimpleTestBundle;
   
-  use Acme\SimpleTestModule\Base\AbstractAcmeSimpleTestModule;
+  use Acme\SimpleTestBundle\Base\AbstractAcmeSimpleTestBundle;
   
   /\**
-   * Module implementation class.
+   * Bundle implementation class.
    *\/
-  class AcmeSimpleTestModule extends AbstractAcmeSimpleTestModule
+  class AcmeSimpleTestBundle extends AbstractAcmeSimpleTestBundle
   {
       // custom enhancements can go here
   }
   
 -- / --
--- Base/AbstractAcmeSimpleTestModule.php --
+-- Base/AbstractAcmeSimpleTestBundle.php --
   <?php
   /\**
    * SimpleTest.
@@ -54,14 +54,14 @@ XPECT generated file AcmeSimpleTestModule.php ---
   
   declare(strict_types=1);
   
-  namespace Acme\SimpleTestModule\Base;
+  namespace Acme\SimpleTestBundle\Base;
   
-  use Zikula\ExtensionsModule\AbstractModule;
+  use Zikula\ExtensionsBundle\AbstractModule;
   
   /\**
-   * Module base class.
+   * Bundle base class.
    *\/
-  abstract class AbstractAcmeSimpleTestModule extends AbstractModule
+  abstract class AbstractAcmeSimpleTestBundle extends AbstractModule
   {
   }
   
