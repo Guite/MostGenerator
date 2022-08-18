@@ -50,12 +50,12 @@ class Section {
         «new Relations(fsa, app).generateIncludeStatement(it)»
         «IF categorisable»
             {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                {{ include('@«app.appName»/Helper/includeCategoriesEdit.html.twig', {obj: «name.formatForCode»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
+                {{ include('@«app.vendorAndName»/Helper/includeCategoriesEdit.html.twig', {obj: «name.formatForCode»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
         «IF standardFields»
             {% if mode != 'create' %}
-                {{ include('@«app.appName»/Helper/includeStandardFieldsEdit.html.twig', {obj: «name.formatForCode»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
+                {{ include('@«app.vendorAndName»/Helper/includeStandardFieldsEdit.html.twig', {obj: «name.formatForCode»«IF useGroupingTabs('edit')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
     '''

@@ -126,7 +126,7 @@ class Relations {
 
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean useTarget, String relationAliasName, String uniqueNameForJs) '''
         {{ include(
-            '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
+            '@«application.vendorAndName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
             {group: '«linkingEntity.name.formatForDB»', heading: '«getRelationAliasName(useTarget).formatForDisplayCapital»'|trans({}, '«ownEntity.name.formatForCode»'), alias: '«relationAliasName.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForCode»«IF linkingEntity.useGroupingTabs('edit')», tabs: true«ENDIF», displayMode: '«IF isEmbedded(!useTarget)»embedded«ELSEIF usesAutoCompletion(useTarget)»autocomplete«ELSE»choices«ENDIF»'}
         ) }}
     '''
@@ -185,7 +185,7 @@ class Relations {
 
     def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean includeEditing) {
         '''
-            '@«application.appName»/«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
+            '@«application.vendorAndName»/«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
     }
 
     def private component_ItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean includeEditing) '''

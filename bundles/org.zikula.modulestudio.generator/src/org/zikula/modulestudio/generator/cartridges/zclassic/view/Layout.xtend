@@ -66,7 +66,7 @@ class Layout {
         {{ pageSetVar('title', block('pageTitle') is defined ? block('pageTitle') : block('title')) }}
 
         «IF generateModerationPanel && needsApproval»
-            {{ include('@«appName»/Helper/includeModerationPanel.html.twig') }}
+            {{ include('@«vendorAndName»/Helper/includeModerationPanel.html.twig') }}
 
         «ENDIF»
         {{ showflashes() }}

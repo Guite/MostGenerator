@@ -24,7 +24,7 @@ class Index {
 
     def private indexView(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» index view #}
-        {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
+        {% extends routeArea == 'admin' ? '@«application.vendorAndName»/adminBase.html.twig' : '@«application.vendorAndName»/base.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block title '«nameMultiple.formatForDisplayCapital»'|trans %}
         {% block admin_page_icon 'home' %}

@@ -114,7 +114,7 @@ class Relations {
         {% endif %}
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
-                '@«application.appName»/«otherEntity.name.formatForCodeCapital»/includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
+                '@«application.vendorAndName»/«otherEntity.name.formatForCodeCapital»/includeDisplayItemList«getTargetMultiplicity(useTarget)».html.twig',
                 {item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName»}
             ) }}
         {% endif %}

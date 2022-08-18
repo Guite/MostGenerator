@@ -31,7 +31,7 @@ class ViewHierarchy {
 
     def private hierarchyView(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
-        {% extends routeArea == 'admin' ? '@«appName»/adminBase.html.twig' : '@«appName»/base.html.twig' %}
+        {% extends routeArea == 'admin' ? '@«application.vendorAndName»/adminBase.html.twig' : '@«application.vendorAndName»/base.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block title '«name.formatForDisplayCapital» hierarchy'|trans %}
         {% block admin_page_icon 'code-branch' %}
@@ -39,9 +39,9 @@ class ViewHierarchy {
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
                 «(new ViewPagesHelper).commonHeader(it)»
                 {% for rootId, treeNodes in trees %}
-                    {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', {rootId: rootId, items: treeNodes}) }}
+                    {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', {rootId: rootId, items: treeNodes}) }}
                 {% else %}
-                    {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', {rootId: 1, items: null}) }}
+                    {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', {rootId: 1, items: null}) }}
                 {% endfor %}
 
                 <br style="clear: left" />
@@ -51,7 +51,7 @@ class ViewHierarchy {
             {{ parent() }}
             {{ pageAddAsset('stylesheet', asset('jstree/dist/themes/default/style.min.css')) }}
             {{ pageAddAsset('javascript', asset('jstree/dist/jstree.min.js')) }}
-            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Tree.js')) }}
+            {{ pageAddAsset('javascript', zasset('@«application.vendorAndName»:js/«appName».Tree.js')) }}
         {% endblock %}
     '''
 

@@ -22,7 +22,7 @@ class Delete {
     def private deleteView(Entity it) '''
         «val app = application»
         {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
-        {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
+        {% extends routeArea == 'admin' ? '@«app.vendorAndName»/adminBase.html.twig' : '@«app.vendorAndName»/base.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block title 'Delete «name.formatForDisplay»'|trans %}
         {% block admin_page_icon 'trash-alt' %}
@@ -31,7 +31,7 @@ class Delete {
                 <p class="alert alert-warning">{% trans with {'%name%': «name.formatForCode»|«app.appName.formatForDB»_formattedTitle} %}Do you really want to delete this «name.formatForDisplay»: "%name%" ?{% endtrans %}</p>
 
                 {% form_theme deleteForm with [
-                    '@«app.appName»/Form/bootstrap_4.html.twig',
+                    '@«app.vendorAndName»/Form/bootstrap_4.html.twig',
                     '@ZikulaFormExtension/Form/form_div_layout.html.twig'
                 ] only %}
                 {{ form_start(deleteForm) }}

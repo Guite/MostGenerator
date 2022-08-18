@@ -215,6 +215,6 @@ class LoggableHistory {
             $templateParameters['diffValues'] = $diffValues;
         }
 
-        return $this->render('@«application.appName»/«name.formatForCode.toFirstUpper»/history.html.twig', $templateParameters);
+        return $this->render('@«application.vendorAndName»/«name.formatForCode.toFirstUpper»/history.html.twig', $templateParameters);
     '''
 }

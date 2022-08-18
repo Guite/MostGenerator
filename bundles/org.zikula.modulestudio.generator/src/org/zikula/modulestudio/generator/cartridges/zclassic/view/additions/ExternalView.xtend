@@ -82,7 +82,7 @@ class ExternalView {
 
                 {# you can embed the display template like this: #}
                 {#{ app.request.query.set('raw', 1) }}
-                {% set displayPage = include('@«app.appName»/«name.formatForDisplayCapital»/display.html.twig', {«name.formatForCode»: «name.formatForCode», routeArea: '', currentUrlObject: null}) %}
+                {% set displayPage = include('@«app.vendorAndName»/«name.formatForDisplayCapital»/display.html.twig', {«name.formatForCode»: «name.formatForCode», routeArea: '', currentUrlObject: null}) %}
                 {% set displayPage = displayPage|split('<body>') %}
                 {% set displayPage = displayPage[1]|split('</body>') %}
                 {{ displayPage[0]|raw }#}
@@ -155,14 +155,14 @@ class ExternalView {
     def private findTemplate(Entity it, Application app) '''
         {# purpose of this template: Display a popup selector of «nameMultiple.formatForDisplay» #}
         {% set useFinder = true %}
-        {% extends '@«app.appName»/raw.html.twig' %}
+        {% extends '@«app.vendorAndName»/raw.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block title 'Search and select «name.formatForDisplay»'|trans %}
         {% block content %}
             <div class="container">
                 «findTemplateObjectTypeSwitcher(app)»
                 {% form_theme finderForm with [
-                    '@«app.appName»/Form/bootstrap_4.html.twig',
+                    '@«app.vendorAndName»/Form/bootstrap_4.html.twig',
                     '@ZikulaFormExtension/Form/form_div_layout.html.twig'
                 ] only %}
                 {{ form_start(finderForm, {attr: {id: '«app.appName.toFirstLower»SelectorForm'}}) }}

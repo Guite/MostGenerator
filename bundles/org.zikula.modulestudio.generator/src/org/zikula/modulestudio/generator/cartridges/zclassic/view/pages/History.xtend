@@ -28,7 +28,7 @@ class History {
     def private historyView(Entity it) '''
         «val app = application»
         {# purpose of this template: «nameMultiple.formatForDisplay» change history view #}
-        {% extends routeArea == 'admin' ? '@«app.appName»/adminBase.html.twig' : '@«app.appName»/base.html.twig' %}
+        {% extends routeArea == 'admin' ? '@«app.vendorAndName»/adminBase.html.twig' : '@«app.vendorAndName»/base.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% macro outputSimpleValue(input) %}
             {{ input is «app.appName.toLowerCase»_instanceOf('DateTimeInterface') ? input|format_datetime('long', 'medium') : input|default('an empty value'|trans({}, 'messages')) }}

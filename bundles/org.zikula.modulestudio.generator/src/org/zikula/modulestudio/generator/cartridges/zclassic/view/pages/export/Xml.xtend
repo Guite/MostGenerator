@@ -54,7 +54,7 @@ class Xml {
         <?xml version="1.0" encoding="{{ pageGetVar('meta.charset')|default('utf-8') }}" ?>
         <«nameMultiple.formatForCode»>
         {% for «name.formatForCode» in items %}
-            {{ include('@«application.appName»/«name.formatForCodeCapital»/include.xml.twig') }}
+            {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/include.xml.twig') }}
         {% else %}
             <no«name.formatForCodeCapital» />
         {% endfor %}
@@ -65,7 +65,7 @@ class Xml {
         {# purpose of this template: «nameMultiple.formatForDisplay» display xml view #}
         {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
-        {{ include('@«application.appName»/«name.formatForCodeCapital»/include.xml.twig') }}
+        {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/include.xml.twig') }}
     '''
 
     def private xmlInclude(Entity it) '''

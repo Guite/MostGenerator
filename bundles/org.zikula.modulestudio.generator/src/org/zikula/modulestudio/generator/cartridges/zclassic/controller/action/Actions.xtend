@@ -106,7 +106,7 @@ class Actions {
             return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . $templateParameters['routeArea'] . 'view');
         «ELSE»
             // return index template
-            return $this->render('@«app.appName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
+            return $this->render('@«app.vendorAndName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
         «ENDIF»
     '''
 
@@ -358,6 +358,6 @@ class Actions {
         ];
 
         // return template
-        return $this->render('@«app.appName»/«name.formatForCodeCapital»/«action.name.formatForCode.toFirstLower».html.twig', $templateParameters);
+        return $this->render('@«app.vendorAndName»/«name.formatForCodeCapital»/«action.name.formatForCode.toFirstLower».html.twig', $templateParameters);
     '''
 }

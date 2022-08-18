@@ -51,7 +51,7 @@ class Json {
         {% for «name.formatForCode» in items %}
             {% if not loop.first %},{% endif %}
             {
-                {{ include('@«application.appName»/«name.formatForCodeCapital»/include.json.twig') }}
+                {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/include.json.twig') }}
             }
         {% endfor %}
         ]
@@ -61,7 +61,7 @@ class Json {
         {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
         {% trans_default_domain '«name.formatForCode»' %}
         {
-            {{ include('@«application.appName»/«name.formatForCodeCapital»/include.json.twig') }}
+            {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/include.json.twig') }}
         }
     '''
 

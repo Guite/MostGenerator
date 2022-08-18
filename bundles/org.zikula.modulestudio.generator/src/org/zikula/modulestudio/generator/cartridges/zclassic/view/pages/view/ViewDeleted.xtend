@@ -25,7 +25,7 @@ class ViewDeleted {
 
     def private viewViewDeleted(Entity it) '''
         {# purpose of this template: list view of deleted «nameMultiple.formatForDisplay» #}
-        {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
+        {% extends routeArea == 'admin' ? '@«application.vendorAndName»/adminBase.html.twig' : '@«application.vendorAndName»/base.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block title 'Deleted «nameMultiple.formatForDisplay»'|trans %}
         {% block admin_page_icon 'trash-alt' %}

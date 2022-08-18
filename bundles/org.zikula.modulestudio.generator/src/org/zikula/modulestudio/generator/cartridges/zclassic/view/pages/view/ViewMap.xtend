@@ -39,7 +39,7 @@ class ViewMap {
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view «appName.toLowerCase»-map">
                 «(new ViewPagesHelper).commonHeader(it)»
-                {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig', {«IF !hasVisibleWorkflow»workflowStateFilter: false, «ENDIF»sorting: false, pageSizeSelector: false}) }}{# see template file for available options #}
+                {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/viewQuickNav.html.twig', {«IF !hasVisibleWorkflow»workflowStateFilter: false, «ENDIF»sorting: false, pageSizeSelector: false}) }}{# see template file for available options #}
 
                 <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
                 </div>

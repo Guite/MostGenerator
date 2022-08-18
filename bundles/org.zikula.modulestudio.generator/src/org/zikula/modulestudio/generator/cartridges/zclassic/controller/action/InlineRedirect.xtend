@@ -90,7 +90,7 @@ class InlineRedirect {
         ];
 
         return new PlainResponse(
-            $this->renderView('@«application.appName»/«name.formatForCode.toFirstUpper»/inlineRedirectHandler.html.twig', $templateParameters)
+            $this->renderView('@«application.vendorAndName»/«name.formatForCode.toFirstUpper»/inlineRedirectHandler.html.twig', $templateParameters)
         );
     '''
 }

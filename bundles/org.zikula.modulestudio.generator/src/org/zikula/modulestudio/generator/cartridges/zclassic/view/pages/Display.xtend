@@ -65,7 +65,7 @@ class Display {
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
         {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
-        {% extends '@«application.appName»/' ~ baseTemplate ~ '.html.twig' %}
+        {% extends '@«application.vendorAndName»/' ~ baseTemplate ~ '.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) }}{% endblock %}
         {% block title %}
@@ -280,7 +280,7 @@ class Display {
         «ENDIF»
         «IF categorisable»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
+                {{ include('@«application.vendorAndName»/Helper/includeCategoriesDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
@@ -292,7 +292,7 @@ class Display {
                 <h3 class="relatives">{% trans from 'messages' %}Relatives{% endtrans %}</h3>
                 «ENDIF»
                     {{ include(
-                        '@«application.appName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
+                        '@«application.vendorAndName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
                         {allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true}
                     ) }}
                 «IF useGroupingTabs('display')»
@@ -301,7 +301,7 @@ class Display {
             {% endif %}
         «ENDIF»
         «IF standardFields»
-            {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
+            {{ include('@«application.vendorAndName»/Helper/includeStandardFieldsDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
         «ENDIF»
     '''
 

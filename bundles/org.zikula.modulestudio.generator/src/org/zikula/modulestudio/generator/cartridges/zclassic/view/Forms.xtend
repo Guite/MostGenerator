@@ -59,7 +59,7 @@ class Forms {
     def private formTemplate(Entity it, String actionName) '''
         {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
         {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
-        {% extends '@«app.appName»/' ~ baseTemplate ~ '.html.twig' %}
+        {% extends '@«app.vendorAndName»/' ~ baseTemplate ~ '.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block title mode == 'create' ? 'Create «name.formatForDisplay»'|trans : 'Edit «name.formatForDisplay»'|trans %}
         {% block admin_page_icon mode == 'create' ? 'plus' : 'edit' %}
@@ -84,7 +84,7 @@ class Forms {
 
     def private formTemplateBody(Entity it, String actionName) '''
         {% form_theme form with [
-            '@«app.appName»/Form/bootstrap_4.html.twig',
+            '@«app.vendorAndName»/Form/bootstrap_4.html.twig',
             '@ZikulaFormExtension/Form/form_div_layout.html.twig'
         ] only %}
         {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm', class: '«app.vendorAndName.toLowerCase»-edit-form'}}) }}
