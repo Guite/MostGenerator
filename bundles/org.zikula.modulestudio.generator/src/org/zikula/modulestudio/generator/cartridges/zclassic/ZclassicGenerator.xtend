@@ -22,7 +22,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ListEntryValidator
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.BundleFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ComposerFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.DependencyInjection
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
@@ -37,7 +37,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.BundleFile
 
 class ZclassicGenerator implements IGenerator {
 
@@ -128,9 +127,6 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Custom event definitions')
         'Generating custom event definitions'.printIfNotTesting(fsa)
         new Events().generate(it, fsa)
-        pm?.subTask('Controller: Bootstrapping')
-        'Generating bootstrapping'.printIfNotTesting(fsa)
-        new Bootstrap().generate(it, fsa)
         pm?.subTask('Controller: Workflows')
         'Generating workflows'.printIfNotTesting(fsa)
         new Workflow().generate(it, fsa)
