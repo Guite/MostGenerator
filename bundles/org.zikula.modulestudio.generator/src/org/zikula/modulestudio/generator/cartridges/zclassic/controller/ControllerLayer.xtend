@@ -201,6 +201,7 @@ class ControllerLayer {
         /**
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.
          */
+        #[Route('/«name.formatForDB»')]
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
             «/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
