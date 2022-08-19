@@ -20,7 +20,7 @@ class InlineRedirect {
             «IF isBase»
                 «handleInlineRedirectBaseImpl»
             «ELSE»
-                return parent::handleInlineRedirect«IF !application.targets('3.1')»Action«ENDIF»(
+                return parent::handleInlineRedirect(
                     $repository,
                     $entityDisplayHelper,
                     $idPrefix,
@@ -38,6 +38,7 @@ class InlineRedirect {
              */
         «ELSE»
             #[Route('/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}',
+                name: '«application.name.formatForDB»_«name.formatForDB»_handleinlineredirect',
                 requirements: ['id' => '\d+'],
                 defaults: ['commandName' => '', 'id' => 0],
                 methods: ['GET']
@@ -46,7 +47,7 @@ class InlineRedirect {
     '''
 
     def private handleInlineRedirectSignature(Entity it) '''
-        public function handleInlineRedirect«IF !application.targets('3.1')»Action«ENDIF»(
+        public function handleInlineRedirect(
             «name.formatForCodeCapital»RepositoryInterface $repository,
             EntityDisplayHelper $entityDisplayHelper,
             string $idPrefix,

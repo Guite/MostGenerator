@@ -39,7 +39,7 @@ class ConfigController {
 
     def private configAction(Application it, Boolean isBase) '''
         «configDocBlock(isBase)»
-        public function config«IF !targets('3.1')»Action«ENDIF»(
+        public function config(
             Request $request,
             PermissionHelper $permissionHelper,
             AppSettings $appSettings,
@@ -49,7 +49,7 @@ class ConfigController {
             «IF isBase»
                 «configBaseImpl»
             «ELSE»
-                return parent::config«IF !targets('3.1')»Action«ENDIF»($request, $permissionHelper, $appSettings, $logger, $currentUserApi);
+                return parent::config($request, $permissionHelper, $appSettings, $logger, $currentUserApi);
             «ENDIF»
         }
     '''
@@ -65,7 +65,7 @@ class ConfigController {
             /**
              * @Theme("admin")
              */
-            #[Route('/config', methods: ['GET', 'POST'])]
+            #[Route('', name: '«appName.formatForDB»_config_config', methods: ['GET', 'POST'])]
         «ENDIF»
     '''
 
@@ -119,7 +119,7 @@ class ConfigController {
         /**
          * Config controller implementation class.
          */
-        #[Route('/config')]
+        #[Route('/«name.formatForDB»/config')]
         class ConfigController extends AbstractConfigController
         {
             «configAction(false)»

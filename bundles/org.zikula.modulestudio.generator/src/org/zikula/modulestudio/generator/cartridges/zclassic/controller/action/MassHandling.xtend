@@ -21,7 +21,7 @@ class MassHandling {
     def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «handleSelectedObjectsDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries«IF !application.targets('3.1')»Action«ENDIF»(
+            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries(
                 «handleSelectedObjectsArguments(false)»
             ): RedirectResponse {
                 return $this->handleSelectedEntriesInternal(
@@ -59,7 +59,10 @@ class MassHandling {
                  * @Theme("admin")
                  */
             «ENDIF»
-            #[Route('/«IF isAdmin»admin/«ENDIF»«nameMultiple.formatForCode»/handleSelectedEntries', methods: ['POST'])]
+            #[Route('/«IF isAdmin»admin/«ENDIF»«nameMultiple.formatForCode»/handleSelectedEntries',
+                name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»handleselectedentries',
+                methods: ['POST']
+            )]
         «ENDIF»
     '''
 

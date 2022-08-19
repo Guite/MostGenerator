@@ -81,17 +81,18 @@ class ExternalController {
             /**
              * Displays one item of a certain object type using a separate template for external usages.
              */
-         «ELSE»
-             #[Route('/display/{objectType}/{id}/{displayMode}',
-                 requirements: ['id' => '\d+', 'displayMode' => 'link|embed'],
-                 defaults: ['displayMode' => 'embed'],
-                 methods: ['GET']
-             )]
-         «ENDIF»
+        «ELSE»
+            #[Route('/display/{objectType}/{id}/{displayMode}',
+                name: '«appName.formatForDB»_external_display',
+                requirements: ['id' => '\d+', 'displayMode' => 'link|embed'],
+                defaults: ['displayMode' => 'embed'],
+                methods: ['GET']
+            )]
+        «ENDIF»
     '''
 
     def private displaySignature(Application it) '''
-        public function display«IF !targets('3.1')»Action«ENDIF»(
+        public function display(
             Request $request,
             ControllerHelper $controllerHelper,
             PermissionHelper $permissionHelper,
@@ -165,6 +166,7 @@ class ExternalController {
              */
         «ELSE»
             #[Route('/finder/{objectType}/{editor}/{sort}/{sortdir}/{page}/{num}',
+                name: '«appName.formatForDB»_external_finder',
                 requirements: ['editor' => 'ckeditor|quill|summernote|tinymce', 'sortdir' => 'asc|desc', 'page' => '\d+', 'num' => '\d+'],
                 defaults: ['sort' => 'dummy«/* will be replaced by default field */»', 'sortdir' => 'asc', 'page' => 1, 'num' => 0],
                 methods: ['GET'],
@@ -174,7 +176,7 @@ class ExternalController {
     '''
 
     def private finderSignature(Application it) '''
-        public function finder«IF !targets('3.1')»Action«ENDIF»(
+        public function finder(
             Request $request,
             RouterInterface $router,
             ControllerHelper $controllerHelper,
@@ -343,7 +345,7 @@ class ExternalController {
         /**
          * Controller for external calls implementation class.
          */
-        #[Route('/external')]
+        #[Route('/«name.formatForDB»/external')]
         class ExternalController extends AbstractExternalController
         {
             «displayImpl»
@@ -357,7 +359,7 @@ class ExternalController {
     def private displayImpl(Application it) '''
         «displayDocBlock(false)»
         «displaySignature» {
-            return parent::display«IF !targets('3.1')»Action«ENDIF»(
+            return parent::display(
                 $request,
                 $controllerHelper,
                 $permissionHelper,
@@ -373,7 +375,7 @@ class ExternalController {
     def private finderImpl(Application it) '''
         «finderDocBlock(false)»
         «finderSignature» {
-            return parent::finder«IF !targets('3.1')»Action«ENDIF»(
+            return parent::finder(
                 $request,
                 $router,
                 $controllerHelper,

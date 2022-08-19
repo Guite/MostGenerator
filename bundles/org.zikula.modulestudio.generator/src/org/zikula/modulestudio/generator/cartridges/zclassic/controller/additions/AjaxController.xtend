@@ -135,12 +135,16 @@ class AjaxController {
              * Retrieve item list for finder selections.
              */
         «ELSE»
-            #[Route('/getItemListFinder', methods: ['GET'], options: ['expose' => true])]
+            #[Route('/getItemListFinder',
+                name: '«appName.formatForDB»_ajax_getitemlistfinder',
+                methods: ['GET'],
+                options: ['expose' => true])
+            ]
         «ENDIF»
     '''
 
     def private getItemListFinderSignature(Application it) '''
-        public function getItemListFinder«IF !targets('3.1')»Action«ENDIF»(
+        public function getItemListFinder(
             Request $request,
             ControllerHelper $controllerHelper,
             PermissionHelper $permissionHelper,
@@ -256,12 +260,16 @@ class AjaxController {
              * Searches for entities for auto completion usage.
              */
         «ELSE»
-            #[Route('/getItemListAutoCompletion', methods: ['GET'], options: ['expose' => true])]
+            #[Route('/getItemListAutoCompletion',
+                name: '«appName.formatForDB»_ajax_getitemlistautocompletion',
+                methods: ['GET'],
+                options: ['expose' => true]
+            )]
         «ENDIF»
     '''
 
     def private getItemListAutoCompletionSignature(Application it) '''
-        public function getItemListAutoCompletion«IF !targets('3.1')»Action«ENDIF»(
+        public function getItemListAutoCompletion(
             Request $request,
             CacheManager $imagineCacheManager,
             ControllerHelper $controllerHelper,
@@ -377,12 +385,16 @@ class AjaxController {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
         «ELSE»
-            #[Route('/checkForDuplicate', methods: ['GET'], options: ['expose' => true])]
+            #[Route('/checkForDuplicate',
+                name: '«appName.formatForDB»_ajax_checkforduplicate',
+                methods: ['GET'],
+                options: ['expose' => true]
+            )]
         «ENDIF»
     '''
 
     def private checkForDuplicateSignature(Application it) '''
-        public function checkForDuplicate«IF !targets('3.1')»Action«ENDIF»(
+        public function checkForDuplicate(
             Request $request,
             ControllerHelper $controllerHelper,
             EntityFactory $entityFactory
@@ -476,12 +488,16 @@ class AjaxController {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
         «ELSE»
-            #[Route('/toggleFlag', methods: ['POST'], options: ['expose' => true])]
+            #[Route('/toggleFlag',
+                name: '«appName.formatForDB»_ajax_toggleflag',
+                methods: ['POST'],
+                options: ['expose' => true]
+            )]
         «ENDIF»
     '''
 
     def private toggleFlagSignature(Application it) '''
-        public function toggleFlag«IF !targets('3.1')»Action«ENDIF»(
+        public function toggleFlag(
             Request $request,
             LoggerInterface $logger,
             EntityFactory $entityFactory,
@@ -557,7 +573,11 @@ class AjaxController {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
         «ELSE»
-            #[Route('/handleTreeOperation', methods: ['POST'], options: ['expose' => true])]
+            #[Route('/handleTreeOperation',
+                name: '«appName.formatForDB»_ajax_handletreeoperation',
+                methods: ['POST'],
+                options: ['expose' => true]
+            )]
         «ENDIF»
     '''
 
@@ -907,7 +927,11 @@ class AjaxController {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
         «ELSE»
-            #[Route('/updateSortPositions', methods: ['POST'], options: ['expose' => true])]
+            #[Route('/updateSortPositions',
+                name: '«appName.formatForDB»_ajax_updatesortpositions',
+                methods: ['POST'],
+                options: ['expose' => true]
+            )]
         «ENDIF»
     '''
 
@@ -1080,7 +1104,7 @@ class AjaxController {
         /**
          * Ajax controller implementation class.
          */
-        #[Route('/ajax')]
+        #[Route('/«name.formatForDB»/ajax')]
         class AjaxController extends AbstractAjaxController
         {
             «additionalAjaxFunctions»

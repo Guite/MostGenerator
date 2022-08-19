@@ -24,7 +24,7 @@ class LoggableHistory {
     def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «loggableHistoryDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistory«IF !application.targets('3.1')»Action«ENDIF»(
+            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistory(
                 «loggableHistoryArguments(false)»
             ): Response {
                 return $this->loggableHistoryInternal(
@@ -64,6 +64,7 @@ class LoggableHistory {
                  */
             «ENDIF»
             #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
+                name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»loggablehistory',
                 «IF hasSluggableFields && slugUnique»
                 requirements: ['slug' => '«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»'],
                 «ELSE»

@@ -25,7 +25,7 @@ class LoggableUndelete {
     def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «undeleteDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndelete«IF !application.targets('3.1')»Action«ENDIF»(
+            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndelete(
                 «undeleteArguments(false)»
             ): Response {
                 return $this->undeleteInternal(
@@ -61,6 +61,7 @@ class LoggableUndelete {
                  */
             «ENDIF»
             #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}',
+                name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»deleted',
                 requirements: ['id' => '\d+', '_format' => 'html'],
                 defaults: ['_format' => 'html'],
                 methods: ['GET']
