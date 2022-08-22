@@ -33,10 +33,6 @@ class TechStructureSettings {
 
     def private settingsContent(Application it) '''
         <tr>
-            <td headers="hSettingName1">«IF language == 'de'»Anzahl Beispielsätze«ELSE»Amount of example rows«ENDIF»</td>
-            <td headers="hSettingValue1" class="text-center">«amountOfExampleRows»</td>
-        </tr>
-        <tr>
             <td headers="hSettingName1">«IF language == 'de'»Benutzerkonto«ELSE»Account panel«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateAccountApi)»</td>
             <td headers="hSettingName2">«IF language == 'de'»Panel zur Moderation«ELSE»Moderation panel«ENDIF»</td>
@@ -45,8 +41,6 @@ class TechStructureSettings {
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»Externe Aufrufe und Finder«ELSE»External calls and Finder«ENDIF»</td>
             <td headers="hSettingValue1" class="text-center">«helper.flag(it, generateExternalControllerAndFinder)»</td>
-            <td headers="hSettingName2">«IF language == 'de'»Authentifizierungsmethode«ELSE»Authentication method«ENDIF»</td>
-            <td headers="hSettingValue2" class="text-center">«authenticationMethod.literal» &ndash; «authenticationMethod.authMethodDescription»</td>
         </tr>
         <tr>
             <td headers="hSettingName1">«IF language == 'de'»RSS-Templates«ELSE»RSS templates«ENDIF»</td>

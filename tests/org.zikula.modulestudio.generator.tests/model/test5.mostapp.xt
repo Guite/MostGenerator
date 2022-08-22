@@ -18,7 +18,6 @@ application "SimpleNews" {
     email "info@guite.de"
     url "https://guite.de"
     prefix "sinew"
-    amountOfExampleRows 5
     viewActionsStyle BUTTON_GROUP
     entities {
         entity "post" {

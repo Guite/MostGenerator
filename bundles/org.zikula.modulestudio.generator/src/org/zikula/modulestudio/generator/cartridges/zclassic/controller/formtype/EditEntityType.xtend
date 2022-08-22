@@ -421,7 +421,7 @@ class EditEntityType {
                 ],
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
-                'module' => '«app.appName»',
+                'bundle' => '«app.appName»',
                 'entity' => '«name.formatForCodeCapital»Entity',
                 'entityCategoryClass' => «name.formatForCodeCapital»CategoryEntity::class,
                 'showRegistryLabels' => true,

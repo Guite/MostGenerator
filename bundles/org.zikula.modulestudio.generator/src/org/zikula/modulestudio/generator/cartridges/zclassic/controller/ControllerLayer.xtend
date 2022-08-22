@@ -143,6 +143,7 @@ class ControllerLayer {
         «IF hasViewAction || hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
+        use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
         «IF hasEditAction»
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
@@ -155,7 +156,6 @@ class ControllerLayer {
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use Zikula\Bundle\CoreBundle\Controller\AbstractController;
         «IF hasDeleteAction»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType;
         «ENDIF»

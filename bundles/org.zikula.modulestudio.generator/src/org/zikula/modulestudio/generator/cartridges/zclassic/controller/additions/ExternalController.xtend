@@ -46,11 +46,11 @@ class ExternalController {
     def private externalBaseClass(Application it) '''
         namespace «appNamespace»\Controller\Base;
 
+        use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use Zikula\Bundle\CoreBundle\Controller\AbstractController;
         «commonSystemImports»
         «commonAppImports»
 

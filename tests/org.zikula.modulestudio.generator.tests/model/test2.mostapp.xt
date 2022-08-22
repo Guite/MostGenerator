@@ -21,12 +21,10 @@ application "SimpleNews" targets ZK40 {
     license "My license"
     prefix "sinew"
     capabilities "foo, bar"
-    amountOfExampleRows 3
     generateAccountApi false
     generateModerationPanel false
     generateExternalControllerAndFinder false
     generatePdfSupport true
-    authenticationMethod REMOTE
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles false
     versionAllGeneratedFiles false

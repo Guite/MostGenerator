@@ -132,7 +132,7 @@ class WorkflowStart {
 
         val fileSystemAccess = injector.getInstance(JavaIoFileSystemAccess)
 
-        fileSystemAccess.setOutputPath('DEFAULT_OUTPUT', settings.getPathToModuleRoot)
+        fileSystemAccess.setOutputPath('DEFAULT_OUTPUT', settings.getPathToBundleRoot)
         if (fileSystemAccess instanceof MostFileSystemAccess) {
             fileSystemAccess.app = getModel.contents.head as Application
         }
@@ -156,14 +156,14 @@ class WorkflowStart {
     def readSettingsFromModel() {
         val model = getModel
         val app = model.contents.head as Application
-        settings.appName = app.name?.formatForCodeCapital ?: 'Module' //$NON-NLS-1$
+        settings.appName = app.name?.formatForCodeCapital ?: 'Bundle' //$NON-NLS-1$
         settings.appVendor = app.vendor?.formatForCodeCapital ?: 'Vendor' //$NON-NLS-1$
         settings.appVersion = if (null !== app.version) app.version else '1.0.0' //$NON-NLS-1$
 
         // compute destination path for model files
         if (app.writeModelToDocs) {
             //modelDestinationPath = File.separator + 'zclassic' + File.separator + settings.appName + File.separator
-            var modelDestinationPath = settings.getPathToModuleRoot
+            var modelDestinationPath = settings.getPathToBundleRoot
             modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             settings.modelDestinationPath = modelDestinationPath
         }

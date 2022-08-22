@@ -2,14 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ConnectionsMenuListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.FormTypeChoicesListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.GroupListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.IpTraceListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.KernelListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.LoggableListener
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.MailerListener
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleInstallerListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ThemeListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.UserLoginListener
@@ -60,10 +57,7 @@ class Listeners {
 
     def private generateListenerClasses(Application it) {
         listenerFile('FormTypeChoices', formTypeChoicesFile)
-        listenerFile('Installer', listenersInstallerFile)
         listenerFile('Kernel', listenersKernelFile)
-        listenerFile('ConnectionsMenu', listenersConnectionsMenuFile)
-        listenerFile('Mailer', listenersMailerFile)
         listenerFile('Theme', listenersThemeFile)
         listenerFile('UserLogin', listenersUserLoginFile)
         listenerFile('UserLogout', listenersUserLogoutFile)
@@ -85,7 +79,6 @@ class Listeners {
         fsa.generateFile(filePath, content)
     }
 
-    // 3.0 only
     def private formTypeChoicesFile(Application it) '''
         namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -103,37 +96,6 @@ class Listeners {
         {
             «IF isBase»
                 «new FormTypeChoicesListener().generate(it)»
-            «ELSE»
-                // feel free to enhance the parent methods
-            «ENDIF»
-        }
-    '''
-
-    def private listenersInstallerFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractInstallerListener;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\ExtensionsBundle\Event\ExtensionPostCacheRebuildEvent;
-            use Zikula\ExtensionsBundle\Event\ExtensionPostDisabledEvent;
-            use Zikula\ExtensionsBundle\Event\ExtensionPostEnabledEvent;
-            use Zikula\ExtensionsBundle\Event\ExtensionPostInstallEvent;
-            use Zikula\ExtensionsBundle\Event\ExtensionPostRemoveEvent;
-            use Zikula\ExtensionsBundle\Event\ExtensionPostUpgradeEvent;
-            «IF amountOfExampleRows > 0»
-                use «appNamespace»\Helper\ExampleDataHelper;
-            «ENDIF»
-        «ENDIF»
-
-        /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for extension installer events.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»InstallerListener«IF !isBase» extends AbstractInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «IF isBase»
-                «new ModuleInstallerListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -164,54 +126,6 @@ class Listeners {
         {
             «IF isBase»
                 «new KernelListener().generate(it)»
-            «ELSE»
-                // feel free to enhance the parent methods
-            «ENDIF»
-        }
-    '''
-
-    def private listenersConnectionsMenuFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractConnectionsMenuListener;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\ExtensionsBundle\Event\ConnectionsMenuEvent;
-            use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
-        «ENDIF»
-
-        /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for adding connections to extension menus.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ConnectionsMenuListener«IF !isBase» extends AbstractConnectionsMenuListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «IF isBase»
-                «new ConnectionsMenuListener().generate(it)»
-            «ELSE»
-                // feel free to enhance the parent methods
-            «ENDIF»
-        }
-    '''
-
-    def private listenersMailerFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractMailerListener;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\Mailer\Event\MessageEvent;
-        «ENDIF»
-
-        /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailing events.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»MailerListener«IF !isBase» extends AbstractMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «IF isBase»
-                «new MailerListener().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»

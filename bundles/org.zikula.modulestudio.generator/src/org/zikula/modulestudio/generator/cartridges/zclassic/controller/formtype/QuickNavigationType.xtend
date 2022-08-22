@@ -281,7 +281,7 @@ class QuickNavigationType {
                 ],
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
-                'module' => '«app.appName»',
+                'bundle' => '«app.appName»',
                 'entity' => ucfirst($objectType) . 'Entity',
                 'entityCategoryClass' => $entityCategoryClass,
                 'showRegistryLabels' => true,

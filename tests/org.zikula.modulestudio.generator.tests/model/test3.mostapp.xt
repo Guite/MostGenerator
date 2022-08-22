@@ -19,7 +19,6 @@ application "SimpleNews" targets ZK30 {
     email "info@guite.de"
     url "https://guite.de"
     prefix "sinew"
-    authenticationMethod LOCAL
     displayActionsStyle BUTTON
     entities {
         entity "article" leading readOnly categorisable {

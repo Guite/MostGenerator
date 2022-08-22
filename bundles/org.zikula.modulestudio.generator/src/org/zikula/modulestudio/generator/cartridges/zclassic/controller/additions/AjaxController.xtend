@@ -25,7 +25,7 @@ class AjaxController {
         fsa.generateClassPair('Controller/AjaxController.php', ajaxControllerBaseClass, ajaxControllerImpl)
     }
 
-    def private commonSystemImports(Application it) '''
+    def private commonSystemImports(Application it, Boolean isBase) '''
         «IF needsAutoCompletion»
             use Liip\ImagineBundle\Imagine\Cache\CacheManager;
         «ENDIF»
@@ -33,6 +33,9 @@ class AjaxController {
             use Psr\Log\LoggerInterface;
             «IF hasTrees»
                 use Symfony\Component\Routing\RouterInterface;
+            «ENDIF»
+            «IF isBase»
+                use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
             «ENDIF»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
             «IF hasTrees»
@@ -68,6 +71,7 @@ class AjaxController {
         «IF hasTrees»
             use Exception;
         «ENDIF»
+        use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
@@ -77,8 +81,7 @@ class AjaxController {
         «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
-        use Zikula\Bundle\CoreBundle\Controller\AbstractController;
-        «commonSystemImports»
+        «commonSystemImports(true)»
         «IF generateExternalControllerAndFinder»
             use «appNamespace»\Entity\EntityInterface;
         «ENDIF»
@@ -89,6 +92,10 @@ class AjaxController {
          */
         abstract class AbstractAjaxController extends AbstractController
         {
+            public function __construct(private readonly PermissionApiInterface $permissionApi)
+            {
+            }
+
             «additionalAjaxFunctionsBase»
         }
     '''
@@ -157,7 +164,7 @@ class AjaxController {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
@@ -283,7 +290,7 @@ class AjaxController {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
@@ -405,7 +412,7 @@ class AjaxController {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
@@ -509,7 +516,7 @@ class AjaxController {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
@@ -598,7 +605,7 @@ class AjaxController {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
@@ -946,7 +953,7 @@ class AjaxController {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
+        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
 
@@ -1097,7 +1104,7 @@ class AjaxController {
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\Routing\Annotation\Route;
-        «commonSystemImports»
+        «commonSystemImports(false)»
         use «appNamespace»\Controller\Base\AbstractAjaxController;
         «commonAppImports»
 

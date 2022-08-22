@@ -21,7 +21,6 @@ application "SimpleNews" targets ZK40 {
     license "My license"
     prefix "sinew"
     capabilities "foo, bar"
-    amountOfExampleRows 3
     generateAccountApi true
     generateModerationPanel true
     generateExternalControllerAndFinder true
@@ -33,7 +32,6 @@ application "SimpleNews" targets ZK40 {
     generateKmlTemplates true
     generateIcsTemplates true
     generatePdfSupport true
-    authenticationMethod NONE
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles true
     versionAllGeneratedFiles true

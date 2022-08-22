@@ -48,7 +48,6 @@ class ServiceDefinitions {
                 autoconfigure: true
                 public: false
                 bind:
-                    $extension: '@«appNamespace»\«appName»'
                     $twigLoader: '@twig.loader'
 
             «appNamespace»\:

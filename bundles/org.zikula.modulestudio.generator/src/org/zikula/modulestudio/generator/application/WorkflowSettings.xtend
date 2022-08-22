@@ -106,12 +106,12 @@ class WorkflowSettings {
     }
 
     /**
-     * Returns base path to the module's root folder.
+     * Returns base path to the bundle's root folder.
      *
-     * @return string Module base path
+     * @return string Bundle base path
      */
-    def getPathToModuleRoot() {
-        outputPath + File.separator + appVendor.toFirstUpper + File.separator + appName.toFirstUpper + 'Module' + File.separator //$NON-NLS-1$
+    def getPathToBundleRoot() {
+        outputPath + File.separator + appVendor.toFirstUpper + File.separator + appName.toFirstUpper + 'Bundle' + File.separator //$NON-NLS-1$
     }
 
     /**
@@ -120,7 +120,7 @@ class WorkflowSettings {
      * @return path to images folder
      */
     def getPathToModuleImageAssets() {
-        val targetBasePath = getPathToModuleRoot
+        val targetBasePath = getPathToBundleRoot
         var imagePath = 'Resources' + File.separator + 'public' + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         var targetFolder = new File(targetBasePath + imagePath)
 

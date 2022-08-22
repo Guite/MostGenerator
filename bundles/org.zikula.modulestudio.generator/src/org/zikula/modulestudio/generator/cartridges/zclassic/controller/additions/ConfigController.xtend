@@ -19,10 +19,10 @@ class ConfigController {
         namespace «appNamespace»\Controller\Base;
 
         use Psr\Log\LoggerInterface;
+        use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use Zikula\Bundle\CoreBundle\Controller\AbstractController;
         use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\AppSettings;
         use «appNamespace»\Form\Type\ConfigType;

@@ -190,7 +190,7 @@ class FinderType {
                 'help' => 'This is an optional filter.',
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
-                'module' => '«app.appName»',
+                'bundle' => '«app.appName»',
                 'entity' => ucfirst($options['object_type']) . 'Entity',
                 'entityCategoryClass' => $entityCategoryClass,
                 'showRegistryLabels' => true,

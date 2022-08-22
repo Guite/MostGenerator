@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.AuthMethodType
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -16,7 +15,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AuthenticationMethod
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.AppSettings
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
@@ -65,7 +63,6 @@ class ZclassicGenerator implements IGenerator {
         generateController
         generateView
 
-        generateIntegration
         generateAdditions
     }
 
@@ -156,12 +153,6 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('View: Images')
         'Generating images'.printIfNotTesting(fsa)
         new Images().generate(it, fsa)
-    }
-
-    def private generateIntegration(Application it) {
-        if (authenticationMethod != AuthMethodType.NONE) {
-            new AuthenticationMethod().generate(it, fsa)
-        }
     }
 
     def private generateAdditions(Application it) {
