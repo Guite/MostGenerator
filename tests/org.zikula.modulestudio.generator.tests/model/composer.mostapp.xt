@@ -25,7 +25,9 @@ XPECT generated file composer.json ---
         "psr-4": { "Acme\\SimpleTestBundle\\": "" }
     },
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "doctrine/doctrine-migrations-bundle": "^3.2",
+        "symfony/maker-bundle": "^1"
     },
     "require-dev": {
     },
