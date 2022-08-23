@@ -18,12 +18,11 @@ class WorkflowEventsListener {
         use TranslatorTrait;
 
         public function __construct(
-            TranslatorInterface $translator,
-            protected EntityFactory $entityFactory,
-            protected PermissionHelper $permissionHelper«IF needsApproval»,
-            protected NotificationHelper $notificationHelper«ENDIF»
+            protected readonly TranslatorInterface $translator,
+            protected readonly EntityFactory $entityFactory,
+            protected readonly PermissionHelper $permissionHelper«IF needsApproval»,
+            protected readonly NotificationHelper $notificationHelper«ENDIF»
         ) {
-            $this->setTranslator($translator);
         }
 
         public static function getSubscribedEvents()
@@ -245,7 +244,7 @@ class WorkflowEventsListener {
 
         if (!$this->permissionHelper->hasEntityPermission($entity, $permissionLevel)) {
             // no permission for this transition, so disallow it
-            $event->setBlocked(true, $this->trans('No permission for this action.'));
+            $event->setBlocked(true, $this->translator->trans('No permission for this action.'));
 
             return;
         }
@@ -261,7 +260,7 @@ class WorkflowEventsListener {
                                 if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»() && 0 < count($entity->get«relation.targetAlias.formatForCodeCapital»())) {
                                     $event->addTransitionBlocker(
                                         new TransitionBlocker(
-                                            $this->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!', [], '«entity.name.formatForCode»'),
+                                            $this->translator->trans('Sorry, but you can not delete the «entity.name.formatForDisplay» yet as it still contains «relation.targetAlias.formatForDisplay»!', [], '«entity.name.formatForCode»'),
                                             '0'
                                         )
                                     );

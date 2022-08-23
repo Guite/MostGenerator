@@ -43,25 +43,25 @@ class GetFileSize {
          */
         private function getReadableFileSize(int $size, bool $nodesc = false, bool $onlydesc = false): string
         {
-            $sizeDesc = $this->trans('Bytes');
+            $sizeDesc = $this->translator->trans('Bytes');
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->trans('KB');
+                $sizeDesc = $this->translator->trans('KB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->trans('MB');
+                $sizeDesc = $this->translator->trans('MB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->trans('GB');
+                $sizeDesc = $this->translator->trans('GB');
             }
             $sizeDesc = '&nbsp;' . $sizeDesc;
 
             // format number
             $dec_point = ',';
             $thousands_separator = '.';
-            if ($size - (int) $size >= 0.005) {
+            if (0.005 <= $size - (int) $size) {
                 $size = number_format($size, 2, $dec_point, $thousands_separator);
             } else {
                 $size = number_format($size, 0, '', $thousands_separator);

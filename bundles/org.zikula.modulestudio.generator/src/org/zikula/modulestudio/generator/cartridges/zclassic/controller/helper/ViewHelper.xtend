@@ -56,18 +56,18 @@ class ViewHelper {
     def private helperBaseImpl(Application it) '''
         public function __construct(
             «IF hasGeographical»
-                protected ZikulaHttpKernelInterface $kernel,
-                protected Filesystem $filesystem,
+                protected readonly ZikulaHttpKernelInterface $kernel,
+                protected readonly Filesystem $filesystem,
             «ENDIF»
-            protected Environment $twig,
-            protected LoaderInterface $twigLoader,
-            protected RequestStack $requestStack,
-            protected VariableApiInterface $variableApi,
+            protected readonly Environment $twig,
+            protected readonly LoaderInterface $twigLoader,
+            protected readonly RequestStack $requestStack,
+            protected readonly VariableApiInterface $variableApi,
             «IF generatePdfSupport»
-                protected ParameterBag $pageVars,
+                protected readonly ParameterBag $pageVars,
             «ENDIF»
-            protected ControllerHelper $controllerHelper,
-            protected PermissionHelper $permissionHelper
+            protected readonly ControllerHelper $controllerHelper,
+            protected readonly PermissionHelper $permissionHelper
         ) {
         }
 

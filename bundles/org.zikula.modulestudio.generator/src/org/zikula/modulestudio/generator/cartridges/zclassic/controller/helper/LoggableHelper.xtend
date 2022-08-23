@@ -61,10 +61,10 @@ class LoggableHelper {
 
         public function __construct(
             TranslatorInterface $translator,
-            protected EntityFactory $entityFactory,
-            protected EntityDisplayHelper $entityDisplayHelper,
-            protected EntityLifecycleListener $entityLifecycleListener«IF hasLoggableTranslatable»,
-            protected TranslatableHelper $translatableHelper«ENDIF»
+            protected readonly EntityFactory $entityFactory,
+            protected readonly EntityDisplayHelper $entityDisplayHelper,
+            protected readonly EntityLifecycleListener $entityLifecycleListener«IF hasLoggableTranslatable»,
+            protected readonly TranslatableHelper $translatableHelper«ENDIF»
         ) {
             $this->setTranslator($translator);
         }

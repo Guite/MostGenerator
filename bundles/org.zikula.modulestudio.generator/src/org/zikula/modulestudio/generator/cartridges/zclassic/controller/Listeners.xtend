@@ -376,7 +376,6 @@ class Listeners {
                 use Symfony\Component\Workflow\TransitionBlocker;
             «ENDIF»
             use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
             use «appNamespace»\Entity\EntityInterface;
             use «appNamespace»\Entity\Factory\EntityFactory;
             use «appNamespace»\Helper\PermissionHelper;

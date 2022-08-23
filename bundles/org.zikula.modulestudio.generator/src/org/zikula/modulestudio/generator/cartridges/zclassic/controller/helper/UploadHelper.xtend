@@ -77,14 +77,14 @@ class UploadHelper {
         protected array $forbiddenFileTypes;
 
         public function __construct(
-            protected ZikulaHttpKernelInterface $kernel,
+            protected readonly ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
-            protected Filesystem $filesystem,
-            protected RequestStack $requestStack,
-            protected LoggerInterface $logger,
-            protected CurrentUserApiInterface $currentUserApi,
+            protected readonly Filesystem $filesystem,
+            protected readonly RequestStack $requestStack,
+            protected readonly LoggerInterface $logger,
+            protected readonly CurrentUserApiInterface $currentUserApi,
             VariableApiInterface $variableApi,
-            protected string $dataDirectory
+            protected readonly string $dataDirectory
         ) {
             $this->setTranslator($translator);
             $this->moduleVars = $variableApi->getAll('«appName»');

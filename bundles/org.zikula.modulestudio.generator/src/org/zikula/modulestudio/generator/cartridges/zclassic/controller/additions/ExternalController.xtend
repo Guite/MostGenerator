@@ -28,8 +28,11 @@ class ExternalController {
         new ExternalView().generate(it, fsa)
     }
 
-    def private commonSystemImports(Application it) '''
+    def private commonSystemImports(Application it, Boolean isBase) '''
         use Symfony\Component\Routing\RouterInterface;
+        «IF isBase»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
         use Zikula\ThemeBundle\Engine\Asset;
         use Zikula\ThemeBundle\Engine\AssetBag;
     '''
@@ -51,7 +54,7 @@ class ExternalController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «commonSystemImports»
+        «commonSystemImports(true)»
         «commonAppImports»
 
         /**
@@ -59,6 +62,10 @@ class ExternalController {
          */
         abstract class AbstractExternalController extends AbstractController
         {
+            public function __construct(private readonly TranslatorInterface $translator)
+            {
+            }
+
             «externalBaseImpl»
         }
     '''
@@ -114,7 +121,7 @@ class ExternalController {
         // assign object data fetched from the database
         $entity = $repository->selectById($id);
         if (null === $entity) {
-            return new Response($this->trans('No such item.'));
+            return new Response($this->translator->trans('No such item.'));
         }
 
         if (!$permissionHelper->mayRead($entity)) {
@@ -223,7 +230,7 @@ class ExternalController {
         }
 
         if (empty($editor) || !in_array($editor, ['ckeditor', 'quill', 'summernote', 'tinymce'], true)) {
-            return new Response($this->trans('Error: Invalid editor context given for external controller action.'));
+            return new Response($this->translator->trans('Error: Invalid editor context given for external controller action.'));
         }
 
         $cssAssetBag->add($assetHelper->resolve('@«appName»:css/style.css'));
@@ -338,7 +345,7 @@ class ExternalController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
-        «commonSystemImports»
+        «commonSystemImports(false)»
         use «appNamespace»\Controller\Base\AbstractExternalController;
         «commonAppImports»
 

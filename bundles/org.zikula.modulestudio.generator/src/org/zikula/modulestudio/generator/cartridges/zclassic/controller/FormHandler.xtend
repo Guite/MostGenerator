@@ -16,7 +16,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.Aut
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.TranslationListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ConfigType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntityType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ArrayType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
@@ -107,8 +106,6 @@ class FormHandler {
                 new TranslationListener().generate(it, fsa)
             }
         }
-        // additional form types
-        new ConfigType().generate(it, fsa)
     }
 
     /**

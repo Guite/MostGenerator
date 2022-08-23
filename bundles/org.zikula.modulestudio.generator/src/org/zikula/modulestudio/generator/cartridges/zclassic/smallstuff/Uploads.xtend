@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller
+package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
@@ -18,9 +18,6 @@ class Uploads {
 
     IMostFileSystemAccess fsa
 
-    /**
-     * Entry point for the upload handler.
-     */
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         createUploadFolders

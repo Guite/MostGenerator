@@ -23,15 +23,22 @@ class ExpiryHelper {
     def private expiryHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Doctrine\DBAL\Exception\TableNotFoundException;
-        use Exception;
-        use Psr\Log\LoggerInterface;
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Contracts\Translation\TranslatorInterface;
+        «IF hasAutomaticExpiryHandling»
+            use Doctrine\DBAL\Exception\TableNotFoundException;
+            use Exception;
+            use Psr\Log\LoggerInterface;
+            use Symfony\Component\HttpFoundation\RequestStack;
+            use Symfony\Contracts\Translation\TranslatorInterface;
+        «ENDIF»
+        «IF hasLoggable»
+            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
+        «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
-        use «appNamespace»\Helper\PermissionHelper;
-        use «appNamespace»\Helper\WorkflowHelper;
+        «IF hasAutomaticExpiryHandling»
+            use «appNamespace»\Helper\PermissionHelper;
+            use «appNamespace»\Helper\WorkflowHelper;
+        «ENDIF»
 
         /**
          * Expiry helper base class.
@@ -43,18 +50,33 @@ class ExpiryHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
+        «constructor»
+        «IF hasAutomaticExpiryHandling»
+
+            «handleObsoleteObjects»
+        «ENDIF»
+        «IF hasLoggable»
+
+            «purgeOldLogEntries»
+        «ENDIF»
+    '''
+
+    def private constructor(Application it) '''
         public function __construct(
-            protected TranslatorInterface $translator,
-            protected RequestStack $requestStack,
-            protected LoggerInterface $logger,
-            protected EntityFactory $entityFactory,
-            protected PermissionHelper $permissionHelper,
-            protected WorkflowHelper $workflowHelper
+            protected readonly EntityFactory $entityFactory«IF hasAutomaticExpiryHandling»,
+            protected readonly TranslatorInterface $translator,
+            protected readonly RequestStack $requestStack,
+            protected readonly LoggerInterface $logger,
+            protected readonly PermissionHelper $permissionHelper,
+            protected readonly WorkflowHelper $workflowHelper«ENDIF»«IF hasLoggable»,
+            protected readonly VariableApiInterface $variableApi«ENDIF»
         ) {
         }
+    '''
 
+    def private handleObsoleteObjects(Application it) '''
         /**
-         * Handles obsolete data bv either moving into the archive or deleting.
+         * Handles obsolete data by either moving into the archive or deleting.
          */
         public function handleObsoleteObjects(int $probabilityPercent = 75): void
         {
@@ -96,6 +118,33 @@ class ExpiryHelper {
         «ENDFOR»
 
         «helperMethods»
+    '''
+
+    def private purgeOldLogEntries(Application it) '''
+        /**
+         * Removes obsolete log entries for loggable entities.
+         */
+        public function purgeOldLogEntries(int $probabilityPercent = 75): void
+        {
+            $randProbability = random_int(1, 100);
+            if ($randProbability < $probabilityPercent) {
+                return;
+            }
+
+            $entityManager = $this->entityFactory->getEntityManager();
+            «FOR entity : getLoggableEntities»
+                $revisionHandling = $this->$variableApi->getVar('«appName»', 'revisionHandlingFor«entity.name.formatForCodeCapital»');
+                $limitParameter = '';
+                if ('limitedByAmount' === $revisionHandling) {
+                    $limitParameter = $this->$variableApi->getVar('«appName»', 'maximumAmountOf«entity.name.formatForCodeCapital»Revisions');
+                } elseif ('limitedByDate' === $revisionHandling) {
+                    $limitParameter = $this->$variableApi->getVar('«appName»', 'periodFor«entity.name.formatForCodeCapital»Revisions');
+                }
+
+                $logEntriesRepository = $entityManager->getRepository('«entity.application.appName»:«entity.name.formatForCodeCapital»LogEntryEntity');
+                $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);
+            «ENDFOR»
+        }
     '''
 
     def private archiveObjects(Entity it) '''

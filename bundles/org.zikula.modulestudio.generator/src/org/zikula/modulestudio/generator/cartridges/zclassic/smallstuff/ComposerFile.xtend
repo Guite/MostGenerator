@@ -52,6 +52,8 @@ class ComposerFile {
         },
         "require": {
             «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
+            "php": "^8.1",
+            "doctrine/doctrine-migrations-bundle": "^3.2",
             «IF generatePdfSupport»
                 "dompdf/dompdf": "^2",
             «ENDIF»
@@ -61,7 +63,7 @@ class ComposerFile {
             «IF hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
                 "egulias/email-validator": "^2",
             «ENDIF»
-            "php": "^8.1"«IF !dependencies.empty»,«ENDIF»
+            "symfony/maker-bundle": "^1"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»

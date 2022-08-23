@@ -73,6 +73,10 @@ class FormattingExtensions {
         result.trim.toFirstLower
     }
 
+    def formatForSnakeCase(String s) {
+        s.formatForDisplay.replace(' ', '_')
+    }
+
     /**
      * Formats a string for improved output readability starting with capital.
      * For example federalStateName becomes Federal state name.

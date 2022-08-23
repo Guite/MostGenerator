@@ -537,7 +537,7 @@ class PersistenceTransformer {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Moderation'
-            documentation = 'Here you can define moderation-related settings.'
+            documentation = 'Moderation-related settings.'
             sortOrder = newSortNumber
         ]
     }
@@ -546,7 +546,7 @@ class PersistenceTransformer {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'ListViews'
-            documentation = 'Here you can configure parameters for list views.'
+            documentation = 'List views settings.'
             sortOrder = newSortNumber
         ]
     }
@@ -555,7 +555,7 @@ class PersistenceTransformer {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Images'
-            documentation = 'Here you can define several options for image handling.'
+            documentation = 'Image handling settings.'
             sortOrder = newSortNumber
         ]
     }
@@ -564,7 +564,7 @@ class PersistenceTransformer {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Integration'
-            documentation = 'These options allow you to configure integration aspects.'
+            documentation = 'Integration settings.'
             sortOrder = newSortNumber
         ]
     }
@@ -573,7 +573,7 @@ class PersistenceTransformer {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Geo'
-            documentation = 'Here you can define settings related to geographical features.'
+            documentation = 'Settings related to geographical features.'
             sortOrder = newSortNumber
         ]
     }
@@ -582,7 +582,7 @@ class PersistenceTransformer {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Versioning'
-            documentation = 'Here you can define settings related to version control.'
+            documentation = 'Settings related to version control.'
             sortOrder = newSortNumber
         ]
     }

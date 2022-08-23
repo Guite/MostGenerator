@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.di
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -22,6 +22,7 @@ class DependencyInjection {
         use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
         use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+        use «appNamespace»\DependencyInjection\Configuration;
 
         /**
          * DependencyInjection extension base class.
@@ -32,6 +33,13 @@ class DependencyInjection {
             {
                 $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../Resources/config'));
                 $loader->load('services.yaml');
+                «IF needsConfig»
+
+                    $configuration = new Configuration();
+                    $config = $this->processConfiguration($configuration, $configs);
+
+                    // TODO apply
+                «ENDIF»
             }
         }
     '''

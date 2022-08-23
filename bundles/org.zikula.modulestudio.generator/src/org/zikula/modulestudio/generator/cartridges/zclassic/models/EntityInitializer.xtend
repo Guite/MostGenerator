@@ -10,7 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class EntityInitialiser {
+class EntityInitializer {
 
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
@@ -21,15 +21,15 @@ class EntityInitialiser {
     FileHelper fh
 
     /**
-     * Creates an entity initialiser class file for easy entity initialisation.
+     * Creates an entity initializer class file for easy entity initialization.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         fh = new FileHelper(it)
-        'Generating entity initialiser class'.printIfNotTesting(fsa)
-        fsa.generateClassPair('Entity/Factory/EntityInitialiser.php', initialiserBaseImpl, initialiserImpl)
+        'Generating entity initializer class'.printIfNotTesting(fsa)
+        fsa.generateClassPair('Entity/Factory/EntityInitializer.php', initializerBaseImpl, initializerImpl)
     }
 
-    def private initialiserBaseImpl(Application it) '''
+    def private initializerBaseImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory\Base;
 
         «IF !getAllEntities.filter[!fields.filter(DatetimeField).filter[!immutable].empty].empty»
@@ -53,9 +53,9 @@ class EntityInitialiser {
         use «appNamespace»\Helper\PermissionHelper;
 
         /**
-         * Entity initialiser class used to dynamically apply default values to newly created entities.
+         * Entity initializer class used to dynamically apply default values to newly created entities.
          */
-        abstract class AbstractEntityInitialiser
+        abstract class AbstractEntityInitializer
         {
             «IF hasGeographical»
                 protected string $defaultLatitude;
@@ -64,9 +64,9 @@ class EntityInitialiser {
 
             «ENDIF»
             public function __construct(
-                «IF supportLocaleFilter»protected RequestStack $requestStack,«ENDIF»
-                protected PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
-                protected ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
+                «IF supportLocaleFilter»protected readonly RequestStack $requestStack,«ENDIF»
+                protected readonly PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
+                protected readonly ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
                 VariableApiInterface $variableApi«ENDIF»
             ) {
                 «IF hasGeographical»
@@ -141,17 +141,17 @@ class EntityInitialiser {
         !getAllListFields.filter[name != 'workflowState'].empty
     }
 
-    def private initialiserImpl(Application it) '''
+    def private initializerImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory;
 
-        use «appNamespace»\Entity\Factory\Base\AbstractEntityInitialiser;
+        use «appNamespace»\Entity\Factory\Base\AbstractEntityInitializer;
 
         /**
-         * Entity initialiser class used to dynamically apply default values to newly created entities.
+         * Entity initializer class used to dynamically apply default values to newly created entities.
          */
-        class EntityInitialiser extends AbstractEntityInitialiser
+        class EntityInitializer extends AbstractEntityInitializer
         {
-            // feel free to customise the initialiser
+            // feel free to customise the initializer
         }
     '''
 }

@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Cat
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.ModerationPanel
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.StandardFields
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Custom
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Delete
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Display
@@ -71,9 +70,6 @@ class Views {
         }
 
         layoutHelper.baseTemplates(it)
-        if (needsConfig) {
-            new Config().generate(it, fsa)
-        }
         if (needsApproval) {
             new Emails().generate(it, fsa)
         }

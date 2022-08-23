@@ -87,18 +87,18 @@ class NotificationHelper {
         protected string $applicationName;
 
         public function __construct(
-            protected ZikulaHttpKernelInterface $kernel,
+            protected readonly ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
-            protected RouterInterface $router,
-            protected RequestStack $requestStack,
-            protected VariableApiInterface $variableApi,
-            protected Environment $twig,
-            protected MailerInterface $mailer,
-            protected LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
-            protected GroupRepositoryInterface $groupRepository,
-            protected UserRepositoryInterface $userRepository,
-            protected EntityDisplayHelper $entityDisplayHelper,
-            protected WorkflowHelper $workflowHelper
+            protected readonly RouterInterface $router,
+            protected readonly RequestStack $requestStack,
+            protected readonly VariableApiInterface $variableApi,
+            protected readonly Environment $twig,
+            protected readonly MailerInterface $mailer,
+            protected readonly LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
+            protected readonly GroupRepositoryInterface $groupRepository,
+            protected readonly UserRepositoryInterface $userRepository,
+            protected readonly EntityDisplayHelper $entityDisplayHelper,
+            protected readonly WorkflowHelper $workflowHelper
         ) {
             $this->setTranslator($translator);
             «IF targets('4.0')»

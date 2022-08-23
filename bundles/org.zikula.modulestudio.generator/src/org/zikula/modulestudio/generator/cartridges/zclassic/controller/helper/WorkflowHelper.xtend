@@ -53,13 +53,13 @@ class WorkflowHelper {
 
     def private helperBaseImpl(Application it) '''
         public function __construct(
-            protected TranslatorInterface $translator,
-            protected Registry $workflowRegistry,
-            protected LoggerInterface $logger,
-            protected CurrentUserApiInterface $currentUserApi,
-            protected EntityFactory $entityFactory,
-            protected ListEntriesHelper $listEntriesHelper,
-            protected PermissionHelper $permissionHelper
+            protected readonly TranslatorInterface $translator,
+            protected readonly Registry $workflowRegistry,
+            protected readonly LoggerInterface $logger,
+            protected readonly CurrentUserApiInterface $currentUserApi,
+            protected readonly EntityFactory $entityFactory,
+            protected readonly ListEntriesHelper $listEntriesHelper,
+            protected readonly PermissionHelper $permissionHelper
         ) {
         }
 

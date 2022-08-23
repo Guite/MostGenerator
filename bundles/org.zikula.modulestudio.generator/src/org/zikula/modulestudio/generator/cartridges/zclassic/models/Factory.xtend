@@ -24,7 +24,7 @@ class Factory {
         fh = new FileHelper(it)
         'Generating entity factory class'.printIfNotTesting(fsa)
         fsa.generateClassPair('Entity/Factory/EntityFactory.php', modelFactoryBaseImpl, modelFactoryImpl)
-        new EntityInitialiser().generate(it, fsa)
+        new EntityInitializer().generate(it, fsa)
     }
 
     def private modelFactoryBaseImpl(Application it) '''
@@ -33,7 +33,7 @@ class Factory {
         use Doctrine\ORM\EntityManagerInterface;
         use Doctrine\ORM\EntityRepository;
         use InvalidArgumentException;
-        use «appNamespace»\Entity\Factory\EntityInitialiser;
+        use «appNamespace»\Entity\Factory\EntityInitializer;
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
@@ -48,10 +48,10 @@ class Factory {
         abstract class AbstractEntityFactory
         {
             public function __construct(
-                protected EntityManagerInterface $entityManager,
-                protected EntityInitialiser $entityInitialiser,
-                protected CollectionFilterHelper $collectionFilterHelper«IF hasTranslatable»,
-                protected FeatureActivationHelper $featureActivationHelper«ENDIF»
+                protected readonly EntityManagerInterface $entityManager,
+                protected readonly EntityInitializer $entityInitializer,
+                protected readonly CollectionFilterHelper $collectionFilterHelper«IF hasTranslatable»,
+                protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
             }
 
@@ -85,7 +85,7 @@ class Factory {
                 {
                     $entity = new «entity.name.formatForCodeCapital»Entity(«/* TODO provide entity constructor arguments if required */»);
 
-                    $this->entityInitialiser->init«entity.name.formatForCodeCapital»($entity);
+                    $this->entityInitializer->init«entity.name.formatForCodeCapital»($entity);
 
                     return $entity;
                 }
@@ -93,7 +93,7 @@ class Factory {
 
             «getIdField»
             «fh.getterMethod(it, 'entityManager', 'EntityManagerInterface', false)»
-            «fh.getterMethod(it, 'entityInitialiser', 'EntityInitialiser', false)»
+            «fh.getterMethod(it, 'entityInitializer', 'EntityInitializer', false)»
         }
     '''
 

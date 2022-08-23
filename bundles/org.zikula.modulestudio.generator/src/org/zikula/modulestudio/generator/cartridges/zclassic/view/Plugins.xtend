@@ -81,7 +81,6 @@ class Plugins {
         «IF hasUploads»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         use «appNamespace»\Entity\EntityInterface;
         «IF hasTrees»
@@ -170,23 +169,22 @@ class Plugins {
 
         public function __construct(
             «IF hasUploads»
-                protected ZikulaHttpKernelInterface $kernel,
+                protected readonly ZikulaHttpKernelInterface $kernel,
             «ENDIF»
-            TranslatorInterface $translator«IF !getEntitiesWithCounterFields.empty»,
-            protected Connection $databaseConnection«ENDIF»«IF hasTrees»,
-            protected RouterInterface $router«ENDIF»«IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»,
-            protected RequestStack $requestStack«ENDIF»,
-            protected VariableApiInterface $variableApi,
+            protected readonly TranslatorInterface $translator«IF !getEntitiesWithCounterFields.empty»,
+            protected readonly Connection $databaseConnection«ENDIF»«IF hasTrees»,
+            protected readonly RouterInterface $router«ENDIF»«IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»,
+            protected readonly RequestStack $requestStack«ENDIF»,
+            protected readonly VariableApiInterface $variableApi,
             «IF hasTrees»
-                protected EntityFactory $entityFactory,
+                protected readonly EntityFactory $entityFactory,
             «ENDIF»
-            protected EntityDisplayHelper $entityDisplayHelper,
-            protected WorkflowHelper $workflowHelper«IF hasListFields»,
-            protected ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
-            protected LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
-            protected MenuBuilder $menuBuilder«ENDIF»
+            protected readonly EntityDisplayHelper $entityDisplayHelper,
+            protected readonly WorkflowHelper $workflowHelper«IF hasListFields»,
+            protected readonly ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
+            protected readonly LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
+            protected readonly MenuBuilder $menuBuilder«ENDIF»
         ) {
-            $this->setTranslator($translator);
         }
 
         «viewPlugins»

@@ -62,15 +62,15 @@ class PermissionHelper {
 
     def private helperBaseImpl(Application it) '''
         public function __construct(
-            protected RequestStack $requestStack,
-            protected PermissionApiInterface $permissionApi,
+            protected readonly RequestStack $requestStack,
+            protected readonly PermissionApiInterface $permissionApi,
             «IF hasLoggable»
-                protected VariableApiInterface $variableApi,
+                protected readonly VariableApiInterface $variableApi,
             «ENDIF»
-            protected CurrentUserApiInterface $currentUserApi,
-            protected UserRepositoryInterface $userRepository«IF hasCategorisableEntities»,
-            protected FeatureActivationHelper $featureActivationHelper,
-            protected CategoryHelper $categoryHelper«ENDIF»
+            protected readonly CurrentUserApiInterface $currentUserApi,
+            protected readonly UserRepositoryInterface $userRepository«IF hasCategorisableEntities»,
+            protected readonly FeatureActivationHelper $featureActivationHelper,
+            protected readonly CategoryHelper $categoryHelper«ENDIF»
         ) {
         }
 

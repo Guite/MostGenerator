@@ -20,17 +20,6 @@ class MenuLinksHelperFunctions {
         «FOR entity : getAllEntities.filter[hasViewAction]»
             «entity.menuLinkToViewAction»
         «ENDFOR»
-        «IF needsConfig»
-            if ('admin' === $routeArea && $this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
-                $menu->addChild('Settings', [
-                    'route' => '«appName.formatForDB»_config_config',
-                ])
-                    ->setAttribute('icon', 'fas fa-wrench')
-                    ->setLinkAttribute('title', 'Manage settings for this application')
-                    ->setExtra('translation_domain', 'config')
-                ;
-            }
-        «ENDIF»
     '''
 
     def private menuLinkToViewAction(Entity it) '''

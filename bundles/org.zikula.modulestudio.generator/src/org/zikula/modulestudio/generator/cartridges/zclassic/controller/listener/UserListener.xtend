@@ -203,17 +203,9 @@ class UserListener {
             «ENDIF»
         «ELSEIF null !== varContainer»
             // set «name.formatForDisplay» variable to «IF onAccountDeletion != AccountDeletionHandler.DELETE»«onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)»)«ELSE»admin (UsersConstant::USER_ID_ADMIN)«ENDIF» if it is affected
-            «IF varContainer.composite»
-                $«varContainer.name.formatForCode» = $this->variableApi->get('«application.appName»', '«varContainer.name.formatForCode»');
-                if (isset($«varContainer.name.formatForCode»['«name.formatForCode»']) && $userId === $«varContainer.name.formatForCode»['«name.formatForCode»']) {
-                    $«varContainer.name.formatForCode»['«name.formatForCode»'] = «IF onAccountDeletion != AccountDeletionHandler.DELETE»«application.adhUid(onAccountDeletion)»«ELSE»UsersConstant::USER_ID_ADMIN«ENDIF»;
-                    $this->variableApi->set('«application.appName»', '«varContainer.name.formatForCode»', $«varContainer.name.formatForCode»);
-                }
-            «ELSE»
-                if ($userId === $this->variableApi->get('«application.appName»', '«name.formatForCode»')) {
-                    $this->variableApi->set('«application.appName»', '«name.formatForCode»', «IF onAccountDeletion != AccountDeletionHandler.DELETE»«application.adhUid(onAccountDeletion)»«ELSE»UsersConstant::USER_ID_ADMIN«ENDIF»);
-                }
-            «ENDIF»
+            if ($userId === $this->variableApi->get('«application.appName»', '«name.formatForCode»')) {
+                $this->variableApi->set('«application.appName»', '«name.formatForCode»', «IF onAccountDeletion != AccountDeletionHandler.DELETE»«application.adhUid(onAccountDeletion)»«ELSE»UsersConstant::USER_ID_ADMIN«ENDIF»);
+            }
         «ENDIF»
     '''
 }

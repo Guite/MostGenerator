@@ -88,7 +88,6 @@ class ListEntryValidator {
         use Symfony\Component\Validator\ConstraintValidator;
         use Symfony\Component\Validator\Exception\UnexpectedTypeException;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use «appNamespace»\Helper\ListEntriesHelper;
         use «appNamespace»\Validator\Constraints\ListEntry;
 
@@ -97,11 +96,8 @@ class ListEntryValidator {
          */
         abstract class AbstractListEntryValidator extends ConstraintValidator
         {
-            use TranslatorTrait;
-
-            public function __construct(TranslatorInterface $translator, protected ListEntriesHelper $listEntriesHelper)
+            public function __construct(protected readonly TranslatorInterface $translator, protected readonly ListEntriesHelper $listEntriesHelper)
             {
-                $this->setTranslator($translator);
             }
 
             public function validate($value, Constraint $constraint)
@@ -127,7 +123,7 @@ class ListEntryValidator {
                     // single-valued list
                     if ('' !== $value && !in_array($value, $allowedValues/*, true*/)) {
                         $this->context->buildViolation(
-                            $this->trans(
+                            $this->translator->trans(
                                 'The value "%value%" is not allowed for the "%property%" property.',
                                 [
                                     '%value%' => $value,
@@ -149,7 +145,7 @@ class ListEntryValidator {
                     }
                     if (!in_array($singleValue, $allowedValues/*, true*/)) {
                         $this->context->buildViolation(
-                            $this->trans(
+                            $this->translator->trans(
                                 'The value "%value%" is not allowed for the "%property%" property.',
                                 [
                                     '%value%' => $singleValue,

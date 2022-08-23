@@ -34,9 +34,13 @@ class AjaxController {
             «IF hasTrees»
                 use Symfony\Component\Routing\RouterInterface;
             «ENDIF»
-            «IF isBase»
-                use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
-            «ENDIF»
+        «ENDIF»
+        «IF isBase»
+            use Symfony\Contracts\Translation\TranslatorInterface;
+            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
+            use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
+        «ENDIF»
+        «IF hasBooleansWithAjaxToggle || hasTrees»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
             «IF hasTrees»
                 use Zikula\UsersBundle\Repository\UserRepositoryInterface;
@@ -92,8 +96,9 @@ class AjaxController {
          */
         abstract class AbstractAjaxController extends AbstractController
         {
-            public function __construct(private readonly PermissionApiInterface $permissionApi)
+            public function __construct(private readonly PermissionApiInterface $permissionApi, TranslatorInterface $translator)
             {
+                $this->setTranslator($translator);
             }
 
             «additionalAjaxFunctionsBase»

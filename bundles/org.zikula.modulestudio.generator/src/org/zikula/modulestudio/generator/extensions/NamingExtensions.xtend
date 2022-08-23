@@ -131,10 +131,17 @@ class NamingExtensions {
     }
 
     /**
+     * Returns the base path for the Flex recipe.
+     */
+    def getRecipePath(Application it) {
+        getAppDocPath + 'recipes/'
+    }
+
+    /**
      * Returns the base path for any assets.
      */
     def getAssetPath(Application it) {
-        getResourcesPath + 'public/'
+        getResourcesPath + 'recipes/public/'
     }
 
     /**
@@ -169,7 +176,7 @@ class NamingExtensions {
      * Returns the base path for uploaded files of the generated application.
      */
     def getAppUploadPath(Application it) {
-        getResourcesPath + 'userdata/' + appName + '/'
+        getRecipePath + 'public/uploads/' + appName + '/'
     }
 
     /**

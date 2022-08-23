@@ -10,22 +10,22 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Controll
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Events
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.HelperServices
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Installer
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Initializer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceDefinitions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.AppSettings
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.di.Configuration
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.di.DependencyInjection
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ListEntryValidator
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.BundleFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ComposerFile
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.DependencyInjection
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.GitIgnore
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.PhpUnitXmlDist
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Recipe
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.zclassic.tests.Tests
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Forms
@@ -70,11 +70,14 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Basic information')
         'Generating basic information'.printIfNotTesting(fsa)
         new BundleFile().generate(it, fsa)
-        new DependencyInjection().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
         new GitIgnore().generate(it, fsa)
         if (generateTests) {
             new PhpUnitXmlDist().generate(it, fsa)
+        }
+        new DependencyInjection().generate(it, fsa)
+        if (needsConfig) {
+            new Configuration().generate(it, fsa)
         }
     }
 
@@ -91,21 +94,15 @@ class ZclassicGenerator implements IGenerator {
         'Generating factory class'.printIfNotTesting(fsa)
         new Factory().generate(it, fsa)
 
-        if (!variables.empty) {
-            pm?.subTask('Model: Application settings class')
-            'Generating application settings class'.printIfNotTesting(fsa)
-            new AppSettings().generate(it, fsa)
-        }
-
         if (hasListFields) {
             new ListEntryValidator().generate(it, fsa)
         }
     }
 
     def private generateController(Application it) {
-        pm?.subTask('Controller: Application installer')
-        'Generating application installer'.printIfNotTesting(fsa)
-        new Installer().generate(it, fsa)
+        pm?.subTask('Controller: Bundle initializer')
+        'Generating bundle initializer'.printIfNotTesting(fsa)
+        new Initializer().generate(it, fsa)
         pm?.subTask('Controller: Controller classes')
         'Generating controller classes'.printIfNotTesting(fsa)
         new ControllerLayer().generate(it, fsa)
@@ -127,11 +124,6 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Workflows')
         'Generating workflows'.printIfNotTesting(fsa)
         new Workflow().generate(it, fsa)
-        if (hasUploads) {
-            pm?.subTask('Controller: Upload handlers')
-            'Generating upload handlers'.printIfNotTesting(fsa)
-            new Uploads().generate(it, fsa)
-        }
         pm?.subTask('Controller: JavaScript files')
         'Generating JavaScript files'.printIfNotTesting(fsa)
         new JavaScriptFiles().generate(it, fsa)
@@ -162,6 +154,9 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Additions: Documentation')
         'Generating documentation'.printIfNotTesting(fsa)
         new Docs().generate(it, fsa)
+        pm?.subTask('Additions: Flex recipe')
+        'Generating Flex recipe'.printIfNotTesting(fsa)
+        new Recipe().generate(it, fsa)
 
         if (generateTests) {
             pm?.subTask('Additions: Tests')

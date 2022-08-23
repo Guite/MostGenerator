@@ -60,7 +60,7 @@ class ControllerHelper {
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
         use «appNamespace»\Helper\CollectionFilterHelper;
-        «IF hasAutomaticExpiryHandling»
+        «IF hasAutomaticExpiryHandling || hasLoggable»
             use «appNamespace»\Helper\ExpiryHelper;
         «ENDIF»
         «IF needsFeatureActivationHelper»
@@ -85,31 +85,35 @@ class ControllerHelper {
 
         public function __construct(
             TranslatorInterface $translator,
-            protected RequestStack $requestStack,
+            protected readonly RequestStack $requestStack,
             «IF hasViewActions»
-                protected RouterInterface $router,
+                protected readonly RouterInterface $router,
             «ENDIF»
             «IF hasViewActions»
-                protected FormFactoryInterface $formFactory,
+                protected readonly FormFactoryInterface $formFactory,
             «ENDIF»
             «IF hasViewActions»
-                protected VariableApiInterface $variableApi,
+                protected readonly VariableApiInterface $variableApi,
             «ENDIF»
             «IF hasGeographical»
-                protected LoggerInterface $logger,
-                protected CurrentUserApiInterface $currentUserApi,
+                protected readonly LoggerInterface $logger,
+                protected readonly CurrentUserApiInterface $currentUserApi,
             «ENDIF»
-            protected EntityFactory $entityFactory,
-            protected CollectionFilterHelper $collectionFilterHelper,
-            protected PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
-            protected ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
-            protected FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasAutomaticExpiryHandling»,
+            protected readonly EntityFactory $entityFactory,
+            protected readonly CollectionFilterHelper $collectionFilterHelper,
+            protected readonly PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
+            protected readonly ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
+            protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasAutomaticExpiryHandling || hasLoggable»,
             ExpiryHelper $expiryHelper«ENDIF»
         ) {
             $this->setTranslator($translator);
             «IF hasAutomaticExpiryHandling»
 
                 $expiryHelper->handleObsoleteObjects(75);
+            «ENDIF»
+            «IF hasLoggable»
+
+                $expiryHelper->purgeOldLogEntries(75);
             «ENDIF»
         }
 

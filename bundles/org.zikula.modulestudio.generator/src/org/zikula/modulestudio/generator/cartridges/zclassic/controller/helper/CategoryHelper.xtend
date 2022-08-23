@@ -41,12 +41,12 @@ class CategoryHelper {
 
     def private helperBaseImpl(Application it) '''
         public function __construct(
-            protected TranslatorInterface $translator,
-            protected RequestStack $requestStack,
-            protected LoggerInterface $logger,
-            protected CurrentUserApiInterface $currentUserApi,
-            protected CategoryRegistryRepositoryInterface $categoryRegistryRepository,
-            protected CategoryPermissionApiInterface $categoryPermissionApi
+            protected readonly TranslatorInterface $translator,
+            protected readonly RequestStack $requestStack,
+            protected readonly LoggerInterface $logger,
+            protected readonly CurrentUserApiInterface $currentUserApi,
+            protected readonly CategoryRegistryRepositoryInterface $categoryRegistryRepository,
+            protected readonly CategoryPermissionApiInterface $categoryPermissionApi
         ) {
         }
 

@@ -24,7 +24,7 @@ class BacklinkIntegrator {
 
         (function($) {
             $(document).ready(function () {
-                if ($('#poweredBy').length < 1) {
+                if (1 > $('#poweredBy').length || 1 > $('#poweredByMost').length) {
                     return;
                 }
 

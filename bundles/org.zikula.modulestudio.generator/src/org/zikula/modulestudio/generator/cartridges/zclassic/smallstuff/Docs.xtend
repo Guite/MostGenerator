@@ -6,20 +6,20 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.document
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_LGPL
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs.TechComplexity
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs.TechStructure
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Docs {
 
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     /**
-     * Entry point for module documentation.
+     * Entry point for bundle documentation.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         var fileName = 'CHANGELOG.md'
@@ -83,17 +83,44 @@ class Docs {
     '''
 
     def private Install(Application it) '''
-        # Installation instructions
+        # Installation and setup instructions
 
-        «IF needsComposerInstall»
-            0. If the application's root folder does not contain a `vendor/` folder yet, run `composer install --no-dev` to install dependencies.
-        «ENDIF»
-        1. Copy «appName» into your `extensions` directory. Afterwards you should have a folder named `«relativeAppRootPath»/Resources`.
-        2. Initialize and activate «appName» in the extensions administration.
+        ## Install the bundle
+
+        Add an entry to your `composer.json` pointing to your repository like this:
+
+        ```
+          "repositories": [
+            {
+              "type": "git",
+              "url": "https://github.com/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Bundle/"
+            }
+          ],
+        ```
+
+        Afterwards execute `composer require "«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Bundle:dev-main"`.
+
+        ## Setup
+
+        ### When using the Flex recipe
+
+        Just follow the instructions in your console.
+
+        ### When not using Flex
+
+        1. Add the bundle to `/config/bundles.php` adding `"«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\«appName»": ["all"]`.
+        2. Copy `Resources/docs/recipe/config/routes/«vendor.formatForDB»_«name.formatForDB».yaml` to `/config/routes/«vendor.formatForDB»_«name.formatForDB».yaml`.
+        3. Create database tables
+           1. Create a database migration using `php bin/console make:migration`.
+           2. Review the generated migration file and execute it using `php bin/console doctrine:migrations:migrate`.
+
+           Alternatively the quick and dirty way during development: `php bin/console doctrine:schema:update --force`.
+        4. JavaScript routes  
+          If you use the `FOSJsRoutingBundle` dump JS routes using `php bin/console fos:js-routing:dump`.
+        5. Execute `php bin/console zikula:init-bundle «appName»`.
+        6. Optional: dump the default configuration using `php bin/console config:dump-reference «appName»` and put it into `/config/packages/«vendor.formatForDB»_«name.formatForDB».yaml`.
         «IF hasUploads»
-            3. Move or copy the directory `Resources/userdata/«appName»/` to `/public/uploads/«appName»/`.
-               Note this step is optional as the install process can create these folders, too.
-            4. Make the directory `/public/uploads/«appName»/` writable including all sub folders.
+            7. Move or copy the directory `Resources/docs/recipe/public/uploads/«appName»/` to `/public/uploads/«appName»/` and make it writable including all sub folders.
         «ENDIF»
 
         For questions and other remarks visit our homepage <«url»>.
@@ -106,8 +133,8 @@ class Docs {
 
         To create a new translation follow the steps below:
 
-        1. First install the module like described in the `install.md` file.
-        2. Open a console and navigate to the Zikula root directory.
+        1. First install the bundle like described in the `install.md` file.
+        2. Open a console and navigate to the Symfony root directory.
         3. Execute this command replacing `en` by your desired locale code:
 
         `php -dmemory_limit=2G bin/console translation:extract --bundle «appName» extension en`
@@ -120,8 +147,8 @@ class Docs {
     '''
 
     def private ReadmeFooter(Application it) '''
-        «author»«IF email != ""» («email»)«ENDIF»
-        «IF url != ""»<«url»>«/*«ELSE»«msUrl»*/»«ENDIF»
+        «author»«IF email != ''» («email»)«ENDIF»
+        «IF url != ''»<«url»>«/*«ELSE»«msUrl»*/»«ENDIF»
     '''
 
     def Readme(Application it) '''

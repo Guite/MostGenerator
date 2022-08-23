@@ -64,28 +64,19 @@ class EntityDisplayHelper {
 
     def private helperBaseImpl(Application it) '''
         «IF hasAnyDateTimeFields»
-            /**
-             * @var IntlDateFormatter Formatter for dates
-             */
-            protected $dateFormatter;
+            protected IntlDateFormatter $dateFormatter;
 
         «ENDIF»
         «IF hasNumberFields»
-            /**
-             * @var NumberFormatter Formatter for numbers
-             */
-            protected $numberFormatter;
+            protected NumberFormatter $numberFormatter;
 
-            /**
-             * @var NumberFormatter Formatter for currencies
-             */
-            protected $currencyFormatter;
+            protected NumberFormatter $currencyFormatter;
 
         «ENDIF»
 
         public function __construct(
-            protected TranslatorInterface $translator«IF hasListFields»,
-            protected ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasAnyDateTimeFields || hasNumberFields»,
+            protected readonly TranslatorInterface $translator«IF hasListFields»,
+            protected readonly ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasAnyDateTimeFields || hasNumberFields»,
             RequestStack $requestStack«ENDIF»
         ) {
             «IF hasAnyDateTimeFields || hasNumberFields»

@@ -42,7 +42,7 @@ class ModelHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        public function __construct(protected EntityFactory $entityFactory)
+        public function __construct(protected readonly EntityFactory $entityFactory)
         {
         }
 

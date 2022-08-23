@@ -56,11 +56,11 @@ class ImageHelper {
 
         public function __construct(
             «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-                protected ZikulaHttpKernelInterface $kernel,
+                protected readonly ZikulaHttpKernelInterface $kernel,
             «ENDIF»
-            protected TranslatorInterface $translator,
-            protected RequestStack $requestStack,
-            protected VariableApiInterface $variableApi
+            protected readonly TranslatorInterface $translator,
+            protected readonly RequestStack $requestStack,
+            protected readonly VariableApiInterface $variableApi
         ) {
             $this->applicationName = '«appName»';
         }

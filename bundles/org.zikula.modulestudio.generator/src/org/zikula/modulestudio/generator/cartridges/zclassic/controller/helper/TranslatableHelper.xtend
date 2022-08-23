@@ -55,11 +55,11 @@ class TranslatableHelper {
 
         «ENDIF»
         public function __construct(
-            protected TranslatorInterface $translator,
-            protected RequestStack $requestStack,
-            protected VariableApiInterface $variableApi,
-            protected LocaleApiInterface $localeApi,
-            protected EntityFactory $entityFactory
+            protected readonly TranslatorInterface $translator,
+            protected readonly RequestStack $requestStack,
+            protected readonly VariableApiInterface $variableApi,
+            protected readonly LocaleApiInterface $localeApi,
+            protected readonly EntityFactory $entityFactory
         ) {
         }
 

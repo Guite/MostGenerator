@@ -239,7 +239,7 @@ application "SimpleNews" targets ZK40 {
                 upload "myImage"
             }
         },
-        varContainer "OtherSettings" composite {
+        varContainer "OtherSettings" {
             documentation "My variable section with {{ variable }}"
             sortOrder 3
             fields {

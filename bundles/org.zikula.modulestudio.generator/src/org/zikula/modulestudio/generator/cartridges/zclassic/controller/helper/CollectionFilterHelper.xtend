@@ -80,18 +80,18 @@ class CollectionFilterHelper {
         «ENDIF»
 
         public function __construct(
-            protected RequestStack $requestStack,
-            protected PermissionHelper $permissionHelper,
+            protected readonly RequestStack $requestStack,
+            protected readonly PermissionHelper $permissionHelper,
             «IF hasStandardFieldEntities»
-                protected CurrentUserApiInterface $currentUserApi,
+                protected readonly CurrentUserApiInterface $currentUserApi,
             «ENDIF»
             «IF hasUserFields»
-                protected UserRepositoryInterface $userRepository,
+                protected readonly UserRepositoryInterface $userRepository,
             «ENDIF»
             «IF hasCategorisableEntities»
-                protected CategoryHelper $categoryHelper,
+                protected readonly CategoryHelper $categoryHelper,
             «ENDIF»
-            «IF !getAllEntities.filter[ownerPermission].empty»protected «ENDIF»VariableApiInterface $variableApi
+            «IF !getAllEntities.filter[ownerPermission].empty»protected readonly «ENDIF»VariableApiInterface $variableApi
         ) {
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $this->variableApi = $variableApi;

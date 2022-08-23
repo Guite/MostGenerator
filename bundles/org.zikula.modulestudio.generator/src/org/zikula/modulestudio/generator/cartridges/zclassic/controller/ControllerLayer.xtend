@@ -10,7 +10,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.L
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableUndelete
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.MassHandling
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AjaxController
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ConfigController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.ExtensionMenu
@@ -47,9 +46,6 @@ class ControllerLayer {
         // controller classes
         getAllEntities.forEach[generateController(fsa)]
         new AjaxController().generate(it, fsa)
-        if (needsConfig) {
-            new ConfigController().generate(it, fsa)
-        }
 
         new ExtensionMenu().generate(it, fsa)
         new MenuBuilder().generate(it, fsa)
@@ -79,6 +75,13 @@ class ControllerLayer {
          */
         abstract class Abstract«name.formatForCodeCapital»Controller extends AbstractController
         {
+            use TranslatorTrait;
+        
+            public function __construct(TranslatorInterface $translator)
+            {
+                $this->setTranslator($translator);
+            }
+
             «FOR action : getAllEntityActions»
                 «adminAndUserImpl(action, true)»
 
@@ -156,6 +159,8 @@ class ControllerLayer {
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        use Symfony\Contracts\Translation\TranslatorInterface;
+        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «IF hasDeleteAction»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType;
         «ENDIF»
