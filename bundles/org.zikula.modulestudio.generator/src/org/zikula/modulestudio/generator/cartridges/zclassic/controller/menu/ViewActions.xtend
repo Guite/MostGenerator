@@ -30,7 +30,7 @@ class ViewActions {
     def private actionsImpl(Entity it, Application app) '''
         $routePrefix = '«app.appName.formatForDB»_«name.formatForDB»_';
         «IF ownerPermission»
-            $showOnlyOwn = 'admin' !== $routeArea && $this->variableApi->get('«app.appName»', '«name.formatForCode»PrivateMode', false);
+            $showOnlyOwn = 'admin' !== $routeArea && $this->listViewConfig['«name.formatForSnakeCase»_private_mode'];
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
             if ('tree' === $currentTemplate) {

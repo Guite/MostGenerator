@@ -81,7 +81,6 @@ class Plugins {
         «IF hasUploads»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
-        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         use «appNamespace»\Entity\EntityInterface;
         «IF hasTrees»
             use «appNamespace»\Entity\Factory\EntityFactory;
@@ -175,7 +174,6 @@ class Plugins {
             protected readonly Connection $databaseConnection«ENDIF»«IF hasTrees»,
             protected readonly RouterInterface $router«ENDIF»«IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»,
             protected readonly RequestStack $requestStack«ENDIF»,
-            protected readonly VariableApiInterface $variableApi,
             «IF hasTrees»
                 protected readonly EntityFactory $entityFactory,
             «ENDIF»

@@ -189,7 +189,7 @@ class UploadType {
             «new FileHelper(it).getterMethod(null, 'formBuilder', 'FormBuilderInterface', false)»
             «new FileHelper(it).getterMethod(null, 'entity', 'object', false)»
 
-            public function getBlockPrefix()
+            public function getBlockPrefix(): string
             {
                 return '«appName.formatForDB»_field_upload';
             }

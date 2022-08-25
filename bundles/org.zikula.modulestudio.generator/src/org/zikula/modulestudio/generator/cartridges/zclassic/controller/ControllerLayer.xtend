@@ -175,7 +175,7 @@ class ControllerLayer {
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF ownerPermission && hasDeleteAction»
-            use Zikula\UsersBundle\Constant\UsersConstant;
+            use Zikula\UsersBundle\UsersConstant;
         «ENDIF»
         «commonAppImports»
 

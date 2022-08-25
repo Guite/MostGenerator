@@ -11,7 +11,7 @@ class Translations {
     extension Utils = new Utils
 
     /**
-     * Entry point for module translations.
+     * Entry point for bundle translations.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         fsa.createPlaceholder(getAppLocalePath)

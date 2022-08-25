@@ -20,21 +20,23 @@ class UserListener {
         «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
             public function __construct(
                 «IF hasStandardFieldEntities || hasUserFields»
-                    protected EntityFactory $entityFactory,
-                    protected CurrentUserApiInterface $currentUserApi,
-                    protected LoggerInterface $logger«IF hasUserVariables || hasLoggable»,«ENDIF»
+                    protected readonly EntityFactory $entityFactory,
+                    protected readonly CurrentUserApiInterface $currentUserApi,
+                    protected readonly LoggerInterface $logger«IF hasUserVariables || hasLoggable»,«ENDIF»
                 «ENDIF»
                 «IF hasUserVariables»
-                    protected VariableApiInterface $variableApi«IF hasLoggable»,«ENDIF»
+                    «FOR userVar : getAllVariables.filter(UserField)»
+                        protected readonly int $«userVar.name.formatForCode»,
+                    «ENDFOR»«IF hasLoggable»,«ENDIF»
                 «ENDIF»
                 «IF hasLoggable»
-                    protected LoggableHelper $loggableHelper
+                    protected readonly LoggableHelper $loggableHelper
                 «ENDIF»
             ) {
             }
 
         «ENDIF»
-        public static function getSubscribedEvents()
+        public static function getSubscribedEvents(): array
         {
             return [
                 ActiveUserPostCreatedEvent::class => ['create', 5],
@@ -202,9 +204,15 @@ class UserListener {
                 );
             «ENDIF»
         «ELSEIF null !== varContainer»
-            // set «name.formatForDisplay» variable to «IF onAccountDeletion != AccountDeletionHandler.DELETE»«onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)»)«ELSE»admin (UsersConstant::USER_ID_ADMIN)«ENDIF» if it is affected
-            if ($userId === $this->variableApi->get('«application.appName»', '«name.formatForCode»')) {
-                $this->variableApi->set('«application.appName»', '«name.formatForCode»', «IF onAccountDeletion != AccountDeletionHandler.DELETE»«application.adhUid(onAccountDeletion)»«ELSE»UsersConstant::USER_ID_ADMIN«ENDIF»);
+            if ($userId === $this->«name.formatForCode») {
+                $logArgs = [
+                    'app' => '«application.appName»',
+                    'user' => $this->currentUserApi->get('uname'),
+                ];
+                $this->logger->warning(
+                    '{app}: User {user} has been deleted, hence the "«name.formatForCode»" configuration definition should be changed to another user ID.',
+                    $logArgs
+                );
             }
         «ENDIF»
     '''

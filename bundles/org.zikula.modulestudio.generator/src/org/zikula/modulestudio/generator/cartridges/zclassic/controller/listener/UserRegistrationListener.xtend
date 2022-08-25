@@ -5,7 +5,7 @@ import de.guite.modulestudio.metamodel.Application
 class UserRegistrationListener {
 
     def generate(Application it) '''
-        public static function getSubscribedEvents()
+        public static function getSubscribedEvents(): array
         {
             return [
                 ActiveUserPreCreatedEvent::class => ['createVeto', 5],

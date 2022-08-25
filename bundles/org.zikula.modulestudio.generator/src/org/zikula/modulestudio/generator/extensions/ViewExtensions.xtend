@@ -136,9 +136,9 @@ class ViewExtensions {
         {{ pageAddAsset('stylesheet', zasset('@«application.appName»:leaflet/css/leaflet.css')) }}
         {{ pageAddAsset('javascript', zasset('@«application.appName»:leaflet/js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js')) }}
         «IF 'view' == actionName»
-            <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-object-type="«objName»" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"></div>
+            <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-object-type="«objName»" data-tile-layer-url="{{ geoConfig.tile_layer_url|e('html_attr') }}" data-tile-layer-attribution="{{ geoConfig.tile_layer_attribution|e('html_attr') }}"></div>
         «ELSE»
-            <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-latitude="{{ «objName».latitude|«application.appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«application.appName.formatForDB»_geoData }}" data-zoom-level="{{ getModVar('«application.appName»', 'defaultZoomLevel', 18) }}" data-tile-layer-url="{{ getModVar('«application.appName»', 'tileLayerUrl') }}" data-tile-layer-attribution="{{ getModVar('«application.appName»', 'tileLayerAttribution') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and getModVar('«application.appName»', 'enable«name.formatForCodeCapital»GeoLocation', false) == true %}true{% else %}false{% endif %}"«ENDIF»></div>
+            <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-latitude="{{ «objName».latitude|«application.appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«application.appName.formatForDB»_geoData }}" data-zoom-level="{{ geoConfig.default_zoom_level|e('html_attr') }}" data-tile-layer-url="{{ geoConfig.tile_layer_url|e('html_attr') }}" data-tile-layer-attribution="{{ geoConfig.tile_layer_attribution|e('html_attr') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and geoConfig.enable_«name.formatForSnakeCase»_geo_location %}true{% else %}false{% endif %}"«ENDIF»></div>
         «ENDIF»
 
     '''

@@ -41,9 +41,6 @@ class EntityInitializer {
         «IF supportLocaleFilter»
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
-        «IF hasGeographical»
-            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
@@ -57,22 +54,13 @@ class EntityInitializer {
          */
         abstract class AbstractEntityInitializer
         {
-            «IF hasGeographical»
-                protected string $defaultLatitude;
-
-                protected string $defaultLongitude;
-
-            «ENDIF»
             public function __construct(
                 «IF supportLocaleFilter»protected readonly RequestStack $requestStack,«ENDIF»
                 protected readonly PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
                 protected readonly ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
-                VariableApiInterface $variableApi«ENDIF»
+                protected readonly string $defaultLatitude,
+                protected readonly string $defaultLongitude«ENDIF»
             ) {
-                «IF hasGeographical»
-                    $this->defaultLatitude = $variableApi->get('«appName»', 'defaultLatitude', '0.00');
-                    $this->defaultLongitude = $variableApi->get('«appName»', 'defaultLongitude', '0.00');
-                «ENDIF»
             }
             «FOR entity : getAllEntities»
 

@@ -123,17 +123,17 @@ class EditEntityType {
             «ENDIF»
             public function __construct(
                 «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                    protected RequestStack $requestStack,
+                    protected readonly RequestStack $requestStack,
                 «ENDIF»
-                protected EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
-                protected CollectionFilterHelper $collectionFilterHelper,
-                protected EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
-                protected VariableApiInterface $variableApi,
-                protected TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
-                protected ListEntriesHelper $listHelper«ENDIF»«IF hasUploadFieldsEntity»,
-                protected UploadHelper $uploadHelper«ENDIF»«IF hasLocaleFieldsEntity»,
-                protected LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
-                protected FeatureActivationHelper $featureActivationHelper«ENDIF»
+                protected readonly EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
+                protected readonly CollectionFilterHelper $collectionFilterHelper,
+                protected readonly EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
+                protected readonly LocaleApiInterface $localeApi,
+                protected readonly TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
+                protected readonly ListEntriesHelper $listHelper«ENDIF»«IF hasUploadFieldsEntity»,
+                protected readonly UploadHelper $uploadHelper«ENDIF»«IF hasLocaleFieldsEntity»,
+                protected readonly LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
+                protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
             }
 
@@ -213,7 +213,7 @@ class EditEntityType {
                 «addSubmitButtons»
 
             «ENDIF»
-            public function getBlockPrefix()
+            public function getBlockPrefix(): string
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»';
             }
@@ -319,9 +319,9 @@ class EditEntityType {
     def private translatableFields(Entity it) '''
         «translatableFieldSet»
 
-        if ($this->variableApi->getSystemVar('multilingual') && $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
+        if ($this->localeApi->multilingual() && $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
             $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
-            if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
+            if (is_array($supportedLanguages) && 1 < count($supportedLanguages)) {
                 $currentLanguage = $this->translatableHelper->getCurrentLanguage();
                 $translatableFields = $this->translatableHelper->getTranslatableFields('«name.formatForCode»');
                 $mandatoryFields = $this->translatableHelper->getMandatoryFields('«name.formatForCode»');

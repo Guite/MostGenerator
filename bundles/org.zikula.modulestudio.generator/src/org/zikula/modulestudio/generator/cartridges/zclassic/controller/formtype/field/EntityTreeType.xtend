@@ -138,12 +138,12 @@ class EntityTreeType {
                 return $prefix . $this->entityDisplayHelper->getFormattedTitle($choice);
             }
 
-            public function getParent()
+            public function getParent(): ?string
             {
                 return EntityType::class;
             }
 
-            public function getBlockPrefix()
+            public function getBlockPrefix(): string
             {
                 return '«appName.formatForDB»_field_entitytree';
             }

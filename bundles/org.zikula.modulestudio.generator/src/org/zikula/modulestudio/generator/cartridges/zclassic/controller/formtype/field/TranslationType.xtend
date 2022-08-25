@@ -59,7 +59,7 @@ class TranslationType {
                 ;
             }
 
-            public function getBlockPrefix()
+            public function getBlockPrefix(): string
             {
                 return '«appName.formatForDB»_field_translation';
             }

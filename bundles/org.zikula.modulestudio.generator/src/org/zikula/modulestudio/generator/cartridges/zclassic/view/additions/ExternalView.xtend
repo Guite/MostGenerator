@@ -169,7 +169,7 @@ class ExternalView {
                 {{ form_errors(finderForm) }}
                 <fieldset>
                     <legend>{% trans %}Search and select «name.formatForDisplay»{% endtrans %}</legend>
-                    {% if finderForm.language is defined and getModVar('ZConfig', 'multilingual') %}
+                    {% if finderForm.language is defined and multilingual %}
                         {{ form_row(finderForm.language) }}
                     {% endif %}
                     «IF categorisable»

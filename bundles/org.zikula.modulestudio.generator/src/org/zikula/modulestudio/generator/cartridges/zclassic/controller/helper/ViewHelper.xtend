@@ -36,8 +36,10 @@ class ViewHelper {
         «IF hasGeographical»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
+        «IF generatePdfSupport»
+            use Zikula\Bundle\CoreBundle\Site\SiteDefinitionInterface;
+        «ENDIF»
         use Zikula\Bundle\CoreBundle\Response\PlainResponse;
-        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «IF generatePdfSupport»
             use Zikula\ThemeBundle\Engine\ParameterBag;
         «ENDIF»
@@ -62,12 +64,13 @@ class ViewHelper {
             protected readonly Environment $twig,
             protected readonly LoaderInterface $twigLoader,
             protected readonly RequestStack $requestStack,
-            protected readonly VariableApiInterface $variableApi,
             «IF generatePdfSupport»
+                protected readonly SiteDefinitionInterface $site,
                 protected readonly ParameterBag $pageVars,
             «ENDIF»
             protected readonly ControllerHelper $controllerHelper,
-            protected readonly PermissionHelper $permissionHelper
+            protected readonly PermissionHelper $permissionHelper«IF hasGeographical»,
+            protected readonly array $geoConfig«ENDIF»
         ) {
         }
 
@@ -133,6 +136,7 @@ class ViewHelper {
             }
             «IF hasGeographical»
                 $this->copyLeafletAssets();
+                $templateParameters['geoConfig'] = $this->geoConfig;
 
             «ENDIF»
             «IF generatePdfSupport»
@@ -296,9 +300,8 @@ class ViewHelper {
             $output = $this->twig->render('@«vendorAndName»/includePdfHeader.html.twig') . $output . '</body></html>';
 
             // create name of the pdf output file
-            $siteName = $this->variableApi->getSystemVar('sitename');
             $pageTitle = iconv('UTF-8', 'ASCII//TRANSLIT', $this->pageVars->get('title'));
-            $fileTitle = iconv('UTF-8', 'ASCII//TRANSLIT', $siteName)
+            $fileTitle = iconv('UTF-8', 'ASCII//TRANSLIT', $this->site->getName())
                . '-'
                . ('' !== $pageTitle ? $pageTitle . '-' : '')
                . date('Ymd') . '.pdf'

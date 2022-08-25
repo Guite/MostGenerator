@@ -51,11 +51,11 @@ class FinderType {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Translation\Extractor\Annotation\Ignore;
+        use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
         use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «IF categorisable»
             use Zikula\CategoriesBundle\Form\Type\CategoriesType;
         «ENDIF»
-        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «IF needsFeatureActivationHelperEntity»
             use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
@@ -66,9 +66,9 @@ class FinderType {
         abstract class Abstract«name.formatForCodeCapital»FinderType extends AbstractType
         {
             public function __construct(
-                protected RequestStack $requestStack,
-                protected VariableApiInterface $variableApi«IF needsFeatureActivationHelperEntity»,
-                protected FeatureActivationHelper $featureActivationHelper
+                protected readonly RequestStack $requestStack,
+                protected readonly LocaleApiInterface $localeApi«IF needsFeatureActivationHelperEntity»,
+                protected readonly FeatureActivationHelper $featureActivationHelper
                 «ENDIF»
             ) {
             }
@@ -85,7 +85,7 @@ class FinderType {
                     ])
                 ;
 
-                if ($this->variableApi->getSystemVar('multilingual')) {
+                if ($this->localeApi->multilingual()) {
                     $this->addLanguageField($builder, $options);
                 }
                 «IF categorisable»
@@ -135,7 +135,7 @@ class FinderType {
 
             «addSearchField»
 
-            public function getBlockPrefix()
+            public function getBlockPrefix(): string
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»finder';
             }

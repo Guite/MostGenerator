@@ -40,10 +40,10 @@ class UploadHelper {
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
         use Symfony\Component\HttpFoundation\RequestStack;
+        use function Symfony\Component\String\s;
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\EntityInterface;
 
@@ -58,8 +58,6 @@ class UploadHelper {
 
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
-
-        protected array $moduleVars;
 
         /**
          * List of object types with upload fields
@@ -83,11 +81,10 @@ class UploadHelper {
             protected readonly RequestStack $requestStack,
             protected readonly LoggerInterface $logger,
             protected readonly CurrentUserApiInterface $currentUserApi,
-            VariableApiInterface $variableApi,
+            protected readonly array $imageConfig,
             protected readonly string $dataDirectory
         ) {
             $this->setTranslator($translator);
-            $this->moduleVars = $variableApi->getAll('«appName»');
 
             $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
             $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'];
@@ -198,24 +195,13 @@ class UploadHelper {
                 $image->save($destinationFilePath);
 
                 // check if shrinking functionality is enabled
-                $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
-                if (
-                    isset($this->moduleVars['enableShrinkingFor' . $fieldSuffix])
-                    && true === (bool) $this->moduleVars['enableShrinkingFor' . $fieldSuffix]
-                ) {
+                $configSuffix = s($objectType . '_' . $fieldName)->snake()
+
+                if ($this->imageConfig['enable_shrinking_for_' . $configSuffix]) {
                     // check for maximum size
-                    $maxWidth = isset($this->moduleVars['shrinkWidth' . $fieldSuffix])
-                        ? $this->moduleVars['shrinkWidth' . $fieldSuffix]
-                        : 800
-                    ;
-                    $maxHeight = isset($this->moduleVars['shrinkHeight' . $fieldSuffix])
-                        ? $this->moduleVars['shrinkHeight' . $fieldSuffix]
-                        : 600
-                    ;
-                    $thumbMode = isset($this->moduleVars['thumbnailMode' . $fieldSuffix])
-                        ? $this->moduleVars['thumbnailMode' . $fieldSuffix]
-                        : ImageInterface::THUMBNAIL_INSET
-                    ;
+                    $maxWidth = $this->imageConfig['shrink_width_' . $configSuffix];
+                    $maxHeight = $this->imageConfig['shrink_height_' . $configSuffix];
+                    $thumbMode = $this->imageConfig['thumbnail_mode_' . $configSuffix];
 
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {

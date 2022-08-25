@@ -36,13 +36,13 @@ class NotificationHelper {
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Twig\Environment;
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
+        use Zikula\Bundle\CoreBundle\Site\SiteDefinitionInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        use Zikula\GroupsBundle\Constant as GroupsConstant;
+        use Zikula\GroupsBundle\GroupsConstant;
         use Zikula\GroupsBundle\Repository\GroupRepositoryInterface;
-        use Zikula\UsersBundle\Constant as UsersConstant;
         use Zikula\UsersBundle\Entity\UserEntity;
         use Zikula\UsersBundle\Repository\UserRepositoryInterface;
+        use Zikula\UsersBundle\UsersConstant;
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Helper\EntityDisplayHelper;
         use «appNamespace»\Helper\WorkflowHelper;
@@ -58,8 +58,6 @@ class NotificationHelper {
 
     def private helperBaseImpl(Application it) '''
         use TranslatorTrait;
-
-        protected bool $mailLoggingEnabled;
 
         /**
          * List of notification recipients.
@@ -91,21 +89,18 @@ class NotificationHelper {
             TranslatorInterface $translator,
             protected readonly RouterInterface $router,
             protected readonly RequestStack $requestStack,
-            protected readonly VariableApiInterface $variableApi,
             protected readonly Environment $twig,
+            protected readonly SiteDefinitionInterface $site,
             protected readonly MailerInterface $mailer,
             protected readonly LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
             protected readonly GroupRepositoryInterface $groupRepository,
             protected readonly UserRepositoryInterface $userRepository,
             protected readonly EntityDisplayHelper $entityDisplayHelper,
-            protected readonly WorkflowHelper $workflowHelper
+            protected readonly WorkflowHelper $workflowHelper,
+            protected readonly bool $mailLoggingEnabled,
+            protected readonly array $moderationConfig
         ) {
             $this->setTranslator($translator);
-            «IF targets('4.0')»
-                $this->mailLoggingEnabled = (bool) $variableApi->getSystemVar('enableMailLogging', false);
-            «ELSE»
-                $this->mailLoggingEnabled = (bool) $variableApi->get('ZikulaMailerModule', 'enableLogging', false);
-            «ENDIF»
             $this->applicationName = '«appName»';
         }
 
@@ -179,24 +174,16 @@ class NotificationHelper {
 
             if (in_array($this->recipientType, ['moderator', 'superModerator'], true)) {
                 «val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]»
-                $modVarSuffixes = [
+                $configSuffixes = [
                     «FOR entity : entitiesWithWorkflow»
-                        '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForCodeCapital»',
+                        '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForSnakeCase»',
                     «ENDFOR»
                 ];
-                $modVarSuffix = $modVarSuffixes[$this->entity->get_objectType()];
+                $configSuffix = $configSuffixes[$this->entity->get_objectType()];
 
-                $moderatorGroupId = $this->variableApi->get(
-                    '«appName»',
-                    'moderationGroupFor' . $modVarSuffix,
-                    GroupsConstant::GROUP_ID_ADMIN
-                );
+                $moderatorGroupId = $this->moderationConfig['moderation_group_for_' . $configSuffix];
                 if ('superModerator' === $this->recipientType) {
-                    $moderatorGroupId = $this->variableApi->get(
-                        '«appName»',
-                        'superModerationGroupFor' . $modVarSuffix,
-                        GroupsConstant::GROUP_ID_ADMIN
-                    );
+                    $moderatorGroupId = $this->moderationConfig['super_moderation_group_for_' . $configSuffix];
                 }
 
                 $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
@@ -265,8 +252,8 @@ class NotificationHelper {
         protected function sendMails(): bool
         {
             $objectType = $this->entity->get_objectType();
-            $siteName = $this->variableApi->getSystemVar('sitename');
-            $adminMail = $this->variableApi->getSystemVar('adminmail');
+            $siteName = $this->site->getName();
+            $adminMail = $this->site->getAdminMail();
 
             $templateType = '';
             if ($this->usesDesignatedEntityFields()) {

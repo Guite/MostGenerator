@@ -41,7 +41,7 @@ class Listeners {
         listenerSuffix = 'Listener.php'
 
         'Generating event listener base classes'.printIfNotTesting(fsa)
-        listenerPath = 'Listener/Base/'
+        listenerPath = 'EventListener/Base/'
         isBase = true
         generateListenerClasses
 
@@ -50,7 +50,7 @@ class Listeners {
         }
 
         'Generating event listener implementation classes'.printIfNotTesting(fsa)
-        listenerPath = 'Listener/'
+        listenerPath = 'EventListener/'
         isBase = false
         generateListenerClasses
     }
@@ -80,10 +80,10 @@ class Listeners {
     }
 
     def private formTypeChoicesFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractFormTypeChoicesListener;
+            use «appNamespace»\EventListener\Base\AbstractFormTypeChoicesListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\Bundle\FormExtensionBundle\Event\FormTypeChoiceEvent;
@@ -103,10 +103,10 @@ class Listeners {
     '''
 
     def private listenersKernelFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractKernelListener;
+            use «appNamespace»\EventListener\Base\AbstractKernelListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -133,10 +133,10 @@ class Listeners {
     '''
 
     def private listenersThemeFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractThemeListener;
+            use «appNamespace»\EventListener\Base\AbstractThemeListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -160,10 +160,10 @@ class Listeners {
     '''
 
     def private listenersUserLoginFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractUserLoginListener;
+            use «appNamespace»\EventListener\Base\AbstractUserLoginListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\UsersBundle\Event\UserPostLoginFailureEvent;
@@ -185,10 +185,10 @@ class Listeners {
     '''
 
     def private listenersUserLogoutFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractUserLogoutListener;
+            use «appNamespace»\EventListener\Base\AbstractUserLogoutListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\UsersBundle\Event\UserPostLogoutSuccessEvent;
@@ -208,27 +208,24 @@ class Listeners {
     '''
 
     def private listenersUserFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractUserListener;
+            use «appNamespace»\EventListener\Base\AbstractUserListener;
         «ELSE»
             «IF hasStandardFieldEntities || hasUserFields»
                 use Psr\Log\LoggerInterface;
             «ENDIF»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            «IF hasUserVariables»
-                use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-            «ENDIF»
             «IF hasStandardFieldEntities || hasUserFields»
                 use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-            «ENDIF»
-            «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
-                use Zikula\UsersBundle\Constant as UsersConstant;
             «ENDIF»
             use Zikula\UsersBundle\Event\ActiveUserPostCreatedEvent;
             use Zikula\UsersBundle\Event\ActiveUserPostDeletedEvent;
             use Zikula\UsersBundle\Event\ActiveUserPostUpdatedEvent;
+            «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
+                use Zikula\UsersBundle\UsersConstant;
+            «ENDIF»
             «IF hasStandardFieldEntities || hasUserFields»
                 use «appNamespace»\Entity\Factory\EntityFactory;
             «ENDIF»
@@ -251,10 +248,10 @@ class Listeners {
     '''
 
     def private listenersUserRegistrationFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractUserRegistrationListener;
+            use «appNamespace»\EventListener\Base\AbstractUserRegistrationListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\UsersBundle\Event\ActiveUserPreCreatedEvent;
@@ -279,10 +276,10 @@ class Listeners {
     '''
 
     def private listenersGroupFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractGroupListener;
+            use «appNamespace»\EventListener\Base\AbstractGroupListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Zikula\GroupsBundle\Event\GroupApplicationPostCreatedEvent;
@@ -309,10 +306,10 @@ class Listeners {
     '''
 
     def private listenersIpTraceFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractIpTraceListener;
+            use «appNamespace»\EventListener\Base\AbstractIpTraceListener;
         «ELSE»
             use Gedmo\IpTraceable\IpTraceableListener;
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -338,10 +335,10 @@ class Listeners {
     '''
 
     def private listenersLoggableFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractLoggableListener;
+            use «appNamespace»\EventListener\Base\AbstractLoggableListener;
         «ELSE»
             use Gedmo\Loggable\LoggableListener as BaseListener;
             use Gedmo\Loggable\Mapping\Event\LoggableAdapter;
@@ -364,10 +361,10 @@ class Listeners {
     '''
 
     def private listenersWorkflowEventsFile(Application it) '''
-        namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
+        namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\AbstractWorkflowEventsListener;
+            use «appNamespace»\EventListener\Base\AbstractWorkflowEventsListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\Workflow\Event\Event;

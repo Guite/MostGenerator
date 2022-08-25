@@ -6,8 +6,8 @@ class LoggableListener {
 
     def generate(Application it) '''
         public function __construct(
-            protected EntityDisplayHelper $entityDisplayHelper,
-            protected LoggableHelper $loggableHelper
+            protected readonly EntityDisplayHelper $entityDisplayHelper,
+            protected readonly LoggableHelper $loggableHelper
         ) {
             parent::__construct();
         }

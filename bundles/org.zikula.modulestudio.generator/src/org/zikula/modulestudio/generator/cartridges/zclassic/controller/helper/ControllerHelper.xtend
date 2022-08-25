@@ -7,7 +7,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerHelper {
@@ -16,7 +15,6 @@ class ControllerHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     /**
@@ -40,14 +38,12 @@ class ControllerHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         «IF hasViewActions»
             use Symfony\Component\Routing\RouterInterface;
+            use function Symfony\Component\String\s;
         «ENDIF»
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «IF hasViewActions»
             use Zikula\Component\SortableColumns\SortableColumns;
-        «ENDIF»
-        «IF hasViewActions»
-            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «ENDIF»
         «IF hasGeographical»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
@@ -92,9 +88,6 @@ class ControllerHelper {
             «IF hasViewActions»
                 protected readonly FormFactoryInterface $formFactory,
             «ENDIF»
-            «IF hasViewActions»
-                protected readonly VariableApiInterface $variableApi,
-            «ENDIF»
             «IF hasGeographical»
                 protected readonly LoggerInterface $logger,
                 protected readonly CurrentUserApiInterface $currentUserApi,
@@ -104,7 +97,8 @@ class ControllerHelper {
             protected readonly PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
             protected readonly ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
             protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasAutomaticExpiryHandling || hasLoggable»,
-            ExpiryHelper $expiryHelper«ENDIF»
+            ExpiryHelper $expiryHelper«ENDIF»«IF hasViewActions»,
+            protected readonly array $listViewConfig«ENDIF»
         ) {
             $this->setTranslator($translator);
             «IF hasAutomaticExpiryHandling»
@@ -215,17 +209,18 @@ class ControllerHelper {
                 }
             «ENDIF»
 
+            $configName = s($objectType)->snake();
             $templateParameters['all'] = 'csv' === $request->getRequestFormat() ? 1 : $request->query->getInt('all');
             $showOnlyOwnEntriesSetting = (bool) $request->query->getInt(
                 'own',
-                (int) $this->variableApi->get('«appName»', 'showOnlyOwnEntries')
+                (int) $this->listViewConfig['show_only_own_entries']
             );
             $showOnlyOwnEntriesSetting = $showOnlyOwnEntriesSetting ? 1 : 0;
             «IF !getAllEntities.filter[ownerPermission].empty»
                 $routeName = $request->get('_route');
                 $isAdminArea = 'admin' === $templateParameters['routeArea'];
                 if (!$isAdminArea && in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'], true)) {
-                    $showOnlyOwnEntries = (bool) $this->variableApi->get('«appName»', $objectType . 'PrivateMode', false);
+                    $showOnlyOwnEntries = $this->listViewConfig[$configName . '_private_mode'];
                     if (true === $showOnlyOwnEntries) {
                         $templateParameters['own'] = 1;
                     } else {
@@ -243,7 +238,7 @@ class ControllerHelper {
                 // the number of items displayed on a page for pagination
                 $resultsPerPage = $request->query->getInt('num');
                 if (in_array($resultsPerPage, [0, 10], true)) {
-                    $resultsPerPage = $this->variableApi->get('«appName»', $objectType . 'EntriesPerPage', 10);
+                    $resultsPerPage = $this->listViewConfig[$configName . '_entries_per_page'];
                 }
             }
             $templateParameters['num'] = $resultsPerPage;
@@ -518,44 +513,25 @@ class ControllerHelper {
         {
             $url = 'https://nominatim.openstreetmap.org/search?limit=1&format=json&q=' . urlencode($address);
 
-            $json = '';
+            $data = null;
 
-            // we can either use Snoopy if available
-            //require_once '«relativeAppRootPath»/vendor/Snoopy/Snoopy.class.php';
-            //$snoopy = new Snoopy();
-            //$snoopy->fetch($url);
-            //$json = $snoopy->results;
-
-            // we can also use curl
-            if (function_exists('curl_version')) {
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                if (!ini_get('open_basedir')) {
-                    // This option does not work with open_basedir set in php.ini
-                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-                }
-                curl_setopt($ch, CURLOPT_URL, $url);
-                $json = curl_exec($ch);
-                curl_close($ch);
-            } else {
-                // or we can use the plain file_get_contents method
-                // requires allow_url_fopen = true in php.ini which is NOT good for security
-                $json = file_get_contents($url);
-            }
+            // inject Symfony\Contracts\HttpClient\HttpClientInterface and then do
+            //$response = $this->client->request($url);
+            //if (200 === $response->getStatusCode()) {
+            //$data = $response->getContent()->toArray();
+            //}
 
             // create the result array
             $result = [
                 'latitude' => 0,
-                'longitude' => 0
+                'longitude' => 0,
             ];
 
-            if ('' === $json) {
+            if (null === $data) {
                 return $result;
             }
 
-            $data = json_decode($json);
-            if (JSON_ERROR_NONE === json_last_error() && 'OK' === $data->status && 0 < count($data)) {
+            if (0 < count($data)) {
                 $location = $data[0];
                 $result['latitude'] = str_replace(',', '.', $location->lat);
                 $result['longitude'] = str_replace(',', '.', $location->lng);

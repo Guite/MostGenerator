@@ -145,22 +145,25 @@ class FormHandler {
         «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
+            use function Symfony\Component\String\s;
+        «ENDIF»
         use Symfony\Contracts\Translation\TranslatorInterface;
+        «IF hasTranslatable»
+            use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
+        «ENDIF»
         use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        «ENDIF»
         «IF needsApproval»
-            use Zikula\GroupsBundle\Constant as GroupsConstant;
+            use Zikula\GroupsBundle\GroupsConstant;
             use Zikula\GroupsBundle\Repository\GroupApplicationRepositoryInterface;
         «ENDIF»
         use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        «IF needsApproval»
-            use Zikula\UsersBundle\Constant as UsersConstant;
-        «ENDIF»
         «IF hasNonNullableUserFields»
             use Zikula\UsersBundle\Repository\UserRepositoryInterface;
+        «ENDIF»
+        «IF needsApproval»
+            use Zikula\UsersBundle\UsersConstant;
         «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -187,16 +190,6 @@ class FormHandler {
              * Name of treated object type.
              */
             protected string $objectType;
-
-            /**
-             * Name of treated object type starting with upper case.
-             */
-            protected string $objectTypeCapital;
-
-            /**
-             * Lower case version.
-             */
-            protected string $objectTypeLower;
 
             /**
              * Reference to treated entity instance.
@@ -256,29 +249,31 @@ class FormHandler {
             protected array $templateParameters = [];
 
             public function __construct(
-                protected ZikulaHttpKernelInterface $kernel,
+                protected readonly ZikulaHttpKernelInterface $kernel,
                 TranslatorInterface $translator,
-                protected FormFactoryInterface $formFactory,
-                protected RequestStack $requestStack,
-                protected RouterInterface $router,
-                protected LoggerInterface $logger,
-                «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-                    protected VariableApiInterface $variableApi,
+                protected readonly FormFactoryInterface $formFactory,
+                protected readonly RequestStack $requestStack,
+                protected readonly RouterInterface $router,
+                protected readonly LoggerInterface $logger,
+                «IF hasTranslatable»
+                    protected readonly LocaleApiInterface $localeApi,
                 «ENDIF»
-                protected CurrentUserApiInterface $currentUserApi,
+                protected readonly CurrentUserApiInterface $currentUserApi,
                 «IF needsApproval»
-                    protected GroupApplicationRepositoryInterface $groupApplicationRepository,
+                    protected readonly GroupApplicationRepositoryInterface $groupApplicationRepository,
                 «ENDIF»
                 «IF hasNonNullableUserFields»
-                    protected UserRepositoryInterface $userRepository,
+                    protected readonly UserRepositoryInterface $userRepository,
                 «ENDIF»
-                protected EntityFactory $entityFactory,
-                protected ControllerHelper $controllerHelper,
-                protected ModelHelper $modelHelper,
-                protected PermissionHelper $permissionHelper,
-                protected WorkflowHelper $workflowHelper«IF hasTranslatable»,
-                protected TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
-                protected FeatureActivationHelper $featureActivationHelper«ENDIF»
+                protected readonly EntityFactory $entityFactory,
+                protected readonly ControllerHelper $controllerHelper,
+                protected readonly ModelHelper $modelHelper,
+                protected readonly PermissionHelper $permissionHelper,
+                protected readonly WorkflowHelper $workflowHelper«IF hasTranslatable»,
+                protected readonly TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
+                protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasTranslatable || needsApproval || hasStandardFieldEntities»,
+                protected readonly array $moderationConfig
+                «ENDIF»
             ) {
                 $this->setTranslator($translator);
             }
@@ -326,7 +321,7 @@ class FormHandler {
             $this->returnTo = $request->query->get('returnTo');
             if (null !== $session) {
                 // default to referer
-                $refererSessionVar = '«appName.formatForDB»' . $this->objectTypeCapital . 'Referer';
+                $refererSessionVar = '«appName.formatForDB»' . ucfirst($this->objectType) . 'Referer';
                 if (null === $this->returnTo && $request->headers->has('referer')) {
                     $currentReferer = $request->headers->get('referer');
                     if ($currentReferer !== urldecode($request->getUri())) {
@@ -367,7 +362,7 @@ class FormHandler {
                     «IF !getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].empty»
                         if (null !== $session && in_array($this->objectType, ['«getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
                             // map display return urls to redirect codes because slugs may change
-                            $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
+                            $routePrefix = '«app.appName.formatForDB»_' . mb_strtolower($this->objectType) . '_';
                             $userDisplayUrl = $this->router->generate(
                                 $routePrefix . 'display',
                                 $entity->createUrlArgs(),
@@ -594,12 +589,7 @@ class FormHandler {
                     return;
                 }
 
-                if (!$this->variableApi->getSystemVar('multilingual')) {
-                    $this->templateParameters['translationsEnabled'] = false;
-
-                    return;
-                }
-                if (2 > count($supportedLanguages)) {
+                if (!$this->localeApi->multilingual() || 2 > count($supportedLanguages)) {
                     $this->templateParameters['translationsEnabled'] = false;
 
                     return;
@@ -620,7 +610,7 @@ class FormHandler {
                 // retrieve and assign translated fields
                 $translations = $this->translatableHelper->prepareEntityForEditing($this->entityRef);
                 foreach ($translations as $language => $translationData) {
-                    $this->templateParameters[$this->objectTypeLower . $language] = $translationData;
+                    $this->templateParameters[mb_strtolower($this->objectType) . $language] = $translationData;
                 }
             }
         «ENDIF»
@@ -873,24 +863,17 @@ class FormHandler {
                 )
             ;
 
+            $configSuffix = s($this->objectType)->snake();
             $groupApplicationArgs = [
                 'user' => $currentUserId,
-                'group' => $this->variableApi->get(
-                    '«appName»',
-                    'moderationGroupFor' . $this->objectTypeCapital,
-                    GroupsConstant::GROUP_ID_ADMIN
-                ),
+                'group' => $this->moderationConfig['moderation_group_for_' . $configSuffix],
             ];
             $roles['is_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
 
             if (true === $enterprise) {
                 $groupApplicationArgs = [
                     'user' => $currentUserId,
-                    'group' => $this->variableApi->get(
-                        '«appName»',
-                        'superModerationGroupFor' . $this->objectTypeCapital,
-                        GroupsConstant::GROUP_ID_ADMIN
-                    ),
+                    'group' => $this->moderationConfig['super_moderation_group_for_' . $configSuffix],
                 ];
                 $roles['is_super_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
             }
@@ -960,7 +943,7 @@ class FormHandler {
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         «IF ownerPermission || !fields.filter(UserField).filter[!nullable].empty»
-            use Zikula\UsersBundle\Constant as UsersConstant;
+            use Zikula\UsersBundle\UsersConstant;
         «ENDIF»
         use «entityClassName('', false)»;
         «IF ownerPermission»
@@ -970,10 +953,7 @@ class FormHandler {
 
     def private memberVarAssignments(Entity it) '''
         $this->objectType = '«name.formatForCode»';
-        $this->objectTypeCapital = '«name.formatForCodeCapital»';
-        $this->objectTypeLower = '«name.formatForDB»';
         «IF app.hasTranslatable»
-
             $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;
         «ENDIF»
     '''
@@ -1075,6 +1055,9 @@ class FormHandler {
 
         protected function getFormOptions(): array
         {
+            «IF standardFields»
+                $configSuffix = s($this->objectType)->snake();
+            «ENDIF»
             $options = [
                 «IF hasUploadFieldsEntity»
                     'entity' => $this->entityRef,
@@ -1083,16 +1066,8 @@ class FormHandler {
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
                     'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADMIN),
-                    'allow_moderation_specific_creator' => (bool) $this->variableApi->get(
-                        '«app.appName»',
-                        'allowModerationSpecificCreatorFor' . $this->objectTypeCapital,
-                        false
-                    ),
-                    'allow_moderation_specific_creation_date' => (bool) $this->variableApi->get(
-                        '«app.appName»',
-                        'allowModerationSpecificCreationDateFor' . $this->objectTypeCapital,
-                        false
-                    ),
+                    'allow_moderation_specific_creator' => $this->moderationConfig['allow_moderation_specific_creator_for_' . $configSuffix],
+                    'allow_moderation_specific_creation_date' => $this->moderationConfig['allow_moderation_specific_creation_date_for_' . $configSuffix],
                 «ENDIF»
                 «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
                     'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD),
@@ -1110,7 +1085,7 @@ class FormHandler {
 
                 $options['translations'] = [];
                 foreach ($this->templateParameters['supportedLanguages'] as $language) {
-                    $translationKey = $this->objectTypeLower . $language;
+                    $translationKey = mb_strtolower($this->objectType) . $language;
                     $options['translations'][$language] = $this->templateParameters[$translationKey] ?? [];
                 }
             «ENDIF»

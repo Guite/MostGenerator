@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 /**
  * Service definitions in YAML format.
@@ -23,6 +24,7 @@ class ServiceDefinitions {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     IMostFileSystemAccess fsa
 
@@ -49,6 +51,9 @@ class ServiceDefinitions {
                 public: false
                 bind:
                     $twigLoader: '@twig.loader'
+                    «IF needsApproval»
+                        $mailLoggingEnabled: '%enable_mail_logging%'
+                    «ENDIF»
 
             «appNamespace»\:
                 resource: '../../*'
@@ -73,17 +78,14 @@ class ServiceDefinitions {
         # public because EntityLifecycleListener accesses this using container
         «appNamespace»\Entity\Factory\EntityFactory:
             public: true
-        «IF hasUploads»
 
-            «appNamespace»\«name.formatForCodeCapital»ModuleInstaller:
-                arguments:
-                    $dataDirectory: '%datadir%'
+        «IF hasUploads»
 
             # public because EntityLifecycleListener accesses this using container
             «appNamespace»\Helper\UploadHelper:
                 public: true
                 arguments:
-                    $dataDirectory: '%datadir%'
+                    $dataDirectory: '%data_directory%'
         «ENDIF»
         «IF generatePdfSupport»
 
@@ -92,12 +94,12 @@ class ServiceDefinitions {
                     $pageVars: '@zikula_core.common.theme.pagevars'
         «ENDIF»
 
-        «appNamespace»\Listener\EntityLifecycleListener:
+        «appNamespace»\EventListener\EntityLifecycleListener:
             tags: ['doctrine.event_subscriber']
         «IF hasLoggable»
 
             # public because EntityLifecycleListener accesses this using container
-            «appNamespace»\Listener\LoggableListener:
+            «appNamespace»\EventListener\LoggableListener:
                 public: true
         «ENDIF»
 

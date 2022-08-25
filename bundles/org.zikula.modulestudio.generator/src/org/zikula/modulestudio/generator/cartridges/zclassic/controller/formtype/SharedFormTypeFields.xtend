@@ -145,6 +145,13 @@ class SharedFormTypeFields {
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Translation\Extractor\Annotation\Ignore;
         use Translation\Extractor\Annotation\Translate;
+        «IF
+            (null !== dataObject && dataObject.hasLocaleFieldsEntity)
+            || (null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).hasTranslatableFields)
+            || (null === dataObject && !fields.filter(StringField).filter[role == StringRole.LOCALE].empty)
+        »
+            use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
+        «ENDIF»
         «IF !fields.filter(DerivedField).filter[!mandatory && !nullable].empty»
             use Zikula\Bundle\FormExtensionBundle\Form\DataTransformer\NullToEmptyTransformer;
         «ENDIF»
@@ -157,14 +164,8 @@ class SharedFormTypeFields {
         «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).categorisable»
             use Zikula\CategoriesBundle\Form\Type\CategoriesType;
         «ENDIF»
-        «IF null !== dataObject && dataObject instanceof Entity && (dataObject as Entity).hasTranslatableFields»
-            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        «ENDIF»
         «IF !fields.filter(IntegerField).filter[isUserGroupSelector].empty»
             use Zikula\GroupsBundle\Entity\GroupEntity;
-        «ENDIF»
-        «IF (null !== dataObject && dataObject.hasLocaleFieldsEntity) || (null === dataObject && !fields.filter(StringField).filter[role == StringRole.LOCALE].empty)»
-            use Zikula\SettingsBundle\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
         «IF null !== dataObject»
             use «app.appNamespace»\Entity\Factory\EntityFactory;

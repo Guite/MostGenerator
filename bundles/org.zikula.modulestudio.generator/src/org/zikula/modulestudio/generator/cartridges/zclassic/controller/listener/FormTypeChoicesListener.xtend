@@ -5,7 +5,7 @@ import de.guite.modulestudio.metamodel.Application
 class FormTypeChoicesListener {
 
     def generate(Application it) '''
-        public static function getSubscribedEvents()
+        public static function getSubscribedEvents(): array
         {
             return [
                 FormTypeChoiceEvent::class => ['formTypeChoices'],

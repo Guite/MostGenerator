@@ -25,7 +25,7 @@ class WorkflowEventsListener {
         ) {
         }
 
-        public static function getSubscribedEvents()
+        public static function getSubscribedEvents(): array
         {
             return [
                 'workflow.guard' => ['onGuard', 5],

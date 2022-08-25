@@ -11,11 +11,11 @@ class ThemeListener {
 
     def generate(Application it) '''
         public function __construct(
-            protected AssetFilter $assetFilter
+            protected readonly AssetFilter $assetFilter
         ) {
         }
 
-        public static function getSubscribedEvents()
+        public static function getSubscribedEvents(): array
         {
             return [
                 TwigPreRenderEvent::class => ['preRender', 5],

@@ -34,7 +34,7 @@ class HelperServices {
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         new PermissionHelper().generate(it, fsa)
-        if (hasAutomaticExpiryHandling) {
+        if (hasAutomaticExpiryHandling || hasLoggable) {
             new ExpiryHelper().generate(it, fsa)
         }
         if (hasCategorisableEntities) {

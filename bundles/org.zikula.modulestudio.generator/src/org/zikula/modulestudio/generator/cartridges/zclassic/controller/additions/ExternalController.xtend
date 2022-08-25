@@ -30,9 +30,11 @@ class ExternalController {
 
     def private commonSystemImports(Application it, Boolean isBase) '''
         use Symfony\Component\Routing\RouterInterface;
+        use function Symfony\Component\String\s;
         «IF isBase»
             use Symfony\Contracts\Translation\TranslatorInterface;
         «ENDIF»
+        use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
         use Zikula\ThemeBundle\Engine\Asset;
         use Zikula\ThemeBundle\Engine\AssetBag;
     '''
@@ -62,8 +64,11 @@ class ExternalController {
          */
         abstract class AbstractExternalController extends AbstractController
         {
-            public function __construct(private readonly TranslatorInterface $translator)
-            {
+            public function __construct(
+                private readonly TranslatorInterface $translator,
+                private readonly array $integrationConfig,
+                private readonly array $listViewConfig
+            ) {
             }
 
             «externalBaseImpl»
@@ -191,6 +196,7 @@ class ExternalController {
             EntityFactory $entityFactory,
             CollectionFilterHelper $collectionFilterHelper,
             ListEntriesHelper $listEntriesHelper,
+            LocaleApiInterface $localeApi,
             ViewHelper $viewHelper,
             AssetBag $cssAssetBag,
             Asset $assetHelper,
@@ -203,7 +209,7 @@ class ExternalController {
         ): Response'''
 
     def private finderBaseImpl(Application it) '''
-        $activatedObjectTypes = $listEntriesHelper->extractMultiList($this->getVar('enabledFinderTypes', ''));
+        $activatedObjectTypes = $listEntriesHelper->extractMultiList($this->integrationConfig['enabledFinderTypes']);
         if (!in_array($objectType, $activatedObjectTypes, true)) {
             if (!count($activatedObjectTypes)) {
                 throw new AccessDeniedException();
@@ -249,7 +255,7 @@ class ExternalController {
         // the number of items displayed on a page for pagination
         $resultsPerPage = $num;
         if (0 === $resultsPerPage) {
-            $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 20);
+            $resultsPerPage = $this->listViewConfig[s($objectType)->snake() . '_entries_per_page'];
         }
 
         $templateParameters = [
@@ -263,6 +269,7 @@ class ExternalController {
                 'onlyImages' => false,
                 'imageField' => '',
             «ENDIF»
+            'multilingual' => $localeApi->multilingual(),
         ];
         $searchTerm = '';
 
@@ -390,6 +397,7 @@ class ExternalController {
                 $entityFactory,
                 $collectionFilterHelper,
                 $listEntriesHelper,
+                $localeApi,
                 $viewHelper,
                 $cssAssetBag,
                 $assetHelper,

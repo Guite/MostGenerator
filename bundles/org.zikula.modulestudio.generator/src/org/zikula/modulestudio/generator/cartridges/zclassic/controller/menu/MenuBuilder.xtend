@@ -30,12 +30,9 @@ class MenuBuilder {
         use Knp\Menu\ItemInterface;
         use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasViewActions»
-            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        «ENDIF»
         use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «IF (!getAllEntities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
-            use Zikula\UsersBundle\Constant as UsersConstant;
+            use Zikula\UsersBundle\UsersConstant;
         «ENDIF»
         «FOR entity : getAllEntities»
             use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
@@ -68,19 +65,20 @@ class MenuBuilder {
 
     def private menuBuilderClassBaseImpl(Application it) '''
         public function __construct(
-            protected FactoryInterface $factory,
-            protected EventDispatcherInterface $eventDispatcher,
-            protected RequestStack $requestStack,
-            protected PermissionHelper $permissionHelper,
+            protected readonly FactoryInterface $factory,
+            protected readonly EventDispatcherInterface $eventDispatcher,
+            protected readonly RequestStack $requestStack,
+            protected readonly PermissionHelper $permissionHelper,
             «IF hasDisplayActions»
-                protected EntityDisplayHelper $entityDisplayHelper,
+                protected readonly EntityDisplayHelper $entityDisplayHelper,
             «ENDIF»
             «IF hasLoggable»
-                protected LoggableHelper $loggableHelper,
+                protected readonly LoggableHelper $loggableHelper,
             «ENDIF»
-            protected CurrentUserApiInterface $currentUserApi«IF hasViewActions»,
-            protected VariableApiInterface $variableApi«ENDIF»«IF hasViewActions && hasEditActions»,
-            protected ModelHelper $modelHelper«ENDIF»
+            protected readonly CurrentUserApiInterface $currentUserApi«IF hasViewActions && hasEditActions»,
+            protected readonly ModelHelper $modelHelper«ENDIF»«IF hasViewActions»,
+            protected readonly array $listViewConfig«ENDIF»
+            
         ) {
         }
 

@@ -15,7 +15,7 @@ class Initializer {
     extension Utils = new Utils
 
     /**
-     * Entry point for application installer.
+     * Entry point for application initializer.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         if (!hasUploads && !hasCategorisableEntities) {
@@ -33,8 +33,7 @@ class Initializer {
             use Zikula\CategoriesBundle\Entity\CategoryRegistryEntity;
             use Zikula\CategoriesBundle\Repository\CategoryRepositoryInterface;
         «ENDIF»
-        use Zikula\ExtensionsBundle\AbstractExtension;
-        use Zikula\ExtensionsBundle\Installer\AbstractExtensionInstaller;
+        use Zikula\ExtensionsBundle\Initializer\BundleInitializerInterface;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»
@@ -45,7 +44,7 @@ class Initializer {
         /**
          * Initializer base class.
          */
-        abstract class Abstract«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller
+        abstract class Abstract«name.formatForCodeCapital»Initializer implements BundleInitializerInterface
         {
             «constructor»
 
@@ -77,8 +76,8 @@ class Initializer {
                 «FOR entity : getCategorisableEntities»
 
                     $registry = (new CategoryRegistryEntity())
-                        ->setModname('«appName»')
-                        ->setEntityname('«entity.name.formatForCodeCapital»Entity')
+                        ->setBundleName('«appName»')
+                        ->setEntityName('«entity.name.formatForCodeCapital»Entity')
                         ->setProperty($this->categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'))
                         ->setCategory($categoryGlobal);
 

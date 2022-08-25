@@ -24,9 +24,6 @@ class ExtensionMenu {
 
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
-        «IF generateAccountApi»
-            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        «ENDIF»
         use Zikula\MenuBundle\ExtensionMenu\ExtensionMenuInterface;
         «IF generateAccountApi»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
@@ -40,13 +37,13 @@ class ExtensionMenu {
         abstract class AbstractExtensionMenu implements ExtensionMenuInterface
         {
             public function __construct(
-                protected FactoryInterface $factory,
+                protected readonly FactoryInterface $factory,
                 «IF generateAccountApi»
-                    protected VariableApiInterface $variableApi,
-                    protected CurrentUserApiInterface $currentUserApi,
+                    protected readonly CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
-                protected ControllerHelper $controllerHelper,
-                protected PermissionHelper $permissionHelper
+                protected readonly ControllerHelper $controllerHelper,
+                protected readonly PermissionHelper $permissionHelper«IF generateAccountApi»,
+                protected readonly array $listViewConfig«ENDIF»
             ) {
             }
 
@@ -69,12 +66,12 @@ class ExtensionMenu {
                         }
 
                         «FOR entity : getAllEntities.filter[hasViewAction && standardFields]»
-                            if (true === $this->variableApi->get('«appName»', 'linkOwn«entity.nameMultiple.formatForCodeCapital»OnAccountPage', true)) {
+                            if ($this->listViewConfig['link_own_«entity.nameMultiple.formatForSnakeCase»_on_account_page']) {
                                 $objectType = '«entity.name.formatForCode»';
                                 if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
                                     $routeParameters = ['own' => 1];
                                     «IF entity.ownerPermission»
-                                        $showOnlyOwnEntries = (bool) $this->variableApi->get('«appName»', '«entity.name.formatForCode»PrivateMode');
+                                        $showOnlyOwnEntries = $this->listViewConfig['«entity.name.formatForSnakeCase»_private_mode'];
                                         if (true === $showOnlyOwnEntries) {
                                             $routeParameters = [];
                                         }

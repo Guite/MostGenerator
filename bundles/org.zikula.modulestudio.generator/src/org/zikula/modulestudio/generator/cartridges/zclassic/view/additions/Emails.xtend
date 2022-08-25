@@ -56,7 +56,7 @@ class Emails {
             «ENDIF»
         {% endif %}
 
-        <p>{% trans with {'%siteName%': getSystemVar('sitename')} %}This mail has been sent automatically by %siteName%.{% endtrans %}</p>
+        <p>{% trans with {'%siteName%': siteName()} %}This mail has been sent automatically by %siteName%.{% endtrans %}</p>
     '''
 
     def private notifyModeratorTemplate(Entity it) '''
@@ -85,6 +85,6 @@ class Emails {
             «ENDIF»
         {% endif %}
 
-        <p>{% trans with {'%siteName%': getSystemVar('sitename')} %}This mail has been sent automatically by %siteName%.{% endtrans %}</p>
+        <p>{% trans with {'%siteName%': siteName()} %}This mail has been sent automatically by %siteName%.{% endtrans %}</p>
     '''
 }

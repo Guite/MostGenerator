@@ -86,13 +86,11 @@ class QuickNavigationType {
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Translation\Extractor\Annotation\Ignore;
         «IF hasLocaleFieldsEntity»
+            use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
             use Zikula\Bundle\FormExtensionBundle\Form\Type\LocaleType;
         «ENDIF»
         «IF categorisable»
             use Zikula\CategoriesBundle\Form\Type\CategoriesType;
-        «ENDIF»
-        «IF hasLocaleFieldsEntity»
-            use Zikula\SettingsBundle\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
         «IF !fields.filter(UserField).empty»
             use Zikula\UsersBundle\Entity\UserEntity;
@@ -123,19 +121,19 @@ class QuickNavigationType {
         {
             public function __construct(
                 «IF !incomingRelations.empty || !outgoingRelations.empty»
-                    protected RequestStack $requestStack,
-                    protected EntityFactory $entityFactory,
-                    protected PermissionHelper $permissionHelper,
-                    protected EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
+                    protected readonly RequestStack $requestStack,
+                    protected readonly EntityFactory $entityFactory,
+                    protected readonly PermissionHelper $permissionHelper,
+                    protected readonly EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
                 «ENDIF»
                 «IF hasListFieldsEntity»
-                    protected ListEntriesHelper $listHelper«IF hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
+                    protected readonly ListEntriesHelper $listHelper«IF hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
                 «ENDIF»
                 «IF hasLocaleFieldsEntity»
-                    protected LocaleApiInterface $localeApi«IF needsFeatureActivationHelperEntity»,«ENDIF»
+                    protected readonly LocaleApiInterface $localeApi«IF needsFeatureActivationHelperEntity»,«ENDIF»
                 «ENDIF»
                 «IF needsFeatureActivationHelperEntity»
-                    protected FeatureActivationHelper $featureActivationHelper
+                    protected readonly FeatureActivationHelper $featureActivationHelper
                 «ENDIF»
             ) {
             }
@@ -249,7 +247,7 @@ class QuickNavigationType {
                 «addBooleanFields»
 
             «ENDIF»
-            public function getBlockPrefix()
+            public function getBlockPrefix(): string
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»quicknav';
             }

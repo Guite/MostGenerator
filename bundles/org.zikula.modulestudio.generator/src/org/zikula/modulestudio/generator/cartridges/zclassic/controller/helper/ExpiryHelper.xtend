@@ -30,9 +30,6 @@ class ExpiryHelper {
             use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Contracts\Translation\TranslatorInterface;
         «ENDIF»
-        «IF hasLoggable»
-            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
         «IF hasAutomaticExpiryHandling»
@@ -69,7 +66,7 @@ class ExpiryHelper {
             protected readonly LoggerInterface $logger,
             protected readonly PermissionHelper $permissionHelper,
             protected readonly WorkflowHelper $workflowHelper«ENDIF»«IF hasLoggable»,
-            protected readonly VariableApiInterface $variableApi«ENDIF»
+            protected readonly array $loggableConfig«ENDIF»
         ) {
         }
     '''
@@ -133,12 +130,12 @@ class ExpiryHelper {
 
             $entityManager = $this->entityFactory->getEntityManager();
             «FOR entity : getLoggableEntities»
-                $revisionHandling = $this->$variableApi->getVar('«appName»', 'revisionHandlingFor«entity.name.formatForCodeCapital»');
+                $revisionHandling = $this->loggableConfig['revision_handling_for_«entity.name.formatForSnakeCase»'];
                 $limitParameter = '';
                 if ('limitedByAmount' === $revisionHandling) {
-                    $limitParameter = $this->$variableApi->getVar('«appName»', 'maximumAmountOf«entity.name.formatForCodeCapital»Revisions');
+                    $limitParameter = $this->loggableConfig['maximum_amount_of_«entity.name.formatForSnakeCase»_revisions'];
                 } elseif ('limitedByDate' === $revisionHandling) {
-                    $limitParameter = $this->$variableApi->getVar('«appName»', 'periodFor«entity.name.formatForCodeCapital»Revisions');
+                    $limitParameter = $this->loggableConfig['period_for_«entity.name.formatForSnakeCase»_revisions'];
                 }
 
                 $logEntriesRepository = $entityManager->getRepository('«entity.application.appName»:«entity.name.formatForCodeCapital»LogEntryEntity');
@@ -212,7 +209,7 @@ class ExpiryHelper {
             try {
                 return $query->getResult();
             } catch (TableNotFoundException) {
-                // module has just been uninstalled
+                // bundle has just been uninstalled
                 return [];
             }
         }

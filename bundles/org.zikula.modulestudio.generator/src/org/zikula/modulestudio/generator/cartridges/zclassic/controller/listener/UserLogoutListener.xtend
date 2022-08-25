@@ -5,7 +5,7 @@ import de.guite.modulestudio.metamodel.Application
 class UserLogoutListener {
 
     def generate(Application it) '''
-        public static function getSubscribedEvents()
+        public static function getSubscribedEvents(): array
         {
             return [
                 UserPostLogoutSuccessEvent::class => ['succeeded', 5],

@@ -69,7 +69,7 @@ class AutoCompletionRelationTransformer {
              *
              * @throws TransformationFailedException if entity is not found
              */
-            public function reverseTransform($value)
+            public function reverseTransform($value): mixed
             {
                 if (!$value) {
                     return $this->isMultiple ? new ArrayCollection() : null;

@@ -47,12 +47,12 @@ class MultiListType {
                 $builder->addModelTransformer($transformer);
             }
 
-            public function getParent()
+            public function getParent(): ?string
             {
                 return ChoiceType::class;
             }
 
-            public function getBlockPrefix()
+            public function getBlockPrefix(): string
             {
                 return '«appName.formatForDB»_field_multilist';
             }

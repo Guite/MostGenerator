@@ -5,7 +5,7 @@ import de.guite.modulestudio.metamodel.Application
 class UserLoginListener {
 
     def generate(Application it) '''
-        public static function getSubscribedEvents()
+        public static function getSubscribedEvents(): array
         {
             return [
                 UserPreLoginSuccessEvent::class => ['veto', 5],

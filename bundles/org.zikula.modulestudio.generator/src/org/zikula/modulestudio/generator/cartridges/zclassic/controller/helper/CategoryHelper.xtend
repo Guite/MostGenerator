@@ -196,13 +196,13 @@ class CategoryHelper {
                 throw new InvalidArgumentException($this->translator->trans('Invalid object type received.'));
             }
 
-            $moduleRegistries = $this->categoryRegistryRepository->findBy([
-                'modname' => '«appName»',
-                'entityname' => ucfirst($objectType) . 'Entity',
+            $bundleRegistries = $this->categoryRegistryRepository->findBy([
+                'bundleName' => '«appName»',
+                'entityName' => ucfirst($objectType) . 'Entity',
             ]);
 
             $result = [];
-            foreach ($moduleRegistries as $registry) {
+            foreach ($bundleRegistries as $registry) {
                 $result[$registry['property']] = $registry['id'];
             }
 
@@ -218,13 +218,13 @@ class CategoryHelper {
                 throw new InvalidArgumentException($this->translator->trans('Invalid object type received.'));
             }
 
-            $moduleRegistries = $this->categoryRegistryRepository->findBy([
-                'modname' => '«appName»',
-                'entityname' => ucfirst($objectType) . 'Entity',
+            $bundleRegistries = $this->categoryRegistryRepository->findBy([
+                'bundleName' => '«appName»',
+                'entityName' => ucfirst($objectType) . 'Entity',
             ], ['id' => 'ASC']);
 
             $result = [];
-            foreach ($moduleRegistries as $registry) {
+            foreach ($bundleRegistries as $registry) {
                 $registry = $registry->toArray();
                 $result[$registry[$arrayKey]] = $registry['category']->getId();
             }

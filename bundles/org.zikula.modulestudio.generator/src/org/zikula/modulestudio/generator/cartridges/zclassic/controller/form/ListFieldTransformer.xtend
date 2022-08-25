@@ -48,7 +48,7 @@ class ListFieldTransformer {
             /**
              * Transforms an array with values back to the string.
              */
-            public function reverseTransform($values)
+            public function reverseTransform($values): mixed
             {
                 if (!$values) {
                     return '';

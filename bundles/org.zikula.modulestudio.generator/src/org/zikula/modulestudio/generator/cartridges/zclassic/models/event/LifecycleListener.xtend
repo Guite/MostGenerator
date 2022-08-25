@@ -19,11 +19,11 @@ class LifecycleListener {
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
-        fsa.generateClassPair('Listener/EntityLifecycleListener.php', lifecycleListenerBaseImpl, lifecycleListenerImpl)
+        fsa.generateClassPair('EventListener/EntityLifecycleListener.php', lifecycleListenerBaseImpl, lifecycleListenerImpl)
     }
 
     def private lifecycleListenerBaseImpl(Application it) '''
-        namespace «appNamespace»\Listener\Base;
+        namespace «appNamespace»\EventListener\Base;
 
         use Doctrine\Common\EventSubscriber;
         use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -39,16 +39,16 @@ class LifecycleListener {
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Symfony\Component\DependencyInjection\ContainerInterface;
+        «IF hasLoggable»
+            use function Symfony\Component\String\s;
+        «ENDIF»
         use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
         «IF !getUploadEntities.empty»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
-        «IF hasLoggable»
-            use Zikula\ExtensionsBundle\Api\VariableApi;
-        «ENDIF»
         use Zikula\UsersBundle\Api\CurrentUserApi;
         «IF hasLoggable»
-            use Zikula\UsersBundle\Constant as UsersConstant;
+            use Zikula\UsersBundle\UsersConstant;
         «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         «IF hasLoggable»
@@ -58,7 +58,7 @@ class LifecycleListener {
             use «appNamespace»\Helper\UploadHelper;
         «ENDIF»
         «IF hasLoggable»
-            use «appNamespace»\Listener\LoggableListener;
+            use «appNamespace»\EventListener\LoggableListener;
         «ENDIF»
 
         /**
@@ -71,10 +71,11 @@ class LifecycleListener {
             public function __construct(
                 ContainerInterface $container,
                 «IF !getUploadEntities.empty»
-                    protected ZikulaHttpKernelInterface $kernel,
+                    protected readonly ZikulaHttpKernelInterface $kernel,
                 «ENDIF»
-                protected EventDispatcherInterface $eventDispatcher,
-                protected LoggerInterface $logger
+                protected readonly EventDispatcherInterface $eventDispatcher,
+                protected readonly LoggerInterface $logger«IF hasLoggable»
+                protected readonly array $loggableConfig«ENDIF»
             ) {
                 $this->setContainer($container);
             }
@@ -328,27 +329,14 @@ class LifecycleListener {
                     }
 
                     $entityManager = $this->container->get(EntityFactory::class)->getEntityManager();
-                    $variableApi = $this->container->get(VariableApi::class);
-                    $objectTypeCapitalised = ucfirst($objectType);
+                    $configSuffix = s($objectType)->snake();
 
-                    $revisionHandling = $variableApi->get(
-                        '«appName»',
-                        'revisionHandlingFor' . $objectTypeCapitalised,
-                        'unlimited'
-                    );
+                    $revisionHandling = $this->loggableConfig['revision_handling_for_' . $configSuffix];
                     $limitParameter = '';
                     if ('limitedByAmount' === $revisionHandling) {
-                        $limitParameter = $variableApi->get(
-                            '«appName»',
-                            'maximumAmountOf' . $objectTypeCapitalised . 'Revisions',
-                            25
-                        );
+                        $limitParameter = $this->loggableConfig['maximum_amount_of_' . $configSuffix . '_revisions'];
                     } elseif ('limitedByDate' === $revisionHandling) {
-                        $limitParameter = $variableApi->get(
-                            '«appName»',
-                            'periodFor' . $objectTypeCapitalised . 'Revisions',
-                            'P1Y0M0DT0H0M0S'
-                        );
+                        $limitParameter = $this->loggableConfig['period_for_' . $configSuffix . '_revisions'];
                     }
 
                     $logEntriesRepository = $entityManager->getRepository(
@@ -389,11 +377,10 @@ class LifecycleListener {
                         }
                     «ENDIF»
 
-                    $variableApi = $this->container->get(VariableApi::class);
                     $currentUserApi = $this->container->get(CurrentUserApi::class);
                     $userName = $currentUserApi->isLoggedIn()
                         ? $currentUserApi->get('uname')
-                        : $variableApi->get(UsersConstant::MODNAME, UsersConstant::MODVAR_ANONYMOUS_DISPLAY_NAME, 'Guest')
+                        : 'Guest'
                     ;
 
                     $customLoggableListener->setUsername($userName);
@@ -405,9 +392,9 @@ class LifecycleListener {
     '''
 
     def private lifecycleListenerImpl(Application it) '''
-        namespace «appNamespace»\Listener;
+        namespace «appNamespace»\EventListener;
 
-        use «appNamespace»\Listener\Base\AbstractEntityLifecycleListener;
+        use «appNamespace»\EventListener\Base\AbstractEntityLifecycleListener;
 
         /**
          * Event subscriber implementation class for entity lifecycle events.

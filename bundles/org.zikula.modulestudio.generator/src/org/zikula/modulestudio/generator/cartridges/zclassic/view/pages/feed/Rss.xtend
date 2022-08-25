@@ -45,18 +45,18 @@ class Rss {
                 <title>{% trans %}Latest «nameMultiple.formatForDisplay»{% endtrans %}</title>
                 <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
                 <atom:link href="{{ app.request.schemeAndHttpHost ~ app.request.basePath ~ app.request.pathInfo }}" rel="self" type="application/rss+xml" />
-                <description>{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %} - {{ getSystemVar('slogan') }}</description>
+                <description>{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %} - {{ siteSlogan() }}</description>
                 <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
-                    <title>{{ getSystemVar('sitename') }}</title>
+                    <title>{{ siteName() }}</title>
                     <url>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}{{ imagepath }}/logo.jpg</url>
                     <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
                 </image>
                 #}
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
                 <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.schemeAndHttpHost }}</copyright>
-                <webMaster>{{ getSystemVar('adminmail') }}</webMaster>
+                <webMaster>{{ siteDefinition().getAdminMail() }}</webMaster>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             <item>

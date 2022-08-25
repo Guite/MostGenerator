@@ -45,7 +45,7 @@ class LoggableHelper {
         «IF hasLoggableTranslatable»
             use «appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
-        use «appNamespace»\Listener\EntityLifecycleListener;
+        use «appNamespace»\EventListener\EntityLifecycleListener;
 
         /**
          * Helper base class for loggable behaviour.

@@ -55,7 +55,7 @@ class UploadFileTransformer {
             /**
              * Transforms a result array back to the File object.
              */
-            public function reverseTransform($data)
+            public function reverseTransform($data): mixed
             {
                 $deleteFile = false;
                 $uploadedFile = null;

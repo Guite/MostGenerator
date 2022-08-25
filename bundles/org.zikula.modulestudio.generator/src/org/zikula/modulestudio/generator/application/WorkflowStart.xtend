@@ -100,7 +100,7 @@ class WorkflowStart {
 
         try {
             val progressMonitor = settings.progressMonitor
-            progressMonitor.beginTask('Generating "' + settings.appVendor + File.separator + settings.appName + 'Module ' + settings.appVersion + '" ...', -1)
+            progressMonitor.beginTask('Generating "' + settings.appVendor + File.separator + settings.appName + 'Bundle ' + settings.appVersion + '" ...', -1)
 
             for (singleCartridge : #['zclassic']) { //$NON-NLS-1$
                 // The generator cartridge to execute

@@ -75,7 +75,7 @@ class Configuration {
     '''
 
     def private getConfigTreeBuilder(Application it) '''
-        public function getConfigTreeBuilder()
+        public function getConfigTreeBuilder(): TreeBuilder
         {
             $treeBuilder = new TreeBuilder('zikula_groups');
     
@@ -142,7 +142,11 @@ class Configuration {
     }
 
     def private initialValue(Field it) {
-        Property.defaultFieldData(it)
+        val value = Property.defaultFieldData(it)
+        switch (it) {
+            ListField case multiple && null !== value && '' !== value: '[\'' + value.split('\', \'') + '\']'
+            default: value
+        }
     }
 
     def private validation(Field it) '''

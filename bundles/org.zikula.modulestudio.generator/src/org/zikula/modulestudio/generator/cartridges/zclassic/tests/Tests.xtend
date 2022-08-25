@@ -11,7 +11,7 @@ class Tests {
     extension Utils = new Utils
 
     /**
-     * Entry point for module unit test classes.
+     * Entry point for bundle unit test classes.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         var testsPath = getAppTestsPath

@@ -47,7 +47,7 @@ class ArrayFieldTransformer {
             /**
              * Transforms a textual value back to the array.
              */
-            public function reverseTransform($value)
+            public function reverseTransform($value): mixed
             {
                 if (!$value) {
                     return [];

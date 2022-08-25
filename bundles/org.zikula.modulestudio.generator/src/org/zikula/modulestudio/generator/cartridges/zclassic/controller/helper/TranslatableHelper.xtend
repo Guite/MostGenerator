@@ -35,8 +35,7 @@ class TranslatableHelper {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        use Zikula\SettingsBundle\Api\ApiInterface\LocaleApiInterface;
+        use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Entity\Factory\EntityFactory;
 
@@ -57,7 +56,6 @@ class TranslatableHelper {
         public function __construct(
             protected readonly TranslatorInterface $translator,
             protected readonly RequestStack $requestStack,
-            protected readonly VariableApiInterface $variableApi,
             protected readonly LocaleApiInterface $localeApi,
             protected readonly EntityFactory $entityFactory
         ) {
@@ -125,7 +123,7 @@ class TranslatableHelper {
          */
         public function getSupportedLanguages(string $objectType): array
         {
-            if ($this->variableApi->getSystemVar('multilingual')) {
+            if ($this->localeApi->multilingual()) {
                 return $this->localeApi->getSupportedLocales();
             }
 
@@ -160,7 +158,7 @@ class TranslatableHelper {
             $translations = [];
             $objectType = $entity->get_objectType();
 
-            if (!$this->variableApi->getSystemVar('multilingual')) {
+            if (!$this->localeApi->multilingual()) {
                 return $translations;
             }
 

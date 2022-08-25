@@ -37,9 +37,6 @@ class PermissionHelper {
             use Doctrine\Common\Collections\Collection;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasLoggable»
-            use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
-        «ENDIF»
         use Zikula\GroupsBundle\Entity\GroupEntity;
         use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
         use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
@@ -64,13 +61,11 @@ class PermissionHelper {
         public function __construct(
             protected readonly RequestStack $requestStack,
             protected readonly PermissionApiInterface $permissionApi,
-            «IF hasLoggable»
-                protected readonly VariableApiInterface $variableApi,
-            «ENDIF»
             protected readonly CurrentUserApiInterface $currentUserApi,
             protected readonly UserRepositoryInterface $userRepository«IF hasCategorisableEntities»,
             protected readonly FeatureActivationHelper $featureActivationHelper,
-            protected readonly CategoryHelper $categoryHelper«ENDIF»
+            protected readonly CategoryHelper $categoryHelper«ENDIF»«IF hasLoggable»,
+            protected readonly array $loggableConfig«ENDIF»
         ) {
         }
 
@@ -243,7 +238,13 @@ class PermissionHelper {
              */
             public function mayUseHistory(string $objectType, ?int $userId = null): bool
             {
-                return $this->variableApi->get('«appName»', 'show' . ucfirst($objectType) . 'History', true);
+                $configNames = [
+                    «FOR entity : loggableEntities»
+                        '«entity.name.formatForCode»' => '«entity.name.formatForSnakeCase»',
+                    «ENDFOR»
+                ];
+
+                return $this->loggableConfig['show_' . $configNames[$objectType] . '_history'];
             }
         «ENDIF»
 

@@ -111,7 +111,7 @@ class SimpleFields {
     def private displayUnit(StringField it) '''«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ENDIF»'''
 
     def dispatch displayField(TextField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|u.truncate(50)«ELSE»|safeHtml«ENDIF» }}'''
+        {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|u.truncate(50)«ELSE»«ENDIF» }}'''
 
     def dispatch displayField(EmailField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode

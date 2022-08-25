@@ -33,11 +33,11 @@ class ImageHelper {
             use Symfony\Component\Filesystem\Filesystem;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
+        use function Symfony\Component\String\s;
         use Symfony\Contracts\Translation\TranslatorInterface;
         «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
             use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         «ENDIF»
-        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
 
         /**
          * Helper base class for image methods.
@@ -60,7 +60,7 @@ class ImageHelper {
             «ENDIF»
             protected readonly TranslatorInterface $translator,
             protected readonly RequestStack $requestStack,
-            protected readonly VariableApiInterface $variableApi
+            protected readonly array $imageConfig
         ) {
             $this->applicationName = '«appName»';
         }
@@ -126,14 +126,12 @@ class ImageHelper {
             string $context = '',
             array $args = []
         ): array {
+            $configSuffix = s($objectType . '_' . $fieldName)->snake();
+
             $options = [
                 'thumbnail' => [
                     'size' => [100, 100], // thumbnail width and height in pixels
-                    'mode' => $this->variableApi->get(
-                        '«appName»',
-                        'thumbnailMode' . ucfirst($objectType) . ucfirst($fieldName),
-                        ImageInterface::THUMBNAIL_INSET
-                    ),
+                    'mode' => $this->imageConfig['thumbnail_mode_' . $configSuffix],
                     'extension' => null, // file extension for thumbnails (jpg, png, gif; null for original file type)
                 ],
             ];
@@ -148,13 +146,12 @@ class ImageHelper {
             if ($this->applicationName . '_relateditem' === $contextName) {
                 $options['thumbnail']['size'] = [100, 75];
             } elseif ('controllerAction' === $context) {
-                if (in_array($args['action'], ['view', 'display', 'edit'])) {
-                    $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName) . ucfirst($args['action']);
-                    $defaultWidth = 'view' === $args['action'] ? 32 : 240;
-                    $defaultHeight = 'view' === $args['action'] ? 24 : 180;
+                if (in_array($args['action'], ['view', 'display', 'edit'], true)) {
+                    $configSuffix = s($objectType . '_' . $fieldName . '_' . $args['action'])->snake()
+
                     $options['thumbnail']['size'] = [
-                        $this->variableApi->get('«appName»', 'thumbnailWidth' . $fieldSuffix, $defaultWidth),
-                        $this->variableApi->get('«appName»', 'thumbnailHeight' . $fieldSuffix, $defaultHeight),
+                        $this->imageConfig['thumbnail_width_' . $configSuffix],
+                        $this->imageConfig['thumbnail_height_' . $configSuffix],
                     ];
                 }
             }

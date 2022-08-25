@@ -43,14 +43,15 @@ class CollectionFilterHelper {
 
         use Doctrine\ORM\QueryBuilder;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\ExtensionsBundle\Api\ApiInterface\VariableApiInterface;
         «IF hasStandardFieldEntities»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-            use Zikula\UsersBundle\Constant as UsersConstant;
         «ENDIF»
         «IF hasUserFields»
             use Zikula\UsersBundle\Entity\UserEntity;
             use Zikula\UsersBundle\Repository\UserRepositoryInterface;
+        «ENDIF»
+        «IF hasStandardFieldEntities»
+            use Zikula\UsersBundle\UsersConstant;
         «ENDIF»
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
@@ -67,18 +68,6 @@ class CollectionFilterHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        /**
-         * @var bool Fallback value to determine whether only own entries should be selected or not
-         */
-        protected bool $showOnlyOwnEntries = false;
-        «IF supportLocaleFilter»
-
-            /**
-             * @var bool Whether to apply a locale-based filter or not
-             */
-            protected bool $filterDataByLocale = false;
-        «ENDIF»
-
         public function __construct(
             protected readonly RequestStack $requestStack,
             protected readonly PermissionHelper $permissionHelper,
@@ -91,15 +80,8 @@ class CollectionFilterHelper {
             «IF hasCategorisableEntities»
                 protected readonly CategoryHelper $categoryHelper,
             «ENDIF»
-            «IF !getAllEntities.filter[ownerPermission].empty»protected readonly «ENDIF»VariableApiInterface $variableApi
+            protected readonly array $listViewConfig
         ) {
-            «IF !getAllEntities.filter[ownerPermission].empty»
-                $this->variableApi = $variableApi;
-            «ENDIF»
-            $this->showOnlyOwnEntries = (bool) $variableApi->get('«appName»', 'showOnlyOwnEntries');
-            «IF supportLocaleFilter»
-                $this->filterDataByLocale = (bool) $variableApi->get('«appName»', 'filterDataByLocale');
-            «ENDIF»
         }
 
         /**
@@ -399,12 +381,12 @@ class CollectionFilterHelper {
             «IF ownerPermission || standardFields»
 
                 «IF standardFields»
-                    $showOnlyOwnDefault = $isAdminArea ? false : $this->showOnlyOwnEntries;
+                    $showOnlyOwnDefault = $isAdminArea ? false : $this->listViewConfig['show_only_own_entries'];
                     $showOnlyOwnEntries = (bool) $request->query->getInt('own', (int) $showOnlyOwnDefault);
                 «ENDIF»
                 «IF ownerPermission»
                     if (!$isAdminArea) {
-                        $privateMode = (bool) $this->variableApi->get('«application.appName»', '«name.formatForCode»PrivateMode', false);
+                        $privateMode = $this->listViewConfig['«name.formatForSnakeCase»_private_mode'];
                         if ($privateMode) {
                             $showOnlyOwnEntries = true;
                         }
@@ -434,7 +416,7 @@ class CollectionFilterHelper {
             }
             «IF hasLanguageFieldsEntity || hasLocaleFieldsEntity»
 
-                if (true === (bool) $this->filterDataByLocale) {
+                if ($this->listViewConfig['filter_data_by_locale']) {
                     $allowedLocales = ['', $request->getLocale()];
                     «FOR field : getLanguageFieldsEntity»
                         «val fieldName = field.name.formatForCode»

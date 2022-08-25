@@ -32,7 +32,7 @@ class TranslationListener {
     '''
 
     def private listenerBaseImplBody(Application it) '''
-        public static function getSubscribedEvents()
+        public static function getSubscribedEvents(): array
         {
             return [
                 FormEvents::PRE_SET_DATA => 'preSetData',
