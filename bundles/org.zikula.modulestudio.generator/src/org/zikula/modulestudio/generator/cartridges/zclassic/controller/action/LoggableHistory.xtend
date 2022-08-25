@@ -58,11 +58,6 @@ class LoggableHistory {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
         «ELSE»
-            «IF isAdmin»
-                /**
-                 * @Theme("admin")
-                 */
-            «ENDIF»
             #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
                 name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»loggablehistory',
                 «IF hasSluggableFields && slugUnique»
@@ -73,6 +68,9 @@ class LoggableHistory {
                 «ENDIF»
                 methods: ['GET']
             )]
+            «IF isAdmin»
+                #[Theme('admin')]
+            «ENDIF»
         «ENDIF»
     '''
 

@@ -54,15 +54,13 @@ class MassHandling {
              * @throws RuntimeException Thrown if executing the workflow action fails
              */
         «ELSE»
-            «IF isAdmin»
-                /**
-                 * @Theme("admin")
-                 */
-            «ENDIF»
             #[Route('/«IF isAdmin»admin/«ENDIF»«nameMultiple.formatForCode»/handleSelectedEntries',
                 name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»handleselectedentries',
                 methods: ['POST']
             )]
+            «IF isAdmin»
+                #[Theme('admin')]
+            «ENDIF»
         «ENDIF»
     '''
 

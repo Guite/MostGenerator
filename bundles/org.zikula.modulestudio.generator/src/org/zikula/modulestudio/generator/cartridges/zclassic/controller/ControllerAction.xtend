@@ -26,10 +26,12 @@ class ControllerAction {
     extension Utils = new Utils
 
     Application app
+    Annotations annotations
     Actions actionsImpl
 
     new(Application app) {
         this.app = app
+        annotations = new Annotations(app)
         actionsImpl = new Actions(app)
     }
 
@@ -59,8 +61,6 @@ class ControllerAction {
          * «actionDocMethodDescription(isAdmin)»
          «ENDIF»
         «IF isBase»«actionDocMethodDocumentation»
-        «ELSE»
-        «new Annotations(app).generate(it, entity, isAdmin, true)»
         «ENDIF»
         «IF isBase»
          *
@@ -79,7 +79,7 @@ class ControllerAction {
         «ENDIF»
          */
         «IF !isBase»
-            «new Annotations(app).generate(it, entity, isAdmin, false)»
+            «annotations.generate(it, entity, isAdmin, false)»
         «ENDIF»
     '''
 

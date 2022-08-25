@@ -55,17 +55,15 @@ class LoggableUndelete {
              * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
              */
         «ELSE»
-            «IF isAdmin»
-                /**
-                 * @Theme("admin")
-                 */
-            «ENDIF»
             #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}',
                 name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»deleted',
                 requirements: ['id' => '\d+', '_format' => 'html'],
                 defaults: ['_format' => 'html'],
                 methods: ['GET']
             )]
+            «IF isAdmin»
+                #[Theme('admin')]
+            «ENDIF»
         «ENDIF»
     '''
 
