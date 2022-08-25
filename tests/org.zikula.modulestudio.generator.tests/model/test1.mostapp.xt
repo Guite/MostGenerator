@@ -20,7 +20,6 @@ application "SimpleNews" targets ZK40 {
     version "0.0.5"
     license "My license"
     prefix "sinew"
-    capabilities "foo, bar"
     generateAccountApi true
     generateModerationPanel true
     generateExternalControllerAndFinder true

@@ -114,7 +114,7 @@ class ComposerFile {
         },
         "user": {
             "route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»"
-        }«IF hasExtraCapabilities»,«ENDIF»
+        }«IF hasCategorisableEntities»,«ENDIF»
         «IF hasCategorisableEntities»
             "categorizable": {
                 "entities": [
@@ -122,25 +122,9 @@ class ComposerFile {
                         "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
                     «ENDFOR»
                 ]
-            }«IF null !== capabilities && !capabilities.empty»,«ENDIF»
-        «ENDIF»
-        «IF null !== capabilities && !capabilities.empty»
-            «val capabilitiesArray = capabilities.replaceAll(', ', '').split(',')»
-            «FOR capability : capabilitiesArray»
-                "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last»,«ENDIF»
-            «ENDFOR»
+            }
         «ENDIF»
     '''
-
-    def private hasExtraCapabilities(Application it) {
-        if (hasCategorisableEntities) {
-            return true
-        }
-        if (null !== capabilities && !capabilities.empty) {
-            return true
-        }
-        false
-    }
 
     def private permissionSchema(Entity it, String appName) '''
         "«appName»:«name.formatForCodeCapital»:": "«name.formatForCodeCapital» ID::",
