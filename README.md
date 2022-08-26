@@ -1,11 +1,10 @@
-# ModuleStudio Generator - MDSD for Zikula
+# ModuleStudio Generator - MDSD for Symfony
 
 ModuleStudio is a model-driven development environment with which one can quickly,
 simply and efficiently describe and generate web applications. Create complex
 modules in a few steps and meet individual project requirements with them.
 
-The generated applications can be used with the [Zikula application framework](https://github.com/zikula/core/)
-which is based on [Symfony](https://github.com/symfony/symfony/).
+The generated applications can be used with the [Symfony PHP framework](https://github.com/symfony/symfony/).
 
 Here is a screenshot showing how the user interface looks like:
 
