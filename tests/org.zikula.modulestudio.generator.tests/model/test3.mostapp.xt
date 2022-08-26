@@ -13,7 +13,7 @@ XPECT files ---
     Helper/Base/AbstractExpiryHelper.php
 --- */
 
-application "SimpleNews" targets ZK30 {
+application "SimpleNews" targets SF70 {
     vendor "Guite"
     author "Axel Guckelsberger"
     email "info@guite.de"

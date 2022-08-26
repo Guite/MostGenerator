@@ -11,7 +11,7 @@ XPECT files ---
     composer.json
 --- */
 
-application "SimpleNews" targets ZK40 {
+application "SimpleNews" targets SF70 {
     documentation "Simple news extension"
     vendor "Guite"
     author "Axel Guckelsberger"
