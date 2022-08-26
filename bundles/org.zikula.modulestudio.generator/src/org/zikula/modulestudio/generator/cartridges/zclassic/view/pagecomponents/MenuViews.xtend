@@ -37,11 +37,11 @@ class MenuViews {
     '''
 
     def private renderItemActionsMenu(Application it, String context) '''
-        {{ knp_menu_render(itemActions, {template: '@ZikulaMenu/Override/«IF useStyle(context, ItemActionsStyle.ICON)»actions«ELSE»bootstrap_fontawesome«ENDIF».html.twig'}) }}
+        {{ knp_menu_render(itemActions, {template: '@ZikulaTheme/Menu/«IF useStyle(context, ItemActionsStyle.ICON)»actions«ELSE»bootstrap_fontawesome«ENDIF».html.twig'}) }}
     '''
 
     def private renderViewActionsMenu(Application it) '''
-        {{ knp_menu_render(viewActions, {template: '@ZikulaMenu/Override/bootstrap_fontawesome.html.twig'}) }}
+        {{ knp_menu_render(viewActions, {template: '@ZikulaTheme/Menu/bootstrap_fontawesome.html.twig'}) }}
     '''
 
     def private useStyle(Application it, String context, ItemActionsStyle style) {
