@@ -73,7 +73,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {% if not isQuickView %}
             «ENDIF»
-                {{ «realName».uid|profileLinkByUserId }}{% if currentUser.loggedIn %}{% set sendMessageUrl = «realName».uid|messageSendLink(urlOnly=true) %}{% if sendMessageUrl != '#' %}{% set linkTitle = 'Send private message to %userName%'|trans({'%userName%': «realName».uname}, 'messages') %}<a href="{{ sendMessageUrl }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-envelope"></i></a>{% endif %}{% endif %}
+                {{ «realName».uid|profileLinkByUserId }}
                 <span class="avatar">{{ userAvatar(«realName».uid, {rating: 'g'}) }}</span>
             «IF page == 'display'»
                 {% else %}

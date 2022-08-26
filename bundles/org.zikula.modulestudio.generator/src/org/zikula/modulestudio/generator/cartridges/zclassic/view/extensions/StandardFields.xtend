@@ -52,29 +52,13 @@ class StandardFields {
             <dt>{% trans %}Creation{% endtrans %}</dt>
             {% set profileLink = obj.createdBy.uid|profileLinkByUserId %}
             <dd class="avatar">{{ userAvatar(obj.createdBy.uid, {rating: 'g'}) }}</dd>
-            <dd>
-                {{ 'Created by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.createdDate|format_datetime('medium', 'short')})|raw }}
-                {% if currentUser.loggedIn %}
-                    {% set sendMessageUrl = obj.createdBy.uid|messageSendLink(urlOnly=true) %}
-                    {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="{% trans with {'%userName%': obj.createdBy.uname} %}Send private message to %userName%{% endtrans %}"><i class="fas fa-envelope"></i></a>
-                    {% endif %}
-                {% endif %}
-            </dd>
+            <dd>{{ 'Created by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.createdDate|format_datetime('medium', 'short')})|raw }}</dd>
         {% endif %}
         {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
             <dt>{% trans %}Last update{% endtrans %}</dt>
             {% set profileLink = obj.updatedBy.uid|profileLinkByUserId %}
             <dd class="avatar">{{ userAvatar(obj.updatedBy.uid, {rating: 'g'}) }}</dd>
-            <dd>
-                {{ 'Last update by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedDate|format_datetime('medium', 'short')})|raw }}
-                {% if currentUser.loggedIn %}
-                    {% set sendMessageUrl = obj.updatedBy.uid|messageSendLink(urlOnly=true) %}
-                    {% if sendMessageUrl != '#' %}
-                        <a href="{{ sendMessageUrl }}" title="{% trans with {'%userName%': obj.updatedBy.uname} %}Send private message to %userName%{% endtrans %}"><i class="fas fa-envelope"></i></a>
-                    {% endif %}
-                {% endif %}
-            </dd>
+            <dd>{{ 'Last update by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedDate|format_datetime('medium', 'short')})|raw }}</dd>
         {% endif %}
         </dl>
     '''
