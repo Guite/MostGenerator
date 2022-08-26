@@ -143,6 +143,8 @@ class Utils {
                 '6.2'
             case SF61:
                 '6.1'
+            case SF60:
+                '6.0'
             case SF54:
                 '5.4'
         }
@@ -162,6 +164,8 @@ class Utils {
             case SF62:
                 '4.0'
             case SF61:
+                '4.0'
+            case SF60:
                 '4.0'
             case SF54:
                 '4.0'
