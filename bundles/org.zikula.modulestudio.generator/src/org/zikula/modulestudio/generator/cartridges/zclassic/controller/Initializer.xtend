@@ -29,11 +29,11 @@ class Initializer {
 
         use Exception;
         use Psr\Log\LoggerInterface;
+        use Zikula\Bundle\CoreBundle\BundleInitializer\BundleInitializerInterface;
         «IF hasCategorisableEntities»
             use Zikula\CategoriesBundle\Entity\CategoryRegistryEntity;
             use Zikula\CategoriesBundle\Repository\CategoryRepositoryInterface;
         «ENDIF»
-        use Zikula\ExtensionsBundle\Initializer\BundleInitializerInterface;
         «IF hasCategorisableEntities»
             use «appNamespace»\Helper\CategoryHelper;
         «ENDIF»

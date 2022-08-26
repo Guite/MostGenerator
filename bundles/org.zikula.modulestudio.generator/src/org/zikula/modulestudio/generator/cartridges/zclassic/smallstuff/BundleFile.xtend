@@ -28,10 +28,10 @@ class BundleFile {
     '''
 
     def private moduleBaseImpl(Application it) '''
-        use Zikula\ExtensionsBundle\AbstractModule;
+        use Zikula\Bundle\CoreBundle\AbstractModule;
         «IF needsInitializer»
-            use Zikula\ExtensionsBundle\Initializer\BundleInitializerInterface;
-            use Zikula\ExtensionsBundle\Initializer\InitializableBundleInterface;
+            use Zikula\Bundle\CoreBundle\BundleInitializer\BundleInitializerInterface;
+            use Zikula\Bundle\CoreBundle\BundleInitializer\InitializableBundleInterface;
             use «appNamespace»\Initializer\«name.formatForCodeCapital»Initializer;
         «ENDIF»
 

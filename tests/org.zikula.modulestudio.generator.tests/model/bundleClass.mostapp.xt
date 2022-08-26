@@ -56,7 +56,7 @@ XPECT generated file AcmeSimpleTestBundle.php ---
   
   namespace Acme\SimpleTestBundle\Base;
   
-  use Zikula\ExtensionsBundle\AbstractModule;
+  use Zikula\Bundle\CoreBundle\AbstractModule;
   
   /\**
    * Bundle base class.

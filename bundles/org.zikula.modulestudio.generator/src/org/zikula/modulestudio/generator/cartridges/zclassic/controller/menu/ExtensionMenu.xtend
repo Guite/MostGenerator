@@ -24,7 +24,7 @@ class ExtensionMenu {
 
         use Knp\Menu\FactoryInterface;
         use Knp\Menu\ItemInterface;
-        use Zikula\MenuBundle\ExtensionMenu\ExtensionMenuInterface;
+        use Zikula\ThemeBundle\ExtensionMenu\ExtensionMenuInterface;
         «IF generateAccountApi»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»

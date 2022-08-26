@@ -57,7 +57,7 @@ class Layout {
         {% endblock %}
 
         {% block appTitle %}
-            {{ moduleHeader('user', '«/* custom title */»', '«/* title link */»', false, true«/* flashes */», false, true«/* image */») }}
+            {{ showflashes() }}
         {% endblock %}
 
         {% block titleArea %}
@@ -74,7 +74,6 @@ class Layout {
         {% block content %}{% endblock %}
 
         {% block footer %}
-            {{ moduleFooter() }}
         {% endblock %}
 
         {% block assets %}
@@ -106,7 +105,6 @@ class Layout {
         {# purpose of this template: admin area base layout #}
         {% extends '@«vendorAndName»/base.html.twig' %}
         {% trans_default_domain 'messages' %}
-        {% block appTitle %}{# empty on purpose #}{% endblock %}
         {% block titleArea %}
             <h3><i class="fas fa-{% block admin_page_icon %}{% endblock %}"></i> {% block title %}{% endblock %}</h3>
         {% endblock %}
