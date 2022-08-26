@@ -594,7 +594,7 @@ class AjaxController {
     '''
 
     def private handleTreeOperationSignature(Application it) '''
-        public function handleTreeOperation«IF !targets('3.1')»Action«ENDIF»(
+        public function handleTreeOperation(
             Request $request,
             RouterInterface $router,
             LoggerInterface $logger,
@@ -948,7 +948,7 @@ class AjaxController {
     '''
 
     def private updateSortPositionsSignature(Application it) '''
-        public function updateSortPositions«IF !targets('3.1')»Action«ENDIF»(
+        public function updateSortPositions(
             Request $request,
             EntityFactory $entityFactory
         ): JsonResponse'''
@@ -1030,7 +1030,7 @@ class AjaxController {
     def private getItemListFinderImpl(Application it) '''
         «getItemListFinderDocBlock(false)»
         «getItemListFinderSignature» {
-            return parent::getItemListFinder«IF !targets('3.1')»Action«ENDIF»(
+            return parent::getItemListFinder(
                 $request,
                 $controllerHelper,
                 $permissionHelper,
@@ -1043,7 +1043,7 @@ class AjaxController {
     def private getItemListAutoCompletionImpl(Application it) '''
         «getItemListAutoCompletionDocBlock(false)»
         «getItemListAutoCompletionSignature» {
-            return parent::getItemListAutoCompletion«IF !targets('3.1')»Action«ENDIF»(
+            return parent::getItemListAutoCompletion(
                 $request,
                 $imagineCacheManager,
                 $controllerHelper,
@@ -1057,7 +1057,7 @@ class AjaxController {
     def private checkForDuplicateImpl(Application it) '''
         «checkForDuplicateDocBlock(false)»
         «checkForDuplicateSignature» {
-            return parent::checkForDuplicate«IF !targets('3.1')»Action«ENDIF»(
+            return parent::checkForDuplicate(
                 $request,
                 $controllerHelper,
                 $entityFactory
@@ -1068,7 +1068,7 @@ class AjaxController {
     def private toggleFlagImpl(Application it) '''
         «toggleFlagDocBlock(false)»
         «toggleFlagSignature» {
-            return parent::toggleFlag«IF !targets('3.1')»Action«ENDIF»(
+            return parent::toggleFlag(
                 $request,
                 $logger,
                 $entityFactory,
@@ -1080,7 +1080,7 @@ class AjaxController {
     def private handleTreeOperationImpl(Application it) '''
         «handleTreeOperationDocBlock(false)»
         «handleTreeOperationSignature» {
-            return parent::handleTreeOperation«IF !targets('3.1')»Action«ENDIF»(
+            return parent::handleTreeOperation(
                 $request,
                 $router,
                 $logger,
@@ -1096,7 +1096,7 @@ class AjaxController {
     def private updateSortPositionsImpl(Application it) '''
         «updateSortPositionsDocBlock(false)»
         «updateSortPositionsSignature» {
-            return parent::updateSortPositions«IF !targets('3.1')»Action«ENDIF»(
+            return parent::updateSortPositions(
                 $request,
                 $entityFactory
             );

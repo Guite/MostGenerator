@@ -106,7 +106,7 @@ class MenuBuilder {
                 $context = $options['context'];
                 «IF hasLoggable»
 
-                    $mainRequest = $this->requestStack->get«IF targets('3.1')»Main«ELSE»Master«ENDIF»Request();
+                    $mainRequest = $this->requestStack->getMainRequest();
                     // return empty menu for preview of deleted items
                     $routeName = $mainRequest->get('_route');
                     if (false !== mb_stripos($routeName, 'displaydeleted')) {

@@ -106,7 +106,7 @@ class Utils {
     }
 
     /**
-     * Checks whether a given core version is targeted or not.
+     * Checks whether a given Symfony version is targeted or not.
      *
      * @param it The {@link Application} instance
      * @param version The version in question
@@ -114,36 +114,17 @@ class Utils {
      * @return Boolean The result
      */
     def Boolean targets(Application it, String version) {
-        switch targetCoreVersion {
-            case ZK40:
-                #['4.0', '3.1', '3.0'].contains(version)
-            case ZK31:
-                #['3.1', '3.0'].contains(version)
-            case ZK30:
-                #['3.0'].contains(version)
+        switch symfonyVersion {
+            case SF70:
+                #['7.0', '6.2', '6.1', '5.4'].contains(version)
+            case SF62:
+                #['6.2', '6.1', '5.4'].contains(version)
+            case SF61:
+                #['6.1', '5.4'].contains(version)
+            case SF54:
+                #['5.4'].contains(version)
             default:
                 true
-        }
-    }
-
-    /**
-     * Returns the Zikula core version as semantic version number.
-     *
-     * @param it The {@link Application} instance
-     * @param withPoint Whether to include the last part or not
-     *
-     * @return String the formatted version number
-     */
-    def targetSemVer(Application it, Boolean withPoint) {
-        switch targetCoreVersion {
-            case ZK40:
-                if (!withPoint) '4.0' else '4.0.0'
-            case ZK31:
-                if (!withPoint) '3.1' else '3.1.0'
-            case ZK30:
-                if (!withPoint) '3.0' else '3.0.4'
-            default:
-                if (!withPoint) '4.0' else '4.0.0'
         }
     }
 
@@ -151,14 +132,19 @@ class Utils {
      * Returns the Symfony version.
      *
      * @param it The {@link Application} instance
+     * @param withPoint Whether to include the last part or not
      *
      * @return String the formatted version number
      */
     def targetSymfonyVersion(Application it) {
-        switch targetCoreVersion {
-            case ZK40:
-                '5.4'
-            default:
+        switch symfonyVersion {
+            case SF70:
+                '7.0'
+            case SF62:
+                '6.2'
+            case SF61:
+                '6.1'
+            case SF54:
                 '5.4'
         }
     }

@@ -17,7 +17,7 @@ class ViewActions {
     extension Utils = new Utils
 
     def actionsImpl(Application it) '''
-        $mainRequest = $this->requestStack->get«IF targets('3.1')»Main«ELSE»Master«ENDIF»Request();
+        $mainRequest = $this->requestStack->getMainRequest();
         $query = $mainRequest->query;
         $currentTemplate = $query->getAlnum('tpl', '');
         «FOR entity : getAllEntities.filter[hasViewAction]»

@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.AuthMethodType
 
 class TechStructureSettings {
 
@@ -67,15 +66,4 @@ class TechStructureSettings {
             <td headers="hSettingValue2" class="text-center">«helper.flag(it, generatePdfSupport)»</td>
         </tr>
     '''
-
-    def authMethodDescription(AuthMethodType it) {
-        switch it {
-            case NONE:
-                return if (language == 'de') 'keine Authentifizierungsmethode verfügbar.' else 'no authentication method available.'
-            case REMOTE:
-                return if (language == 'de') 'Wiederkehrende Authentifizierungsmethode.' else 'ReEntrant authentication method available.'
-            case LOCAL:
-                return if (language == 'de') 'Nicht wiederkehrende Authentifizierungsmethode.' else 'NonReEntrant authentication method.'
-        }
-    }
 }

@@ -18,8 +18,8 @@ class PhpUnitXmlDist {
     def private phpUnitXml(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
         <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:noNamespaceSchemaLocation="«IF targets('3.1')»../../../vendor/phpunit/phpunit/«ELSE»https://schema.phpunit.de/8.3/«ENDIF»phpunit.xsd"
-                 bootstrap="../../../../«IF targets('3.1')»tests/bootstrap.php«ELSE»vendor/autoload.php«ENDIF»"
+                 xsi:noNamespaceSchemaLocation="../../../vendor/phpunit/phpunit/phpunit.xsd"
+                 bootstrap="../../../../tests/bootstrap.php"
                  colors="true"
                  convertDeprecationsToExceptions="false"
                  executionOrder="depends,defects"
@@ -38,9 +38,7 @@ class PhpUnitXmlDist {
                 <server name="APP_ENV" value="test" force="true"/>
                 <server name="SHELL_VERBOSITY" value="-1"/>
                 <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
-                «IF targets('3.1')»
-                    <server name="SYMFONY_PHPUNIT_VERSION" value="9.3"/>
-                «ENDIF»
+                <server name="SYMFONY_PHPUNIT_VERSION" value="9.3"/>
             </php>
             <testsuites>
                 <testsuite name="«appName» Test Suite">

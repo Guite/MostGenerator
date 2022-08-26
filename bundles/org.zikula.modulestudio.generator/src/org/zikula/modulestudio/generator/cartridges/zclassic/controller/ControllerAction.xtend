@@ -38,7 +38,7 @@ class ControllerAction {
     def generate(Entity it, Action action, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «action.actionDoc(it, isBase, isAdmin)»
-            public function «action.methodName(isAdmin)»«IF !application.targets('3.1')»Action«ENDIF»(
+            public function «action.methodName(isAdmin)»(
                 «methodArguments(it, action, false)»
             ): Response {
                 return $this->«action.methodName(false)»Internal(

@@ -150,32 +150,25 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(StringField it) '''
         «fieldAnnotationsString»
-        «IF application.targets('3.1')»
-            «IF mandatory»
-                #[Assert\Length(min: «minLength», max: «length»)]
-                «IF fixed && minLength != length»
-                    #[Assert\Length(min: «length», max: «length»)]
-                «ENDIF»
-            «ELSE»
+        «IF mandatory»
+            #[Assert\Length(min: «minLength», max: «length»)]
+            «IF fixed && minLength != length»
+                #[Assert\Length(min: «length», max: «length»)]
+            «ENDIF»
+        «ELSE»
+            #[Assert\AtLeastOneOf(
+                constraints: [
+                    new Assert\Blank(),
+                    new Assert\Length(min: «minLength», max: «length»),
+                ]
+            )]
+            «IF fixed && minLength != length»
                 #[Assert\AtLeastOneOf(
                     constraints: [
                         new Assert\Blank(),
-                        new Assert\Length(min: «minLength», max: «length»),
+                        new Assert\Length(min: «length», max: «length»),
                     ]
                 )]
-                «IF fixed && minLength != length»
-                    #[Assert\AtLeastOneOf(
-                        constraints: [
-                            new Assert\Blank(),
-                            new Assert\Length(min: «length», max: «length»),
-                        ]
-                    )]
-                «ENDIF»
-            «ENDIF»
-        «ELSE»
-            #[Assert\Length(min: «minLength», max: «length», allowEmptyString: «(if (mandatory) false else true).displayBool»)]
-            «IF fixed && minLength != length»
-                #[Assert\Length(min: «length», max: «length», allowEmptyString: «(if (mandatory) false else true).displayBool»)]
             «ENDIF»
         «ENDIF»
         «IF role == StringRole.BIC»
@@ -216,19 +209,15 @@ class ValidationConstraints {
         «ENDIF»
     '''
     private def lengthAnnotationString(AbstractStringField it, int length) '''
-        «IF application.targets('3.1')»
-            «IF mandatory»
-                #[Assert\Length(min: «minLength», max: «length»)]
-            «ELSE»
-                #[Assert\AtLeastOneOf(
-                    constraints: [
-                        new Assert\Blank(),
-                        new Assert\Length(min: «minLength», max: «length»),
-                    ]
-                )]
-            «ENDIF»
+        «IF mandatory»
+            #[Assert\Length(min: «minLength», max: «length»)]
         «ELSE»
-            #[Assert\Length(min: «minLength», max: «length», allowEmptyString: «(if (mandatory) false else true).displayBool»)]
+            #[Assert\AtLeastOneOf(
+                constraints: [
+                    new Assert\Blank(),
+                    new Assert\Length(min: «minLength», max: «length»),
+                ]
+            )]
         «ENDIF»
     '''
     def dispatch fieldAnnotations(TextField it) '''
