@@ -132,7 +132,6 @@ class Utils {
      * Returns the Symfony version.
      *
      * @param it The {@link Application} instance
-     * @param withPoint Whether to include the last part or not
      *
      * @return String the formatted version number
      */
@@ -146,6 +145,26 @@ class Utils {
                 '6.1'
             case SF54:
                 '5.4'
+        }
+    }
+
+    /**
+     * Returns the Zikula version.
+     *
+     * @param it The {@link Application} instance
+     *
+     * @return String the formatted version number
+     */
+    def targetZikulaVersion(Application it) {
+        switch symfonyVersion {
+            case SF70:
+                '4.0'
+            case SF62:
+                '4.0'
+            case SF61:
+                '4.0'
+            case SF54:
+                '4.0'
         }
     }
 

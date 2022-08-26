@@ -27,14 +27,13 @@ import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
+import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 
 class ValidationConstraints {
 
@@ -47,7 +46,6 @@ class ValidationConstraints {
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension Utils = new Utils
 
     def dispatch fieldAnnotations(DerivedField it) {
     }

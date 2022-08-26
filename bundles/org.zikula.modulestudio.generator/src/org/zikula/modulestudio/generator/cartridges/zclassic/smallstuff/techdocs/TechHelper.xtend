@@ -119,7 +119,10 @@ class TechHelper {
         </tr>
         <tr>
             <th id="hPlatform" scope="row" headers="hBasicField">«IF language == 'de'»Plattform«ELSE»Platform«ENDIF»</th>
-            <td headers="hBasicValue hPlatform"><a href="https://ziku.la/«language»/" title="«IF language == 'de'»Internetseite von Zikula«ELSE»Zikula website«ENDIF»" target="_blank">Zikula</a> «targetSemVer(true)»</td>
+            <td headers="hBasicValue hPlatform">
+                <a href="https://symfony.com/" title="«IF language == 'de'»Internetseite von Symfony«ELSE»Symfony website«ENDIF»" target="_blank">Symfony</a> «targetSymfonyVersion»
+                 &amp; <a href="https://ziku.la/«language»/" title="«IF language == 'de'»Internetseite von Zikula«ELSE»Zikula website«ENDIF»" target="_blank">Zikula</a> «targetZikulaVersion»
+            </td>
         </tr>
         <tr>
             <th id="hGenerated" scope="row" headers="hBasicField">«IF language == 'de'»Generiert«ELSE»Generated«ENDIF»</th>
