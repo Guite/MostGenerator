@@ -63,7 +63,8 @@ class ComposerFile {
             «IF hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
                 "egulias/email-validator": "^2",
             «ENDIF»
-            "symfony/maker-bundle": "^1"«IF !dependencies.empty»,«ENDIF»
+            "symfony/maker-bundle": "^1",
+            "zikula/core-bundle": "^«targetSemVer(false)»"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»

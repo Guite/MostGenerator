@@ -156,7 +156,7 @@ class Docs {
 
         «appDescription»
 
-        This bundle is intended for being used with Zikula «targetSemVer(true)» and later.
+        This bundle is intended for being used with Symfony «targetSymfonyVersion» and later.
 
         For questions and other remarks visit our homepage <«url»>.
 

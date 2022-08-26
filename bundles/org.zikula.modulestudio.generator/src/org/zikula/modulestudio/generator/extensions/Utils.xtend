@@ -127,7 +127,7 @@ class Utils {
     }
 
     /**
-     * Returns the core version as semantic version number.
+     * Returns the Zikula core version as semantic version number.
      *
      * @param it The {@link Application} instance
      * @param withPoint Whether to include the last part or not
@@ -143,7 +143,23 @@ class Utils {
             case ZK30:
                 if (!withPoint) '3.0' else '3.0.4'
             default:
-                if (!withPoint) '3.0' else '3.0.4'
+                if (!withPoint) '4.0' else '4.0.0'
+        }
+    }
+
+    /**
+     * Returns the Symfony version.
+     *
+     * @param it The {@link Application} instance
+     *
+     * @return String the formatted version number
+     */
+    def targetSymfonyVersion(Application it) {
+        switch targetCoreVersion {
+            case ZK40:
+                '5.4'
+            default:
+                '5.4'
         }
     }
 

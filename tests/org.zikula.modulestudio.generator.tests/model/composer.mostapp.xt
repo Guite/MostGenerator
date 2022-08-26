@@ -27,7 +27,8 @@ XPECT generated file composer.json ---
     "require": {
         "php": "^8.1",
         "doctrine/doctrine-migrations-bundle": "^3.2",
-        "symfony/maker-bundle": "^1"
+        "symfony/maker-bundle": "^1",
+        "zikula/core-bundle": "^4.0"
     },
     "require-dev": {
     },
