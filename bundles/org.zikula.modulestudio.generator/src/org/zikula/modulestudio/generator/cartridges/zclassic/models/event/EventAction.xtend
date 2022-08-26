@@ -35,7 +35,7 @@ class EventAction {
                 } else {
                     «entityVar»->set_uploadBasePathRelative($uploadBaseDirectory);
                 }
-                «entityVar»->set_uploadBasePathAbsolute($this->kernel->getProjectDir() . '/' . $uploadBaseDirectory);
+                «entityVar»->set_uploadBasePathAbsolute($this->projectDir . '/' . $uploadBaseDirectory);
                 «entityVar»->set_uploadBaseUrl($baseUrl);
 
                 // determine meta data if it does not exist
@@ -55,7 +55,7 @@ class EventAction {
                     $basePath = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
                     $getter = 'get' . ucfirst($fieldName) . 'FileName';
                     $fileName = «entityVar»->$getter();
-                    $filePath = $this->kernel->getProjectDir() . '/' . $basePath . $fileName;
+                    $filePath = $this->projectDir . '/' . $basePath . $fileName;
                     if (!file_exists($filePath)) {
                         continue;
                     }

@@ -31,11 +31,11 @@ class ViewHelper {
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Response;
+        «IF hasGeographical»
+            use Symfony\Component\HttpKernel\KernelInterface;
+        «ENDIF»
         use Twig\Environment;
         use Twig\Loader\LoaderInterface;
-        «IF hasGeographical»
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «ENDIF»
         «IF generatePdfSupport»
             use Zikula\Bundle\CoreBundle\Site\SiteDefinitionInterface;
         «ENDIF»
@@ -58,7 +58,7 @@ class ViewHelper {
     def private helperBaseImpl(Application it) '''
         public function __construct(
             «IF hasGeographical»
-                protected readonly ZikulaHttpKernelInterface $kernel,
+                protected readonly KernelInterface $kernel,
                 protected readonly Filesystem $filesystem,
             «ENDIF»
             protected readonly Environment $twig,
@@ -334,7 +334,7 @@ class ViewHelper {
         {
             $bundle = $this->kernel->getBundle('«appName»');
             $leafletSrcPath = $bundle->getPath() . '/vendor/drmonty/leaflet/';
-            $leafletPublicPath = $this->kernel->getProjectDir() . '/public/modules/«vendor.toLowerCase»«name.toLowerCase»/leaflet/';
+            $leafletPublicPath = $this->kernel->getProjectDir() . '/public/bundles/«vendor.toLowerCase»«name.toLowerCase»/leaflet/';
             if (!$this->filesystem->exists($leafletPublicPath)) {
                 $this->filesystem->mkdir($leafletPublicPath);
             }

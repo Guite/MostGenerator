@@ -51,6 +51,9 @@ class ServiceDefinitions {
                 public: false
                 bind:
                     $twigLoader: '@twig.loader'
+                    «IF hasUploads»
+                        $projectDir: '%kernel.project_dir%'
+                    «ENDIF»
                     «IF needsApproval»
                         $mailLoggingEnabled: '%enable_mail_logging%'
                     «ENDIF»

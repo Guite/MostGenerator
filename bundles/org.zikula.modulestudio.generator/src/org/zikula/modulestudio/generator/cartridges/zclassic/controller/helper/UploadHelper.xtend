@@ -42,7 +42,6 @@ class UploadHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use function Symfony\Component\String\s;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         use «appNamespace»\Entity\EntityInterface;
@@ -75,13 +74,13 @@ class UploadHelper {
         protected array $forbiddenFileTypes;
 
         public function __construct(
-            protected readonly ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
             protected readonly Filesystem $filesystem,
             protected readonly RequestStack $requestStack,
             protected readonly LoggerInterface $logger,
             protected readonly CurrentUserApiInterface $currentUserApi,
             protected readonly array $imageConfig,
+            protected readonly string $projectDir,
             protected readonly string $dataDirectory
         ) {
             $this->setTranslator($translator);
@@ -155,7 +154,7 @@ class UploadHelper {
 
             // retrieve the final file name
             try {
-                $basePath = $this->kernel->getProjectDir() . '/' . $this->getFileBaseFolder($objectType, $fieldName);
+                $basePath = $this->projectDir . '/' . $this->getFileBaseFolder($objectType, $fieldName);
             } catch (Exception $exception) {
                 if (null !== $flashBag) {
                     $flashBag->add('error', $exception->getMessage());
@@ -696,7 +695,7 @@ class UploadHelper {
          */
         protected function checkAndCreateUploadFolder(string $objectType, string $fieldName, string $allowedExtensions = ''): bool
         {
-            $uploadPath = $this->kernel->getProjectDir() . '/' . $this->getFileBaseFolder($objectType, $fieldName, true);
+            $uploadPath = $this->projectDir . '/' . $this->getFileBaseFolder($objectType, $fieldName, true);
 
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;

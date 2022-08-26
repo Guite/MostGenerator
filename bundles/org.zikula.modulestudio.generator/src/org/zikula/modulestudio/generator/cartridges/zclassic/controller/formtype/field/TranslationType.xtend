@@ -29,7 +29,7 @@ class TranslationType {
          */
         abstract class AbstractTranslationType extends AbstractType
         {
-            public function __construct(protected TranslationListener $translationListener)
+            public function __construct(protected readonly TranslationListener $translationListener)
             {
             }
 

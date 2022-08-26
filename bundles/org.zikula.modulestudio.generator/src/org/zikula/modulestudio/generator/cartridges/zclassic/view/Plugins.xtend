@@ -78,9 +78,6 @@ class Plugins {
         «ENDIF»
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Twig\Extension\RuntimeExtensionInterface;
-        «IF hasUploads»
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «ENDIF»
         use «appNamespace»\Entity\EntityInterface;
         «IF hasTrees»
             use «appNamespace»\Entity\Factory\EntityFactory;
@@ -167,9 +164,6 @@ class Plugins {
         use TranslatorTrait;
 
         public function __construct(
-            «IF hasUploads»
-                protected readonly ZikulaHttpKernelInterface $kernel,
-            «ENDIF»
             protected readonly TranslatorInterface $translator«IF !getEntitiesWithCounterFields.empty»,
             protected readonly Connection $databaseConnection«ENDIF»«IF hasTrees»,
             protected readonly RouterInterface $router«ENDIF»«IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»,
@@ -181,7 +175,8 @@ class Plugins {
             protected readonly WorkflowHelper $workflowHelper«IF hasListFields»,
             protected readonly ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
             protected readonly LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
-            protected readonly MenuBuilder $menuBuilder«ENDIF»
+            protected readonly MenuBuilder $menuBuilder«ENDIF»«IF hasUploads»,
+            protected readonly string $projectDir«ENDIF»
         ) {
         }
 
@@ -243,7 +238,7 @@ class Plugins {
              */
             public function getRelativePath(string $absolutePath): string
             {
-                return str_replace($this->kernel->getProjectDir() . '/public', '', $absolutePath);
+                return str_replace($this->projectDir . '/public', '', $absolutePath);
             }
         «ENDIF»
 

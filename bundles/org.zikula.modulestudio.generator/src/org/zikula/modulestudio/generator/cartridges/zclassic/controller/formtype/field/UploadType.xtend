@@ -33,7 +33,6 @@ class UploadType {
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
-        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use «appNamespace»\Form\DataTransformer\UploadFileTransformer;
         use «appNamespace»\Helper\ImageHelper;
         use «appNamespace»\Helper\UploadHelper;
@@ -48,9 +47,9 @@ class UploadType {
             protected object $entity;
 
             public function __construct(
-                protected ZikulaHttpKernelInterface $kernel,
-                protected ImageHelper $imageHelper,
-                protected UploadHelper $uploadHelper
+                protected readonly ImageHelper $imageHelper,
+                protected readonly UploadHelper $uploadHelper,
+                protected readonly string $projectDir
             ) {
             }
 
@@ -64,7 +63,7 @@ class UploadType {
 
                 $fileOptions = [];
                 foreach ($options as $optionName => $optionValue) {
-                    if (in_array($optionName, ['entity', 'allow_deletion', 'allowed_extensions', 'allowed_size'])) {
+                    if (in_array($optionName, ['entity', 'allow_deletion', 'allowed_extensions', 'allowed_size'], true)) {
                         continue;
                     }
                     $fileOptions[$optionName] = $optionValue;
@@ -72,7 +71,7 @@ class UploadType {
                 $fileOptions['attr']['class'] = 'validate-upload';
 
                 $builder->add($fieldName, FileType::class, $fileOptions);
-                $uploadFileTransformer = new UploadFileTransformer($this->kernel, $this->entity, $this->uploadHelper, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
+                $uploadFileTransformer = new UploadFileTransformer($this->entity, $this->uploadHelper, $this->projectDir, $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», $options['custom_filename']«ENDIF»);
                 $builder->addModelTransformer($uploadFileTransformer);
 
                 if ($options['allow_deletion'] && !$options['required']) {

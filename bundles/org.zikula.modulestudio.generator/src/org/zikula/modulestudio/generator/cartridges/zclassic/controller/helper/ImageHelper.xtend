@@ -35,9 +35,6 @@ class ImageHelper {
         use Symfony\Component\HttpFoundation\RequestStack;
         use function Symfony\Component\String\s;
         use Symfony\Contracts\Translation\TranslatorInterface;
-        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «ENDIF»
 
         /**
          * Helper base class for image methods.
@@ -55,11 +52,11 @@ class ImageHelper {
         protected string $applicationName;
 
         public function __construct(
-            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-                protected readonly ZikulaHttpKernelInterface $kernel,
-            «ENDIF»
             protected readonly TranslatorInterface $translator,
             protected readonly RequestStack $requestStack,
+            «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
+                protected readonly string $projectDir,
+            «ENDIF»
             protected readonly array $imageConfig
         ) {
             $this->applicationName = '«appName»';
@@ -180,7 +177,7 @@ class ImageHelper {
          */
         protected function checkIfImagineCacheDirectoryExists(): void
         {
-            $cacheDirectory = $this->kernel->getProjectDir() . '/public/media/cache';
+            $cacheDirectory = $this->projectDir . '/public/media/cache';
             $fs = new Filesystem();
             if ($fs->exists($cacheDirectory)) {
                 return;

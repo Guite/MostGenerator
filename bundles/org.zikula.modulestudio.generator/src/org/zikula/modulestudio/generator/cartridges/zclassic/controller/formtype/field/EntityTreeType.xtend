@@ -30,7 +30,7 @@ class EntityTreeType {
          */
         abstract class AbstractEntityTreeType extends AbstractType
         {
-            public function __construct(protected EntityDisplayHelper $entityDisplayHelper)
+            public function __construct(protected readonly EntityDisplayHelper $entityDisplayHelper)
             {
             }
 

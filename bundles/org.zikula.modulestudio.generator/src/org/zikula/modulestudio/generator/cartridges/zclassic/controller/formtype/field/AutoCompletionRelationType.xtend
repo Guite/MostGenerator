@@ -36,7 +36,7 @@ class AutoCompletionRelationType {
          */
         abstract class AbstractAutoCompletionRelationType extends AbstractType
         {
-            public function __construct(protected RouterInterface $router, protected EntityFactory $entityFactory)
+            public function __construct(protected readonly RouterInterface $router, protected readonly EntityFactory $entityFactory)
             {
             }
 

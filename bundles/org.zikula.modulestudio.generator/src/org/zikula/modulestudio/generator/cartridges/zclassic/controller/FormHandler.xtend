@@ -152,7 +152,6 @@ class FormHandler {
         «IF hasTranslatable»
             use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
         «ENDIF»
-        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         «IF needsApproval»
             use Zikula\GroupsBundle\GroupsConstant;
@@ -249,7 +248,6 @@ class FormHandler {
             protected array $templateParameters = [];
 
             public function __construct(
-                protected readonly ZikulaHttpKernelInterface $kernel,
                 TranslatorInterface $translator,
                 protected readonly FormFactoryInterface $formFactory,
                 protected readonly RequestStack $requestStack,

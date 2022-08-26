@@ -35,7 +35,6 @@ class NotificationHelper {
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Twig\Environment;
-        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use Zikula\Bundle\CoreBundle\Site\SiteDefinitionInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\GroupsBundle\GroupsConstant;
@@ -85,7 +84,6 @@ class NotificationHelper {
         protected string $applicationName;
 
         public function __construct(
-            protected readonly ZikulaHttpKernelInterface $kernel,
             TranslatorInterface $translator,
             protected readonly RouterInterface $router,
             protected readonly RequestStack $requestStack,

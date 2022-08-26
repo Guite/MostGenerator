@@ -30,9 +30,9 @@ class AutoCompletionRelationTransformer {
         abstract class AbstractAutoCompletionRelationTransformer implements DataTransformerInterface
         {
             public function __construct(
-                protected EntityFactory $entityFactory,
-                protected string $objectType,
-                protected bool $isMultiple
+                protected readonly EntityFactory $entityFactory,
+                protected readonly string $objectType,
+                protected readonly bool $isMultiple
             ) {
             }
 

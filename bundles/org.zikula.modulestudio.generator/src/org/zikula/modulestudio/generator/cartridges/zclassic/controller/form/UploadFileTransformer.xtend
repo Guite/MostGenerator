@@ -21,7 +21,6 @@ class UploadFileTransformer {
         use Symfony\Component\Form\DataTransformerInterface;
         use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\HttpFoundation\File\UploadedFile;
-        use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
         use «appNamespace»\Entity\EntityInterface;
         use «appNamespace»\Helper\UploadHelper;
 
@@ -33,11 +32,11 @@ class UploadFileTransformer {
         abstract class AbstractUploadFileTransformer implements DataTransformerInterface
         {
             public function __construct(
-                protected ZikulaHttpKernelInterface $kernel,
-                protected EntityInterface $entity,
-                protected UploadHelper $uploadHelper,
-                protected string $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»,
-                protected bool $supportCustomFileName = false«ENDIF»
+                protected readonly EntityInterface $entity,
+                protected readonly UploadHelper $uploadHelper,
+                protected readonly string $projectDir,
+                protected readonly string $fieldName = ''«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»,
+                protected readonly bool $supportCustomFileName = false«ENDIF»
             ) {
             }
 
@@ -114,7 +113,7 @@ class UploadFileTransformer {
                 $metaData = [];
                 if ('' !== $uploadResult['fileName']) {
                     $result = $this->uploadHelper->getFileBaseFolder($objectType, $fieldName) . $uploadResult['fileName'];
-                    $result = null !== $result ? new File($this->kernel->getProjectDir() . '/' . $result) : $result;
+                    $result = null !== $result ? new File($this->projectDir . '/' . $result) : $result;
                     $metaData = $uploadResult['metaData'];
                 }
 

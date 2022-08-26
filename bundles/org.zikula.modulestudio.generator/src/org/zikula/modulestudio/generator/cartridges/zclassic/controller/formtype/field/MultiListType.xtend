@@ -37,7 +37,7 @@ class MultiListType {
          */
         abstract class AbstractMultiListType extends AbstractType
         {
-            public function __construct(protected ListEntriesHelper $listHelper)
+            public function __construct(protected readonly ListEntriesHelper $listHelper)
             {
             }
 

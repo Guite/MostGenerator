@@ -43,9 +43,6 @@ class LifecycleListener {
             use function Symfony\Component\String\s;
         «ENDIF»
         use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-        «IF !getUploadEntities.empty»
-            use Zikula\Bundle\CoreBundle\HttpKernel\ZikulaHttpKernelInterface;
-        «ENDIF»
         use Zikula\UsersBundle\Api\CurrentUserApi;
         «IF hasLoggable»
             use Zikula\UsersBundle\UsersConstant;
@@ -70,10 +67,10 @@ class LifecycleListener {
 
             public function __construct(
                 ContainerInterface $container,
-                «IF !getUploadEntities.empty»
-                    protected readonly ZikulaHttpKernelInterface $kernel,
-                «ENDIF»
                 protected readonly EventDispatcherInterface $eventDispatcher,
+                «IF !getUploadEntities.empty»
+                    protected readonly string $projectDir,
+                «ENDIF»
                 protected readonly LoggerInterface $logger«IF hasLoggable»
                 protected readonly array $loggableConfig«ENDIF»
             ) {
