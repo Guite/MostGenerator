@@ -49,13 +49,13 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "true"
                     mandatory false
-                    displayType DISPLAY
+                    displayType DETAIL
                     visible false
                 },
                 boolean "bool2" unique translatable ajaxTogglability {
                     defaultValue "true"
                     mandatory true
-                    displayType VIEW_DISPLAY
+                    displayType INDEX_DETAIL
                     visible true
                     cssClass "mybool"
                 }
@@ -71,13 +71,13 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DISPLAY
+                    displayType DETAIL
                     visible false
                 },
                 integer "integ2" unique percentage translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType VIEW_DISPLAY
+                    displayType INDEX_DETAIL
                     visible true
                     cssClass "myint"
                 },
@@ -99,13 +99,13 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DISPLAY
+                    displayType DETAIL
                     visible false
                 },
                 number "num2" unique percentage translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType VIEW_DISPLAY
+                    displayType INDEX_DETAIL
                     visible true
                     cssClass "mynum"
                     numberType DECIMAL
@@ -128,13 +128,13 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DISPLAY
+                    displayType DETAIL
                     visible false
                 },
                 string "str2" unique translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType VIEW_DISPLAY
+                    displayType INDEX_DETAIL
                     visible true
                     cssClass "mystr"
                     minLength 3
@@ -324,13 +324,13 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DISPLAY
+                    displayType DETAIL
                     visible false
                 },
                 text "txt2" translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType VIEW_DISPLAY
+                    displayType INDEX_DETAIL
                     visible true
                     cssClass "mytxt"
                     regexp "foo"
@@ -356,13 +356,13 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DISPLAY
+                    displayType DETAIL
                     visible false
                 },
                 user "usr2" unique translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType VIEW_DISPLAY
+                    displayType INDEX_DETAIL
                     visible true
                     cssClass "myuser"
                 },
@@ -400,7 +400,7 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "info@guite.de"
                     mandatory false
-                    displayType VIEW
+                    displayType INDEX
                     visible false
                 },
                 email "ema2" unique translatable {
@@ -429,7 +429,7 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "https://guite.de"
                     mandatory false
-                    displayType VIEW
+                    displayType INDEX
                     visible false
                 },
                 url "url2" unique translatable {
@@ -458,14 +458,14 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "foo"
                     mandatory false
-                    displayType VIEW_SORTING
+                    displayType INDEX_SORTING
                     visible false
                     namingScheme RANDOMCHECKSUM
                     allowSquare false
                 },
                 upload "file2" unique translatable {
                     mandatory true
-                    displayType DISPLAY_SORTING
+                    displayType DETAIL_SORTING
                     visible true
                     cssClass "myurl"
                     minLength 3
@@ -512,7 +512,7 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "info@guite.de"
                     mandatory false
-                    displayType VIEW
+                    displayType INDEX
                     visible false
                     items {
                         listItem "foo",
@@ -557,7 +557,7 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "foo"
                     mandatory false
-                    displayType VIEW
+                    displayType INDEX
                     visible false
                     arrayType ARRAY
                 },
@@ -583,7 +583,7 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "foo"
                     mandatory false
-                    displayType VIEW
+                    displayType INDEX
                     visible false
                 },
                 object "obj2" {
@@ -603,13 +603,13 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "now"
                     mandatory false
-                    displayType DISPLAY
+                    displayType DETAIL
                     visible false
                 },
                 datetime "dat2" unique translatable {
                     defaultValue "now"
                     mandatory true
-                    displayType VIEW_DISPLAY
+                    displayType INDEX_DETAIL
                     visible true
                     cssClass "mydate"
                     components TIME

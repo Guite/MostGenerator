@@ -108,12 +108,12 @@ application "SimpleNews" targets SF70 {
                     displayType NONE
                 },
                 string "myPassword" {
-                    displayType VIEW
+                    displayType INDEX
                     role PASSWORD
                 },
                 string "zipCode" unique {
                     mandatory false
-                    displayType DISPLAY
+                    displayType DETAIL
                 },
                 list "myList1" {
                     items {
