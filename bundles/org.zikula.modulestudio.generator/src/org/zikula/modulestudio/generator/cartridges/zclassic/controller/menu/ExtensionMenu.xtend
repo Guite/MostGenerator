@@ -22,8 +22,7 @@ class ExtensionMenu {
     def private extensionMenuBaseImpl(Application it) '''
         namespace «appNamespace»\Menu\Base;
 
-        use Knp\Menu\FactoryInterface;
-        use Knp\Menu\ItemInterface;
+        use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
         use Zikula\ThemeBundle\ExtensionMenu\ExtensionMenuInterface;
         «IF generateAccountApi»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
@@ -37,7 +36,6 @@ class ExtensionMenu {
         abstract class AbstractExtensionMenu implements ExtensionMenuInterface
         {
             public function __construct(
-                protected readonly FactoryInterface $factory,
                 «IF generateAccountApi»
                     protected readonly CurrentUserApiInterface $currentUserApi,
                 «ENDIF»
@@ -47,22 +45,20 @@ class ExtensionMenu {
             ) {
             }
 
-            public function get(string $type = self::TYPE_ADMIN): ?ItemInterface
+            public function get(string $context = ExtensionMenuInterface::CONTEXT_ADMIN): iterable
             {
                 $contextArgs = ['api' => 'extensionMenu', 'action' => 'get'];
                 $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api', $contextArgs);
         
-                $permLevel = self::TYPE_ADMIN === $type ? ACCESS_ADMIN : ACCESS_READ;
+                $permLevel = ExtensionMenuInterface::CONTEXT_ADMIN === $context ? ACCESS_ADMIN : ACCESS_READ;
 
-                $menu = $this->factory->createItem('«appName.formatForDB»' . ucfirst($type) . 'Menu');
-
-                if (self::TYPE_ACCOUNT === $type) {
+                if (ExtensionMenuInterface::CONTEXT_ACCOUNT === $context) {
                     «IF generateAccountApi»
                         if (!$this->currentUserApi->isLoggedIn()) {
-                            return null;
+                            return;
                         }
                         if (!$this->permissionHelper->hasPermission(ACCESS_OVERVIEW)) {
-                            return null;
+                            return;
                         }
 
                         «FOR entity : getAllEntities.filter[hasViewAction && standardFields]»
@@ -76,34 +72,21 @@ class ExtensionMenu {
                                             $routeParameters = [];
                                         }
                                     «ENDIF»
-                                    $menu->addChild('My «entity.nameMultiple.formatForDisplay»', [
-                                        'route' => '«appName.formatForDB»_' . mb_strtolower($objectType) . '_view',
-                                        'routeParameters' => $routeParameters,
-                                    ])
-                                        ->setAttribute('icon', 'fas fa-list-alt')
-                                        ->setExtra('translation_domain', '«entity.name.formatForCode»')
-                                    ;
+                                    yield MenuItem::linktoRoute('My «entity.nameMultiple.formatForDisplay»', 'fas fa-list-alt', '«appName.formatForDB»_' . mb_strtolower($objectType) . '_view', $routeParameters);
                                 }
                             }
 
                         «ENDFOR»
                         if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
-                            $menu->addChild('«name.formatForDisplayCapital» Backend', [
-                                'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»',
-                            ])
-                                ->setAttribute('icon', 'fas fa-wrench')
-                            ;
+                            yield MenuItem::linktoRoute('«name.formatForDisplayCapital» Backend', 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
                         }
 
                     «ENDIF»
-                    return 0 === $menu->count() ? null : $menu;
                 }
 
-                $routeArea = self::TYPE_ADMIN === $type ? 'admin' : '';
+                $routeArea = ExtensionMenuInterface::CONTEXT_ADMIN === $context ? 'admin' : '';
                 «val menuLinksHelper = new MenuLinksHelperFunctions»
                 «menuLinksHelper.generate(it)»
-
-                return 0 === $menu->count() ? null : $menu;
             }
 
             public function getBundleName(): string

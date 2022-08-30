@@ -27,34 +27,18 @@ class MenuLinksHelperFunctions {
             in_array('«name.formatForCode»', $allowedObjectTypes, true)
             && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)
         ) {
-            $menu->addChild('«nameMultiple.formatForDisplayCapital»', [
-                'route' => '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view',«/*IF tree != EntityTreeType.NONE»
-                'routeParameters' => ['tpl' => 'tree']«ENDIF*/»
-            ])
-                ->setLinkAttribute('title', '«nameMultiple.formatForDisplayCapital» list')
-                ->setExtra('translation_domain', '«name.formatForCode»')
-            ;
+            yield MenuItem::linktoRoute('«nameMultiple.formatForDisplayCapital»', null, '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»);
         }
     '''
 
     def private menuLinksBetweenControllers(Application it) '''
         if (self::TYPE_ADMIN === $type) {
             if ($this->permissionHelper->hasPermission(ACCESS_READ)) {
-                $menu->addChild('Frontend', [
-                    'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»',
-                ])
-                    ->setAttribute('icon', 'fas fa-home')
-                    ->setLinkAttribute('title', 'Switch to user area.')
-                ;
+                yield MenuItem::linktoRoute('Frontend', 'fas fa-home', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»');
             }
         } else {
             if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
-                $menu->addChild('Backend', [
-                    'route' => '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»',
-                ])
-                    ->setAttribute('icon', 'fas fa-wrench')
-                    ->setLinkAttribute('title', 'Switch to administration area.')
-                ;
+                yield MenuItem::linktoRoute('Backend', 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
             }
         }
     '''
