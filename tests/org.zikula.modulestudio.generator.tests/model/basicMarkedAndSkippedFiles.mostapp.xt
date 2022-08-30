@@ -13,9 +13,9 @@ XPECT files ---
     AcmeSimpleTestBundle.generated.php
     Base/AbstractAcmeSimpleTestBundle.php
     Entity/Base/AbstractArticleEntity.php
-    Resources/views/Article/view.html.twig
-    !Resources/views/Article/display.html.twig
-    Resources/views/Article/display.html.generated.twig
+    Resources/views/Article/index.html.twig
+    !Resources/views/Article/detail.html.twig
+    Resources/views/Article/detail.html.generated.twig
     !Resources/views/Article/delete.html.twig
     !Resources/views/Article/delete.html.generated.twig
 --- */
@@ -33,7 +33,7 @@ application "SimpleTest" {
     "
     markFiles "
         AcmeSimpleTestBundle.php,
-        Resources/views/Article/display.html.twig
+        Resources/views/Article/detail.html.twig
     "
     entities {
         entity "article" leading {

@@ -58,9 +58,8 @@ application "SimpleNews" targets SF70 {
                 datetime "myFuture" future
             }
             actions {
-                indexAction "Index",
                 indexAction "Index" {
-                    documentation "My view action"
+                    documentation "My index action"
                 },
                 detailAction "Detail",
                 editAction "Edit",
