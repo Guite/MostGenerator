@@ -49,7 +49,7 @@ class LoggableUndelete {
     def private undeleteDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF isBase»
             /**
-             * «IF hasDisplayAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
+             * «IF hasDetailAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
              *
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
@@ -105,7 +105,7 @@ class LoggableUndelete {
             throw new AccessDeniedException();
         }
 
-        «IF hasDisplayAction»
+        «IF hasDetailAction»
             $preview = $request->query->getInt('preview');
             if (1 === $preview) {
                 return $this->displayInternal(
@@ -137,7 +137,7 @@ class LoggableUndelete {
 
         $routeArea = $isAdmin ? 'admin' : '';
 
-        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . '«IF hasDisplayAction»display', $«name.formatForCode»->createUrlArgs()«ELSEIF hasViewAction»view'«ELSE»index'«ENDIF»);
+        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . '«IF hasDetailAction»detail', $«name.formatForCode»->createUrlArgs()«ELSEIF hasIndexAction»index'«ELSE»«primaryAction»'«ENDIF»);
     '''
 
     def private undeletion(Entity it) '''

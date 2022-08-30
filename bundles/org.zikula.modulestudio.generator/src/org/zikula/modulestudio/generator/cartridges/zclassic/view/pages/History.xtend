@@ -210,9 +210,9 @@ class History {
                             {% endif %}
                         </td>
                         <td headers="hActions hVersion{{ logEntry.version|e('html_attr') }}" class="actions">
-                            «IF hasDisplayAction»
+                            «IF hasDetailAction»
                                 {% set linkTitle = 'Preview version %version%'|trans({'%version%': logEntry.version}, 'messages') %}
-                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ 'version'|trans({}, 'messages') ~ ' ' ~ logEntry.version }}"><i class="fas fa-id-card"></i></a>
+                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'detail', {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ 'version'|trans({}, 'messages') ~ ' ' ~ logEntry.version }}"><i class="fas fa-id-card"></i></a>
                             «ENDIF»
                             {% if not loop.first %}
                                 {% set linkTitle = 'Revert to version %version%'|trans({'%version%': logEntry.version}, 'messages') %}
@@ -226,20 +226,20 @@ class History {
     '''
 
     def private pageNavLinks(Entity it, String appName) '''
-        «IF hasViewAction || hasDisplayAction»
+        «IF hasIndexAction || hasDetailAction»
             <p>
                 {% if isDiffView == true %}
                     {% set linkTitle = 'Back to history'|trans({}, 'messages') %}
                     <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'loggablehistory', {«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields && slugUnique»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i> {{ linkTitle }}</a>
                 {% else %}
-                    «IF hasViewAction»
+                    «IF hasIndexAction»
                         {% set linkTitle = '«nameMultiple.formatForDisplayCapital» list'|trans %}
-                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-reply"></i> {{ linkTitle }}</a>
+                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'index') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-reply"></i> {{ linkTitle }}</a>
                     «ENDIF»
                 {% endif %}
-                «IF hasDisplayAction»
+                «IF hasDetailAction»
                     {% set linkTitle = 'Back to detail view'|trans({}, 'messages') %}
-                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-eye"></i> {{ linkTitle }}</a>
+                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'detail'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-eye"></i> {{ linkTitle }}</a>
                 «ENDIF»
             </p>
         «ENDIF»

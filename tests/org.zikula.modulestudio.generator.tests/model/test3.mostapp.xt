@@ -19,7 +19,7 @@ application "SimpleNews" targets SF70 {
     email "info@guite.de"
     url "https://guite.de"
     prefix "sinew"
-    displayActionsStyle BUTTON
+    detailActionsStyle BUTTON
     entities {
         entity "article" leading readOnly categorisable {
             documentation "My article"
@@ -56,9 +56,8 @@ application "SimpleNews" targets SF70 {
                 upload "myImage"
             }
             actions {
-                mainAction "Index",
-                viewAction "View",
-                displayAction "Display",
+                indexAction "Index",
+                detailAction "Detail",
                 editAction "Edit"
             }
         },

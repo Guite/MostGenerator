@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.ItemActions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.ViewActions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -39,17 +38,17 @@ class MenuBuilder {
         «ENDFOR»
         use «appNamespace»\Event\ItemActionsMenuPostConfigurationEvent;
         use «appNamespace»\Event\ItemActionsMenuPreConfigurationEvent;
-        «IF hasViewActions»
+        «IF hasIndexActions»
             use «appNamespace»\Event\ViewActionsMenuPostConfigurationEvent;
             use «appNamespace»\Event\ViewActionsMenuPreConfigurationEvent;
         «ENDIF»
-        «IF hasDisplayActions»
+        «IF hasDetailActions»
             use «appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
         «IF hasLoggable»
             use «appNamespace»\Helper\LoggableHelper;
         «ENDIF»
-        «IF hasViewActions && hasEditActions»
+        «IF hasIndexActions && hasEditActions»
             use «appNamespace»\Helper\ModelHelper;
         «ENDIF»
         use «appNamespace»\Helper\PermissionHelper;
@@ -69,23 +68,23 @@ class MenuBuilder {
             protected readonly EventDispatcherInterface $eventDispatcher,
             protected readonly RequestStack $requestStack,
             protected readonly PermissionHelper $permissionHelper,
-            «IF hasDisplayActions»
+            «IF hasDetailActions»
                 protected readonly EntityDisplayHelper $entityDisplayHelper,
             «ENDIF»
             «IF hasLoggable»
                 protected readonly LoggableHelper $loggableHelper,
             «ENDIF»
-            protected readonly CurrentUserApiInterface $currentUserApi«IF hasViewActions && hasEditActions»,
-            protected readonly ModelHelper $modelHelper«ENDIF»«IF hasViewActions»,
+            protected readonly CurrentUserApiInterface $currentUserApi«IF hasIndexActions && hasEditActions»,
+            protected readonly ModelHelper $modelHelper«ENDIF»«IF hasIndexActions»,
             protected readonly array $listViewConfig«ENDIF»
             
         ) {
         }
 
         «createMenu('item')»
-        «IF hasViewActions»
+        «IF hasIndexActions»
 
-            «createMenu('view')»
+            «createMenu('index')»
         «ENDIF»
     '''
 
@@ -113,7 +112,7 @@ class MenuBuilder {
                         return $menu;
                     }
                 «ENDIF»
-            «ELSEIF 'view' == actionType»
+            «ELSEIF 'index' == actionType»
                 if (!isset($options['objectType'], $options['area'])) {
                     return $menu;
                 }
@@ -129,8 +128,8 @@ class MenuBuilder {
 
             «IF 'item' == actionType»
                 «new ItemActions().actionsImpl(it)»
-            «ELSEIF 'view' == actionType»
-                «new ViewActions().actionsImpl(it)»
+            «ELSEIF 'index' == actionType»
+                «new IndexActions().actionsImpl(it)»
             «ENDIF»
 
             $this->eventDispatcher->dispatch(

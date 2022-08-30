@@ -4,15 +4,14 @@ import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DeleteAction
-import de.guite.modulestudio.metamodel.DisplayAction
+import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.MainAction
+import de.guite.modulestudio.metamodel.IndexAction
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
-import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -38,8 +37,8 @@ class Actions {
     }
 
     def actionImpl(Entity it, Action action) '''
-        «IF action instanceof DisplayAction || action instanceof DeleteAction»
-            «IF action instanceof DisplayAction»
+        «IF action instanceof DetailAction || action instanceof DeleteAction»
+            «IF action instanceof DetailAction»
                 if (null === $«name.formatForCode») {
                     $«name.formatForCode» = $repository->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
                 }
@@ -60,17 +59,17 @@ class Actions {
         $objectType = '«name.formatForCode»';
         // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
-        «IF action instanceof ViewAction && tree != EntityTreeType.NONE»
+        «IF action instanceof IndexAction && tree != EntityTreeType.NONE»
             if (!$isAdmin && 'tree' === $request->query->getAlnum('tpl')) {
                 $permLevel = ACCESS_EDIT;
             }
-        «ELSEIF action instanceof DisplayAction && loggable»
+        «ELSEIF action instanceof DetailAction && loggable»
             $route = $request->attributes->get('_route', '');
             if (!$isAdmin && '«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' === $route) {
                 $permLevel = ACCESS_EDIT;
             }
         «ENDIF»
-        «IF action instanceof DisplayAction || action instanceof DeleteAction»
+        «IF action instanceof DetailAction || action instanceof DeleteAction»
             if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
                 «IF ownerPermission && action instanceof DeleteAction»
                     if ($isAdmin) {
@@ -97,20 +96,7 @@ class Actions {
     def private dispatch actionImplBody(Entity it, Action action) {
     }
 
-    def private dispatch actionImplBody(Entity it, MainAction action) '''
-        $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : '',
-        ];
-
-        «IF hasViewAction»
-            return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . $templateParameters['routeArea'] . 'view');
-        «ELSE»
-            // return index template
-            return $this->render('@«app.vendorAndName»/«name.formatForCodeCapital»/index.html.twig', $templateParameters);
-        «ENDIF»
-    '''
-
-    def private dispatch actionImplBody(Entity it, ViewAction action) '''
+    def private dispatch actionImplBody(Entity it, IndexAction action) '''
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : '',
         ];
@@ -130,25 +116,25 @@ class Actions {
         $request->query->set('page', $page);
         $request->query->set('num', $num);
 
-        $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view';
+        $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'index';
         $sortableColumns = new SortableColumns($router, $routeName, 'sort', 'sortdir');
         «IF tree != EntityTreeType.NONE»
 
             if ('tree' === $request->query->getAlnum('tpl')) {
-                $templateParameters = $controllerHelper->processViewActionParameters(
+                $templateParameters = $controllerHelper->processIndexActionParameters(
                     $objectType,
                     $sortableColumns,
                     $templateParameters
                 );
 
                 // fetch and return the appropriate template
-                return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
+                return $viewHelper->processTemplate($objectType, 'index', $templateParameters);
             }
         «ENDIF»
 
         «initSortableColumns»
 
-        $templateParameters = $controllerHelper->processViewActionParameters(
+        $templateParameters = $controllerHelper->processIndexActionParameters(
             $objectType,
             $sortableColumns,
             $templateParameters
@@ -162,7 +148,7 @@ class Actions {
         );
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
+        return $viewHelper->processTemplate($objectType, 'index', $templateParameters);
     '''
 
     def private initSortableColumns(Entity it) '''
@@ -196,7 +182,7 @@ class Actions {
         new Column('«columnName.formatForCode»'),
     '''
 
-    def private dispatch actionImplBody(Entity it, DisplayAction action) '''
+    def private dispatch actionImplBody(Entity it, DetailAction action) '''
         «IF workflow != EntityWorkflowType.NONE»
             if (
                 'approved' !== $«name.formatForCode»->getWorkflowState()
@@ -220,14 +206,14 @@ class Actions {
             $objectType => $«name.formatForCode»,
         ];
 
-        $templateParameters = $controllerHelper->processDisplayActionParameters($objectType, $templateParameters);
+        $templateParameters = $controllerHelper->processDetailActionParameters($objectType, $templateParameters);
 
         «processDisplayOutput»
     '''
 
     def private processDisplayOutput(Entity it) '''
         // fetch and return the appropriate template
-        $response = $viewHelper->processTemplate($objectType, 'display', $templateParameters);
+        $response = $viewHelper->processTemplate($objectType, 'detail', $templateParameters);
         «IF app.generateIcsTemplates && hasStartAndEndDateField»
 
             if ('ics' === $request->getRequestFormat()) {
@@ -274,8 +260,8 @@ class Actions {
             throw new RuntimeException($this->trans('Error! Could not determine workflow actions.'));
         }
 
-        // redirect to the «IF hasViewAction»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
-        $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF hasViewAction»view«ELSE»index«ENDIF»';
+        // redirect to the «IF hasIndexAction»list of «nameMultiple.formatForDisplay»«ELSE»«primaryAction» page«ENDIF»
+        $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF hasIndexAction»index«ELSE»«primaryAction»«ENDIF»';
 
         // check whether deletion is allowed
         $deleteActionId = 'delete';

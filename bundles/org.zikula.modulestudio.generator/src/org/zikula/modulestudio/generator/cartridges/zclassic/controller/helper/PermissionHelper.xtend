@@ -32,7 +32,7 @@ class PermissionHelper {
     def private permissionHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF hasViewActions»
+        «IF hasIndexActions»
             use ArrayIterator;
             use Doctrine\Common\Collections\Collection;
         «ENDIF»
@@ -148,7 +148,7 @@ class PermissionHelper {
                 $userId
             );
         }
-        «IF hasViewActions»
+        «IF hasIndexActions»
 
             /**
              * Filters a given collection of entities based on different permission checks.
@@ -221,7 +221,7 @@ class PermissionHelper {
                 $userId
             );
         }
-        «IF hasViewActions»
+        «IF hasIndexActions»
 
             /**
              * Checks if the quick navigation form for the given object type may be used or not.

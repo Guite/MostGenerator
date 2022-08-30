@@ -13,7 +13,7 @@ class Index {
     extension Utils = new Utils
 
     def generate(Entity it, IMostFileSystemAccess fsa) {
-        /*if (hasActions('view')) {
+        /*if (hasActions('index')) {
             return
         }*/
         ('Generating index templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)

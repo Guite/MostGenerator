@@ -61,7 +61,7 @@ class ExtensionMenu {
                             return;
                         }
 
-                        «FOR entity : getAllEntities.filter[hasViewAction && standardFields]»
+                        «FOR entity : getAllEntities.filter[hasIndexAction && standardFields]»
                             if ($this->listViewConfig['link_own_«entity.nameMultiple.formatForSnakeCase»_on_account_page']) {
                                 $objectType = '«entity.name.formatForCode»';
                                 if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
@@ -72,7 +72,7 @@ class ExtensionMenu {
                                             $routeParameters = [];
                                         }
                                     «ENDIF»
-                                    yield MenuItem::linktoRoute('My «entity.nameMultiple.formatForDisplay»', 'fas fa-list-alt', '«appName.formatForDB»_' . mb_strtolower($objectType) . '_view', $routeParameters);
+                                    yield MenuItem::linktoRoute('My «entity.nameMultiple.formatForDisplay»', 'fas fa-list-alt', '«appName.formatForDB»_' . mb_strtolower($objectType) . '_index', $routeParameters);
                                 }
                             }
 

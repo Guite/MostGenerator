@@ -19,7 +19,7 @@ class ExternalController {
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!generateExternalControllerAndFinder || !hasDisplayActions) {
+        if (!generateExternalControllerAndFinder || !hasDetailActions) {
             return
         }
         'Generating external controller'.printIfNotTesting(fsa)
@@ -95,7 +95,7 @@ class ExternalController {
              */
         «ELSE»
             #[Route('/display/{objectType}/{id}/{displayMode}',
-                name: '«appName.formatForDB»_external_display',
+                name: '«appName.formatForDB»_external_detail',
                 requirements: ['id' => '\d+', 'displayMode' => 'link|embed'],
                 defaults: ['displayMode' => 'embed'],
                 methods: ['GET']
@@ -116,7 +116,7 @@ class ExternalController {
         ): Response'''
 
     def private displayBaseImpl(Application it) '''
-        $contextArgs = ['controller' => 'external', 'action' => 'display'];
+        $contextArgs = ['controller' => 'external', 'action' => 'detail'];
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
@@ -144,7 +144,7 @@ class ExternalController {
             'displayMode' => $displayMode,
         ];
 
-        $contextArgs = ['controller' => 'external', 'action' => 'display'];
+        $contextArgs = ['controller' => 'external', 'action' => 'detail'];
         $templateParameters = $controllerHelper->addTemplateParameters(
             $objectType,
             $templateParameters,
@@ -332,7 +332,7 @@ class ExternalController {
         $templateParameters['items'] = $entities;
         $templateParameters['finderForm'] = $form->createView();
 
-        $contextArgs = ['controller' => 'external', 'action' => 'display'];
+        $contextArgs = ['controller' => 'external', 'action' => 'detail'];
         $templateParameters = $controllerHelper->addTemplateParameters(
             $objectType,
             $templateParameters,

@@ -7,7 +7,7 @@ import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
-class ViewPagesHelper {
+class IndexPagesHelper {
 
     extension FormattingExtensions = new FormattingExtensions
 

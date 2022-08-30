@@ -26,7 +26,7 @@ class GeoFunctions {
         'Generating JavaScript for geographical functions'.printIfNotTesting(fsa)
         var fileName = appName + '.Geo.js'
         fsa.generateFile(getAppJsPath + fileName, generate)
-        if (!getGeographicalEntities.filter[hasViewAction].empty) {
+        if (!getGeographicalEntities.filter[hasIndexAction].empty) {
             fileName = appName + '.ViewMap.js'
             fsa.generateFile(getAppJsPath + fileName, generateViewMap)
         }
@@ -35,7 +35,7 @@ class GeoFunctions {
     def private generate(Application it) '''
         'use strict';
 
-        «IF hasDisplayActions || hasEditActions»
+        «IF hasDetailActions || hasEditActions»
             «initGeoDisplay»
         «ENDIF»
         «IF hasEditActions»
@@ -73,7 +73,7 @@ class GeoFunctions {
                 useGeoLocation: false
             };
 
-            if (infoElem.data('context') == 'display') {
+            if (infoElem.data('context') == 'detail') {
                 «vendorAndName»InitGeographicalDisplay(parameters, false);
             } else if (infoElem.data('context') == 'edit') {
                 parameters.useGeoLocation = 'true' == infoElem.attr('data-use-geolocation');
@@ -262,7 +262,7 @@ class GeoFunctions {
             var infoElem, parameters;
 
             infoElem = jQuery('#geographicalInfo');
-            if (infoElem.length == 0) {
+            if (0 == infoElem.length) {
                 return;
             }
 
@@ -274,7 +274,7 @@ class GeoFunctions {
                 tileLayerAttribution: infoElem.data('tile-layer-attribution')
             };
 
-            if (infoElem.data('context') == 'view') {
+            if ('index' == infoElem.data('context')) {
                 «vendorAndName»InitGeographicalView(parameters);
 
                 jQuery('.«appName.formatForDB»-quicknav').removeClass('form-inline');

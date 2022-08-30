@@ -51,9 +51,8 @@ application "SimpleNews" targets SF70 {
                 }
             }
             actions {
-                mainAction "Index",
-                viewAction "View",
-                displayAction "Display",
+                indexAction "Index",
+                detailAction "Detail",
                 editAction "Edit"
             }
         },

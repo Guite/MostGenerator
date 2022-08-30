@@ -32,26 +32,26 @@ class ControllerHelper {
         «IF hasGeographical»
             use Psr\Log\LoggerInterface;
         «ENDIF»
-        «IF hasViewActions»
+        «IF hasIndexActions»
             use Symfony\Component\Form\FormFactoryInterface;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasViewActions»
+        «IF hasIndexActions»
             use Symfony\Component\Routing\RouterInterface;
             use function Symfony\Component\String\s;
         «ENDIF»
         use Symfony\Contracts\Translation\TranslatorInterface;
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «IF hasViewActions»
+        «IF hasIndexActions»
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
         «IF hasGeographical»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
-        «IF hasViewActions && hasUserFields»
+        «IF hasIndexActions && hasUserFields»
             use Zikula\UsersBundle\Entity\UserEntity;
         «ENDIF»
-        «IF hasViewActions»
+        «IF hasIndexActions»
             use «appNamespace»\Entity\EntityInterface;
         «ENDIF»
         use «appNamespace»\Entity\Factory\EntityFactory;
@@ -82,10 +82,10 @@ class ControllerHelper {
         public function __construct(
             TranslatorInterface $translator,
             protected readonly RequestStack $requestStack,
-            «IF hasViewActions»
+            «IF hasIndexActions»
                 protected readonly RouterInterface $router,
             «ENDIF»
-            «IF hasViewActions»
+            «IF hasIndexActions»
                 protected readonly FormFactoryInterface $formFactory,
             «ENDIF»
             «IF hasGeographical»
@@ -97,7 +97,7 @@ class ControllerHelper {
             protected readonly PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
             protected readonly ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
             protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasAutomaticExpiryHandling || hasLoggable»,
-            ExpiryHelper $expiryHelper«ENDIF»«IF hasViewActions»,
+            ExpiryHelper $expiryHelper«ENDIF»«IF hasIndexActions»,
             protected readonly array $listViewConfig«ENDIF»
         ) {
             $this->setTranslator($translator);
@@ -114,13 +114,13 @@ class ControllerHelper {
         «getObjectTypes»
 
         «getDefaultObjectType»
-        «IF hasViewActions»
+        «IF hasIndexActions»
 
-            «processViewActionParameters»
+            «processIndexActionParameters»
         «ENDIF»
-        «IF hasDisplayActions»
+        «IF hasDetailActions»
 
-            «processDisplayActionParameters»
+            «processDetailActionParameters»
         «ENDIF»
         «IF hasEditActions»
 
@@ -175,17 +175,17 @@ class ControllerHelper {
         }
     '''
 
-    def private processViewActionParameters(Application it) '''
+    def private processIndexActionParameters(Application it) '''
         /**
          * Processes the parameters for a view action.
          * This includes handling pagination, quick navigation forms and other aspects.
          */
-        public function processViewActionParameters(
+        public function processIndexActionParameters(
             string $objectType,
             SortableColumns $sortableColumns,
             array $templateParameters = []
         ): array {
-            $contextArgs = ['controller' => $objectType, 'action' => 'view'];
+            $contextArgs = ['controller' => $objectType, 'action' => 'index'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
                 throw new Exception($this->trans('Error! Invalid object type received.'));
             }
@@ -197,7 +197,7 @@ class ControllerHelper {
             $repository = $this->entityFactory->getRepository($objectType);
 
             // parameter for used sorting field
-            [$sort, $sortdir] = $this->determineDefaultViewSorting($objectType);
+            [$sort, $sortdir] = $this->determineDefaultIndexSorting($objectType);
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = mb_strtolower($sortdir);
             «IF hasTrees»
@@ -339,7 +339,7 @@ class ControllerHelper {
                     $resultsPerPage,
                     «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
                 );
-                $paginator->setRoute('«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $templateParameters['routeArea'] . 'view');
+                $paginator->setRoute('«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $templateParameters['routeArea'] . 'index');
                 $paginator->setRouteParameters($urlParameters);
 
                 $templateParameters['paginator'] = $paginator;
@@ -366,7 +366,7 @@ class ControllerHelper {
         /**
          * Determines the default sorting criteria.
          */
-        protected function determineDefaultViewSorting(string $objectType): array
+        protected function determineDefaultIndexSorting(string $objectType): array
         {
             $request = $this->requestStack->getCurrentRequest();
             if (null === $request) {
@@ -385,15 +385,15 @@ class ControllerHelper {
         }
     '''
 
-    def private processDisplayActionParameters(Application it) '''
+    def private processDetailActionParameters(Application it) '''
         /**
-         * Processes the parameters for a display action.
+         * Processes the parameters for a detail action.
          */
-        public function processDisplayActionParameters(
+        public function processDetailActionParameters(
             string $objectType,
             array $templateParameters = []
         ): array {
-            $contextArgs = ['controller' => $objectType, 'action' => 'display'];
+            $contextArgs = ['controller' => $objectType, 'action' => 'detail'];
             if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
                 throw new Exception($this->trans('Error! Invalid object type received.'));
             }
@@ -457,7 +457,7 @@ class ControllerHelper {
                     $routeNameParts = explode('_', $routeName);
                     $args['action'] = end($routeNameParts);
                 }
-                if (in_array($args['action'], ['index', 'view'], true)) {
+                if ('index' === $args['action']) {
                     $parameters = array_merge(
                         $parameters,
                         $this->collectionFilterHelper->getViewQuickNavParameters($objectType, $context, $args)
@@ -480,7 +480,7 @@ class ControllerHelper {
                             $parameters['thumbRuntimeOptions'] = $thumbRuntimeOptions;
                         }
                     «ENDFOR»
-                    if (in_array($args['action'], ['display', 'edit', 'view'], true)) {
+                    if (in_array($args['action'], ['index', 'detail', 'edit'], true)) {
                         // use separate preset for images in related items
                         $parameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions(
                             '',

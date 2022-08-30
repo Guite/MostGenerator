@@ -140,7 +140,7 @@ class FormHandler {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\HttpFoundation\RedirectResponse;
         use Symfony\Component\HttpFoundation\RequestStack;
-        «IF !getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].empty»
+        «IF !getAllEntities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
@@ -357,24 +357,24 @@ class FormHandler {
                     if (!$this->permissionHelper->mayEdit($entity)) {
                         throw new AccessDeniedException();
                     }
-                    «IF !getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].empty»
-                        if (null !== $session && in_array($this->objectType, ['«getAllEntities.filter[hasDisplayAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
+                    «IF !getAllEntities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty»
+                        if (null !== $session && in_array($this->objectType, ['«getAllEntities.filter[hasDetailAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
                             // map display return urls to redirect codes because slugs may change
                             $routePrefix = '«app.appName.formatForDB»_' . mb_strtolower($this->objectType) . '_';
-                            $userDisplayUrl = $this->router->generate(
-                                $routePrefix . 'display',
+                            $userDetailUrl = $this->router->generate(
+                                $routePrefix . 'detail',
                                 $entity->createUrlArgs(),
                                 UrlGeneratorInterface::ABSOLUTE_URL
                             );
-                            $adminDisplayUrl = $this->router->generate(
-                                $routePrefix . 'admindisplay',
+                            $adminDetailUrl = $this->router->generate(
+                                $routePrefix . 'admindetail',
                                 $entity->createUrlArgs(),
                                 UrlGeneratorInterface::ABSOLUTE_URL
                             );
-                            if ($this->returnTo === $userDisplayUrl) {
-                                $this->returnTo = 'userDisplay';
-                            } elseif ($this->returnTo === $adminDisplayUrl) {
-                                $this->returnTo = 'adminDisplay';
+                            if ($this->returnTo === $userDetailUrl) {
+                                $this->returnTo = 'userDetail';
+                            } elseif ($this->returnTo === $adminDetailUrl) {
+                                $this->returnTo = 'adminDetail';
                             }
                             $session->set($refererSessionVar, $this->returnTo);
                         }

@@ -68,7 +68,7 @@ class ViewExtensions {
      */
     def getListOfViewFormats(Application it) {
         var formats = newArrayList
-        if (!hasViewActions) {
+        if (!hasIndexActions) {
             return formats
         }
         if (generateCsvTemplates) {
@@ -100,7 +100,7 @@ class ViewExtensions {
      */
     def getListOfDisplayFormats(Application it) {
         var formats = newArrayList
-        if (!hasDisplayActions) {
+        if (!hasDetailActions) {
             return formats
         }
         if (generateXmlTemplates) {
@@ -112,7 +112,7 @@ class ViewExtensions {
         if (generateKmlTemplates && hasGeographical) {
             formats.add('kml')
         }
-        if (hasEntitiesWithIcsTemplates && hasDisplayActions) {
+        if (hasEntitiesWithIcsTemplates && hasDetailActions) {
             formats.add('ics')
         }
         if (generatePdfSupport) {
@@ -125,8 +125,8 @@ class ViewExtensions {
      * Returns whether jQuery UI is needed or not.
      */
     def needsJQueryUI(Application it) {
-        (hasSortable && hasViewActions)
-        || (!relations.empty && (hasViewActions || hasDisplayActions || hasEditActions))
+        (hasSortable && hasIndexActions)
+        || (!relations.empty && (hasIndexActions || hasDetailActions || hasEditActions))
     }
 
     /**
@@ -135,7 +135,7 @@ class ViewExtensions {
     def includeLeaflet(Entity it, String actionName, String objName) '''
         {{ pageAddAsset('stylesheet', zasset('@«application.appName»:leaflet/css/leaflet.css')) }}
         {{ pageAddAsset('javascript', zasset('@«application.appName»:leaflet/js/leaflet' ~ (app.environment == 'dev' ? '' : '.min') ~ '.js')) }}
-        «IF 'view' == actionName»
+        «IF 'index' == actionName»
             <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-object-type="«objName»" data-tile-layer-url="{{ geoConfig.tile_layer_url|e('html_attr') }}" data-tile-layer-attribution="{{ geoConfig.tile_layer_attribution|e('html_attr') }}"></div>
         «ELSE»
             <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-latitude="{{ «objName».latitude|«application.appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«application.appName.formatForDB»_geoData }}" data-zoom-level="{{ geoConfig.default_zoom_level|e('html_attr') }}" data-tile-layer-url="{{ geoConfig.tile_layer_url|e('html_attr') }}" data-tile-layer-attribution="{{ geoConfig.tile_layer_attribution|e('html_attr') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and geoConfig.enable_«name.formatForSnakeCase»_geo_location %}true{% else %}false{% endif %}"«ENDIF»></div>

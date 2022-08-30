@@ -28,17 +28,17 @@ class Csv {
     SimpleFields fieldHelper = new SimpleFields
 
     def generate(Entity it, IMostFileSystemAccess fsa) {
-        if (!hasViewAction) {
+        if (!hasIndexAction) {
             return
         }
         ('Generating CSV view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
-        var templateFilePath = templateFileWithExtension('view', 'csv')
-        fsa.generateFile(templateFilePath, csvView)
+        var templateFilePath = templateFileWithExtension('index', 'csv')
+        fsa.generateFile(templateFilePath, csvIndex)
     }
 
-    def private csvView(Entity it) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
+    def private csvIndex(Entity it) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» index csv view #}
         {% trans_default_domain '«name.formatForCode»' %}
         «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{% trans %}«geoFieldName.formatForDisplayCapital»{% endtrans %}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{% trans %}Workflow state{% endtrans %}"«ENDIF»«headerLinesRelations»
         «val objName = name.formatForCode»

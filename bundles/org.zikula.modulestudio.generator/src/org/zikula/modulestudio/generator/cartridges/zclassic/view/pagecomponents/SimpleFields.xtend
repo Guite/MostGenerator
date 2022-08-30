@@ -30,7 +30,7 @@ class SimpleFields {
         {{ «objName».«name.formatForCode» }}'''
 
     def dispatch displayField(BooleanField it, String objName, String page) {
-        if (ajaxTogglability && (page == 'view' || page == 'display')) '''
+        if (ajaxTogglability && (page == 'index' || page == 'detail')) '''
             {% set itemId = «objName».getKey() %}
             <a id="toggle«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle d-none" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId|e('html_attr') }}">
                 <i class="fas fa-check text-success{% if not «objName».«name.formatForCode» %} d-none{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ 'This setting is enabled. Click here to disable it.'|trans({}, 'messages')|e('html_attr') }}"></i>
@@ -70,12 +70,12 @@ class SimpleFields {
             «IF !mandatory»
                 {% if «realName»|default and «realName».getUid() > 0 %}
             «ENDIF»
-            «IF page == 'display'»
+            «IF page == 'detail'»
                   {% if not isQuickView %}
             «ENDIF»
                 {{ «realName».uid|profileLinkByUserId }}
                 <span class="avatar">{{ userAvatar(«realName».uid, {rating: 'g'}) }}</span>
-            «IF page == 'display'»
+            «IF page == 'detail'»
                 {% else %}
                     {{ «realName».uname }}
                 {% endif %}
@@ -120,11 +120,11 @@ class SimpleFields {
             «IF !mandatory»
                 {% if «realName» is not empty %}
             «ENDIF»
-            «IF page == 'display'»
+            «IF page == 'detail'»
                   {% if not isQuickView %}
             «ENDIF»
             <a href="mailto:{{ «realName»|protectMail }}" title="{{ 'Send an email'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-envelope"></i></a>
-            «IF page == 'display'»
+            «IF page == 'detail'»
                 {% else %}
                     {{ «realName»|protectMail }}
                 {% endif %}
@@ -142,11 +142,11 @@ class SimpleFields {
             «IF !mandatory»
                 {% if «realName» is not empty %}
             «ENDIF»
-            «IF page == 'display'»
+            «IF page == 'detail'»
                   {% if not isQuickView %}
             «ENDIF»
             <a href="{{ «realName» }}" title="{{ 'Visit this page'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-external-link-square-alt"></i></a>
-            «IF page == 'display'»
+            «IF page == 'detail'»
                 {% else %}
                     {{ «realName» }}
                 {% endif %}

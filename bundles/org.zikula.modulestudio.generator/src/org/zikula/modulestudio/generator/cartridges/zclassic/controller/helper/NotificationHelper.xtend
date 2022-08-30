@@ -366,14 +366,14 @@ class NotificationHelper {
             $session = null !== $request && $request->hasSession() ? $request->getSession() : null;
             $remarks = null !== $session ? $session->get($this->applicationName . 'AdditionalNotificationRemarks', '') : '';
 
-            $hasDisplayAction = in_array($objectType, ['«getAllEntities.filter[hasDisplayAction].map[name.formatForCode].join('\', \'')»'], true);
+            $hasDetailAction = in_array($objectType, ['«getAllEntities.filter[hasDetailAction].map[name.formatForCode].join('\', \'')»'], true);
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
             $routeArea = in_array($this->recipientType, ['moderator', 'superModerator'], true) ? 'admin' : '';
             $routePrefix = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $routeArea;
 
             $urlArgs = $this->entity->createUrlArgs();
-            $displayUrl = $hasDisplayAction
-                ? $this->router->generate($routePrefix . 'display', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL)
+            $detailUrl = $hasDetailAction
+                ? $this->router->generate($routePrefix . 'detail', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL)
                 : ''
             ;
 
@@ -391,7 +391,7 @@ class NotificationHelper {
                 'newState' => $stateInfo['text'],
                 'remarks' => $remarks,
                 'editor' => $this->getEditorName(),
-                'displayUrl' => $displayUrl,
+                'detailUrl' => $detailUrl,
                 'editUrl' => $editUrl,
             ];
         }

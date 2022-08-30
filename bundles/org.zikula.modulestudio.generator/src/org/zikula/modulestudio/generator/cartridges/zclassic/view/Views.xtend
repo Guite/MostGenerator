@@ -13,7 +13,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Sta
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Custom
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Delete
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Display
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.History
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Index
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Csv
@@ -33,6 +32,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Detail
 
 class Views {
 
@@ -82,7 +82,7 @@ class Views {
         if (entity.hasIndexAction) {
             new Index().generate(entity, fsa)
         }
-        if (entity.hasViewAction) {
+        if (entity.hasIndexAction) {
             new ViewTable().generate(entity, appName, 3, fsa)
             if (entity.geographical) {
                 new ViewMap().generate(entity, appName, fsa)
@@ -100,7 +100,7 @@ class Views {
                 new Atom().generate(entity, fsa)
             }
         }
-        if (entity.hasViewAction || entity.hasDisplayAction) {
+        if (entity.hasIndexAction || entity.hasDetailAction) {
             if (generateXmlTemplates) {
                 new Xml().generate(entity, fsa)
             }
@@ -111,13 +111,13 @@ class Views {
                 new Kml().generate(entity, fsa)
             }
         }
-        if (entity.hasDisplayAction) {
+        if (entity.hasDetailAction) {
             if (generateIcsTemplates && null !== entity.startDateField && null !== entity.endDateField) {
                 new Ics().generate(entity, fsa)
             }
         }
-        if (entity.hasDisplayAction) {
-            new Display().generate(entity, appName, fsa)
+        if (entity.hasDetailAction) {
+            new Detail().generate(entity, appName, fsa)
         }
         if (entity.hasDeleteAction) {
             new Delete().generate(entity, appName, fsa)

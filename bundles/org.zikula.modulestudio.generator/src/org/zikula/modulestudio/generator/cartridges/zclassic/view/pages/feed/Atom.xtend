@@ -20,12 +20,12 @@ class Atom {
     extension Utils = new Utils
 
     def generate(Entity it, IMostFileSystemAccess fsa) {
-        if (!hasViewAction) {
+        if (!hasIndexAction) {
             return
         }
         ('Generating Atom view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
-        var templateFilePath = templateFileWithExtension('view', 'atom')
+        var templateFilePath = templateFileWithExtension('index', 'atom')
         fsa.generateFile(templateFilePath, atomView(application))
     }
 
@@ -41,19 +41,19 @@ class Atom {
             </author>
         {% set amountOfItems = items|length %}
         {% if amountOfItems > 0 %}
-        {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({'http://': '', '/': ''}) }},{{ «IF standardFields»items.first.createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams('items.first', true)»«ENDIF») }}{% endset %}
+        {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({'http://': '', '/': ''}) }},{{ «IF standardFields»items.first.createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDetailAction»«routeParams('items.first', true)»«ENDIF») }}{% endset %}
             <id>{{ uniqueID }}</id>
             <updated>{{ «IF standardFields»items[0].updatedDate«ELSE»'now'«ENDIF»|date('Y-m-dTH:M:SZ') }}</updated>
         {% endif %}
-            <link rel="alternate" type="text/html" hreflang="{{ app.request.locale }}" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasIndexAction»index«ELSEIF hasViewAction»view«ELSE»«defaultAction»«ENDIF»') }}" />
+            <link rel="alternate" type="text/html" hreflang="{{ app.request.locale }}" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasIndexAction»index«ELSE»«defaultAction»«ENDIF»') }}" />
             <link rel="self" type="application/atom+xml" href="{{ app.request.schemeAndHttpHost ~ app.request.basePath }}" />
             <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.schemeAndHttpHost }}</rights>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             <entry>
                 <title type="html">{{ «objName»|«app.appName.formatForDB»_formattedTitle }}</title>
-                <link rel="alternate" type="text/html" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}" />
-                {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDisplayAction»«routeParams(objName, true)»«ENDIF») }}{% endset %}
+                <link rel="alternate" type="text/html" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDetailAction»«routeParams(objName, true)»«ENDIF») }}" />
+                {% set uniqueID %}tag:{{ app.request.schemeAndHttpHost|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDetailAction»«routeParams(objName, true)»«ENDIF») }}{% endset %}
                 <id>{{ uniqueID }}</id>
                 «IF standardFields»
                     {% if «objName».updatedDate|default %}

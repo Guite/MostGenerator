@@ -24,7 +24,7 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.MenuViews
 
-class Display {
+class Detail {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
@@ -40,11 +40,11 @@ class Display {
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating display templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
-        var templateFilePath = templateFile('display')
+        var templateFilePath = templateFile('detail')
         fsa.generateFile(templateFilePath, displayView(appName))
 
         if (tree != EntityTreeType.NONE) {
-            templateFilePath = templateFile('displayTreeRelatives')
+            templateFilePath = templateFile('detailTreeRelatives')
             fsa.generateFile(templateFilePath, treeRelatives(appName))
         }
     }
@@ -69,14 +69,14 @@ class Display {
         {% trans_default_domain '«name.formatForCode»' %}
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) }}{% endblock %}
         {% block title %}
-            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
+            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.detailActionsPosition) && application.detailActionsStyle == ItemActionsStyle.DROPDOWN»
                 {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             «ENDIF»
             {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) %}
             «templateHeading(appName)»
-            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle == ItemActionsStyle.DROPDOWN»
+            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.detailActionsPosition) && application.detailActionsStyle == ItemActionsStyle.DROPDOWN»
                 {% if not isQuickView %}
-                    «new MenuViews().itemActions(it, 'display', 'Start')»
+                    «new MenuViews().itemActions(it, 'detail', 'Start')»
                 {% endif %}
             «ENDIF»
         {% endblock %}
@@ -96,7 +96,7 @@ class Display {
         «IF !refedElems.empty»
             {% block related_items %}
                 {% set isQuickView = app.request.query.getBoolean('raw', false) %}
-                «IF useGroupingTabs('display')»
+                «IF useGroupingTabs('detail')»
                     <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
                         <h3>{% trans from 'messages' %}Related data{% endtrans %}</h3>
                         «displayRelatedItems(appName)»
@@ -109,7 +109,7 @@ class Display {
         «IF geographical»
             {% block footer %}
                 {{ parent() }}
-                «includeLeaflet('display', objName)»
+                «includeLeaflet('detail', objName)»
             {% endblock %}
         «ENDIF»
     '''
@@ -126,7 +126,7 @@ class Display {
 
     def private content(Entity it, String appName) '''
         «val refedElems = getReferredElements»
-        «IF useGroupingTabs('display')»
+        «IF useGroupingTabs('detail')»
             «tabs»
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade show active" id="tabFields" aria-labelledby="fieldsTab">
@@ -193,9 +193,9 @@ class Display {
     '''
 
     def private fieldSection(Entity it, Boolean withHeading) '''
-        «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.displayActionsPosition) && application.displayActionsStyle != ItemActionsStyle.DROPDOWN»
+        «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.detailActionsPosition) && application.detailActionsStyle != ItemActionsStyle.DROPDOWN»
             {% if not isQuickView %}
-                «new MenuViews().itemActions(it, 'display', 'Start')»
+                «new MenuViews().itemActions(it, 'detail', 'Start')»
             {% endif %}
         «ENDIF»
         «IF withHeading»
@@ -234,7 +234,7 @@ class Display {
     '''
 
     def private displayEntryImpl(DerivedField it) {
-        new SimpleFields().displayField(it, entity.name.formatForCode, 'display')
+        new SimpleFields().displayField(it, entity.name.formatForCode, 'detail')
     }
 
     def private displayEntry(JoinRelationship it, Boolean useTarget) '''
@@ -246,13 +246,13 @@ class Display {
             <dt>{% trans from '«linkEntity.name.formatForCode»' %}«relationAliasName.formatForDisplayCapital»{% endtrans %}</dt>
             <dd>
               {% if not isQuickView %}
-                  «IF linkEntity.hasDisplayAction»
-                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
+                  «IF linkEntity.hasDetailAction»
+                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'detail'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
                   «ENDIF»
                     {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
-                  «IF linkEntity.hasDisplayAction»
+                  «IF linkEntity.hasDetailAction»
                     {% endapply %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'detail', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
@@ -263,7 +263,7 @@ class Display {
 
     def private displayExtensions(Entity it, String objName) '''
         «IF geographical»
-            «IF useGroupingTabs('display')»
+            «IF useGroupingTabs('detail')»
                 <div role="tabpanel" class="tab-pane fade" id="tabMap" aria-labelledby="mapTab">
                     <h3>{% trans from 'messages' %}Map{% endtrans %}</h3>
             «ELSE»
@@ -271,21 +271,21 @@ class Display {
             «ENDIF»
             <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
             </div>
-            «IF useGroupingTabs('display')»
+            «IF useGroupingTabs('detail')»
                 </div>
             «ENDIF»
         «ENDIF»
-        «IF useGroupingTabs('display')»
+        «IF useGroupingTabs('detail')»
             {{ block('related_items') }}
         «ENDIF»
         «IF categorisable»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                {{ include('@«application.vendorAndName»/Helper/includeCategoriesDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
+                {{ include('@«application.vendorAndName»/Helper/includeCategoriesDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('detail')», tabs: true«ENDIF»}) }}
             {% endif %}
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
-                «IF useGroupingTabs('display')»
+                «IF useGroupingTabs('detail')»
                 <div role="tabpanel" class="tab-pane fade" id="tabRelatives" aria-labelledby="relativesTab">
                     <h3>{% trans from 'messages' %}Relatives{% endtrans %}</h3>
                 «ELSE»
@@ -295,20 +295,20 @@ class Display {
                         '@«application.vendorAndName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
                         {allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true}
                     ) }}
-                «IF useGroupingTabs('display')»
+                «IF useGroupingTabs('detail')»
                 </div>
                 «ENDIF»
             {% endif %}
         «ENDIF»
         «IF standardFields»
-            {{ include('@«application.vendorAndName»/Helper/includeStandardFieldsDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('display')», tabs: true«ENDIF»}) }}
+            {{ include('@«application.vendorAndName»/Helper/includeStandardFieldsDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('detail')», tabs: true«ENDIF»}) }}
         «ENDIF»
     '''
 
     def private displayAdditions(Entity it) '''
-        «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.displayActionsPosition)»
+        «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.detailActionsPosition)»
             {% if not isQuickView %}
-                «new MenuViews().itemActions(it, 'display', 'End')»
+                «new MenuViews().itemActions(it, 'detail', 'End')»
             {% endif %}
         «ENDIF»
     '''
@@ -381,7 +381,7 @@ class Display {
         «val objName = name.formatForCode»
         <ul>
         {% for node in «collectionName» %}
-            <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'display'«routeParams('node', true)») }}" title="{{ node|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ node|«application.appName.formatForDB»_formattedTitle }}</a></li>
+            <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'detail'«routeParams('node', true)») }}" title="{{ node|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ node|«application.appName.formatForDB»_formattedTitle }}</a></li>
         {% endfor %}
         </ul>
     '''

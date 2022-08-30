@@ -95,7 +95,7 @@ class TreeData {
             $itemActionsMenu = $this->menuBuilder->createItemActionsMenu([
                 'entity' => $node,
                 'area' => $routeArea,
-                'context' => 'view',
+                'context' => 'index',
             ]);
             $renderer = new ListRenderer(new Matcher());
 

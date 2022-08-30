@@ -33,10 +33,10 @@ class ExternalView {
             fileName = 'find' + templateExtension
             fsa.generateFile(templatePath + fileName, entity.findTemplate(it))
         }
-        for (entity : getAllEntities.filter[hasDisplayAction]) {
+        for (entity : getAllEntities.filter[hasDetailAction]) {
             val templatePath = getViewPath + 'External/' + entity.name.formatForCodeCapital + '/'
 
-            fileName = 'display' + templateExtension
+            fileName = 'detail' + templateExtension
             fsa.generateFile(templatePath + fileName, entity.displayTemplate(it))
 
             fileName = 'info' + templateExtension
@@ -54,12 +54,12 @@ class ExternalView {
         «ENDIF»
         <div id="«name.formatForCode»{{ «name.formatForCode».getKey() }}" class="«app.appName.toLowerCase»-external-«name.formatForDB»">
         {% if displayMode == 'link' %}
-            <p«IF hasDisplayAction» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
-            «IF hasDisplayAction»
-                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}" title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
+            <p«IF hasDetailAction» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
+            «IF hasDetailAction»
+                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_detail'«routeParams(name.formatForCode, true)») }}" title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
             «ENDIF»
             {{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle }}
-            «IF hasDisplayAction»
+            «IF hasDetailAction»
                 </a>
             «ENDIF»
             </p>
@@ -78,7 +78,7 @@ class ExternalView {
             <div class="«app.appName.toLowerCase»-external-snippet">
                 «displaySnippet»
             </div>
-            «IF hasDisplayAction»
+            «IF hasDetailAction»
 
                 {# you can embed the display template like this: #}
                 {#{ app.request.query.set('raw', 1) }}
@@ -108,7 +108,7 @@ class ExternalView {
     def private displaySnippet(Entity it) '''
         «IF hasImageFieldsEntity»
             «val imageField = getImageFieldsEntity.head»
-            «fieldHelper.displayField(imageField, name.formatForCode, 'display')»
+            «fieldHelper.displayField(imageField, name.formatForCode, 'detail')»
         «ELSE»
             &nbsp;
         «ENDIF»
@@ -231,10 +231,10 @@ class ExternalView {
     '''
 
     def private findTemplateObjectTypeSwitcher(Entity it, Application app) '''
-        «IF app.hasDisplayActions»
+        «IF app.hasDetailActions»
             <div class="zikula-bootstrap-tab-container">
                 <ul class="nav nav-tabs" role="tablist">
-                «FOR entity : app.getAllEntities.filter[hasDisplayAction]»
+                «FOR entity : app.getAllEntities.filter[hasDetailAction]»
                     {% if '«entity.name.formatForCode»' in activatedObjectTypes %}
                         <li class="nav-item">
                             <a href="{{ path('«app.appName.formatForDB»_external_finder', {objectType: '«entity.name.formatForCode»', editor: editorName}) }}" title="{{ 'Search and select «entity.name.formatForDisplay»'|trans|e('html_attr') }}" class="nav-link{{ objectType == '«entity.name.formatForCode»' ? ' active' : '' }}">{% trans %}«entity.nameMultiple.formatForDisplayCapital»{% endtrans %}</a>
@@ -283,9 +283,9 @@ class ExternalView {
                                     «ENDIF»
                                 </a>
                                 {% set displayParameters = {«IF !hasSluggableFields || !slugUnique»«routePkParams(name.formatForCode, true)»«ENDIF»«appendSlug(name.formatForCode, true)»}|merge({'_locale': language|default(app.request.locale)}) %}
-                                «IF hasDisplayAction»
-                                    <input type="hidden" id="path{{ itemId }}" value="{{ path('«app.appName.formatForDB»_«name.formatForDB»_display', displayParameters) }}" />
-                                    <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_display', displayParameters) }}" />
+                                «IF hasDetailAction»
+                                    <input type="hidden" id="path{{ itemId }}" value="{{ path('«app.appName.formatForDB»_«name.formatForDB»_detail', displayParameters) }}" />
+                                    <input type="hidden" id="url{{ itemId }}" value="{{ url('«app.appName.formatForDB»_«name.formatForDB»_detail', displayParameters) }}" />
                                 «ENDIF»
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}" />
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />

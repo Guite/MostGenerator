@@ -10,7 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ViewQuickNavForm {
+class IndexQuickNavForm {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
@@ -21,12 +21,12 @@ class ViewQuickNavForm {
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating view filter form templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
-        var templatePath = templateFile('viewQuickNav')
+        var templatePath = templateFile('indexQuickNav')
         fsa.generateFile(templatePath, quickNavForm)
     }
 
     def private quickNavForm(Entity it) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» view filter form #}
+        {# purpose of this template: «nameMultiple.formatForDisplay» index filter form #}
         {% trans_default_domain '«name.formatForCode»' %}
         {% macro renderQuickNavEntry(quickNavForm, fieldName, isVisible) %}
             {% if attribute(quickNavForm, fieldName) is defined %}
@@ -62,7 +62,7 @@ class ViewQuickNavForm {
         «ENDIF»
         «formFields»
         {{ form_widget(quickNavForm.updateview) }}
-        <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'view', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="{% trans %}Back to default view{% endtrans %}" class="btn btn-secondary btn-sm">{% trans %}Reset{% endtrans %}</a>
+        <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'index', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="{% trans %}Back to default view{% endtrans %}" class="btn btn-secondary btn-sm">{% trans %}Reset{% endtrans %}</a>
         «IF categorisable»
             {% if categoriesEnabled and quickNavForm.categories is defined and quickNavForm.categories is not null %}
                 {% if categoryFilter is defined and categoryFilter != true %}

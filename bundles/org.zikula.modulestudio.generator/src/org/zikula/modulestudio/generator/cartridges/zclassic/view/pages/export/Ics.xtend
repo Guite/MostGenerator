@@ -20,18 +20,18 @@ class Ics {
     extension Utils = new Utils
 
     def generate(Entity it, IMostFileSystemAccess fsa) {
-        if (!hasDisplayAction) {
+        if (!hasDetailAction) {
             return
         }
         ('Generating ICS view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
 
-        var templateFilePath = templateFileWithExtension('display', 'ics')
-        fsa.generateFile(templateFilePath, icsDisplay)
+        var templateFilePath = templateFileWithExtension('detail', 'ics')
+        fsa.generateFile(templateFilePath, icsDetail)
     }
 
-    def private icsDisplay(Entity it) '''
+    def private icsDetail(Entity it) '''
         «val objName = name.formatForCode»
-        {# purpose of this template: «nameMultiple.formatForDisplay» display ics view #}
+        {# purpose of this template: «nameMultiple.formatForDisplay» detail ics view #}
         {% trans_default_domain '«name.formatForCode»' %}
         BEGIN:VCALENDAR
         VERSION:2.0

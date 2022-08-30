@@ -82,7 +82,7 @@ application "SimpleTest" {
                 }
             }
             actions {
-                mainAction "Index"
+                indexAction "Index"
             }
         },
         entity "image" {
@@ -95,7 +95,7 @@ application "SimpleTest" {
                 }
             }
             actions {
-                mainAction "Index"
+                indexAction "Index"
             }
         }
     }

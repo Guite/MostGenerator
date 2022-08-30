@@ -31,9 +31,9 @@ class Events {
 
         fsa.generateClassPair('Event/ItemActionsMenuPreConfigurationEvent.php', menuEventBaseClass('item', 'pre'), menuEventImpl('item', 'pre'))
         fsa.generateClassPair('Event/ItemActionsMenuPostConfigurationEvent.php', menuEventBaseClass('item', 'post'), menuEventImpl('item', 'post'))
-        if (hasViewActions) {
-            fsa.generateClassPair('Event/ViewActionsMenuPreConfigurationEvent.php', menuEventBaseClass('view', 'pre'), menuEventImpl('view', 'pre'))
-            fsa.generateClassPair('Event/ViewActionsMenuPostConfigurationEvent.php', menuEventBaseClass('view', 'post'), menuEventImpl('view', 'post'))
+        if (hasIndexActions) {
+            fsa.generateClassPair('Event/ViewActionsMenuPreConfigurationEvent.php', menuEventBaseClass('index', 'pre'), menuEventImpl('index', 'pre'))
+            fsa.generateClassPair('Event/ViewActionsMenuPostConfigurationEvent.php', menuEventBaseClass('index', 'post'), menuEventImpl('index', 'post'))
         }
 
         val suffixes = #[

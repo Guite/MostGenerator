@@ -6,19 +6,18 @@ import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DerivedField
-import de.guite.modulestudio.metamodel.DisplayAction
+import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.IndexAction
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.JoinRelationship
-import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
-import de.guite.modulestudio.metamodel.ViewAction
 
 /**
  * This class contains controller related extension methods.
@@ -45,21 +44,14 @@ class ControllerExtensions {
      * Checks whether an entity owns an index action.
      */
     def Boolean hasIndexAction(Entity it) {
-        !actions.filter(MainAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasIndexAction)
-    }
-
-    /**
-     * Checks whether an entity owns a view action.
-     */
-    def Boolean hasViewAction(Entity it) {
-        !actions.filter(ViewAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasViewAction)
+        !actions.filter(IndexAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasIndexAction)
     }
 
     /**
      * Checks whether an entity owns a display action.
      */
-    def Boolean hasDisplayAction(Entity it) {
-        !actions.filter(DisplayAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasDisplayAction)
+    def Boolean hasDetailAction(Entity it) {
+        !actions.filter(DetailAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasDetailAction)
     }
 
     /**
@@ -93,14 +85,11 @@ class ControllerExtensions {
     /**
      * Determines the default action used for linking to a certain entity.
      */
-    def defaultAction(Entity it) '''«IF hasDisplayAction»display«ELSEIF hasViewAction»view«ELSEIF hasIndexAction»index«ELSE»«actions.head.name.formatForCode»«ENDIF»'''
+    def defaultAction(Entity it) '''«IF hasDetailAction»detail«ELSEIF hasIndexAction»index«ELSE»«actions.head.name.formatForCode»«ENDIF»'''
 
     def getPrimaryAction(Entity it) {
         if (hasIndexAction) {
             return 'index'
-        }
-        if (hasViewAction) {
-            return 'view'
         }
 
         return actions.head.name.formatForDB
@@ -108,9 +97,8 @@ class ControllerExtensions {
 
     def getPermissionAccessLevel(DataObject it, Action action) {
         switch action {
-            MainAction: 'ACCESS_OVERVIEW'
-            ViewAction: 'ACCESS_READ'
-            DisplayAction: 'ACCESS_READ'
+            IndexAction: 'ACCESS_OVERVIEW'
+            DetailAction: 'ACCESS_READ'
             EditAction: if (it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
             DeleteAction: 'ACCESS_DELETE'
             CustomAction: 'ACCESS_OVERVIEW'
@@ -119,31 +107,31 @@ class ControllerExtensions {
     }
 
     /**
-     * Checks whether the application has at least one view action or not.
+     * Checks whether the application has at least one index action or not.
      */
-    def hasViewActions(Application it) {
-        !getViewActions.empty
+    def hasIndexActions(Application it) {
+        !getIndexActions.empty
     }
 
     /**
-     * Returns a list of all view actions in the given application.
+     * Returns a list of all index actions in the given application.
      */
-    def getViewActions(Application it) {
-        getAllEntities.map[actions].flatten.filter(ViewAction)
+    def getIndexActions(Application it) {
+        getAllEntities.map[actions].flatten.filter(IndexAction)
     }
 
     /**
-     * Checks whether the application has at least one display action or not.
+     * Checks whether the application has at least one detail action or not.
      */
-    def hasDisplayActions(Application it) {
-        !getDisplayActions.empty
+    def hasDetailActions(Application it) {
+        !getDetailActions.empty
     }
 
     /**
-     * Returns a list of all display actions in the given application.
+     * Returns a list of all detail actions in the given application.
      */
-    def getDisplayActions(Application it) {
-        getAllEntities.map[actions].flatten.filter(DisplayAction)
+    def getDetailActions(Application it) {
+        getAllEntities.map[actions].flatten.filter(DetailAction)
     }
 
     /**

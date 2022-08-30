@@ -51,7 +51,7 @@ class TreeFunctions {
         var rootId;
         var objectType;
         var routeArgNames;
-        var hasDisplayAction;
+        var hasDetailAction;
         var hasEditAction;
 
         /**
@@ -62,7 +62,7 @@ class TreeFunctions {
             rootId = treeContainer.data('root-id');
             objectType = treeContainer.data('object-type');
             routeArgNames = treeContainer.data('urlargnames').split(',');
-            hasDisplayAction = treeContainer.data('has-display');
+            hasDetailAction = treeContainer.data('has-detail');
             hasEditAction = treeContainer.data('has-edit');
 
             trees[idPrefix] = jQuery('#' + idPrefix).jstree({
@@ -199,12 +199,12 @@ class TreeFunctions {
             jQuery.each(routeArgNames, function (index, value) {
                 nodeEntityRouteArgs[value] = currentNodeDom.data(value);
             });
-            if (true === hasDisplayAction) {
-                actions.display = {
-                    label: Translator.trans('Display'),
+            if (true === hasDetailAction) {
+                actions.detail = {
+                    label: Translator.trans('Detail'),
                     title: Translator.trans('Show detail page'),
                     action: function (node) {
-                        document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', nodeEntityRouteArgs, true);
+                        document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_detail', nodeEntityRouteArgs, true);
                     },
                     icon: 'fas fa-fw fa-eye'
                 };

@@ -19,24 +19,24 @@ class Kml {
     extension Utils = new Utils
 
     def generate(Entity it, IMostFileSystemAccess fsa) {
-        if (!(hasViewAction || hasDisplayAction)) {
+        if (!(hasIndexAction || hasDetailAction)) {
             return
         }
         ('Generating KML view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = ''
-        if (hasViewAction) {
-            templateFilePath = templateFileWithExtension('view', 'kml')
-            fsa.generateFile(templateFilePath, kmlView)
+        if (hasIndexAction) {
+            templateFilePath = templateFileWithExtension('index', 'kml')
+            fsa.generateFile(templateFilePath, kmlIndex)
         }
-        if (hasDisplayAction) {
-            templateFilePath = templateFileWithExtension('display', 'kml')
-            fsa.generateFile(templateFilePath, kmlDisplay)
+        if (hasDetailAction) {
+            templateFilePath = templateFileWithExtension('detail', 'kml')
+            fsa.generateFile(templateFilePath, kmlDetail)
         }
     }
 
-    def private kmlView(Entity it) '''
+    def private kmlIndex(Entity it) '''
         «val objName = name.formatForCode»
-        {# purpose of this template: «nameMultiple.formatForDisplay» view kml view #}
+        {# purpose of this template: «nameMultiple.formatForDisplay» index kml view #}
         {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
@@ -47,7 +47,7 @@ class Kml {
                 <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ENDIF»</name>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty && textFields.head != stringFields.head»
-                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDisplayAction»<br /><a href="{{ url('«application.appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">{% trans %}Details{% endtrans %}</a>«ENDIF»]]></description>
+                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDetailAction»<br /><a href="{{ url('«application.appName.toLowerCase»_«name.formatForCode.toLowerCase»_detail'«routeParams(name.formatForCode, true)») }}">{% trans %}Details{% endtrans %}</a>«ENDIF»]]></description>
                 «ENDIF»
                 <Point>
                     <coordinates>{{ «objName».getLongitude() }}, {{ «objName».getLatitude() }}, 0</coordinates>
@@ -58,9 +58,9 @@ class Kml {
         </kml>
     '''
 
-    def private kmlDisplay(Entity it) '''
+    def private kmlDetail(Entity it) '''
         «val objName = name.formatForCode»
-        {# purpose of this template: «nameMultiple.formatForDisplay» display kml view #}
+        {# purpose of this template: «nameMultiple.formatForDisplay» detail kml view #}
         {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
@@ -70,7 +70,7 @@ class Kml {
                 <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{% trans %}«name.formatForDisplayCapital»{% endtrans %}«ENDIF»</name>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty && textFields.head != stringFields.head»
-                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDisplayAction»<br /><a href="{{ url('«application.appName.toLowerCase»_«name.formatForCode.toLowerCase»_display'«routeParams(name.formatForCode, true)») }}">{% trans %}Details{% endtrans %}</a>«ENDIF»]]></description>
+                    <description><![CDATA[{{ «objName».get«textFields.head.name.formatForCodeCapital»() }}«IF hasDetailAction»<br /><a href="{{ url('«application.appName.toLowerCase»_«name.formatForCode.toLowerCase»_detail'«routeParams(name.formatForCode, true)») }}">{% trans %}Details{% endtrans %}</a>«ENDIF»]]></description>
                 «ENDIF»
                 <Point>
                     <coordinates>{{ «objName».getLongitude() }}, {{ «objName».getLatitude() }}, 0</coordinates>

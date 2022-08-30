@@ -52,8 +52,8 @@ class Styles {
     }
 
     def private appStyles(Application it) '''
-        «IF hasViewActions»
-            /* view pages */
+        «IF hasIndexActions»
+            /* index pages */
             div#z-maincontent.z-module-«name.formatForDB» table tbody tr td {
                 vertical-align: top;
             }
@@ -64,13 +64,13 @@ class Styles {
             «ENDIF»
 
         «ENDIF»
-        «IF hasDisplayActions»
-            /* display pages */
-            .«cssPrefix»-display p.managelink {
+        «IF hasDetailActions»
+            /* detail pages */
+            .«cssPrefix»-detail p.managelink {
                 margin: 18px 0 0 18px;
             }
 
-            «IF displayActionsStyle == ItemActionsStyle.DROPDOWN»
+            «IF detailActionsStyle == ItemActionsStyle.DROPDOWN»
                 .z-module-«appName.formatForDB» h2 .dropdown.item-actions,
                 .z-module-«appName.formatForDB» h3 .dropdown.item-actions {
                     display: inline;
@@ -83,11 +83,11 @@ class Styles {
             div.«cssPrefix»-mapcontainer {
                 height: 400px;
             }
-            «IF hasViewActions»
-                «cssPrefix»-view.«cssPrefix»-map div.«cssPrefix»-mapcontainer {
+            «IF hasIndexActions»
+                «cssPrefix»-index.«cssPrefix»-map div.«cssPrefix»-mapcontainer {
                     height: 800px;
                 }
-                «cssPrefix»-view.«cssPrefix»-map .detail-marker {
+                «cssPrefix»-index.«cssPrefix»-map .detail-marker {
                     width: auto !important;
                     height: auto !important;
                     background-color: #f5f5f5;
@@ -218,15 +218,15 @@ class Styles {
     '''
 
     def private viewAdditions(Application it) '''
-        «IF hasViewActions»
+        «IF hasIndexActions»
 
             /** fix dropdown visibility inside responsive tables */
-            div.«cssPrefix»-view .table-responsive {
+            div.«cssPrefix»-index .table-responsive {
                 min-height: 300px;
             }
             «viewFilterForm»
 
-            div.«cssPrefix»-view .avatar img {
+            div.«cssPrefix»-index .avatar img {
                 width: auto;
                 max-height: 24px;
             }
@@ -255,29 +255,29 @@ class Styles {
     '''
 
     def private viewFilterForm(Application it) '''
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav {
+        div.«cssPrefix»-index form.«cssPrefix»-quicknav {
             margin: 10px 0;
             padding: 8px 12px;
             border: 1px solid #ccc;
         }
 
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav h3 {
+        div.«cssPrefix»-index form.«cssPrefix»-quicknav h3 {
             display: none;
         }
 
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav .form-group {
+        div.«cssPrefix»-index form.«cssPrefix»-quicknav .form-group {
             display: inline-block;
         }
         «IF hasCategorisableEntities»
 
-            div.«cssPrefix»-view form.«cssPrefix»-quicknav .col-md-3 fieldset {
+            div.«cssPrefix»-index form.«cssPrefix»-quicknav .col-md-3 fieldset {
                 border: none;
                 padding: 0;
                 background: none;
             }
         «ENDIF»
 
-        div.«cssPrefix»-view form.«cssPrefix»-quicknav label {
+        div.«cssPrefix»-index form.«cssPrefix»-quicknav label {
            margin: 0 5px;
            display: inline;
         }

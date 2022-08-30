@@ -4,12 +4,11 @@ import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DeleteAction
-import de.guite.modulestudio.metamodel.DisplayAction
+import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.MainAction
-import de.guite.modulestudio.metamodel.ViewAction
+import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -38,16 +37,9 @@ class Annotations {
     def private dispatch actionRoute(Action it, Entity entity, Boolean isAdmin) '''
     '''
 
-    def private dispatch actionRoute(MainAction it, Entity entity, Boolean isAdmin) '''
-        #[Route('/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»',
-            name: '«entity.application.name.formatForDB»_«entity.name.formatForDB»_«IF isAdmin»admin«ENDIF»index',
-            methods: ['GET']
-        )]
-    '''
-
-    def private dispatch actionRoute(ViewAction it, Entity entity, Boolean isAdmin) '''
+    def private dispatch actionRoute(IndexAction it, Entity entity, Boolean isAdmin) '''
         #[Route('/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{page}/{num}.{_format}',
-            name: '«entity.application.name.formatForDB»_«entity.name.formatForDB»_«IF isAdmin»admin«ENDIF»view',
+            name: '«entity.application.name.formatForDB»_«entity.name.formatForDB»_«IF isAdmin»admin«ENDIF»index',
             requirements: ['sortdir' => 'asc|desc|ASC|DESC', 'page' => '\d+', 'num' => '\d+', '_format' => 'html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»'],
             defaults: ['sort' => '', 'sortdir' => 'asc', 'page' => 1, 'num' => 10, '_format' => 'html'],
             methods: ['GET']
@@ -55,9 +47,9 @@ class Annotations {
     '''
 
     def private actionRouteForSingleEntity(Entity it, Action action, Boolean isAdmin) '''
-        #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}',
-            name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»display',
-            requirements: [«actionRouteRequirementsForSingleEntity(action)», '_format' => 'html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«app.getListOfDisplayFormats.join('|')»«ENDIF»'],
+        #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/«IF !(action instanceof DetailAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}',
+            name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»detail',
+            requirements: [«actionRouteRequirementsForSingleEntity(action)», '_format' => 'html«IF action instanceof DetailAction && app.getListOfDisplayFormats.size > 0»|«app.getListOfDisplayFormats.join('|')»«ENDIF»'],
             defaults: [«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»'_format' => 'html'],
             methods: ['GET'«IF action instanceof EditAction || action instanceof DeleteAction», 'POST'«ENDIF»]«IF tree != EntityTreeType.NONE»,
             options: ['expose' => true]«ENDIF»
@@ -94,7 +86,7 @@ class Annotations {
 
     def private actionRouteDefaultsForSingleEntity(Entity it, Action action) {
         var output = ''
-        if (hasSluggableFields && action instanceof DisplayAction) {
+        if (hasSluggableFields && action instanceof DetailAction) {
             output = '''«''»'slug' => ''«''»'''
             if (slugUnique) {
                 return output
@@ -106,7 +98,7 @@ class Annotations {
         output
     }
 
-    def private dispatch actionRoute(DisplayAction it, Entity entity, Boolean isAdmin) '''
+    def private dispatch actionRoute(DetailAction it, Entity entity, Boolean isAdmin) '''
         «actionRouteForSingleEntity(entity, it, isAdmin)»
     '''
 

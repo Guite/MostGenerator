@@ -195,17 +195,17 @@ class ModelExtensions {
     }
 
     /**
-     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled for it's view action.
+     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled for it's index action.
      */
     def hasBooleansWithAjaxToggleInView(Application it) {
-        !getAllEntities.filter[hasBooleansWithAjaxToggleEntity('view')].empty
+        !getAllEntities.filter[hasBooleansWithAjaxToggleEntity('index')].empty
     }
 
     /**
-     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled for it's display action.
+     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled for it's detail action.
      */
     def hasBooleansWithAjaxToggleInDisplay(Application it) {
-        !getAllEntities.filter[hasBooleansWithAjaxToggleEntity('display')].empty
+        !getAllEntities.filter[hasBooleansWithAjaxToggleEntity('detail')].empty
     }
 
     /**
@@ -698,9 +698,9 @@ class ModelExtensions {
         if (fields.empty || context.empty) {
             return fields
         }
-        if (context == 'view') {
+        if (context == 'index') {
             return fields.filter[f|f.isVisibleOnViewPage]
-        } else if (context == 'display') {
+        } else if (context == 'detail') {
             return fields.filter[f|f.isVisibleOnDisplayPage]
         }
     }

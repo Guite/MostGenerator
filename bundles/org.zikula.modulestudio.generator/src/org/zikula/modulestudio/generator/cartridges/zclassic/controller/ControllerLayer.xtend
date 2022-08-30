@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DisplayAction
+import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.InlineRedirect
@@ -50,7 +50,7 @@ class ControllerLayer {
         new ExtensionMenu().generate(it, fsa)
         new MenuBuilder().generate(it, fsa)
         new Routing().generate(it, fsa)
-        if (hasViewActions) {
+        if (hasIndexActions) {
             new QuickNavigationType().generate(it, fsa)
         }
 
@@ -86,7 +86,7 @@ class ControllerLayer {
                 «adminAndUserImpl(action, true)»
 
             «ENDFOR»
-            «IF hasViewAction»
+            «IF hasIndexAction»
                 «new MassHandling().generate(it, true)»
             «ENDIF»
             «IF loggable»
@@ -107,10 +107,10 @@ class ControllerLayer {
         «IF hasEditAction»
             use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;
         «ENDIF»
-        «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
+        «IF hasIndexAction || hasDetailAction || hasEditAction || hasDeleteAction»
             use «app.appNamespace»\Helper\ControllerHelper;
         «ENDIF»
-        «IF (hasDisplayAction && app.generateIcsTemplates && hasStartAndEndDateField) || (hasEditAction && app.needsInlineEditing)»
+        «IF (hasDetailAction && app.generateIcsTemplates && hasStartAndEndDateField) || (hasEditAction && app.needsInlineEditing)»
             use «app.appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
         «IF loggable»
@@ -120,13 +120,13 @@ class ControllerLayer {
         «IF loggable && hasTranslatableFields»
             use «app.appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
-        «IF hasViewAction || hasDisplayAction || hasEditAction || hasDeleteAction»
+        «IF hasIndexAction || hasDetailAction || hasEditAction || hasDeleteAction»
             use «app.appNamespace»\Helper\ViewHelper;
         «ENDIF»
-        «IF hasViewAction || hasDeleteAction || loggable»
+        «IF hasIndexAction || hasDeleteAction || loggable»
             use «app.appNamespace»\Helper\WorkflowHelper;
         «ENDIF»
-        «IF hasViewAction || hasDisplayAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
+        «IF hasIndexAction || hasDetailAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
             use «app.appNamespace»\Repository\«name.formatForCodeCapital»RepositoryInterface;
             «IF loggable»
                 use «app.appNamespace»\Repository\«name.formatForCodeCapital»LogEntryRepositoryInterface;
@@ -137,13 +137,13 @@ class ControllerLayer {
     def private entityControllerBaseImports(Entity it) '''
         namespace «app.appNamespace»\Controller\Base;
 
-        «IF hasViewAction || hasEditAction»
+        «IF hasIndexAction || hasEditAction»
             use Exception;
         «ENDIF»
-        «IF hasViewAction || hasDeleteAction»
+        «IF hasIndexAction || hasDeleteAction»
             use Psr\Log\LoggerInterface;
         «ENDIF»
-        «IF hasViewAction || hasEditAction || hasDeleteAction»
+        «IF hasIndexAction || hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
         use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -152,10 +152,10 @@ class ControllerLayer {
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
-        «IF hasViewAction»
+        «IF hasIndexAction»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
-        «IF hasDisplayAction || hasDeleteAction»
+        «IF hasDetailAction || hasDeleteAction»
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         «ENDIF»
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -164,14 +164,14 @@ class ControllerLayer {
         «IF hasDeleteAction»
             use Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType;
         «ENDIF»
-        «IF hasViewAction»
+        «IF hasIndexAction»
             use Zikula\Component\SortableColumns\Column;
             use Zikula\Component\SortableColumns\SortableColumns;
         «ENDIF»
         «IF hasEditAction && app.needsInlineEditing»
             use Zikula\Bundle\CoreBundle\Response\PlainResponse;
         «ENDIF»
-        «IF hasViewAction || hasDeleteAction»
+        «IF hasIndexAction || hasDeleteAction»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF ownerPermission && hasDeleteAction»
@@ -185,20 +185,20 @@ class ControllerLayer {
         namespace «app.appNamespace»\Controller;
 
         use «app.appNamespace»\Controller\Base\Abstract«name.formatForCodeCapital»Controller;
-        «IF hasViewAction || hasDeleteAction»
+        «IF hasIndexAction || hasDeleteAction»
             use Psr\Log\LoggerInterface;
         «ENDIF»
-        «IF hasViewAction»
+        «IF hasIndexAction»
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
-        «IF hasViewAction»
+        «IF hasIndexAction»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
         use Zikula\ThemeBundle\Engine\Annotation\Theme;
-        «IF hasViewAction || hasDeleteAction»
+        «IF hasIndexAction || hasDeleteAction»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «commonAppImports»
@@ -210,7 +210,7 @@ class ControllerLayer {
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
             «/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
-            «FOR action : getAllEntityActions.reject(DisplayAction)»
+            «FOR action : getAllEntityActions.reject(DetailAction)»
                 «adminAndUserImpl(action, false)»
 
             «ENDFOR»
@@ -218,11 +218,11 @@ class ControllerLayer {
                 «new LoggableUndelete().generate(it, false)»
                 «new LoggableHistory().generate(it, false)»
             «ENDIF»
-            «FOR action : getAllEntityActions.filter(DisplayAction)»
+            «FOR action : getAllEntityActions.filter(DetailAction)»
                 «adminAndUserImpl(action, false)»
 
             «ENDFOR»
-            «IF hasViewAction»
+            «IF hasIndexAction»
                 «new MassHandling().generate(it, false)»
             «ENDIF»
             «IF hasEditAction && app.needsInlineEditing»

@@ -20,7 +20,7 @@ class StandardFields {
         val templateExtension = '.html.twig'
 
         var fileName = ''
-        if (hasViewActions || hasDisplayActions) {
+        if (hasIndexActions || hasDetailActions) {
             fileName = 'includeStandardFieldsDisplay' + templateExtension
             fsa.generateFile(templatePath + fileName, standardFieldsViewImpl)
         }

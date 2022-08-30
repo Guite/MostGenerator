@@ -47,7 +47,7 @@ class ItemActions {
                 && $currentUserId === $entity->getCreatedBy()->getUid()
             ;
         «ENDIF»
-        «IF hasDisplayAction || hasEditAction || loggable || hasDeleteAction»
+        «IF hasDetailAction || hasEditAction || loggable || hasDeleteAction»
 
         «ENDIF»
         «itemActionsTargetingDisplay(application)»
@@ -57,33 +57,27 @@ class ItemActions {
     '''
 
     def private itemActionsTargetingDisplay(Entity it, Application app) '''
-        «IF hasDisplayAction»
+        «IF hasDetailAction»
             if ('admin' === $routeArea) {
                 $previewRouteParameters = $entity->createUrlArgs();
                 $previewRouteParameters['preview'] = 1;
                 $menu->addChild('Preview', [
-                    'route' => $routePrefix . 'display',
+                    'route' => $routePrefix . 'detail',
                     'routeParameters' => $previewRouteParameters,
                 ])
                     ->setLinkAttribute('target', '_blank')
-                    ->setLinkAttribute(
-                        'title',
-                        'Open preview page'
-                    )
+                    ->setLinkAttribute('title', 'Open preview page')
                     «app.addLinkClass('secondary')»
                     «app.addIcon('search-plus')»
                 ;
             }
-            if ('display' !== $context) {
+            if ('detail' !== $context) {
                 $entityTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
                 $menu->addChild('Details', [
-                    'route' => $routePrefix . $routeArea . 'display',
+                    'route' => $routePrefix . $routeArea . 'detail',
                     'routeParameters' => $entity->createUrlArgs(),
                 ])
-                    ->setLinkAttribute(
-                        'title',
-                        str_replace('"', '', $entityTitle)
-                    )
+                    ->setLinkAttribute('title', str_replace('"', '', $entityTitle))
                     «app.addLinkClass('secondary')»
                     «app.addIcon('eye')»
                 ;
@@ -106,15 +100,12 @@ class ItemActions {
         «ENDIF»
         «IF loggable»
             if ($this->permissionHelper->mayAccessHistory($entity)) {
-                if (in_array($context, ['view', 'display']) && $this->loggableHelper->hasHistoryItems($entity)) {
+                if (in_array($context, ['index', 'detail'], true) && $this->loggableHelper->hasHistoryItems($entity)) {
                     $menu->addChild('History', [
                         'route' => $routePrefix . $routeArea . 'loggablehistory',
                         'routeParameters' => $entity->createUrlArgs(),
                     ])
-                        ->setLinkAttribute(
-                            'title',
-                            'Watch version history'
-                        )
+                        ->setLinkAttribute('title', 'Watch version history')
                         «app.addLinkClass('secondary')»
                         «app.addIcon('history')»
                     ;
@@ -127,10 +118,7 @@ class ItemActions {
                     'route' => $routePrefix . $routeArea . 'delete',
                     'routeParameters' => $entity->createUrlArgs(),
                 ])
-                    ->setLinkAttribute(
-                        'title',
-                        'Delete this «name.formatForDisplay»'
-                    )
+                    ->setLinkAttribute('title', 'Delete this «name.formatForDisplay»')
                     «app.addLinkClass('danger')»
                     «app.addIcon('trash-alt')»
                     ->setExtra('translation_domain', '«name.formatForCode»')
@@ -140,10 +128,10 @@ class ItemActions {
     '''
 
     def private itemActionsTargetingView(Entity it, Application app) '''
-        «IF hasDisplayAction && hasViewAction»
-            if ('display' === $context) {
+        «IF hasDetailAction && hasIndexAction»
+            if ('detail' === $context) {
                 $menu->addChild('«nameMultiple.formatForDisplayCapital» list', [
-                    'route' => $routePrefix . $routeArea . 'view',
+                    'route' => $routePrefix . $routeArea . 'index',
                 ])
                     «app.addLinkClass('secondary')»
                     «app.addIcon('reply')»
@@ -199,10 +187,7 @@ class ItemActions {
                 'route' => $routePrefix . $routeArea . 'edit',
                 'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»),
             ])
-                ->setLinkAttribute(
-                    'title',
-                    'Edit this «name.formatForDisplay»'
-                )
+                ->setLinkAttribute('title', 'Edit this «name.formatForDisplay»')
                 «application.addLinkClass('secondary')»
                 «application.addIcon('edit')»
                 ->setExtra('translation_domain', '«name.formatForCode»')
@@ -212,10 +197,7 @@ class ItemActions {
             'route' => $routePrefix . $routeArea . 'edit',
             'routeParameters' => ['astemplate' => $entity->getKey()],
         ])
-            ->setLinkAttribute(
-                'title',
-                'Reuse for new «name.formatForDisplay»'
-            )
+            ->setLinkAttribute('title', 'Reuse for new «name.formatForDisplay»')
             «application.addLinkClass('secondary')»
             «application.addIcon('copy')»
             ->setExtra('translation_domain', '«name.formatForCode»')
@@ -239,12 +221,12 @@ class ItemActions {
     '''
 
     def private addLinkClass(Application it, String linkClass) '''
-        «IF viewActionsStyle.hasButtons && displayActionsStyle.hasButtons»
+        «IF indexActionsStyle.hasButtons && detailActionsStyle.hasButtons»
             ->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»')
-        «ELSEIF viewActionsStyle.hasButtons && !displayActionsStyle.hasButtons»
-            ->setLinkAttribute('class', 'view' === $context ? 'btn btn-sm btn-«linkClass»' : '')
-        «ELSEIF !viewActionsStyle.hasButtons && displayActionsStyle.hasButtons»
-            ->setLinkAttribute('class', 'display' === $context ? 'btn btn-sm btn-«linkClass»' : '')
+        «ELSEIF indexActionsStyle.hasButtons && !detailActionsStyle.hasButtons»
+            ->setLinkAttribute('class', 'index' === $context ? 'btn btn-sm btn-«linkClass»' : '')
+        «ELSEIF !indexActionsStyle.hasButtons && detailActionsStyle.hasButtons»
+            ->setLinkAttribute('class', 'detail' === $context ? 'btn btn-sm btn-«linkClass»' : '')
         «ENDIF»
     '''
 
@@ -253,12 +235,12 @@ class ItemActions {
     }
 
     def private addIcon(Application it, String icon) '''
-        «IF viewActionsWithIcons && displayActionsWithIcons»
+        «IF indexActionsWithIcons && detailActionsWithIcons»
             ->setAttribute('icon', 'fas fa-«icon»')
-        «ELSEIF viewActionsWithIcons && !displayActionsWithIcons»
-            ->setAttribute('icon', 'view' === $context ? 'fas fa-«icon»' : '')
-        «ELSEIF !viewActionsWithIcons && displayActionsWithIcons»
-            ->setAttribute('icon', 'display' === $context ? 'fas fa-«icon»' : '')
+        «ELSEIF indexActionsWithIcons && !detailActionsWithIcons»
+            ->setAttribute('icon', 'index' === $context ? 'fas fa-«icon»' : '')
+        «ELSEIF !indexActionsWithIcons && detailActionsWithIcons»
+            ->setAttribute('icon', 'detail' === $context ? 'fas fa-«icon»' : '')
         «ENDIF»
     '''
 }

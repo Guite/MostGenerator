@@ -18,7 +18,7 @@ application "SimpleNews" {
     email "info@guite.de"
     url "https://guite.de"
     prefix "sinew"
-    viewActionsStyle BUTTON_GROUP
+    indexActionsStyle BUTTON_GROUP
     entities {
         entity "post" {
             documentation "The posts"
@@ -32,9 +32,8 @@ application "SimpleNews" {
                 integer "sortValue" sortablePosition
             }
             actions {
-                mainAction "Index",
-                viewAction "View",
-                displayAction "Display",
+                indexAction "Index",
+                detailAction "Detail",
                 editAction "Edit",
                 deleteAction "Delete"
             }
@@ -386,7 +385,7 @@ application "SimpleNews" {
                 }
             }
             actions {
-                displayAction "Display"
+                detailAction "Detail"
             }
         },
         entity "article7" {

@@ -48,8 +48,8 @@ class Emails {
         {% endif %}
 
         {% if mailData.newState != 'Deleted'|trans %}
-            «IF hasDisplayAction»
-                <p>{% trans %}Link to your «name.formatForDisplay»:{% endtrans %} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
+            «IF hasDetailAction»
+                <p>{% trans %}Link to your «name.formatForDisplay»:{% endtrans %} <a href="{{ mailData.detailUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.detailUrl }}</a></p>
             «ENDIF»
             «IF hasEditAction»
                 <p>{% trans %}Edit your «name.formatForDisplay»:{% endtrans %} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{% trans %}Edit{% endtrans %}">{{ mailData.editUrl }}</a></p>
@@ -77,8 +77,8 @@ class Emails {
         {% endif %}
 
         {% if mailData.newState != 'Deleted'|trans %}
-            «IF hasDisplayAction»
-                <p>{% trans %}Link to the «name.formatForDisplay»:{% endtrans %} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
+            «IF hasDetailAction»
+                <p>{% trans %}Link to the «name.formatForDisplay»:{% endtrans %} <a href="{{ mailData.detailUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.detailUrl }}</a></p>
             «ENDIF»
             «IF hasEditAction»
                 <p>{% trans %}Edit the «name.formatForDisplay»:{% endtrans %} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{% trans %}Edit{% endtrans %}">{{ mailData.editUrl }}</a></p>

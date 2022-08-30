@@ -49,7 +49,7 @@ class DependencyInjection {
                 «ENDFOR»
             «ENDIF»
             use «appNamespace»\Helper\CollectionFilterHelper;
-            «IF hasViewActions»
+            «IF hasIndexActions»
                 use «appNamespace»\Helper\ControllerHelper;
             «ENDIF»
             «IF hasAutomaticExpiryHandling || hasLoggable»
@@ -73,7 +73,7 @@ class DependencyInjection {
             «IF generateAccountApi»
                 use «appNamespace»\Menu\ExtensionMenu;
             «ENDIF»
-            «IF hasViewActions»
+            «IF hasIndexActions»
                 use «appNamespace»\Menu\MenuBuilder;
             «ENDIF»
         «ENDIF»
@@ -121,7 +121,7 @@ class DependencyInjection {
                     «ENDIF»
                     $container->getDefinition(CollectionFilterHelper::class)
                         ->setArgument('$listViewConfig', $config['list_views']);
-                    «IF hasViewActions»
+                    «IF hasIndexActions»
                         $container->getDefinition(ControllerHelper::class)
                             ->setArgument('$listViewConfig', $config['list_views']);
                     «ENDIF»
@@ -153,7 +153,7 @@ class DependencyInjection {
                         $container->getDefinition(ExtensionMenu::class)
                             ->setArgument('$listViewConfig', $config['list_views']);
                     «ENDIF»
-                    «IF hasViewActions»
+                    «IF hasIndexActions»
                         $container->getDefinition(MenuBuilder::class)
                             ->setArgument('$listViewConfig', $config['list_views']);
                     «ENDIF»

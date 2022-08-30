@@ -36,20 +36,14 @@ class ModerationPanel {
                     <p class="alert alert-info alert-dismissable text-center">
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                         {% set itemObjectType = modItem.objectType|lower %}
-                        «IF hasViewActions»
-                            {% if itemObjectType in ['«getAllEntities.filter[hasViewAction].map[name.formatForCode].join('\', \'')»'] %}
-                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', {workflowState: modItem.state}) }}" class="font-weight-bold alert-link">{{ modItem.message }}</a>
-                            {% elseif itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
-                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="font-weight-bold alert-link">{{ modItem.message }}</a>
-                            {% else %}
-                                <strong>{{ modItem.message }}</strong>
-                            {% endif %}
-                        «ELSE»
+                        «IF hasIndexActions»
                             {% if itemObjectType in ['«getAllEntities.filter[hasIndexAction].map[name.formatForCode].join('\', \'')»'] %}
                                 <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminindex', {workflowState: modItem.state}) }}" class="font-weight-bold alert-link">{{ modItem.message }}</a>
                             {% else %}
                                 <strong>{{ modItem.message }}</strong>
                             {% endif %}
+                        «ELSE»
+                            <strong>{{ modItem.message }}</strong>
                         «ENDIF»
                     </p>
                 {% endfor %}

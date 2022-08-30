@@ -234,15 +234,15 @@ class PersistenceTransformer {
     }
 
     def private addViewSettings(Application it) {
-        val entitiesWithView = getAllEntities.filter[hasViewAction]
-        if (entitiesWithView.empty) {
+        val entitiesWithIndex = getAllEntities.filter[hasIndexAction]
+        if (entitiesWithIndex.empty) {
             return
         }
 
         val varContainer = createVarContainerForViewSettings
         val factory = ModuleStudioFactory.eINSTANCE
 
-        for (entity : entitiesWithView) {
+        for (entity : entitiesWithIndex) {
             varContainer.fields += factory.createIntegerField => [
                 name = entity.name.formatForCode + 'EntriesPerPage'
                 defaultValue = '10'
@@ -268,7 +268,7 @@ class PersistenceTransformer {
         varContainer.fields += factory.createBooleanField => [
             name = 'showOnlyOwnEntries'
             defaultValue = 'false'
-            documentation = 'Whether only own entries should be shown on view pages by default or not.'
+            documentation = 'Whether only own entries should be shown on index pages by default or not.'
             mandatory = false
         ]
         if (supportLocaleFilter) {
@@ -328,17 +328,17 @@ class PersistenceTransformer {
                     value = 'outbound'
                 ]
                 varContainer.fields += thumbModeField
-                for (action : #['view', 'display', 'edit']) {
-                    if ((action == 'view' && entity.hasViewAction) || (action == 'display' && entity.hasDisplayAction) || (action == 'edit' && entity.hasEditAction)) {
+                for (action : #['index', 'detail', 'edit']) {
+                    if ((action == 'index' && entity.hasIndexAction) || (action == 'detail' && entity.hasDetailAction) || (action == 'edit' && entity.hasEditAction)) {
                         varContainer.fields += factory.createIntegerField => [
                             name = 'thumbnailWidth' + fieldSuffix + action.toFirstUpper
-                            defaultValue = if (action == 'view') '32' else '240'
+                            defaultValue = if (action == 'index') '32' else '240'
                             documentation = 'Thumbnail width on ' + action + ' pages in pixels.'
                             unit = 'pixels'
                         ]
                         varContainer.fields += factory.createIntegerField => [
                             name = 'thumbnailHeight' + fieldSuffix + action.toFirstUpper
-                            defaultValue = if (action == 'view') '24' else '180'
+                            defaultValue = if (action == 'index') '24' else '180'
                             documentation = 'Thumbnail height on ' + action + ' pages in pixels.'
                             unit = 'pixels'
                         ]

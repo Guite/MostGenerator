@@ -25,7 +25,7 @@ class FinderType {
      * Entry point for entity finder form type.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!generateExternalControllerAndFinder || !hasDisplayActions) {
+        if (!generateExternalControllerAndFinder || !hasDetailActions) {
             return
         }
         app = it
@@ -244,7 +244,7 @@ class FinderType {
                 'label' => 'Paste as',
                 'empty_data' => 1,
                 'choices' => [
-                    «IF hasDisplayAction»
+                    «IF hasDetailAction»
                         'Relative link to the «name.formatForDisplay»' => 1,
                         'Absolute url to the «name.formatForDisplay»' => 2,
                     «ENDIF»

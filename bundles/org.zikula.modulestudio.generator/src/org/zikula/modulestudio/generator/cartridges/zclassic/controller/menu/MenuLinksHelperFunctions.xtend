@@ -17,7 +17,7 @@ class MenuLinksHelperFunctions {
     def generate(Application it) '''
         «menuLinksBetweenControllers»
 
-        «FOR entity : getAllEntities.filter[hasViewAction]»
+        «FOR entity : getAllEntities.filter[hasIndexAction]»
             «entity.menuLinkToViewAction»
         «ENDFOR»
     '''
@@ -27,7 +27,7 @@ class MenuLinksHelperFunctions {
             in_array('«name.formatForCode»', $allowedObjectTypes, true)
             && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)
         ) {
-            yield MenuItem::linktoRoute('«nameMultiple.formatForDisplayCapital»', null, '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'view'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»);
+            yield MenuItem::linktoRoute('«nameMultiple.formatForDisplayCapital»', null, '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'index'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»);
         }
     '''
 

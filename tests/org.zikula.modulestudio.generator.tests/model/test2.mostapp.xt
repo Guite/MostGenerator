@@ -31,12 +31,12 @@ application "SimpleNews" targets SF70 {
     generateTests false
     writeModelToDocs false
     generateTechnicalDocumentation false
-    viewActionsPosition END
-    viewActionsStyle DROPDOWN
-    viewActionsWithIcons false
-    displayActionsPosition NONE
-    displayActionsStyle BUTTON_GROUP
-    displayActionsWithIcons false
+    indexActionsPosition END
+    indexActionsStyle DROPDOWN
+    indexActionsWithIcons false
+    detailActionsPosition NONE
+    detailActionsStyle BUTTON_GROUP
+    detailActionsWithIcons false
     skipFiles "foo, bar"
     markFiles "foo, bar"
     entities {
@@ -58,11 +58,11 @@ application "SimpleNews" targets SF70 {
                 datetime "myFuture" future
             }
             actions {
-                mainAction "Index",
-                viewAction "View" {
+                indexAction "Index",
+                indexAction "Index" {
                     documentation "My view action"
                 },
-                displayAction "Display",
+                detailAction "Detail",
                 editAction "Edit",
                 deleteAction "Delete"
             }
@@ -95,9 +95,8 @@ application "SimpleNews" targets SF70 {
                 }
             }
             actions {
-                mainAction "Index",
-                viewAction "View",
-                displayAction "Display",
+                indexAction "Index",
+                detailAction "Detail",
                 editAction "Edit"
             }
         },
@@ -170,9 +169,8 @@ application "SimpleNews" targets SF70 {
                 }
             }
             actions {
-                mainAction "Index",
-                viewAction "View",
-                displayAction "Display",
+                indexAction "Index",
+                detailAction "Detail",
                 editAction "Edit",
                 customAction "Export"
             }

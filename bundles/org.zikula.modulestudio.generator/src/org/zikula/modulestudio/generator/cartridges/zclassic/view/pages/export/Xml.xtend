@@ -31,25 +31,25 @@ class Xml {
     SimpleFields fieldHelper = new SimpleFields
 
     def generate(Entity it, IMostFileSystemAccess fsa) {
-        if (!(hasViewAction || hasDisplayAction)) {
+        if (!(hasIndexAction || hasDetailAction)) {
             return
         }
         ('Generating XML view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = ''
-        if (hasViewAction) {
-            templateFilePath = templateFileWithExtension('view', 'xml')
-            fsa.generateFile(templateFilePath, xmlView)
+        if (hasIndexAction) {
+            templateFilePath = templateFileWithExtension('index', 'xml')
+            fsa.generateFile(templateFilePath, xmlIndex)
         }
-        if (hasDisplayAction) {
-            templateFilePath = templateFileWithExtension('display', 'xml')
-            fsa.generateFile(templateFilePath, xmlDisplay)
+        if (hasDetailAction) {
+            templateFilePath = templateFileWithExtension('detail', 'xml')
+            fsa.generateFile(templateFilePath, xmlDetail)
         }
         templateFilePath = templateFileWithExtension('include', 'xml')
         fsa.generateFile(templateFilePath, xmlInclude)
     }
 
-    def private xmlView(Entity it) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» view xml view #}
+    def private xmlIndex(Entity it) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» index xml view #}
         {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="{{ pageGetVar('meta.charset')|default('utf-8') }}" ?>
         <«nameMultiple.formatForCode»>
@@ -61,8 +61,8 @@ class Xml {
         </«nameMultiple.formatForCode»>
     '''
 
-    def private xmlDisplay(Entity it) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» display xml view #}
+    def private xmlDetail(Entity it) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» detail xml view #}
         {% trans_default_domain '«name.formatForCode»' %}
         <?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
         {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/include.xml.twig') }}

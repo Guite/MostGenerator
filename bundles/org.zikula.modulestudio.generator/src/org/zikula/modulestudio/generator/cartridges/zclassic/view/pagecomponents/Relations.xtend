@@ -37,7 +37,7 @@ class Relations {
         «IF ownerPermission»
             {% set hasEditPermission = permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
         «ENDIF»
-        «IF hasDisplayAction»
+        «IF hasDetailAction»
             {% if noLink is not defined %}
                 {% set noLink = false %}
             {% endif %}
@@ -50,17 +50,17 @@ class Relations {
                 <li class="list-group-item">
         «ENDIF»
         <h5>
-        «IF hasDisplayAction»
+        «IF hasDetailAction»
             {% apply spaceless %}
             {% if not noLink %}
-                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams('item', true)») }}" title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
+                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'detail'«routeParams('item', true)») }}" title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
             {% endif %}
         «ENDIF»
             {{ item|«app.appName.formatForDB»_formattedTitle }}
-        «IF hasDisplayAction»
+        «IF hasDetailAction»
             {% if not noLink %}
                 </a>
-                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="{% trans %}Open quick view window{% endtrans %}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'detail', {«IF !hasSluggableFields || !slugUnique»«routePkParams('item', true)»«ENDIF»«appendSlug('item', true)», raw: 1}) }}" title="{% trans %}Open quick view window{% endtrans %}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
             {% endif %}
             {% endapply %}
         «ENDIF»

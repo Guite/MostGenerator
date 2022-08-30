@@ -19,8 +19,6 @@ import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.MenuViews
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewPagesHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -29,6 +27,8 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.IndexPagesHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.IndexQuickNavForm
 
 class ViewTable {
 
@@ -55,25 +55,25 @@ class ViewTable {
         this.listType = listType
         this.appName = appName
 
-        var templateFilePath = templateFile('view')
-        fsa.generateFile(templateFilePath, viewView)
+        var templateFilePath = templateFile('index')
+        fsa.generateFile(templateFilePath, indexView)
 
-        new ViewQuickNavForm().generate(it, appName, fsa)
+        new IndexQuickNavForm().generate(it, appName, fsa)
         if (loggable) {
             new ViewDeleted().generate(it, appName, fsa)
         }
     }
 
-    def private viewView(Entity it) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
+    def private indexView(Entity it) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» index view #}
         {% extends routeArea == 'admin' ? '@«application.appName»/adminBase.html.twig' : '@«application.appName»/base.html.twig' %}
         {% trans_default_domain '«name.formatForCode»' %}
         {% block title own ? 'My «nameMultiple.formatForDisplay»'|trans : '«nameMultiple.formatForDisplayCapital» list'|trans %}
         {% block admin_page_icon 'list-alt' %}
         {% block content %}
-            <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
-                «(new ViewPagesHelper).commonHeader(it)»
-                {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/viewQuickNav.html.twig'«IF !hasVisibleWorkflow», {workflowStateFilter: false}«ENDIF») }}{# see template file for available options #}
+            <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-index">
+                «(new IndexPagesHelper).commonHeader(it)»
+                {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/indexQuickNav.html.twig'«IF !hasVisibleWorkflow», {workflowStateFilter: false}«ENDIF») }}{# see template file for available options #}
 
                 «viewForm»
             </div>
@@ -88,7 +88,7 @@ class ViewTable {
             {% endif %}
         «ENDIF»
             «viewItemList»
-            «(new ViewPagesHelper).pagerCall(it)»
+            «(new IndexPagesHelper).pagerCall(it)»
         «IF listType == LIST_TYPE_TABLE»
             {% if routeArea == 'admin' %}
                     «massActionFields»
@@ -123,7 +123,7 @@ class ViewTable {
                     {% if routeArea == 'admin' %}
                         <col id="cSelect" />
                     {% endif %}
-                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
+                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.indexActionsPosition)»
                         <col id="cItemActionsStart" />
                     «ENDIF»
                     «IF hasSortableFields»
@@ -134,7 +134,7 @@ class ViewTable {
                     «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
-                    «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
+                    «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.indexActionsPosition)»
                         <col id="cItemActionsEnd" />
                     «ENDIF»
                 </colgroup>
@@ -145,7 +145,7 @@ class ViewTable {
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
-                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
+                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.indexActionsPosition)»
                         <th id="hItemActionsStart" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
                     «ENDIF»
                     «IF hasSortableFields»
@@ -156,7 +156,7 @@ class ViewTable {
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
-                    «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.viewActionsPosition)»
+                    «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.indexActionsPosition)»
                         <th id="hItemActionsEnd" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
                     «ENDIF»
                 </tr>
@@ -179,7 +179,7 @@ class ViewTable {
                         </td>
                     {% endif %}
             «ENDIF»
-                «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.viewActionsPosition)»
+                «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.indexActionsPosition)»
                     «itemActions('Start')»
                 «ENDIF»
                 «IF hasSortableFields»
@@ -192,7 +192,7 @@ class ViewTable {
                 «FOR field : listItemsFields»«IF field.name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»«field.displayEntry(false)»«IF field.name == 'workflowState'»{% endif %}«ENDIF»«ENDFOR»
                 «FOR relation : listItemsIn»«relation.displayEntry(false)»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true)»«ENDFOR»
-                «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.viewActionsPosition)»
+                «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.indexActionsPosition)»
                     «itemActions('End')»
                 «ENDIF»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
@@ -335,15 +335,15 @@ class ViewTable {
 
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF #['name', 'title'].contains(name)»
-            «IF entity instanceof Entity && (entity as Entity).hasDisplayAction»
-                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayLeadingEntry»</a>
+            «IF entity instanceof Entity && (entity as Entity).hasDetailAction»
+                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'detail'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayLeadingEntry»</a>
             «ELSE»
                 «displayLeadingEntry»
             «ENDIF»
         «ELSEIF name == 'workflowState'»
             {{ «entity.name.formatForCode».workflowState|«application.appName.formatForDB»_objectState }}
         «ELSE»
-            «fieldHelper.displayField(it, entity.name.formatForCode, 'view')»
+            «fieldHelper.displayField(it, entity.name.formatForCode, 'index')»
         «ENDIF»
     '''
 
@@ -357,13 +357,13 @@ class ViewTable {
         «val linkEntity = (if (useTarget) target else source) as Entity»
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {% if «relObjName»|default %}
-            «IF linkEntity.hasDisplayAction»
-                <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
+            «IF linkEntity.hasDetailAction»
+                <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'detail'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
             «ENDIF»
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
-            «IF linkEntity.hasDisplayAction»
+            «IF linkEntity.hasDetailAction»
                 {% endapply %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'detail', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
             «ENDIF»
         {% else %}
             {% trans from 'messages' %}Not set{% endtrans %}
@@ -399,7 +399,7 @@ class ViewTable {
         «ELSE»
             <td id="«new MenuViews().itemActionContainerViewId(it)»«idSuffix»" headers="hItemActions«idSuffix»" class="actions">
         «ENDIF»
-            «new MenuViews().itemActions(it, 'view', idSuffix)»
+            «new MenuViews().itemActions(it, 'index', idSuffix)»
         </«listType.asItemTag»>
     '''
 

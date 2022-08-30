@@ -2,13 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.view
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewPagesHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.IndexPagesHelper
 
 class ViewHierarchy {
 
@@ -36,8 +36,8 @@ class ViewHierarchy {
         {% block title '«name.formatForDisplayCapital» hierarchy'|trans %}
         {% block admin_page_icon 'code-branch' %}
         {% block content %}
-            <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
-                «(new ViewPagesHelper).commonHeader(it)»
+            <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-indexhierarchy">
+                «(new IndexPagesHelper).commonHeader(it)»
                 {% for rootId, treeNodes in trees %}
                     {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', {rootId: rootId, items: treeNodes}) }}
                 {% else %}
@@ -72,7 +72,7 @@ class ViewHierarchy {
             </div>
         </div>
         <div class="clearfix">
-            <div id="{{ idPrefix }}" class="tree-container" data-root-id="{{ rootId|e('html_attr') }}" data-object-type="«name.formatForCode»" data-urlargnames="«IF hasSluggableFields && slugUnique»slug«ELSE»«getPrimaryKey.name.formatForCode»«IF hasSluggableFields»,slug«ENDIF»«ENDIF»" data-has-display="«hasDisplayAction.displayBool»" data-has-edit="«(hasEditAction && !readOnly).displayBool»">
+            <div id="{{ idPrefix }}" class="tree-container" data-root-id="{{ rootId|e('html_attr') }}" data-object-type="«name.formatForCode»" data-urlargnames="«IF hasSluggableFields && slugUnique»slug«ELSE»«getPrimaryKey.name.formatForCode»«IF hasSluggableFields»,slug«ENDIF»«ENDIF»" data-has-detail="«hasDetailAction.displayBool»" data-has-edit="«(hasEditAction && !readOnly).displayBool»">
                 {% if hasNodes %}
                     {% set treeData = «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, routeArea=routeArea, rootId=rootId) %}
                     <ul id="itemTree{{ rootId|e('html_attr') }}">

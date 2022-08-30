@@ -27,25 +27,25 @@ class Json {
     SimpleFields fieldHelper = new SimpleFields
 
     def generate(Entity it, IMostFileSystemAccess fsa) {
-        if (!(hasViewAction || hasDisplayAction)) {
+        if (!(hasIndexAction || hasDetailAction)) {
             return
         }
         ('Generating JSON view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
         var templateFilePath = ''
-        if (hasViewAction) {
-            templateFilePath = templateFileWithExtension('view', 'json')
-            fsa.generateFile(templateFilePath, jsonView)
+        if (hasIndexAction) {
+            templateFilePath = templateFileWithExtension('index', 'json')
+            fsa.generateFile(templateFilePath, jsonIndex)
         }
-        if (hasDisplayAction) {
-            templateFilePath = templateFileWithExtension('display', 'json')
-            fsa.generateFile(templateFilePath, jsonDisplay)
+        if (hasDetailAction) {
+            templateFilePath = templateFileWithExtension('detail', 'json')
+            fsa.generateFile(templateFilePath, jsonDetail)
         }
         templateFilePath = templateFileWithExtension('include', 'json')
         fsa.generateFile(templateFilePath, jsonInclude)
     }
 
-    def private jsonView(Entity it) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» view json view #}
+    def private jsonIndex(Entity it) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» index json view #}
         {% trans_default_domain '«name.formatForCode»' %}
         [
         {% for «name.formatForCode» in items %}
@@ -57,8 +57,8 @@ class Json {
         ]
     '''
 
-    def private jsonDisplay(Entity it) '''
-        {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
+    def private jsonDetail(Entity it) '''
+        {# purpose of this template: «nameMultiple.formatForDisplay» detail json view #}
         {% trans_default_domain '«name.formatForCode»' %}
         {
             {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/include.json.twig') }}

@@ -9,7 +9,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ViewActions {
+class IndexActions {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
@@ -20,7 +20,7 @@ class ViewActions {
         $mainRequest = $this->requestStack->getMainRequest();
         $query = $mainRequest->query;
         $currentTemplate = $query->getAlnum('tpl', '');
-        «FOR entity : getAllEntities.filter[hasViewAction]»
+        «FOR entity : getAllEntities.filter[hasIndexAction]»
             if ('«entity.name.formatForCode»' === $objectType) {
                 «entity.actionsImpl(it)»
             }
@@ -47,7 +47,7 @@ class ViewActions {
                     }
                 «ENDIF»
                 $menu->addChild('Switch to table view', [
-                    'route' => $routePrefix . $routeArea . 'view',
+                    'route' => $routePrefix . $routeArea . 'index',
                 ])
                     ->setAttribute('icon', 'fas fa-table')
                 ;
@@ -65,7 +65,7 @@ class ViewActions {
             «linkTogglePagination»
             «IF tree != EntityTreeType.NONE»
                 $menu->addChild('Switch to hierarchy view', [
-                    'route' => $routePrefix . $routeArea . 'view',
+                    'route' => $routePrefix . $routeArea . 'index',
                     'routeParameters' => ['tpl' => 'tree'],
                 ])
                     ->setAttribute('icon', 'fas fa-code-branch')
@@ -73,7 +73,7 @@ class ViewActions {
             «ENDIF»
             «IF geographical»
                 $menu->addChild('Show map', [
-                    'route' => $routePrefix . $routeArea . 'view',
+                    'route' => $routePrefix . $routeArea . 'index',
                     'routeParameters' => ['tpl' => 'map', 'all' => 1],
                 ])
                     ->setAttribute('icon', 'fas fa-map')
@@ -89,7 +89,7 @@ class ViewActions {
                     }
                     if ($hasDeletedEntities) {
                         $menu->addChild('View deleted «nameMultiple.formatForDisplay»', [
-                            'route' => $routePrefix . $routeArea . 'view',
+                            'route' => $routePrefix . $routeArea . 'index',
                             'routeParameters' => ['deleted' => 1],
                         ])
                             ->setAttribute('icon', 'fas fa-trash-alt')
@@ -130,7 +130,7 @@ class ViewActions {
         if (1 === $query->getInt('all')) {
             unset($routeParameters['all']);
             $menu->addChild('Back to paginated view', [
-                'route' => $routePrefix . $routeArea . 'view',
+                'route' => $routePrefix . $routeArea . 'index',
                 'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fas fa-table')
@@ -138,7 +138,7 @@ class ViewActions {
         } else {
             $routeParameters['all'] = 1;
             $menu->addChild('Show all entries', [
-                'route' => $routePrefix . $routeArea . 'view',
+                'route' => $routePrefix . $routeArea . 'index',
                 'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fas fa-table')
@@ -159,7 +159,7 @@ class ViewActions {
         if (1 === $query->getInt('own')) {
             $routeParameters['own'] = 0;
             $menu->addChild('Show also entries from other users', [
-                'route' => $routePrefix . $routeArea . 'view',
+                'route' => $routePrefix . $routeArea . 'index',
                 'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fas fa-users')
@@ -167,7 +167,7 @@ class ViewActions {
         } else {
             $routeParameters['own'] = 1;
             $menu->addChild('Show only own entries', [
-                'route' => $routePrefix . $routeArea . 'view',
+                'route' => $routePrefix . $routeArea . 'index',
                 'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fas fa-user')

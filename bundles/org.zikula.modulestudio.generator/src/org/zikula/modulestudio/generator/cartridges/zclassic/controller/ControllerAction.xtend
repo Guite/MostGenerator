@@ -4,21 +4,18 @@ import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DeleteAction
-import de.guite.modulestudio.metamodel.DisplayAction
+import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.MainAction
-import de.guite.modulestudio.metamodel.ViewAction
+import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Actions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Annotations
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 
 class ControllerAction {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -63,7 +60,7 @@ class ControllerAction {
         «IF isBase»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «IF it instanceof DisplayAction»
+         «IF it instanceof DetailAction»
          * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be displayed isn't found
          «ELSEIF it instanceof EditAction»
          * @throws RuntimeException Thrown if another critical error occurs (e.g. workflow actions not available)
@@ -71,7 +68,7 @@ class ControllerAction {
          * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be deleted isn't found
          * @throws RuntimeException Thrown if another critical error occurs (e.g. workflow actions not available)
          «ENDIF»
-         «IF it instanceof ViewAction || it instanceof EditAction»
+         «IF it instanceof IndexAction || it instanceof EditAction»
          * @throws Exception
          «ENDIF»
         «ENDIF»
@@ -83,9 +80,8 @@ class ControllerAction {
 
     def private actionDocMethodDescription(Action it, Boolean isAdmin) {
         switch it {
-            MainAction: 'This is the default action handling the ' + controllerName + (if (isAdmin) ' admin' else '') + ' area called without defining arguments.'
-            ViewAction: 'This action provides an item list overview' + (if (isAdmin) ' in the admin area' else '') + '.'
-            DisplayAction: 'This action provides a item detail view' + (if (isAdmin) ' in the admin area' else '') + '.'
+            IndexAction: 'This action provides an item list overview' + (if (isAdmin) ' in the admin area' else '') + '.'
+            DetailAction: 'This action provides a item detail view' + (if (isAdmin) ' in the admin area' else '') + '.'
             EditAction: 'This action provides a handling of edit requests' + (if (isAdmin) ' in the admin area' else '') + '.'
             DeleteAction: 'This action provides a handling of simple delete requests' + (if (isAdmin) ' in the admin area' else '') + '.'
             CustomAction: 'This is a custom action' + (if (isAdmin) ' in the admin area' else '') + '.'
@@ -101,9 +97,7 @@ class ControllerAction {
         }
     }
 
-    def private dispatch methodName(Action it, Boolean isAdmin) '''«IF !isAdmin»«name.formatForCode.toFirstLower»«ELSE»admin«name.formatForCodeCapital»«ENDIF»'''
-
-    def private dispatch methodName(MainAction it, Boolean isAdmin) '''«IF isAdmin»adminIndex«ELSE»index«ENDIF»'''
+    def private methodName(Action it, Boolean isAdmin) '''«IF !isAdmin»«name.formatForCode.toFirstLower»«ELSE»admin«name.formatForCodeCapital»«ENDIF»'''
 
     def private dispatch methodArguments(Entity it, Action action, Boolean internalMethod) '''
         Request $request,
@@ -118,7 +112,7 @@ class ControllerAction {
         '''
     }
 
-    def private dispatch methodArguments(Entity it, ViewAction action, Boolean internalMethod) '''
+    def private dispatch methodArguments(Entity it, IndexAction action, Boolean internalMethod) '''
         Request $request,
         RouterInterface $router,
         PermissionHelper $permissionHelper,
@@ -133,7 +127,7 @@ class ControllerAction {
         int $num«IF internalMethod»,
         bool $isAdmin = false«ENDIF»
     '''
-    def private dispatch methodArgsCall(Entity it, ViewAction action, Boolean isAdmin) {
+    def private dispatch methodArgsCall(Entity it, IndexAction action, Boolean isAdmin) {
         '''
             $request,
             $router,
@@ -149,7 +143,7 @@ class ControllerAction {
         '''
     }
 
-    def private dispatch methodArguments(Entity it, DisplayAction action, Boolean internalMethod) '''
+    def private dispatch methodArguments(Entity it, DetailAction action, Boolean internalMethod) '''
         Request $request,
         PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
@@ -165,7 +159,7 @@ class ControllerAction {
         «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
         bool $isAdmin = false«ENDIF»
     '''
-    def private dispatch methodArgsCall(Entity it, DisplayAction action, Boolean isAdmin) {
+    def private dispatch methodArgsCall(Entity it, DetailAction action, Boolean isAdmin) {
         '''
             $request,
             $permissionHelper,

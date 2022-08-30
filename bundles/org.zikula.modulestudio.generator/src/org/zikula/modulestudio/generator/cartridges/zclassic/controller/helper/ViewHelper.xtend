@@ -228,7 +228,7 @@ class ViewHelper {
         protected function determineExtension(string $type, string $func): string
         {
             $templateExtension = 'html.twig';
-            if (!in_array($func, ['view', 'display'])) {
+            if (!in_array($func, ['index', 'detail'])) {
                 return $templateExtension;
             }
 
@@ -261,13 +261,13 @@ class ViewHelper {
         {
             $extensions = [];
             $hasAdminAccess = $this->permissionHelper->hasComponentPermission($type, ACCESS_ADMIN);
-            if ('view' === $func) {
+            if ('index' === $func) {
                 if ($hasAdminAccess) {
                     $extensions = [«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»];
                 } else {
                     $extensions = [«FOR format : getListOfViewFormats.filter[#['rss', 'atom', 'pdf'].contains(it)] SEPARATOR ', '»'«format»'«ENDFOR»];
                 }
-            } elseif ('display' === $func) {
+            } elseif ('detail' === $func) {
                 if ($hasAdminAccess) {
                     $extensions = [«FOR format : getListOfDisplayFormats SEPARATOR ', '»'«format»'«ENDFOR»];
                 } else {

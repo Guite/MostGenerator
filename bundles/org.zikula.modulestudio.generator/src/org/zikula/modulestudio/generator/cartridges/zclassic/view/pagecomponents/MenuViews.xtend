@@ -23,12 +23,12 @@ class MenuViews {
 
     def private markup(Entity it, String context, String idSuffix) '''
         «IF application.useStyle(context, ItemActionsStyle.BUTTON_GROUP)»
-            <div class="btn-group«IF context == 'view'»-vertical«ENDIF» btn-group-sm item-actions" role="group" aria-label="{% trans from 'messages' %}Actions{% endtrans %}">
+            <div class="btn-group«IF context == 'index'»-vertical«ENDIF» btn-group-sm item-actions" role="group" aria-label="{% trans from 'messages' %}Actions{% endtrans %}">
                 «application.renderItemActionsMenu(context)»
             </div>
         «ELSEIF application.useStyle(context, ItemActionsStyle.DROPDOWN)»
             <div class="dropdown item-actions">
-                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="d-none dropdown-toggle"><i class="fas fa-tasks"></i>«IF context == 'display'» {% trans from 'messages' %}Actions{% endtrans %}«ENDIF»</a>
+                <a id="«itemActionContainerViewId»DropDownToggle«idSuffix»" role="button" data-toggle="dropdown" href="javascript:void(0);" class="d-none dropdown-toggle"><i class="fas fa-tasks"></i>«IF context == 'detail'» {% trans from 'messages' %}Actions{% endtrans %}«ENDIF»</a>
                 «application.renderItemActionsMenu(context)»
             </div>
         «ELSE»
@@ -45,7 +45,7 @@ class MenuViews {
     '''
 
     def private useStyle(Application it, String context, ItemActionsStyle style) {
-        (context == 'view' && viewActionsStyle == style) || (context == 'display' && displayActionsStyle == style)
+        (context == 'index' && indexActionsStyle == style) || (context == 'detail' && detailActionsStyle == style)
     }
 
     def itemActionContainerViewId(Entity it) '''

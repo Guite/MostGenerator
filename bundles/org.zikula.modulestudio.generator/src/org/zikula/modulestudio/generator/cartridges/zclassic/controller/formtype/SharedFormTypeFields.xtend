@@ -1033,10 +1033,10 @@ class SharedFormTypeFields {
         }
         if (isThumbDimensionField) {
             var suffix = ''
-            if (name.endsWith('View')) {
-                suffix = ' view'
-            } else if (name.endsWith('Display')) {
-                suffix = ' display'
+            if (name.endsWith('Index')) {
+                suffix = ' index'
+            } else if (name.endsWith('Detail')) {
+                suffix = ' detail'
             } else if (name.endsWith('Edit')) {
                 suffix = ' edit'
             }

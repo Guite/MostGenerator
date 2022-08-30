@@ -36,7 +36,7 @@ class DisplayFunctions {
         function «vendorAndName»CapitaliseFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.substring(1);
         }
-        «IF hasViewActions»
+        «IF hasIndexActions»
 
             «initQuickNavigation»
         «ENDIF»
@@ -48,15 +48,15 @@ class DisplayFunctions {
         «ENDIF»
 
         «simpleAlert»
-        «IF hasViewActions»
+        «IF hasIndexActions»
 
             «initMassToggle»
         «ENDIF»
-        «IF hasViewActions || hasDisplayActions»
+        «IF hasIndexActions || hasDetailActions»
 
             «initItemActions»
         «ENDIF»
-        «IF (!getJoinRelations.empty || hasLoggable) && hasDisplayActions»
+        «IF (!getJoinRelations.empty || hasLoggable) && hasDetailActions»
 
             «initInlineWindow»
 
@@ -66,7 +66,7 @@ class DisplayFunctions {
 
             «initImageViewer»
         «ENDIF»
-        «IF hasSortable && hasViewActions»
+        «IF hasSortable && hasIndexActions»
 
             «initSortable»
         «ENDIF»
@@ -202,15 +202,15 @@ class DisplayFunctions {
          */
         function «vendorAndName»InitItemActions(context) {
             «FOR styleWithJs : #[ItemActionsStyle.ICON, ItemActionsStyle.BUTTON_GROUP, ItemActionsStyle.DROPDOWN]»
-            «IF #[viewActionsStyle, displayActionsStyle].contains(styleWithJs)»
-                «IF viewActionsStyle == styleWithJs && displayActionsStyle == styleWithJs»
+            «IF #[indexActionsStyle, detailActionsStyle].contains(styleWithJs)»
+                «IF indexActionsStyle == styleWithJs && detailActionsStyle == styleWithJs»
                     «initItemActionStyle(styleWithJs, '')»
-                «ELSEIF viewActionsStyle == styleWithJs && displayActionsStyle != styleWithJs»
-                    if ('view' === context) {
+                «ELSEIF indexActionsStyle == styleWithJs && detailActionsStyle != styleWithJs»
+                    if ('index' === context) {
                         «initItemActionStyle(styleWithJs, '')»
                     }
-                «ELSEIF viewActionsStyle != styleWithJs && displayActionsStyle == styleWithJs»
-                    if ('display' === context) {
+                «ELSEIF indexActionsStyle != styleWithJs && detailActionsStyle == styleWithJs»
+                    if ('detail' === context) {
                         «initItemActionStyle(styleWithJs, '')»
                     }
                 «ENDIF»
@@ -233,9 +233,9 @@ class DisplayFunctions {
             var containers;
 
             containerSelector = '';
-            if ('view' === context) {
-                containerSelector = '.«appName.toLowerCase»-view';
-            } else if ('display' === context) {
+            if ('index' === context) {
+                containerSelector = '.«appName.toLowerCase»-index';
+            } else if ('detail' === context) {
                 containerSelector = 'h2, h3';
             }
 
@@ -252,7 +252,7 @@ class DisplayFunctions {
             containers.find('.dropdown > ul > li').addClass('dropdown-item').css('padding', 0);
             containers.find('.dropdown > ul a').addClass('d-block').css('padding', '3px 5px');
             containers.find('.dropdown > ul a i').addClass('fa-fw mr-1');
-            if (containers.find('.dropdown-toggle').length > 0) {
+            if (0 < containers.find('.dropdown-toggle').length) {
                 containers.find('.dropdown-toggle').removeClass('d-none').dropdown();
             }
         «ENDIF»
@@ -373,7 +373,7 @@ class DisplayFunctions {
          * Initialises reordering view entries using drag n drop.
          */
         function «vendorAndName»InitSortable() {
-            if (jQuery('#sortableTable').length < 1) {
+            if (1 > jQuery('#sortableTable').length) {
                 return;
             }
 
@@ -413,33 +413,33 @@ class DisplayFunctions {
 
     def private onLoad(Application it) '''
         jQuery(document).ready(function () {
-            var isViewPage;
-            var isDisplayPage;
+            var isIndexPage;
+            var isDetailPage;
 
-            isViewPage = jQuery('.«appName.toLowerCase»-view').length > 0;
-            isDisplayPage = jQuery('.«appName.toLowerCase»-display').length > 0;
+            isIndexPage = 0 < jQuery('.«appName.toLowerCase»-index').length;
+            isDetailPage = 0 < jQuery('.«appName.toLowerCase»-detail').length;
 
             «IF hasImageFields»
                 «vendorAndName»InitImageViewer();
 
             «ENDIF»
-            if (isViewPage) {
+            if (isIndexPage) {
                 «vendorAndName»InitQuickNavigation();
                 «vendorAndName»InitMassToggle();
-                «vendorAndName»InitItemActions('view');
+                «vendorAndName»InitItemActions('index');
                 «IF hasBooleansWithAjaxToggleInView»
                     «vendorAndName»InitAjaxToggles();
                 «ENDIF»
                 «IF hasSortable»
                     «vendorAndName»InitSortable();
                 «ENDIF»
-            } else if (isDisplayPage) {
-                «vendorAndName»InitItemActions('display');
+            } else if (isDetailPage) {
+                «vendorAndName»InitItemActions('detail');
                 «IF hasBooleansWithAjaxToggleInDisplay»
                     «vendorAndName»InitAjaxToggles();
                 «ENDIF»
             }
-            «IF (!getJoinRelations.empty || hasLoggable) && hasDisplayActions»
+            «IF (!getJoinRelations.empty || hasLoggable) && hasDetailActions»
 
                 «vendorAndName»InitQuickViewModals();
             «ENDIF»

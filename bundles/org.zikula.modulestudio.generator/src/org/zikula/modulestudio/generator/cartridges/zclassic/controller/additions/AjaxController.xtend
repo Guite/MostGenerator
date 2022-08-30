@@ -233,7 +233,7 @@ class AjaxController {
             $previewParameters = [
                 $objectType => $entity,
             ];
-            $contextArgs = ['controller' => $objectType, 'action' => 'display'];
+            $contextArgs = ['controller' => $objectType, 'action' => 'detail'];
             $previewParameters = $controllerHelper->addTemplateParameters(
                 $objectType,
                 $previewParameters,

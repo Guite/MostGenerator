@@ -36,7 +36,7 @@ class ModelBehaviourExtensions {
      * (supporting either display actions or image upload fields).
      */
     def getFinderEntities(Application it) {
-        getAllEntities.filter[hasDisplayAction || hasImageFieldsEntity]
+        getAllEntities.filter[hasDetailAction || hasImageFieldsEntity]
     }
 
     /**

@@ -41,11 +41,11 @@ class QuickNavigationType {
      * Entry point for quick navigation form type.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!hasViewActions) {
+        if (!hasIndexActions) {
             return
         }
         app = it
-        for (entity : getAllEntities.filter[hasViewAction]) {
+        for (entity : getAllEntities.filter[hasIndexAction]) {
             incomingRelations = entity.getBidirectionalIncomingJoinRelations.filter[source instanceof Entity]
             outgoingRelations = entity.getOutgoingJoinRelations.filter[target instanceof Entity]
             fsa.generateClassPair('Form/Type/QuickNavigation/' + entity.name.formatForCodeCapital + 'QuickNavType.php',
@@ -567,7 +567,7 @@ class QuickNavigationType {
         $objectType = '«(if (useTarget) target else source).name.formatForCode»';
         // select without joins
         $entities = $this->entityFactory->getRepository($objectType)->selectWhere('', '', false);
-        $permLevel = «(if (useTarget) target else source).getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createViewAction)»;
+        $permLevel = «(if (useTarget) target else source).getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createIndexAction)»;
 
         $entities = $this->permissionHelper->filterCollection($objectType, $entities, $permLevel);
         $choices = [];

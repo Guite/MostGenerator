@@ -15,7 +15,7 @@ class Categories {
         val templateExtension = '.html.twig'
 
         var fileName = ''
-        if (hasViewActions || hasDisplayActions) {
+        if (hasIndexActions || hasDetailActions) {
             fileName = 'includeCategoriesDisplay' + templateExtension
             fsa.generateFile(templatePath + fileName, categoriesViewImpl)
         }

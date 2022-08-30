@@ -109,7 +109,7 @@ class ServiceDefinitions {
         «appNamespace»\Menu\MenuBuilder:
             tags:
                 - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }
-                «IF hasViewActions»
+                «IF hasIndexActions»
                 - { name: knp_menu.menu_builder, method: createViewActionsMenu, alias: «vendorAndName.toFirstLower»MenuViewActions }
                 «ENDIF»
         «IF !getAllEntities.filter[hasIpTraceableFields].empty»

@@ -46,9 +46,8 @@ application "SimpleTest" {
                 }
             }
             actions {
-                mainAction "Index",
-                viewAction "View",
-                displayAction "Display",
+                indexAction "Index",
+                detailAction "Detail",
                 deleteAction "Delete"
             }
         },
@@ -62,7 +61,7 @@ application "SimpleTest" {
                 }
             }
             actions {
-                mainAction "Index"
+                indexAction "Index"
             }
         }
     }
