@@ -56,9 +56,7 @@ class Layout {
         {% block header %}
         {% endblock %}
 
-        {% block appTitle %}
-            {{ showflashes() }}
-        {% endblock %}
+        {% block appTitle %}{% endblock %}
 
         {% block titleArea %}
             <h2>{% block title %}{% endblock %}</h2>
@@ -69,8 +67,6 @@ class Layout {
             {{ include('@«vendorAndName»/Helper/includeModerationPanel.html.twig') }}
 
         «ENDIF»
-        {{ showflashes() }}
-
         {% block content %}{% endblock %}
 
         {% block footer %}
