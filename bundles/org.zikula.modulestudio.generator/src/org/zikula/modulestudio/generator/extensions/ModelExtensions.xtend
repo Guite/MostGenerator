@@ -301,17 +301,17 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all fields which should be displayed on the view page.
+     * Returns a list of all fields which should be displayed on the index page.
      */
     def getFieldsForViewPage(Entity it) {
-        getDisplayFields.filter[f|f.isVisibleOnViewPage].reject(ArrayField).reject(ObjectField).toList
+        getDisplayFields.filter[f|f.isVisibleOnIndexPage].reject(ArrayField).reject(ObjectField).toList
     }
 
     /**
-     * Returns a list of all fields which should be displayed on the display page.
+     * Returns a list of all fields which should be displayed on the detail page.
      */
     def getFieldsForDisplayPage(Entity it) {
-        getDisplayFields.filter[f|f.isVisibleOnDisplayPage]
+        getDisplayFields.filter[f|f.isVisibleOnDetailPage]
     }
 
     /**
@@ -424,24 +424,24 @@ class ModelExtensions {
     }
 
     /**
-     * Returns whether this field is visible on the view page.
+     * Returns whether this field is visible on the index page.
      */
-    def isVisibleOnViewPage(Field it) {
-        #[FieldDisplayType.VIEW, FieldDisplayType.VIEW_SORTING, FieldDisplayType.VIEW_DISPLAY, FieldDisplayType.ALL].contains(displayType)
+    def private isVisibleOnIndexPage(Field it) {
+        #[FieldDisplayType.INDEX, FieldDisplayType.INDEX_SORTING, FieldDisplayType.INDEX_DETAIL, FieldDisplayType.ALL].contains(displayType)
     }
 
     /**
-     * Returns whether this field is visible on the display page.
+     * Returns whether this field is visible on the detail page.
      */
-    def isVisibleOnDisplayPage(Field it) {
-        #[FieldDisplayType.DISPLAY, FieldDisplayType.DISPLAY_SORTING, FieldDisplayType.VIEW_DISPLAY, FieldDisplayType.ALL].contains(displayType)
+    def private isVisibleOnDetailPage(Field it) {
+        #[FieldDisplayType.DETAIL, FieldDisplayType.DETAIL_SORTING, FieldDisplayType.INDEX_DETAIL, FieldDisplayType.ALL].contains(displayType)
     }
 
     /**
      * Returns whether this field maybe used for sorting.
      */
     def isSortField(Field it) {
-        #[FieldDisplayType.SORTING, FieldDisplayType.VIEW_SORTING, FieldDisplayType.DISPLAY_SORTING, FieldDisplayType.ALL].contains(displayType)
+        #[FieldDisplayType.SORTING, FieldDisplayType.INDEX_SORTING, FieldDisplayType.DETAIL_SORTING, FieldDisplayType.ALL].contains(displayType)
     }
 
     /**
@@ -699,9 +699,9 @@ class ModelExtensions {
             return fields
         }
         if (context == 'index') {
-            return fields.filter[f|f.isVisibleOnViewPage]
+            return fields.filter[f|f.isVisibleOnIndexPage]
         } else if (context == 'detail') {
-            return fields.filter[f|f.isVisibleOnDisplayPage]
+            return fields.filter[f|f.isVisibleOnDetailPage]
         }
     }
 
