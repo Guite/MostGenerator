@@ -202,7 +202,7 @@ class Detail {
             <h3>{% trans from 'messages' %}Fields{% endtrans %}</h3>
         «ENDIF»
         <dl>
-            «FOR field : getFieldsForDisplayPage»«field.displayEntry»«ENDFOR»
+            «FOR field : getFieldsForDetailPage»«field.displayEntry»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     {% if «name.formatForCode».«geoFieldName» is not empty %}

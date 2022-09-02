@@ -99,7 +99,7 @@ class ViewTable {
     '''
 
     def private viewItemList(Entity it) '''
-        «val listItemsFields = getFieldsForViewPage»
+        «val listItemsFields = getFieldsForIndexPage»
         «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
         «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
         «viewItemListHeader(listItemsFields, listItemsIn, listItemsOut)»

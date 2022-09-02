@@ -119,7 +119,7 @@ class PersistenceTransformer {
                     mandatory = false
                     displayType = FieldDisplayType.NONE
                     visible = false
-                    arrayType = ArrayType.JSON_ARRAY
+                    arrayType = ArrayType.JSON
                 ]
             }
         }
