@@ -559,7 +559,6 @@ application "SimpleNews" {
                     mandatory false
                     displayType INDEX
                     visible false
-                    arrayType ARRAY
                 },
                 array "arr2" {
                     mandatory true
@@ -569,30 +568,10 @@ application "SimpleNews" {
                     arrayType SIMPLE_ARRAY
                 },
                 array "arr3" translatable {
-                    arrayType JSON_ARRAY
+                    arrayType JSON
                     min 3
                     max 10
                 }
-            }
-        },
-        entity "article12" {
-            nameMultiple "articles12"
-            fields {
-                object "obj1" nullable readonly sortableGroup {
-                    dbName "obj1"
-                    documentation "My field"
-                    defaultValue "foo"
-                    mandatory false
-                    displayType INDEX
-                    visible false
-                },
-                object "obj2" {
-                    mandatory true
-                    displayType SORTING
-                    visible true
-                    cssClass "myobj"
-                },
-                object "obj3" translatable
             }
         },
         entity "article13" {
@@ -733,14 +712,6 @@ application "SimpleNews" {
         inheritance {
             source "article11"
             sourceAlias "article11"
-            target "post"
-            targetAlias "post"
-            strategy SINGLE_TABLE
-            discriminatorColumn "discr"
-        },
-        inheritance {
-            source "article12"
-            sourceAlias "article12"
             target "post"
             targetAlias "post"
             strategy SINGLE_TABLE

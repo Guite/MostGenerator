@@ -19,7 +19,6 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
-import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringIsbnStyle
 import de.guite.modulestudio.metamodel.StringIssnStyle
@@ -162,9 +161,6 @@ class TechStructureFields {
     }
     def private dispatch fieldType(ArrayField it) {
         'Array'
-    }
-    def private dispatch fieldType(ObjectField it) {
-        if (language == 'de') 'Objekt' else 'Object'
     }
     def private dispatch fieldType(DatetimeField it) {
         if (language == 'de') {
@@ -599,26 +595,19 @@ class TechStructureFields {
     def private dispatch remarks(ArrayField it) {
         val result = commonRemarks
         if (language == 'de') {
-            if (arrayType == ArrayType.ARRAY) {
-                result += 'Verwendet ein normales Array.'
+            if (arrayType == ArrayType.JSON) {
+                result += 'Verwendet ein JSON Array.'
             } else if (arrayType == ArrayType.SIMPLE_ARRAY) {
                 result += 'Verwendet ein einfaches Array, repräsentiert durch ein komma-getrenntes Textfeld.'
-            } else if (arrayType == ArrayType.JSON_ARRAY) {
-                result += 'Verwendet ein JSON Array.'
             }
         } else {
-            if (arrayType == ArrayType.ARRAY) {
-                result += 'Uses a normal array.'
+            if (arrayType == ArrayType.JSON) {
+                result += 'Uses a JSON array.'
             } else if (arrayType == ArrayType.SIMPLE_ARRAY) {
                 result += 'Uses a simple array represented by a comma-separated text field.'
-            } else if (arrayType == ArrayType.JSON_ARRAY) {
-                result += 'Uses a JSON array.'
             }
         }
         result
-    }
-    def private dispatch remarks(ObjectField it) {
-        commonRemarks
     }
     def private dispatch remarks(DatetimeField it) {
         val result = commonRemarks

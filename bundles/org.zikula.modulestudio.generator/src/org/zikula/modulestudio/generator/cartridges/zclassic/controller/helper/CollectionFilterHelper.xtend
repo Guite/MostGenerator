@@ -9,7 +9,6 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.NumberField
-import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
@@ -549,7 +548,6 @@ class CollectionFilterHelper {
             BooleanField: false
             UserField: false
             ArrayField: false
-            ObjectField: false
             default: true
         }
     }

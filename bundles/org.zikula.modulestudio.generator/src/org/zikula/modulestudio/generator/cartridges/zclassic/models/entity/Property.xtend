@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
-import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
@@ -17,7 +16,6 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
-import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -131,7 +129,7 @@ class Property {
             UrlField:
                 '''length: «it.length»'''
             ArrayField:
-                '''type: '«IF ArrayType.JSON_ARRAY == arrayType»json«ELSE»«arrayType.literal.toLowerCase»«ENDIF»'«/*», length: «it.length*/»'''
+                '''type: '«arrayType.literal.toLowerCase»'«/*», length: «it.length*/»'''
             UploadField:
                 '''length: «it.length»'''
             ListField:
@@ -173,7 +171,6 @@ class Property {
                 }
             ArrayField: '[]'
             UploadField: 'null'
-            ObjectField: 'null'
             ListField:
                 if (!items.filter[^default].empty) {
                     if (multiple) '\'' + items.filter[^default].map[listItemValue].join('###') + '\''

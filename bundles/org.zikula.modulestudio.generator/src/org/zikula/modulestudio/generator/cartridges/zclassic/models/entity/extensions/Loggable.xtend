@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.ObjectField
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -24,7 +23,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Additional field annotations.
      */
     override columnAnnotations(DerivedField it) '''
-        «IF entity instanceof Entity && (entity as Entity).loggable && !(it instanceof ObjectField) && !translatable»«/* if loggable and translatable are combined we add store this into a translationData array field instead */»
+        «IF entity instanceof Entity && (entity as Entity).loggable && !translatable»«/* if loggable and translatable are combined we add store this into a translationData array field instead */»
             #[Gedmo\Versioned]
         «ENDIF»
     '''

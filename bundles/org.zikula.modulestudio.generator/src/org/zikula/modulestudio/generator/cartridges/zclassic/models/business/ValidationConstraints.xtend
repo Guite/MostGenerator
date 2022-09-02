@@ -15,7 +15,6 @@ import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
-import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringIsbnStyle
 import de.guite.modulestudio.metamodel.StringIssnStyle
@@ -317,9 +316,6 @@ class ValidationConstraints {
         «IF max > 0»
             #[Assert\Count(min: «min», max: «max»)]
         «ENDIF»
-    '''
-    def dispatch fieldAnnotations(ObjectField it) '''
-        «fieldAnnotationsMandatory»
     '''
     def dispatch fieldAnnotations(DatetimeField it) '''
         «fieldAnnotationsMandatory»

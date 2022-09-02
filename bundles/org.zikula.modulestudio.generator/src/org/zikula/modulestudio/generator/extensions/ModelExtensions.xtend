@@ -25,7 +25,6 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
-import de.guite.modulestudio.metamodel.ObjectField
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
@@ -303,14 +302,14 @@ class ModelExtensions {
     /**
      * Returns a list of all fields which should be displayed on the index page.
      */
-    def getFieldsForViewPage(Entity it) {
-        getDisplayFields.filter[f|f.isVisibleOnIndexPage].reject(ArrayField).reject(ObjectField).toList
+    def getFieldsForIndexPage(Entity it) {
+        getDisplayFields.filter[f|f.isVisibleOnIndexPage].reject(ArrayField).toList
     }
 
     /**
      * Returns a list of all fields which should be displayed on the detail page.
      */
-    def getFieldsForDisplayPage(Entity it) {
+    def getFieldsForDetailPage(Entity it) {
         getDisplayFields.filter[f|f.isVisibleOnDetailPage]
     }
 
@@ -334,13 +333,12 @@ class ModelExtensions {
      * Returns a list of all fields which may be used for sorting.
      */
     def getSortingFields(DataObject it) {
-        getDisplayFields.filter[f|f.isSortField].reject(UserField).reject(ArrayField).reject(ObjectField).toList
+        getDisplayFields.filter[f|f.isSortField].reject(UserField).reject(ArrayField).toList
     }
 
     /**
      * Returns a list of all editable fields of the given entity.
-     * At the moment instances of ObjectField are excluded.
-     * Also version fields are excluded as these are incremented automatically.
+     * At the moment version fields are excluded as these are incremented automatically.
      * In addition all fields which are used as join columns are excluded as well.
      */
     def getEditableFields(DataObject it) {
@@ -348,7 +346,7 @@ class ModelExtensions {
         if (!(it instanceof Entity) || (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter[!primaryKey]
         }
-        var filteredFields = fields.filter[!isVersionField].reject(ObjectField)
+        var filteredFields = fields.filter[!isVersionField]
         val joinFieldNames = newArrayList
         for (relation : incoming.filter(JoinRelationship).filter[targetField != 'id']) {
             joinFieldNames += relation.targetField
@@ -807,7 +805,6 @@ class ModelExtensions {
             UploadField: 'string'
             ListField: 'string'
             ArrayField: 'array'
-            ObjectField: 'object'
             DatetimeField: if (forPhp) 'DateTime' else dateTimeFieldTypeAsString
             default: ''
         }
