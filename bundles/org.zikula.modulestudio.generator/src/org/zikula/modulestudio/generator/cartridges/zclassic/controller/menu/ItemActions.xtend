@@ -74,7 +74,7 @@ class ItemActions {
             if ('detail' !== $context) {
                 $entityTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
                 $menu->addChild('Details', [
-                    'route' => $routePrefix . $routeArea . 'detail',
+                    'route' => $routePrefix . 'detail',
                     'routeParameters' => $entity->createUrlArgs(),
                 ])
                     ->setLinkAttribute('title', str_replace('"', '', $entityTitle))
@@ -102,7 +102,7 @@ class ItemActions {
             if ($this->permissionHelper->mayAccessHistory($entity)) {
                 if (in_array($context, ['index', 'detail'], true) && $this->loggableHelper->hasHistoryItems($entity)) {
                     $menu->addChild('History', [
-                        'route' => $routePrefix . $routeArea . 'loggablehistory',
+                        'route' => $routePrefix . 'loggablehistory',
                         'routeParameters' => $entity->createUrlArgs(),
                     ])
                         ->setLinkAttribute('title', 'Watch version history')
@@ -115,7 +115,7 @@ class ItemActions {
         «IF hasDeleteAction»
             if ($this->permissionHelper->mayDelete($entity)«IF ownerPermission» || ($isOwner && $this->permissionHelper->mayEdit($entity))«ENDIF») {
                 $menu->addChild('Delete', [
-                    'route' => $routePrefix . $routeArea . 'delete',
+                    'route' => $routePrefix . 'delete',
                     'routeParameters' => $entity->createUrlArgs(),
                 ])
                     ->setLinkAttribute('title', 'Delete this «name.formatForDisplay»')
@@ -131,7 +131,7 @@ class ItemActions {
         «IF hasDetailAction && hasIndexAction»
             if ('detail' === $context) {
                 $menu->addChild('«nameMultiple.formatForDisplayCapital» list', [
-                    'route' => $routePrefix . $routeArea . 'index',
+                    'route' => $routePrefix . 'index',
                 ])
                     «app.addLinkClass('secondary')»
                     «app.addIcon('reply')»
@@ -158,7 +158,7 @@ class ItemActions {
                     «IF !many»
                         if (null === $entity->get«relationAliasName»()) {
                             $menu->addChild('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', [
-                                'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
+                                'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . 'edit',
                                 'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»],
                             ])
                                 «app.addLinkClass('secondary')»
@@ -168,7 +168,7 @@ class ItemActions {
                         }
                     «ELSE»
                         $menu->addChild('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', [
-                            'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . $routeArea . 'edit',
+                            'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . 'edit',
                             'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»],
                         ])
                             «app.addLinkClass('secondary')»
@@ -184,7 +184,7 @@ class ItemActions {
     def private itemActionsForEditAction(Entity it) '''
         «IF !readOnly»«/*create is allowed, but editing not*/»
             $menu->addChild('Edit', [
-                'route' => $routePrefix . $routeArea . 'edit',
+                'route' => $routePrefix . 'edit',
                 'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»),
             ])
                 ->setLinkAttribute('title', 'Edit this «name.formatForDisplay»')
@@ -194,7 +194,7 @@ class ItemActions {
             ;
         «ENDIF»
         $menu->addChild('Reuse', [
-            'route' => $routePrefix . $routeArea . 'edit',
+            'route' => $routePrefix . 'edit',
             'routeParameters' => ['astemplate' => $entity->getKey()],
         ])
             ->setLinkAttribute('title', 'Reuse for new «name.formatForDisplay»')
@@ -205,7 +205,7 @@ class ItemActions {
         «IF tree != EntityTreeType.NONE»
             if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                 $menu->addChild('Add sub «name.formatForDisplay»', [
-                    'route' => $routePrefix . $routeArea . 'edit',
+                    'route' => $routePrefix . 'edit',
                     'routeParameters' => ['parent' => $entity->getKey()],
                 ])
                     ->setLinkAttribute(

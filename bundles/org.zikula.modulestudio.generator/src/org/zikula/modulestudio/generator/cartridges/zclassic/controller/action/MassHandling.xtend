@@ -13,37 +13,29 @@ class MassHandling {
 
     def generate(Entity it, Boolean isBase) '''
 
-        «handleSelectedObjects(isBase, true)»
-
-        «handleSelectedObjects(isBase, false)»
+        «handleSelectedObjects(isBase)»
     '''
 
-    def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «IF !isBase»
-            «handleSelectedObjectsDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries(
-                «handleSelectedObjectsArguments(false)»
-            ): RedirectResponse {
-                return $this->handleSelectedEntriesInternal(
+    def private handleSelectedObjects(Entity it, Boolean isBase) '''
+        «handleSelectedObjectsDocBlock(isBase)»
+        public function handleSelectedEntries(
+            «handleSelectedObjectsArguments»
+        ): RedirectResponse {
+            «IF isBase»
+                «handleSelectedObjectsBaseImpl»
+            «ELSE»
+                return $this->handleSelectedEntries(
                     $request,
                     $repository,
                     $workflowHelper,
                     $currentUserApi,
-                    $logger,
-                    «isAdmin.displayBool»
+                    $logger
                 );
-            }
-        «ELSEIF isBase && !isAdmin»
-            «handleSelectedObjectsDocBlock(isBase, isAdmin)»
-            protected function handleSelectedEntriesInternal(
-                «handleSelectedObjectsArguments(true)»
-            ): RedirectResponse {
-                «handleSelectedObjectsBaseImpl»
-            }
-        «ENDIF»
+            «ENDIF»
+        }
     '''
 
-    def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
+    def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase) '''
         «IF isBase»
             /**
              * Process status changes for multiple items.
@@ -54,23 +46,19 @@ class MassHandling {
              * @throws RuntimeException Thrown if executing the workflow action fails
              */
         «ELSE»
-            #[Route('/«IF isAdmin»admin/«ENDIF»«nameMultiple.formatForCode»/handleSelectedEntries',
-                name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»handleselectedentries',
+            #[Route('/«nameMultiple.formatForCode»/handleSelectedEntries',
+                name: '«application.name.formatForDB»_«name.formatForDB»_handleselectedentries',
                 methods: ['POST']
             )]
-            «IF isAdmin»
-                #[Theme('admin')]
-            «ENDIF»
         «ENDIF»
     '''
 
-    def private handleSelectedObjectsArguments(Entity it, Boolean internalMethod) '''
+    def private handleSelectedObjectsArguments(Entity it) '''
         Request $request,
         «name.formatForCodeCapital»RepositoryInterface $repository,
         WorkflowHelper $workflowHelper,
         CurrentUserApiInterface $currentUserApi,
-        LoggerInterface $logger«IF internalMethod»,
-        bool $isAdmin = false«ENDIF»
+        LoggerInterface $logger
     '''
 
     def private handleSelectedObjectsBaseImpl(Entity it) '''
@@ -78,7 +66,7 @@ class MassHandling {
         $action = $request->request->get('action');
         $items = $request->request->get('items');
         if (!is_array($items) || !count($items)) {
-            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«getPrimaryAction»');
+            return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«getPrimaryAction»');
         }
 
         $action = mb_strtolower($action);
@@ -171,6 +159,6 @@ class MassHandling {
             }
         }
 
-        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«getPrimaryAction»');
+        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«getPrimaryAction»');
     '''
 }

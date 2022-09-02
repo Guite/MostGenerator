@@ -16,18 +16,18 @@ class LoggableHistory {
 
     def generate(Entity it, Boolean isBase) '''
 
-        «loggableHistory(isBase, true)»
-
-        «loggableHistory(isBase, false)»
+        «loggableHistory(isBase)»
     '''
 
-    def private loggableHistory(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «IF !isBase»
-            «loggableHistoryDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminL«ELSE»l«ENDIF»oggableHistory(
-                «loggableHistoryArguments(false)»
-            ): Response {
-                return $this->loggableHistoryInternal(
+    def private loggableHistory(Entity it, Boolean isBase) '''
+        «loggableHistoryDocBlock(isBase)»
+        public function loggableHistory(
+            «loggableHistoryArguments»
+        ): Response {
+            «IF isBase»
+                «loggableHistoryBaseImpl»
+            «ELSE»
+                return parent::loggableHistory(
                     $request,
                     $permissionHelper,
                     $repository,
@@ -35,21 +35,13 @@ class LoggableHistory {
                     $loggableHelper,«IF hasTranslatableFields»
                     $translatableHelper,«ENDIF»
                     $workflowHelper,
-                    «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»,
-                    «isAdmin.displayBool»
+                    «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»
                 );
-            }
-        «ELSEIF isBase && !isAdmin»
-            «loggableHistoryDocBlock(isBase, isAdmin)»
-            protected function loggableHistoryInternal(
-                «loggableHistoryArguments(true)»
-            ): Response {
-                «loggableHistoryBaseImpl»
-            }
-        «ENDIF»
+            «ENDIF»
+        }
     '''
 
-    def private loggableHistoryDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
+    def private loggableHistoryDocBlock(Entity it, Boolean isBase) '''
         «IF isBase»
             /**
              * This method provides a change history for a given «name.formatForDisplay».
@@ -58,8 +50,8 @@ class LoggableHistory {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
         «ELSE»
-            #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
-                name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»loggablehistory',
+            #[Route('/«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
+                name: '«application.name.formatForDB»_«name.formatForDB»_loggablehistory',
                 «IF hasSluggableFields && slugUnique»
                 requirements: ['slug' => '«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»'],
                 «ELSE»
@@ -68,13 +60,10 @@ class LoggableHistory {
                 «ENDIF»
                 methods: ['GET']
             )]
-            «IF isAdmin»
-                #[Theme('admin')]
-            «ENDIF»
         «ENDIF»
     '''
 
-    def private loggableHistoryArguments(Entity it, Boolean internalMethod) '''
+    def private loggableHistoryArguments(Entity it) '''
         Request $request,
         PermissionHelper $permissionHelper,
         «name.formatForCodeCapital»RepositoryInterface $repository,
@@ -84,8 +73,7 @@ class LoggableHistory {
             TranslatableHelper $translatableHelper,
         «ENDIF»
         WorkflowHelper $workflowHelper,
-        «IF hasSluggableFields && slugUnique»string $slug = ''«ELSE»int $id = 0«ENDIF»«IF internalMethod»,
-        bool $isAdmin = false«ENDIF»
+        «IF hasSluggableFields && slugUnique»string $slug = ''«ELSE»int $id = 0«ENDIF»
     '''
 
     def private loggableHistoryBaseImpl(Entity it) '''
@@ -110,12 +98,12 @@ class LoggableHistory {
             );
         }
 
+        $isAdmin = false;«/*TODO*/»
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
         if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
             throw new AccessDeniedException();
         }
 
-        $routeArea = $isAdmin ? 'admin' : '';
         $logEntries = $logEntryRepository->getLogEntries($«name.formatForCode»);
 
         $revertToVersion = $request->query->getInt('revert');
@@ -168,7 +156,7 @@ class LoggableHistory {
             «ENDIF»
 
             return $this->redirectToRoute(
-                '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'loggablehistory',
+                '«application.appName.formatForDB»_«name.formatForDB»_loggablehistory',
                 [«routeParams(name.formatForCode, false)»]
             );
         }
@@ -197,7 +185,6 @@ class LoggableHistory {
         }
 
         $templateParameters = [
-            'routeArea' => $routeArea,
             '«name.formatForCode»' => $«name.formatForCode»,
             'logEntries' => $logEntries,
             'isDiffView' => $isDiffView,

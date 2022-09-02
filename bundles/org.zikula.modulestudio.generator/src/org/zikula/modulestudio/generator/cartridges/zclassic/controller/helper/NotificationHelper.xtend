@@ -368,8 +368,7 @@ class NotificationHelper {
 
             $hasDetailAction = in_array($objectType, ['«getAllEntities.filter[hasDetailAction].map[name.formatForCode].join('\', \'')»'], true);
             $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
-            $routeArea = in_array($this->recipientType, ['moderator', 'superModerator'], true) ? 'admin' : '';
-            $routePrefix = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $routeArea;
+            $routePrefix = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_';
 
             $urlArgs = $this->entity->createUrlArgs();
             $detailUrl = $hasDetailAction

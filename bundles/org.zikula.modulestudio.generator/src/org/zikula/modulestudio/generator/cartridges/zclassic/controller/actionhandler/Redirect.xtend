@@ -107,11 +107,7 @@ class Redirect {
             }
 
             «IF hasIndexAction || hasDetailAction && tree != EntityTreeType.NONE»
-                $routeArea = array_key_exists('routeArea', $this->templateParameters)
-                    ? $this->templateParameters['routeArea']
-                    : ''
-                ;
-                $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
+                $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
 
             «ENDIF»
             «IF hasIndexAction»
@@ -177,8 +173,7 @@ class Redirect {
                 return $this->getDefaultReturnUrl($args);
             }
 
-            $routeArea = str_starts_with($this->returnTo, 'admin') ? 'admin' : '';
-            $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_' . $routeArea;
+            $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
 
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {
@@ -210,18 +205,18 @@ class Redirect {
                         «IF sourceEntity.hasIndexAction»
                             case 'userIndex«sourceEntity.nameMultiple.formatForCodeCapital»':
                             case 'adminIndex«sourceEntity.nameMultiple.formatForCodeCapital»':
-                                return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'index');
+                                return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_index');
                             «IF sourceEntity.standardFields»
                                 case 'userOwnIndex«sourceEntity.nameMultiple.formatForCodeCapital»':
                                 case 'adminOwnIndex«sourceEntity.nameMultiple.formatForCodeCapital»':
-                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'index', ['own' => 1]);
+                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_index', ['own' => 1]);
                             «ENDIF»
                         «ENDIF»
                         «IF sourceEntity.hasDetailAction»
                             case 'userDetail«sourceEntity.name.formatForCodeCapital»':
                             case 'adminDetail«sourceEntity.name.formatForCodeCapital»':
                                 if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»']) || (method_exists($this->entityRef, 'get«incomingRelation.getRelationAliasName(false).toFirstUpper»') && null !== $this->entityRef->get«incomingRelation.getRelationAliasName(false).toFirstUpper»())) {
-                                    $routeName = '«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_' . $routeArea . 'detail';
+                                    $routeName = '«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_detail';
                                     $«incomingRelation.getRelationAliasName(false)»Id = !empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»']) ? $this->relationPresets['«incomingRelation.getRelationAliasName(false)»'] : $this->entityRef->get«incomingRelation.getRelationAliasName(false).toFirstUpper»();
 
                                     return $this->router->generate($routeName, ['id' => $«incomingRelation.getRelationAliasName(false)»Id]);

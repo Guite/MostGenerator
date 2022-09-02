@@ -247,12 +247,12 @@ class Detail {
             <dd>
               {% if not isQuickView %}
                   «IF linkEntity.hasDetailAction»
-                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'detail'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
+                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_detail'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
                   «ENDIF»
                     {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
                   «IF linkEntity.hasDetailAction»
                     {% endapply %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'detail', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_detail', {«IF !linkEntity.hasSluggableFields || !linkEntity.slugUnique»«linkEntity.routePkParams(relObjName, true)»«ENDIF»«linkEntity.appendSlug(relObjName, true)», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
@@ -324,14 +324,14 @@ class Detail {
                 {% set parents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
                 {% if parents is not null and parents is iterable and parents|length > 0 %}
                     <h4>{% trans from 'messages' %}All parents{% endtrans %}</h4>
-                    {{ _self.list_relatives(parents, routeArea) }}
+                    {{ _self.list_relatives(parents) }}
                 {% endif %}
             {% endif %}
             {% if directParent is not defined or directParent == true %}
                 {% set parents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directParent') %}
                 {% if parents is not null and parents is iterable and parents|length > 0 %}
                     <h4>{% trans from 'messages' %}Direct parent{% endtrans %}</h4>
-                    {{ _self.list_relatives(parents, routeArea) }}
+                    {{ _self.list_relatives(parents) }}
                 {% endif %}
             {% endif %}
         {% endif %}
@@ -339,14 +339,14 @@ class Detail {
             {% set allChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allChildren') %}
             {% if allChildren is not null and allChildren is iterable and allChildren|length > 0 %}
                 <h4>{% trans from 'messages' %}All children{% endtrans %}</h4>
-                {{ _self.list_relatives(allChildren, routeArea) }}
+                {{ _self.list_relatives(allChildren) }}
             {% endif %}
         {% endif %}
         {% if directChildren is not defined or directChildren == true %}
             {% set directChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directChildren') %}
             {% if directChildren is not null and directChildren is iterable and directChildren|length > 0 %}
                 <h4>{% trans from 'messages' %}Direct children{% endtrans %}</h4>
-                {{ _self.list_relatives(directChildren, routeArea) }}
+                {{ _self.list_relatives(directChildren) }}
             {% endif %}
         {% endif %}
         {% if «objName».lvl > 0 %}
@@ -354,25 +354,25 @@ class Detail {
                 {% set predecessors = «pluginPrefix»_treeSelection('«objName»', node=«objName», target='predecessors') %}
                 {% if predecessors is not null and predecessors is iterable and predecessors|length > 0 %}
                     <h4>{% trans from 'messages' %}Predecessors{% endtrans %}</h4>
-                    {{ _self.list_relatives(predecessors, routeArea) }}
+                    {{ _self.list_relatives(predecessors) }}
                 {% endif %}
             {% endif %}
             {% if successors is not defined or successors == true %}
                 {% set successors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='successors') %}
                 {% if successors is not null and successors is iterable and successors|length > 0 %}
                     <h4>{% trans from 'messages' %}Successors{% endtrans %}</h4>
-                    {{ _self.list_relatives(successors, routeArea) }}
+                    {{ _self.list_relatives(successors) }}
                 {% endif %}
             {% endif %}
             {% if preandsuccessors is not defined or preandsuccessors == true %}
                 {% set preandsuccessors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='preandsuccessors') %}
                 {% if preandsuccessors is not null and preandsuccessors is iterable and preandsuccessors|length > 0 %}
                     <h4>{% trans from 'messages' %}Siblings{% endtrans %}</h4>
-                    {{ _self.list_relatives(preandsuccessors, routeArea) }}
+                    {{ _self.list_relatives(preandsuccessors) }}
                 {% endif %}
             {% endif %}
         {% endif %}
-        {% macro list_relatives(items, routeArea) %}
+        {% macro list_relatives(items) %}
             «nodeLoop(appName, 'items')»
         {% endmacro %}
     '''
@@ -381,7 +381,7 @@ class Detail {
         «val objName = name.formatForCode»
         <ul>
         {% for node in «collectionName» %}
-            <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'detail'«routeParams('node', true)») }}" title="{{ node|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ node|«application.appName.formatForDB»_formattedTitle }}</a></li>
+            <li><a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_detail'«routeParams('node', true)») }}" title="{{ node|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ node|«application.appName.formatForDB»_formattedTitle }}</a></li>
         {% endfor %}
         </ul>
     '''

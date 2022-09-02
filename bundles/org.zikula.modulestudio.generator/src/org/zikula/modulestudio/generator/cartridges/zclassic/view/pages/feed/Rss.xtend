@@ -61,8 +61,8 @@ class Rss {
         {% for «objName» in items %}
             <item>
                 <title><![CDATA[{{ «objName»|«app.appName.formatForDB»_formattedTitle }}]]></title>
-                <link>{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDetailAction»«routeParams(objName, true)»«ENDIF») }}</link>
-                <guid>{{ url('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasDetailAction»«routeParams(objName, true)»«ENDIF») }}</guid>
+                <link>{{ url('«app.appName.formatForDB»_«name.formatForDB»_«defaultAction»'«IF hasDetailAction»«routeParams(objName, true)»«ENDIF») }}</link>
+                <guid>{{ url('«app.appName.formatForDB»_«name.formatForDB»_«defaultAction»'«IF hasDetailAction»«routeParams(objName, true)»«ENDIF») }}</guid>
                 «IF standardFields»
                     {% if «objName».createdBy|default and «objName».createdBy.getUid() > 0 %}
                         {% set creatorAttributes = «objName».createdBy.getAttributes() %}

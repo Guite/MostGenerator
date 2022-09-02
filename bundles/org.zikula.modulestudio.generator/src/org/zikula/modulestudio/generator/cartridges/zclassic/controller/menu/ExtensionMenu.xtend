@@ -92,7 +92,6 @@ class ExtensionMenu {
                 }
 
                 $isAdmin = ExtensionMenuInterface::CONTEXT_ADMIN === $context;
-                $routeArea = $isAdmin ? 'admin' : '';
                 «menuEntries»
             }
 
@@ -114,7 +113,7 @@ class ExtensionMenu {
             if ($isAdmin) {
                 $moderationEntries = $this->workflowHelper->collectAmountOfModerationItems()
                 foreach ($entry as $moderationEntries) {
-                    yield MenuItem::linktoRoute($entry['title'], null, '«appName.formatForDB»_' . mb_strtolower($entry['objectType'] . '_' . $routeArea . 'index', ['workflowState' => $entry['state']])
+                    yield MenuItem::linktoRoute($entry['title'], null, '«appName.formatForDB»_' . mb_strtolower($entry['objectType'] . '_index', ['workflowState' => $entry['state']])
                         ->setBadge($entry['amount'], 'primary');
             }
         «ENDIF»
@@ -122,7 +121,7 @@ class ExtensionMenu {
 
     def private menuEntryForCrud(Entity it) '''
         if ($this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)) {
-            yield MenuItem::linktoRoute(t('«nameMultiple.formatForDisplayCapital»'), null, '«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . 'index'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»);
+            yield MenuItem::linktoRoute(t('«nameMultiple.formatForDisplayCapital»'), null, '«application.appName.formatForDB»_«name.formatForDB»_index'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»);
         }
     '''
 

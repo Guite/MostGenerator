@@ -58,6 +58,7 @@ class Actions {
         «ENDIF»
         $objectType = '«name.formatForCode»';
         // permission check
+        $isAdmin = false;«/*TODO*/»
         $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
         «IF action instanceof IndexAction && tree != EntityTreeType.NONE»
             if (!$isAdmin && 'tree' === $request->query->getAlnum('tpl')) {
@@ -76,7 +77,7 @@ class Actions {
                         throw new AccessDeniedException();
                     }
                     $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-                    $isOwner = $currentUserId > 0 && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId === $«name.formatForCode»->getCreatedBy()->getUid();
+                    $isOwner = 0 < $currentUserId && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId === $«name.formatForCode»->getCreatedBy()->getUid();
                     if (!$isOwner || !$permissionHelper->mayEdit($«name.formatForCode»)) {
                         throw new AccessDeniedException();
                     }
@@ -97,9 +98,7 @@ class Actions {
     }
 
     def private dispatch actionImplBody(Entity it, IndexAction action) '''
-        $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : '',
-        ];
+        $templateParameters = [];
         «IF loggable»
 
             // check if deleted entities should be displayed
@@ -116,7 +115,7 @@ class Actions {
         $request->query->set('page', $page);
         $request->query->set('num', $num);
 
-        $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'index';
+        $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_index';
         $sortableColumns = new SortableColumns($router, $routeName, 'sort', 'sortdir');
         «IF tree != EntityTreeType.NONE»
 
@@ -194,6 +193,7 @@ class Actions {
         «ENDIF»
         «IF loggable»
             $requestedVersion = $request->query->getInt('version');
+            $isAdmin = false;«/*TODO*/»
             $versionPermLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
             if (0 < $requestedVersion && $permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
                 // preview of a specific version is desired, but detach entity
@@ -202,7 +202,6 @@ class Actions {
 
         «ENDIF»
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : '',
             $objectType => $«name.formatForCode»,
         ];
 
@@ -232,7 +231,6 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, EditAction action) '''
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : '',
         ];
 
         // delegate form processing to the form handler
@@ -261,7 +259,7 @@ class Actions {
         }
 
         // redirect to the «IF hasIndexAction»list of «nameMultiple.formatForDisplay»«ELSE»«primaryAction» page«ENDIF»
-        $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF hasIndexAction»index«ELSE»«primaryAction»«ENDIF»';
+        $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_«IF hasIndexAction»index«ELSE»«primaryAction»«ENDIF»';
 
         // check whether deletion is allowed
         $deleteActionId = 'delete';
@@ -301,7 +299,6 @@ class Actions {
         }
 
         $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : '',
             'deleteForm' => $form->createView(),
             $objectType => $«name.formatForCode»,
         ];
@@ -339,9 +336,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, CustomAction action) '''
         «/* TODO custom logic */»
-        $templateParameters = [
-            'routeArea' => $isAdmin ? 'admin' : '',
-        ];
+        $templateParameters = [];
 
         // return template
         return $this->render('@«app.vendorAndName»/«name.formatForCodeCapital»/«action.name.formatForCode.toFirstLower».html.twig', $templateParameters);

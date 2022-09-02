@@ -47,7 +47,7 @@ class IndexActions {
                     }
                 «ENDIF»
                 $menu->addChild('Switch to table view', [
-                    'route' => $routePrefix . $routeArea . 'index',
+                    'route' => $routePrefix . 'index',
                 ])
                     ->setAttribute('icon', 'fas fa-table')
                 ;
@@ -65,7 +65,7 @@ class IndexActions {
             «linkTogglePagination»
             «IF tree != EntityTreeType.NONE»
                 $menu->addChild('Switch to hierarchy view', [
-                    'route' => $routePrefix . $routeArea . 'index',
+                    'route' => $routePrefix . 'index',
                     'routeParameters' => ['tpl' => 'tree'],
                 ])
                     ->setAttribute('icon', 'fas fa-code-branch')
@@ -73,7 +73,7 @@ class IndexActions {
             «ENDIF»
             «IF geographical»
                 $menu->addChild('Show map', [
-                    'route' => $routePrefix . $routeArea . 'index',
+                    'route' => $routePrefix . 'index',
                     'routeParameters' => ['tpl' => 'map', 'all' => 1],
                 ])
                     ->setAttribute('icon', 'fas fa-map')
@@ -89,7 +89,7 @@ class IndexActions {
                     }
                     if ($hasDeletedEntities) {
                         $menu->addChild('View deleted «nameMultiple.formatForDisplay»', [
-                            'route' => $routePrefix . $routeArea . 'index',
+                            'route' => $routePrefix . 'index',
                             'routeParameters' => ['deleted' => 1],
                         ])
                             ->setAttribute('icon', 'fas fa-trash-alt')
@@ -111,7 +111,7 @@ class IndexActions {
         if ($canBeCreated) {
             if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                 $menu->addChild('Create «name.formatForDisplay»', [
-                    'route' => $routePrefix . $routeArea . 'edit',
+                    'route' => $routePrefix . 'edit',
                 ])
                     ->setAttribute('icon', 'fas fa-plus')
                     ->setExtra('translation_domain', '«name.formatForCode»')
@@ -130,7 +130,7 @@ class IndexActions {
         if (1 === $query->getInt('all')) {
             unset($routeParameters['all']);
             $menu->addChild('Back to paginated view', [
-                'route' => $routePrefix . $routeArea . 'index',
+                'route' => $routePrefix . 'index',
                 'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fas fa-table')
@@ -138,7 +138,7 @@ class IndexActions {
         } else {
             $routeParameters['all'] = 1;
             $menu->addChild('Show all entries', [
-                'route' => $routePrefix . $routeArea . 'index',
+                'route' => $routePrefix . 'index',
                 'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fas fa-table')
@@ -159,7 +159,7 @@ class IndexActions {
         if (1 === $query->getInt('own')) {
             $routeParameters['own'] = 0;
             $menu->addChild('Show also entries from other users', [
-                'route' => $routePrefix . $routeArea . 'index',
+                'route' => $routePrefix . 'index',
                 'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fas fa-users')
@@ -167,7 +167,7 @@ class IndexActions {
         } else {
             $routeParameters['own'] = 1;
             $menu->addChild('Show only own entries', [
-                'route' => $routePrefix . $routeArea . 'index',
+                'route' => $routePrefix . 'index',
                 'routeParameters' => $routeParameters,
             ])
                 ->setAttribute('icon', 'fas fa-user')

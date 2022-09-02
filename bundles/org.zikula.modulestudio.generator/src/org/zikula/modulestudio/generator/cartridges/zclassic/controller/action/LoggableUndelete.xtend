@@ -17,36 +17,23 @@ class LoggableUndelete {
 
     def generate(Entity it, Boolean isBase) '''
 
-        «undelete(isBase, true)»
-
-        «undelete(isBase, false)»
+        «undelete(isBase)»
     '''
 
-    def private undelete(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «IF !isBase»
-            «undeleteDocBlock(isBase, isAdmin)»
-            public function «IF isAdmin»adminU«ELSE»u«ENDIF»ndelete(
-                «undeleteArguments(false)»
-            ): Response {
-                return $this->undeleteInternal(
-                    $request,
-                    $loggableHelper,«IF hasTranslatableFields»
-                    $translatableHelper,«ENDIF»
-                    $id,
-                    «isAdmin.displayBool»
-                );
-            }
-        «ELSEIF isBase && !isAdmin»
-            «undeleteDocBlock(isBase, isAdmin)»
-            protected function undeleteInternal(
-                «undeleteArguments(true)»
-            ): Response {
+    def private undelete(Entity it, Boolean isBase) '''
+        «undeleteDocBlock(isBase)»
+        public function undelete(
+            «undeleteArguments»
+        ): Response {
+            «IF isBase»
                 «loggableUndeleteBaseImpl»
-            }
-        «ENDIF»
+            «ELSE»
+                return parent::undelete($request, $loggableHelper«IF hasTranslatableFields», $translatableHelper«ENDIF», $id);
+            «ENDIF»
+        }
     '''
 
-    def private undeleteDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
+    def private undeleteDocBlock(Entity it, Boolean isBase) '''
         «IF isBase»
             /**
              * «IF hasDetailAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
@@ -55,19 +42,16 @@ class LoggableUndelete {
              * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
              */
         «ELSE»
-            #[Route('/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/deleted/{id}.{_format}',
-                name: '«application.name.formatForDB»_«name.formatForDB»_«IF isAdmin»admin«ENDIF»deleted',
+            #[Route('/«name.formatForCode»/deleted/{id}.{_format}',
+                name: '«application.name.formatForDB»_«name.formatForDB»_deleted',
                 requirements: ['id' => '\d+', '_format' => 'html'],
                 defaults: ['_format' => 'html'],
                 methods: ['GET']
             )]
-            «IF isAdmin»
-                #[Theme('admin')]
-            «ENDIF»
         «ENDIF»
     '''
 
-    def private undeleteArguments(Entity it, Boolean internalMethod) '''
+    def private undeleteArguments(Entity it) '''
         Request $request,
         PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
@@ -84,8 +68,7 @@ class LoggableUndelete {
         «IF hasTranslatableFields»
             TranslatableHelper $translatableHelper,
         «ENDIF»
-        int $id = 0«IF internalMethod»,
-        bool $isAdmin = false«ENDIF»
+        int $id = 0
     '''
 
     def private loggableUndeleteBaseImpl(Entity it) '''
@@ -100,6 +83,7 @@ class LoggableUndelete {
             );
         }
 
+        $isAdmin = false;«/*TODO*/»
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
         if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
             throw new AccessDeniedException();
@@ -108,7 +92,7 @@ class LoggableUndelete {
         «IF hasDetailAction»
             $preview = $request->query->getInt('preview');
             if (1 === $preview) {
-                return $this->displayInternal(
+                return $this->detail(
                     $request,
                     $permissionHelper,
                     $controllerHelper,
@@ -123,8 +107,7 @@ class LoggableUndelete {
                         $entityDisplayHelper,
                     «ENDIF»
                     $«name.formatForCode»,
-                    null,
-                    $isAdmin
+                    null
                 );
             }
 
@@ -135,9 +118,7 @@ class LoggableUndelete {
             $translatableHelper->refreshTranslationsFromLogData($«name.formatForCode»);
         «ENDIF»
 
-        $routeArea = $isAdmin ? 'admin' : '';
-
-        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_' . $routeArea . '«IF hasDetailAction»detail', $«name.formatForCode»->createUrlArgs()«ELSEIF hasIndexAction»index'«ELSE»«primaryAction»'«ENDIF»);
+        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«IF hasDetailAction»detail', $«name.formatForCode»->createUrlArgs()«ELSEIF hasIndexAction»index'«ELSE»«primaryAction»'«ENDIF»);
     '''
 
     def private undeletion(Entity it) '''

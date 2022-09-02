@@ -62,7 +62,7 @@ class IndexQuickNavForm {
         «ENDIF»
         «formFields»
         {{ form_widget(quickNavForm.updateview) }}
-        <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_' ~ routeArea|default ~ 'index', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="{% trans %}Back to default view{% endtrans %}" class="btn btn-secondary btn-sm">{% trans %}Reset{% endtrans %}</a>
+        <a href="{{ path('«application.appName.formatForDB»_«name.formatForCode.toLowerCase»_index', {tpl: app.request.query.get('tpl', ''), all: app.request.query.get('all', '')}) }}" title="{% trans %}Back to default view{% endtrans %}" class="btn btn-secondary btn-sm">{% trans %}Reset{% endtrans %}</a>
         «IF categorisable»
             {% if categoriesEnabled and quickNavForm.categories is defined and quickNavForm.categories is not null %}
                 {% if categoryFilter is defined and categoryFilter != true %}
