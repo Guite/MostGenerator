@@ -134,14 +134,14 @@ class NamingExtensions {
      * Returns the base path for the Flex recipe.
      */
     def getRecipePath(Application it) {
-        getAppDocPath + 'recipes/'
+        getAppDocPath + 'recipe/'
     }
 
     /**
      * Returns the base path for any assets.
      */
     def getAssetPath(Application it) {
-        getResourcesPath + 'recipes/public/'
+        getResourcesPath + 'public/'
     }
 
     /**

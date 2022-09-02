@@ -64,7 +64,7 @@ class WorkflowPostProcess {
      * Copies the admin image for the generated application.
      */
     def private copyAdminImage() {
-        val targetFolder = settings.getPathToModuleImageAssets
+        val targetFolder = settings.getPathToBundleImageAssets
         if (!targetFolder.exists) {
             return
         }

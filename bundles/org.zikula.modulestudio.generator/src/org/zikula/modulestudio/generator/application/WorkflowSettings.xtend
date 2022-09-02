@@ -115,11 +115,11 @@ class WorkflowSettings {
     }
 
     /**
-     * Returns path to the module's image assets folder.
+     * Returns path to the bundle's image assets folder.
      *
      * @return path to images folder
      */
-    def getPathToModuleImageAssets() {
+    def getPathToBundleImageAssets() {
         val targetBasePath = getPathToBundleRoot
         var imagePath = 'Resources' + File.separator + 'public' + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         var targetFolder = new File(targetBasePath + imagePath)

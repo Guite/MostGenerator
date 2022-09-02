@@ -125,7 +125,7 @@ class ImageCreator {
      */
     def private determineTargetDirectories() {
         if (context == CONTEXT_ADMIN) {
-            targetDirectories = #[settings.getPathToModuleImageAssets]
+            targetDirectories = #[settings.getPathToBundleImageAssets]
         }
     }
 

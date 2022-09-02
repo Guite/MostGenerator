@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -10,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Recipe {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -41,7 +43,7 @@ class Recipe {
 
     def private Routes(Application it) '''
         «vendor.formatForDB»_«name.formatForDB»:
-            resource: "@«appName»/Resources/config/routing.yaml"
+            resource: '@«appName»/Resources/config/routing.yaml'
     '''
 
     def private Instructions(Application it) '''
@@ -54,8 +56,15 @@ class Recipe {
 
         «'  '»* <fg=blue>JavaScript routes</>
         «'  '»  If you use the <info>FOSJsRoutingBundle</> dump JS routes using <comment>php bin/console fos:js-routing:dump</>.
+        «IF hasUploads»
 
-        «'  '»* <fg=blue>Additional setup tasks</>
-        «'  '»  Execute <comment>php bin/console zikula:init-bundle «appName»</>.
+            «'  '»* <fg=blue>Upload folder</>
+            «'  '»  Ensure the directory `/public/uploads/«appName»/` is writable including all sub folders.
+        «ENDIF»
+        «IF hasUploads || hasCategorisableEntities»
+
+            «'  '»* <fg=blue>Additional setup tasks</>
+            «'  '»  Execute <comment>php bin/console zikula:init-bundle «appName»</>.
+        «ENDIF»
     '''
 }
