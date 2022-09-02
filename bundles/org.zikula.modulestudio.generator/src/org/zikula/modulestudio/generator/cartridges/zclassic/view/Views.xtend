@@ -6,13 +6,13 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Emails
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Categories
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.ModerationPanel
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.StandardFields
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.StandardFields
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Custom
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Delete
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Detail
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.History
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Index
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Csv
@@ -32,7 +32,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Detail
 
 class Views {
 
@@ -61,9 +60,6 @@ class Views {
         // helper templates
         if (hasCategorisableEntities) {
             new Categories().generate(it, fsa)
-        }
-        if (generateModerationPanel && needsApproval) {
-            new ModerationPanel().generate(it, fsa)
         }
         if (hasStandardFieldEntities) {
             new StandardFields().generate(it, fsa)

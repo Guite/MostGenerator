@@ -12,7 +12,7 @@ XPECT files ---
     !AcmeSimpleTestBundle.php
     AcmeSimpleTestBundle.generated.php
     Base/AbstractAcmeSimpleTestBundle.php
-    Entity/Base/AbstractArticleEntity.php
+    Entity/Base/AbstractArticle.php
     Resources/views/Article/index.html.twig
     !Resources/views/Article/detail.html.twig
     Resources/views/Article/detail.html.generated.twig

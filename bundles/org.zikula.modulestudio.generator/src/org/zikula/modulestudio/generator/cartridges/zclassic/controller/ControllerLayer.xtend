@@ -10,7 +10,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.L
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableUndelete
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.MassHandling
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AjaxController
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.ExtensionMenu
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.MenuBuilder
@@ -52,11 +51,6 @@ class ControllerLayer {
         new Routing().generate(it, fsa)
         if (hasIndexActions) {
             new QuickNavigationType().generate(it, fsa)
-        }
-
-        if (generateExternalControllerAndFinder) {
-            // controller for external calls
-            new ExternalController().generate(it, fsa)
         }
     }
 

@@ -9,7 +9,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatI
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetListEntry
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.IncreaseCounter
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ModerationObjects
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectState
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
@@ -17,7 +16,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Plugins {
 
@@ -25,7 +23,6 @@ class Plugins {
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating Twig extension class'.printIfNotTesting(fsa)
@@ -111,9 +108,6 @@ class Plugins {
                 «IF hasTrees»
                     new TwigFunction('«appNameLower»_treeData', [TwigRuntime::class, 'getTreeData'], ['is_safe' => ['html']]),
                     new TwigFunction('«appNameLower»_treeSelection', [TwigRuntime::class, 'getTreeSelection']),
-                «ENDIF»
-                «IF generateModerationPanel && needsApproval»
-                    new TwigFunction('«appNameLower»_moderationObjects', [TwigRuntime::class, 'getModerationObjects']),
                 «ENDIF»
                 «IF !getEntitiesWithCounterFields.empty»
                     new TwigFunction('«appNameLower»_increaseCounter', [TwigRuntime::class, 'increaseCounter']),
@@ -309,9 +303,6 @@ class Plugins {
         if (hasTrees) {
             result += new TreeData().generate(it)
             result += new TreeSelection().generate(it)
-        }
-        if (generateModerationPanel && needsApproval) {
-            result += new ModerationObjects().generate(it)
         }
         if (!getEntitiesWithCounterFields.empty) {
             result += new IncreaseCounter().generate(it)

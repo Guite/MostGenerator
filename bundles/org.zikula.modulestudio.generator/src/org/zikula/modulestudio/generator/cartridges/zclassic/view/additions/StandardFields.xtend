@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
+package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.IntegerField

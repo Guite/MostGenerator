@@ -35,11 +35,6 @@ class Styles {
         fileName = 'custom.css'
         fsa.generateFile(getAppCssPath + fileName, '/* this file is intended for custom styles */')
 
-        if (generateExternalControllerAndFinder) {
-            fileName = 'finder.css'
-            fsa.generateFile(getAppCssPath + fileName, finderStyles)
-        }
-
         if (generatePdfSupport) {
             fileName = 'pdf.css'
             fsa.generateFile(getAppCssPath + fileName, pdfStyles)
@@ -280,62 +275,6 @@ class Styles {
         div.«cssPrefix»-index form.«cssPrefix»-quicknav label {
            margin: 0 5px;
            display: inline;
-        }
-    '''
-
-    def private finderStyles(Application it) '''
-        body {
-            background-color: #ddd;
-            margin: 10px;
-            text-align: left;
-        }
-
-        #«cssPrefix»ItemContainer {
-            background-color: #eee;
-            height: 300px;
-            overflow: auto;
-            padding: 5px;
-        }
-
-        #«cssPrefix»ItemContainer ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #«cssPrefix»ItemContainer a {
-            color: #000;
-            margin: 0.1em 0.2em;
-            text-decoration: underline;
-        }
-        #«cssPrefix»ItemContainer a:hover,
-        #«cssPrefix»ItemContainer a:focus,
-        #«cssPrefix»ItemContainer a:active {
-            color: #900;
-            text-decoration: none;
-        }
-        «IF hasImageFields»
-
-            #«cssPrefix»ItemContainer a img {
-                border: none;
-            }
-
-            #«cssPrefix»ItemContainer a img {
-                border: 1px solid #ccc;
-                background-color: #f5f5f5;
-                padding: 0.5em;
-            }
-            #«cssPrefix»ItemContainer a:hover img,
-            #«cssPrefix»ItemContainer a:focus img,
-            #«cssPrefix»ItemContainer a:active img {
-                background-color: #fff;
-            }
-        «ENDIF»
-
-        .«cssPrefix»-finderform fieldset,
-        .«cssPrefix»-finderform fieldset legend {
-            background-color: #fff;
-            border: none;
         }
     '''
 

@@ -49,20 +49,17 @@ class AjaxController {
     '''
 
     def private commonAppImports(Application it) '''
-        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
+        «IF needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
             use «appNamespace»\Entity\Factory\EntityFactory;
         «ENDIF»
-        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck»
+        «IF needsAutoCompletion || needsDuplicateCheck»
             use «appNamespace»\Helper\ControllerHelper;
         «ENDIF»
-        «IF generateExternalControllerAndFinder || needsAutoCompletion || hasTrees»
+        «IF needsAutoCompletion || hasTrees»
             use «appNamespace»\Helper\EntityDisplayHelper;
         «ENDIF»
         «IF needsAutoCompletion && hasImageFields»
             use «appNamespace»\Helper\ImageHelper;
-        «ENDIF»
-        «IF generateExternalControllerAndFinder»
-            use «appNamespace»\Helper\PermissionHelper;
         «ENDIF»
         «IF hasTrees»
             use «appNamespace»\Helper\WorkflowHelper;
@@ -82,13 +79,10 @@ class AjaxController {
         «IF hasTrees && hasEditActions»
             use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         «ENDIF»
-        «IF generateExternalControllerAndFinder || needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
+        «IF needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         «ENDIF»
         «commonSystemImports(true)»
-        «IF generateExternalControllerAndFinder»
-            use «appNamespace»\Entity\EntityInterface;
-        «ENDIF»
         «commonAppImports»
 
         /**
@@ -106,10 +100,6 @@ class AjaxController {
     '''
 
     def additionalAjaxFunctionsBase(Application it) '''
-        «IF generateExternalControllerAndFinder»
-
-            «getItemListFinderBase»
-        «ENDIF»
         «IF needsAutoCompletion»
 
             «getItemListAutoCompletionBase»
@@ -130,133 +120,6 @@ class AjaxController {
 
             «updateSortPositionsBase»
         «ENDIF»
-    '''
-
-    def private getItemListFinderBase(Application it) '''
-        «getItemListFinderDocBlock(true)»
-        «getItemListFinderSignature» {
-            «getItemListFinderBaseImpl»
-        }
-
-        «getItemListFinderPrepareSlimItem»
-    '''
-
-    def private getItemListFinderDocBlock(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Retrieve item list for finder selections.
-             */
-        «ELSE»
-            #[Route('/getItemListFinder',
-                name: '«appName.formatForDB»_ajax_getitemlistfinder',
-                methods: ['GET'],
-                options: ['expose' => true])
-            ]
-        «ENDIF»
-    '''
-
-    def private getItemListFinderSignature(Application it) '''
-        public function getItemListFinder(
-            Request $request,
-            ControllerHelper $controllerHelper,
-            PermissionHelper $permissionHelper,
-            EntityFactory $entityFactory,
-            EntityDisplayHelper $entityDisplayHelper
-        ): JsonResponse'''
-
-    def private getItemListFinderBaseImpl(Application it) '''
-        if (!$request->isXmlHttpRequest()) {
-            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            throw new AccessDeniedException();
-        }
-
-        $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListFinder'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
-        }
-
-        $repository = $entityFactory->getRepository($objectType);
-
-        $sort = $request->query->getAlnum('sort');
-        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields(), true)) {
-            $sort = $repository->getDefaultSortingField();
-        }
-
-        $sdir = mb_strtolower($request->query->getAlpha('sortdir'));
-        if ('asc' !== $sdir && 'desc' !== $sdir) {
-            $sdir = 'asc';
-        }
-
-        $where = ''; // filters are processed inside the repository class
-        $searchTerm = $request->query->get('q');
-        $sortParam = $sort . ' ' . $sdir;
-
-        $entities = [];
-        if ('' !== $searchTerm) {
-            $entities = $repository->selectSearch($searchTerm, [], $sortParam, 1, 50, false);
-        } else {
-            $entities = $repository->selectWhere($where, $sortParam);
-        }
-
-        $slimItems = [];
-        foreach ($entities as $entity) {
-            if (!$permissionHelper->mayRead($item)) {
-                continue;
-            }
-            $slimItems[] = $this->prepareSlimItem(
-                $controllerHelper,
-                $repository,
-                $entityDisplayHelper,
-                $entity
-            );
-        }
-
-        // return response
-        return $this->json($slimItems);
-    '''
-
-    def private getItemListFinderPrepareSlimItem(Application it) '''
-        /**
-         * Builds and returns a slim data array from a given entity.
-         */
-        protected function prepareSlimItem(
-            ControllerHelper $controllerHelper,
-            EntityRepository $repository,
-            EntityDisplayHelper $entityDisplayHelper,
-            EntityInterface $entity
-        ): array {
-            $objectType = $entity->get_objectType();
-            $previewParameters = [
-                $objectType => $entity,
-            ];
-            $contextArgs = ['controller' => $objectType, 'action' => 'detail'];
-            $previewParameters = $controllerHelper->addTemplateParameters(
-                $objectType,
-                $previewParameters,
-                'controllerAction',
-                $contextArgs
-            );
-
-            $previewInfo = $this->renderView(
-                '@«vendorAndName»/External/' . ucfirst($objectType) . '/info.html.twig',
-                $previewParameters
-            );
-            $previewInfo = base64_encode($previewInfo);
-
-            $title = $entityDisplayHelper->getFormattedTitle($entity);
-            $description = $entityDisplayHelper->getDescription($entity);
-
-            return [
-                'id' => $entity->getKey(),
-                'title' => str_replace('&amp;', '&', $title),
-                'description' => $description,
-                'previewInfo' => $previewInfo,
-            ];
-        }
     '''
 
     def private getItemListAutoCompletionBase(Application it) '''
@@ -1001,10 +864,6 @@ class AjaxController {
     '''
 
     def additionalAjaxFunctions(Application it) '''
-        «IF generateExternalControllerAndFinder»
-
-            «getItemListFinderImpl»
-        «ENDIF»
         «IF needsAutoCompletion»
 
             «getItemListAutoCompletionImpl»
@@ -1025,19 +884,6 @@ class AjaxController {
 
             «updateSortPositionsImpl»
         «ENDIF»
-    '''
-
-    def private getItemListFinderImpl(Application it) '''
-        «getItemListFinderDocBlock(false)»
-        «getItemListFinderSignature» {
-            return parent::getItemListFinder(
-                $request,
-                $controllerHelper,
-                $permissionHelper,
-                $entityFactory,
-                $entityDisplayHelper
-            );
-        }
     '''
 
     def private getItemListAutoCompletionImpl(Application it) '''

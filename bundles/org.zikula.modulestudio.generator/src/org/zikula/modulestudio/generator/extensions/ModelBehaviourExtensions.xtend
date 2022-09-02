@@ -26,18 +26,9 @@ import java.util.List
  */
 class ModelBehaviourExtensions {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-
-    /**
-     * Returns a list of all entities for the finder component
-     * (supporting either display actions or image upload fields).
-     */
-    def getFinderEntities(Application it) {
-        getAllEntities.filter[hasDetailAction || hasImageFieldsEntity]
-    }
 
     /**
      * Checks whether the feature activation helper class should be generated or not.

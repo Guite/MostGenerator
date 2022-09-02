@@ -33,9 +33,6 @@ class DependencyInjection {
         use Symfony\Component\HttpKernel\DependencyInjection\Extension;
         use «appNamespace»\DependencyInjection\Configuration;
         «IF needsConfig»
-            «IF generateExternalControllerAndFinder»
-                use «appNamespace»\Controller\ExternalController;
-            «ENDIF»
             «IF hasGeographical»
                 use «appNamespace»\Entity\Factory\EntityInitializer;
             «ENDIF»
@@ -92,11 +89,6 @@ class DependencyInjection {
                     $configuration = new Configuration();
                     $config = $this->processConfiguration($configuration, $configs);
 
-                    «IF generateExternalControllerAndFinder»
-                        $container->getDefinition(ExternalController::class)
-                            ->setArgument('$integrationConfig', $config['integration'])
-                            ->setArgument('$listViewConfig', $config['list_views']);
-                    «ENDIF»
                     «IF hasGeographical»
                         $container->getDefinition(EntityInitializer::class)
                             ->setArgument('$defaultLatitude', $config['geo']['default_latitude'])

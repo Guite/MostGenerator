@@ -33,8 +33,15 @@ class WorkflowExtensions {
     /**
      * Checks whether any entity has another workflow than none.
      */
-    def needsApproval(Application it) {
+    def dispatch needsApproval(Application it) {
         hasWorkflow(EntityWorkflowType.STANDARD) || hasWorkflow(EntityWorkflowType.ENTERPRISE)
+    }
+
+    /**
+     * Checks whether an entity has another workflow than none.
+     */
+    def dispatch needsApproval(Entity it) {
+        #[EntityWorkflowType.STANDARD, EntityWorkflowType.ENTERPRISE].contains(workflow)
     }
 
     /**

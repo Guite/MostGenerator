@@ -402,26 +402,22 @@ class WorkflowHelper {
         {
             $amounts = [];
 
-            «IF !needsApproval»
-                // nothing required here as no entities use enhanced workflows including approval actions
-            «ELSE»
-                «val entitiesStandard = getEntitiesForWorkflow(EntityWorkflowType::STANDARD)»
-                «val entitiesEnterprise = getEntitiesForWorkflow(EntityWorkflowType::ENTERPRISE)»
-                // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
-                $state = 'waiting';
-                «FOR entity : entitiesStandard»
+            «val entitiesStandard = getEntitiesForWorkflow(EntityWorkflowType::STANDARD)»
+            «val entitiesEnterprise = getEntitiesForWorkflow(EntityWorkflowType::ENTERPRISE)»
+            // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
+            $state = 'waiting';
+            «FOR entity : entitiesStandard»
+                «entity.readAmountForObjectTypeAndState('approval')»
+            «ENDFOR»
+            «FOR entity : entitiesEnterprise»
+                «entity.readAmountForObjectTypeAndState('acceptance')»
+            «ENDFOR»
+            «IF !entitiesEnterprise.empty»
+                // check if objects are waiting for approval
+                $state = 'accepted';
+                «FOR entity : entitiesEnterprise»
                     «entity.readAmountForObjectTypeAndState('approval')»
                 «ENDFOR»
-                «FOR entity : entitiesEnterprise»
-                    «entity.readAmountForObjectTypeAndState('acceptance')»
-                «ENDFOR»
-                «IF !entitiesEnterprise.empty»
-                    // check if objects are waiting for approval
-                    $state = 'accepted';
-                    «FOR entity : entitiesEnterprise»
-                        «entity.readAmountForObjectTypeAndState('approval')»
-                    «ENDFOR»
-                «ENDIF»
             «ENDIF»
 
             return $amounts;
@@ -435,23 +431,11 @@ class WorkflowHelper {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if (0 < $amount) {
                 $amounts[] = [
-                    'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
-                    'description' => $this->translator->trans('«nameMultiple.formatForCodeCapital» pending «requiredAction»', [], '«name.formatForCode»'),
+                    'title' => $this->translator->trans('«nameMultiple.formatForCodeCapital» pending «requiredAction»', [], '«name.formatForCode»'),
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
-                    /** @Desc("{count, plural,\n  one   {One «name.formatForDisplay» is waiting for «requiredAction».}\n  other {# «nameMultiple.formatForDisplay» are waiting for «requiredAction».}\n}") */
-                    'message' => $this->translator->trans(
-                        'plural_n.«nameMultiple.formatForDB».waiting_for_«requiredAction»',
-                        ['%count%' => $amount],
-                        '«name.formatForCode»'
-                    ),
                 ];
-
-                $this->logger->info(
-                    '{app}: There are {amount} {entities} waiting for approval.',
-                    ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']
-                );
             }
         }
     '''

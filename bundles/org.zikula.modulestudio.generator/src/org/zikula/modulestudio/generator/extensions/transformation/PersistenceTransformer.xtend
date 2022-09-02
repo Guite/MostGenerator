@@ -67,7 +67,6 @@ class PersistenceTransformer {
         addViewSettings
         addImageSettings
         addModerationSettings
-        addIntegrationSettings
         addGeoSettings
         addVersionControlSettings
     }
@@ -392,32 +391,6 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
-    def private addIntegrationSettings(Application it) {
-        if (!generateExternalControllerAndFinder) {
-            return
-        }
-
-        val varContainer = createVarContainerForIntegrationSettings
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        val listField = factory.createListField => [
-            name = 'enabledFinderTypes'
-            documentation = 'Which sections are supported in the Finder component.'
-            mandatory = false
-            multiple = true
-        ]
-        for (entity : getFinderEntities) {
-            listField.items += factory.createListFieldItem => [
-                name = entity.name.formatForDisplayCapital
-                value = entity.name.formatForCode
-                ^default = true
-            ]
-        }
-
-        varContainer.fields += listField
-        variables += varContainer
-    }
-
     def private addGeoSettings(Application it) {
         if (!hasGeographical) {
             return
@@ -556,15 +529,6 @@ class PersistenceTransformer {
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Images'
             documentation = 'Image handling settings.'
-            sortOrder = newSortNumber
-        ]
-    }
-
-    def private createVarContainerForIntegrationSettings(Application it) {
-        val newSortNumber = getNextVarContainerSortNumber
-        ModuleStudioFactory.eINSTANCE.createVariables => [
-            name = 'Integration'
-            documentation = 'Integration settings.'
             sortOrder = newSortNumber
         ]
     }

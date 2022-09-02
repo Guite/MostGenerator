@@ -21,8 +21,6 @@ application "SimpleNews" targets SF70 {
     license "My license"
     prefix "sinew"
     generateAccountApi false
-    generateModerationPanel false
-    generateExternalControllerAndFinder false
     generatePdfSupport true
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles false

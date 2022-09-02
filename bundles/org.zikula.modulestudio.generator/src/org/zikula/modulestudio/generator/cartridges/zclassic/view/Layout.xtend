@@ -13,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Layout {
 
@@ -25,7 +24,6 @@ class Layout {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
-    extension WorkflowExtensions = new WorkflowExtensions
 
     IMostFileSystemAccess fsa
 
@@ -63,10 +61,6 @@ class Layout {
         {% endblock %}
         {{ pageSetVar('title', block('pageTitle') is defined ? block('pageTitle') : block('title')) }}
 
-        «IF generateModerationPanel && needsApproval»
-            {{ include('@«vendorAndName»/Helper/includeModerationPanel.html.twig') }}
-
-        «ENDIF»
         {% block content %}{% endblock %}
 
         {% block footer %}
@@ -230,23 +224,11 @@ class Layout {
             <title>{{ block('pageTitle') is defined ? block('pageTitle') : block('title') }}</title>
         </head>
         <body>
-            «IF generateExternalControllerAndFinder»
-                {% if useFinder|default != true %}
-                    <h2>{{ block('title') }}</h2>
-                {% endif %}
-            «ELSE»
-                <h2>{{ block('title') }}</h2>
-            «ENDIF»
+            <h2>{{ block('title') }}</h2>
             {% block content %}{% endblock %}
             {% block footer %}
                 «commonFooter»
-                «IF generateExternalControllerAndFinder»
-                    {% if useFinder|default != true %}
-                        «rawJsInit»
-                    {% endif %}
-                «ELSE»
-                    «rawJsInit»
-                «ENDIF»
+                «rawJsInit»
             {% endblock %}
         </body>
         </html>
