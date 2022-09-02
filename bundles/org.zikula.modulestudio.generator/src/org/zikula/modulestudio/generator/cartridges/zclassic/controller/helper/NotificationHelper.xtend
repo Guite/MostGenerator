@@ -39,7 +39,7 @@ class NotificationHelper {
         use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
         use Zikula\GroupsBundle\GroupsConstant;
         use Zikula\GroupsBundle\Repository\GroupRepositoryInterface;
-        use Zikula\UsersBundle\Entity\UserEntity;
+        use Zikula\UsersBundle\Entity\User;
         use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         use Zikula\UsersBundle\UsersConstant;
         use «appNamespace»\Entity\EntityInterface;
@@ -207,7 +207,7 @@ class NotificationHelper {
         /**
          * Collects data for building the recipients array.
          */
-        protected function addRecipient(?UserEntity $user = null): void
+        protected function addRecipient(?User $user = null): void
         {
             if ($this->usesDesignatedEntityFields()) {
                 $recipientTypeParts = explode('-', $this->recipientType);

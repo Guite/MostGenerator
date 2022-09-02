@@ -165,7 +165,7 @@ class SharedFormTypeFields {
             use Zikula\CategoriesBundle\Form\Type\CategoriesType;
         «ENDIF»
         «IF !fields.filter(IntegerField).filter[isUserGroupSelector].empty»
-            use Zikula\GroupsBundle\Entity\GroupEntity;
+            use Zikula\GroupsBundle\Entity\Group;
         «ENDIF»
         «IF null !== dataObject»
             use «app.appNamespace»\Entity\Factory\EntityFactory;
@@ -801,7 +801,7 @@ class SharedFormTypeFields {
     '''
     def private dispatch additionalOptions(IntegerField it) '''
         «IF isUserGroupSelector»
-            'class' => GroupEntity::class,
+            'class' => Group::class,
             'choice_label' => 'name',
             'choice_value' => 'gid',
         «ELSE»

@@ -150,7 +150,7 @@ class Property {
                 '''
             UserField:
                 '''
-                    #[ORM\ManyToOne(targetEntity=UserEntity::class)]
+                    #[ORM\ManyToOne(targetEntity=User::class)]
                     #[ORM\JoinColumn(referencedColumnName: 'uid'«IF nullable», nullable: true«ENDIF»)]
                 '''
         }

@@ -49,7 +49,7 @@ class ControllerHelper {
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF hasIndexActions && hasUserFields»
-            use Zikula\UsersBundle\Entity\UserEntity;
+            use Zikula\UsersBundle\Entity\User;
         «ENDIF»
         «IF hasIndexActions»
             use «appNamespace»\Entity\EntityInterface;

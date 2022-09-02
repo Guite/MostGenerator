@@ -112,7 +112,7 @@ class Entities {
         }
         thProp = new Property(app, extMan)
         thAssoc.resetImports
-        fsa.generateClassPair('Entity/' + name.formatForCodeCapital + 'Entity.php', modelEntityBaseImpl(app), modelEntityImpl(app))
+        fsa.generateClassPair('Entity/' + name.formatForCodeCapital + '.php', modelEntityBaseImpl(app), modelEntityImpl(app))
     }
 
     def private dispatch imports(MappedSuperClass it, Boolean isBase) '''
@@ -138,7 +138,7 @@ class Entities {
         «ENDIF»
         «IF isBase»
             «IF hasUserFieldsEntity»
-                use Zikula\UsersBundle\Entity\UserEntity;
+                use Zikula\UsersBundle\Entity\User;
             «ENDIF»
             use «application.appNamespace»\Entity\EntityInterface;
             «IF hasListFieldsEntity»
@@ -188,30 +188,30 @@ class Entities {
         «ENDIF»
         «IF !isBase»
             «IF tree === EntityTreeType.CLOSURE»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»ClosureEntity;
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»Closure;
             «ENDIF»
             «IF loggable»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»LogEntryEntity;
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»LogEntry;
             «ENDIF»
             «IF hasTranslatableFields»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»TranslationEntity;
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»Translation;
             «ENDIF»
             use «application.appNamespace»\Repository\«name.formatForCodeCapital»Repository;
         «ELSE»
             «IF hasUserFieldsEntity»
-                use Zikula\UsersBundle\Entity\UserEntity;
+                use Zikula\UsersBundle\Entity\User;
             «ENDIF»
             «IF !isInheriting»
                 use «application.appNamespace»\Entity\EntityInterface;
             «ENDIF»
             «IF isInheriting»
-                use «application.appNamespace»\Entity\«parentType.name.formatForCodeCapital»Entity as BaseEntity;
+                use «application.appNamespace»\Entity\«parentType.name.formatForCodeCapital» as BaseEntity;
             «ENDIF»
             «IF categorisable»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity;
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»Category;
             «ENDIF»
             «IF tree !== EntityTreeType.NONE»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+                use «application.appNamespace»\Entity\«name.formatForCodeCapital»;
             «ENDIF»
             «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.importRelatedEntity(relation, false)»«ENDFOR»
             «FOR relation : getOutgoingJoinRelations»«thAssoc.importRelatedEntity(relation, true)»«ENDFOR»
@@ -245,7 +245,7 @@ class Entities {
          * inherit orm properties.
          */
         #[ORM\MappedSuperclass]
-        abstract class Abstract«name.formatForCodeCapital»Entity«IF isInheriting» extends BaseEntity«ENDIF» implements AbstractEntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»«IF isInheriting» extends BaseEntity«ENDIF» implements AbstractEntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
         {
             «IF it instanceof Entity && (it as Entity).geographical»
                 /**
@@ -334,11 +334,11 @@ class Entities {
     def private modelEntityImpl(DataObject it, Application app) '''
         namespace «app.appNamespace»\Entity;
 
-        use «app.appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital»Entity as BaseEntity;
+        use «app.appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital» as BaseEntity;
         «imports(false)»
 
         «entityImplClassDocblock(app)»
-        class «name.formatForCodeCapital»Entity extends BaseEntity implements EntityInterface
+        class «name.formatForCodeCapital» extends BaseEntity implements EntityInterface
         {
             // feel free to add your own methods here
         }
@@ -389,7 +389,7 @@ class Entities {
         «IF isTopSuperClass»
             #[ORM\InheritanceType('«getChildRelations.head.strategy.literal»')]
             #[ORM\DiscriminatorColumn(name: '«getChildRelations.head.discriminatorColumn.formatForCode»'«/*, type: 'string'*/»)]
-            #[ORM\DiscriminatorMap(['«name.formatForCode»' => «name.formatForCodeCapital»Entity::class«FOR relation : getChildRelations», «relation.discriminatorInfo»«ENDFOR»])]
+            #[ORM\DiscriminatorMap(['«name.formatForCode»' => «name.formatForCodeCapital»::class«FOR relation : getChildRelations», «relation.discriminatorInfo»«ENDFOR»])]
         «ENDIF»
         «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
             #[ORM\ChangeTrackingPolicy('«changeTrackingPolicy.literal»')]
@@ -402,6 +402,6 @@ class Entities {
     def private indexField(EntityIndexItem it) '''"«indexItemForEntity»"'''
 
     def private discriminatorInfo(InheritanceRelationship it) '''
-        '«source.name.formatForCode»' => «source.name.formatForCodeCapital»Entity::class
+        '«source.name.formatForCode»' => «source.name.formatForCodeCapital»::class
     '''
 }

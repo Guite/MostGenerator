@@ -208,12 +208,12 @@ abstract class AbstractExtension implements EntityExtensionInterface {
             «IF classType == 'translation' || classType == 'logEntry'»
                 public function __construct(EntityManagerInterface $manager)
                 {
-                    parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity::class));
+                    parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»«classType.formatForCodeCapital»::class));
                 }
             «ELSE»
                 public function __construct(ManagerRegistry $registry)
                 {
-                    parent::__construct($registry, «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity::class);
+                    parent::__construct($registry, «name.formatForCodeCapital»«classType.formatForCodeCapital»::class);
                 }
             «ENDIF»
 

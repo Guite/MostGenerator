@@ -142,7 +142,7 @@ class Repository {
                 $id = 0,
                 bool $useJoins = true,
                 bool $slimMode = false
-            ): ?«name.formatForCodeCapital»Entity;
+            ): ?«name.formatForCodeCapital»;
 
             public function selectByIdList(
                 array $idList = [0],
@@ -156,7 +156,7 @@ class Repository {
                     bool $useJoins = true,
                     bool $slimMode = false,
                     int $excludeId = 0
-                ): ?«name.formatForCodeCapital»Entity;
+                ): ?«name.formatForCodeCapital»;
             «ENDIF»
 
             public function getListQueryBuilder(
@@ -250,12 +250,12 @@ class Repository {
             «IF tree != EntityTreeType.NONE || hasSortableFields»
                 public function __construct(EntityManagerInterface $manager)
                 {
-                    parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»Entity::class));
+                    parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»::class));
                 }
             «ELSE»
                 public function __construct(ManagerRegistry $registry)
                 {
-                    parent::__construct($registry, «name.formatForCodeCapital»Entity::class);
+                    parent::__construct($registry, «name.formatForCodeCapital»::class);
                 }
             «ENDIF»
 

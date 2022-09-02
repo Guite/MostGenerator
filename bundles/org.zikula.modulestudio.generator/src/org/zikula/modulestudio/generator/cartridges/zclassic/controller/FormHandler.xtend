@@ -1159,7 +1159,7 @@ class FormHandler {
         public function applyAction(array $args = []): bool
         {
             // get treated entity reference from persisted member var
-            /** @var «name.formatForCodeCapital»Entity $entity */
+            /** @var «name.formatForCodeCapital» $entity */
             $entity = $this->entityRef;
 
             $action = $args['commandName'];

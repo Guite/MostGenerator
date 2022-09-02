@@ -366,7 +366,7 @@ class ValidationConstraints {
         #[Assert\IsTrue(message: 'This value must be a valid user id.')]
         public function is«name.formatForCodeCapital»UserValid(): bool
         {
-            return «IF !mandatory && nullable»null === $this->get«name.formatForCodeCapital»() || «ENDIF»$this->get«name.formatForCodeCapital»() instanceof UserEntity;
+            return «IF !mandatory && nullable»null === $this->get«name.formatForCodeCapital»() || «ENDIF»$this->get«name.formatForCodeCapital»() instanceof User;
         }
     '''
 

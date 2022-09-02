@@ -47,7 +47,7 @@ class EntityDisplayHelper {
         use Symfony\Contracts\Translation\TranslatorInterface;
         use «appNamespace»\Entity\EntityInterface;
         «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
         «ENDFOR»
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
@@ -132,7 +132,7 @@ class EntityDisplayHelper {
         /**
          * Returns the formatted title for a given «name.formatForDisplay».
          */
-        protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital»Entity $entity): string
+        protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital» $entity): string
         {
             «IF displayPatternParts.length < 2»«/* no field references, just pass to translator */»
                 return $this->translator->trans('«getUsedDisplayPattern.formatForCodeCapital»', [], '«name.formatForCode»');
@@ -152,7 +152,7 @@ class EntityDisplayHelper {
         /**
          * Returns an additional description for a given «name.formatForDisplay».
          */
-        protected function get«name.formatForCodeCapital»Description(«name.formatForCodeCapital»Entity $entity): string
+        protected function get«name.formatForCodeCapital»Description(«name.formatForCodeCapital» $entity): string
         {
             $descriptionFieldName = $this->getDescriptionFieldName($entity->get_objectType());
             $getter = 'get' . ucfirst($descriptionFieldName);

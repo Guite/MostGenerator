@@ -102,7 +102,7 @@ class ControllerLayer {
     def private commonAppImports(Entity it) '''
         use «entityClassName('', false)»;
         «IF loggable»
-            use «app.appNamespace»\Entity\«name.formatForCodeCapital»LogEntryEntity;
+            use «app.appNamespace»\Entity\«name.formatForCodeCapital»LogEntry;
         «ENDIF»
         «IF hasEditAction»
             use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;

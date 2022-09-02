@@ -317,7 +317,7 @@ class LoggableHelper {
         {
             $entityManager = $this->entityFactory->getEntityManager();
 
-            $metadata = $entityManager->getClassMetaData($entity::class);
+            $metadata = $entityManager->getClassMetaData($::class);
             $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
             $metadata->setIdGenerator(new AssignedGenerator());
 

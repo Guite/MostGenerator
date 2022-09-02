@@ -35,7 +35,7 @@ class Factory {
         use InvalidArgumentException;
         use «appNamespace»\Entity\Factory\EntityInitializer;
         «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
         «ENDFOR»
         use «appNamespace»\Helper\CollectionFilterHelper;
         «IF hasTranslatable»

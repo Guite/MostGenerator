@@ -34,7 +34,7 @@ class MenuBuilder {
             use Zikula\UsersBundle\UsersConstant;
         «ENDIF»
         «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
         «ENDFOR»
         use «appNamespace»\Event\ItemActionsMenuPostConfigurationEvent;
         use «appNamespace»\Event\ItemActionsMenuPreConfigurationEvent;

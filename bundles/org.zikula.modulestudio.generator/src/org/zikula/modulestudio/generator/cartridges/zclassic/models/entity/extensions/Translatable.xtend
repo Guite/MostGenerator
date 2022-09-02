@@ -16,7 +16,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         #[Gedmo\TranslationEntity(class: «name.formatForCodeCapital»TranslationEntity::class)]
+         #[Gedmo\TranslationEntity(class: «name.formatForCodeCapital»Translation::class)]
     '''
 
     /**

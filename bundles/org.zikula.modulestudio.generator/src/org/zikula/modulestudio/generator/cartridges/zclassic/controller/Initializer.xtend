@@ -31,7 +31,7 @@ class Initializer {
         use Psr\Log\LoggerInterface;
         use Zikula\Bundle\CoreBundle\BundleInitializer\BundleInitializerInterface;
         «IF hasCategorisableEntities»
-            use Zikula\CategoriesBundle\Entity\CategoryRegistryEntity;
+            use Zikula\CategoriesBundle\Entity\CategoryRegistry;
             use Zikula\CategoriesBundle\Repository\CategoryRepositoryInterface;
         «ENDIF»
         «IF hasCategorisableEntities»

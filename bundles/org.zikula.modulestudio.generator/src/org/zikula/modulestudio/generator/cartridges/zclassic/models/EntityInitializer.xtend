@@ -42,7 +42,7 @@ class EntityInitializer {
             use Symfony\Component\HttpFoundation\RequestStack;
         «ENDIF»
         «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
         «ENDFOR»
         «IF hasListFieldsExceptWorkflowState»
             use «appNamespace»\Helper\ListEntriesHelper;
@@ -67,7 +67,7 @@ class EntityInitializer {
                 /**
                  * Initialises a given «entity.name.formatForCode» instance.
                  */
-                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital»Entity $entity): «entity.name.formatForCodeCapital»Entity
+                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital» $entity): «entity.name.formatForCodeCapital»Entity
                 {
                     «FOR field : entity.getLanguageFieldsEntity + entity.getLocaleFieldsEntity»
                         $entity->set«field.name.formatForCodeCapital»($this->requestStack->getCurrentRequest()->getLocale());

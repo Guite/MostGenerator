@@ -18,7 +18,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
     override classAnnotations(Entity it) '''
         #[Gedmo\Tree(type: '«tree.literal.toLowerCase»')]
         «IF tree == EntityTreeType.CLOSURE»
-             #[Gedmo\TreeClosure(class: «name.formatForCodeCapital»ClosureEntity::class)]
+             #[Gedmo\TreeClosure(class: «name.formatForCodeCapital»Closure::class)]
         «ENDIF»
     '''
 
@@ -51,7 +51,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Bidirectional - Many children [«name.formatForDisplay»] are linked by one parent [«name.formatForDisplay»] (OWNING SIDE).
          */
-        #[ORM\ManyToOne(targetEntity: «name.formatForCodeCapital»Entity::class, inversedBy: 'children')]
+        #[ORM\ManyToOne(targetEntity: «name.formatForCodeCapital»::class, inversedBy: 'children')]
         #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: '«getPrimaryKey.name.formatForDisplay»', onDelete: 'SET NULL')]
         #[Gedmo\TreeParent]
         «IF loggable»
@@ -62,10 +62,10 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Bidirectional - One parent [«name.formatForDisplay»] has many children [«name.formatForDisplay»] (INVERSE SIDE).
          */
-        #[ORM\OneToMany(targetEntity: «name.formatForCodeCapital»Entity::class, mappedBy: 'parent')]
+        #[ORM\OneToMany(targetEntity: «name.formatForCodeCapital»::class, mappedBy: 'parent')]
         #[ORM\OrderBy(['lft' => 'ASC'])]
         /**
-         * @var Collection<int, «name.formatForCodeCapital»Entity>
+         * @var Collection<int, «name.formatForCodeCapital»>
          */
         protected ?Collection $children = null;
 
@@ -80,8 +80,8 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         «fh.getterAndSetterMethods(it, 'lvl', 'int', false, '', '')»
         «fh.getterAndSetterMethods(it, 'rgt', 'int', false, '', '')»
         «fh.getterAndSetterMethods(it, 'root', 'int', false, '', '')»
-        «fh.getterAndSetterMethods(it, 'parent', name.formatForCodeCapital + 'Entity', true, 'null', '')»
-        «fh.getterAndSetterMethods(it, 'children', 'Collection<int, ' + name.formatForCodeCapital + 'Entity>', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'parent', name.formatForCodeCapital, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, 'children', 'Collection<int, ' + name.formatForCodeCapital + '>', true, '', '')»
     '''
 
     /**

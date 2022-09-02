@@ -93,7 +93,7 @@ class QuickNavigationType {
             use Zikula\CategoriesBundle\Form\Type\CategoriesType;
         «ENDIF»
         «IF !fields.filter(UserField).empty»
-            use Zikula\UsersBundle\Entity\UserEntity;
+            use Zikula\UsersBundle\Entity\User;
         «ENDIF»
         «IF !incomingRelations.empty || !outgoingRelations.empty»
             use «app.appNamespace»\Entity\Factory\EntityFactory;
@@ -540,7 +540,7 @@ class QuickNavigationType {
 
     def private dispatch additionalOptions(UserField it) '''
         'placeholder' => 'All',
-        'class' => UserEntity::class,
+        'class' => User::class,
         'choice_label' => 'uname',
     '''
 

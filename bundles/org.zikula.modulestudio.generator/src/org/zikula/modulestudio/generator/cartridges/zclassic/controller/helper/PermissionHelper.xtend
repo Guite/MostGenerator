@@ -37,10 +37,10 @@ class PermissionHelper {
             use Doctrine\Common\Collections\Collection;
         «ENDIF»
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\GroupsBundle\Entity\GroupEntity;
+        use Zikula\GroupsBundle\Entity\Group;
         use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
         use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        use Zikula\UsersBundle\Entity\UserEntity;
+        use Zikula\UsersBundle\Entity\User;
         use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         use «appNamespace»\Entity\EntityInterface;
         «IF hasCategorisableEntities»
@@ -275,7 +275,7 @@ class PermissionHelper {
 
             $groupIds = [];
             $groups = $this->currentUserApi->get('groups');
-            /** @var GroupEntity $group */
+            /** @var Group $group */
             foreach ($groups as $group) {
                 $groupIds[] = $group->getGid();
             }

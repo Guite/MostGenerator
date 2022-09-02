@@ -142,7 +142,7 @@ class EditEntityType {
                 «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
                     if ('create' === $options['mode']) {
                         $builder->add('parent', EntityTreeType::class, [
-                            'class' => «name.formatForCodeCapital»Entity::class,
+                            'class' => «name.formatForCodeCapital»::class,
                             'multiple' => false,
                             'expanded' => false,
                             'use_joins' => false,
@@ -159,7 +159,7 @@ class EditEntityType {
                     $builder->add('parentFields', «parents.head.name.formatForCodeCapital»Type::class, [
                         'label' => '«parents.head.name.formatForDisplayCapital» data',
                         'inherit_data' => true,
-                        'data_class' => «name.formatForCodeCapital»Entity::class
+                        'data_class' => «name.formatForCodeCapital»::class
                     ]);
                 «ENDIF»
                 «IF extensions.contains('categories')»
@@ -223,7 +223,7 @@ class EditEntityType {
                 $resolver
                     ->setDefaults([
                         // define class for underlying data (required for embedding forms)
-                        'data_class' => «name.formatForCodeCapital»Entity::class,
+                        'data_class' => «name.formatForCodeCapital»::class,
                         'translation_domain' => '«name.formatForCode»',
                         'empty_data' => function (FormInterface $form) {
                             return $this->entityFactory->create«name.formatForCodeCapital»();
@@ -423,7 +423,7 @@ class EditEntityType {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'bundle' => '«app.appName»',
                 'entity' => '«name.formatForCodeCapital»Entity',
-                'entityCategoryClass' => «name.formatForCodeCapital»CategoryEntity::class,
+                'entityCategoryClass' => «name.formatForCodeCapital»Category::class,
                 'showRegistryLabels' => true,
             ]);
         }

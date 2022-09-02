@@ -346,7 +346,7 @@ class TranslatableHelper {
             $qb->delete($translationMeta->rootEntityName, 'trans')
                ->where('trans.objectClass = :objectClass')
                ->andWhere('trans.foreignKey = :objectId')
-               ->setParameter('objectClass', $entity::class)
+               ->setParameter('objectClass', $::class)
                ->setParameter('objectId', $entity->getKey())
             ;
             $query = $qb->getQuery();

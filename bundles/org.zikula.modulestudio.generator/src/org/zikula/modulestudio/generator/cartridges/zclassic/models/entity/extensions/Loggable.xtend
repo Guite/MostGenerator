@@ -17,7 +17,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         #[Gedmo\Loggable(logEntryClass: «name.formatForCodeCapital»LogEntryEntity::class)]
+         #[Gedmo\Loggable(logEntryClass: «name.formatForCodeCapital»LogEntry::class)]
     '''
 
     /**

@@ -94,17 +94,17 @@ class Events {
     def private filterEventBaseClass(Entity it, String classSuffix) '''
         namespace «app.appNamespace»\Event\Base;
 
-        use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+        use «app.appNamespace»\Entity\«name.formatForCodeCapital»;
 
         /**
          * Event base class for filtering «name.formatForDisplay» processing.
          */
         abstract class Abstract«name.formatForCodeCapital»«classSuffix»Event
         {
-            public function __construct(protected «name.formatForCodeCapital»Entity $«name.formatForCode»«IF classSuffix == 'PreUpdate'», protected array $entityChangeSet = []«ENDIF»)
+            public function __construct(protected «name.formatForCodeCapital» $«name.formatForCode»«IF classSuffix == 'PreUpdate'», protected array $entityChangeSet = []«ENDIF»)
             {
             }
-            «fh.getterMethod(it, name.formatForCode, name.formatForCodeCapital + 'Entity', false)»
+            «fh.getterMethod(it, name.formatForCode, name.formatForCodeCapital, false)»
             «IF classSuffix == 'PreUpdate'»
                 «fh.getterAndSetterMethods(it, 'entityChangeSet', 'array', false, '[]', '')»
             «ENDIF»

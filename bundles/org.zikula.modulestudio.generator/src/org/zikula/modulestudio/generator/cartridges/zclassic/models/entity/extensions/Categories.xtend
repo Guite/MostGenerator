@@ -30,13 +30,13 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override properties(Entity it) '''
         #[ORM\OneToMany(
-            targetEntity: «name.formatForCodeCapital»CategoryEntity::class,
+            targetEntity: «name.formatForCodeCapital»Category::class,
             mappedBy: 'entity',
             cascade: ['all'],
             orphanRemoval: true«/*commented out as this causes only one category to be selected (#349)   , indexBy: 'categoryRegistryId'*/»
         )]
         /**
-         * @var Collection<int, «name.formatForCodeCapital»CategoryEntity>
+         * @var Collection<int, «name.formatForCodeCapital»Category>
          */
         protected ?Collection $categories = null;
 
@@ -46,10 +46,10 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection<int, ' + name.formatForCodeCapital + 'CategoryEntity>', true)»
+        «(new FileHelper(application)).getterMethod(it, 'categories', 'Collection<int, ' + name.formatForCodeCapital + 'Category>', true)»
 
         /**
-         * @param Collection<int, «name.formatForCodeCapital»CategoryEntity> $categories
+         * @param Collection<int, «name.formatForCodeCapital»Category> $categories
          */
         public function setCategories(Collection $categories): void
         {
@@ -68,9 +68,9 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Checks if a collection contains an element based only on two criteria (categoryRegistryId, category).
          *
-         * @param Collection<int, «name.formatForCodeCapital»CategoryEntity> $collection
+         * @param Collection<int, «name.formatForCodeCapital»Category> $collection
          */
-        private function categoryCollectionContains(Collection $collection, «name.formatForCodeCapital»CategoryEntity $element): bool|int
+        private function categoryCollectionContains(Collection $collection, «name.formatForCodeCapital»Category $element): bool|int
         {
             foreach ($collection as $key => $category) {
                 if (
@@ -122,7 +122,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassBaseImplementation(Entity it) '''
         #[ORM\ManyToOne(inversedBy: 'categories')]
         #[ORM\JoinColumn(name: 'entityId', referencedColumnName: '«getPrimaryKey.name.formatForCode»')]
-        protected «name.formatForCodeCapital»Entity $entity;
+        protected «name.formatForCodeCapital» $entity;
         «extensionClassEntityAccessors»
     '''
 

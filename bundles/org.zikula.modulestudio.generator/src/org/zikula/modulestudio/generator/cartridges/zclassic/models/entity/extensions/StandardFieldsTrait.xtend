@@ -32,7 +32,7 @@ class StandardFieldsTrait {
         use Doctrine\ORM\Mapping as ORM;
         use Gedmo\Mapping\Annotation as Gedmo;
         use Symfony\Component\Validator\Constraints as Assert;
-        use Zikula\UsersBundle\Entity\UserEntity;
+        use Zikula\UsersBundle\Entity\User;
 
         /**
          * «IF isLoggable»Loggable s«ELSE»S«ENDIF»tandard fields trait.
@@ -50,7 +50,7 @@ class StandardFieldsTrait {
         «IF isLoggable»
             #[Gedmo\Versioned]
         «ENDIF»
-        protected ?UserEntity $createdBy = null;
+        protected ?User $createdBy = null;
 
         #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
         #[Gedmo\Timestampable(on: 'create')]
@@ -62,7 +62,7 @@ class StandardFieldsTrait {
         #[ORM\ManyToOne]
         #[ORM\JoinColumn(referencedColumnName: 'uid')]
         #[Gedmo\Blameable(on: 'update')]
-        protected ?UserEntity $updatedBy = null;
+        protected ?User $updatedBy = null;
 
         #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
         #[Gedmo\Timestampable(on: 'update')]

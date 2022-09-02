@@ -47,7 +47,7 @@ class CollectionFilterHelper {
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
         «IF hasUserFields»
-            use Zikula\UsersBundle\Entity\UserEntity;
+            use Zikula\UsersBundle\Entity\User;
             use Zikula\UsersBundle\Repository\UserRepositoryInterface;
         «ENDIF»
         «IF hasStandardFieldEntities»
