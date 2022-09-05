@@ -95,7 +95,7 @@ Workflow {
         cartridge = cartridgeName
         // specify where to put the generated code
         outlet = {
-            path = '${targetDir}/${vendorName}/${modelName}Module/'
+            path = '${targetDir}/${vendorName}/${modelName}Bundle/'
         }
     }
 

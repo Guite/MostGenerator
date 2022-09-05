@@ -5,80 +5,15 @@ module org.zikula.modulestudio.generator.workflow.msManualCollection
  */
 
 Workflow {
-    component = @msManual { dir = 'customers/later' name = 'GuiAdvert' }
-    component = @msManual { dir = 'customers/later' name = 'GuiAffiliate' }
-    component = @msManual { dir = 'customers/later' name = 'GuiCallCenter' }
-    component = @msManual { dir = 'customers/later' name = 'GuiStockKeeping' }
-    component = @msManual { dir = 'customers/later' name = 'GuiSubscription' }
-    component = @msManual { dir = 'customers' name = 'AddressList' }
-    component = @msManual { dir = 'customers' name = 'AdShare' }
-    component = @msManual { dir = 'customers' name = 'AgencyClients' }
-    component = @msManual { dir = 'customers' name = 'AgencyJobs' }
-    component = @msManual { dir = 'customers' name = 'CandidateCheck' }
-    component = @msManual { dir = 'customers' name = 'ConstructionProjects' }
-    component = @msManual { dir = 'customers' name = 'ContentPool' }
-    component = @msManual { dir = 'customers' name = 'EjubaAddresses' }
-    component = @msManual { dir = 'customers' name = 'EjubaEvents' }
-    component = @msManual { dir = 'customers' name = 'EjubaMaterials' }
-    component = @msManual { dir = 'customers' name = 'EjubaSettings' }
-    component = @msManual { dir = 'customers' name = 'EjubaWorkshops' }
-    component = @msManual { dir = 'customers' name = 'FreelancerProjects' }
-    component = @msManual { dir = 'customers' name = 'FreestyleModels' }
-    component = @msManual { dir = 'customers' name = 'GuiCustomer' }
-    component = @msManual { dir = 'customers' name = 'GuiErpSync' }
-    component = @msManual { dir = 'customers' name = 'GuiOrder' }
-    component = @msManual { dir = 'customers' name = 'GuiPayment' }
-    component = @msManual { dir = 'customers' name = 'GuiPricing' }
-    component = @msManual { dir = 'customers' name = 'GuiProduct' }
-    component = @msManual { dir = 'customers' name = 'GuiPromotion' }
-    component = @msManual { dir = 'customers' name = 'GuiQuiz' }
-    component = @msManual { dir = 'customers' name = 'GuiShipping' }
-    component = @msManual { dir = 'customers' name = 'GuiShop' }
-    component = @msManual { dir = 'customers' name = 'HandyDB' }
-    component = @msManual { dir = 'customers' name = 'HistoricProducts' }
-    component = @msManual { dir = 'customers' name = 'JsRefPool' }
-    component = @msManual { dir = 'customers' name = 'JuFeBo' }
-    component = @msManual { dir = 'customers' name = 'KongProjects' }
-    component = @msManual { dir = 'customers' name = 'LeisurePlaces' }
-    component = @msManual { dir = 'customers' name = 'MenuSuggestion' }
-    component = @msManual { dir = 'customers' name = 'MwcMath' }
-    component = @msManual { dir = 'customers' name = 'MwcPartners' }
-    component = @msManual { dir = 'customers' name = 'MwcPayment' }
-    component = @msManual { dir = 'customers' name = 'OperativeProjects' }
-    component = @msManual { dir = 'customers' name = 'PlantManager' }
-    component = @msManual { dir = 'customers' name = 'RideBoard' }
-    component = @msManual { dir = 'customers' name = 'SimpleClaims' }
-    component = @msManual { dir = 'customers' name = 'SimplePolls' }
-    component = @msManual { dir = 'customers' name = 'SimpleProductList' }
-    component = @msManual { dir = 'customers' name = 'SimpleSupport' }
-    component = @msManual { dir = 'customers' name = 'SimpleVarieties' }
-    component = @msManual { dir = 'customers' name = 'SurveyManager' }
-    component = @msManual { dir = 'customers' name = 'VineyardManager' }
-    component = @msManual { dir = 'customers' name = 'YouthWorkout' }
-    component = @msManual { dir = 'customers' name = 'XaliaBench' }
-
     component = @msManual { dir = 'examples' name = 'AutoBugs' }
     component = @msManual { dir = 'examples' name = 'AutoCustomer' }
-    component = @msManual { dir = 'examples' name = 'AutoExchange' }
-    component = @msManual { dir = 'examples' name = 'AutoMixtapes' }
     component = @msManual { dir = 'examples' name = 'AutoMusic' }
     component = @msManual { dir = 'examples' name = 'AutoProject' }
-    component = @msManual { dir = 'examples' name = 'AutoSocial' }
+    component = @msManual { dir = 'examples' name = 'News' }
     component = @msManual { dir = 'examples' name = 'RecipeManager' }
-    component = @msManual { dir = 'examples' name = 'SimpleMedia' }
 
-    component = @msManual { dir = 'own/most' name = 'MostAdmin' }
-    component = @msManual { dir = 'own'      name = 'ContentLayouts' }
-    component = @msManual { dir = 'own'      name = 'IukEvents' }
-    component = @msManual { dir = 'own'      name = 'MyPortfolio' }
-    component = @msManual { dir = 'own'      name = 'SimpleClients' }
-    component = @msManual { dir = 'own'      name = 'SimpleLists' }
-
-    component = @msManual { dir = 'zikula'   name = 'CampManager' }
-    component = @msManual { dir = 'zikula'   name = 'Connector' }
-    component = @msManual { dir = 'zikula'   name = 'KnowledgeBase' }
-    component = @msManual { dir = 'zikula'   name = 'Participation' }
-    component = @msManual { dir = 'zikula'   name = 'PhotoStream' }
-    component = @msManual { dir = 'zikula'   name = 'ScheduleManager' }
-    component = @msManual { dir = 'zikula'   name = 'TroubleShooter' }
+    component = @msManual { dir = 'test' name = 'SelfRelationTest' }
+    component = @msManual { dir = 'test' name = 'SimpleDemo' }
+    component = @msManual { dir = 'test' name = 'SimpleTest' }
+    component = @msManual { dir = 'test' name = 'ValidationTest' }
 }

@@ -15,7 +15,7 @@ var dir
 var vendorName = 'Guite'
 
 // The path where to find the model, without trailing slash
-var modelPath = '/home/axel/projects/GitClones/Applications/models/${dir}'
+var modelPath = '/home/axel/projects/GitClones/ModuleStudio/MostExamples/models/${dir}'
 
 // Destination folder
 var targetDir = '/home/axel/batchOutput/'
