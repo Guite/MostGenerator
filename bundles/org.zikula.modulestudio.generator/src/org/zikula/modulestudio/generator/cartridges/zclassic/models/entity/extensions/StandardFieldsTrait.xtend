@@ -70,9 +70,9 @@ class StandardFieldsTrait {
             #[Gedmo\Versioned]
         «ENDIF»
         protected ?DateTimeInterface $updatedDate = null;
-        «fh.getterAndSetterMethods(it, 'createdBy', 'UserEntity', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'createdBy', 'User', true, '', '')»
         «fh.getterAndSetterMethods(it, 'createdDate', 'DateTimeInterface', true, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedBy', 'UserEntity', true, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedBy', 'User', true, '', '')»
         «fh.getterAndSetterMethods(it, 'updatedDate', 'DateTimeInterface', true, '', '')»
     '''
 }

@@ -83,7 +83,7 @@ class ModelFileCopier implements IWorkflowComponent {
         println('Running model file copier.')
 
         copy(sourceModelFile, targetModelFile)
-        copy(sourceModelFileEnriched, targetModelFileEnriched)
+        //copy(sourceModelFileEnriched, targetModelFileEnriched)
         //copy(sourceDiagramFile, targetDiagramFile)
     }
 

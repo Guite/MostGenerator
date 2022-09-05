@@ -644,9 +644,10 @@ class EditEntityType {
         } else {
             if (minTarget > 0 && maxTarget > 0) {
                 if (minTarget == maxTarget) {
-                    parameters += '''«''»'%amount%' => «minTarget»])'''
+                    parameters += '''«''»'%amount%' => «minTarget»'''
                 } else {
-                    parameters += '''«''»'%min%' => «minTarget», '%max%' => «maxTarget»]'''
+                    parameters += '''«''»'%min%' => «minTarget»'''
+                    parameters += '''«''»'%max%' => «maxTarget»'''
                 }
             } else if (minTarget > 0) {
                 parameters += '''«''»'%min%' => «minTarget»'''

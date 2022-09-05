@@ -1,32 +1,28 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.di
 
+import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayField
+import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Field
+import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.ListFieldItem
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.UserField
 import de.guite.modulestudio.metamodel.Variables
+import java.math.BigInteger
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.AbstractIntegerField
-import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.NumberField
-import de.guite.modulestudio.metamodel.ListField
-import de.guite.modulestudio.metamodel.ArrayField
-import java.math.BigInteger
-import de.guite.modulestudio.metamodel.ListFieldItem
 
 class Configuration {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     /**
@@ -51,38 +47,19 @@ class Configuration {
          */
         abstract class AbstractConfiguration implements ConfigurationInterface
         {
-            «IF hasUserVariables || hasUserGroupSelectors || hasLoggable»
-                «constructor»
-
-            «ENDIF»
             «getConfigTreeBuilder»
-        }
-    '''
-
-    def private constructor(Application it) '''
-        public function __construct(
-            «IF hasUserVariables»
-                protected readonly UserRepositoryInterface $userRepository«IF hasUserGroupSelectors || hasLoggable»,«ENDIF»
-            «ENDIF»
-            «IF hasUserGroupSelectors»,
-                protected readonly GroupRepositoryInterface $groupRepository«IF hasLoggable»,«ENDIF»
-            «ENDIF»
-            «IF hasLoggable»
-                protected readonly EntityFactory $entityFactory
-            «ENDIF»
-        ) {
         }
     '''
 
     def private getConfigTreeBuilder(Application it) '''
         public function getConfigTreeBuilder(): TreeBuilder
         {
-            $treeBuilder = new TreeBuilder('zikula_groups');
-    
+            $treeBuilder = new TreeBuilder('«vendor.formatForDB»_«name.formatForDB»');
+
             $treeBuilder->getRootNode()
                 «configurationBuilder»
             ;
-    
+
             return $treeBuilder;
         }
     '''
@@ -144,7 +121,7 @@ class Configuration {
     def private initialValue(Field it) {
         val value = Property.defaultFieldData(it)
         switch (it) {
-            ListField case multiple && null !== value && '' !== value: '[\'' + value.split('\', \'') + '\']'
+            ListField case multiple && null !== value && '' !== value: '[' + value.split('###').join('\', \'') + ']'
             default: value
         }
     }
@@ -181,7 +158,9 @@ class Configuration {
         «ELSE»
             «IF (it as DerivedField).mandatory»
                 ->isRequired()
+                «IF !(it instanceof BooleanField || it instanceof AbstractIntegerField || it instanceof NumberField)»
                 ->cannotBeEmpty()
+                «ENDIF»
             «ENDIF»
         «ENDIF»
     '''

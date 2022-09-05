@@ -400,10 +400,10 @@ class Repository {
     '''
 
     def private methodAnnotations(Entity it) '''
-        «' '»* @method «name.formatForCodeCapital»Entity|null find($id, $lockMode = null, $lockVersion = null)
-        «' '»* @method «name.formatForCodeCapital»Entity[] findAll()
-        «' '»* @method «name.formatForCodeCapital»Entity[] findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
-        «' '»* @method «name.formatForCodeCapital»Entity|null findOneBy(array $criteria, ?array $orderBy = null)
+        «' '»* @method «name.formatForCodeCapital»|null find($id, $lockMode = null, $lockVersion = null)
+        «' '»* @method «name.formatForCodeCapital»[] findAll()
+        «' '»* @method «name.formatForCodeCapital»[] findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
+        «' '»* @method «name.formatForCodeCapital»|null findOneBy(array $criteria, ?array $orderBy = null)
         «' '»* @method int count(array $criteria)
     '''
 
@@ -441,7 +441,7 @@ class Repository {
             $id = 0,
             bool $useJoins = true,
             bool $slimMode = false
-        ): ?«name.formatForCodeCapital»Entity {
+        ): ?«name.formatForCodeCapital» {
             $results = $this->selectByIdList(is_array($id) ? $id : [$id], $useJoins, $slimMode);
 
             return null !== $results && 0 < count($results) ? $results[0] : null;
@@ -455,7 +455,7 @@ class Repository {
          * @param bool $slimMode If activated only some basic fields are selected without using any joins
          *                       (optional) (default=false)
          *
-         * @return array Retrieved «name.formatForCodeCapital»Entity instances
+         * @return array Retrieved «name.formatForCodeCapital» instances
          */
         public function selectByIdList(
             array $idList = [0],
@@ -488,7 +488,7 @@ class Repository {
             bool $useJoins = true,
             bool $slimMode = false,
             int $excludeId = 0
-        ): ?«name.formatForCodeCapital»Entity {
+        ): ?«name.formatForCodeCapital» {
             if ('' === $slugTitle) {
                 throw new InvalidArgumentException('Invalid slug title received.');
             }

@@ -141,9 +141,6 @@ class Listeners {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\Event\ResponseEvent;
             use Symfony\Component\HttpKernel\KernelEvents;
-            use Zikula\ThemeBundle\Bridge\Event\TwigPostRenderEvent;
-            use Zikula\ThemeBundle\Bridge\Event\TwigPreRenderEvent;
-            use Zikula\ThemeBundle\Engine\AssetFilter;
         «ENDIF»
 
         /**

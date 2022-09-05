@@ -16,7 +16,7 @@ class FormattingExtensions {
     def replaceSpecialChars(String s) {
         s.replace('Ä', 'Ae').replace('ä', 'ae').replace('Ö', 'Oe')
          .replace('ö', 'oe').replace('Ü', 'Ue').replace('ü', 'ue')
-         .replace('ß', 'ss').replaceAll('[\\W]', '')
+         .replace('ß', 'ss').replaceAll('[^a-zA-Z0-9_\\s]', '')
     }
 
     /**

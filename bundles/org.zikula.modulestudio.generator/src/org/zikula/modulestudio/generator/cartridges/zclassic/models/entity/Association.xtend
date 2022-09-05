@@ -48,7 +48,7 @@ class Association {
     '''
 
     def private simpleEntityClassName(DataObject it) {
-        name.formatForCodeCapital + 'Entity'
+        name.formatForCodeCapital
     }
 
     /**
@@ -288,7 +288,7 @@ class Association {
         } else if (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal)
            && !unique && nullable && onDelete.empty) '''#[ORM\JoinTable(name: '«foreignTableName»')]'''
         else '''
-#[ORM\JoinTable(name: '«foreignTableName»')
+#[ORM\JoinTable(name: '«foreignTableName»')]
 «joinTableDetails(useTarget)»
 '''
     }
@@ -315,7 +315,7 @@ class Association {
 
     def private joinColumnName(JoinRelationship it, String columnName, Boolean useTarget) {
         switch it {
-            ManyToManyRelationship case columnName == 'id': (if (useTarget) target else source).name.formatForDB + '_id' //$NON-NLS-1$ //$NON-NLS-2$
+            case columnName == 'id': (if (useTarget) target else source).name.formatForDB + '_id' //$NON-NLS-1$ //$NON-NLS-2$
             default: columnName
         }
         //(if (useTarget) target else source).name.formatForDB + '_' + columnName //$NON-NLS-1$

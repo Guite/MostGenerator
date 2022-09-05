@@ -299,7 +299,7 @@ class ControllerHelper {
                     ) {
                         // set filter as query argument, fetched inside CollectionFilterHelper
                         «IF hasUserFields»
-                            if ($fieldValue instanceof UserEntity) {
+                            if ($fieldValue instanceof User) {
                                 $fieldValue = $fieldValue->getUid();
                             }
                         «ENDIF»

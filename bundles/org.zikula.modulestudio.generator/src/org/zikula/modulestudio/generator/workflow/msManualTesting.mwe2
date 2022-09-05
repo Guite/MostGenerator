@@ -6,14 +6,17 @@ module org.zikula.modulestudio.generator.workflow.msManualTesting
  */
 
 // The model to be processed (file name without extension)
-var modelName = 'AutoMusic'
+//var modelName = 'AutoMusic'
+var modelName = 'ValidationTest'
 
 // The path where to find the model, without trailing slash
-//var modelPath = '/home/axel/projects/GitClones/Applications/models/zikula'
-var modelPath = '/home/axel/model'
+//var modelPath = '/home/axel/projects/GitClones/ModuleStudio/MostExamples/models/examples'
+var modelPath = '/home/axel/projects/GitClones/ModuleStudio/MostExamples/models/test'
+//var modelPath = '/home/axel/model'
 
 // Destination folder
-var targetDir = '${modelPath}/'
+//var targetDir = '${modelPath}/'
+var targetDir = '/home/axel/asas/'
 
 Workflow {
     // Call the file reader workflow and provide required properties

@@ -1,13 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
  * Generates a class for defining custom events.
@@ -15,8 +12,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 class Events {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     Application app
@@ -32,25 +27,8 @@ class Events {
         fsa.generateClassPair('Event/ItemActionsMenuPreConfigurationEvent.php', menuEventBaseClass('item', 'pre'), menuEventImpl('item', 'pre'))
         fsa.generateClassPair('Event/ItemActionsMenuPostConfigurationEvent.php', menuEventBaseClass('item', 'post'), menuEventImpl('item', 'post'))
         if (hasIndexActions) {
-            fsa.generateClassPair('Event/ViewActionsMenuPreConfigurationEvent.php', menuEventBaseClass('index', 'pre'), menuEventImpl('index', 'pre'))
-            fsa.generateClassPair('Event/ViewActionsMenuPostConfigurationEvent.php', menuEventBaseClass('index', 'post'), menuEventImpl('index', 'post'))
-        }
-
-        val suffixes = #[
-            'PostLoad',
-            'PrePersist',
-            'PostPersist',
-            'PreRemove',
-            'PostRemove',
-            'PreUpdate',
-            'PostUpdate'
-        ]
-        for (entity : getAllEntities) {
-            for (suffix : suffixes) {
-                fsa.generateClassPair('Event/' + entity.name.formatForCodeCapital + suffix + 'Event.php',
-                    entity.filterEventBaseClass(suffix), entity.filterEventImpl(suffix)
-                )
-            }
+            fsa.generateClassPair('Event/IndexActionsMenuPreConfigurationEvent.php', menuEventBaseClass('index', 'pre'), menuEventImpl('index', 'pre'))
+            fsa.generateClassPair('Event/IndexActionsMenuPostConfigurationEvent.php', menuEventBaseClass('index', 'post'), menuEventImpl('index', 'post'))
         }
     }
 
@@ -86,40 +64,6 @@ class Events {
          * Event implementation class for extending «actionType» actions menu.
          */
         class «actionType.toFirstUpper»ActionsMenu«eventTimeType.toFirstUpper»ConfigurationEvent extends Abstract«actionType.toFirstUpper»ActionsMenu«eventTimeType.toFirstUpper»ConfigurationEvent
-        {
-            // feel free to extend the event class here
-        }
-    '''
-
-    def private filterEventBaseClass(Entity it, String classSuffix) '''
-        namespace «app.appNamespace»\Event\Base;
-
-        use «app.appNamespace»\Entity\«name.formatForCodeCapital»;
-
-        /**
-         * Event base class for filtering «name.formatForDisplay» processing.
-         */
-        abstract class Abstract«name.formatForCodeCapital»«classSuffix»Event
-        {
-            public function __construct(protected «name.formatForCodeCapital» $«name.formatForCode»«IF classSuffix == 'PreUpdate'», protected array $entityChangeSet = []«ENDIF»)
-            {
-            }
-            «fh.getterMethod(it, name.formatForCode, name.formatForCodeCapital, false)»
-            «IF classSuffix == 'PreUpdate'»
-                «fh.getterAndSetterMethods(it, 'entityChangeSet', 'array', false, '[]', '')»
-            «ENDIF»
-        }
-    '''
-
-    def private filterEventImpl(Entity it, String classSuffix) '''
-        namespace «app.appNamespace»\Event;
-
-        use «app.appNamespace»\Event\Base\Abstract«name.formatForCodeCapital»«classSuffix»Event;
-
-        /**
-         * Event implementation class for filtering «name.formatForDisplay» processing.
-         */
-        class «name.formatForCodeCapital»«classSuffix»Event extends Abstract«name.formatForCodeCapital»«classSuffix»Event
         {
             // feel free to extend the event class here
         }

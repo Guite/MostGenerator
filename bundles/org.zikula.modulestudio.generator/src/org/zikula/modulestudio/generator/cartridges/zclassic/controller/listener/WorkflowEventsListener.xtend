@@ -15,8 +15,6 @@ class WorkflowEventsListener {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it) '''
-        use TranslatorTrait;
-
         public function __construct(
             protected readonly TranslatorInterface $translator,
             protected readonly EntityFactory $entityFactory,

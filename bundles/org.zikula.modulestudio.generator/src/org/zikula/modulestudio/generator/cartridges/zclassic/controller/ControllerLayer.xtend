@@ -67,7 +67,7 @@ class ControllerLayer {
         /**
          * «name.formatForDisplayCapital» controller base class.
          */
-        abstract class Abstract«name.formatForCodeCapital»Controller extends AbstractController
+        abstract class Abstract«name.formatForCodeCapital»Controller extends AbstractCrudController
         {
             use TranslatorTrait;
         
@@ -76,8 +76,30 @@ class ControllerLayer {
                 $this->setTranslator($translator);
             }
 
+            public static function getEntityFqcn(): string
+            {
+                return «name.formatForCodeCapital»::class;
+            }
+
+            public function configureCrud(Crud $crud): Crud
+            {
+                return $crud
+                    ->setEntityLabelInSingular(
+                        fn (?«name.formatForCodeCapital» $«name.formatForCode», ?string $pageName) => $«name.formatForCode» ?? '«name.formatForDisplayCapital»'
+                    )
+                    ->setEntityLabelInPlural('«nameMultiple.formatForDisplayCapital»')
+                    ->setPageTitle(Crud::PAGE_INDEX, t('%entity_label_plural% list'))
+                    ->setPageTitle(Crud::PAGE_NEW, t('New %entity_label_singular%'))
+                    ->setPageTitle(Crud::PAGE_DETAIL, fn («name.formatForCodeCapital» $«name.formatForCode») => (string) $«name.formatForCode»)
+                    ->setPageTitle(Crud::PAGE_EDIT, fn («name.formatForCodeCapital» $«name.formatForCode») => sprintf(t('Edit %s'), (string) $«name.formatForCode»))
+                    «IF null !== documentation && !documentation.replaceAll('\\s+', '').empty»
+                        ->setHelp(Crud::PAGE_INDEX, t('«documentation.replaceAll('\'', '"')»'))
+                    «ENDIF»
+                ;
+            }
+
             «FOR action : getAllEntityActions»
-                «adminAndUserImpl(action, true)»
+                «actionImpl(action, true)»
 
             «ENDFOR»
             «IF hasIndexAction»
@@ -131,6 +153,8 @@ class ControllerLayer {
     def private entityControllerBaseImports(Entity it) '''
         namespace «app.appNamespace»\Controller\Base;
 
+        use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+        use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
         «IF hasIndexAction || hasEditAction»
             use Exception;
         «ENDIF»
@@ -140,7 +164,6 @@ class ControllerLayer {
         «IF hasIndexAction || hasEditAction || hasDeleteAction»
             use RuntimeException;
         «ENDIF»
-        use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
         «IF hasEditAction»
             use Symfony\Component\HttpFoundation\RedirectResponse;
         «ENDIF»
@@ -205,7 +228,7 @@ class ControllerLayer {
         {
             «/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
             «FOR action : getAllEntityActions.reject(DetailAction)»
-                «adminAndUserImpl(action, false)»
+                «actionImpl(action, false)»
 
             «ENDFOR»
             «IF loggable»
@@ -213,7 +236,7 @@ class ControllerLayer {
                 «new LoggableHistory().generate(it, false)»
             «ENDIF»
             «FOR action : getAllEntityActions.filter(DetailAction)»
-                «adminAndUserImpl(action, false)»
+                «actionImpl(action, false)»
 
             «ENDFOR»
             «IF hasIndexAction»
@@ -227,7 +250,7 @@ class ControllerLayer {
         }
     '''
 
-    def private adminAndUserImpl(Entity it, Action action, Boolean isBase) '''
+    def private actionImpl(Entity it, Action action, Boolean isBase) '''
         «actionHelper.generate(it, action, isBase)»
     '''
 }

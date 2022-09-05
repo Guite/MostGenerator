@@ -785,7 +785,7 @@ class ModelExtensions {
     def fieldTypeAsString(DerivedField it, Boolean forPhp) {
         switch it {
             BooleanField: if (forPhp) 'bool' else 'boolean'
-            UserField: 'UserEntity'
+            UserField: 'User'
             AbstractIntegerField: {
                     if (forPhp) 'int'
                     else {

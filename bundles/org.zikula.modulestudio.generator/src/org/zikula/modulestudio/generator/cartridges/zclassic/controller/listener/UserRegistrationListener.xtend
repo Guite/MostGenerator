@@ -111,7 +111,7 @@ class UserRegistrationListener {
          * or through the administration panel for the Users module. This event will not fire if the result of the
          * registration process is a full user record. Instead, an `ActiveUserPostCreatedEvent` will fire.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
-         * The subject of the event is set to the UserEntity that was created.
+         * The subject of the event is set to the user entity that was created.
          * This event occurs before the `$authenticationMethod->register()` method is called.
          *
          * You can access the user and date in the event.
@@ -128,8 +128,8 @@ class UserRegistrationListener {
          *
          * Occurs after a registration record is updated (likely through the admin panel, but not guaranteed).
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
-         * The subject of the event is set to the UserEntity, with the updated values. The event data contains the
-         * original UserEntity in an array `['oldValue' => $originalUser]`.
+         * The subject of the event is set to the user entity, with the updated values. The event data contains the
+         * original user entity in an array `['oldValue' => $originalUser]`.
          *
          * You can access the user and date in the event.
          *

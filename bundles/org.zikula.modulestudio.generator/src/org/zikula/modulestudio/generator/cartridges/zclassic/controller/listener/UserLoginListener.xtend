@@ -64,7 +64,7 @@ class UserLoginListener {
          *
          * Occurs right after an unsuccessful attempt to log in.
          *
-         * The event contains the userEntity if it has been found, otherwise null.
+         * The event contains the user entity if it has been found, otherwise null.
          *
          * If a `'returnUrl'` is specified by any entity intercepting and processing this event, then
          * the user will be redirected to the URL provided.  An event handler

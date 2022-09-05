@@ -51,7 +51,7 @@ class LoggableHistory {
              */
         «ELSE»
             #[Route('/«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
-                name: '«application.name.formatForDB»_«name.formatForDB»_loggablehistory',
+                name: '«application.appName.formatForDB»_«name.formatForDB»_loggablehistory',
                 «IF hasSluggableFields && slugUnique»
                 requirements: ['slug' => '«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»'],
                 «ELSE»

@@ -194,7 +194,7 @@ class UploadHelper {
                 $image->save($destinationFilePath);
 
                 // check if shrinking functionality is enabled
-                $configSuffix = s($objectType . '_' . $fieldName)->snake()
+                $configSuffix = s($objectType . '_' . $fieldName)->snake();
 
                 if ($this->imageConfig['enable_shrinking_for_' . $configSuffix]) {
                     // check for maximum size

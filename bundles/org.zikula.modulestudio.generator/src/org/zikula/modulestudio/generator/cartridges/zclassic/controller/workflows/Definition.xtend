@@ -72,7 +72,7 @@ class Definition {
                     supports:
                         «FOR entity : app.getEntitiesForWorkflow(wfType)»
                             «IF !entity.isInheriting || entity.parentType instanceof MappedSuperClass»
-                                - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity
+                                - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»
                             «ENDIF»
                         «ENDFOR»
                     «/*initial_marking: [initial]*/»«statesImpl»

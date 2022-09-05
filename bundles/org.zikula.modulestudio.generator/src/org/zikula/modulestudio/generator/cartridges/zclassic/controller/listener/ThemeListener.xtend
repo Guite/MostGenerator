@@ -10,36 +10,11 @@ class ThemeListener {
     extension Utils = new Utils
 
     def generate(Application it) '''
-        public function __construct(
-            protected readonly AssetFilter $assetFilter
-        ) {
-        }
-
         public static function getSubscribedEvents(): array
         {
             return [
-                TwigPreRenderEvent::class => ['preRender', 5],
-                TwigPostRenderEvent::class => ['postRender', 5],
                 KernelEvents::RESPONSE => ['injectDefaultAssetsIntoRawPage', 1020], // after DefaultPageAssetSetterListener
             ];
-        }
-
-        /**
-         * Listener for the `TwigPreRenderEvent`.
-         *
-         * Occurs immediately before twig theme engine renders a template.
-         */
-        public function preRender(TwigPreRenderEvent $event): void
-        {
-        }
-
-        /**
-         * Listener for the `TwigPostRenderEvent`.
-         *
-         * Occurs immediately after twig theme engine renders a template.
-         */
-        public function postRender(TwigPostRenderEvent $event): void
-        {
         }
 
         /**
@@ -61,7 +36,7 @@ class ThemeListener {
 
             $response = $event->getResponse();
             $output = $response->getContent();
-            $output = $this->assetFilter->filter($output);
+            // $output = $this->assetFilter->filter($output); TODO
             $response->setContent($output);
             $event->setResponse($response);
         }

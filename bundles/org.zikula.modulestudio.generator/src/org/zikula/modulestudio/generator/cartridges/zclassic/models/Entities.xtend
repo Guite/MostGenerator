@@ -267,6 +267,7 @@ class Entities {
 
     def private modelEntityBaseImplBody(DataObject it, Application app) '''
         «memberVars»
+
         «new EntityConstructor().constructor(it, false)»
         «accessors»
         «new EntityMethods().generate(it, app, thProp)»
@@ -349,13 +350,12 @@ class Entities {
          * Entity class that defines the entity structure and behaviours.
          *
          * This is the concrete entity class for «name.formatForDisplay» entities.
-         *
-         «extMan.classAnnotations»
+         */
+        «extMan.classAnnotations»
         «classAnnotation»
         «IF it instanceof Entity»
-            «entityImplClassDocblockAdditions(app)»
+            «entityImplClassAdditionalAttributes(app)»
         «ENDIF»
-         */
         «new ValidationConstraints().classAnnotations(it)»
     '''
 
@@ -374,16 +374,18 @@ class Entities {
         #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»Repository::class«IF readOnly», readOnly: true«ENDIF»)]
     '''
 
-    def private entityImplClassDocblockAdditions(Entity it, Application app) '''
-        #[ORM\Table(name: '«fullEntityTableName»')
+    def private entityImplClassAdditionalAttributes(Entity it, Application app) '''
+        #[ORM\Table(name: '«fullEntityTableName»')]
         «IF !indexes.empty»
         «IF hasNormalIndexes»
-            #[
-                «FOR index : getNormalIndexes SEPARATOR ','»«index.index('Index')»«ENDFOR»
-            ]
+            «FOR index : getNormalIndexes»
+                «index.index('Index')»
+            «ENDFOR»
         «ENDIF»
         «IF hasUniqueIndexes»
-            «FOR index : getUniqueIndexes SEPARATOR ','»«index.index('UniqueConstraint')»«ENDFOR»
+            «FOR index : getUniqueIndexes»
+                «index.index('UniqueConstraint')»
+            «ENDFOR»
         «ENDIF»
         «ENDIF»
         «IF isTopSuperClass»
@@ -397,9 +399,9 @@ class Entities {
     '''
 
     def private index(EntityIndex it, String indexType) '''
-        #[ORM\«indexType.toFirstUpper»(name: '«name.formatForDB»', «/*IF 'index' == indexType»fields«ELSE*/»columns«/*ENDIF*/»: [«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»])]
+        #[ORM\«indexType.toFirstUpper»(name: '«name.formatForDB»', «IF 'Index' == indexType»fields«ELSE»columns«ENDIF»: [«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»])]
     '''
-    def private indexField(EntityIndexItem it) '''"«indexItemForEntity»"'''
+    def private indexField(EntityIndexItem it) '''«''»'«indexItemForEntity»'«''»'''
 
     def private discriminatorInfo(InheritanceRelationship it) '''
         '«source.name.formatForCode»' => «source.name.formatForCodeCapital»::class

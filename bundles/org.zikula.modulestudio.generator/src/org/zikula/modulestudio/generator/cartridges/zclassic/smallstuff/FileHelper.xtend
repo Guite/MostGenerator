@@ -139,7 +139,7 @@ class FileHelper {
         «IF nullable»
             $this->«name» = $«name»;
         «ELSE»
-            if ($«name» instanceof UserEntity) {
+            if ($«name» instanceof User) {
                 $this->«name» = $«name»;
             }
         «ENDIF»

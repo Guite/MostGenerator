@@ -200,7 +200,7 @@ class ValidationConstraints {
         «ELSEIF ipAddress != IpAddressScope.NONE»
             #[Assert\Ip(version: '«ipAddress.ipScopeAsConstant»')]
         «ELSEIF role == StringRole.TIME_ZONE»
-            «' '»@Assert\Timezone]
+            #[Assert\Timezone]
         «ELSEIF role == StringRole.UUID»
             #[Assert\Uuid(strict: true)]
         «ENDIF»
@@ -354,19 +354,7 @@ class ValidationConstraints {
         «ENDIF»
     '''
 
-    def dispatch validationMethods(UserField it) '''
-        /**
-         * Checks whether the «name.formatForCode» field contains a valid user reference.
-         * This method is used for validation.
-         */
-        #[Assert\IsTrue(message: 'This value must be a valid user id.')]
-        public function is«name.formatForCodeCapital»UserValid(): bool
-        {
-            return «IF !mandatory && nullable»null === $this->get«name.formatForCodeCapital»() || «ENDIF»$this->get«name.formatForCodeCapital»() instanceof User;
-        }
-    '''
-
-    def dispatch validationMethods(DatetimeField it) '''
+    def validationMethods(DatetimeField it) '''
         «IF isTimeField»
         «IF past»
             /**

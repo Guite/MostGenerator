@@ -283,16 +283,6 @@ class LifecycleListener {
             {
                 return $entity instanceof EntityInterface;
             }
-
-            /**
-             * Returns a filter event instance for the given entity.
-             */
-            protected function createFilterEvent(EntityInterface $entity, string $classSuffix = '')
-            {
-                $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\Event\\' . ucfirst($entity->get_objectType()) . $classSuffix . 'Event';
-
-                return new $filterEventClass($entity);
-            }
             «IF !getUploadEntities.empty»
 
                 /**

@@ -25,8 +25,6 @@ class MenuBuilder {
     def private menuBuilderBaseImpl(Application it) '''
         namespace «appNamespace»\Menu\Base;
 
-        use Knp\Menu\FactoryInterface;
-        use Knp\Menu\ItemInterface;
         use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
@@ -39,8 +37,8 @@ class MenuBuilder {
         use «appNamespace»\Event\ItemActionsMenuPostConfigurationEvent;
         use «appNamespace»\Event\ItemActionsMenuPreConfigurationEvent;
         «IF hasIndexActions»
-            use «appNamespace»\Event\ViewActionsMenuPostConfigurationEvent;
-            use «appNamespace»\Event\ViewActionsMenuPreConfigurationEvent;
+            use «appNamespace»\Event\IndexActionsMenuPostConfigurationEvent;
+            use «appNamespace»\Event\IndexActionsMenuPreConfigurationEvent;
         «ENDIF»
         «IF hasDetailActions»
             use «appNamespace»\Helper\EntityDisplayHelper;
@@ -64,7 +62,6 @@ class MenuBuilder {
 
     def private menuBuilderClassBaseImpl(Application it) '''
         public function __construct(
-            protected readonly FactoryInterface $factory,
             protected readonly EventDispatcherInterface $eventDispatcher,
             protected readonly RequestStack $requestStack,
             protected readonly PermissionHelper $permissionHelper,

@@ -48,12 +48,6 @@ class EntityMethods {
 
     def validationMethods(DataObject it) '''
         «val thVal = new ValidationConstraints»
-        «IF hasUserFieldsEntity»
-            «FOR userField : getUserFieldsEntity»
-
-                «thVal.validationMethods(userField)»
-            «ENDFOR»
-        «ENDIF»
         «IF hasDirectTimeFields»
             «FOR timeField : getDirectTimeFields»
 
@@ -129,13 +123,9 @@ class EntityMethods {
     '''
 
     def private toStringImpl(DataObject it, Application app) '''
-        /**
-         * ToString interceptor implementation.
-         * This method is useful for debugging purposes.
-         */
         public function __toString(): string
         {
-            return '«name.formatForDisplayCapital» ' . $this->getKey()«IF hasDisplayStringFieldsEntity» . ': ' . $this->get«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»()«ENDIF»;
+            return «IF hasDisplayStringFieldsEntity»$this->get«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»()«ELSE»'«name.formatForDisplayCapital» ' . $this->getKey()«ENDIF»;
         }
     '''
 

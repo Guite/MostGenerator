@@ -12,6 +12,7 @@ import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Annotations {
@@ -19,6 +20,7 @@ class Annotations {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
     Application app
@@ -36,7 +38,7 @@ class Annotations {
 
     def private dispatch actionRoute(IndexAction it) '''
         #[Route('/«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{page}/{num}.{_format}',
-            name: '«entity.application.name.formatForDB»_«entity.name.formatForDB»_index',
+            name: '«entity.application.appName.formatForDB»_«entity.name.formatForDB»_index',
             requirements: ['sortdir' => 'asc|desc|ASC|DESC', 'page' => '\d+', 'num' => '\d+', '_format' => 'html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»'],
             defaults: ['sort' => '', 'sortdir' => 'asc', 'page' => 1, 'num' => 10, '_format' => 'html'],
             methods: ['GET']
@@ -45,7 +47,7 @@ class Annotations {
 
     def private actionRouteForSingleEntity(Entity it, Action action) '''
         #[Route('/«name.formatForCode»/«IF !(action instanceof DetailAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}',
-            name: '«application.name.formatForDB»_«name.formatForDB»_detail',
+            name: '«application.appName.formatForDB»_«name.formatForDB»_detail',
             requirements: [«actionRouteRequirementsForSingleEntity(action)», '_format' => 'html«IF action instanceof DetailAction && app.getListOfDisplayFormats.size > 0»|«app.getListOfDisplayFormats.join('|')»«ENDIF»'],
             defaults: [«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»'_format' => 'html'],
             methods: ['GET'«IF action instanceof EditAction || action instanceof DeleteAction», 'POST'«ENDIF»]«IF tree != EntityTreeType.NONE»,
@@ -109,7 +111,7 @@ class Annotations {
 
     def private dispatch actionRoute(CustomAction it) '''
         #[Route('/«entity.nameMultiple.formatForCode»/«name.formatForCode»',
-            name: '«entity.application.name.formatForDB»_«entity.name.formatForDB»_«name.formatForDB»',
+            name: '«entity.application.appName.formatForDB»_«entity.name.formatForDB»_«name.formatForDB»',
             methods: ['GET', 'POST']
         )]
     '''

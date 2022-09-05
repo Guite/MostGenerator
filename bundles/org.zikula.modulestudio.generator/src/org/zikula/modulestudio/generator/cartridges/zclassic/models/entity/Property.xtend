@@ -91,11 +91,11 @@ class Property {
     // NOTE: DateTime fields are always treated as nullable (for PHP, not for Doctrine) enforcing a default value
     // in order to to avoid "$foo must not be accessed before initialization"
     def persistentProperty(DerivedField it, String name, String typePhp, String typeDoctrine, String init, String modifier) '''
-        /**
-         «IF null !== documentation && !documentation.empty»
-          * «documentation»«IF !documentation.endsWith('.')».«ENDIF»
-         «ENDIF»
-         */
+        «IF null !== documentation && !documentation.empty»
+            /**
+             * «documentation»«IF !documentation.endsWith('.')».«ENDIF»
+             */
+        «ENDIF»
         «IF null !== entity»
             «IF primaryKey»
                 #[ORM\Id]
@@ -104,18 +104,18 @@ class Property {
                 «ENDIF»
             «ENDIF»
             «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
-            «IF !(it instanceof UserField)»«/* user fields are implemented as join to UserEntity, see persistentPropertyAdditions */»
+            «IF !(it instanceof UserField)»«/* user fields are implemented as join to user entity, see persistentPropertyAdditions */»
                 #[ORM\Column(«IF null !== dbName && !dbName.empty»name: '«dbName.formatForCode»', «ELSEIF it instanceof UploadField»name: '«it.name.formatForCode»', «ENDIF»«persistentPropertyImpl(typeDoctrine.toLowerCase)»«IF unique», unique: true«ENDIF»«IF nullable», nullable: true«ENDIF»)]
             «ENDIF»
             «persistentPropertyAdditions»
         «ENDIF»
         «thVal.fieldAnnotations(it)»
-        «modifier» «IF nullable || it instanceof UploadField || it instanceof DatetimeField»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSEIF !skipTypeHint»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
+        «modifier» «IF nullable || it instanceof UploadField || it instanceof DatetimeField»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSEIF !skipTypeHint»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof UserField»«ELSEIF it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
     def private skipTypeHint(Object it) {
-        (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) || (it instanceof UserField)
+        (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector)
     }
 
     def private persistentPropertyImpl(DerivedField it, String type) {
@@ -123,7 +123,7 @@ class Property {
             NumberField: '''type: '«type»'«IF numberType == NumberFieldType.DECIMAL», precision: «it.length», scale: «it.scale»«ENDIF»'''
             TextField: '''type: '«type»', length: «it.length»'''
             StringField:
-                '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type="dateinterval"«ELSE»«/*type="«type»", */»length=«it.length»«ENDIF»'''
+                '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type="dateinterval"«ELSE»«/*type="«type»", */»length: «it.length»«ENDIF»'''
             EmailField:
                 '''length: «it.length»'''
             UrlField:
@@ -148,7 +148,7 @@ class Property {
                 '''
             UserField:
                 '''
-                    #[ORM\ManyToOne(targetEntity=User::class)]
+                    #[ORM\ManyToOne(targetEntity: User::class)]
                     #[ORM\JoinColumn(referencedColumnName: 'uid'«IF nullable», nullable: true«ENDIF»)]
                 '''
         }
@@ -164,11 +164,7 @@ class Property {
                 else if (it.nullable) 'null'
                 else '0'
             NumberField:
-                if (NumberFieldType.DECIMAL === it.numberType) {
-                    if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'0.00\''
-                } else if (NumberFieldType.FLOAT === it.numberType) {
-                    if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
-                }
+                if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
             ArrayField: '[]'
             UploadField: 'null'
             ListField:

@@ -46,28 +46,25 @@ class ControllerAction {
     '''
 
     def private actionDoc(Action it, Entity entity, Boolean isBase) '''
-        /**
-         «IF isBase»
-         * «actionDocMethodDescription»
-         «ENDIF»
-        «IF isBase»«actionDocMethodDocumentation»
-        «ENDIF»
         «IF isBase»
-         *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-         «IF it instanceof DetailAction»
-         * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be displayed isn't found
-         «ELSEIF it instanceof EditAction»
-         * @throws RuntimeException Thrown if another critical error occurs (e.g. workflow actions not available)
-         «ELSEIF it instanceof DeleteAction»
-         * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be deleted isn't found
-         * @throws RuntimeException Thrown if another critical error occurs (e.g. workflow actions not available)
-         «ENDIF»
-         «IF it instanceof IndexAction || it instanceof EditAction»
-         * @throws Exception
-         «ENDIF»
+            /**
+             * «actionDocMethodDescription»
+            «actionDocMethodDocumentation»
+             *
+             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+             «IF it instanceof DetailAction»
+             * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be displayed isn't found
+             «ELSEIF it instanceof EditAction»
+             * @throws RuntimeException Thrown if another critical error occurs (e.g. workflow actions not available)
+             «ELSEIF it instanceof DeleteAction»
+             * @throws NotFoundHttpException Thrown if «entity.name.formatForDisplay» to be deleted isn't found
+             * @throws RuntimeException Thrown if another critical error occurs (e.g. workflow actions not available)
+             «ENDIF»
+             «IF it instanceof IndexAction || it instanceof EditAction»
+             * @throws Exception
+             «ENDIF»
+             */
         «ENDIF»
-         */
         «IF !isBase»
             «annotations.generate(it)»
         «ENDIF»
@@ -92,7 +89,7 @@ class ControllerAction {
         }
     }
 
-    def private methodName(Action it) '''«name.formatForCode.toFirstLower»'''
+    def private methodName(Action it) '''«name.formatForCode.toFirstLower»OLD'''
 
     def private dispatch methodArguments(Entity it, Action action) '''
         Request $request,

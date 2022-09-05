@@ -38,7 +38,7 @@ class InlineRedirect {
              */
         «ELSE»
             #[Route('/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}',
-                name: '«application.name.formatForDB»_«name.formatForDB»_handleinlineredirect',
+                name: '«application.appName.formatForDB»_«name.formatForDB»_handleinlineredirect',
                 requirements: ['id' => '\d+'],
                 defaults: ['commandName' => '', 'id' => 0],
                 methods: ['GET']

@@ -155,8 +155,6 @@ class Plugins {
     '''
 
     def private twigRuntimeBody(Application it) '''
-        use TranslatorTrait;
-
         public function __construct(
             protected readonly TranslatorInterface $translator«IF !getEntitiesWithCounterFields.empty»,
             protected readonly Connection $databaseConnection«ENDIF»«IF hasTrees»,

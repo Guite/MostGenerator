@@ -294,7 +294,7 @@ class PermissionHelper {
         /**
          * Returns the the current user's entity.
          */
-        public function getUser(): UserEntity
+        public function getUser(): User
         {
             return $this->userRepository->find($this->getUserId());
         }

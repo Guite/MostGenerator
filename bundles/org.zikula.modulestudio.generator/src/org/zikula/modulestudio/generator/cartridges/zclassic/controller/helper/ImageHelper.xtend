@@ -144,7 +144,7 @@ class ImageHelper {
                 $options['thumbnail']['size'] = [100, 75];
             } elseif ('controllerAction' === $context) {
                 if (in_array($args['action'], ['index', 'detail', 'edit'], true)) {
-                    $configSuffix = s($objectType . '_' . $fieldName . '_' . $args['action'])->snake()
+                    $configSuffix = s($objectType . '_' . $fieldName . '_' . $args['action'])->snake();
 
                     $options['thumbnail']['size'] = [
                         $this->imageConfig['thumbnail_width_' . $configSuffix],

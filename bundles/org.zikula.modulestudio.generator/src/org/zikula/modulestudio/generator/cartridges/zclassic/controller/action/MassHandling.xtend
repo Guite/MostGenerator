@@ -47,7 +47,7 @@ class MassHandling {
              */
         «ELSE»
             #[Route('/«nameMultiple.formatForCode»/handleSelectedEntries',
-                name: '«application.name.formatForDB»_«name.formatForDB»_handleselectedentries',
+                name: '«application.appName.formatForDB»_«name.formatForDB»_handleselectedentries',
                 methods: ['POST']
             )]
         «ENDIF»

@@ -31,6 +31,9 @@ class ExtensionMenu {
         «IF generateAccountApi»
             use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
         «ENDIF»
+        «FOR entity : getAllEntities.filter[hasIndexAction]»
+            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
+        «ENDFOR»
         use «appNamespace»\Helper\ControllerHelper;
         use «appNamespace»\Helper\PermissionHelper;
         «IF needsApproval»
@@ -79,13 +82,13 @@ class ExtensionMenu {
                                             $routeParameters = [];
                                         }
                                     «ENDIF»
-                                    yield MenuItem::linktoRoute(t('My «entity.nameMultiple.formatForDisplay»'), 'fas fa-list-alt', '«appName.formatForDB»_' . mb_strtolower($objectType) . '_index', $routeParameters);
+                                    yield '«entity.name.formatForCode»' => MenuItem::linktoRoute(t('My «entity.nameMultiple.formatForDisplay»'), 'fas fa-list-alt', '«appName.formatForDB»_' . mb_strtolower($objectType) . '_index', $routeParameters);
                                 }
                             }
 
                         «ENDFOR»
                         if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
-                            yield MenuItem::linktoRoute(t('«name.formatForDisplayCapital» Backend'), 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
+                            yield 'backend' => MenuItem::linktoRoute(t('«name.formatForDisplayCapital» Backend'), 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
                         }
 
                     «ENDIF»
@@ -111,28 +114,29 @@ class ExtensionMenu {
         «IF needsApproval»
 
             if ($isAdmin) {
-                $moderationEntries = $this->workflowHelper->collectAmountOfModerationItems()
+                $moderationEntries = $this->workflowHelper->collectAmountOfModerationItems();
                 foreach ($entry as $moderationEntries) {
-                    yield MenuItem::linktoRoute($entry['title'], null, '«appName.formatForDB»_' . mb_strtolower($entry['objectType'] . '_index', ['workflowState' => $entry['state']])
+                    yield $entry['objectType'] . $entry['state'] => MenuItem::linktoRoute($entry['title'], null, '«appName.formatForDB»_' . mb_strtolower($entry['objectType']) . '_index', ['workflowState' => $entry['state']])
                         ->setBadge($entry['amount'], 'primary');
+                }
             }
         «ENDIF»
     '''
 
     def private menuEntryForCrud(Entity it) '''
         if ($this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)) {
-            yield MenuItem::linktoRoute(t('«nameMultiple.formatForDisplayCapital»'), null, '«application.appName.formatForDB»_«name.formatForDB»_index'«/*IF tree != EntityTreeType.NONE», ['tpl' => 'tree']«ENDIF*/»);
+            yield '«name.formatForCode»' => MenuItem::linktoCrud(t('«nameMultiple.formatForDisplayCapital»'), 'fa fa-square', «name.formatForCodeCapital»::class);
         }
     '''
 
     def private menuEntriesBetweenControllers(Application it) '''
         if ($isAdmin) {
             if ($this->permissionHelper->hasPermission(ACCESS_READ)) {
-                yield MenuItem::linktoRoute(t('Frontend'), 'fas fa-home', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»');
+                yield 'frontend' => MenuItem::linktoRoute(t('Frontend'), 'fas fa-home', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»');
             }
         } else {
             if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
-                yield MenuItem::linktoRoute(t('Backend'), 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
+                yield 'backend' => MenuItem::linktoRoute(t('Backend'), 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
             }
         }
     '''

@@ -85,7 +85,7 @@ class NamingExtensions {
      * Returns the class name for a certain entity class.
      */
     def entityClassName(DataObject it, String suffix, Boolean isBase) {
-        application.appNamespace + '\\Entity\\' + (if (isBase) 'Base\\Abstract' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity'
+        application.appNamespace + '\\Entity\\' + (if (isBase) 'Base\\Abstract' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
     }
 
     /**

@@ -322,7 +322,7 @@ class CollectionFilterHelper {
                 // field filter
                 if ((!is_numeric($v) && '' !== $v) || (is_numeric($v) && 0 < $v)) {
                     «IF hasUserFieldsEntity»
-                        if ($v instanceof UserEntity) {
+                        if ($v instanceof User) {
                             $v = $v->getUid();
                         } else {
                             $v = (string) $v;

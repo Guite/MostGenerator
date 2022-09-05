@@ -43,7 +43,7 @@ class LoggableUndelete {
              */
         «ELSE»
             #[Route('/«name.formatForCode»/deleted/{id}.{_format}',
-                name: '«application.name.formatForDB»_«name.formatForDB»_deleted',
+                name: '«application.appName.formatForDB»_«name.formatForDB»_deleted',
                 requirements: ['id' => '\d+', '_format' => 'html'],
                 defaults: ['_format' => 'html'],
                 methods: ['GET']

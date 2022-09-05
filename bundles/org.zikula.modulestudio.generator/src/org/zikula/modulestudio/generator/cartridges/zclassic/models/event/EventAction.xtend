@@ -65,10 +65,6 @@ class EventAction {
                 }
             }
         «ENDIF»
-
-        // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar», 'PostLoad');
-        $this->eventDispatcher->dispatch($event);
     '''
 
     def prePersist(Application it) '''
@@ -105,10 +101,6 @@ class EventAction {
                 return;
             }
         «ENDIF»
-
-        // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar», 'PrePersist');
-        $this->eventDispatcher->dispatch($event);
     '''
 
     def postPersist(Application it) '''
@@ -125,17 +117,9 @@ class EventAction {
 
             $this->purgeHistory(«entityVar»->get_objectType());
         «ENDIF»
-
-        // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar», 'PostPersist');
-        $this->eventDispatcher->dispatch($event);
     '''
 
     def preRemove(Application it) '''
-
-        // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar», 'PreRemove');
-        $this->eventDispatcher->dispatch($event);
     '''
 
     def postRemove(Application it) '''
@@ -171,18 +155,9 @@ class EventAction {
             'id' => «entityVar»->getKey(),
         ];
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
-
-        // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar», 'PostRemove');
-        $this->eventDispatcher->dispatch($event);
     '''
 
     def preUpdate(Application it) '''
-
-        // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar», 'PreUpdate');
-        $event->setEntityChangeSet($args->getEntityChangeSet());
-        $this->eventDispatcher->dispatch($event);
     '''
 
     def postUpdate(Application it) '''
@@ -199,9 +174,5 @@ class EventAction {
 
             $this->purgeHistory(«entityVar»->get_objectType());
         «ENDIF»
-
-        // create the filter event and dispatch it
-        $event = $this->createFilterEvent(«entityVar», 'PostUpdate');
-        $this->eventDispatcher->dispatch($event);
     '''
 }
