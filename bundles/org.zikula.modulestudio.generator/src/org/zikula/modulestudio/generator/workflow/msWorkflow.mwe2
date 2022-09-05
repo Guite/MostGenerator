@@ -41,8 +41,8 @@ var targetDir
 var modelFile = '${modelPath}/${modelName}.mostapp'
 // note: this does not consider the writeModelToDocs generator setting (yet)
 var modelFileCopy = '${targetDir}/model/${modelName}.mostapp'
-var modelFileEnriched = '${modelPath}/${modelName}_enriched.mostapp'
-var modelFileEnrichedCopy = '${targetDir}/model/${modelName}_enriched.mostapp'
+//var modelFileEnriched = '${modelPath}/${modelName}_enriched.mostapp'
+//var modelFileEnrichedCopy = '${targetDir}/model/${modelName}_enriched.mostapp'
 
 var mostSlot = 'mostModel'
 
@@ -99,12 +99,12 @@ Workflow {
         }
     }
 
-    component = Logger { message = 'Writing enriched model file for reference:' }
-    component = Logger { message = modelFileEnriched }
-    component = ModelWriter {
-        uri = modelFileEnriched
-        slot = mostSlot
-    }
+    //component = Logger { message = 'Writing enriched model file for reference:' }
+    //component = Logger { message = modelFileEnriched }
+    //component = ModelWriter {
+    //    uri = modelFileEnriched
+    //    slot = mostSlot
+    //}
 
     component = Logger { message = 'Copying model artifacts.' }
     component = ModelFileCopier {
@@ -113,8 +113,8 @@ Workflow {
         sourceModelFile = modelFile
         targetModelFile = modelFileCopy
         // enriched domain model
-        sourceModelFileEnriched = modelFileEnriched
-        targetModelFileEnriched = modelFileEnrichedCopy
+        //sourceModelFileEnriched = modelFileEnriched
+        //targetModelFileEnriched = modelFileEnrichedCopy
     }
 
     // output required generation time
