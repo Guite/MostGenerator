@@ -131,6 +131,7 @@ class Entities {
         } else {
             imports.add(application.appNamespace + '\\Entity\\Base\\Abstract' + name.formatForCodeCapital + ' as BaseEntity')
         }
+        imports
     }
 
     def private dispatch collectBaseImports(Entity it, Boolean isBase) {
