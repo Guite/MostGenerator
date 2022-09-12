@@ -142,13 +142,13 @@ class ModelJoinExtensions {
     }
 
     /**
-     * Returns a list of all relationships for a given data object which should be included into editing.
+     * Returns a list of all relationships for a given data object connecting entities.
      */
-    def getEditableJoinRelations(DataObject it, Boolean incoming) {
+    def getJoinRelationsWithEntities(DataObject it, Boolean incoming) {
         if (incoming) {
-            getBidirectionalIncomingJoinRelations.filter[source.application == application && source instanceof Entity]
+            getBidirectionalIncomingJoinRelations.filter[source instanceof Entity]
         } else {
-            getOutgoingJoinRelations.filter[target.application == application && target instanceof Entity]
+            getOutgoingJoinRelations.filter[target instanceof Entity]
         }
     }
 

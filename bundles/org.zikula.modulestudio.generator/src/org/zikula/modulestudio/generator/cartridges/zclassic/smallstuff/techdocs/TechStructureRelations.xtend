@@ -14,17 +14,20 @@ import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.RelationEditMode
 import de.guite.modulestudio.metamodel.RelationFetchType
 import de.guite.modulestudio.metamodel.Relationship
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationDocProvider
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class TechStructureRelations {
 
     extension FormattingExtensions = new FormattingExtensions
 
+    ValidationDocProvider validationDocProvider
     TechHelper helper = new TechHelper
     String language
 
     def generate(DataObject it, String language) {
         this.language = language
+        validationDocProvider = new ValidationDocProvider(language)
         helper.table(application, relationColumns, relationHeader, relationContent)
     }
 
@@ -269,30 +272,14 @@ class TechStructureRelations {
             if (orphanRemoval) result += 'Waisen werden automatisch entfernt.'
             if (null !== orderBy && !orderBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + orderBy + '" sortiert.'
             if (null !== indexBy && !indexBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" indiziert.'
-            if (minTarget > 0 || maxTarget > 0) {
-                if (minTarget > 0 && maxTarget > 0) {
-                    result += 'Es können mindestens ' + minTarget + ' und höchstens ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' zugewiesen werden.'
-                } else if (minTarget > 0) {
-                    result += 'Es können mindestens ' + minTarget + ' ' + targetAlias.formatForDisplay + ' zugewiesen werden.'
-                } else if (maxTarget > 0) {
-                    result += 'Es können höchstens ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' zugewiesen werden.'
-                }
-            }
+            result.addAll(validationDocProvider.constraints(it))
             if (inheritPermissions) result += 'Die Sichtbarkeit der Quelle beeinflusst die Sichtbarkeit des Ziels durch Vererbung von Zugriffsrechten.'
         } else {
             result += 'This relation is realised by ' + (if (bidirectional) 'a bidirectional' else 'an unidirectional') + ' association.'
             if (orphanRemoval) result += 'Orphans get removed automatically.'
             if (null !== orderBy && !orderBy.empty) result += 'The ' + targetAlias.formatForDisplay + ' are sorted by the "' + orderBy + '" field.'
             if (null !== indexBy && !indexBy.empty) result += 'The ' + targetAlias.formatForDisplay + ' are indexed by the "' + indexBy + '" field.'
-            if (minTarget > 0 || maxTarget > 0) {
-                if (minTarget > 0 && maxTarget > 0) {
-                    result += 'At least ' + minTarget + ' and at most ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' may be assigned.'
-                } else if (minTarget > 0) {
-                    result += 'At least ' + minTarget + ' ' + targetAlias.formatForDisplay + ' may be assigned.'
-                } else if (maxTarget > 0) {
-                    result += 'At most ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' may be assigned.'
-                }
-            }
+            result.addAll(validationDocProvider.constraints(it))
             if (inheritPermissions) result += 'Source visibility affects target visibility by permission inheritance.'
         }
         result += editRemarks(false, sourceEditing, bidirectional, true)
@@ -321,24 +308,7 @@ class TechStructureRelations {
             if (null !== orderByReverse && !orderByReverse.empty) result += 'Die ' + sourceAlias.formatForDisplay + ' werden nach dem Feld "' + orderByReverse + '" sortiert.'
             if (null !== orderBy && !orderBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + orderBy + '" sortiert.'
             if (null !== indexBy && !indexBy.empty) result += 'Die ' + targetAlias.formatForDisplay + ' werden nach dem Feld "' + indexBy + '" indiziert.'
-            if (minSource > 0 || maxSource > 0) {
-                if (minSource > 0 && maxSource > 0) {
-                    result += 'Es können mindestens ' + minSource + ' und höchstens ' + maxSource + ' ' + sourceAlias.formatForDisplay + ' zugewiesen werden.'
-                } else if (minSource > 0) {
-                    result += 'Es können mindestens ' + minSource + ' ' + sourceAlias.formatForDisplay + ' zugewiesen werden.'
-                } else if (maxSource > 0) {
-                    result += 'Es können höchstens ' + maxSource + ' ' + sourceAlias.formatForDisplay + ' zugewiesen werden.'
-                }
-            }
-            if (minTarget > 0 || maxTarget > 0) {
-                if (minTarget > 0 && maxTarget > 0) {
-                    result += 'Es können mindestens ' + minTarget + ' und höchstens ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' zugewiesen werden.'
-                } else if (minTarget > 0) {
-                    result += 'Es können mindestens ' + minTarget + ' ' + targetAlias.formatForDisplay + ' zugewiesen werden.'
-                } else if (maxTarget > 0) {
-                    result += 'Es können höchstens ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' zugewiesen werden.'
-                }
-            }
+            result.addAll(validationDocProvider.constraints(it))
             if (inheritPermissions != ManyToManyPermissionInheritanceType.NONE) {
                 result += 'Die Sichtbarkeit der Quelle beeinflusst die Sichtbarkeit des Ziels durch Vererbung von Zugriffsrechten.'
                 if (inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE) {
@@ -354,24 +324,7 @@ class TechStructureRelations {
             if (null !== orderByReverse && !orderByReverse.empty) result += 'The ' + sourceAlias.formatForDisplay + ' are sorted by the "' + orderByReverse + '" field.'
             if (null !== orderBy && !orderBy.empty) result += 'The ' + targetAlias.formatForDisplay + ' are sorted by the "' + orderBy + '" field.'
             if (null !== indexBy && !indexBy.empty) result += 'The ' + targetAlias.formatForDisplay + ' are indexed by the "' + indexBy + '" field.'
-            if (minSource > 0 || maxSource > 0) {
-                if (minSource > 0 && maxSource > 0) {
-                    result += 'At least ' + minSource + ' and at most ' + maxSource + ' ' + sourceAlias.formatForDisplay + ' may be assigned.'
-                } else if (minSource > 0) {
-                    result += 'At least ' + minSource + ' ' + sourceAlias.formatForDisplay + ' may be assigned.'
-                } else if (maxSource > 0) {
-                    result += 'At most ' + maxSource + ' ' + sourceAlias.formatForDisplay + ' may be assigned.'
-                }
-            }
-            if (minTarget > 0 || maxTarget > 0) {
-                if (minTarget > 0 && maxTarget > 0) {
-                    result += 'At least ' + minTarget + ' and at most ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' may be assigned.'
-                } else if (minTarget > 0) {
-                    result += 'At least ' + minTarget + ' ' + targetAlias.formatForDisplay + ' may be assigned.'
-                } else if (maxTarget > 0) {
-                    result += 'At most ' + maxTarget + ' ' + targetAlias.formatForDisplay + ' may be assigned.'
-                }
-            }
+            result.addAll(validationDocProvider.constraints(it))
             if (inheritPermissions != ManyToManyPermissionInheritanceType.NONE) {
                 result += 'Source visibility affects target visibility by permission inheritance.'
                 if (inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE) {

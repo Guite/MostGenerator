@@ -1,27 +1,22 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Locking
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ArrayFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.AutoCompletionRelationTransformer
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.TranslationListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntityType
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ArrayType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TranslationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.trait.ModerationFormFieldsTrait
@@ -61,20 +56,6 @@ class FormHandler {
         app = it
         fh = new FileHelper(app)
 
-        // common form types (shared by entities and variables)
-        if (!entities.filter[e|!e.fields.filter(ArrayField).empty].empty || !getAllVariables.filter(ArrayField).empty) {
-            new ArrayType().generate(it, fsa)
-            new ArrayFieldTransformer().generate(it, fsa)
-        }
-        if (hasUploads) {
-            new UploadType().generate(it, fsa)
-            new UploadFileTransformer().generate(it, fsa)
-        }
-        if (hasMultiListFields || !getAllVariables.filter(ListField).filter[multiple].empty) {
-            new MultiListType().generate(it, fsa)
-            new ListFieldTransformer().generate(it, fsa)
-        }
-
         if (hasEditActions()) {
             // form handlers
             generateCommon('edit', fsa)
@@ -84,6 +65,10 @@ class FormHandler {
             // form types
             for (entity : entities.filter[it instanceof MappedSuperClass || (it as Entity).hasEditAction]) {
                 new EditEntityType().generate(entity, fsa)
+            }
+            if (hasUploads) {
+                new UploadType().generate(it, fsa)
+                new UploadFileTransformer().generate(it, fsa)
             }
             if (hasStandardFieldEntities) {
                 new ModerationFormFieldsTrait().generate(it, fsa)
@@ -130,52 +115,56 @@ class FormHandler {
         )
     }
 
+    def private collectCommonBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Psr\\Log\\LoggerInterface',
+            'RuntimeException',
+            'Symfony\\Component\\Form\\Form',
+            'Symfony\\Component\\Form\\FormFactoryInterface',
+            'Symfony\\Component\\Form\\FormInterface',
+            'Symfony\\Component\\HttpFoundation\\RedirectResponse',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Symfony\\Component\\Routing\\RouterInterface',
+            'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Entity\\Factory\\EntityFactory',
+            appNamespace + '\\Helper\\ControllerHelper',
+            appNamespace + '\\Helper\\ModelHelper',
+            appNamespace + '\\Helper\\PermissionHelper',
+            appNamespace + '\\Helper\\WorkflowHelper'
+        ])
+        if (!getAllEntities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty) {
+            imports.add('Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface')
+        }
+        if (hasTranslatable || needsApproval || hasStandardFieldEntities) {
+            imports.add('function Symfony\\Component\\String\\s')
+        }
+        if (hasTranslatable) {
+            imports.add('Zikula\\Bundle\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
+            imports.add(appNamespace + '\\Helper\\TranslatableHelper')
+        }
+        if (needsApproval) {
+            imports.add('Zikula\\GroupsBundle\\GroupsConstant')
+            imports.add('Zikula\\GroupsBundle\\Repository\\GroupApplicationRepositoryInterface')
+            imports.add('Zikula\\UsersBundle\\UsersConstant')
+        }
+        if (hasNonNullableUserFields) {
+            imports.add('Zikula\\UsersBundle\\Repository\\UserRepositoryInterface')
+        }
+        if (needsFeatureActivationHelper) {
+            imports.add(appNamespace + '\\Helper\\FeatureActivationHelper')
+        }
+        imports
+    }
+
     def private formHandlerCommonBaseImpl(Application it, String actionName) '''
         namespace «appNamespace»\Form\Handler\Common\Base;
 
-        use Psr\Log\LoggerInterface;
-        use RuntimeException;
-        use Symfony\Component\Form\Form;
-        use Symfony\Component\Form\FormFactoryInterface;
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\HttpFoundation\RedirectResponse;
-        use Symfony\Component\HttpFoundation\RequestStack;
-        «IF !getAllEntities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty»
-            use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-        «ENDIF»
-        use Symfony\Component\Routing\RouterInterface;
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-            use function Symfony\Component\String\s;
-        «ENDIF»
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        «IF hasTranslatable»
-            use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
-        «ENDIF»
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «IF needsApproval»
-            use Zikula\GroupsBundle\GroupsConstant;
-            use Zikula\GroupsBundle\Repository\GroupApplicationRepositoryInterface;
-        «ENDIF»
-        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        «IF hasNonNullableUserFields»
-            use Zikula\UsersBundle\Repository\UserRepositoryInterface;
-        «ENDIF»
-        «IF needsApproval»
-            use Zikula\UsersBundle\UsersConstant;
-        «ENDIF»
-        use «appNamespace»\Entity\EntityInterface;
-        use «appNamespace»\Entity\Factory\EntityFactory;
-        «IF needsFeatureActivationHelper»
-            use «appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
-        use «appNamespace»\Helper\ControllerHelper;
-        use «appNamespace»\Helper\ModelHelper;
-        use «appNamespace»\Helper\PermissionHelper;
-        «IF hasTranslatable»
-            use «appNamespace»\Helper\TranslatableHelper;
-        «ENDIF»
-        use «appNamespace»\Helper\WorkflowHelper;
+        «collectCommonBaseImports.print»
 
         /**
          * This handler class handles the page events of editing forms.
@@ -926,27 +915,32 @@ class FormHandler {
         }
     '''
 
+    def private collectBaseImports(Entity it, String actionName) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Exception',
+            'RuntimeException',
+            'Symfony\\Component\\Form\\FormInterface',
+            'Symfony\\Component\\HttpFoundation\\RedirectResponse',
+            entityClassName('', false),
+            app.appNamespace + '\\Form\\Handler\\Common\\' + actionName.formatForCodeCapital + 'Handler',
+            app.appNamespace + '\\Form\\Type\\' + name.formatForCodeCapital + 'Type'
+        ])
+        imports.addAll(locking.imports(it))
+        if (ownerPermission || !fields.filter(UserField).filter[!nullable].empty) {
+            imports.add('Zikula\\UsersBundle\\UsersConstant')
+            if (ownerPermission) {
+                imports.add('Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException')
+                imports.add(app.appNamespace + '\\Entity\\EntityInterface')
+            }
+        }
+        imports
+    }
+
     def private formHandlerBaseImports(Entity it, String actionName) '''
-        «val app = application»
         namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
-        use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler;
-        use «app.appNamespace»\Form\Type\«name.formatForCodeCapital»Type;
-        «locking.imports(it)»
-        use Exception;
-        use RuntimeException;
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\HttpFoundation\RedirectResponse;
-        «IF ownerPermission»
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «ENDIF»
-        «IF ownerPermission || !fields.filter(UserField).filter[!nullable].empty»
-            use Zikula\UsersBundle\UsersConstant;
-        «ENDIF»
-        use «entityClassName('', false)»;
-        «IF ownerPermission»
-            use «app.appNamespace»\Entity\EntityInterface;
-        «ENDIF»
+        «collectBaseImports(actionName).print»
     '''
 
     def private memberVarAssignments(Entity it) '''

@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class Initializer {
 
@@ -24,22 +25,30 @@ class Initializer {
         fsa.generateClassPair('Initializer/' + name.formatForCodeCapital + 'Initializer.php', initializerBaseClass, initializerImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Exception',
+            'Psr\\Log\\LoggerInterface',
+            'Zikula\\Bundle\\CoreBundle\\BundleInitializer\\BundleInitializerInterface'
+        ])
+        if (hasCategorisableEntities) {
+            imports.addAll(#[
+                'Zikula\\CategoriesBundle\\Entity\\CategoryRegistry',
+                'Zikula\\CategoriesBundle\\Repository\\CategoryRepositoryInterface',
+                appNamespace + '\\Helper\\CategoryHelper'
+            ])
+        }
+        if (hasUploads) {
+            imports.add(appNamespace + '\\Helper\\UploadHelper')
+        }
+        imports
+    }
+
     def private initializerBaseClass(Application it) '''
         namespace «appNamespace»\Initializer\Base;
 
-        use Exception;
-        use Psr\Log\LoggerInterface;
-        use Zikula\Bundle\CoreBundle\BundleInitializer\BundleInitializerInterface;
-        «IF hasCategorisableEntities»
-            use Zikula\CategoriesBundle\Entity\CategoryRegistry;
-            use Zikula\CategoriesBundle\Repository\CategoryRepositoryInterface;
-        «ENDIF»
-        «IF hasCategorisableEntities»
-            use «appNamespace»\Helper\CategoryHelper;
-        «ENDIF»
-        «IF hasUploads»
-            use «appNamespace»\Helper\UploadHelper;
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * Initializer base class.

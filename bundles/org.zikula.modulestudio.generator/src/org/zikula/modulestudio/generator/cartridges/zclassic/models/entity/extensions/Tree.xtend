@@ -98,9 +98,11 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
     /**
      * Returns the extension class import statements.
      */
-    override extensionClassImports(Entity it) '''
-        use Gedmo\Tree\Entity\MappedSuperclass\«extensionBaseClass»;
-    '''
+    override extensionClassImports(Entity it) {
+        #[
+            'Gedmo\\Tree\\Entity\\MappedSuperclass\\' + extensionBaseClass
+        ]
+    }
 
     /**
      * Returns the extension base class.

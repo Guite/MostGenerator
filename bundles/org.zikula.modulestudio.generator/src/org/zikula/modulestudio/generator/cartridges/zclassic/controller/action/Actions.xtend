@@ -10,14 +10,10 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IndexAction
-import de.guite.modulestudio.metamodel.OneToManyRelationship
-import de.guite.modulestudio.metamodel.OneToOneRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Actions {
@@ -25,9 +21,7 @@ class Actions {
     extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     Application app
@@ -71,14 +65,14 @@ class Actions {
             }
         «ENDIF»
         «IF action instanceof DetailAction || action instanceof DeleteAction»
-            if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
+            if (!$this->permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
                 «IF ownerPermission && action instanceof DeleteAction»
                     if ($isAdmin) {
                         throw new AccessDeniedException();
                     }
                     $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
                     $isOwner = 0 < $currentUserId && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId === $«name.formatForCode»->getCreatedBy()->getUid();
-                    if (!$isOwner || !$permissionHelper->mayEdit($«name.formatForCode»)) {
+                    if (!$isOwner || !$this->permissionHelper->mayEdit($«name.formatForCode»)) {
                         throw new AccessDeniedException();
                     }
                 «ELSE»
@@ -86,7 +80,7 @@ class Actions {
                 «ENDIF»
             }
         «ELSE»
-            if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
+            if (!$this->permissionHelper->hasComponentPermission($objectType, $permLevel)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
@@ -103,7 +97,7 @@ class Actions {
 
             // check if deleted entities should be displayed
             $viewDeleted = $request->query->getInt('deleted');
-            if (1 === $viewDeleted && $permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_EDIT)) {
+            if (1 === $viewDeleted && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_EDIT)) {
                 $templateParameters['deletedEntities'] = $loggableHelper->getDeletedEntities($objectType);
 
                 return $viewHelper->processTemplate($objectType, 'viewDeleted', $templateParameters);
@@ -116,13 +110,11 @@ class Actions {
         $request->query->set('num', $num);
 
         $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_index';
-        $sortableColumns = new SortableColumns($router, $routeName, 'sort', 'sortdir');
         «IF tree != EntityTreeType.NONE»
 
             if ('tree' === $request->query->getAlnum('tpl')) {
                 $templateParameters = $controllerHelper->processIndexActionParameters(
                     $objectType,
-                    $sortableColumns,
                     $templateParameters
                 );
 
@@ -131,16 +123,13 @@ class Actions {
             }
         «ENDIF»
 
-        «initSortableColumns»
-
         $templateParameters = $controllerHelper->processIndexActionParameters(
             $objectType,
-            $sortableColumns,
             $templateParameters
         );
 
         // filter by permissions
-        $templateParameters['items'] = $permissionHelper->filterCollection(
+        $templateParameters['items'] = $this->permissionHelper->filterCollection(
             $objectType,
             $templateParameters['items'],
             $permLevel
@@ -150,42 +139,11 @@ class Actions {
         return $viewHelper->processTemplate($objectType, 'index', $templateParameters);
     '''
 
-    def private initSortableColumns(Entity it) '''
-        «val listItemsFields = getSortingFields»
-        «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
-        «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
-        $sortableColumns->addColumns([
-            «FOR field : listItemsFields»
-                «addSortColumn(field.name)»
-            «ENDFOR»
-            «FOR relation : listItemsIn»
-                «addSortColumn(relation.getRelationAliasName(false))»
-            «ENDFOR»
-            «FOR relation : listItemsOut»
-                «addSortColumn(relation.getRelationAliasName(true))»
-            «ENDFOR»
-            «IF geographical»
-                «addSortColumn('latitude')»
-                «addSortColumn('longitude')»
-            «ENDIF»
-            «IF standardFields»
-                «addSortColumn('createdBy')»
-                «addSortColumn('createdDate')»
-                «addSortColumn('updatedBy')»
-                «addSortColumn('updatedDate')»
-            «ENDIF»
-        ]);
-    '''
-
-    def private addSortColumn(Entity it, String columnName) '''
-        new Column('«columnName.formatForCode»'),
-    '''
-
     def private dispatch actionImplBody(Entity it, DetailAction action) '''
         «IF workflow != EntityWorkflowType.NONE»
             if (
                 'approved' !== $«name.formatForCode»->getWorkflowState()
-                && !$permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)
+                && !$this->permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)
             ) {
                 throw new AccessDeniedException();
             }
@@ -195,7 +153,7 @@ class Actions {
             $requestedVersion = $request->query->getInt('version');
             $isAdmin = false;«/*TODO*/»
             $versionPermLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
-            if (0 < $requestedVersion && $permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
+            if (0 < $requestedVersion && $this->permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
                 // preview of a specific version is desired, but detach entity
                 $«name.formatForCode» = $loggableHelper->revert($«name.formatForCode», $requestedVersion, true);
             }
@@ -219,7 +177,7 @@ class Actions {
                 $fileName = $objectType . '_' .
                     (property_exists($«name.formatForCode», 'slug')
                         ? $«name.formatForCode»['slug']
-                        : $entityDisplayHelper->getFormattedTitle($«name.formatForCode»)
+                        : $this->entityDisplayHelper->getFormattedTitle($«name.formatForCode»)
                     ) . '.ics'
                 ;
                 $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);

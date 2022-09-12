@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exte
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import java.util.List
 
 interface EntityExtensionInterface {
 
@@ -39,7 +40,7 @@ interface EntityExtensionInterface {
     /**
      * Returns the extension class import statements.
      */
-    def String extensionClassImports(Entity it)
+    def List<String> extensionClassImports(Entity it)
 
     /**
      * Returns the extension base class.

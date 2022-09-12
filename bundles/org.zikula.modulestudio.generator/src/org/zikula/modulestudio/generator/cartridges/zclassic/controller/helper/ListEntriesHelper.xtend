@@ -145,17 +145,6 @@ class ListEntriesHelper {
                         }
                         break;
                 «ENDFOR»
-                «IF !getAllVariables.filter(ListField).empty»
-                    case 'appSettings':
-                        switch ($fieldName) {
-                            «FOR listField : getAllVariables.filter(ListField)»
-                                case '«listField.name.formatForCode»':
-                                    $result = «listField.multiple.displayBool»;
-                                    break;
-                            «ENDFOR»
-                        }
-                        break;
-                «ENDIF»
             }
 
             return $result;
@@ -189,17 +178,6 @@ class ListEntriesHelper {
                         }
                         break;
                 «ENDFOR»
-                «IF !getAllVariables.filter(ListField).empty»
-                    case 'appSettings':
-                        switch ($fieldName) {
-                            «FOR listField : getAllVariables.filter(ListField)»
-                                case '«listField.name.formatForCode»':
-                                    $entries = $this->get«listField.name.formatForCodeCapital»EntriesForAppSettings();
-                                    break;
-                            «ENDFOR»
-                        }
-                        break;
-                «ENDIF»
             }
 
             return $entries;
@@ -211,17 +189,13 @@ class ListEntriesHelper {
 
             «listField.getItemsImpl»
         «ENDFOR»
-        «FOR listField : getAllVariables.filter(ListField)»
-
-            «listField.getItemsImpl»
-        «ENDFOR»
     '''
 
     def private getItemsImpl(ListField it) '''
         /**
          * Get '«name.formatForDisplay»' list entries.
          */
-        public function get«name.formatForCodeCapital»EntriesFor«IF null !== entity»«entity.name.formatForCodeCapital»«ELSE»AppSettings«ENDIF»(): array
+        public function get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»(): array
         {
             $states = [];
             «IF name == 'workflowState'»

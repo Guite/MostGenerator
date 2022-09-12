@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class LifecycleListener {
 
@@ -22,41 +23,43 @@ class LifecycleListener {
         fsa.generateClassPair('EventListener/EntityLifecycleListener.php', lifecycleListenerBaseImpl, lifecycleListenerImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Doctrine\\Common\\EventSubscriber',
+            'Doctrine\\ORM\\Event\\OnFlushEventArgs',
+            'Doctrine\\ORM\\Event\\PostFlushEventArgs',
+            'Doctrine\\ORM\\Event\\PreFlushEventArgs',
+            'Doctrine\\ORM\\Event\\PreUpdateEventArgs',
+            'Doctrine\\ORM\\Events',
+            'Doctrine\\Persistence\\Event\\LifecycleEventArgs',
+            'Psr\\Log\\LoggerInterface',
+            'Symfony\\Component\\DependencyInjection\\ContainerAwareInterface',
+            'Symfony\\Component\\DependencyInjection\\ContainerAwareTrait',
+            'Symfony\\Component\\DependencyInjection\\ContainerInterface',
+            'Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface',
+            'Zikula\\UsersBundle\\Api\\CurrentUserApi',
+            appNamespace + '\\Entity\\EntityInterface'
+        ])
+        if (!getUploadEntities.empty) {
+            imports.add(appNamespace + '\\Helper\\UploadHelper')
+        }
+        if (hasLoggable) {
+            imports.addAll(#[
+                'Gedmo\\Loggable\\Entity\\MappedSuperclass\\AbstractLogEntry',
+                'function Symfony\\Component\\String\\s',
+                'Zikula\\UsersBundle\\UsersConstant',
+                appNamespace + '\\Entity\\Factory\\EntityFactory',
+                appNamespace + '\\EventListener\\LoggableListener'
+            ])
+        }
+        imports
+    }
+
     def private lifecycleListenerBaseImpl(Application it) '''
         namespace «appNamespace»\EventListener\Base;
 
-        use Doctrine\Common\EventSubscriber;
-        use Doctrine\ORM\Event\OnFlushEventArgs;
-        use Doctrine\ORM\Event\PostFlushEventArgs;
-        use Doctrine\ORM\Event\PreFlushEventArgs;
-        use Doctrine\ORM\Event\PreUpdateEventArgs;
-        use Doctrine\ORM\Events;
-        use Doctrine\Persistence\Event\LifecycleEventArgs;
-        «IF hasLoggable»
-            use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
-        «ENDIF»
-        use Psr\Log\LoggerInterface;
-        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-        use Symfony\Component\DependencyInjection\ContainerInterface;
-        «IF hasLoggable»
-            use function Symfony\Component\String\s;
-        «ENDIF»
-        use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-        use Zikula\UsersBundle\Api\CurrentUserApi;
-        «IF hasLoggable»
-            use Zikula\UsersBundle\UsersConstant;
-        «ENDIF»
-        use «appNamespace»\Entity\EntityInterface;
-        «IF hasLoggable»
-            use «appNamespace»\Entity\Factory\EntityFactory;
-        «ENDIF»
-        «IF !getUploadEntities.empty»
-            use «appNamespace»\Helper\UploadHelper;
-        «ENDIF»
-        «IF hasLoggable»
-            use «appNamespace»\EventListener\LoggableListener;
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * Event subscriber base class for entity lifecycle events.

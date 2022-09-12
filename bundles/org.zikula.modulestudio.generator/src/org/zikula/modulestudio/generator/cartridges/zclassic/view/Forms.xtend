@@ -194,7 +194,7 @@ class Forms {
     '''
 
     def private fieldSet(Entity it, String subElem) '''
-        «FOR field : getEditableTranslatableFields»«field.fieldWrapper(subElem)»«ENDFOR»
+        «FOR field : getEditableTranslatableFields.filter[f|!#['latitude', 'longitude'].contains(f.name)]»«field.fieldWrapper(subElem)»«ENDFOR»
         «IF hasTranslatableSlug»
             «slugField(subElem)»
         «ENDIF»
@@ -215,11 +215,6 @@ class Forms {
             «ENDIF»
             «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
                 «slugField(subElem)»
-            «ENDIF»
-            «IF geographical && !subElem.empty»
-                «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    {{ form_row(attribute(«subElem», '«geoFieldName»')) }}
-                «ENDFOR»
             «ENDIF»
             «IF isInheriting»
                 «IF !subElem.empty»

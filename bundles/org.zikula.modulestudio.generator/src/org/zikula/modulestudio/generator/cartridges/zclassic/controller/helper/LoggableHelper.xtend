@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class LoggableHelper {
 
@@ -24,28 +25,36 @@ class LoggableHelper {
         fsa.generateClassPair('Helper/LoggableHelper.php', loggableFunctionsBaseImpl, loggableFunctionsImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Doctrine\\ORM\\EntityRepository',
+            'Doctrine\\ORM\\Id\\AssignedGenerator',
+            'Doctrine\\ORM\\Mapping\\ClassMetadata',
+            'Doctrine\\Persistence\\Event\\LifecycleEventArgs',
+            'Exception',
+            'Gedmo\\Loggable\\Entity\\MappedSuperclass\\AbstractLogEntry',
+            'Gedmo\\Loggable\\LoggableListener',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Entity\\Factory\\EntityFactory',
+            appNamespace + '\\Helper\\EntityDisplayHelper',
+            appNamespace + '\\EventListener\\EntityLifecycleListener'
+        ])
+        if (hasTrees && !getTreeEntities.filter[loggable].empty) {
+            imports.add('Doctrine\\Common\\Proxy\\Proxy')
+        }
+        if (hasLoggableTranslatable) {
+            imports.add(appNamespace + '\\Helper\\TranslatableHelper')
+        }
+        imports
+    }
+
     def private loggableFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF hasTrees && !getTreeEntities.filter[loggable].empty»
-            use Doctrine\Common\Proxy\Proxy;
-        «ENDIF»
-        use Doctrine\ORM\EntityRepository;
-        use Doctrine\ORM\Id\AssignedGenerator;
-        use Doctrine\ORM\Mapping\ClassMetadata;
-        use Doctrine\Persistence\Event\LifecycleEventArgs;
-        use Exception;
-        use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
-        use Gedmo\Loggable\LoggableListener;
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        use «appNamespace»\Entity\EntityInterface;
-        use «appNamespace»\Entity\Factory\EntityFactory;
-        use «appNamespace»\Helper\EntityDisplayHelper;
-        «IF hasLoggableTranslatable»
-            use «appNamespace»\Helper\TranslatableHelper;
-        «ENDIF»
-        use «appNamespace»\EventListener\EntityLifecycleListener;
+        «collectBaseImports.print»
 
         /**
          * Helper base class for loggable behaviour.

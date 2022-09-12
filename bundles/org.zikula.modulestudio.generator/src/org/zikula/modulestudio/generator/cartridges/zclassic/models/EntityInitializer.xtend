@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -29,25 +30,31 @@ class EntityInitializer {
         fsa.generateClassPair('Entity/Factory/EntityInitializer.php', initializerBaseImpl, initializerImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.add(appNamespace + '\\Helper\\PermissionHelper')
+        if (!getAllEntities.filter[!fields.filter(DatetimeField).filter[!immutable].empty].empty) {
+            imports.add('DateTime')
+        }
+        if (!getAllEntities.filter[!fields.filter(DatetimeField).filter[immutable].empty].empty) {
+            imports.add('DateTimeImmutable')
+        }
+        if (supportLocaleFilter) {
+            imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
+        }
+        for (entity : getAllEntities) {
+            imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+        }
+        if (hasListFieldsExceptWorkflowState) {
+            imports.add(appNamespace + '\\Helper\\ListEntriesHelper')
+        }
+        imports
+    }
+
     def private initializerBaseImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory\Base;
 
-        «IF !getAllEntities.filter[!fields.filter(DatetimeField).filter[!immutable].empty].empty»
-            use DateTime;
-        «ENDIF»
-        «IF !getAllEntities.filter[!fields.filter(DatetimeField).filter[immutable].empty].empty»
-            use DateTimeImmutable;
-        «ENDIF»
-        «IF supportLocaleFilter»
-            use Symfony\Component\HttpFoundation\RequestStack;
-        «ENDIF»
-        «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
-        «ENDFOR»
-        «IF hasListFieldsExceptWorkflowState»
-            use «appNamespace»\Helper\ListEntriesHelper;
-        «ENDIF»
-        use «appNamespace»\Helper\PermissionHelper;
+        «collectBaseImports.print»
 
         /**
          * Entity initializer class used to dynamically apply default values to newly created entities.

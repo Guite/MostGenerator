@@ -40,10 +40,10 @@ class Csv {
     def private csvIndex(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» index csv view #}
         {% trans_default_domain '«name.formatForCode»' %}
-        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{% trans %}«geoFieldName.formatForDisplayCapital»{% endtrans %}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{% trans %}Workflow state{% endtrans %}"«ENDIF»«headerLinesRelations»
+        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF hasVisibleWorkflow»;"{% trans %}Workflow state{% endtrans %}"«ENDIF»«headerLinesRelations»
         «val objName = name.formatForCode»
         {% for «objName» in items %}
-        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ «name.formatForCode».«geoFieldName»|«application.appName.formatForDB»_geoData }}"«ENDFOR»«ENDIF»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«application.appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
+        «FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.displayEntry»«ENDFOR»«IF hasVisibleWorkflow»;"{{ «name.formatForCode».workflowState|«application.appName.formatForDB»_objectState(false)|lower }}"«ENDIF»«dataLinesRelations»
         {% endfor %}
     '''
 

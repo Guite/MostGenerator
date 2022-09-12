@@ -49,14 +49,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "true"
                     mandatory false
-                    displayType DETAIL
-                    visible false
+                    visibleOnIndex false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 boolean "bool2" unique translatable ajaxTogglability {
                     defaultValue "true"
                     mandatory true
-                    displayType INDEX_DETAIL
-                    visible true
+                    visibleOnSort false
                     cssClass "mybool"
                 }
             }
@@ -71,14 +72,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DETAIL
-                    visible false
+                    visibleOnIndex false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 integer "integ2" unique percentage translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType INDEX_DETAIL
-                    visible true
+                    visibleOnSort false
                     cssClass "myint"
                 },
                 integer "integ3" range version {
@@ -99,14 +101,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DETAIL
-                    visible false
+                    visibleOnIndex false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 number "num2" unique percentage translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType INDEX_DETAIL
-                    visible true
+                    visibleOnSort false
                     cssClass "mynum"
                     numberType DECIMAL
                 },
@@ -128,14 +131,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DETAIL
-                    visible false
+                    visibleOnIndex false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 string "str2" unique translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType INDEX_DETAIL
-                    visible true
+                    visibleOnSort false
                     cssClass "mystr"
                     minLength 3
                     regexp "foo"
@@ -324,14 +328,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DETAIL
-                    visible false
+                    visibleOnIndex false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 text "txt2" translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType INDEX_DETAIL
-                    visible true
+                    visibleOnSort false
                     cssClass "mytxt"
                     regexp "foo"
                 },
@@ -356,14 +361,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "123"
                     mandatory false
-                    displayType DETAIL
-                    visible false
+                    visibleOnIndex false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 user "usr2" unique translatable {
                     defaultValue "123"
                     mandatory true
-                    displayType INDEX_DETAIL
-                    visible true
+                    visibleOnSort false
                     cssClass "myuser"
                 },
                 user "usr3" sortablePosition {
@@ -400,13 +406,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "info@guite.de"
                     mandatory false
-                    displayType INDEX
-                    visible false
+                    visibleOnDetail false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 email "ema2" unique translatable {
                     mandatory true
-                    displayType SORTING
-                    visible true
+                    visibleOnIndex false
+                    visibleOnDetail false
                     cssClass "myema"
                     minLength 3
                     regexp "foo"
@@ -429,13 +437,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "https://guite.de"
                     mandatory false
-                    displayType INDEX
-                    visible false
+                    visibleOnDetail false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 url "url2" unique translatable {
                     mandatory true
-                    displayType SORTING
-                    visible true
+                    visibleOnIndex false
+                    visibleOnDetail false
                     cssClass "myurl"
                     minLength 3
                     regexp "foo"
@@ -458,15 +468,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "foo"
                     mandatory false
-                    displayType INDEX_SORTING
-                    visible false
+                    visibleOnDetail false
+                    visibleOnNew false
+                    visibleOnEdit false
                     namingScheme RANDOMCHECKSUM
                     allowSquare false
                 },
                 upload "file2" unique translatable {
                     mandatory true
-                    displayType DETAIL_SORTING
-                    visible true
+                    visibleOnIndex false
                     cssClass "myurl"
                     minLength 3
                     regexp "foo"
@@ -476,7 +486,6 @@ application "SimpleNews" {
                     allowPortrait true
                 },
                 upload "file3" fixed multiple {
-                    displayType ALL
                     sluggablePosition 3
                     regexp "foo" opposite
                     length 50
@@ -512,8 +521,10 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "info@guite.de"
                     mandatory false
-                    displayType INDEX
-                    visible false
+                    visibleOnDetail false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                     items {
                         listItem "foo",
                         default listItem "bar"
@@ -521,8 +532,8 @@ application "SimpleNews" {
                 },
                 list "list2" unique translatable expanded {
                     mandatory true
-                    displayType SORTING
-                    visible true
+                    visibleOnIndex false
+                    visibleOnDetail false
                     cssClass "mylist"
                     minLength 3
                     regexp "foo"
@@ -557,13 +568,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "foo"
                     mandatory false
-                    displayType INDEX
-                    visible false
+                    visibleOnDetail false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 array "arr2" {
                     mandatory true
-                    displayType SORTING
-                    visible true
+                    visibleOnIndex false
+                    visibleOnDetail false
                     cssClass "myarr"
                     arrayType SIMPLE_ARRAY
                 },
@@ -582,14 +595,15 @@ application "SimpleNews" {
                     documentation "My field"
                     defaultValue "now"
                     mandatory false
-                    displayType DETAIL
-                    visible false
+                    visibleOnIndex false
+                    visibleOnNew false
+                    visibleOnEdit false
+                    visibleOnSort false
                 },
                 datetime "dat2" unique translatable {
                     defaultValue "now"
                     mandatory true
-                    displayType INDEX_DETAIL
-                    visible true
+                    visibleOnSort false
                     cssClass "mydate"
                     components TIME
                 },

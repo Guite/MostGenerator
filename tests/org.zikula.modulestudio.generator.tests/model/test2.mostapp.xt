@@ -102,15 +102,19 @@ application "SimpleNews" targets SF70 {
             displayPattern "#title#"
             fields {
                 string "title" {
-                    displayType NONE
+                    visibleOnIndex false
+                    visibleOnDetail false
+                    visibleOnSort false
                 },
                 string "myPassword" {
-                    displayType INDEX
+                    visibleOnDetail false
+                    visibleOnSort false
                     role PASSWORD
                 },
                 string "zipCode" unique {
                     mandatory false
-                    displayType DETAIL
+                    visibleOnIndex false
+                    visibleOnSort false
                 },
                 list "myList1" {
                     items {

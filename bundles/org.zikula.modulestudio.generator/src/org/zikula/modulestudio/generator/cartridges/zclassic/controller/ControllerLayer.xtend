@@ -4,18 +4,24 @@ import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.StringRole
+import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.InlineRedirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableHistory
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.LoggableUndelete
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.MassHandling
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.AjaxController
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigationType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.config.ConfigureActions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.config.ConfigureCrud
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.config.ConfigureFields
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.config.ConfigureFilters
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.ExtensionMenu
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.menu.MenuBuilder
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Routing
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -25,15 +31,15 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ControllerLayer {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     Application app
     ControllerAction actionHelper
+    List<ControllerMethodInterface> configureMethods
 
     /**
      * Entry point for the controller creation.
@@ -41,6 +47,12 @@ class ControllerLayer {
     def void generate(Application it, IMostFileSystemAccess fsa) {
         this.app = it
         this.actionHelper = new ControllerAction(app)
+        this.configureMethods = #[
+            new ConfigureCrud(),
+            new ConfigureFields(),
+            new ConfigureFilters(),
+            new ConfigureActions()
+        ]
 
         // controller classes
         getAllEntities.forEach[generateController(fsa)]
@@ -49,9 +61,6 @@ class ControllerLayer {
         new ExtensionMenu().generate(it, fsa)
         new MenuBuilder().generate(it, fsa)
         new Routing().generate(it, fsa)
-        if (hasIndexActions) {
-            new QuickNavigationType().generate(it, fsa)
-        }
     }
 
     /**
@@ -59,11 +68,15 @@ class ControllerLayer {
      */
     def private generateController(Entity it, IMostFileSystemAccess fsa) {
         ('Generating "' + name.formatForDisplay + '" controller classes').printIfNotTesting(fsa)
+        configureMethods.forEach[m|m.init(it)]
         fsa.generateClassPair('Controller/' + name.formatForCodeCapital + 'Controller.php', entityControllerBaseImpl, entityControllerImpl)
     }
 
     def private entityControllerBaseImpl(Entity it) '''
-        «entityControllerBaseImports»
+        namespace «app.appNamespace»\Controller\Base;
+
+        «collectBaseImports.print»
+
         /**
          * «name.formatForDisplayCapital» controller base class.
          */
@@ -71,8 +84,23 @@ class ControllerLayer {
         {
             use TranslatorTrait;
         
-            public function __construct(TranslatorInterface $translator)
-            {
+            public function __construct(
+                TranslatorInterface $translator,
+                «IF !getAllEntityFields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
+                    protected readonly RequestStack $requestStack,
+                «ENDIF»
+                «IF hasLocaleFieldsEntity»
+                    protected readonly LocaleApiInterface $localeApi,
+                «ENDIF»
+                «IF hasListFieldsEntity»
+                    protected readonly ListEntriesHelper $listEntriesHelper,
+                «ENDIF»
+                «IF hasUploadFieldsEntity»
+                    protected readonly UploadHelper $uploadHelper,
+                «ENDIF»
+                protected readonly PermissionHelper $permissionHelper«IF hasDetailAction || hasEditAction»,
+                protected readonly EntityDisplayHelper $entityDisplayHelper«ENDIF»
+            ) {
                 $this->setTranslator($translator);
             }
 
@@ -80,23 +108,10 @@ class ControllerLayer {
             {
                 return «name.formatForCodeCapital»::class;
             }
+            «FOR method : configureMethods»
 
-            public function configureCrud(Crud $crud): Crud
-            {
-                return $crud
-                    ->setEntityLabelInSingular(
-                        fn (?«name.formatForCodeCapital» $«name.formatForCode», ?string $pageName) => $«name.formatForCode» ?? '«name.formatForDisplayCapital»'
-                    )
-                    ->setEntityLabelInPlural('«nameMultiple.formatForDisplayCapital»')
-                    ->setPageTitle(Crud::PAGE_INDEX, t('%entity_label_plural% list'))
-                    ->setPageTitle(Crud::PAGE_NEW, t('New %entity_label_singular%'))
-                    ->setPageTitle(Crud::PAGE_DETAIL, fn («name.formatForCodeCapital» $«name.formatForCode») => (string) $«name.formatForCode»)
-                    ->setPageTitle(Crud::PAGE_EDIT, fn («name.formatForCodeCapital» $«name.formatForCode») => sprintf(t('Edit %s'), (string) $«name.formatForCode»))
-                    «IF null !== documentation && !documentation.replaceAll('\\s+', '').empty»
-                        ->setHelp(Crud::PAGE_INDEX, t('«documentation.replaceAll('\'', '"')»'))
-                    «ENDIF»
-                ;
-            }
+                «method.generateMethod(it)»
+            «ENDFOR»
 
             «FOR action : getAllEntityActions»
                 «actionImpl(action, true)»
@@ -115,110 +130,125 @@ class ControllerLayer {
         }
     '''
 
-    def private commonAppImports(Entity it) '''
-        use «entityClassName('', false)»;
-        «IF loggable»
-            use «app.appNamespace»\Entity\«name.formatForCodeCapital»LogEntry;
-        «ENDIF»
-        «IF hasEditAction»
-            use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;
-        «ENDIF»
-        «IF hasIndexAction || hasDetailAction || hasEditAction || hasDeleteAction»
-            use «app.appNamespace»\Helper\ControllerHelper;
-        «ENDIF»
-        «IF (hasDetailAction && app.generateIcsTemplates && hasStartAndEndDateField) || (hasEditAction && app.needsInlineEditing)»
-            use «app.appNamespace»\Helper\EntityDisplayHelper;
-        «ENDIF»
-        «IF loggable»
-            use «app.appNamespace»\Helper\LoggableHelper;
-        «ENDIF»
-        use «app.appNamespace»\Helper\PermissionHelper;
-        «IF loggable && hasTranslatableFields»
-            use «app.appNamespace»\Helper\TranslatableHelper;
-        «ENDIF»
-        «IF hasIndexAction || hasDetailAction || hasEditAction || hasDeleteAction»
-            use «app.appNamespace»\Helper\ViewHelper;
-        «ENDIF»
-        «IF hasIndexAction || hasDeleteAction || loggable»
-            use «app.appNamespace»\Helper\WorkflowHelper;
-        «ENDIF»
-        «IF hasIndexAction || hasDetailAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable»
-            use «app.appNamespace»\Repository\«name.formatForCodeCapital»RepositoryInterface;
-            «IF loggable»
-                use «app.appNamespace»\Repository\«name.formatForCodeCapital»LogEntryRepositoryInterface;
-            «ENDIF»
-        «ENDIF»
-    '''
+    def private commonAppImports(Entity it) {
+        val imports = newArrayList
+        imports.add(entityClassName('', false))
+        if (loggable) {
+            imports.add(app.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'LogEntry')
+        }
+        if (hasEditAction) {
+            imports.add(app.appNamespace + '\\Form\\Handler\\' + name.formatForCodeCapital + '\\EditHandler')
+        }
+        if (hasIndexAction || hasDetailAction || hasEditAction || hasDeleteAction) {
+            imports.add(app.appNamespace + '\\Helper\\ControllerHelper')
+        }
+        if (hasDetailAction || hasEditAction) {
+            imports.add(app.appNamespace + '\\Helper\\EntityDisplayHelper')
+        }
+        if (loggable) {
+            imports.add(app.appNamespace + '\\Helper\\LoggableHelper')
+        }
+        imports.add(app.appNamespace + '\\Helper\\PermissionHelper')
+        if (loggable && hasTranslatableFields) {
+            imports.add(app.appNamespace + '\\Helper\\TranslatableHelper')
+        }
+        if (hasIndexAction || hasDetailAction || hasEditAction || hasDeleteAction) {
+            imports.add(app.appNamespace + '\\Helper\\ViewHelper')
+        }
+        if (hasIndexAction || hasDeleteAction || loggable) {
+            imports.add(app.appNamespace + '\\Helper\\WorkflowHelper')
+        }
+        if (hasIndexAction || hasDetailAction || (hasEditAction && app.needsInlineEditing) || hasDeleteAction || loggable) {
+            imports.add(app.appNamespace + '\\Repository\\' + name.formatForCodeCapital + 'RepositoryInterface')
+            if (loggable) {
+                imports.add(app.appNamespace + '\\Repository\\' + name.formatForCodeCapital + 'LogEntryRepositoryInterface')
+            }
+        }
+        imports
+    }
 
-    def private entityControllerBaseImports(Entity it) '''
-        namespace «app.appNamespace»\Controller\Base;
+    def private collectBaseImports(Entity it) {
+        val imports = new ImportList
+        configureMethods.forEach[c|imports.addAll(c.imports(it))]
+        imports.addAll(#[
+            'EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController',
+            'Symfony\\Component\\HttpFoundation\\Request',
+            'Symfony\\Component\\HttpFoundation\\Response',
+            'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
+            'function Symfony\\Component\\Translation\\t',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait'
+        ])
+        if (hasIndexAction || hasEditAction) {
+            imports.add('Exception')
+        }
+        if (hasIndexAction || hasDeleteAction) {
+            imports.add('Psr\\Log\\LoggerInterface')
+        }
+        if (hasIndexAction || hasEditAction || hasDeleteAction) {
+            imports.add('RuntimeException')
+        }
+        if (hasEditAction) {
+            imports.add('Symfony\\Component\\HttpFoundation\\RedirectResponse')
+        }
+        if (hasIndexAction) {
+            imports.add('Symfony\\Component\\Routing\\RouterInterface')
+        }
+        if (hasDetailAction || hasDeleteAction) {
+            imports.add('Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException')
+        }
+        if (hasDeleteAction) {
+            imports.add('Zikula\\Bundle\\FormExtensionBundle\\Form\\Type\\DeletionType')
+        }
+        if (hasEditAction && app.needsInlineEditing) {
+            imports.add('Zikula\\Bundle\\CoreBundle\\Response\\PlainResponse')
+        }
+        if (hasIndexAction || hasDeleteAction) {
+            imports.add('Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface')
+        }
+        if (ownerPermission && hasDeleteAction) {
+            imports.add('Zikula\\UsersBundle\\UsersConstant')
+        }
+        imports.addAll(commonAppImports)
+        if (hasLocaleFieldsEntity) {
+            imports.add('Zikula\\Bundle\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
+        }
+        if (hasListFieldsEntity) {
+            imports.add(app.appNamespace + '\\Helper\\ListEntriesHelper')
+        }
+        if (hasUploadFieldsEntity) {
+            imports.add(app.appNamespace + '\\Helper\\UploadHelper')
+        }
+        if (!getAllEntityFields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty) {
+            imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
+        }
+        imports
+    }
 
-        use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-        use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-        «IF hasIndexAction || hasEditAction»
-            use Exception;
-        «ENDIF»
-        «IF hasIndexAction || hasDeleteAction»
-            use Psr\Log\LoggerInterface;
-        «ENDIF»
-        «IF hasIndexAction || hasEditAction || hasDeleteAction»
-            use RuntimeException;
-        «ENDIF»
-        «IF hasEditAction»
-            use Symfony\Component\HttpFoundation\RedirectResponse;
-        «ENDIF»
-        use Symfony\Component\HttpFoundation\Request;
-        use Symfony\Component\HttpFoundation\Response;
-        «IF hasIndexAction»
-            use Symfony\Component\Routing\RouterInterface;
-        «ENDIF»
-        «IF hasDetailAction || hasDeleteAction»
-            use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-        «ENDIF»
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «IF hasDeleteAction»
-            use Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType;
-        «ENDIF»
-        «IF hasIndexAction»
-            use Zikula\Component\SortableColumns\Column;
-            use Zikula\Component\SortableColumns\SortableColumns;
-        «ENDIF»
-        «IF hasEditAction && app.needsInlineEditing»
-            use Zikula\Bundle\CoreBundle\Response\PlainResponse;
-        «ENDIF»
-        «IF hasIndexAction || hasDeleteAction»
-            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        «ENDIF»
-        «IF ownerPermission && hasDeleteAction»
-            use Zikula\UsersBundle\UsersConstant;
-        «ENDIF»
-        «commonAppImports»
-
-    '''
+    def private collectImplImports(Entity it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\HttpFoundation\\Request',
+            'Symfony\\Component\\HttpFoundation\\Response',
+            'Symfony\\Component\\Routing\\Annotation\\Route',
+            app.appNamespace + '\\Controller\\Base\\Abstract' + name.formatForCodeCapital + 'Controller'
+        ])
+        if (hasIndexAction || hasDeleteAction) {
+            imports.add('Psr\\Log\\LoggerInterface')
+            if (hasIndexAction) {
+                imports.add('Symfony\\Component\\HttpFoundation\\RedirectResponse')
+                imports.add('Symfony\\Component\\Routing\\RouterInterface')
+            }
+            imports.add('Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface')
+        }
+        imports.addAll(commonAppImports)
+        imports
+    }
 
     def private entityControllerImpl(Entity it) '''
         namespace «app.appNamespace»\Controller;
 
-        use «app.appNamespace»\Controller\Base\Abstract«name.formatForCodeCapital»Controller;
-        «IF hasIndexAction || hasDeleteAction»
-            use Psr\Log\LoggerInterface;
-        «ENDIF»
-        «IF hasIndexAction»
-            use Symfony\Component\HttpFoundation\RedirectResponse;
-        «ENDIF»
-        use Symfony\Component\HttpFoundation\Request;
-        use Symfony\Component\HttpFoundation\Response;
-        use Symfony\Component\Routing\Annotation\Route;
-        «IF hasIndexAction»
-            use Symfony\Component\Routing\RouterInterface;
-        «ENDIF»
-        use Zikula\ThemeBundle\Engine\Annotation\Theme;
-        «IF hasIndexAction || hasDeleteAction»
-            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        «ENDIF»
-        «commonAppImports»
+        «collectImplImports.print»
 
         /**
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.

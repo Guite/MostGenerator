@@ -5,6 +5,7 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class CategoryHelper {
 
@@ -20,15 +21,17 @@ class CategoryHelper {
     def private categoryHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Doctrine\ORM\QueryBuilder;
-        use InvalidArgumentException;
-        use Psr\Log\LoggerInterface;
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\CategoriesBundle\Api\ApiInterface\CategoryPermissionApiInterface;
-        use Zikula\CategoriesBundle\Repository\CategoryRegistryRepositoryInterface;
-        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        use «appNamespace»\Entity\EntityInterface;
+        «(new ImportList).addAll(#[
+            'Doctrine\\ORM\\QueryBuilder',
+            'InvalidArgumentException',
+            'Psr\\Log\\LoggerInterface',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Zikula\\CategoriesBundle\\Api\\ApiInterface\\CategoryPermissionApiInterface',
+            'Zikula\\CategoriesBundle\\Repository\\CategoryRegistryRepositoryInterface',
+            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+            appNamespace + '\\Entity\\EntityInterface'
+        ]).print»
 
         /**
          * Category helper base class.

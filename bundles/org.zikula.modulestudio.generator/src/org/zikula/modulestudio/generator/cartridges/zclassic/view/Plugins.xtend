@@ -16,6 +16,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class Plugins {
 
@@ -31,16 +32,24 @@ class Plugins {
         fsa.generateClassPair(twigFolder + '/TwigRuntime.php', twigRuntimeBaseImpl, twigRuntimeImpl)
     }
 
+    def private collectExtensionBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Twig\\Extension\\AbstractExtension',
+            'Twig\\TwigFilter',
+            'Twig\\TwigFunction',
+            appNamespace + '\\Twig\\TwigRuntime'
+        ])
+        if (hasLoggable) {
+            imports.add('Twig\\TwigTest')
+        }
+        imports
+    }
+
     def private twigExtensionBaseImpl(Application it) '''
         namespace «appNamespace»\Twig\Base;
 
-        use Twig\Extension\AbstractExtension;
-        use Twig\TwigFilter;
-        use Twig\TwigFunction;
-        «IF hasLoggable»
-            use Twig\TwigTest;
-        «ENDIF»
-        use «appNamespace»\Twig\TwigRuntime;
+        «collectExtensionBaseImports.print»
 
         /**
          * Twig extension base class.
@@ -51,45 +60,49 @@ class Plugins {
         }
     '''
 
+    def private collectRuntimeBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Twig\\Extension\\RuntimeExtensionInterface',
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Helper\\EntityDisplayHelper',
+            appNamespace + '\\Helper\\WorkflowHelper'
+        ])
+        if (!getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty) {
+            imports.add('DateInterval')
+        }
+        if (!getEntitiesWithCounterFields.empty) {
+            imports.add('Doctrine\\DBAL\\Driver\\Connection')
+        }
+        if (hasLoggable) {
+            imports.addAll(#[
+                'Gedmo\\Loggable\\Entity\\MappedSuperclass\\AbstractLogEntry',
+                appNamespace + '\\Helper\\LoggableHelper'
+            ])
+        }
+        if ((generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty) {
+            imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
+        }
+        if (hasTrees) {
+            imports.addAll(#[
+                'Knp\\Menu\\Matcher\\Matcher',
+                'Knp\\Menu\\Renderer\\ListRenderer',
+                'Symfony\\Component\\Routing\\RouterInterface',
+                appNamespace + '\\Entity\\Factory\\EntityFactory',
+                appNamespace + '\\Menu\\MenuBuilder'
+            ])
+        }
+        if (hasListFields) {
+            imports.add(appNamespace + '\\Helper\\ListEntriesHelper')
+        }
+        imports
+    }
+
     def private twigRuntimeBaseImpl(Application it) '''
         namespace «appNamespace»\Twig\Base;
 
-        «IF !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
-            use DateInterval;
-        «ENDIF»
-        «IF !getEntitiesWithCounterFields.empty»
-            use Doctrine\DBAL\Driver\Connection;
-        «ENDIF»
-        «IF hasLoggable»
-            use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
-        «ENDIF»
-        «IF hasTrees»
-            use Knp\Menu\Matcher\Matcher;
-            use Knp\Menu\Renderer\ListRenderer;
-        «ENDIF»
-        «IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»
-            use Symfony\Component\HttpFoundation\RequestStack;
-        «ENDIF»
-        «IF hasTrees»
-            use Symfony\Component\Routing\RouterInterface;
-        «ENDIF»
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use Twig\Extension\RuntimeExtensionInterface;
-        use «appNamespace»\Entity\EntityInterface;
-        «IF hasTrees»
-            use «appNamespace»\Entity\Factory\EntityFactory;
-        «ENDIF»
-        use «appNamespace»\Helper\EntityDisplayHelper;
-        «IF hasListFields»
-            use «appNamespace»\Helper\ListEntriesHelper;
-        «ENDIF»
-        «IF hasLoggable»
-            use «appNamespace»\Helper\LoggableHelper;
-        «ENDIF»
-        use «appNamespace»\Helper\WorkflowHelper;
-        «IF hasTrees»
-            use «appNamespace»\Menu\MenuBuilder;
-        «ENDIF»
+        «collectRuntimeBaseImports.print»
 
         /**
          * Twig runtime base class.

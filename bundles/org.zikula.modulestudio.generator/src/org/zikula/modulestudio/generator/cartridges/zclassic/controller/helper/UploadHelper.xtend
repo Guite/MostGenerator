@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class UploadHelper {
 
@@ -25,26 +26,34 @@ class UploadHelper {
         fsa.generateClassPair('Helper/UploadHelper.php', uploadFunctionsBaseImpl, uploadFunctionsImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Exception',
+            'Imagine\\Filter\\Basic\\Autorotate',
+            'Imagine\\Gd\\Imagine',
+            'Imagine\\Image\\Box',
+            'Imagine\\Image\\ImageInterface',
+            'Imagine\\Image\\Metadata\\ExifMetadataReader',
+            'Psr\\Log\\LoggerInterface',
+            'Symfony\\Component\\Filesystem\\Exception\\IOExceptionInterface',
+            'Symfony\\Component\\Filesystem\\Filesystem',
+            'Symfony\\Component\\HttpFoundation\\File\\File',
+            'Symfony\\Component\\HttpFoundation\\File\\UploadedFile',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'function Symfony\\Component\\String\\s',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+            appNamespace + '\\Entity\\EntityInterface'
+        ])
+        imports
+    }
+
     def private uploadFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Exception;
-        use Imagine\Filter\Basic\Autorotate;
-        use Imagine\Gd\Imagine;
-        use Imagine\Image\Box;
-        use Imagine\Image\ImageInterface;
-        use Imagine\Image\Metadata\ExifMetadataReader;
-        use Psr\Log\LoggerInterface;
-        use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-        use Symfony\Component\Filesystem\Filesystem;
-        use Symfony\Component\HttpFoundation\File\File;
-        use Symfony\Component\HttpFoundation\File\UploadedFile;
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use function Symfony\Component\String\s;
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        use «appNamespace»\Entity\EntityInterface;
+        «collectBaseImports.print»
 
         /**
          * Helper base class for upload handling.
@@ -390,9 +399,6 @@ class UploadHelper {
             $allowedExtensions = [];
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»«entity.getAllowedFileExtensionsEntityCase»«ENDFOR»
-                «IF hasUploadVariables»
-                    «getAllowedFileExtensionsEntityCase»
-                «ENDIF»
             }
 
             return $allowedExtensions;
@@ -418,7 +424,7 @@ class UploadHelper {
         }
     '''
 
-    def private dispatch getAllowedFileExtensionsEntityCase(Entity it) '''
+    def private getAllowedFileExtensionsEntityCase(Entity it) '''
         «val uploadFields = getUploadFieldsEntity»
         case '«name.formatForCode»':
             «IF uploadFields.size > 1»
@@ -429,20 +435,6 @@ class UploadHelper {
                 $allowedExtensions = ['«uploadFields.head.allowedExtensions.replace(', ', "', '")»'];
             «ENDIF»
             break;
-    '''
-
-
-    def private dispatch getAllowedFileExtensionsEntityCase(Application it) '''
-        «val uploadFields = getUploadVariables»
-        case 'appSettings':
-            «IF uploadFields.size > 1»
-                switch ($fieldName) {
-                    «FOR uploadField : uploadFields»«uploadField.getAllowedFileExtensionsFieldCase»«ENDFOR»
-                }
-            «ELSE»
-                $allowedExtensions = ['«uploadFields.head.allowedExtensions.replace(', ', "', '")»'];
-            «ENDIF»
-                break;
     '''
 
     def private getAllowedFileExtensionsFieldCase(UploadField it) '''
@@ -482,9 +474,6 @@ class UploadHelper {
             $namingScheme = 0;
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»«entity.determineFileNameEntityCase»«ENDFOR»
-                «IF hasUploadVariables»
-                    «determineFileNameEntityCase»
-                «ENDIF»
             }
 
             if (0 === $namingScheme || 3 === $namingScheme) {
@@ -526,7 +515,7 @@ class UploadHelper {
         }
     '''
 
-    def private dispatch determineFileNameEntityCase(Entity it) '''
+    def private determineFileNameEntityCase(Entity it) '''
         «val uploadFields = getUploadFieldsEntity»
         case '«name.formatForCode»':
             «IF uploadFields.size > 1»
@@ -537,19 +526,6 @@ class UploadHelper {
                 $namingScheme = «uploadFields.head.namingScheme.value»;
             «ENDIF»
             break;
-    '''
-
-    def private dispatch determineFileNameEntityCase(Application it) '''
-        «val uploadFields = getUploadVariables»
-        case 'appSettings':
-            «IF uploadFields.size > 1»
-                switch ($fieldName) {
-                    «FOR uploadField : uploadFields»«uploadField.determineFileNameFieldCase»«ENDFOR»
-                }
-            «ELSE»
-                $namingScheme = «uploadFields.head.namingScheme.value»;
-            «ENDIF»
-                break;
     '''
 
     def private determineFileNameFieldCase(UploadField it) '''
@@ -628,28 +604,6 @@ class UploadHelper {
                         «ENDIF»
                         break;
                 «ENDFOR»
-                «IF hasUploadVariables»
-                    «val uploadFields = getUploadVariables»
-                    case 'appSettings':
-                        «IF uploadFields.size > 1»
-                            $basePath .= 'appSettings/';
-                            if ('' !== $fieldName) {
-                                switch ($fieldName) {
-                                    «FOR uploadField : uploadFields»
-                                        case '«uploadField.name.formatForCode»':
-                                            $basePath .= '«uploadField.subFolderPathSegment»/';
-                                            break;
-                                    «ENDFOR»
-                                }
-                            }
-                        «ELSE»
-                            $basePath .= 'appSettings/';
-                            if ('' !== $fieldName) {
-                                $basePath .= '«uploadFields.head.subFolderPathSegment»/';
-                            }
-                        «ENDIF»
-                        break;
-                «ENDIF»
                 default:
                     throw new Exception($this->trans('Error! Invalid object type received.'));
             }
@@ -680,9 +634,6 @@ class UploadHelper {
                 «FOR uploadField : uploadEntity.getUploadFieldsEntity»
                     $result = $result && $this->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
                 «ENDFOR»
-            «ENDFOR»
-            «FOR uploadField : getUploadVariables»
-                $result = $result && $this->checkAndCreateUploadFolder('appSettings', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
             «ENDFOR»
 
             return $result;

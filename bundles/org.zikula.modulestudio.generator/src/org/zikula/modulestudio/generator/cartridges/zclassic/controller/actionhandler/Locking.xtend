@@ -13,14 +13,16 @@ class Locking {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def imports(Entity it) '''
-        «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
-            use Doctrine\DBAL\LockMode;
-            «IF hasOptimisticLock»
-                use Doctrine\ORM\OptimisticLockException;
-            «ENDIF»
-        «ENDIF»
-    '''
+    def imports(Entity it) {
+        val imports = newArrayList
+        if (hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock) {
+            imports.add('Doctrine\\DBAL\\LockMode')
+            if (hasOptimisticLock) {
+                imports.add('Doctrine\\ORM\\OptimisticLockException')
+            }
+        }
+        imports
+    }
 
     def setVersion(Entity it) '''
         «IF hasOptimisticLock»

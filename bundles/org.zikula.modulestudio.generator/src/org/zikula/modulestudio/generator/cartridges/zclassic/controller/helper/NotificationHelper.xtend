@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class NotificationHelper {
 
@@ -22,29 +23,37 @@ class NotificationHelper {
         fsa.generateClassPair('Helper/NotificationHelper.php', notificationHelperBaseClass, notificationHelperImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Psr\\Log\\LoggerInterface',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Symfony\\Component\\Mailer\\Exception\\TransportExceptionInterface',
+            'Symfony\\Component\\Mailer\\MailerInterface',
+            'Symfony\\Component\\Mime\\Address',
+            'Symfony\\Component\\Mime\\Email',
+            'Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface',
+            'Symfony\\Component\\Routing\\RouterInterface',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Twig\\Environment',
+            'Zikula\\Bundle\\CoreBundle\\Site\\SiteDefinitionInterface',
+            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            'Zikula\\GroupsBundle\\GroupsConstant',
+            'Zikula\\GroupsBundle\\Repository\\GroupRepositoryInterface',
+            'Zikula\\UsersBundle\\Entity\\User',
+            'Zikula\\UsersBundle\\Repository\\UserRepositoryInterface',
+            'Zikula\\UsersBundle\\UsersConstant',
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Helper\\EntityDisplayHelper',
+            appNamespace + '\\Helper\\WorkflowHelper'
+        ])
+        imports
+    }
+
     def private notificationHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Psr\Log\LoggerInterface;
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-        use Symfony\Component\Mailer\MailerInterface;
-        use Symfony\Component\Mime\Address;
-        use Symfony\Component\Mime\Email;
-        use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-        use Symfony\Component\Routing\RouterInterface;
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use Twig\Environment;
-        use Zikula\Bundle\CoreBundle\Site\SiteDefinitionInterface;
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        use Zikula\GroupsBundle\GroupsConstant;
-        use Zikula\GroupsBundle\Repository\GroupRepositoryInterface;
-        use Zikula\UsersBundle\Entity\User;
-        use Zikula\UsersBundle\Repository\UserRepositoryInterface;
-        use Zikula\UsersBundle\UsersConstant;
-        use «appNamespace»\Entity\EntityInterface;
-        use «appNamespace»\Helper\EntityDisplayHelper;
-        use «appNamespace»\Helper\WorkflowHelper;
+        «collectBaseImports.print»
 
         /**
          * Notification helper base class.

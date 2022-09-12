@@ -5,6 +5,7 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
+import org.zikula.modulestudio.generator.application.ImportList
 
 class ViewHelper {
 
@@ -20,31 +21,35 @@ class ViewHelper {
         fsa.generateClassPair('Helper/ViewHelper.php', viewFunctionsBaseImpl, viewFunctionsImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Symfony\\Component\\HttpFoundation\\Response',
+            'Twig\\Environment',
+            'Twig\\Loader\\LoaderInterface',
+            'Zikula\\Bundle\\CoreBundle\\Response\\PlainResponse',
+            appNamespace + '\\Helper\\ControllerHelper',
+            appNamespace + '\\Helper\\PermissionHelper'
+        ])
+        if (hasGeographical) {
+            imports.add('Symfony\\Component\\Filesystem\\Filesystem')
+            imports.add('Symfony\\Component\\HttpKernel\\KernelInterface')
+        }
+        if (generatePdfSupport) {
+            imports.addAll(#[
+                'Dompdf\\Dompdf',
+                'Zikula\\Bundle\\CoreBundle\\Site\\SiteDefinitionInterface',
+                'Zikula\\ThemeBundle\\Engine\\ParameterBag'
+            ])
+        }
+        imports
+    }
+
     def private viewFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF generatePdfSupport»
-            use Dompdf\Dompdf;
-        «ENDIF»
-        «IF hasGeographical»
-            use Symfony\Component\Filesystem\Filesystem;
-        «ENDIF»
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Component\HttpFoundation\Response;
-        «IF hasGeographical»
-            use Symfony\Component\HttpKernel\KernelInterface;
-        «ENDIF»
-        use Twig\Environment;
-        use Twig\Loader\LoaderInterface;
-        «IF generatePdfSupport»
-            use Zikula\Bundle\CoreBundle\Site\SiteDefinitionInterface;
-        «ENDIF»
-        use Zikula\Bundle\CoreBundle\Response\PlainResponse;
-        «IF generatePdfSupport»
-            use Zikula\ThemeBundle\Engine\ParameterBag;
-        «ENDIF»
-        use «appNamespace»\Helper\ControllerHelper;
-        use «appNamespace»\Helper\PermissionHelper;
+        «collectBaseImports.print»
 
         /**
          * Helper base class for view layer methods.

@@ -40,12 +40,6 @@ class DisplayFunctions {
 
             «initQuickNavigation»
         «ENDIF»
-        «IF hasBooleansWithAjaxToggle»
-
-            «toggleFlag»
-
-            «initAjaxToggles»
-        «ENDIF»
 
         «simpleAlert»
         «IF hasIndexActions»
@@ -102,61 +96,6 @@ class DisplayFunctions {
             if (jQuery('#' + fieldPrefix + 'q').length < 1 || jQuery('#' + fieldPrefix + 'q').parent().parent().hasClass('d-none')) {
                 jQuery('#' + fieldPrefix + 'updateview').addClass('d-none');
             }
-        }
-    '''
-
-    def private toggleFlag(Application it) '''
-        /**
-         * Toggles a certain flag for a given item.
-         */
-        function «vendorAndName»ToggleFlag(objectType, fieldName, itemId) {
-            jQuery.ajax({
-                method: 'POST',
-                url: Routing.generate('«appName.formatForDB»_ajax_toggleflag'),
-                data: {
-                    ot: objectType,
-                    field: fieldName,
-                    id: itemId
-                }
-            }).done(function (data) {
-                var idSuffix;
-                var toggleLink;
-
-                idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
-                toggleLink = jQuery('#toggle' + idSuffix);
-
-                /*if (data.message) {
-                    «vendorAndName»SimpleAlert(toggleLink, Translator.trans('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
-                }*/
-
-                toggleLink.find('.fa-check').toggleClass('d-none', true !== data.state);
-                toggleLink.find('.fa-times').toggleClass('d-none', true === data.state);
-            })«/*,
-            fail: function (jqXHR, textStatus, errorThrown) {
-                // nothing to do yet
-                var idSuffix = fieldName + '_' + itemId;
-                «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.trans('Error'), Translator.trans('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
-            })*/»;
-        }
-    '''
-
-    def private initAjaxToggles(Application it) '''
-        /**
-         * Initialise ajax-based toggle for all affected boolean fields on the current page.
-         */
-        function «vendorAndName»InitAjaxToggles() {
-            jQuery('.«vendorAndName.toLowerCase»-ajax-toggle').click(function (event) {
-                var objectType;
-                var fieldName;
-                var itemId;
-
-                event.preventDefault();
-                objectType = jQuery(this).data('object-type');
-                fieldName = jQuery(this).data('field-name');
-                itemId = jQuery(this).data('item-id');
-
-                «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
-            }).removeClass('d-none');
         }
     '''
 
@@ -427,17 +366,11 @@ class DisplayFunctions {
                 «vendorAndName»InitQuickNavigation();
                 «vendorAndName»InitMassToggle();
                 «vendorAndName»InitItemActions('index');
-                «IF hasBooleansWithAjaxToggleInView»
-                    «vendorAndName»InitAjaxToggles();
-                «ENDIF»
                 «IF hasSortable»
                     «vendorAndName»InitSortable();
                 «ENDIF»
             } else if (isDetailPage) {
                 «vendorAndName»InitItemActions('detail');
-                «IF hasBooleansWithAjaxToggleInDisplay»
-                    «vendorAndName»InitAjaxToggles();
-                «ENDIF»
             }
             «IF (!getJoinRelations.empty || hasLoggable) && hasDetailActions»
 

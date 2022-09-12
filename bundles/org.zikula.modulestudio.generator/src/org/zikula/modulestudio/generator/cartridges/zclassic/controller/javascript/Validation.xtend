@@ -44,16 +44,6 @@ class Validation {
 
             return -1 === valStr.indexOf(' ');
         }
-        «IF hasColourFields»
-
-            function «vendorAndName»ValidateHtmlColour(val) {
-                var valStr;
-
-                valStr = '' + val;
-
-                return '' === valStr || /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(valStr);
-            }
-        «ENDIF»
         «IF hasUploads»
 
             function «vendorAndName»ValidateUploadExtension(val, elem) {
@@ -210,15 +200,6 @@ class Validation {
          * Runs special validation rules.
          */
         function «vendorAndName»ExecuteCustomValidationConstraints(objectType, currentEntityId) {
-            «IF hasColourFields»
-                jQuery('.validate-colour').each(function () {
-                    if (!«vendorAndName»ValidateHtmlColour(jQuery(this).val())) {
-                        jQuery(this).get(0).setCustomValidity(Translator.trans('Please select a valid html colour code.', {}, 'validators'));
-                    } else {
-                        jQuery(this).get(0).setCustomValidity('');
-                    }
-                });
-            «ENDIF»
             «IF hasUploads»
                 jQuery('.validate-upload').each(function () {
                     if (!«vendorAndName»ValidateUploadExtension(jQuery(this).val(), jQuery(this))) {

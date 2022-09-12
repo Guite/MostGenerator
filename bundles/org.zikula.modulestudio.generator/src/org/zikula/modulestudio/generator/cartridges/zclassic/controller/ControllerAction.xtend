@@ -10,22 +10,18 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Actions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Annotations
-import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 
 class ControllerAction {
 
-    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
-    Application app
     Annotations annotations
     Actions actionsImpl
 
     new(Application app) {
-        this.app = app
         annotations = new Annotations(app)
         actionsImpl = new Actions(app)
     }
@@ -92,20 +88,17 @@ class ControllerAction {
     def private methodName(Action it) '''«name.formatForCode.toFirstLower»OLD'''
 
     def private dispatch methodArguments(Entity it, Action action) '''
-        Request $request,
-        PermissionHelper $permissionHelper
+        Request $request
     '''
     def private dispatch methodArgsCall(Entity it, Action action) {
         '''
-            $request,
-            $permissionHelper
+            $request
         '''
     }
 
     def private dispatch methodArguments(Entity it, IndexAction action) '''
         Request $request,
         RouterInterface $router,
-        PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
         «IF loggable»
@@ -120,7 +113,6 @@ class ControllerAction {
         '''
             $request,
             $router,
-            $permissionHelper,
             $controllerHelper,
             $viewHelper,«IF loggable»
             $loggableHelper,«ENDIF»
@@ -133,15 +125,11 @@ class ControllerAction {
 
     def private dispatch methodArguments(Entity it, DetailAction action) '''
         Request $request,
-        PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
         «name.formatForCodeCapital»RepositoryInterface $repository,
         «IF loggable»
             LoggableHelper $loggableHelper,
-        «ENDIF»
-        «IF app.generateIcsTemplates && hasStartAndEndDateField»
-            EntityDisplayHelper $entityDisplayHelper,
         «ENDIF»
         ?«name.formatForCodeCapital» $«name.formatForCode» = null,
         «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»
@@ -149,12 +137,10 @@ class ControllerAction {
     def private dispatch methodArgsCall(Entity it, DetailAction action) {
         '''
             $request,
-            $permissionHelper,
             $controllerHelper,
             $viewHelper,
             $repository,«IF loggable»
-            $loggableHelper,«ENDIF»«IF app.generateIcsTemplates && hasStartAndEndDateField»
-            $entityDisplayHelper,«ENDIF»
+            $loggableHelper,«ENDIF»
             $«name.formatForCode»,
             $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»
         '''
@@ -162,7 +148,6 @@ class ControllerAction {
 
     def private dispatch methodArguments(Entity it, EditAction action) '''
         Request $request,
-        PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
         EditHandler $formHandler
@@ -170,7 +155,6 @@ class ControllerAction {
     def private dispatch methodArgsCall(Entity it, EditAction action) {
         '''
             $request,
-            $permissionHelper,
             $controllerHelper,
             $viewHelper,
             $formHandler
@@ -180,7 +164,6 @@ class ControllerAction {
     def private dispatch methodArguments(Entity it, DeleteAction action) '''
         Request $request,
         LoggerInterface $logger,
-        PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
         «name.formatForCodeCapital»RepositoryInterface $repository,
@@ -192,7 +175,6 @@ class ControllerAction {
         '''
             $request,
             $logger,
-            $permissionHelper,
             $controllerHelper,
             $viewHelper,
             $repository,

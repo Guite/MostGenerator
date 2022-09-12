@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.application.ImportList
 
 class ExtensionMenu {
 
@@ -22,23 +23,31 @@ class ExtensionMenu {
         fsa.generateClassPair('Menu/ExtensionMenu.php', extensionMenuBaseImpl, extensionMenuImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'EasyCorp\\Bundle\\EasyAdminBundle\\Config\\MenuItem',
+            'function Symfony\\Component\\Translation\\t',
+            'Zikula\\ThemeBundle\\ExtensionMenu\\ExtensionMenuInterface',
+            appNamespace + '\\Helper\\ControllerHelper',
+            appNamespace + '\\Helper\\PermissionHelper'
+        ])
+        if (generateAccountApi) {
+            imports.add('Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface')
+        }
+        for (entity : getAllEntities.filter[hasIndexAction]) {
+            imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+        }
+        if (needsApproval) {
+            imports.add(appNamespace + '\\Helper\\WorkflowHelper')
+        }
+        imports
+    }
+
     def private extensionMenuBaseImpl(Application it) '''
         namespace «appNamespace»\Menu\Base;
 
-        use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
-        use function Symfony\Component\Translation\t;
-        use Zikula\ThemeBundle\ExtensionMenu\ExtensionMenuInterface;
-        «IF generateAccountApi»
-            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        «ENDIF»
-        «FOR entity : getAllEntities.filter[hasIndexAction]»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
-        «ENDFOR»
-        use «appNamespace»\Helper\ControllerHelper;
-        use «appNamespace»\Helper\PermissionHelper;
-        «IF needsApproval»
-            use «appNamespace»\Helper\WorkflowHelper;
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * This is the extension menu service base class.

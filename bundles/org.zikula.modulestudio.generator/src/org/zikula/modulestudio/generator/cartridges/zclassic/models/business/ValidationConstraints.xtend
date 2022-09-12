@@ -24,25 +24,21 @@ import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class ValidationConstraints {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension EntityIndexExtensions = new EntityIndexExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
 
@@ -78,9 +74,7 @@ class ValidationConstraints {
     def private fieldAnnotationsInteger(AbstractIntegerField it) '''
         «IF mandatory && (!primaryKey || (null !== entity && entity.getVersionField == this))»
             #[Assert\NotBlank]
-            «IF !notOnlyNumericInteger»
-                #[Assert\NotEqualTo(value: 0)]
-            «ENDIF»
+            #[Assert\NotEqualTo(value: 0)]
         «/*ELSEIF !nullable»
             #[Assert\NotNull]
         */»«ENDIF»
@@ -101,17 +95,15 @@ class ValidationConstraints {
              && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty
          )»
             «fieldAnnotationsInteger»
-            «IF !notOnlyNumericInteger»
-                «IF minValue.toString != '0' && maxValue.toString != '0'»
-                    #[Assert\Range(min: «minValue», max: «maxValue»)]
-                «ELSEIF minValue.toString != '0'»
-                    #[Assert\GreaterThanOrEqual(value: «minValue»)]
-                    #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
-                «ELSEIF maxValue.toString != '0'»
-                    #[Assert\LessThanOrEqual(value: «maxValue»)]
-                «ELSE»
-                    #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
-                «ENDIF»
+            «IF minValue.toString != '0' && maxValue.toString != '0'»
+                #[Assert\Range(min: «minValue», max: «maxValue»)]
+            «ELSEIF minValue.toString != '0'»
+                #[Assert\GreaterThanOrEqual(value: «minValue»)]
+                #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
+            «ELSEIF maxValue.toString != '0'»
+                #[Assert\LessThanOrEqual(value: «maxValue»)]
+            «ELSE»
+                #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
             «ENDIF»
         «ENDIF»
     '''
@@ -169,15 +161,15 @@ class ValidationConstraints {
             «ENDIF»
         «ENDIF»
         «IF role == StringRole.BIC»
-            «IF null !== entity && !entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.empty»
-                #[Assert\Bic(ibanPropertyPath: '«entity.getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.IBAN]].flatten.head.name.formatForCode»')]
-            «ELSEIF null !== varContainer && !varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].empty»
-                #[Assert\Bic(ibanPropertyPath: '«varContainer.fields.filter(StringField).filter[role == StringRole.IBAN].head.name.formatForCode»')]
+            «IF null !== entity && !entity.allEntityFields.filter(StringField).filter[role == StringRole.IBAN].empty»
+                #[Assert\Bic(ibanPropertyPath: '«entity.allEntityFields.filter(StringField).filter[role == StringRole.IBAN].head.name.formatForCode»')]
             «ELSE»
                 #[Assert\Bic]
             «ENDIF»
+        «ELSEIF role == StringRole.CIDR»
+            #[Assert\Cidr]
         «ELSEIF role == StringRole.COLOUR»
-            #[Assert\Regex(pattern: '/^#?(([a-fA-F0-9]{3}){1,2})$/', message: 'This value must be a valid html colour code [#123 or #123456].')]
+            #[Assert\CssColor]
         «ELSEIF role == StringRole.COUNTRY»
             #[Assert\Country]
         «ELSEIF role == StringRole.CREDIT_CARD»
@@ -189,6 +181,8 @@ class ValidationConstraints {
             #[Assert\Hostname]
         «ELSEIF role == StringRole.IBAN»
             #[Assert\Iban]
+        «ELSEIF role == StringRole.ISIN»
+            #[Assert\Isin]
         «ELSEIF role == StringRole.LANGUAGE»
             #[Assert\Language]
         «ELSEIF role == StringRole.LOCALE»
@@ -201,6 +195,8 @@ class ValidationConstraints {
             #[Assert\Ip(version: '«ipAddress.ipScopeAsConstant»')]
         «ELSEIF role == StringRole.TIME_ZONE»
             #[Assert\Timezone]
+        «ELSEIF role == StringRole.ULID»
+            #[Assert\Ulid]
         «ELSEIF role == StringRole.UUID»
             #[Assert\Uuid(strict: true)]
         «ENDIF»
@@ -309,7 +305,7 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(ListField it) '''
         «fieldAnnotationsMandatory»
-        #[«application.name.formatForCodeCapital»Assert\ListEntry(entityName: '«IF null !== entity»«entity.name.formatForCode»«ELSE»appSettings«ENDIF»', propertyName: '«name.formatForCode»', multiple: «multiple.displayBool»«IF multiple»«IF min > 0», min: «min»«ENDIF»«IF max > 0», max: «max»«ENDIF»«ENDIF»)]
+        #[«application.name.formatForCodeCapital»Assert\ListEntry(entityName: '«entity.name.formatForCode»', propertyName: '«name.formatForCode»', multiple: «multiple.displayBool»«IF multiple»«IF min > 0», min: «min»«ENDIF»«IF max > 0», max: «max»«ENDIF»«ENDIF»)]
     '''
     def dispatch fieldAnnotations(ArrayField it) '''
         «fieldAnnotationsMandatory»
@@ -331,23 +327,14 @@ class ValidationConstraints {
             «ELSEIF future»
                 #[Assert\GreaterThan(value: 'now', message: 'Please select a value in the future.')]
             «ENDIF»
-            «IF endDate»
+            «IF endDate && null !== entity && entity.hasStartDateField»
                 «IF mandatory»
-                    «IF null !== entity && entity.hasStartDateField»
-                        #[Assert\GreaterThan(propertyPath: '«entity.getStartDateField.name.formatForCode»', message: 'The start must be before the end.')]
-                    «ELSEIF null !== varContainer && varContainer.hasStartDateField»
-                        #[Assert\GreaterThan(propertyPath: '«varContainer.getStartDateField.name.formatForCode»', message: 'The start must be before the end.')]
-                    «ENDIF»
+                    #[Assert\GreaterThan(propertyPath: '«entity.getStartDateField.name.formatForCode»', message: 'The start must be before the end.')]
                 «ELSE»
-                    «IF null !== entity && entity.hasStartDateField»
-                        #[Assert\Expression('«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()', message: 'The start must be before the end.')]
-                    «ELSEIF null !== varContainer && varContainer.hasStartDateField»
-                        #[Assert\Expression('«IF !mandatory»!value or «ENDIF»value > this.get«varContainer.getStartDateField.name.formatForCodeCapital»()', message: 'The start must be before the end.')]
-                    «ENDIF»
+                    #[Assert\Expression('«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()', message: 'The start must be before the end.')]
                 «ENDIF»
-            «ENDIF»
-        «ELSEIF isTimeField»
-            #[Assert\Time]
+            «ENDIF»«/*ELSEIF isTimeField» causes issues with EABs TimeField during editing
+            #[Assert\Time] */»
         «ENDIF»
         «IF null !== validatorAddition && !validatorAddition.empty»
             #[Assert\«validatorAddition»]

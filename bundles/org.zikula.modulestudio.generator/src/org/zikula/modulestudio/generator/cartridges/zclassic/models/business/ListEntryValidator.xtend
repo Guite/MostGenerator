@@ -109,7 +109,7 @@ class ListEntryValidator {
                     return;
                 }
 
-                if ('workflowState' === $constraint->propertyName && in_array($value, ['initial', 'deleted'], true)) {
+                if (!$constraint->multiple && 'workflowState' === $constraint->propertyName && in_array($value, ['initial', 'deleted'], true)) {
                     return;
                 }
 
@@ -137,9 +137,8 @@ class ListEntryValidator {
                     return;
                 }
 
-                // multi-values list
-                $selected = explode('###', $value);
-                foreach ($selected as $singleValue) {
+                // multi-valued list
+                foreach ($value as $singleValue) {
                     if ('' === $singleValue) {
                         continue;
                     }
@@ -157,9 +156,9 @@ class ListEntryValidator {
                     }
                 }
 
-                $count = count($selected);
+                $amountOfSelectedEntries = count($value);
 
-                if (null !== $constraint->min && $count < $constraint->min) {
+                if (null !== $constraint->min && $amountOfSelectedEntries < $constraint->min) {
                     $this->context->buildViolation(
                         $this->translator->trans(
                             'You must select at least "%limit%" choice.|You must select at least "%limit%" choices.',
@@ -171,7 +170,7 @@ class ListEntryValidator {
                         )
                     )->addViolation();
                 }
-                if (null !== $constraint->max && $count > $constraint->max) {
+                if (null !== $constraint->max && $amountOfSelectedEntries > $constraint->max) {
                     $this->context->buildViolation(
                         $this->translator->trans(
                             'You must select at most "%limit%" choice.|You must select at most "%limit%" choices.',

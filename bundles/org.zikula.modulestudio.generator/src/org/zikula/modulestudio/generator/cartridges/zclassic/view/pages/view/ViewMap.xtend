@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.view
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.IndexPagesHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -9,8 +10,6 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.IndexPagesHelper
 
 class ViewMap {
 
@@ -21,7 +20,6 @@ class ViewMap {
     extension Utils = new Utils
     extension UrlExtensions = new UrlExtensions
     extension ViewExtensions = new ViewExtensions
-    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating map view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
@@ -39,7 +37,6 @@ class ViewMap {
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-index «appName.toLowerCase»-map">
                 «(new IndexPagesHelper).commonHeader(it)»
-                {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/indexQuickNav.html.twig', {«IF !hasVisibleWorkflow»workflowStateFilter: false, «ENDIF»sorting: false, pageSizeSelector: false}) }}{# see template file for available options #}
 
                 <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
                 </div>

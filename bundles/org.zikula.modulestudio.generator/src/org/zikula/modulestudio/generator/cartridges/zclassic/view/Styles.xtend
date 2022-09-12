@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -15,7 +14,6 @@ class Styles {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -102,14 +100,6 @@ class Styles {
             }
 
         «ENDIF»
-        «IF hasColourFields»
-            .«cssPrefix»-colour-picker {
-                cursor: pointer;
-            }
-
-        «ENDIF»
-
-        «validationStyles»
 
         /* hide legends if tabs are used as both contain the same labels */
         div.«name.formatForDB»-edit .tab-pane legend {
@@ -123,20 +113,6 @@ class Styles {
                 z-index: 100;
             }
         «ENDIF»
-    '''
-
-    def private validationStyles(Application it) '''
-        /* validation */
-        div.form-group input:required, div.form-group textarea:required, div.form-group select:required {
-            /*border: 1px solid #00a8e6;*/
-            background-color: #fff;
-        }
-        div.form-group input:required:valid, div.form-group textarea:required:valid, div.form-group select:required:valid {
-            /*border: 1px solid green;*/
-        }
-        div.form-group input:required:invalid, div.form-group textarea:required:invalid, div.form-group select:required:invalid {
-            border: 1px solid red;
-        }
     '''
 
     def private autoCompletion(Application it) '''

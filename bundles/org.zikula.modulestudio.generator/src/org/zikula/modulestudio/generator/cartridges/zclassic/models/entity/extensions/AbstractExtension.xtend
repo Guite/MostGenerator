@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 abstract class AbstractExtension implements EntityExtensionInterface {
 
@@ -66,7 +67,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     def protected extensionClassBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Entity\Base;
 
-        «extensionClassImports»
+        «(new ImportList).addAll(extensionClassImports).print»
 
         /**
          * «extensionClassDescription»
@@ -90,7 +91,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) {
-        ''
+        #[]
     }
 
     /**

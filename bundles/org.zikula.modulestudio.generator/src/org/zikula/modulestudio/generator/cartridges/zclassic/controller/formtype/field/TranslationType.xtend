@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class TranslationType {
 
@@ -14,15 +15,23 @@ class TranslationType {
         fsa.generateClassPair('Form/Type/Field/TranslationType.php', translationTypeBaseImpl, translationTypeImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Doctrine\\Common\\Collections\\ArrayCollection',
+            'Symfony\\Component\\Form\\AbstractType',
+            'Symfony\\Component\\Form\\FormBuilderInterface',
+            'Symfony\\Component\\Form\\FormInterface',
+            'Symfony\\Component\\OptionsResolver\\OptionsResolver',
+            appNamespace + '\\Form\\EventListener\\TranslationListener'
+        ])
+        imports
+    }
+
     def private translationTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
-        use Doctrine\Common\Collections\ArrayCollection;
-        use Symfony\Component\Form\AbstractType;
-        use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\OptionsResolver\OptionsResolver;
-        use «appNamespace»\Form\EventListener\TranslationListener;
+        «collectBaseImports.print»
 
         /**
          * Translations field type base class.

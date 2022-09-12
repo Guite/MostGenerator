@@ -24,14 +24,12 @@ import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 
 class Property {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -54,7 +52,7 @@ class Property {
          * «name.formatForDisplayCapital» meta data.
          */
         «IF null !== entity»
-            #[ORM\Column]
+            #[ORM\Column«IF nullable»(nullable: true)«ENDIF»]
             «IF translatable»
                 #[Gedmo\Translatable]
             «ENDIF»
@@ -110,33 +108,29 @@ class Property {
             «persistentPropertyAdditions»
         «ENDIF»
         «thVal.fieldAnnotations(it)»
-        «modifier» «IF nullable || it instanceof UploadField || it instanceof DatetimeField»?«ENDIF»«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSEIF !skipTypeHint»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof UserField»«ELSEIF it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
+        «modifier» ?«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof UserField || it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
-    def private skipTypeHint(Object it) {
-        (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector)
-    }
-
     def private persistentPropertyImpl(DerivedField it, String type) {
         switch it {
-            NumberField: '''type: '«type»'«IF numberType == NumberFieldType.DECIMAL», precision: «it.length», scale: «it.scale»«ENDIF»'''
-            TextField: '''type: '«type»', length: «it.length»'''
+            NumberField: '''type: Types::«type.toUpperCase»«IF numberType == NumberFieldType.DECIMAL», precision: «it.length», scale: «it.scale»«ENDIF»'''
+            TextField: '''type: Types::«type.toUpperCase», length: «it.length»'''
             StringField:
-                '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type="dateinterval"«ELSE»«/*type="«type»", */»length: «it.length»«ENDIF»'''
+                '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type: Types::DATEINTERVAL«ELSE»«/*type: Types::«type.toUpperCase», */»length: «it.length»«ENDIF»'''
             EmailField:
                 '''length: «it.length»'''
             UrlField:
                 '''length: «it.length»'''
             ArrayField:
-                '''type: '«arrayType.literal.toLowerCase»'«/*», length: «it.length*/»'''
+                '''type: Types::«arrayType.literal.toUpperCase»«/*», length: «it.length*/»'''
             UploadField:
                 '''length: «it.length»'''
             ListField:
                 '''length: «it.length»'''
             DatetimeField:
-                '''type: '«/*utc*/»«type»«IF (null !== entity || null !== varContainer) && immutable»_immutable«ENDIF»'«''»'''
-            default: '''type: '«type»'«''»'''
+                '''type: Types::«/*UTC*/»«type.toUpperCase»_«IF (null !== entity || null !== varContainer) && immutable»IM«ENDIF»MUTABLE'''
+            default: '''type: Types::«type.toUpperCase»'''
         }
     }
 
@@ -149,7 +143,7 @@ class Property {
             UserField:
                 '''
                     #[ORM\ManyToOne(targetEntity: User::class)]
-                    #[ORM\JoinColumn(referencedColumnName: 'uid'«IF nullable», nullable: true«ENDIF»)]
+                    #[ORM\JoinColumn(referencedColumnName: 'uid'«IF !nullable», nullable: false«ENDIF»)]
                 '''
         }
     }
@@ -169,9 +163,13 @@ class Property {
             UploadField: 'null'
             ListField:
                 if (!items.filter[^default].empty) {
-                    if (multiple) '\'' + items.filter[^default].map[listItemValue].join('###') + '\''
+                    if (multiple) '[\'' + items.filter[^default].map[listItemValue].join('\', \'') + '\']'
                     else '\'' + items.filter[^default].head.listItemValue + '\''
                 } else if (nullable) 'null' else '\'\''
+            StringField:
+                if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\''
+                else if (role === StringRole.CURRENCY) '\'EUR\''
+                else '\'\''
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             default: '\'\''
         }
@@ -181,9 +179,9 @@ class Property {
 
     def private fieldAccessorDefault(DerivedField it) '''
         «IF isIndexByField»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), nullable)»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), true)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), nullable, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), true, '', '')»
         «ENDIF»
     '''
 
@@ -193,9 +191,9 @@ class Property {
 
     def dispatch fieldAccessor(IntegerField it) '''
         «IF isIndexByField/* || (null !== aggregateFor && !aggregateFor.empty*/»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), nullable)»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), true)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), nullable || primaryKey, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), true, '', '')»
         «ENDIF»
     '''
 

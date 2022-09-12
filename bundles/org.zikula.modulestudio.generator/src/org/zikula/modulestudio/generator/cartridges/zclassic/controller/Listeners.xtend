@@ -18,6 +18,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.application.ImportList
 
 class Listeners {
 
@@ -204,31 +205,37 @@ class Listeners {
         }
     '''
 
+    def private collectUserBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\EventDispatcher\\EventSubscriberInterface',
+            'Zikula\\UsersBundle\\Event\\ActiveUserPostCreatedEvent',
+            'Zikula\\UsersBundle\\Event\\ActiveUserPostDeletedEvent',
+            'Zikula\\UsersBundle\\Event\\ActiveUserPostUpdatedEvent'
+        ])
+        if (hasStandardFieldEntities || hasUserFields || hasUserVariables) {
+            imports.add('Zikula\\UsersBundle\\UsersConstant')
+            if (hasStandardFieldEntities || hasUserFields) {
+                imports.addAll(#[
+                    'Psr\\Log\\LoggerInterface',
+                    'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+                    appNamespace + '\\Entity\\Factory\\EntityFactory'
+                ])
+            }
+        }
+        if (hasLoggable) {
+            imports.add(appNamespace + '\\Helper\\LoggableHelper')
+        }
+        imports
+    }
+
     def private listenersUserFile(Application it) '''
         namespace «appNamespace»\EventListener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
             use «appNamespace»\EventListener\Base\AbstractUserListener;
         «ELSE»
-            «IF hasStandardFieldEntities || hasUserFields»
-                use Psr\Log\LoggerInterface;
-            «ENDIF»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            «IF hasStandardFieldEntities || hasUserFields»
-                use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-            «ENDIF»
-            use Zikula\UsersBundle\Event\ActiveUserPostCreatedEvent;
-            use Zikula\UsersBundle\Event\ActiveUserPostDeletedEvent;
-            use Zikula\UsersBundle\Event\ActiveUserPostUpdatedEvent;
-            «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
-                use Zikula\UsersBundle\UsersConstant;
-            «ENDIF»
-            «IF hasStandardFieldEntities || hasUserFields»
-                use «appNamespace»\Entity\Factory\EntityFactory;
-            «ENDIF»
-            «IF hasLoggable»
-                use «appNamespace»\Helper\LoggableHelper;
-            «ENDIF»
+            «collectUserBaseImports.print»
         «ENDIF»
 
         /**

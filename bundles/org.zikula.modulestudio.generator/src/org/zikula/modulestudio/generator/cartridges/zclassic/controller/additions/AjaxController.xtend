@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class AjaxController {
 
@@ -25,65 +26,75 @@ class AjaxController {
         fsa.generateClassPair('Controller/AjaxController.php', ajaxControllerBaseClass, ajaxControllerImpl)
     }
 
-    def private commonSystemImports(Application it, Boolean isBase) '''
-        «IF needsAutoCompletion»
-            use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-        «ENDIF»
-        «IF hasBooleansWithAjaxToggle || hasTrees»
-            use Psr\Log\LoggerInterface;
-            «IF hasTrees»
-                use Symfony\Component\Routing\RouterInterface;
-            «ENDIF»
-        «ENDIF»
-        «IF isBase»
-            use Symfony\Contracts\Translation\TranslatorInterface;
-            use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-            use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
-        «ENDIF»
-        «IF hasBooleansWithAjaxToggle || hasTrees»
-            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-            «IF hasTrees»
-                use Zikula\UsersBundle\Repository\UserRepositoryInterface;
-            «ENDIF»
-        «ENDIF»
-    '''
+    def private commonSystemImports(Application it, Boolean isBase) {
+        val imports = newArrayList
+        if (needsAutoCompletion) {
+            imports.add('Liip\\ImagineBundle\\Imagine\\Cache\\CacheManager')
+        }
+        if (hasTrees) {
+            imports.addAll(#[
+                'Psr\\Log\\LoggerInterface',
+                'Symfony\\Component\\Routing\\RouterInterface',
+                'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+                'Zikula\\UsersBundle\\Repository\\UserRepositoryInterface'
+            ])
+        }
+        if (isBase) {
+            imports.addAll(#[
+                'Symfony\\Contracts\\Translation\\TranslatorInterface',
+                'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+                'Zikula\\PermissionsBundle\\Api\\ApiInterface\\PermissionApiInterface'
+            ])
+        }
+        imports
+    }
 
-    def private commonAppImports(Application it) '''
-        «IF needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
-            use «appNamespace»\Entity\Factory\EntityFactory;
-        «ENDIF»
-        «IF needsAutoCompletion || needsDuplicateCheck»
-            use «appNamespace»\Helper\ControllerHelper;
-        «ENDIF»
-        «IF needsAutoCompletion || hasTrees»
-            use «appNamespace»\Helper\EntityDisplayHelper;
-        «ENDIF»
-        «IF needsAutoCompletion && hasImageFields»
-            use «appNamespace»\Helper\ImageHelper;
-        «ENDIF»
-        «IF hasTrees»
-            use «appNamespace»\Helper\WorkflowHelper;
-        «ENDIF»
-    '''
+    def private commonAppImports(Application it) {
+        val imports = newArrayList
+        if (needsAutoCompletion || needsDuplicateCheck || hasTrees || hasSortable) {
+            imports.add(appNamespace + '\\Entity\\Factory\\EntityFactory')
+        }
+        if (needsAutoCompletion || needsDuplicateCheck) {
+            imports.add(appNamespace + '\\Helper\\ControllerHelper')
+        }
+        if (needsAutoCompletion || hasTrees) {
+            imports.add(appNamespace + '\\Helper\\EntityDisplayHelper')
+        }
+        if (needsAutoCompletion && hasImageFields) {
+            imports.add(appNamespace + '\\Helper\\ImageHelper')
+        }
+        if (hasTrees) {
+            imports.add(appNamespace + '\\Helper\\WorkflowHelper')
+        }
+        imports
+    }
+
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Bundle\\FrameworkBundle\\Controller\\AbstractController',
+            'Symfony\\Component\\HttpFoundation\\JsonResponse',
+            'Symfony\\Component\\HttpFoundation\\Request',
+            'Symfony\\Component\\HttpFoundation\\Response'
+        ])
+        if (hasTrees) {
+            imports.add('Exception')
+        }
+        if (hasTrees && hasEditActions) {
+            imports.add('Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface')
+        }
+        if (needsAutoCompletion || needsDuplicateCheck || hasTrees || hasSortable) {
+            imports.add('Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException')
+        }
+        imports.addAll(commonSystemImports(true))
+        imports.addAll(commonAppImports)
+        imports
+    }
 
     def private ajaxControllerBaseClass(Application it) '''
         namespace «appNamespace»\Controller\Base;
 
-        «IF hasTrees»
-            use Exception;
-        «ENDIF»
-        use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-        use Symfony\Component\HttpFoundation\JsonResponse;
-        use Symfony\Component\HttpFoundation\Request;
-        use Symfony\Component\HttpFoundation\Response;
-        «IF hasTrees && hasEditActions»
-            use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-        «ENDIF»
-        «IF needsAutoCompletion || needsDuplicateCheck || hasBooleansWithAjaxToggle || hasTrees || hasSortable»
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-        «ENDIF»
-        «commonSystemImports(true)»
-        «commonAppImports»
+        «collectBaseImports.print»
 
         /**
          * Ajax controller base class.
@@ -107,10 +118,6 @@ class AjaxController {
         «IF needsDuplicateCheck»
 
             «checkForDuplicateBase»
-        «ENDIF»
-        «IF hasBooleansWithAjaxToggle»
-
-            «toggleFlagBase»
         «ENDIF»
         «IF hasTrees»
 
@@ -346,91 +353,6 @@ class AjaxController {
         }
 
         $exclude = $request->query->getInt('ex');
-    '''
-
-    def private toggleFlagBase(Application it) '''
-        «toggleFlagDocBlock(true)»
-        «toggleFlagSignature» {
-            «toggleFlagBaseImpl»
-        }
-    '''
-
-    def private toggleFlagDocBlock(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Changes a given flag (boolean field) by switching between true and false.
-             *
-             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-             */
-        «ELSE»
-            #[Route('/toggleFlag',
-                name: '«appName.formatForDB»_ajax_toggleflag',
-                methods: ['POST'],
-                options: ['expose' => true]
-            )]
-        «ENDIF»
-    '''
-
-    def private toggleFlagSignature(Application it) '''
-        public function toggleFlag(
-            Request $request,
-            LoggerInterface $logger,
-            EntityFactory $entityFactory,
-            CurrentUserApiInterface $currentUserApi
-        ): JsonResponse'''
-
-    def private toggleFlagBaseImpl(Application it) '''
-        if (!$request->isXmlHttpRequest()) {
-            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            throw new AccessDeniedException();
-        }
-
-        $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        $field = $request->request->getAlnum('field');
-        $id = $request->request->getInt('id');
-
-        «val entities = getEntitiesWithAjaxToggle»
-        if (
-            0 === $id
-            || («FOR entity : entities SEPARATOR ' && '»'«entity.name.formatForCode»' !== $objectType«ENDFOR»)
-            «FOR entity : entities»
-                || ('«entity.name.formatForCode»' === $objectType && !in_array($field, [«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true))
-            «ENDFOR»
-        ) {
-            return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        // select data from data source
-        $repository = $entityFactory->getRepository($objectType);
-        $entity = $repository->selectById($id, false);
-        if (null === $entity) {
-            return $this->json($this->trans('No such item.'), JsonResponse::HTTP_NOT_FOUND);
-        }
-
-        // toggle the flag
-        $entity[$field] = !$entity[$field];
-
-        // save entity back to database
-        $entityFactory->getEntityManager()->flush();
-
-        $logArgs = [
-            'app' => '«appName»',
-            'user' => $currentUserApi->get('uname'),
-            'field' => $field,
-            'entity' => $objectType,
-            'id' => $id,
-        ];
-        $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
-
-        // return response
-        return $this->json([
-            'id' => $id,
-            'state' => $entity[$field],
-            'message' => $this->trans('The setting has been successfully changed.'),
-        ]);
     '''
 
     def private handleTreeOperationBase(Application it) '''
@@ -872,10 +794,6 @@ class AjaxController {
 
             «checkForDuplicateImpl»
         «ENDIF»
-        «IF hasBooleansWithAjaxToggle»
-
-            «toggleFlagImpl»
-        «ENDIF»
         «IF hasTrees»
 
             «handleTreeOperationImpl»
@@ -911,18 +829,6 @@ class AjaxController {
         }
     '''
 
-    def private toggleFlagImpl(Application it) '''
-        «toggleFlagDocBlock(false)»
-        «toggleFlagSignature» {
-            return parent::toggleFlag(
-                $request,
-                $logger,
-                $entityFactory,
-                $currentUserApi
-            );
-        }
-    '''
-
     def private handleTreeOperationImpl(Application it) '''
         «handleTreeOperationDocBlock(false)»
         «handleTreeOperationSignature» {
@@ -949,15 +855,23 @@ class AjaxController {
         }
     '''
 
+    def private collectImplImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\HttpFoundation\\JsonResponse',
+            'Symfony\\Component\\HttpFoundation\\Request',
+            'Symfony\\Component\\Routing\\Annotation\\Route',
+            appNamespace + '\\Controller\\Base\\AbstractAjaxController'
+        ])
+        imports.addAll(commonSystemImports(false))
+        imports.addAll(commonAppImports)
+        imports
+    }
+
     def private ajaxControllerImpl(Application it) '''
         namespace «appNamespace»\Controller;
 
-        use Symfony\Component\HttpFoundation\JsonResponse;
-        use Symfony\Component\HttpFoundation\Request;
-        use Symfony\Component\Routing\Annotation\Route;
-        «commonSystemImports(false)»
-        use «appNamespace»\Controller\Base\AbstractAjaxController;
-        «commonAppImports»
+        «collectImplImports.print»
 
         /**
          * Ajax controller implementation class.

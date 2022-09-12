@@ -37,7 +37,7 @@ class Section {
                 <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
                 <br />
-                «FOR geoFieldName : newArrayList('latitude', 'longitude')»
+                «FOR geoFieldName : #['latitude', 'longitude']»
                     {{ form_row(form.«geoFieldName») }}
                 «ENDFOR»
             «IF useGroupingTabs('edit')»

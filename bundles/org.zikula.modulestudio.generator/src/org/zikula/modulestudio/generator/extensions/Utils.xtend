@@ -9,7 +9,6 @@ import org.zikula.modulestudio.generator.application.MostInMemoryFileSystemAcces
  * Miscellaneous utility methods.
  */
 class Utils {
-
     extension FormattingExtensions = new FormattingExtensions
 
     /**

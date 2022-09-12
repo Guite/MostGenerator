@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class UploadFileTransformer {
 
@@ -15,14 +16,22 @@ class UploadFileTransformer {
         fsa.generateClassPair('Form/DataTransformer/UploadFileTransformer.php', transformerBaseImpl, transformerImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\Form\\DataTransformerInterface',
+            'Symfony\\Component\\HttpFoundation\\File\\File',
+            'Symfony\\Component\\HttpFoundation\\File\\UploadedFile',
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Helper\\UploadHelper'
+        ])
+        imports
+    }
+
     def private transformerBaseImpl(Application it) '''
         namespace «appNamespace»\Form\DataTransformer\Base;
 
-        use Symfony\Component\Form\DataTransformerInterface;
-        use Symfony\Component\HttpFoundation\File\File;
-        use Symfony\Component\HttpFoundation\File\UploadedFile;
-        use «appNamespace»\Entity\EntityInterface;
-        use «appNamespace»\Helper\UploadHelper;
+        «collectBaseImports.print»
 
         /**
          * Upload file transformer base class.

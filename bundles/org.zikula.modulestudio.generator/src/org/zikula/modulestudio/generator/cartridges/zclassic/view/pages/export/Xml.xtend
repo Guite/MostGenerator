@@ -71,14 +71,9 @@ class Xml {
     def private xmlInclude(Entity it) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» xml inclusion template #}
         {% trans_default_domain '«name.formatForCode»' %}
-        <«name.formatForDB» «getPrimaryKey.name.formatForCode»="{{ «name.formatForCode».get«getPrimaryKey.name.formatForCodeCapital»() }}"«IF standardFields» createdOn="{{ «name.formatForCode».createdDate|format_datetime('medium', 'short') }}" updatedOn="{{ «name.formatForCode».updatedDate|format_datetime('medium', 'short') }}"«ENDIF»>
+        <«name.formatForDB» «getPrimaryKey.name.formatForCode»="{{ «name.formatForCode».get«getPrimaryKey.name.formatForCodeCapital»() }}">
             «FOR field : getDerivedFields.filter[primaryKey]»«field.displayEntry»«ENDFOR»
             «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»«field.displayEntry»«ENDFOR»
-            «IF geographical»
-                «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    <«geoFieldName»>{{ «name.formatForCode».«geoFieldName»|«application.appName.formatForDB»_geoData }}</«geoFieldName»>
-                «ENDFOR»
-            «ENDIF»
             «IF hasVisibleWorkflow»
                 <workflowState>{{ «name.formatForCode».workflowState|«application.appName.formatForDB»_objectState(false)|lower }}</workflowState>
             «ENDIF»

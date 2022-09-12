@@ -27,6 +27,7 @@ import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class Repository {
 
@@ -108,7 +109,10 @@ class Repository {
     }
 
     def private modelRepositoryInterfaceBaseImpl(Entity it) '''
-        «imports(true)»
+        namespace «app.appNamespace»\Repository\Base;
+
+        «collectBaseImports(true).print»
+
         /**
          * Repository interface for «name.formatForDisplay» entities.
          *
@@ -219,13 +223,19 @@ class Repository {
         }
     '''
 
+    def private collectChildRepositoryInterfaceBaseImports(Entity it) {
+        val imports = new ImportList
+        imports.add(app.appNamespace + '\\Repository\\' + parentType.name.formatForCodeCapital + 'RepositoryInterface')
+        if (!incoming.empty || !outgoing.empty) {
+            imports.add('Doctrine\\ORM\\QueryBuilder')
+        }
+        imports
+    }
+
     def private modelChildRepositoryInterfaceBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Repository\Base;
 
-        «IF !incoming.empty || !outgoing.empty»
-            use Doctrine\ORM\QueryBuilder;
-        «ENDIF»
-        use «app.appNamespace»\Repository\«parentType.name.formatForCodeCapital»RepositoryInterface;
+        «collectChildRepositoryInterfaceBaseImports.print»
 
         /**
          * Repository interface for «name.formatForDisplay» entities.
@@ -237,7 +247,10 @@ class Repository {
     '''
 
     def private modelRepositoryBaseImpl(Entity it) '''
-        «imports(false)»
+        namespace «app.appNamespace»\Repository\Base;
+
+        «collectBaseImports(false).print»
+
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *
@@ -316,13 +329,19 @@ class Repository {
         }
     '''
 
+    def private collectChildRepositoryBaseImports(Entity it) {
+        val imports = new ImportList
+        imports.add(app.appNamespace + '\\Repository\\' + parentType.name.formatForCodeCapital + 'Repository')
+        if (!incoming.empty || !outgoing.empty) {
+            imports.add('Doctrine\\ORM\\QueryBuilder')
+        }
+        imports
+    }
+
     def private modelChildRepositoryBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Repository\Base;
 
-        «IF !incoming.empty || !outgoing.empty»
-            use Doctrine\ORM\QueryBuilder;
-        «ENDIF»
-        use «app.appNamespace»\Repository\«parentType.name.formatForCodeCapital»Repository;
+        «collectChildRepositoryBaseImports.print»
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -355,49 +374,54 @@ class Repository {
         tree == EntityTreeType.NONE && !hasSortableFields
     }
 
-    def private imports(Entity it, Boolean isInterface) '''
-        namespace «app.appNamespace»\Repository\Base;
-
-        «IF isInterface»
-            use Doctrine\ORM\Query;
-            use Doctrine\ORM\QueryBuilder;
-            use Doctrine\Persistence\ObjectRepository;
-        «ELSE»
-            «IF canDirectlyExtendServiceRepo»
-                use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-            «ELSE»
-                use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
-            «ENDIF»
-            «IF hasPessimisticReadLock || hasPessimisticWriteLock»
-                use Doctrine\DBAL\LockMode;
-            «ENDIF»
-            «IF !canDirectlyExtendServiceRepo»
-                use Doctrine\ORM\EntityManagerInterface;
-            «ENDIF»
-            use Doctrine\ORM\Query;
-            use Doctrine\ORM\QueryBuilder;
-            «IF canDirectlyExtendServiceRepo»
-                use Doctrine\Persistence\ManagerRegistry;
-            «ENDIF»
-            «IF tree == EntityTreeType.NONE && hasSortableFields»
-                use Gedmo\Sortable\Entity\Repository\SortableRepository;
-            «ENDIF»
-            «IF tree != EntityTreeType.NONE»
-                use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
-            «ENDIF»
-            «IF hasTranslatableFields»
-                use Gedmo\Translatable\Query\TreeWalker\TranslationWalker;
-            «ENDIF»
-        «ENDIF»
-        use InvalidArgumentException;
-        use Psr\Log\LoggerInterface;
-        use Zikula\Bundle\CoreBundle\Doctrine\Paginator;
-        use Zikula\Bundle\CoreBundle\Doctrine\PaginatorInterface;
-        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        use «entityClassName('', false)»;
-        use «app.appNamespace»\Helper\CollectionFilterHelper;
-
-    '''
+    def private collectBaseImports(Entity it, Boolean isInterface) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'InvalidArgumentException',
+            'Psr\\Log\\LoggerInterface',
+            'Zikula\\Bundle\\CoreBundle\\Doctrine\\Paginator',
+            'Zikula\\Bundle\\CoreBundle\\Doctrine\\PaginatorInterface',
+            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+            entityClassName('', false),
+            app.appNamespace + '\\Helper\\CollectionFilterHelper'
+        ])
+        if (isInterface) {
+            imports.addAll(#[
+                'Doctrine\\ORM\\Query',
+                'Doctrine\\ORM\\QueryBuilder',
+                'Doctrine\\Persistence\\ObjectRepository'
+            ])
+        } else {
+            imports.addAll(#[
+                'Doctrine\\ORM\\Query',
+                'Doctrine\\ORM\\QueryBuilder'
+            ])
+            if (canDirectlyExtendServiceRepo) {
+                imports.addAll(#[
+                    'Doctrine\\Bundle\\DoctrineBundle\\Repository\\ServiceEntityRepository',
+                    'Doctrine\\Persistence\\ManagerRegistry'
+                ])
+            } else {
+                imports.addAll(#[
+                    'Doctrine\\Bundle\\DoctrineBundle\\Repository\\ServiceEntityRepositoryInterface',
+                    'Doctrine\\ORM\\EntityManagerInterface'
+                ])
+            }
+            if (hasPessimisticReadLock || hasPessimisticWriteLock) {
+                imports.add('Doctrine\\DBAL\\LockMode')
+            }
+            if (tree == EntityTreeType.NONE && hasSortableFields) {
+                imports.add('Gedmo\\Sortable\\Entity\\Repository\\SortableRepository')
+            }
+            if (tree != EntityTreeType.NONE) {
+                imports.add('Gedmo\\Tree\\Entity\\Repository\\' + tree.literal.toLowerCase.toFirstUpper + 'TreeRepository')
+            }
+            if (hasTranslatableFields) {
+                imports.add('Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker')
+            }
+        }
+        imports
+    }
 
     def private methodAnnotations(Entity it) '''
         «' '»* @method «name.formatForCodeCapital»|null find($id, $lockMode = null, $lockVersion = null)
@@ -766,7 +790,7 @@ class Repository {
     def private addSelectionPartsForDisplayPattern(Entity it) '''
         «FOR patternPart : displayPatternParts»
             «/* check if patternPart equals a field name */»«var matchedFields = fields.filter[name == patternPart]»
-            «IF (!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))»
+            «IF (!matchedFields.empty)»
                 $selection .= ', tbl.«patternPart.formatForCode»';
             «ENDIF»
         «ENDFOR»
@@ -861,7 +885,7 @@ class Repository {
             for (patternPart : displayPatternParts) {
                 /* check if patternPart equals a field name */
                 var matchedFields = fields.filter[name == patternPart]
-                if ((!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))) {
+                if (!matchedFields.empty) {
                     return patternPart.formatForCode
                 }
             }
@@ -896,8 +920,9 @@ class Repository {
         «val relationsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
         «FOR relation : relationsIn»«relation.sortingCriteria(false)»«ENDFOR»
         «FOR relation : relationsOut»«relation.sortingCriteria(true)»«ENDFOR»
-        «IF it instanceof Entity»
-            «extensionSortingFields»
+        «IF it instanceof Entity && (it as Entity).standardFields»«/* add two user fields which are rejected in getSortingFields otherwise */»
+             'createdBy',
+             'updatedBy',
         «ENDIF»
     '''
 
@@ -920,19 +945,6 @@ class Repository {
 
     def private sortingCriteria(JoinRelationship it, Boolean useTarget) '''
         '«getRelationAliasName(useTarget).formatForCode»',
-    '''
-
-    def private extensionSortingFields(Entity it) '''
-        «IF geographical»
-             'latitude',
-             'longitude',
-        «ENDIF»
-        «IF standardFields»
-             'createdBy',
-             'createdDate',
-             'updatedBy',
-             'updatedDate',
-        «ENDIF»
     '''
 
     def private modelRepositoryInterfaceImpl(Entity it) '''

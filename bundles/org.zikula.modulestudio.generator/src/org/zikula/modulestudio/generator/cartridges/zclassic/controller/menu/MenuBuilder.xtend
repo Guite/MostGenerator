@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class MenuBuilder {
 
@@ -22,34 +23,42 @@ class MenuBuilder {
         fsa.generateClassPair('Menu/MenuBuilder.php', menuBuilderBaseImpl, menuBuilderImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+            appNamespace + '\\Event\\ItemActionsMenuPostConfigurationEvent',
+            appNamespace + '\\Event\\ItemActionsMenuPreConfigurationEvent',
+            appNamespace + '\\Helper\\PermissionHelper'
+        ])
+        if ((!getAllEntities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty) {
+            imports.add('Zikula\\UsersBundle\\UsersConstant')
+        }
+        for (entity : getAllEntities) {
+            imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+        }
+        if (hasIndexActions) {
+            imports.add(appNamespace + '\\Event\\IndexActionsMenuPostConfigurationEvent')
+            imports.add(appNamespace + '\\Event\\IndexActionsMenuPreConfigurationEvent')
+        }
+        if (hasDetailActions) {
+            imports.add(appNamespace + '\\Helper\\EntityDisplayHelper')
+        }
+        if (hasLoggable) {
+            imports.add(appNamespace + '\\Helper\\LoggableHelper')
+        }
+        if (hasIndexActions && hasEditActions) {
+            imports.add(appNamespace + '\\Helper\\ModelHelper')
+        }
+        imports
+    }
+
     def private menuBuilderBaseImpl(Application it) '''
         namespace «appNamespace»\Menu\Base;
 
-        use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        «IF (!getAllEntities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
-            use Zikula\UsersBundle\UsersConstant;
-        «ENDIF»
-        «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
-        «ENDFOR»
-        use «appNamespace»\Event\ItemActionsMenuPostConfigurationEvent;
-        use «appNamespace»\Event\ItemActionsMenuPreConfigurationEvent;
-        «IF hasIndexActions»
-            use «appNamespace»\Event\IndexActionsMenuPostConfigurationEvent;
-            use «appNamespace»\Event\IndexActionsMenuPreConfigurationEvent;
-        «ENDIF»
-        «IF hasDetailActions»
-            use «appNamespace»\Helper\EntityDisplayHelper;
-        «ENDIF»
-        «IF hasLoggable»
-            use «appNamespace»\Helper\LoggableHelper;
-        «ENDIF»
-        «IF hasIndexActions && hasEditActions»
-            use «appNamespace»\Helper\ModelHelper;
-        «ENDIF»
-        use «appNamespace»\Helper\PermissionHelper;
+        «collectBaseImports.print»
 
         /**
          * Menu builder base class.

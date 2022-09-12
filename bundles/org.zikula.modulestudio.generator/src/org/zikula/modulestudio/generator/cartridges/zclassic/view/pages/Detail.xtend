@@ -203,14 +203,6 @@ class Detail {
         «ENDIF»
         <dl>
             «FOR field : getFieldsForDetailPage»«field.displayEntry»«ENDFOR»
-            «IF geographical»
-                «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    {% if «name.formatForCode».«geoFieldName» is not empty %}
-                        <dt>{% trans from 'messages' %}«geoFieldName.toFirstUpper»{% endtrans %}</dt>
-                        <dd>{{ «name.formatForCode».«geoFieldName»|«application.appName.formatForDB»_geoData }}</dd>
-                    {% endif %}
-                «ENDFOR»
-            «ENDIF»
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»«relation.displayEntry(false)»«ENDFOR»
             «/*«FOR relation : outgoing.filter[OneToOneRelationship).filter[target instanceof Entity]»«relation.displayEntry(true)»«ENDFOR»*/»
         </dl>

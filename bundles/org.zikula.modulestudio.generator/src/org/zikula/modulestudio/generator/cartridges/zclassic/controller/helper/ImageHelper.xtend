@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class ImageHelper {
 
@@ -24,17 +25,27 @@ class ImageHelper {
         }
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Imagine\\Image\\ImageInterface',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'function Symfony\\Component\\String\\s',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface'
+        ])
+        if (hasImageFields || !getUploadVariables.filter[isImageField].empty) {
+            imports.addAll(#[
+                'Symfony\\Component\\Filesystem\\Exception\\IOExceptionInterface',
+                'Symfony\\Component\\Filesystem\\Filesystem'
+            ])
+        }
+        imports
+    }
+
     def private imageFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Imagine\Image\ImageInterface;
-        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-            use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-            use Symfony\Component\Filesystem\Filesystem;
-        «ENDIF»
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use function Symfony\Component\String\s;
-        use Symfony\Contracts\Translation\TranslatorInterface;
+        «collectBaseImports.print»
 
         /**
          * Helper base class for image methods.

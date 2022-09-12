@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class ControllerHelper {
 
@@ -25,47 +26,50 @@ class ControllerHelper {
         fsa.generateClassPair('Helper/ControllerHelper.php', controllerFunctionsBaseImpl, controllerFunctionsImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Exception',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            appNamespace + '\\Entity\\Factory\\EntityFactory',
+            appNamespace + '\\Helper\\CollectionFilterHelper',
+            appNamespace + '\\Helper\\PermissionHelper'
+        ])
+        if (hasIndexActions) {
+            imports.addAll(#[
+                'Symfony\\Component\\Form\\FormFactoryInterface',
+                'Symfony\\Component\\Routing\\RouterInterface',
+                'function Symfony\\Component\\String\\s',
+                appNamespace + '\\Entity\\EntityInterface'
+            ])
+        }
+        if (hasGeographical) {
+            imports.addAll(#[
+                'Psr\\Log\\LoggerInterface',
+                'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface'
+            ])
+        }
+        if (hasIndexActions && hasUserFields) {
+            imports.add('Zikula\\UsersBundle\\Entity\\User')
+        }
+        if (hasAutomaticExpiryHandling || hasLoggable) {
+            imports.add(appNamespace + '\\Helper\\ExpiryHelper')
+        }
+        if (needsFeatureActivationHelper) {
+            imports.add(appNamespace + '\\Helper\\FeatureActivationHelper')
+        }
+        if (!getUploadEntities.empty) {
+            imports.add(appNamespace + '\\Helper\\ImageHelper')
+        }
+        imports
+    }
+
     def private controllerFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Exception;
-        «IF hasGeographical»
-            use Psr\Log\LoggerInterface;
-        «ENDIF»
-        «IF hasIndexActions»
-            use Symfony\Component\Form\FormFactoryInterface;
-        «ENDIF»
-        use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasIndexActions»
-            use Symfony\Component\Routing\RouterInterface;
-            use function Symfony\Component\String\s;
-        «ENDIF»
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
-        «IF hasIndexActions»
-            use Zikula\Component\SortableColumns\SortableColumns;
-        «ENDIF»
-        «IF hasGeographical»
-            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        «ENDIF»
-        «IF hasIndexActions && hasUserFields»
-            use Zikula\UsersBundle\Entity\User;
-        «ENDIF»
-        «IF hasIndexActions»
-            use «appNamespace»\Entity\EntityInterface;
-        «ENDIF»
-        use «appNamespace»\Entity\Factory\EntityFactory;
-        use «appNamespace»\Helper\CollectionFilterHelper;
-        «IF hasAutomaticExpiryHandling || hasLoggable»
-            use «appNamespace»\Helper\ExpiryHelper;
-        «ENDIF»
-        «IF needsFeatureActivationHelper»
-            use «appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
-        «IF !getUploadEntities.empty»
-            use «appNamespace»\Helper\ImageHelper;
-        «ENDIF»
-        use «appNamespace»\Helper\PermissionHelper;
+        «collectBaseImports.print»
 
         /**
          * Helper base class for controller layer methods.
@@ -182,7 +186,6 @@ class ControllerHelper {
          */
         public function processIndexActionParameters(
             string $objectType,
-            SortableColumns $sortableColumns,
             array $templateParameters = []
         ): array {
             $contextArgs = ['controller' => $objectType, 'action' => 'index'];
@@ -311,13 +314,8 @@ class ControllerHelper {
                     $urlParameters[$fieldName] = $fieldValue;
                 }
             }
-            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), mb_strtoupper($sortdir));
             $resultsPerPage = $templateParameters['num'];
             $request->query->set('own', $templateParameters['own']);
-«/*
-            $sort = $sortableColumns->getSortColumn()->getName();
-            $sortdir = $sortableColumns->getSortDirection();*/»
-            $sortableColumns->setAdditionalUrlParameters($urlParameters);
             «IF hasCategorisableEntities»
                 $useJoins = in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true);
             «ENDIF»
@@ -349,7 +347,6 @@ class ControllerHelper {
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = $sortdir;
             $templateParameters['items'] = $entities;
-            $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
             $templateParameters['quickNavForm'] = $quickNavForm->createView();
 
             $request->query->set('sort', $sort);

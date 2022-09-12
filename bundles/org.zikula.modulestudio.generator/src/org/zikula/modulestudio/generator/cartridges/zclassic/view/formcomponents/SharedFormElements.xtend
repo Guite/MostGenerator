@@ -22,8 +22,8 @@ class SharedFormElements {
     '''
 
     def fieldFormRowImpl(DerivedField it, String subElem) '''
-        «IF !visible»
-            <div class="d-none">
+        «IF !visibleOnNew || !visibleOnEdit»
+            <div class="«IF !visibleOnNew && !visibleOnEdit»d-none«ELSEIF visibleOnNew»{{ mode == 'create' ? '' : 'd-none' }}«ELSEIF visibleOnEdit»{{ mode != 'create' ? '' : 'd-none' }}«ENDIF»">
                 «formRow(it, subElem)»
             </div>
         «ELSE»
@@ -44,7 +44,7 @@ class SharedFormElements {
     }
 
     def jsDefinition(Field it) {
-        val containerName = if (null !== entity) entity.name.formatForCode.toLowerCase else 'appsettings'
+        val containerName = entity.name.formatForCode.toLowerCase
         switch it {
             UserField: jsDefinitionUser(containerName)
             DatetimeField: jsDefinitionCalendar(containerName)

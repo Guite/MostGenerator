@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class UploadType {
 
@@ -18,24 +19,32 @@ class UploadType {
         fsa.generateClassPair('Form/Type/Field/UploadType.php', uploadTypeBaseImpl, uploadTypeImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\Form\\AbstractType',
+            'Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType',
+            'Symfony\\Component\\Form\\Extension\\Core\\Type\\FileType',
+            'Symfony\\Component\\Form\\FormBuilderInterface',
+            'Symfony\\Component\\Form\\FormInterface',
+            'Symfony\\Component\\Form\\FormView',
+            'Symfony\\Component\\HttpFoundation\\File\\File',
+            'Symfony\\Component\\OptionsResolver\\OptionsResolver',
+            'Symfony\\Component\\PropertyAccess\\PropertyAccess',
+            appNamespace + '\\Form\\DataTransformer\\UploadFileTransformer',
+            appNamespace + '\\Helper\\ImageHelper',
+            appNamespace + '\\Helper\\UploadHelper'
+        ])
+        if (hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)) {
+            imports.add('Symfony\\Component\\Form\\Extension\\Core\\Type\\TextType')
+        }
+        imports
+    }
+
     def private uploadTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
-        use Symfony\Component\Form\AbstractType;
-        use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-        use Symfony\Component\Form\Extension\Core\Type\FileType;
-        «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-            use Symfony\Component\Form\Extension\Core\Type\TextType;
-        «ENDIF»
-        use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\Form\FormView;
-        use Symfony\Component\HttpFoundation\File\File;
-        use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Symfony\Component\PropertyAccess\PropertyAccess;
-        use «appNamespace»\Form\DataTransformer\UploadFileTransformer;
-        use «appNamespace»\Helper\ImageHelper;
-        use «appNamespace»\Helper\UploadHelper;
+        «collectBaseImports.print»
 
         /**
          * Upload field type base class.

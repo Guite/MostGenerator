@@ -119,11 +119,7 @@ class Configuration {
     }
 
     def private initialValue(Field it) {
-        val value = Property.defaultFieldData(it)
-        switch (it) {
-            ListField case multiple && null !== value && '' !== value: '[' + value.split('###').join('\', \'') + ']'
-            default: value
-        }
+        Property.defaultFieldData(it)
     }
 
     def private validation(Field it) '''

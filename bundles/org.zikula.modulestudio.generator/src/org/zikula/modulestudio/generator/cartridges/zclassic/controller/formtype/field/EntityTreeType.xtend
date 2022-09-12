@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class EntityTreeType {
 
@@ -14,16 +15,24 @@ class EntityTreeType {
         fsa.generateClassPair('Form/Type/Field/EntityTreeType.php', entityTreeTypeBaseImpl, entityTreeTypeImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Doctrine\\ORM\\EntityRepository',
+            'Symfony\\Bridge\\Doctrine\\Form\\Type\\EntityType',
+            'Symfony\\Component\\Form\\AbstractType',
+            'Symfony\\Component\\OptionsResolver\\Options',
+            'Symfony\\Component\\OptionsResolver\\OptionsResolver',
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Helper\\EntityDisplayHelper'
+        ])
+        imports
+    }
+
     def private entityTreeTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
-        use Doctrine\ORM\EntityRepository;
-        use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-        use Symfony\Component\Form\AbstractType;
-        use Symfony\Component\OptionsResolver\Options;
-        use Symfony\Component\OptionsResolver\OptionsResolver;
-        use «appNamespace»\Entity\EntityInterface;
-        use «appNamespace»\Helper\EntityDisplayHelper;
+        «collectBaseImports.print»
 
         /**
          * Entity tree type base class.

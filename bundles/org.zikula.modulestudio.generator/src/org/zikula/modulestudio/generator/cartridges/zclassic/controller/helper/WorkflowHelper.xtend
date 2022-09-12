@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.application.ImportList
 
 class WorkflowHelper {
 
@@ -25,22 +26,32 @@ class WorkflowHelper {
         fsa.generateClassPair('Helper/WorkflowHelper.php', workflowFunctionsBaseImpl, workflowFunctionsImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Exception',
+            'Psr\\Log\\LoggerInterface',
+            'RuntimeException',
+            'Symfony\\Component\\Workflow\\Registry',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Entity\\Factory\\EntityFactory',
+            appNamespace + '\\Helper\\ListEntriesHelper',
+            appNamespace + '\\Helper\\PermissionHelper'
+        ])
+        if (needsApproval) {
+            imports.addAll(#[
+                'Translation\\Extractor\\Annotation\\Desc'
+            ])
+        }
+        imports
+    }
+
     def private workflowFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Exception;
-        use Psr\Log\LoggerInterface;
-        use RuntimeException;
-        use Symfony\Component\Workflow\Registry;
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        «IF needsApproval»
-            use Translation\Extractor\Annotation\Desc;
-        «ENDIF»
-        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        use «appNamespace»\Entity\EntityInterface;
-        use «appNamespace»\Entity\Factory\EntityFactory;
-        use «appNamespace»\Helper\ListEntriesHelper;
-        use «appNamespace»\Helper\PermissionHelper;
+        «collectBaseImports.print»
 
         /**
          * Helper base class for workflow methods.

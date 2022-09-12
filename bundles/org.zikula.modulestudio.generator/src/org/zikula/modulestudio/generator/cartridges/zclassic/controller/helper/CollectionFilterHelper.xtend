@@ -1,18 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.helper
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ArrayField
-import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
-import de.guite.modulestudio.metamodel.NumberField
-import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -21,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class CollectionFilterHelper {
 
@@ -37,25 +29,33 @@ class CollectionFilterHelper {
         fsa.generateClassPair('Helper/CollectionFilterHelper.php', collectionFilterHelperBaseClass, collectionFilterHelperImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Doctrine\\ORM\\QueryBuilder',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            appNamespace + '\\Helper\\PermissionHelper'
+        ])
+        if (hasStandardFieldEntities) {
+            imports.addAll(#[
+                'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+                'Zikula\\UsersBundle\\UsersConstant',
+                appNamespace + '\\Helper\\CategoryHelper'
+            ])
+        }
+        if (hasUserFields) {
+            imports.addAll(#[
+                'Zikula\\UsersBundle\\Entity\\User',
+                'Zikula\\UsersBundle\\Repository\\UserRepositoryInterface'
+            ])
+        }
+        imports
+    }
+
     def private collectionFilterHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use Doctrine\ORM\QueryBuilder;
-        use Symfony\Component\HttpFoundation\RequestStack;
-        «IF hasStandardFieldEntities»
-            use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        «ENDIF»
-        «IF hasUserFields»
-            use Zikula\UsersBundle\Entity\User;
-            use Zikula\UsersBundle\Repository\UserRepositoryInterface;
-        «ENDIF»
-        «IF hasStandardFieldEntities»
-            use Zikula\UsersBundle\UsersConstant;
-        «ENDIF»
-        «IF hasCategorisableEntities»
-            use «appNamespace»\Helper\CategoryHelper;
-        «ENDIF»
-        use «appNamespace»\Helper\PermissionHelper;
+        «collectBaseImports.print»
 
         /**
          * Entity collection filter helper base class.
@@ -144,8 +144,6 @@ class CollectionFilterHelper {
 
             «entity.applyDateRangeFilter»
         «ENDFOR»
-
-        «addSearchFilter»
         «IF hasStandardFieldEntities»
 
             «addCreatorFilter»
@@ -274,13 +272,6 @@ class CollectionFilterHelper {
                         continue;
                     }
                 «ENDIF»
-                if (in_array($k, ['q', 'searchterm'], true)) {
-                    // quick search
-                    if (!empty($v)) {
-                        $this->addSearchFilter('«name.formatForCode»', $qb, $v);
-                    }
-                    continue;
-                }
                 «IF hasBooleanFieldsEntity»
                     if (in_array($k, ['«getBooleanFieldsEntity.map[name.formatForCode].join('\', \'')»'], true)) {
                         // boolean filter
@@ -479,44 +470,6 @@ class CollectionFilterHelper {
         }
     '''
 
-    def private addSearchFilter(Application it) '''
-        /**
-         * Adds a filter for search query.
-         */
-        public function addSearchFilter(string $objectType, QueryBuilder $qb, string $fragment = ''): void
-        {
-            if ('' === $fragment) {
-                return;
-            }
-
-            $filters = [];
-            $parameters = [];
-
-            «FOR entity : getAllEntities»
-                if ('«entity.name.formatForCode»' === $objectType) {
-                    «val searchFields = entity.getDisplayFields.filter[isContainedInSearch]»
-                    «FOR field : searchFields»
-                        «IF field instanceof AbstractIntegerField || field instanceof NumberField»
-                            if (is_numeric($fragment)) {
-                                $filters[] = 'tbl.«field.name.formatForCode»«IF field instanceof UploadField»FileName«ENDIF» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
-                                $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
-                            }
-                        «ELSEIF !(field instanceof DatetimeField)»«/* see #1247 */»
-                            $filters[] = 'tbl.«field.name.formatForCode»«IF field instanceof UploadField»FileName«ENDIF» «IF field.isTextSearch»LIKE«ELSE»=«ENDIF» :search«field.name.formatForCodeCapital»';
-                            $parameters['search«field.name.formatForCodeCapital»'] = «IF field.isTextSearch»'%' . $fragment . '%'«ELSE»$fragment«ENDIF»;
-                        «ENDIF»
-                    «ENDFOR»
-                }
-            «ENDFOR»
-
-            $qb->andWhere('(' . implode(' OR ', $filters) . ')');
-
-            foreach ($parameters as $parameterName => $parameterValue) {
-                $qb->setParameter($parameterName, $parameterValue);
-            }
-        }
-    '''
-
     def private addCreatorFilter(Application it) '''
         /**
          * Adds a filter for the createdBy field.
@@ -541,23 +494,6 @@ class CollectionFilterHelper {
             '''$alias . '.«fieldName» «operator» :«paramName»'«''»'''
         else
             '''«''»'(' . $alias . '.«fieldName» «operator» :«paramName» OR ' . $alias . '.«fieldName» IS NULL)'«''»'''
-    }
-
-    def private isContainedInSearch(DerivedField it) {
-        switch it {
-            BooleanField: false
-            UserField: false
-            ArrayField: false
-            default: true
-        }
-    }
-
-    def private isTextSearch(DerivedField it) {
-        switch it {
-            StringField: true
-            TextField: true
-            default: false
-        }
     }
 
     def private collectionFilterHelperImpl(Application it) '''

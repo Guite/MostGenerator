@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class Factory {
 
@@ -27,20 +28,28 @@ class Factory {
         new EntityInitializer().generate(it, fsa)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Doctrine\\ORM\\EntityManagerInterface',
+            'Doctrine\\ORM\\EntityRepository',
+            'InvalidArgumentException',
+            appNamespace + '\\Entity\\Factory\\EntityInitializer',
+            appNamespace + '\\Helper\\CollectionFilterHelper'
+        ])
+        for (entity : getAllEntities) {
+            imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+        }
+        if (hasTranslatable) {
+            imports.add(appNamespace + '\\Helper\\FeatureActivationHelper')
+        }
+        imports
+    }
+
     def private modelFactoryBaseImpl(Application it) '''
         namespace «appNamespace»\Entity\Factory\Base;
 
-        use Doctrine\ORM\EntityManagerInterface;
-        use Doctrine\ORM\EntityRepository;
-        use InvalidArgumentException;
-        use «appNamespace»\Entity\Factory\EntityInitializer;
-        «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
-        «ENDFOR»
-        use «appNamespace»\Helper\CollectionFilterHelper;
-        «IF hasTranslatable»
-            use «appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * Factory class used to create entities and receive entity repositories.

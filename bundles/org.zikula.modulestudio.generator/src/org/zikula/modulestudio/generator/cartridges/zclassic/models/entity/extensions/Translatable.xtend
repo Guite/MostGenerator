@@ -59,12 +59,14 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
     /**
      * Returns the extension class import statements.
      */
-    override extensionClassImports(Entity it) '''
-        use Doctrine\DBAL\Types\Types;
-        use Doctrine\ORM\Mapping as ORM;
-        use Gedmo\Translatable\Entity\MappedSuperclass\«extensionBaseClass»;
-        use «repositoryClass(extensionClassType)»;
-    '''
+    override extensionClassImports(Entity it) {
+        #[
+            'Doctrine\\DBAL\\Types\\Types',
+            'Doctrine\\ORM\\Mapping as ORM',
+            'Gedmo\\Translatable\\Entity\\MappedSuperclass\\' + extensionBaseClass,
+            repositoryClass(extensionClassType)
+        ]
+    }
 
     /**
      * Returns the extension base class.

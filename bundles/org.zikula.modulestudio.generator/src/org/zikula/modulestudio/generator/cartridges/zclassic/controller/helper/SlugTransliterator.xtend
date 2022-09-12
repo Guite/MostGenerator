@@ -29,7 +29,7 @@ class SlugTransliterator {
         /**
          * Custom slug transliterator for proper handling of umlauts and accents during permalink generation.
          *
-         * @see https://github.com/Atlantic18/DoctrineExtensions/pull/1504
+         * @see https://github.com/doctrine-extensions/DoctrineExtensions/pull/1504
          */
         abstract class AbstractSlugTransliterator
         {

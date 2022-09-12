@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class AutoCompletionRelationType {
 
@@ -18,18 +19,26 @@ class AutoCompletionRelationType {
         fsa.generateClassPair('Form/Type/Field/AutoCompletionRelationType.php', relationTypeBaseImpl, relationTypeImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\Form\\AbstractType',
+            'Symfony\\Component\\Form\\Extension\\Core\\Type\\HiddenType',
+            'Symfony\\Component\\Form\\FormBuilderInterface',
+            'Symfony\\Component\\Form\\FormInterface',
+            'Symfony\\Component\\Form\\FormView',
+            'Symfony\\Component\\OptionsResolver\\OptionsResolver',
+            'Symfony\\Component\\Routing\\RouterInterface',
+            appNamespace + '\\Entity\\Factory\\EntityFactory',
+            appNamespace + '\\Form\\DataTransformer\\AutoCompletionRelationTransformer'
+        ])
+        imports
+    }
+
     def private relationTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
-        use Symfony\Component\Form\AbstractType;
-        use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-        use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\Form\FormView;
-        use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Symfony\Component\Routing\RouterInterface;
-        use «appNamespace»\Entity\Factory\EntityFactory;
-        use «appNamespace»\Form\DataTransformer\AutoCompletionRelationTransformer;
+        «collectBaseImports.print»
 
         /**
          * Auto completion relation field type base class.

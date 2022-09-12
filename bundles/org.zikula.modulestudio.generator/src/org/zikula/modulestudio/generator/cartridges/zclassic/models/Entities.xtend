@@ -17,8 +17,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Entit
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityMethods
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.GeographicalTrait
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.StandardFieldsTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.LifecycleListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
@@ -28,6 +26,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class Entities {
 
@@ -53,22 +52,6 @@ class Entities {
         entities.forEach(e|e.generate(it, fsa))
 
         new LifecycleListener().generate(it, fsa)
-        if (hasGeographical) {
-            if (!getGeographicalEntities.filter[loggable].empty) {
-                new GeographicalTrait().generate(it, fsa, true)
-            }
-            if (!getGeographicalEntities.filter[!loggable].empty) {
-                new GeographicalTrait().generate(it, fsa, false)
-            }
-        }
-        if (hasStandardFieldEntities) {
-            if (!getStandardFieldEntities.filter[loggable].empty) {
-                new StandardFieldsTrait().generate(it, fsa, true)
-            }
-            if (!getStandardFieldEntities.filter[!loggable].empty) {
-                new StandardFieldsTrait().generate(it, fsa, false)
-            }
-        }
 
         for (entity : getAllEntities) {
             extMan = new ExtensionManager(entity)
@@ -115,123 +98,129 @@ class Entities {
         fsa.generateClassPair('Entity/' + name.formatForCodeCapital + '.php', modelEntityBaseImpl(app), modelEntityImpl(app))
     }
 
-    def private dispatch imports(MappedSuperClass it, Boolean isBase) '''
-        use Doctrine\ORM\Mapping as ORM;
-        «IF isBase && hasCollections»
-            use Doctrine\Common\Collections\ArrayCollection;
-        «ENDIF»
-        «IF isBase/* || loggable || hasTranslatableFields || tree != EntityTreeType.NONE*/»
-            use Gedmo\Mapping\Annotation as Gedmo;
-        «ENDIF»
-        «IF isBase»
-            «IF hasCollections»
-                use InvalidArgumentException;
-            «ENDIF»
-            «IF hasUploadFieldsEntity»
-                use RuntimeException;
-                use Symfony\Component\HttpFoundation\File\File;
-            «ENDIF»
-            use Symfony\Component\Validator\Constraints as Assert;
-        «ENDIF»
-        «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
-            use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-        «ENDIF»
-        «IF isBase»
-            «IF hasUserFieldsEntity»
-                use Zikula\UsersBundle\Entity\User;
-            «ENDIF»
-            use «application.appNamespace»\Entity\EntityInterface;
-            «IF hasListFieldsEntity»
-                use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
-            «ENDIF»
-        «ENDIF»
-    '''
+    def private dispatch collectBaseImports(MappedSuperClass it, Boolean isBase) {
+        val imports = new ImportList
+        imports.add('Doctrine\\ORM\\Mapping as ORM')
+        if (isBase && hasCollections) {
+            imports.add('Doctrine\\Common\\Collections\\ArrayCollection')
+        }
+        if (isBase/* || loggable || hasTranslatableFields || tree != EntityTreeType.NONE*/) {
+            imports.add('Gedmo\\Mapping\\Annotation as Gedmo')
+        }
+        if (isBase) {
+            if (hasCollections) {
+                imports.add('InvalidArgumentException')
+            }
+            if (hasUploadFieldsEntity) {
+                imports.add('RuntimeException')
+                imports.add('Symfony\\Component\\HttpFoundation\\File\\File')
+            }
+            imports.add('Symfony\\Component\\Validator\\Constraints as Assert')
+        }
+        if (!getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty) {
+            imports.add('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')
+        }
+        if (isBase) {
+            if (hasUserFieldsEntity) {
+                imports.add('Zikula\\UsersBundle\\Entity\\User')
+            }
+            imports.add(application.appNamespace + '\\Entity\\EntityInterface')
+            if (hasListFieldsEntity) {
+                imports.add(application.appNamespace + '\\Validator\\Constraints as ' + application.name.formatForCodeCapital + 'Assert')
+            }
+        } else {
+            imports.add(application.appNamespace + '\\Entity\\Base\\Abstract' + name.formatForCodeCapital + ' as BaseEntity')
+        }
+    }
 
-    def private dispatch imports(Entity it, Boolean isBase) '''
-        use Doctrine\ORM\Mapping as ORM;
-        «IF isBase»
-            «IF hasCollections || categorisable || EntityTreeType.NONE != tree»
-                use Doctrine\Common\Collections\ArrayCollection;
-                use Doctrine\Common\Collections\Collection;
-            «ENDIF»
-        «ENDIF»
-        «IF isBase && hasNotifyPolicy»
-            use Doctrine\Common\NotifyPropertyChanged;
-            use Doctrine\Common\PropertyChangedListener;
-        «ENDIF»
-        «IF isBase || loggable || hasTranslatableFields || tree != EntityTreeType.NONE»
-            use Gedmo\Mapping\Annotation as Gedmo;
-        «ENDIF»
-        «IF hasSluggableFields»
-            «IF tree != EntityTreeType.NONE»
-                use Gedmo\Sluggable\Handler\TreeSlugHandler;
-            «ELSEIF needsRelativeOrInversedRelativeSlugHandler»
-                use Gedmo\Sluggable\Handler\InversedRelativeSlugHandler;
-                use Gedmo\Sluggable\Handler\RelativeSlugHandler;
-            «ENDIF»
-        «ENDIF»
-        «IF isBase»
-            «IF hasTranslatableFields»
-                use Gedmo\Translatable\Translatable;
-            «ENDIF»
-            «IF hasUploadFieldsEntity»
-                «IF loggable»
-                    use ReflectionClass;
-                «ENDIF»
-                use RuntimeException;
-                use Symfony\Component\HttpFoundation\File\File;
-            «ENDIF»
-            use Symfony\Component\Validator\Constraints as Assert;
-        «ENDIF»
-        «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
-            use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-        «ENDIF»
-        «IF !isBase»
-            «IF tree === EntityTreeType.CLOSURE»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»Closure;
-            «ENDIF»
-            «IF loggable»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»LogEntry;
-            «ENDIF»
-            «IF hasTranslatableFields»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»Translation;
-            «ENDIF»
-            use «application.appNamespace»\Repository\«name.formatForCodeCapital»Repository;
-        «ELSE»
-            «IF hasUserFieldsEntity»
-                use Zikula\UsersBundle\Entity\User;
-            «ENDIF»
-            «IF !isInheriting»
-                use «application.appNamespace»\Entity\EntityInterface;
-            «ENDIF»
-            «IF isInheriting»
-                use «application.appNamespace»\Entity\«parentType.name.formatForCodeCapital» as BaseEntity;
-            «ENDIF»
-            «IF categorisable»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»Category;
-            «ENDIF»
-            «IF tree !== EntityTreeType.NONE»
-                use «application.appNamespace»\Entity\«name.formatForCodeCapital»;
-            «ENDIF»
-            «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.importRelatedEntity(relation, false)»«ENDFOR»
-            «FOR relation : getOutgoingJoinRelations»«thAssoc.importRelatedEntity(relation, true)»«ENDFOR»
-            use «application.appNamespace»\Repository\«name.formatForCodeCapital»Repository;
-            «IF geographical»
-                use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»GeographicalTrait;
-            «ENDIF»
-            «IF standardFields»
-                use «application.appNamespace»\Traits\«IF loggable»Loggable«ENDIF»StandardFieldsTrait;
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                use «application.appNamespace»\Validator\Constraints as «application.name.formatForCodeCapital»Assert;
-            «ENDIF»
-        «ENDIF»
-    '''
+    def private dispatch collectBaseImports(Entity it, Boolean isBase) {
+        val imports = new ImportList
+        imports.add('Doctrine\\DBAL\\Types\\Types')
+        imports.add('Doctrine\\ORM\\Mapping as ORM')
+        if (isBase) {
+            if (hasCollections || categorisable || EntityTreeType.NONE != tree) {
+                imports.add('Doctrine\\Common\\Collections\\ArrayCollection')
+                imports.add('Doctrine\\Common\\Collections\\Collection')
+            }
+        }
+        if (isBase && hasNotifyPolicy) {
+            imports.add('Doctrine\\Common\\NotifyPropertyChanged')
+            imports.add('Doctrine\\Common\\PropertyChangedListener')
+        }
+        if (isBase || loggable || hasTranslatableFields || tree != EntityTreeType.NONE) {
+            imports.add('Gedmo\\Mapping\\Annotation as Gedmo')
+        }
+        if (hasSluggableFields) {
+            if (tree != EntityTreeType.NONE) {
+                imports.add('Gedmo\\Sluggable\\Handler\\TreeSlugHandler')
+            } else if (needsRelativeOrInversedRelativeSlugHandler) {
+                imports.add('Gedmo\\Sluggable\\Handler\\InversedRelativeSlugHandler')
+                imports.add('Gedmo\\Sluggable\\Handler\\RelativeSlugHandler')
+            }
+        }
+        if (isBase) {
+            if (hasTranslatableFields) {
+                imports.add('Gedmo\\Translatable\\Translatable')
+            }
+            if (hasUploadFieldsEntity) {
+                if (loggable) {
+                    imports.add('ReflectionClass')
+                }
+                imports.add('RuntimeException')
+                imports.add('Symfony\\Component\\HttpFoundation\\File\\File')
+            }
+            imports.add('Symfony\\Component\\Validator\\Constraints as Assert')
+        }
+        if (!getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty) {
+            imports.add('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')
+        }
+        if (!isBase) {
+            if (tree === EntityTreeType.CLOSURE) {
+                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'Closure')
+            }
+            if (loggable) {
+                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'LogEntry')
+            }
+            if (hasTranslatableFields) {
+                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'Translation')
+            }
+            imports.add(application.appNamespace + '\\Repository\\' + name.formatForCodeCapital + 'Repository')
+        } else {
+            if (hasUserFieldsEntity) {
+                imports.add('Zikula\\UsersBundle\\Entity\\User')
+            }
+            if (!isInheriting) {
+                imports.add(application.appNamespace + '\\Entity\\EntityInterface')
+            } else {
+                imports.add(application.appNamespace + '\\Entity\\' + parentType.name.formatForCodeCapital + ' as BaseEntity')
+            }
+            if (categorisable) {
+                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'Category')
+            }
+            if (tree !== EntityTreeType.NONE) {
+                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital)
+            }
+            for (relation : getBidirectionalIncomingJoinRelations) {
+                imports.addAll(thAssoc.importRelatedEntity(relation, false))
+            }
+            for (relation : getOutgoingJoinRelations) {
+                imports.addAll(thAssoc.importRelatedEntity(relation, true))
+            }
+            imports.add(application.appNamespace + '\\Repository\\' + name.formatForCodeCapital + 'Repository')
+            if (hasListFieldsEntity) {
+                imports.add(application.appNamespace + '\\Validator\\Constraints as ' + application.name.formatForCodeCapital + 'Assert')
+            }
+        }
+        if (!isBase) {
+            imports.add(application.appNamespace + '\\Entity\\Base\\Abstract' + name.formatForCodeCapital + ' as BaseEntity')
+        }
+        imports
+    }
 
     def private modelEntityBaseImpl(DataObject it, Application app) '''
         namespace «app.appNamespace»\Entity\Base;
 
-        «imports(true)»
+        «collectBaseImports(true).print»
 
         «modelEntityBaseImplClass(app)»
     '''
@@ -247,20 +236,6 @@ class Entities {
         #[ORM\MappedSuperclass]
         abstract class Abstract«name.formatForCodeCapital»«IF isInheriting» extends BaseEntity«ENDIF» implements AbstractEntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
         {
-            «IF it instanceof Entity && (it as Entity).geographical»
-                /**
-                 * Hook geographical behaviour embedding latitude and longitude fields.
-                 */
-                use «IF (it as Entity).loggable»Loggable«ENDIF»GeographicalTrait;
-
-            «ENDIF»
-            «IF it instanceof Entity && (it as Entity).standardFields»
-                /**
-                 * Hook standard fields behaviour embedding createdBy, updatedBy, createdDate, updatedDate fields.
-                 */
-                use «IF (it as Entity).loggable»Loggable«ENDIF»StandardFieldsTrait;
-
-            «ENDIF»
             «modelEntityBaseImplBody(app)»
         }
     '''
@@ -335,8 +310,7 @@ class Entities {
     def private modelEntityImpl(DataObject it, Application app) '''
         namespace «app.appNamespace»\Entity;
 
-        use «app.appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital» as BaseEntity;
-        «imports(false)»
+        «collectBaseImports(false).print»
 
         «entityImplClassDocblock(app)»
         class «name.formatForCodeCapital» extends BaseEntity implements EntityInterface

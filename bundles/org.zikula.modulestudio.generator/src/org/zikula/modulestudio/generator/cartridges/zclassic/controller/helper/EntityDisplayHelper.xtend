@@ -18,6 +18,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import de.guite.modulestudio.metamodel.AbstractStringField
+import org.zikula.modulestudio.generator.application.ImportList
 
 class EntityDisplayHelper {
 
@@ -32,26 +33,34 @@ class EntityDisplayHelper {
         fsa.generateClassPair('Helper/EntityDisplayHelper.php', entityDisplayHelperBaseClass, entityDisplayHelperImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            appNamespace + '\\Entity\\EntityInterface'
+        ])
+        if (hasAnyDateTimeFields) {
+            imports.add('IntlDateFormatter')
+        }
+        if (hasNumberFields) {
+            imports.add('NumberFormatter')
+        }
+        if (hasAnyDateTimeFields || hasNumberFields) {
+            imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
+        }
+        for (entity : getAllEntities) {
+            imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+        }
+        if (hasListFields) {
+            imports.add(appNamespace + '\\Helper\\ListEntriesHelper')
+        }
+        imports
+    }
+
     def private entityDisplayHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF hasAnyDateTimeFields»
-            use IntlDateFormatter;
-        «ENDIF»
-        «IF hasNumberFields»
-            use NumberFormatter;
-        «ENDIF»
-        «IF hasAnyDateTimeFields || hasNumberFields»
-            use Symfony\Component\HttpFoundation\RequestStack;
-        «ENDIF»
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use «appNamespace»\Entity\EntityInterface;
-        «FOR entity : getAllEntities»
-            use «appNamespace»\Entity\«entity.name.formatForCodeCapital»;
-        «ENDFOR»
-        «IF hasListFields»
-            use «appNamespace»\Helper\ListEntriesHelper;
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * Entity display helper base class.
@@ -97,7 +106,7 @@ class EntityDisplayHelper {
         public function getFormattedTitle(EntityInterface $entity): string
         {
             «FOR entity : getAllEntities»
-                if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
+                if ($entity instanceof «entity.name.formatForCodeCapital») {
                     return $this->format«entity.name.formatForCodeCapital»($entity);
                 }
             «ENDFOR»
@@ -111,7 +120,7 @@ class EntityDisplayHelper {
         public function getDescription(EntityInterface $entity): string
         {
             «FOR entity : getAllEntities»
-                if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
+                if ($entity instanceof «entity.name.formatForCodeCapital») {
                     return $this->get«entity.name.formatForCodeCapital»Description($entity);
                 }
             «ENDFOR»
@@ -261,12 +270,12 @@ class EntityDisplayHelper {
                 // field referencing part
                 if (matchedFields.head instanceof UploadField) {
                     formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars((is_array($entity->get' + patternPart.toFirstUpper + '()) ? $entity->get' + patternPart.toFirstUpper + '()[\'' + patternPart + '\'] : $entity->get' + patternPart.toFirstUpper + '())->getFilename())'
+                } else if (geographical && #['latitude', 'longitude'].contains(matchedFields.head.name)) {
+                    // geo field referencing part
+                    formattedPart = '\'%' + patternPart + '%\' => ' + 'number_format($entity->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
                 } else {
                     formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(' + (if (matchedFields.head instanceof AbstractStringField) '' else '(string) ') + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()') + ')'
                 }
-            } else if (geographical && #['latitude', 'longitude'].contains(patternPart)) {
-                // geo field referencing part
-                formattedPart = '\'%' + patternPart + '%\' => ' + 'number_format($entity->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
             } else {
                 // static part
                 // formattedPart = '\'' + patternPart.replace('\'', '') + '\''

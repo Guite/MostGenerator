@@ -39,13 +39,15 @@ class Association {
     /**
      * If we have an outgoing association useTarget is true; for an incoming one it is false.
      */
-    def importRelatedEntity(JoinRelationship it, Boolean useTarget) '''
-        «val entityClassName = (if (useTarget) target else source).simpleEntityClassName»
-        «IF !importedEntities.contains(entityClassName)»
-            «{importedEntities += entityClassName; ''}»
-            use «application.appNamespace»\Entity\«entityClassName»;
-        «ENDIF»
-    '''
+    def importRelatedEntity(JoinRelationship it, Boolean useTarget) {
+        val imports = newArrayList
+        val entityClassName = (if (useTarget) target else source).simpleEntityClassName
+        if (!importedEntities.contains(entityClassName)) {
+            importedEntities += entityClassName
+            imports.add(application.appNamespace + '\\Entity\\' + entityClassName)
+        }
+        imports
+    }
 
     def private simpleEntityClassName(DataObject it) {
         name.formatForCodeCapital
@@ -104,7 +106,7 @@ class Association {
         IF !isManySide(false)»
             #[Assert\Valid]
         «ENDIF*/»
-        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»«IF isManySide(false)»Collection«ELSE»«entityClass»«ENDIF» $«sourceName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+        protected ?«IF isManySide(false)»Collection«ELSE»«entityClass»«ENDIF» $«sourceName» = null;
         «/* this last line is on purpose */»
     '''
 
@@ -151,7 +153,7 @@ class Association {
             #[Assert\NotNull(message: 'Choosing a «aliasName.formatForDisplay» is required.')]
         «ENDIF»«/* disabled due to problems with upload fields
         #[Assert\Valid]*/»
-        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»«entityClass» $«sourceName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+        protected ?«entityClass» $«sourceName» = null;
         «/* this last line is on purpose */»
     '''
 
@@ -174,7 +176,7 @@ class Association {
             «IF maxSource > 0»
                 #[Assert\Count(min: «minSource», max: «maxSource»)]
             «ENDIF»
-            protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»Collection $«sourceName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+            protected ?Collection $«sourceName» = null;
         «ENDIF»
     '''
 
@@ -203,7 +205,7 @@ class Association {
         IF !isManySide(true)»
             #[Assert\Valid]
         «ENDIF*/»
-        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»«entityClass» $«targetName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+        protected ?«entityClass» $«targetName» = null;
         «/* this last line is on purpose */»
     '''
 
@@ -248,7 +250,7 @@ class Association {
         «IF maxTarget > 0»
             #[Assert\Count(min: «minTarget», max: «maxTarget»)]
         «ENDIF»
-        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»Collection $«targetName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+        protected ?Collection $«targetName» = null;
         «/* this last line is on purpose */»
     '''
 
@@ -271,7 +273,7 @@ class Association {
         «IF maxTarget > 0»
             #[Assert\Count(min: «minTarget», max: «maxTarget»)]
         «ENDIF»
-        protected «/* needed as fallback/default IF nullable*/»?«/*ENDIF*/»Collection $«targetName»«/* needed as fallback/default IF nullable*/» = null«/*ENDIF*/»;
+        protected ?Collection $«targetName» = null;
     '''
 
     def private dispatch outgoingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «sourceName» [«source.getDisplayNameDependingOnType»] have many «targetName» [«target.getDisplayNameDependingOnType»] (OWNING SIDE)'''

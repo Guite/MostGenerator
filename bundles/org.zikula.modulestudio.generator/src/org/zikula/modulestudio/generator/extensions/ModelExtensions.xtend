@@ -17,7 +17,6 @@ import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.FieldDisplayType
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
@@ -33,6 +32,7 @@ import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
+import de.guite.modulestudio.metamodel.TextRole
 
 /**
  * This class contains model related extension methods.
@@ -47,7 +47,7 @@ class ModelExtensions {
     /**
      * Returns a list of all entity fields in this application.
      */
-    def getAllEntityFields(Application it) {
+    def dispatch getAllEntityFields(Application it) {
         entities.map[fields].flatten.toList
     }
 
@@ -84,13 +84,6 @@ class ModelExtensions {
      */
     def hasImageFields(Application it) {
         getAllEntities.exists[hasImageFieldsEntity]
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with at least one colour field.
-     */
-    def hasColourFields(Application it) {
-        getAllEntities.exists[hasColourFieldsEntity] || !getAllVariables.filter(StringField).filter[role == StringRole.COLOUR].empty
     }
 
     /**
@@ -187,34 +180,6 @@ class ModelExtensions {
     }
 
     /**
-     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled.
-     */
-    def hasBooleansWithAjaxToggle(Application it) {
-        !getEntitiesWithAjaxToggle.empty
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled for it's index action.
-     */
-    def hasBooleansWithAjaxToggleInView(Application it) {
-        !getAllEntities.filter[hasBooleansWithAjaxToggleEntity('index')].empty
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled for it's detail action.
-     */
-    def hasBooleansWithAjaxToggleInDisplay(Application it) {
-        !getAllEntities.filter[hasBooleansWithAjaxToggleEntity('detail')].empty
-    }
-
-    /**
-     * Returns a list of all entities with at least one boolean field having ajax toggle enabled.
-     */
-    def getEntitiesWithAjaxToggle(Application it) {
-        getAllEntities.filter[hasBooleansWithAjaxToggleEntity('')]
-    }
-
-    /**
      * Returns an application based on a given field.
      */
     def getApplication(Field it) {
@@ -303,14 +268,14 @@ class ModelExtensions {
      * Returns a list of all fields which should be displayed on the index page.
      */
     def getFieldsForIndexPage(Entity it) {
-        getDisplayFields.filter[f|f.isVisibleOnIndexPage].reject(ArrayField).toList
+        getDisplayFields.filter[f|f.visibleOnIndex].toList
     }
 
     /**
      * Returns a list of all fields which should be displayed on the detail page.
      */
     def getFieldsForDetailPage(Entity it) {
-        getDisplayFields.filter[f|f.isVisibleOnDetailPage]
+        getDisplayFields.filter[f|f.visibleOnDetail]
     }
 
     /**
@@ -333,7 +298,7 @@ class ModelExtensions {
      * Returns a list of all fields which may be used for sorting.
      */
     def getSortingFields(DataObject it) {
-        getDisplayFields.filter[f|f.isSortField].reject(UserField).reject(ArrayField).toList
+        getDisplayFields.filter[f|f.visibleOnSort].reject(UserField).reject(ArrayField).toList
     }
 
     /**
@@ -372,14 +337,6 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all fields of the given entity for which we provide example data.
-     * At the moment instances of UploadField are excluded.
-     */
-    def getFieldsForExampleData(DataObject it) {
-        getDerivedFields.filter[!primaryKey].reject(UploadField).toList
-    }
-
-    /**
      * Checks whether this entity has at least one user field.
      */
     def hasUserFieldsEntity(DataObject it) {
@@ -387,10 +344,20 @@ class ModelExtensions {
     }
 
     /**
+     * Returns a list of all fields of this entity.
+     */
+    def dispatch getAllEntityFields(DataObject it) {
+        it.fields.filter(DerivedField).filter[f|f.primaryKey]
+        + 
+        getSelfAndParentDataObjects.map[fields].flatten
+            .filter[f|!(f instanceof DerivedField) || !(f as DerivedField).primaryKey]
+    }
+
+    /**
      * Returns a list of all user fields of this entity.
      */
     def getUserFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(UserField)].flatten
+        getAllEntityFields.filter(UserField)
     }
 
     /**
@@ -404,7 +371,7 @@ class ModelExtensions {
      * Returns a list of all upload fields of this entity.
      */
     def getUploadFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(UploadField)].flatten
+        getAllEntityFields.filter(UploadField)
     }
 
     /**
@@ -418,28 +385,7 @@ class ModelExtensions {
      * Returns a list of all list fields of this entity.
      */
     def getListFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(ListField)].flatten
-    }
-
-    /**
-     * Returns whether this field is visible on the index page.
-     */
-    def private isVisibleOnIndexPage(Field it) {
-        #[FieldDisplayType.INDEX, FieldDisplayType.INDEX_SORTING, FieldDisplayType.INDEX_DETAIL, FieldDisplayType.ALL].contains(displayType)
-    }
-
-    /**
-     * Returns whether this field is visible on the detail page.
-     */
-    def private isVisibleOnDetailPage(Field it) {
-        #[FieldDisplayType.DETAIL, FieldDisplayType.DETAIL_SORTING, FieldDisplayType.INDEX_DETAIL, FieldDisplayType.ALL].contains(displayType)
-    }
-
-    /**
-     * Returns whether this field maybe used for sorting.
-     */
-    def isSortField(Field it) {
-        #[FieldDisplayType.SORTING, FieldDisplayType.INDEX_SORTING, FieldDisplayType.DETAIL_SORTING, FieldDisplayType.ALL].contains(displayType)
+        getAllEntityFields.filter(ListField)
     }
 
     /**
@@ -532,20 +478,6 @@ class ModelExtensions {
      */
     def getDisplayStringFieldsEntity(DataObject it) {
         getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role != StringRole.PASSWORD]].flatten
-    }
-
-    /**
-     * Checks whether this entity has at least one colour field.
-     */
-    def hasColourFieldsEntity(DataObject it) {
-        !getColourFieldsEntity.empty
-    }
-
-    /**
-     * Returns a list of all colour fields of this entity.
-     */
-    def getColourFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.COLOUR]].flatten
     }
 
     /**
@@ -682,28 +614,6 @@ class ModelExtensions {
     }
 
     /**
-     * Checks whether this entity has at least one boolean field having ajax toggle enabled.
-     */
-    def hasBooleansWithAjaxToggleEntity(DataObject it, String context) {
-        !getBooleansWithAjaxToggleEntity(context).empty
-    }
-
-    /**
-     * Returns a list of all boolean fields having ajax toggle enabled.
-     */
-    def getBooleansWithAjaxToggleEntity(DataObject it, String context) {
-        val fields = getBooleanFieldsEntity.filter[ajaxTogglability]
-        if (fields.empty || context.empty) {
-            return fields
-        }
-        if (context == 'index') {
-            return fields.filter[f|f.isVisibleOnIndexPage]
-        } else if (context == 'detail') {
-            return fields.filter[f|f.isVisibleOnDetailPage]
-        }
-    }
-
-    /**
      * Returns a list of all integer fields which are used as aggregates.
      */
     def getAggregateFields(DataObject it) {
@@ -803,7 +713,7 @@ class ModelExtensions {
             EmailField: 'string'
             UrlField: 'string'
             UploadField: 'string'
-            ListField: 'string'
+            ListField: if (multiple) 'array' else 'string'
             ArrayField: 'array'
             DatetimeField: if (forPhp) 'DateTime' else dateTimeFieldTypeAsString
             default: ''
@@ -814,12 +724,30 @@ class ModelExtensions {
      * Prints an output string describing the type of the given date time field.
      */
     def private dateTimeFieldTypeAsString(DatetimeField it) {
-        if (components == DateTimeComponents.DATE_TIME) {
-            return 'DateTime'
-        }
-        if (components == DateTimeComponents.DATE) {
-            return 'date'
-        }
+        if (components == DateTimeComponents.DATE_TIME) 'datetime' else
+        if (components == DateTimeComponents.DATE_TIME_TZ) 'datetimetz' else
+        if (components == DateTimeComponents.DATE) 'date' else
         'time'
+    }
+
+    /**
+     * Returns the string value for a given text role.
+     */
+    def textRoleAsCodeLanguage(TextRole role) {
+        switch role {
+            case CODE_CSS: 'css'
+            case CODE_DOCKERFILE: 'dockerfile'
+            case CODE_JS: 'js'
+            case CODE_MARKDOWN: 'markdown'
+            case CODE_NGINX: 'nginx'
+            case CODE_PHP: 'php'
+            case CODE_SHELL: 'shell'
+            case CODE_SQL: 'sql'
+            case CODE_TWIG: 'twig'
+            case CODE_XML: 'xml'
+            case CODE_YAML: 'yaml'
+            case CODE_YAML_FM: 'yaml-frontmatter'
+            default: ''
+        }
     }
 }

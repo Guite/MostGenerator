@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class BundleFile {
 
@@ -27,13 +28,21 @@ class BundleFile {
         «moduleBaseImpl»
     '''
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.add('Zikula\\Bundle\\CoreBundle\\AbstractModule')
+        if (needsInitializer) {
+            imports.addAll(#[
+                'Zikula\\Bundle\\CoreBundle\\BundleInitializer\\BundleInitializerInterface',
+                'Zikula\\Bundle\\CoreBundle\\BundleInitializer\\InitializableBundleInterface',
+                appNamespace + '\\Initializer\\' + name.formatForCodeCapital + 'Initializer'
+            ])
+        }
+        imports
+    }
+
     def private moduleBaseImpl(Application it) '''
-        use Zikula\Bundle\CoreBundle\AbstractModule;
-        «IF needsInitializer»
-            use Zikula\Bundle\CoreBundle\BundleInitializer\BundleInitializerInterface;
-            use Zikula\Bundle\CoreBundle\BundleInitializer\InitializableBundleInterface;
-            use «appNamespace»\Initializer\«name.formatForCodeCapital»Initializer;
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * Bundle base class.

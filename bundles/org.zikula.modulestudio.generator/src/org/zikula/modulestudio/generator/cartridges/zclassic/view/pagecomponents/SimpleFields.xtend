@@ -29,29 +29,13 @@ class SimpleFields {
     def dispatch displayField(Field it, String objName, String page) '''
         {{ «objName».«name.formatForCode» }}'''
 
-    def dispatch displayField(BooleanField it, String objName, String page) {
-        if (ajaxTogglability && (page == 'index' || page == 'detail')) '''
-            {% set itemId = «objName».getKey() %}
-            <a id="toggle«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" href="javascript:void(0);" class="«application.vendorAndName.toLowerCase»-ajax-toggle d-none" data-object-type="«entity.name.formatForCode»" data-field-name="«name.formatForCode»" data-item-id="{{ itemId|e('html_attr') }}">
-                <i class="fas fa-check text-success{% if not «objName».«name.formatForCode» %} d-none{% endif %}" id="yes«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ 'This setting is enabled. Click here to disable it.'|trans({}, 'messages')|e('html_attr') }}"></i>
-                <i class="fas fa-times text-danger{% if «objName».«name.formatForCode» %} d-none{% endif %}" id="no«name.formatForCodeCapital»{{ itemId|e('html_attr') }}" title="{{ 'This setting is disabled. Click here to enable it.'|trans({}, 'messages')|e('html_attr') }}"></i>
-            </a>
-            <noscript><div id="noscript«name.formatForCodeCapital»{{ itemId|e('html_attr') }}">
-                {% if «objName».«name.formatForCode» %}
-                    <i class="fas fa-check text-success" title="{{ 'Yes'|trans({}, 'messages')|e('html_attr') }}"></i>
-                {% else %}
-                    <i class="fas fa-times text-danger" title="{{ 'No'|trans({}, 'messages')|e('html_attr') }}"></i>
-                {% endif %}
-            </div></noscript>
-        '''
-        else '''
-            {% if «objName».«name.formatForCode» %}
-                <i class="fas fa-check text-success" title="{{ 'Yes'|trans({}, 'messages')|e('html_attr') }}"></i>
-            {% else %}
-                <i class="fas fa-times text-danger" title="{{ 'No'|trans({}, 'messages')|e('html_attr') }}"></i>
-            {% endif %}
-        '''
-    }
+    def dispatch displayField(BooleanField it, String objName, String page) '''
+        {% if «objName».«name.formatForCode» %}
+            <i class="fas fa-check text-success" title="{{ 'Yes'|trans({}, 'messages')|e('html_attr') }}"></i>
+        {% else %}
+            <i class="fas fa-times text-danger" title="{{ 'No'|trans({}, 'messages')|e('html_attr') }}"></i>
+        {% endif %}
+    '''
 
     def dispatch displayField(IntegerField it, String objName, String page) '''
         {{ «objName».«name.formatForCode» }}«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ELSEIF percentage»%«ENDIF»'''
@@ -59,6 +43,8 @@ class SimpleFields {
     def dispatch displayField(NumberField it, String objName, String page) {
         if (percentage) '''
             {{ («objName».«name.formatForCode» * 100)|format_number }}«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ELSE»%«ENDIF»'''
+        else if (#['latitude', 'longitude'].contains(name)) '''
+            {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_geoData }}'''
         else '''
             {{ «objName».«name.formatForCode»|format_«IF currency»currency('EUR')«ELSE»number«ENDIF» }}«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ENDIF»'''
     }

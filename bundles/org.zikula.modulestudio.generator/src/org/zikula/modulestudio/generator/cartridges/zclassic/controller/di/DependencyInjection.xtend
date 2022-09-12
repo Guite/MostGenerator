@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 import de.guite.modulestudio.metamodel.UserField
+import org.zikula.modulestudio.generator.application.ImportList
 
 class DependencyInjection {
 
@@ -24,56 +25,65 @@ class DependencyInjection {
         fsa.generateClassPair('DependencyInjection/' + extensionFileName, extensionBaseImpl, extensionImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\Config\\FileLocator',
+            'Symfony\\Component\\DependencyInjection\\ContainerBuilder',
+            'Symfony\\Component\\DependencyInjection\\Loader\\YamlFileLoader',
+            'Symfony\\Component\\HttpKernel\\DependencyInjection\\Extension',
+            appNamespace + '\\DependencyInjection\\Configuration'
+        ])
+        if (!needsConfig) {
+            return imports
+        }
+        imports.add(appNamespace + '\\EventListener\\UserListener')
+        imports.add(appNamespace + '\\Helper\\CollectionFilterHelper')
+        if (hasGeographical) {
+            imports.add(appNamespace + '\\Entity\\Factory\\EntityInitializer')
+        }
+        if (hasLoggable) {
+            imports.add(appNamespace + '\\EventListener\\EntityLifecycleListener')
+        }
+        if (hasTranslatable || needsApproval || hasStandardFieldEntities) {
+            for (entity : getAllEntities.filter[hasEditAction]) {
+                imports.add(appNamespace + '\\Form\\Handler\\' + entity.name.formatForCodeCapital + '\\EditHandler as Edit' + entity.name.formatForCodeCapital + 'Handler')
+            }
+        }
+        if (hasIndexActions) {
+            imports.add(appNamespace + '\\Helper\\ControllerHelper')
+        }
+        if (hasAutomaticExpiryHandling || hasLoggable) {
+            imports.add(appNamespace + '\\Helper\\ExpiryHelper')
+        }
+        if (hasUploads) {
+            imports.add(appNamespace + '\\Helper\\ImageHelper')
+        }
+        if (needsApproval) {
+            imports.add(appNamespace + '\\Helper\\NotificationHelper')
+        }
+        if (hasLoggable) {
+            imports.add(appNamespace + '\\Helper\\PermissionHelper')
+        }
+        if (hasUploads) {
+            imports.add(appNamespace + '\\Helper\\UploadHelper')
+        }
+        if (hasGeographical) {
+            imports.add(appNamespace + '\\Helper\\ViewHelper')
+        }
+        if (generateAccountApi) {
+            imports.add(appNamespace + '\\Menu\\ExtensionMenu')
+        }
+        if (hasIndexActions) {
+            imports.add(appNamespace + '\\Menu\\MenuBuilder')
+        }
+        imports
+    }
+
     def private extensionBaseImpl(Application it) '''
         namespace «appNamespace»\DependencyInjection\Base;
 
-        use Symfony\Component\Config\FileLocator;
-        use Symfony\Component\DependencyInjection\ContainerBuilder;
-        use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-        use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-        use «appNamespace»\DependencyInjection\Configuration;
-        «IF needsConfig»
-            «IF hasGeographical»
-                use «appNamespace»\Entity\Factory\EntityInitializer;
-            «ENDIF»
-            «IF hasLoggable»
-                use «appNamespace»\EventListener\EntityLifecycleListener;
-            «ENDIF»
-            use «appNamespace»\EventListener\UserListener;
-            «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-                «FOR entity : getAllEntities.filter[hasEditAction]»
-                    use «appNamespace»\Form\Handler\«entity.name.formatForCodeCapital»\EditHandler as Edit«entity.name.formatForCodeCapital»Handler;
-                «ENDFOR»
-            «ENDIF»
-            use «appNamespace»\Helper\CollectionFilterHelper;
-            «IF hasIndexActions»
-                use «appNamespace»\Helper\ControllerHelper;
-            «ENDIF»
-            «IF hasAutomaticExpiryHandling || hasLoggable»
-                use «appNamespace»\Helper\ExpiryHelper;
-            «ENDIF»
-            «IF hasUploads»
-                use «appNamespace»\Helper\ImageHelper;
-            «ENDIF»
-            «IF needsApproval»
-                use «appNamespace»\Helper\NotificationHelper;
-            «ENDIF»
-            «IF hasLoggable»
-                use «appNamespace»\Helper\PermissionHelper;
-            «ENDIF»
-            «IF hasUploads»
-                use «appNamespace»\Helper\UploadHelper;
-            «ENDIF»
-            «IF hasGeographical»
-                use «appNamespace»\Helper\ViewHelper;
-            «ENDIF»
-            «IF generateAccountApi»
-                use «appNamespace»\Menu\ExtensionMenu;
-            «ENDIF»
-            «IF hasIndexActions»
-                use «appNamespace»\Menu\MenuBuilder;
-            «ENDIF»
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * DependencyInjection extension base class.

@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class ExpiryHelper {
 
@@ -20,22 +21,30 @@ class ExpiryHelper {
         fsa.generateClassPair('Helper/ExpiryHelper.php', expiryHelperBaseClass, expiryHelperImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Entity\\Factory\\EntityFactory'
+        ])
+        if (hasAutomaticExpiryHandling) {
+            imports.addAll(#[
+                'Doctrine\\DBAL\\Exception\\TableNotFoundException',
+                'Exception',
+                'Psr\\Log\\LoggerInterface',
+                'Symfony\\Component\\HttpFoundation\\RequestStack',
+                'Symfony\\Contracts\\Translation\\TranslatorInterface',
+                appNamespace + '\\Helper\\PermissionHelper',
+                appNamespace + '\\Helper\\WorkflowHelper'
+            ])
+        }
+        imports
+    }
+
     def private expiryHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF hasAutomaticExpiryHandling»
-            use Doctrine\DBAL\Exception\TableNotFoundException;
-            use Exception;
-            use Psr\Log\LoggerInterface;
-            use Symfony\Component\HttpFoundation\RequestStack;
-            use Symfony\Contracts\Translation\TranslatorInterface;
-        «ENDIF»
-        use «appNamespace»\Entity\EntityInterface;
-        use «appNamespace»\Entity\Factory\EntityFactory;
-        «IF hasAutomaticExpiryHandling»
-            use «appNamespace»\Helper\PermissionHelper;
-            use «appNamespace»\Helper\WorkflowHelper;
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * Expiry helper base class.

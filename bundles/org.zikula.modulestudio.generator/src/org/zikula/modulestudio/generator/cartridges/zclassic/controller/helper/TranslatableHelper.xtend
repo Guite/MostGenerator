@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class TranslatableHelper {
 
@@ -26,18 +27,26 @@ class TranslatableHelper {
         fsa.generateClassPair('Helper/TranslatableHelper.php', translatableFunctionsBaseImpl, translatableFunctionsImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\Form\\FormInterface',
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            'Zikula\\Bundle\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface',
+            appNamespace + '\\Entity\\EntityInterface',
+            appNamespace + '\\Entity\\Factory\\EntityFactory'
+        ])
+        if (needsDynamicLoggableEnablement) {
+            imports.add('Gedmo\\Loggable\\LoggableListener')
+        }
+        imports
+    }
+
     def private translatableFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF needsDynamicLoggableEnablement»
-            use Gedmo\Loggable\LoggableListener;
-        «ENDIF»
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Api\ApiInterface\LocaleApiInterface;
-        use «appNamespace»\Entity\EntityInterface;
-        use «appNamespace»\Entity\Factory\EntityFactory;
+        «collectBaseImports.print»
 
         /**
          * Helper base class for translatable methods.

@@ -17,6 +17,7 @@ import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.UrlField
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.IndexPagesHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.MenuViews
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -27,8 +28,6 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.IndexPagesHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.IndexQuickNavForm
 
 class ViewTable {
 
@@ -58,7 +57,6 @@ class ViewTable {
         var templateFilePath = templateFile('index')
         fsa.generateFile(templateFilePath, indexView)
 
-        new IndexQuickNavForm().generate(it, appName, fsa)
         if (loggable) {
             new ViewDeleted().generate(it, appName, fsa)
         }
@@ -73,7 +71,6 @@ class ViewTable {
         {% block content %}
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-index">
                 «(new IndexPagesHelper).commonHeader(it)»
-                {{ include('@«application.vendorAndName»/«name.formatForCodeCapital»/indexQuickNav.html.twig'«IF !hasVisibleWorkflow», {workflowStateFilter: false}«ENDIF») }}{# see template file for available options #}
 
                 «viewForm»
             </div>
@@ -115,7 +112,7 @@ class ViewTable {
             <«listType.asListTag»>
         «ELSE»
             «IF hasSortableFields»
-                {% set activateSortable = routeArea == 'admin' and sort.«getSortableFields.head.name.formatForCode».class == 'sorted-asc' %}
+                {% set activateSortable = routeArea == 'admin'«/* TODO and sort.«getSortableFields.head.name.formatForCode».class == 'sorted-asc'*/» %}
             «ENDIF»
             <div class="table-responsive">
             <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-sm«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
@@ -284,13 +281,9 @@ class ViewTable {
 
     def private headerLine(DerivedField it) '''
         «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
-        <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»«IF !entity.getSortingFields.contains(it)» unsorted«ENDIF»">
+        <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
-            «IF entity.getSortingFields.contains(it)»
-                «headerSortingLink(entity, name.formatForCode, fieldLabel)»
-            «ELSE»
-                «headerTitle(entity, name.formatForCode, fieldLabel)»
-            «ENDIF»
+            «headerTitle(entity, name.formatForCode, fieldLabel)»
         </th>
         «IF name == 'workflowState'»{% endif %}«ENDIF»
     '''
@@ -298,12 +291,8 @@ class ViewTable {
     def private headerLine(JoinRelationship it, Boolean useTarget) '''
         <th id="h«markupIdCode(useTarget)»" scope="col" class="text-left">
             «val mainEntity = (if (useTarget) source else target)»
-            «headerSortingLink(mainEntity, getRelationAliasName(useTarget).formatForCode, getRelationAliasName(useTarget).formatForCodeCapital)»
+            «headerTitle(mainEntity, getRelationAliasName(useTarget).formatForCode, getRelationAliasName(useTarget).formatForCodeCapital)»
         </th>
-    '''
-
-    def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        <a href="{{ sort.«fieldName».url }}" title="{{ 'Sort by %fieldName%'|trans({'%fieldName%': '«label.formatForDisplay»'}, 'messages')|e('html_attr') }}" class="{{ sort.«fieldName».class }}">{% trans %}«label.formatForDisplayCapital»{% endtrans %}</a>
     '''
 
     def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''

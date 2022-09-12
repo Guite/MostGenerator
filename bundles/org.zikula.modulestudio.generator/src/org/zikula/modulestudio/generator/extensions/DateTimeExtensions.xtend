@@ -69,7 +69,7 @@ class DateTimeExtensions {
      * Returns whether a date time field represents a datetime value.
      */
     def isDateTimeField(DatetimeField it) {
-        components == DateTimeComponents.DATE_TIME
+        #[DateTimeComponents.DATE_TIME, DateTimeComponents.DATE_TIME_TZ].contains(components)
     }
 
     /**

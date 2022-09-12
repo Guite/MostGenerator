@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DeleteAction
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
@@ -28,7 +27,6 @@ class ControllerExtensions {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-    extension Utils = new Utils
 
     /**
      * Returns name of container (entity). 
@@ -160,28 +158,6 @@ class ControllerExtensions {
      */
     def getDeleteActions(Application it) {
         getAllEntities.map[actions].flatten.filter(DeleteAction)
-    }
-
-    /**
-     * Returns whether variables contain any user group selectors or not.
-     */
-    def hasUserGroupSelectors(Application it) {
-        !getUserGroupSelectors.empty
-    }
-
-    /**
-     * Returns all variables acting as user group selectors.
-     */
-    def getUserGroupSelectors(Application it) {
-        getAllVariables.filter(IntegerField).filter[isUserGroupSelector]
-    }
-
-    /**
-     * Checks if the given field is a special case where an integer field
-     * may not only contain integers.
-     */
-    def notOnlyNumericInteger(DerivedField it) {
-        it instanceof IntegerField && (it as IntegerField).isUserGroupSelector
     }
 
     /**

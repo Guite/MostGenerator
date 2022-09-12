@@ -13,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class PermissionHelper {
 
@@ -29,24 +30,32 @@ class PermissionHelper {
         fsa.generateClassPair('Helper/PermissionHelper.php', permissionHelperBaseClass, permissionHelperImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Zikula\\GroupsBundle\\Entity\\Group',
+            'Zikula\\PermissionsBundle\\Api\\ApiInterface\\PermissionApiInterface',
+            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+            'Zikula\\UsersBundle\\Entity\\User',
+            'Zikula\\UsersBundle\\Repository\\UserRepositoryInterface',
+            appNamespace + '\\Entity\\EntityInterface'
+        ])
+        if (hasIndexActions) {
+            imports.add('ArrayIterator')
+            imports.add('Doctrine\\Common\\Collections\\Collection')
+        }
+        if (hasCategorisableEntities) {
+            imports.add(appNamespace + '\\Helper\\CategoryHelper')
+            imports.add(appNamespace + '\\Helper\\FeatureActivationHelper')
+        }
+        imports
+    }
+
     def private permissionHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF hasIndexActions»
-            use ArrayIterator;
-            use Doctrine\Common\Collections\Collection;
-        «ENDIF»
-        use Symfony\Component\HttpFoundation\RequestStack;
-        use Zikula\GroupsBundle\Entity\Group;
-        use Zikula\PermissionsBundle\Api\ApiInterface\PermissionApiInterface;
-        use Zikula\UsersBundle\Api\ApiInterface\CurrentUserApiInterface;
-        use Zikula\UsersBundle\Entity\User;
-        use Zikula\UsersBundle\Repository\UserRepositoryInterface;
-        use «appNamespace»\Entity\EntityInterface;
-        «IF hasCategorisableEntities»
-            use «appNamespace»\Helper\CategoryHelper;
-            use «appNamespace»\Helper\FeatureActivationHelper;
-        «ENDIF»
+        «collectBaseImports.print»
 
         /**
          * Permission helper base class.

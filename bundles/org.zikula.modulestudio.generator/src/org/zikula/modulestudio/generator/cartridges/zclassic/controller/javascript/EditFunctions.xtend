@@ -220,9 +220,7 @@ class EditFunctions {
             «ENDIF»
             if (jQuery('.field-editing-definition').length > 0) {
                 jQuery('.field-editing-definition').each(function (index) {
-                    if ('user' === jQuery(this).data('field-type')) {
-                        initUserLiveSearch(jQuery(this).data('field-name'));
-                    } else if ('date' === jQuery(this).data('field-type')) {
+                    if ('date' === jQuery(this).data('field-type')) {
                         «vendorAndName»InitDateField(jQuery(this).data('field-name'));
                     } else if ('upload' === jQuery(this).data('field-type')) {
                         «vendorAndName»InitUploadField(jQuery(this).data('field-name'));

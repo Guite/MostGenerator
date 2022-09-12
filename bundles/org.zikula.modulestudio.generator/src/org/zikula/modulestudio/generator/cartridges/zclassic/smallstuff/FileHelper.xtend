@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
@@ -9,17 +10,14 @@ import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.UserField
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.Application
 
 class FileHelper {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
@@ -47,7 +45,7 @@ class FileHelper {
              * @return «type»
              */
         «ENDIF»
-        public function get«name.formatForCodeCapital»()«IF skipTypeHint»/*«ENDIF»: «IF nullable»?«ENDIF»«normalizeTypeHint(type)»«IF skipTypeHint»*/«ENDIF»
+        public function get«name.formatForCodeCapital»(): «IF nullable»?«ENDIF»«normalizeTypeHint(type)»
         {
             return «IF type == 'float' /* needed because decimals are mapped to string properties */»(float) «ENDIF»$this->«name»;
         }
@@ -60,7 +58,7 @@ class FileHelper {
              * @param «type» $«name»
              */
         «ENDIF»
-        public function set«name.formatForCodeCapital»(«IF skipTypeHint»/*«ENDIF»«IF nullable && !type.definesGeneric»?«ENDIF»«normalizeTypeHint(type)»«IF type.definesGeneric»|array«IF nullable»|null«ENDIF»«ENDIF»«IF skipTypeHint»*/«ENDIF» $«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
+        public function set«name.formatForCodeCapital»(«IF nullable && !type.definesGeneric»?«ENDIF»«normalizeTypeHint(type)»«IF type.definesGeneric»|array«IF nullable»|null«ENDIF»«ENDIF» $«name»«IF !init.empty» = «init»«ELSEIF nullable» = null«ENDIF»): self
         {
             «IF type.definesGeneric»«/* array may be set by Forms */»
                 if (is_array($«name»)) {
@@ -80,10 +78,6 @@ class FileHelper {
     def private normalizeTypeHint(String type) '''«IF type.definesGeneric»«type.split('<').head»«ELSEIF type == 'smallint' || type == 'bigint'»int«ELSEIF type.toLowerCase == 'datetime'»\DateTimeInterface«ELSE»«type»«ENDIF»'''
 
     def private definesGeneric(String type) { type.contains('Collection<') }
-
-    def private skipTypeHint(Object it) {
-        (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) || (it instanceof UserField)
-    }
 
     def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
         «IF #['latitude', 'longitude'].contains(name)»

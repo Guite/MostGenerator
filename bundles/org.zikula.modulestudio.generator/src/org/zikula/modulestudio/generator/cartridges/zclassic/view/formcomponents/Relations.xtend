@@ -42,8 +42,8 @@ class Relations {
      * This method creates the templates to be included into the edit forms.
      */
     def CharSequence generateInclusionTemplate(Entity it) '''
-        «FOR relation : getEditableJoinRelations(true)»«relation.generate(false, false, false)»«ENDFOR»
-        «FOR relation : getEditableJoinRelations(false)»«relation.generate(false, false, true)»«ENDFOR»
+        «FOR relation : getJoinRelationsWithEntities(true)»«relation.generate(false, false, false)»«ENDFOR»
+        «FOR relation : getJoinRelationsWithEntities(false)»«relation.generate(false, false, true)»«ENDFOR»
     '''
 
     /**
@@ -51,8 +51,8 @@ class Relations {
      * This method creates the tab titles for included relationship sections on edit pages.
      */
     def generateTabTitles(Entity it) '''
-        «FOR relation : getEditableJoinRelations(true)»«relation.generate(true, false, false)»«ENDFOR»
-        «FOR relation : getEditableJoinRelations(false)»«relation.generate(true, false, true)»«ENDFOR»
+        «FOR relation : getJoinRelationsWithEntities(true)»«relation.generate(true, false, false)»«ENDFOR»
+        «FOR relation : getJoinRelationsWithEntities(false)»«relation.generate(true, false, true)»«ENDFOR»
     '''
 
     /**
@@ -60,8 +60,8 @@ class Relations {
      * This method creates the include statement contained in the including template.
      */
     def generateIncludeStatement(Entity it) '''
-        «FOR relation : getEditableJoinRelations(true)»«relation.generate(false, true, false)»«ENDFOR»
-        «FOR relation : getEditableJoinRelations(false)»«relation.generate(false, true, true)»«ENDFOR»
+        «FOR relation : getJoinRelationsWithEntities(true)»«relation.generate(false, true, false)»«ENDFOR»
+        «FOR relation : getJoinRelationsWithEntities(false)»«relation.generate(false, true, true)»«ENDFOR»
     '''
 
     def private generate(JoinRelationship it, Boolean onlyTabTitle, Boolean onlyInclude, Boolean useTarget) {
@@ -218,8 +218,8 @@ class Relations {
     '''
 
     def jsInitDefinitions(Entity it) '''
-        «val incomingJoins = getEditableJoinRelations(true).filter[getEditStageCode(true) > 0 && getEditStageCode(true) < 3]»
-        «val outgoingJoins = getEditableJoinRelations(false).filter[getEditStageCode(false) > 0 && getEditStageCode(false) < 3]»
+        «val incomingJoins = getJoinRelationsWithEntities(true).filter[getEditStageCode(true) > 0 && getEditStageCode(true) < 3]»
+        «val outgoingJoins = getJoinRelationsWithEntities(false).filter[getEditStageCode(false) > 0 && getEditStageCode(false) < 3]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «FOR relation : incomingJoins»«relation.jsInitDefinition(it, true)»«ENDFOR»
             «FOR relation : outgoingJoins»«relation.jsInitDefinition(it, false)»«ENDFOR»

@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.form
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.application.ImportList
 
 class AutoCompletionRelationTransformer {
 
@@ -12,15 +13,23 @@ class AutoCompletionRelationTransformer {
         fsa.generateClassPair('Form/DataTransformer/AutoCompletionRelationTransformer.php', transformerBaseImpl, transformerImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'Doctrine\\Common\\Collections\\ArrayCollection',
+            'Doctrine\\Common\\Collections\\Selectable',
+            'Doctrine\\ORM\\QueryBuilder',
+            'Symfony\\Component\\Form\\DataTransformerInterface',
+            'Symfony\\Component\\Form\\Exception\\TransformationFailedException',
+            appNamespace + '\\Entity\\Factory\\EntityFactory'
+        ])
+        imports
+    }
+
     def private transformerBaseImpl(Application it) '''
         namespace «appNamespace»\Form\DataTransformer\Base;
 
-        use Doctrine\Common\Collections\ArrayCollection;
-        use Doctrine\Common\Collections\Selectable;
-        use Doctrine\ORM\QueryBuilder;
-        use Symfony\Component\Form\DataTransformerInterface;
-        use Symfony\Component\Form\Exception\TransformationFailedException;
-        use «appNamespace»\Entity\Factory\EntityFactory;
+        «collectBaseImports.print»
 
         /**
          * Auto completion relation transformer base class.

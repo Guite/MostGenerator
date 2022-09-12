@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.techdocs
 
-import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.BooleanField
@@ -29,28 +28,30 @@ import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import de.guite.modulestudio.metamodel.Variables
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationDocProvider
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
 class TechStructureFields {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
 
+    ValidationDocProvider validationDocProvider
     TechHelper helper = new TechHelper
     String language
     String prefix
 
     def dispatch generate(DataObject it, String language) {
         this.language = language
+        validationDocProvider = new ValidationDocProvider(language)
         prefix = 'Entity' + name.formatForCodeCapital + 'Field'
         helper.table(application, fieldColumns, fieldHeader, fieldContent)
     }
 
     def dispatch generate(Variables it, String language) {
         this.language = language
+        validationDocProvider = new ValidationDocProvider(language)
         prefix = 'Variables' + name.formatForCodeCapital + 'Field'
         helper.table(application, fieldColumns, fieldHeader, fieldContent)
     }
@@ -61,7 +62,7 @@ class TechStructureFields {
             <col id="c«prefix»Type" />
             <col id="c«prefix»Mandatory" />
             <col id="c«prefix»Default" />
-            <col id="c«prefix»DisplayType" />
+            <col id="c«prefix»Visibility" />
             <col id="c«prefix»Constraints" />
             <col id="c«prefix»Remarks" />
         </colgroup>
@@ -73,7 +74,7 @@ class TechStructureFields {
             <th id="h«prefix»Type" scope="col">«IF language == 'de'»Typ«ELSE»Type«ENDIF»</th>
             <th id="h«prefix»Mandatory" scope="col">«IF language == 'de'»Pflicht«ELSE»Mandatory«ENDIF»</th>
             <th id="h«prefix»Default" scope="col">«IF language == 'de'»Standardwert«ELSE»Default value«ENDIF»</th>
-            <th id="h«prefix»DisplayType" scope="col">«IF language == 'de'»Anzeige«ELSE»Display«ENDIF»</th>
+            <th id="h«prefix»Visibility" scope="col">«IF language == 'de'»Sichtbarkeit«ELSE»Visibility«ENDIF»</th>
             <th id="h«prefix»Constraints" scope="col">«IF language == 'de'»Beschränkungen«ELSE»Constraints«ENDIF»</th>
             <th id="h«prefix»Remarks" scope="col">«IF language == 'de'»Anmerkungen«ELSE»Remarks«ENDIF»</th>
         </tr>
@@ -97,10 +98,18 @@ class TechStructureFields {
             <td headers="h«prefix»«name.formatForCodeCapital» h«prefix»Type">«fieldType»</td>
             <td headers="h«prefix»«name.formatForCodeCapital» h«prefix»Mandatory">«fieldMandatory»</td>
             <td headers="h«prefix»«name.formatForCodeCapital» h«prefix»Default">«fieldDefaultValue»</td>
-            <td headers="h«prefix»«name.formatForCodeCapital» h«prefix»DisplayType">«displayType.literal»</td>
+            <td headers="h«prefix»«name.formatForCodeCapital» h«prefix»Visibility">
+                <ul>
+                    <li>«visibleFlag(visibleOnIndex)» «IF language == 'de'»auf Index-Seite«ELSE»on index page«ENDIF»</li>
+                    <li>«visibleFlag(visibleOnDetail)» «IF language == 'de'»auf Detail-Seite«ELSE»on detail page«ENDIF»</li>
+                    <li>«visibleFlag(visibleOnNew)» «IF language == 'de'»auf Erstellungsformular«ELSE»on creation form«ENDIF»</li>
+                    <li>«visibleFlag(visibleOnEdit)» «IF language == 'de'»auf Bearbeitungsformular«ELSE»on editing form«ENDIF»</li>
+                    <li>«usableFlag(visibleOnSort)» «IF language == 'de'»für Sortierung«ELSE»for sorting«ENDIF»</li>
+                </ul>
+            </td>
             <td headers="h«prefix»«name.formatForCodeCapital» h«prefix»Constraints">
                 <ul>
-                    «FOR constraint : constraints»
+                    «FOR constraint : validationDocProvider.constraints(it)»
                         <li>«constraint»</li>
                     «ENDFOR»
                 </ul>
@@ -114,6 +123,9 @@ class TechStructureFields {
             </td>
         </tr>
     '''
+
+    def private visibleFlag(Boolean flag) '''«IF flag»«IF language == 'de'»Sichtbar«ELSE»Visible«ENDIF»«ELSE»«IF language == 'de'»Nicht sichtbar«ELSE»Not visible«ENDIF»«ENDIF»'''
+    def private usableFlag(Boolean flag) '''«IF flag»«IF language == 'de'»Nutzbar«ELSE»Usable«ENDIF»«ELSE»«IF language == 'de'»Nicht nutzbar«ELSE»Not usable«ENDIF»«ENDIF»'''
 
     def private dispatch fieldDefaultValue(Field it) {
         ''
@@ -164,9 +176,9 @@ class TechStructureFields {
     }
     def private dispatch fieldType(DatetimeField it) {
         if (language == 'de') {
-            if (components == DateTimeComponents.DATE_TIME) 'Datum mit Zeit' else if (components == DateTimeComponents.DATE) 'Datum' else if (components == DateTimeComponents.TIME) 'Zeit'
+            if (components == DateTimeComponents.DATE_TIME) 'Datum mit Zeit' else if (components == DateTimeComponents.DATE_TIME_TZ) 'Datum mit Zeit und Zeitzone' else if (components == DateTimeComponents.DATE) 'Datum' else if (components == DateTimeComponents.TIME) 'Zeit'
         } else {
-            if (components == DateTimeComponents.DATE_TIME) 'Date with time' else if (components == DateTimeComponents.DATE) 'Date' else if (components == DateTimeComponents.TIME) 'Time'
+            if (components == DateTimeComponents.DATE_TIME) 'Date with time' else if (components == DateTimeComponents.DATE_TIME_TZ) 'Date with time and time zone' else if (components == DateTimeComponents.DATE) 'Date' else if (components == DateTimeComponents.TIME) 'Time'
         }
     }
 
@@ -177,273 +189,6 @@ class TechStructureFields {
         mandatory
     }
 
-    def private dispatch constraints(Field it) {
-        newArrayList
-    }
-    def private dispatch constraints(IntegerField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + '.'
-            if (minValue.toString != '0' && maxValue.toString != '0') {
-                if (minValue == maxValue) result += 'Die Werte müssen genau ' + minValue + ' betragen.'
-                else result += 'Die Werte müssen zwischen ' + minValue + ' und ' + maxValue + ' liegen.'
-            }
-            else if (minValue.toString != '0') result += 'Die Werte dürfen nicht niedriger als ' + minValue + ' sein.'
-            else if (maxValue.toString != '0') result += 'Die Werte dürfen nicht höher als ' + maxValue + ' sein.'
-        } else {
-            result += 'Has a length of ' + length + '.'
-            if (minValue.toString != '0' && maxValue.toString != '0') {
-                if (minValue == maxValue) result += 'Values must be exactly equal to ' + minValue + '.'
-                else result += 'Values must be between ' + minValue + ' and ' + maxValue + '.'
-            }
-            else if (minValue.toString != '0') result += 'Values must not be lower than ' + minValue + '.'
-            else if (maxValue.toString != '0') result += 'Values must not be greater than ' + maxValue + '.'
-        }
-        result
-    }
-    def private dispatch constraints(NumberField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + ' und eine Skalierung von ' + scale + '.'
-            if (minValue > 0 && maxValue > 0) {
-                if (minValue == maxValue) result += 'Die Werte müssen genau ' + minValue + ' betragen.'
-                else result += 'Die Werte müssen zwischen ' + minValue + ' und ' + maxValue + ' liegen.'
-            }
-            else if (minValue > 0) result += 'Die Werte dürfen nicht niedriger als ' + minValue + ' sein.'
-            else if (maxValue > 0) result += 'Die Werte dürfen nicht höher als ' + maxValue + ' sein.'
-        } else {
-            result += 'Has a length of ' + length + ' and a scale of ' + scale + '.'
-            if (minValue > 0 && maxValue > 0) {
-                if (minValue == maxValue) result += 'Values must be exactly equal to ' + minValue + '.'
-                else result += 'Values must be between ' + minValue + ' and ' + maxValue + '.'
-            }
-            else if (minValue > 0) result += 'Values must not be lower than ' + minValue + '.'
-            else if (maxValue > 0) result += 'Values must not be greater than ' + maxValue + '.'
-        }
-        result
-    }
-    def private dispatch constraints(UserField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + '.'
-        } else {
-            result += 'Has a length of ' + length + '.'
-        }
-        result
-    }
-    def private commonStringConstraints(AbstractStringField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            if (fixed) result += 'Die Feldlänge ist fixiert.'
-            if (minLength > 0) result += 'Die minimale Länge beträgt ' + minLength + ' Zeichen.'
-            if (null !== regexp && !regexp.empty) result += 'Die Werte werden gegen ' + (if (regexpOpposite) 'Nichtzutreffen' else 'Zutreffen') + ' auf den regulären Ausdruck <code>' + regexp + '</code> validiert.'
-        } else {
-            if (fixed) result += 'Field length is fixed.'
-            if (minLength > 0) result += 'Minimum length is ' + minLength + ' chars.'
-            if (null !== regexp && !regexp.empty) result += 'Values are validated against ' + (if (regexpOpposite) ' not') + ' matching the regular expression <code>' + regexp + '</code>.'
-        }
-        result
-    }
-    def private dispatch constraints(StringField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + ' Zeichen.'
-        } else {
-            result += 'Has a length of ' + length + ' chars.'
-        }
-        result += commonStringConstraints
-        result
-    }
-    def private dispatch constraints(TextField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + ' Zeichen.'
-        } else {
-            result += 'Has a length of ' + length + ' chars.'
-        }
-        result += commonStringConstraints
-        result
-    }
-    def private dispatch constraints(EmailField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + ' Zeichen.'
-            result += commonStringConstraints
-            result += 'Der Validierungsmodus ist auf "' + validationMode.validationModeAsString + '" eingestellt.'
-        } else {
-            result += 'Has a length of ' + length + ' chars.'
-            result += commonStringConstraints
-            result += 'Validation mode is set to "' + validationMode.validationModeAsString + '".'
-        }
-        result
-    }
-    def private dispatch constraints(UrlField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + ' Zeichen.'
-            result += commonStringConstraints
-        } else {
-            result += 'Has a length of ' + length + ' chars.'
-            result += commonStringConstraints
-        }
-        result
-    }
-    def private dispatch constraints(UploadField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + ' Zeichen.'
-            result += commonStringConstraints
-            result += 'Die erlaubten Dateierweiterungen sind "' + allowedExtensions + '".'
-            result += 'Die erlaubten MIME-Typen sind "' + mimeTypes + '".'
-            if (!maxSize.empty) result += 'Die maximale Dateigröße beträgt ' + maxSize + '.'
-            if (isOnlyImageField) {
-                if (minWidth > 0 && maxWidth > 0) {
-                    if (minWidth == maxWidth) result += 'Die Breite von Bildern muß genau ' + minWidth + ' Pixel betragen.'
-                    else result += 'Die Breite von Bildern muß zwischen ' + minWidth + ' und ' + maxWidth + ' Pixeln liegen.'
-                }
-                else if (minWidth > 0) result += 'Die Breite von Bildern darf nicht niedriger als ' + minWidth + ' Pixel sein.'
-                else if (maxWidth > 0) result += 'Die Breite von Bildern darf nicht höher als ' + maxWidth + ' Pixel sein.'
-                if (minHeight > 0 && maxHeight > 0) {
-                    if (minHeight == maxHeight) result += 'Die Höhe von Bildern muß genau ' + minHeight + ' Pixel betragen.'
-                    else result += 'Die Höhe von Bildern muß zwischen ' + minHeight + ' und ' + maxHeight + ' Pixeln liegen.'
-                }
-                else if (minHeight > 0) result += 'Die Höhe von Bildern darf nicht niedriger als ' + minHeight + ' Pixel sein.'
-                else if (maxHeight > 0) result += 'Die Höhe von Bildern darf nicht höher als ' + maxHeight + ' Pixel sein.'
-                if (minPixels > 0 && maxPixels > 0) {
-                    if (minPixels == maxPixels) result += 'Die Anzahl von Pixeln muß genau ' + minPixels + ' Pixel betragen.'
-                    else result += 'Die Anzahl von Pixeln muß zwischen ' + minPixels + ' und ' + maxPixels + ' Pixeln liegen.'
-                }
-                else if (minPixels > 0) result += 'Die Anzahl von Pixeln darf nicht niedriger als ' + minPixels + ' Pixel sein.'
-                else if (maxPixels > 0) result += 'Die Anzahl von Pixeln darf nicht höher als ' + maxPixels + ' Pixel sein.'
-                if (minRatio > 0 && maxRatio > 0) {
-                    if (minRatio == maxRatio) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) muß genau ' + minRatio + ' betragen.'
-                    else result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) muß zwischen ' + minRatio + ' und ' + maxRatio + ' liegen.'
-                }
-                else if (minRatio > 0) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) darf nicht niedriger als ' + minRatio + ' sein.'
-                else if (maxRatio > 0) result += 'Das Seitenverhältnis von Bildern (Breite / Höhe) darf nicht höher als ' + maxRatio + ' sein.'
-                if (!(allowSquare && allowLandscape && allowPortrait)) {
-                    if (allowSquare && !allowLandscape && !allowPortrait) {
-                        result += 'Es ist nur Quadratformat (kein Hoch- oder Querformat) erlaubt.'
-                    } else if (!allowSquare && allowLandscape && !allowPortrait) {
-                        result += 'Es ist nur Querformat (kein Quadrat- oder Hochformat) erlaubt.'
-                    } else if (!allowSquare && !allowLandscape && allowPortrait) {
-                        result += 'Es ist nur Hochformat (kein Quadrat- oder Querformat) erlaubt.'
-                    } else if (allowSquare && allowLandscape && !allowPortrait) {
-                        result += 'Es sind nur Quadrat- oder Querformat (kein Hochformat) erlaubt.'
-                    } else if (allowSquare && !allowLandscape && allowPortrait) {
-                        result += 'Es sind nur Quadrat- oder Hochformat (kein Querformat) erlaubt.'
-                    } else if (!allowSquare && allowLandscape && allowPortrait) {
-                        result += 'Es sind nur Quer- oder Hochformat (kein Quadratformat) erlaubt.'
-                    }
-                }
-                if (detectCorrupted) result += 'Bildinhalte werden gegen korrupte Daten geprüft.'
-            }
-        } else {
-            result += 'Has a length of ' + length + ' chars.'
-            result += commonStringConstraints
-            result += 'Allowed file extensions are "' + allowedExtensions + '".'
-            result += 'Allowed mime types are "' + mimeTypes + '".'
-            if (!maxSize.empty) result += 'Maximum file size is ' + maxSize + '.'
-            if (isOnlyImageField) {
-                if (minWidth > 0 && maxWidth > 0) {
-                    if (minWidth == maxWidth) result += 'Image width must be exactly equal to ' + minWidth + ' pixels.'
-                    else result += 'Image width must be between ' + minWidth + ' and ' + maxWidth + ' pixels.'
-                }
-                else if (minWidth > 0) result += 'Image width must not be lower than ' + minWidth + ' pixels.'
-                else if (maxWidth > 0) result += 'Image width must not be greater than ' + maxWidth + ' pixels.'
-                if (minHeight > 0 && maxHeight > 0) {
-                    if (minHeight == maxHeight) result += 'Image height must be exactly equal to ' + minHeight + ' pixels.'
-                    else result += 'Image height must be between ' + minHeight + ' and ' + maxHeight + ' pixels.'
-                }
-                else if (minHeight > 0) result += 'Image height must not be lower than ' + minHeight + ' pixels.'
-                else if (maxHeight > 0) result += 'Image height must not be greater than ' + maxHeight + ' pixels.'
-                if (minPixels > 0 && maxPixels > 0) {
-                    if (minPixels == maxPixels) result += 'The amount of pixels must be exactly equal to ' + minPixels + ' pixels.'
-                    else result += 'The amount of pixels must be between ' + minPixels + ' and ' + maxPixels + ' pixels.'
-                }
-                else if (minPixels > 0) result += 'The amount of pixels must not be lower than ' + minPixels + ' pixels.'
-                else if (maxPixels > 0) result += 'The amount of pixels must not be greater than ' + maxPixels + ' pixels.'
-                if (minRatio > 0 && maxRatio > 0) {
-                    if (minRatio == maxRatio) result += 'Image aspect ratio (width / height) must be exactly equal to ' + minRatio + '.'
-                    else result += 'Image aspect ratio (width / height) must be between ' + minRatio + ' and ' + maxRatio + '.'
-                }
-                else if (minRatio > 0) result += 'Image aspect ratio (width / height) must not be lower than ' + minRatio + '.'
-                else if (maxRatio > 0) result += 'Image aspect ratio (width / height) must not be greater than ' + maxRatio + '.'
-                if (!(allowSquare && allowLandscape && allowPortrait)) {
-                    if (allowSquare && !allowLandscape && !allowPortrait) {
-                        result += 'Only square dimension (no portrait or landscape) is allowed.'
-                    } else if (!allowSquare && allowLandscape && !allowPortrait) {
-                        result += 'Only landscape dimension (no square or portrait) is allowed.'
-                    } else if (!allowSquare && !allowLandscape && allowPortrait) {
-                        result += 'Only portrait dimension (no square or landscape) is allowed.'
-                    } else if (allowSquare && allowLandscape && !allowPortrait) {
-                        result += 'Only square or landscape dimension (no portrait) is allowed.'
-                    } else if (allowSquare && !allowLandscape && allowPortrait) {
-                        result += 'Only square or portrait dimension (no landscape) is allowed.'
-                    } else if (!allowSquare && allowLandscape && allowPortrait) {
-                        result += 'Only landscape or portrait dimension (no square) is allowed.'
-                    }
-                }
-                if (detectCorrupted) result += 'Image contents are validated against corrupted data.'
-            }
-        }
-        result
-    }
-    def private dispatch constraints(ListField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            result += 'Hat eine Länge von ' + length + ' Zeichen.'
-            result += commonStringConstraints
-            if (min > 0 && max > 0) {
-                if (min == max) result += 'Erfordert genau ' + min + ' ' + (if (min > 1) 'Einträge' else 'Eintrag') + '.'
-                else result += 'Erfordert zwischen ' + min + ' und ' + max + ' Einträge.'
-            }
-            else if (min > 0) result += 'Erfordert mindestens ' + min + ' ' + (if (min > 1) 'Einträge' else 'Eintrag') + '.'
-            else if (max > 0) result += 'Erfordert höchstens ' + max + ' Einträge.'
-        } else {
-            result += 'Has a length of ' + length + ' chars.'
-            result += commonStringConstraints
-            if (min > 0 && max > 0) {
-                if (min == max) result += 'Requires exactly ' + min + ' ' + (if (min > 1) 'entries' else 'entry') + '.'
-                else result += 'Requires between ' + min + ' and ' + max + ' entries.'
-            }
-            else if (min > 0) result += 'Requires at least ' + min + ' ' + (if (min > 1) 'entries' else 'entry') + '.'
-            else if (max > 0) result += 'Requires at most ' + max + ' entries.'
-        }
-        result
-    }
-    def private dispatch constraints(ArrayField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            if (min > 0 && max > 0) {
-                if (min == max) result += 'Erfordert genau ' + min + ' ' + (if (min > 1) 'Einträge' else 'Eintrag') + '.'
-                else result += 'Erfordert zwischen ' + min + ' und ' + max + ' Einträge.'
-            }
-            else if (min > 0) result += 'Erfordert mindestens ' + min + ' ' + (if (min > 1) 'Einträge' else 'Eintrag') + '.'
-            else if (max > 0) result += 'Erfordert höchstens ' + max + ' Einträge.'
-        } else {
-            if (min > 0 && max > 0) {
-                if (min == max) result += 'Requires exactly ' + min + ' ' + (if (min > 1) 'entries' else 'entry') + '.'
-                else result += 'Requires between ' + min + ' and ' + max + ' entries.'
-            }
-            else if (min > 0) result += 'Requires at least ' + min + ' ' + (if (min > 1) 'entries' else 'entry') + '.'
-            else if (max > 0) result += 'Requires at most ' + max + ' entries.'
-        }
-        result
-    }
-    def private dispatch constraints(DatetimeField it) {
-        val result = newArrayList
-        if (language == 'de') {
-            if (past) result += 'Die Werte müssen in der Vergangenheit liegen.'
-            if (future) result += 'Die Werte müssen in der Zukunft liegen.'
-            if (null !== validatorAddition && !validatorAddition.empty) result += 'Zusätzliche Validierung: <code>' + validatorAddition + '</code>.'
-        } else {
-            if (past) result += 'Values must be in the past.'
-            if (future) result += 'Values must be in the future.'
-            if (null !== validatorAddition && !validatorAddition.empty) result += 'Additional validation: <code>' + validatorAddition + '</code>.'
-        }
-        result
-    }
 
     def private commonRemarks(DerivedField it) {
         val result = newArrayList
@@ -453,7 +198,6 @@ class TechStructureFields {
             if (null !== dbName && !dbName.empty) result += 'Wird in der Datenbank als "' + dbName + '" gespeichert.'
             if (primaryKey) result += 'Fungiert als Primärschlüssel.'
             if (readonly) result += 'Erlaubt nur Lesezugriff.'
-            if (!visible) result += 'Ist in Bearbeitungsformularen nicht sichtbar.'
             if (translatable) result += 'Dieses Feld ist übersetzbar.'
             if (sortableGroup) result += 'Fungiert als Gruppierkriterium für die Sortable-Erweiterung.'
         } else {
@@ -461,7 +205,6 @@ class TechStructureFields {
             if (null !== dbName && !dbName.empty) result += 'Stored as "' + dbName + '" in the database.'
             if (primaryKey) result += 'Acts as primary key.'
             if (readonly) result += 'Allows read access only.'
-            if (!visible) result += 'Is not visible in edit forms.'
             if (translatable) result += 'This field is translatable.'
             if (sortableGroup) result += 'Acts as grouping criteria for the Sortable extension.'
         }
@@ -631,8 +374,10 @@ class TechStructureFields {
                 return ''
             case BIC:
                 return if (language == 'de') 'Repräsentiert einen BIC (Business Identifier Code).' else 'Represents a BIC (business identifier code).'
+            case CIDR:
+                return if (language == 'de') 'Repräsentiert ein CIDR (classless inter-domain routing).' else 'Represents a CIDR (classless inter-domain routing).'
             case COLOUR:
-                return if (language == 'de') 'Repräsentiert einen HTML-Farbcode (z. B. #003399).' else 'Represents a HTML colour code (e.g. #003399).'
+                return if (language == 'de') 'Repräsentiert einen CSS-Farbcode.' else 'Represents a CSS colour code.'
             case COUNTRY:
                 return if (language == 'de') 'Repräsentiert einen Ländercode.' else 'Represents a country code.'
             case CREDIT_CARD:
@@ -647,6 +392,8 @@ class TechStructureFields {
                 return if (language == 'de') 'Repräsentiert eine IBAN (internationale Bankkontonummer).' else 'Represents an IBAN (international bank account number).'
             case ICON:
                 return if (language == 'de') 'Repräsentiert ein Font Awesome Icon.' else 'Represents a Font Awesome icon.'
+            case ISIN:
+                return if (language == 'de') 'Repräsentiert eine ISIN (internationale Sicherheitsidentifikationsnummer).' else 'Represents an ISIN (international securities identification number).'
             case LANGUAGE:
                 return if (language == 'de') 'Repräsentiert einen Unicode-Sprachcode.' else 'Represents an Unicode language identifier.'
             case LOCALE:
@@ -657,6 +404,8 @@ class TechStructureFields {
                 return if (language == 'de') 'Repräsentiert eine Telefonnummer.' else 'Represents a telephone number.'
             case TIME_ZONE:
                 return if (language == 'de') 'Repräsentiert eine Zeitzone.' else 'Represents a time zone.'
+            case ULID:
+                return if (language == 'de') 'Repräsentiert eine ULID (Universally Unique Lexicographically Sortable Identifier).' else 'Represents an ULID (Universally Unique Lexicographically Sortable Identifier).'
             case UUID:
                 return if (language == 'de') 'Repräsentiert eine UUID (Universally Unique Identifier).' else 'Represents an UUID (Universally Unique Identifier).'
             case WEEK:
