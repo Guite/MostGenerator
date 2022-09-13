@@ -41,8 +41,8 @@ class EventAction {
                 // determine meta data if it does not exist
                 foreach ($uploadFields as $fieldName) {
                     $getter = 'get' . ucfirst($fieldName);
-                    $uploadFile = «entityVar»->$getter();
-                    if (empty($uploadFile)) {
+                    $fileName = «entityVar»->$getter();
+                    if (empty($fileName)) {
                         continue;
                     }
 
@@ -53,8 +53,6 @@ class EventAction {
                     }
 
                     $basePath = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
-                    $getter = 'get' . ucfirst($fieldName) . 'FileName';
-                    $fileName = «entityVar»->$getter();
                     $filePath = $this->projectDir . '/' . $basePath . $fileName;
                     if (!file_exists($filePath)) {
                         continue;

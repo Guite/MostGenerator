@@ -81,10 +81,6 @@ class Layout {
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
             {{ pageAddAsset('javascript', asset('jquery-ui/jquery-ui.min.js'), constant('Zikula\\ThemeBundle\\Engine\\AssetBag::WEIGHT_JQUERY_UI')) }}
         «ENDIF»
-        «IF hasImageFields»
-            {{ pageAddAsset('javascript', asset('magnific-popup/jquery.magnific-popup.min.js'), 90) }}
-            {{ pageAddAsset('stylesheet', asset('magnific-popup/magnific-popup.css'), 90) }}
-        «ENDIF»
         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
         «IF hasGeographical»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Geo.js')) }}

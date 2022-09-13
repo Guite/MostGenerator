@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -16,7 +15,6 @@ class DisplayFunctions {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -55,10 +53,6 @@ class DisplayFunctions {
             «initInlineWindow»
 
             «initQuickViewModals»
-        «ENDIF»
-        «IF hasImageFields»
-
-            «initImageViewer»
         «ENDIF»
         «IF hasSortable && hasIndexActions»
 
@@ -261,52 +255,6 @@ class DisplayFunctions {
         }
     '''
 
-    def private initImageViewer(Application it) '''
-        /**
-         * Initialises image viewing behaviour.
-         */
-        function «vendorAndName»InitImageViewer() {
-            var scripts;
-            var magnificPopupAvailable;
-
-            // check if magnific popup is available
-            scripts = jQuery('script');
-            magnificPopupAvailable = false;
-            jQuery.each(scripts, function (index, elem) {
-                if (elem.hasAttribute('src')) {
-                    elem = jQuery(elem);
-                    if (-1 !== elem.attr('src').indexOf('jquery.magnific-popup')) {
-                        magnificPopupAvailable = true;
-                    }
-                }
-            });
-            if (!magnificPopupAvailable) {
-                return;
-            }
-            jQuery('a.image-link').magnificPopup({
-                type: 'image',
-                closeOnContentClick: true,
-                image: {
-                    titleSrc: 'title',
-                    verticalFit: true
-                },
-                gallery: {
-                    enabled: true,
-                    navigateByImgClick: true,
-                    arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
-                    tPrev: Translator.trans('Previous (Left arrow key)'),
-                    tNext: Translator.trans('Next (Right arrow key)'),
-                    tCounter: '<span class="mfp-counter">%curr% ' + Translator.trans('of') + ' %total%</span>'
-                },
-                zoom: {
-                    enabled: true,
-                    duration: 300,
-                    easing: 'ease-in-out'
-                }
-            });
-        }
-    '''
-
     def private initSortable(Application it) '''
         /**
          * Initialises reordering view entries using drag n drop.
@@ -358,10 +306,6 @@ class DisplayFunctions {
             isIndexPage = 0 < jQuery('.«appName.toLowerCase»-index').length;
             isDetailPage = 0 < jQuery('.«appName.toLowerCase»-detail').length;
 
-            «IF hasImageFields»
-                «vendorAndName»InitImageViewer();
-
-            «ENDIF»
             if (isIndexPage) {
                 «vendorAndName»InitQuickNavigation();
                 «vendorAndName»InitMassToggle();

@@ -9,7 +9,6 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
-import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerMethodInterface
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -148,9 +147,6 @@ class ConfigureFilters implements ControllerMethodInterface {
     def private hasSelectorRole(StringField it) {
         #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)
     }
-    def private dispatch filter(UploadField it) '''
-        ->add('«name.formatForCode»FileName')
-    '''
     def private dispatch filter(ArrayField it) '''
         ->add(ArrayFilter::new('«name.formatForCode»')->canSelectMultiple())
     '''

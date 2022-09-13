@@ -59,19 +59,7 @@ class Property {
         «ENDIF»
         protected array $«name.formatForCode»Meta = [];
 
-        «persistentProperty(name.formatForCode + 'FileName', fieldTypeAsString(true), fieldTypeAsString(false), '')»
-        /**
-         * Full «name.formatForDisplay» path as url.
-         */
-        «/* * #[Assert\Url] disabled due to problems with space chars in file names
-         */»protected string $«name.formatForCode»Url = '';
-
-        /**
-         * «name.formatForDisplayCapital» file object.
-         */
-        «thVal.uploadFileAnnotations(it)»
-        protected ?File $«name.formatForCode» = null;
-        «/* this last line is on purpose */»
+        «persistentProperty(name.formatForCode, fieldTypeAsString(true), fieldTypeAsString(false), '')»
     '''
 
     def dispatch persistentProperty(ArrayField it) {
@@ -198,62 +186,7 @@ class Property {
     '''
 
     def dispatch fieldAccessor(UploadField it) '''
-
-        public function get«name.formatForCodeCapital»(): ?File
-        {
-            if (null !== $this->«name.formatForCode») {
-                return $this->«name.formatForCode»;
-            }
-
-            $fileName = $this->«name.formatForCode»FileName;
-            if (!empty($fileName) && !$this->_uploadBasePathRelative) {
-                throw new RuntimeException('Invalid upload base path in ' . static::class . '#get«name.formatForCodeCapital»().');
-            }
-
-            $filePath = $this->_uploadBasePathAbsolute . '«subFolderPathSegment»/' . $fileName;
-            if (!empty($fileName) && file_exists($filePath)) {
-                $this->«name.formatForCode» = new File($filePath);
-                $this->set«name.formatForCodeCapital»Url($this->_uploadBaseUrl . '/' . $this->_uploadBasePathRelative . '«subFolderPathSegment»/' . $fileName);
-            } else {
-                $this->set«name.formatForCodeCapital»FileName('');
-                $this->set«name.formatForCodeCapital»Url('');«/* disabled to avoid persisting empty meta array after fresh upload
-                $this->set«name.formatForCodeCapital»Meta([]);*/»
-            }
-
-            return $this->«name.formatForCode»;
-        }
-
-        /**
-         * Sets the «name.formatForDisplay».
-         */
-        public function set«name.formatForCodeCapital»(?File $«name.formatForCode» = null): self
-        {
-            if (null === $this->«name.formatForCode» && null === $«name.formatForCode») {
-                return $this;
-            }
-            if (
-                null !== $this->«name.formatForCode»
-                && null !== $«name.formatForCode»
-                && $this->«name.formatForCode» instanceof File
-                && $this->«name.formatForCode»->getRealPath() === $«name.formatForCode»->getRealPath()
-            ) {
-                return $this;
-            }
-            «fh.triggerPropertyChangeListeners(it, name)»
-            $this->«name.formatForCode» = $«name.formatForCode»«IF !nullable» ?? ''«ENDIF»;
-
-            if (null === $this->«name.formatForCode» || '' === $this->«name.formatForCode») {
-                $this->set«name.formatForCodeCapital»FileName('');
-                $this->set«name.formatForCodeCapital»Url('');
-                $this->set«name.formatForCodeCapital»Meta([]);
-            } else {
-                $this->set«name.formatForCodeCapital»FileName($this->«name.formatForCode»->getFilename());
-            }
-
-            return $this;
-        }
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'FileName', 'string', true, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', true, '', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode, 'string', true, '', '')»
         «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', false, '[]', '')»
     '''
 }
