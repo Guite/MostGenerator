@@ -122,7 +122,7 @@ class ConfigureFilters implements ControllerMethodInterface {
         ->add('«name.formatForCode»')«options»
     '''
     def private dispatch options(DerivedField it) ''''''
-    def private placeholderOption(Object it) '''->setFormTypeOption('placeholder', t('All'))'''
+    def private placeholderOption(Object it) ''', 'value_type_options.placeholder' => t('All')'''
 
     def private dispatch filter(UserField it) '''
         ->add(TextFilter::new('«name.formatForCode»')«options»)
@@ -137,12 +137,12 @@ class ConfigureFilters implements ControllerMethodInterface {
         «ENDIF»
     '''
     def private dispatch options(StringField it) {
-        if (role === StringRole.COLOUR) '''->setFormType(ColorType::class)''' else
-        if (role === StringRole.COUNTRY) '''->setFormType(CountryType::class)«placeholderOption»''' else
-        if (role === StringRole.CURRENCY) '''->setFormType(CurrencyType::class)«placeholderOption»''' else
-        if (role === StringRole.LANGUAGE) '''->setFormType(LanguageType::class)«placeholderOption»''' else
-        if (role === StringRole.LOCALE) '''->setFormType(LocaleType::class)«placeholderOption»''' else
-        if (role === StringRole.TIME_ZONE) '''->setFormType(TimezoneType::class)«placeholderOption»''' else
+        if (role === StringRole.COLOUR) '''->setFormTypeOptions(['value_type' => ColorType::class])''' else
+        if (role === StringRole.COUNTRY) '''->setFormTypeOptions(['value_type' => CountryType::class«placeholderOption»])''' else
+        if (role === StringRole.CURRENCY) '''->setFormTypeOptions(['value_type' => CurrencyType::class«placeholderOption»])''' else
+        if (role === StringRole.LANGUAGE) '''->setFormTypeOptions(['value_type' => LanguageType::class«placeholderOption»])''' else
+        if (role === StringRole.LOCALE) '''->setFormTypeOptions(['value_type' => LocaleType::class«placeholderOption»])''' else
+        if (role === StringRole.TIME_ZONE) '''->setFormTypeOptions(['value_type' => TimezoneType::class«placeholderOption»])''' else
         ''
     }
     def private hasSelectorRole(StringField it) {
