@@ -9,7 +9,6 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
-import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerMethodInterface
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -123,10 +122,11 @@ class ConfigureFilters implements ControllerMethodInterface {
     def private dispatch options(DerivedField it) ''''''
     def private placeholderOption(Object it) ''', 'value_type_options.placeholder' => t('All')'''
 
-    def private dispatch filter(UserField it) '''
+    /*def private dispatch filter(UserField it) '''
         ->add(TextFilter::new('«name.formatForCode»')«options»)
     '''
     //def private dispatch options(UserField it) '''«placeholderOption»'''
+    */
 
     def private dispatch filter(StringField it) '''
         «IF hasSelectorRole»
