@@ -274,7 +274,7 @@ class EntityDisplayHelper {
                     // geo field referencing part
                     formattedPart = '\'%' + patternPart + '%\' => ' + 'number_format($entity->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
                 } else {
-                    formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(' + (if (matchedFields.head instanceof AbstractStringField) '' else '(string) ') + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()') + ')'
+                    formattedPart = '\'%' + patternPart + '%\' => ' + 'htmlspecialchars(' + (if (matchedFields.head instanceof AbstractStringField || matchedFields.head instanceof UserField) '' else '(string) ') + formatFieldValue(matchedFields.head, '$entity->get' + patternPart.toFirstUpper + '()') + ')'
                 }
             } else {
                 // static part
