@@ -61,10 +61,10 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: zikula-target-version
+    id: symfony-target-version
     attributes:
-      label: Zikula target in model
-      description: Which Zikula target version do you have configured in your model?
+      label: Symfony target in model
+      description: Which Symfony target version do you have configured in your model?
       options:
         - SF70
         - SF62
