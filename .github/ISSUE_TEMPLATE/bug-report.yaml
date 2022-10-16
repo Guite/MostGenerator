@@ -76,17 +76,16 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: zikula-target-version
+    id: symfony-target-version
     attributes:
-      label: Zikula target in model
-      description: Which Zikula target version do you have configured in your model?
+      label: Symfony target in model
+      description: Which Symfony target version do you have configured in your model?
       options:
-        - ZK30
-        - ZK3DEV
-        - ZK20
-        - ZK2DEV
-        - ZK15
-        - ZK15DEV
+        - SF70
+        - SF62
+        - SF61
+        - SF60
+        - SF54
     validations:
       required: true
   - type: dropdown
@@ -95,12 +94,9 @@ body:
       label: Zikula version
       description: Which Zikula version are you running?
       options:
+        - 4.x-git
+        - 3.1.x
         - 3.0.x
-        - 3.x-git
-        - 2.0.x
-        - 2.x-git
-        - 1.5.x
-        - 1.5.x-git
     validations:
       required: true
   - type: dropdown
@@ -109,13 +105,10 @@ body:
       label: PHP version
       description: Which PHP version are you running?
       options:
+        - 8.2.x
+        - 8.1.x
         - 8.0.x
         - 7.4.x
-        - 7.3.x
-        - 7.2.x
-        - 7.1.x
-        - 7.0.x
-        - 5.6.x
-        - 5.5.x
+        - older
     validations:
       required: true
