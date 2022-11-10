@@ -115,13 +115,9 @@ class Utils {
     def Boolean targets(Application it, String version) {
         switch symfonyVersion {
             case SF70:
-                #['7.0', '6.2', '6.1', '5.4'].contains(version)
+                #['7.0', '6.2'].contains(version)
             case SF62:
-                #['6.2', '6.1', '5.4'].contains(version)
-            case SF61:
-                #['6.1', '5.4'].contains(version)
-            case SF54:
-                #['5.4'].contains(version)
+                #['6.2'].contains(version)
             default:
                 true
         }
@@ -140,12 +136,6 @@ class Utils {
                 '7.0'
             case SF62:
                 '6.2'
-            case SF61:
-                '6.1'
-            case SF60:
-                '6.0'
-            case SF54:
-                '5.4'
         }
     }
 
@@ -161,12 +151,6 @@ class Utils {
             case SF70:
                 '4.0'
             case SF62:
-                '4.0'
-            case SF61:
-                '4.0'
-            case SF60:
-                '4.0'
-            case SF54:
                 '4.0'
         }
     }
