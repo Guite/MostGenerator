@@ -1,10 +1,10 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class KernelListener {
+class KernelSubscriber {
 
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
@@ -26,7 +26,7 @@ class KernelListener {
         }
 
         /**
-         * Listener for the `kernel.request` event.
+         * Subscriber for the `kernel.request` event.
          *
          * Occurs after the request handling has started.
          *
@@ -48,7 +48,7 @@ class KernelListener {
         }
 
         /**
-         * Listener for the `kernel.controller` event.
+         * Subscriber for the `kernel.controller` event.
          *
          * Occurs after routing has been done and the controller has been selected.
          *
@@ -79,7 +79,7 @@ class KernelListener {
         }
 
         /**
-         * Listener for the `kernel.view` event.
+         * Subscriber for the `kernel.view` event.
          *
          * Occurs only if the controller did not return a Response object.
          *
@@ -101,7 +101,7 @@ class KernelListener {
         }
 
         /**
-         * Listener for the `kernel.response` event.
+         * Subscriber for the `kernel.response` event.
          *
          * Occurs after a response has been created and returned to the kernel.
          *
@@ -128,7 +128,7 @@ class KernelListener {
         }
 
         /**
-         * Listener for the `kernel.finish_request` event.
+         * Subscriber for the `kernel.finish_request` event.
          *
          * Occurs after processing a request has been completed.
          * Called after a normal response as well as after an exception was thrown.
@@ -142,7 +142,7 @@ class KernelListener {
         }
 
         /**
-         * Listener for the `kernel.terminate` event.
+         * Subscriber for the `kernel.terminate` event.
          *
          * Occurs before the system is shutted down.
          *
@@ -159,7 +159,7 @@ class KernelListener {
         }
 
         /**
-         * Listener for the `kernel.exception` event.
+         * Subscriber for the `kernel.exception` event.
          *
          * Occurs whenever an exception is thrown. Handles (different types
          * of) exceptions and creates a fitting Response object for them.

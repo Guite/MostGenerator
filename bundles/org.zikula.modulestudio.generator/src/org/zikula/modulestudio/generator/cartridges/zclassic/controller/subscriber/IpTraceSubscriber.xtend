@@ -1,8 +1,8 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 
-class IpTraceListener {
+class IpTraceSubscriber {
 
     CommonExample commonExample = new CommonExample()
 

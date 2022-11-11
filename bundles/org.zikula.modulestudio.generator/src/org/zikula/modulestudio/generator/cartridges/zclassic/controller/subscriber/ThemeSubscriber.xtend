@@ -1,10 +1,10 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ThemeListener {
+class ThemeSubscriber {
 
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils

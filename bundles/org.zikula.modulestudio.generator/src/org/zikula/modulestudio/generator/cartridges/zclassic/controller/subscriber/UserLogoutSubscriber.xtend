@@ -1,8 +1,8 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 
-class UserLogoutListener {
+class UserLogoutSubscriber {
 
     def generate(Application it) '''
         public static function getSubscribedEvents(): array
@@ -13,7 +13,7 @@ class UserLogoutListener {
         }
 
         /**
-         * Listener for the `UserPostLogoutSuccessEvent`.
+         * Subscriber for the `UserPostLogoutSuccessEvent`.
          *
          * Occurs right after a successful logout.
          */

@@ -1,8 +1,8 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 
-class FormTypeChoicesListener {
+class FormTypeChoicesSubscriber {
 
     def generate(Application it) '''
         public static function getSubscribedEvents(): array
@@ -13,7 +13,7 @@ class FormTypeChoicesListener {
         }
 
         /**
-         * Listener for the `FormTypeChoiceEvent` event.
+         * Subscriber for the `FormTypeChoiceEvent` event.
          *
          * Implement using like this:
          *

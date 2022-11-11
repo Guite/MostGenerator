@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityWorkflowType
@@ -7,7 +7,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
-class WorkflowEventsListener {
+class WorkflowSubscriber {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
@@ -37,7 +37,7 @@ class WorkflowEventsListener {
         }
 
         /**
-         * Listener for the `workflow.guard` event.
+         * Subscriber for the `workflow.guard` event.
          *
          * Occurs before a transition is started and when testing which transitions are available.
          * Validates whether the transition is allowed or not.
@@ -58,7 +58,7 @@ class WorkflowEventsListener {
         }
 
         /**
-         * Listener for the `workflow.leave` event.
+         * Subscriber for the `workflow.leave` event.
          *
          * Occurs after a subject has left it's current state.
          * Carries the marking with the initial places.
@@ -74,7 +74,7 @@ class WorkflowEventsListener {
         }
 
         /**
-         * Listener for the `workflow.transition` event.
+         * Subscriber for the `workflow.transition` event.
          *
          * Occurs before starting to transition to the new state.
          * Carries the marking with the current places.
@@ -90,7 +90,7 @@ class WorkflowEventsListener {
         }
 
         /**
-         * Listener for the `workflow.enter` event.
+         * Subscriber for the `workflow.enter` event.
          *
          * Occurs before the subject enters into the new state and places are updated.
          * This means the marking of the subject is not yet updated with the new places.
@@ -106,7 +106,7 @@ class WorkflowEventsListener {
         }
 
         /**
-         * Listener for the `workflow.entered` event.
+         * Subscriber for the `workflow.entered` event.
          *
          * Occurs after the subject has entered into the new state.
          * Carries the marking with the new places.
@@ -123,7 +123,7 @@ class WorkflowEventsListener {
         }
 
         /**
-         * Listener for the `workflow.completed` event.
+         * Subscriber for the `workflow.completed` event.
          *
          * Occurs after the subject has completed a transition.
          «commonDocs('completed')»
@@ -139,7 +139,7 @@ class WorkflowEventsListener {
         }
 
         /**
-         * Listener for the `workflow.announce` event.
+         * Subscriber for the `workflow.announce` event.
          *
          * Triggered for each place that now is available for the subject.
          «commonDocs('announce')»

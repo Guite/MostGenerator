@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Events
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.HelperServices
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Initializer
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.di.Configuration
@@ -35,6 +34,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.EventSubscribers
 
 class ZclassicGenerator implements IGenerator {
 
@@ -114,7 +114,7 @@ class ZclassicGenerator implements IGenerator {
         new FormHandler().generate(it, fsa)
         pm?.subTask('Controller: Event listeners')
         'Generating Event listeners'.printIfNotTesting(fsa)
-        new Listeners().generate(it, fsa)
+        new EventSubscribers().generate(it, fsa)
         pm?.subTask('Controller: Service definitions')
         'Generating service definitions'.printIfNotTesting(fsa)
         new ServiceDefinitions().generate(it, fsa)

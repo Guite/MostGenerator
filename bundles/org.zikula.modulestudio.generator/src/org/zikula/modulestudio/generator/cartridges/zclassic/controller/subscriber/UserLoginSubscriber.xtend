@@ -1,8 +1,8 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 
-class UserLoginListener {
+class UserLoginSubscriber {
 
     def generate(Application it) '''
         public static function getSubscribedEvents(): array
@@ -15,7 +15,7 @@ class UserLoginListener {
         }
 
         /**
-         * Listener for the `UserPreLoginSuccessEvent`.
+         * Subscriber for the `UserPreLoginSuccessEvent`.
          *
          * Occurs immediately prior to a log-in that is expected to succeed. (All prerequisites for a
          * successful login have been checked and are satisfied.) This event allows an extension to
@@ -41,7 +41,7 @@ class UserLoginListener {
         }
 
         /**
-         * Listener for the `UserPostLoginSuccessEvent`.
+         * Subscriber for the `UserPostLoginSuccessEvent`.
          *
          * Occurs right after a successful attempt to log in, and just prior to redirecting the user to the desired page.
          *
@@ -60,7 +60,7 @@ class UserLoginListener {
         }
 
         /**
-         * Listener for the `UserPostLoginFailureEvent`.
+         * Subscriber for the `UserPostLoginFailureEvent`.
          *
          * Occurs right after an unsuccessful attempt to log in.
          *

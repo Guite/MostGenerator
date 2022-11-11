@@ -1,8 +1,8 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 
-class UserRegistrationListener {
+class UserRegistrationSubscriber {
 
     def generate(Application it) '''
         public static function getSubscribedEvents(): array
@@ -18,7 +18,7 @@ class UserRegistrationListener {
         }
 
         /**
-         * Listener for the `ActiveUserPreCreatedEvent`.
+         * Subscriber for the `ActiveUserPreCreatedEvent`.
          *
          * Occurs when the registration process is determining whether to create a 'registration' or a 'full user'.
          *
@@ -47,7 +47,7 @@ class UserRegistrationListener {
         }
 
         /**
-         * Listener for the `RegistrationPostSuccessEvent`.
+         * Subscriber for the `RegistrationPostSuccessEvent`.
          *
          * Occurs after a user has successfully registered a new account in the system. It will follow either a
          * `RegistrationPostCreatedEvent`, or a `ActiveUserPostCreatedEvent`, depending on the result of the registration process,
@@ -105,7 +105,7 @@ class UserRegistrationListener {
         }
 
         /**
-         * Listener for the `RegistrationPostCreatedEvent`.
+         * Subscriber for the `RegistrationPostCreatedEvent`.
          *
          * Occurs after a registration record is created, either through the normal user registration process,
          * or through the administration panel for the Users module. This event will not fire if the result of the
@@ -124,7 +124,7 @@ class UserRegistrationListener {
         }
 
         /**
-         * Listener for the `RegistrationPostUpdatedEvent`.
+         * Subscriber for the `RegistrationPostUpdatedEvent`.
          *
          * Occurs after a registration record is updated (likely through the admin panel, but not guaranteed).
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
@@ -141,7 +141,7 @@ class UserRegistrationListener {
         }
 
         /**
-         * Listener for the `RegistrationPostDeletedEvent`.
+         * Subscriber for the `RegistrationPostDeletedEvent`.
          *
          * Occurs after a registration record is deleted. This could occur as a result of the administrator deleting
          * the record through the approval/denial process, or it could happen because the registration request expired.
@@ -159,7 +159,7 @@ class UserRegistrationListener {
         }
 
         /**
-         * Listener for the `RegistrationPostApprovedEvent`.
+         * Subscriber for the `RegistrationPostApprovedEvent`.
          *
          * Occurs when an administrator approves a registration.
          */

@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
@@ -9,7 +9,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class UserListener {
+class UserSubscriber {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -46,7 +46,7 @@ class UserListener {
         }
 
         /**
-         * Listener for the `ActiveUserPostCreatedEvent`.
+         * Subscriber for the `ActiveUserPostCreatedEvent`.
          *
          * Occurs after a user account is created. All handlers are notified.
          * It does not apply to creation of a pending registration.
@@ -64,7 +64,7 @@ class UserListener {
         }
 
         /**
-         * Listener for the `ActiveUserPostUpdatedEvent`.
+         * Subscriber for the `ActiveUserPostUpdatedEvent`.
          *
          * Occurs after a user is updated. All handlers are notified.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
@@ -92,7 +92,7 @@ class UserListener {
         }
 
         /**
-         * Listener for the `ActiveUserPostDeletedEvent`.
+         * Subscriber for the `ActiveUserPostDeletedEvent`.
          *
          * Occurs after the deletion of a user account.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.

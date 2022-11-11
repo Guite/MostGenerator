@@ -1,8 +1,8 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
 
-class GroupListener {
+class GroupSubscriber {
 
     def generate(Application it) '''
         public static function getSubscribedEvents(): array
@@ -20,7 +20,7 @@ class GroupListener {
         }
 
         /**
-         * Listener for the `GroupPostCreatedEvent`.
+         * Subscriber for the `GroupPostCreatedEvent`.
          *
          * Occurs after a group is created.
          */
@@ -29,7 +29,7 @@ class GroupListener {
         }
 
         /**
-         * Listener for the `GroupPostUpdatedEvent`.
+         * Subscriber for the `GroupPostUpdatedEvent`.
          *
          * Occurs after a group is updated.
          */
@@ -38,7 +38,7 @@ class GroupListener {
         }
 
         /**
-         * Listener for the `GroupPreDeletedEvent`.
+         * Subscriber for the `GroupPreDeletedEvent`.
          *
          * Occurs before a group is deleted from the system.
          */
@@ -47,7 +47,7 @@ class GroupListener {
         }
 
         /**
-         * Listener for the `GroupPostDeletedEvent`.
+         * Subscriber for the `GroupPostDeletedEvent`.
          *
          * Occurs after a group is deleted from the system.
          */
@@ -56,7 +56,7 @@ class GroupListener {
         }
 
         /**
-         * Listener for the `GroupPostUserAddedEvent`.
+         * Subscriber for the `GroupPostUserAddedEvent`.
          *
          * Occurs after a user is added to a group.
          */
@@ -65,7 +65,7 @@ class GroupListener {
         }
 
         /**
-         * Listener for the `GroupPostUserRemovedEvent`.
+         * Subscriber for the `GroupPostUserRemovedEvent`.
          *
          * Occurs after a user is removed from a group.
          */
@@ -74,7 +74,7 @@ class GroupListener {
         }
 
         /**
-         * Listener for the `GroupApplicationPostProcessedEvent`.
+         * Subscriber for the `GroupApplicationPostProcessedEvent`.
          *
          * Occurs after a group application has been processed.
          */
@@ -83,7 +83,7 @@ class GroupListener {
         }
 
         /**
-         * Listener for the `GroupApplicationPostCreatedEvent`.
+         * Subscriber for the `GroupApplicationPostCreatedEvent`.
          *
          * Occurs after the successful creation of a group application.
          */
