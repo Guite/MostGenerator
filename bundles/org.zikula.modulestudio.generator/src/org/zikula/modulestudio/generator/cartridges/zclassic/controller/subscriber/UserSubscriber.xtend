@@ -20,17 +20,14 @@ class UserSubscriber {
         «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
             public function __construct(
                 «IF hasStandardFieldEntities || hasUserFields»
+                    protected readonly Security $security,
                     protected readonly EntityFactory $entityFactory,
-                    protected readonly CurrentUserApiInterface $currentUserApi,
-                    protected readonly LoggerInterface $logger«IF hasUserVariables || hasLoggable»,«ENDIF»
+                    protected readonly LoggerInterface $logger«IF hasUserVariables»,«ENDIF»
                 «ENDIF»
                 «IF hasUserVariables»
                     «FOR userVar : getAllVariables.filter(UserField)»
                         protected readonly int $«userVar.name.formatForCode»,
-                    «ENDFOR»«IF hasLoggable»,«ENDIF»
-                «ENDIF»
-                «IF hasLoggable»
-                    protected readonly LoggableHelper $loggableHelper
+                    «ENDFOR»
                 «ENDIF»
             ) {
             }
@@ -39,80 +36,119 @@ class UserSubscriber {
         public static function getSubscribedEvents(): array
         {
             return [
-                ActiveUserPostCreatedEvent::class => ['create', 5],
-                ActiveUserPostUpdatedEvent::class => ['update', 5],
-                ActiveUserPostDeletedEvent::class => ['delete', 5],
+                NucleosUserEvents::USER_CREATED => 'onUserCreated',
+                NucleosUserEvents::USER_ACTIVATED => 'onUserActivated',
+                NucleosUserEvents::USER_DEACTIVATED => 'onUserDeactivated',
+                NucleosUserEvents::USER_PROMOTED => 'onUserPromoted',
+                NucleosUserEvents::USER_DEMOTED => 'onUserDemoted',
+                NucleosUserEvents::USER_LOCALE_CHANGED => 'onLocaleChanged',
+                NucleosUserEvents::USER_TIMEZONE_CHANGED => 'onTimezoneChanged',
+                NucleosUserEvents::ACCOUNT_DELETION_INITIALIZE => 'onAccountDeletionInitialized',
+                NucleosUserEvents::ACCOUNT_DELETION => 'onAccountDeletion',
+                NucleosUserEvents::ACCOUNT_DELETION_SUCCESS => 'onAccountDeletionSuccess',
             ];
         }
 
         /**
-         * Subscriber for the `ActiveUserPostCreatedEvent`.
+         * Subscriber for the `nucleos_user.user.created` event.
          *
-         * Occurs after a user account is created. All handlers are notified.
-         * It does not apply to creation of a pending registration.
-         * The full user record created is available as the subject.
-         * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
-         * The subject of the event is set to the user record that was created.
+         * Occurs when the user is created with UserManipulator.
          *
-         * You can access the user and date in the event.
-         *
-         * The user:
-         *     `echo 'UID: ' . $event->getUser()->getUid();`
+         * This event allows you to access the created user and to add some behaviour after the creation.
          */
-        public function create(ActiveUserPostCreatedEvent $event): void
+        public function onUserCreated(UserEvent $event): void
         {
         }
 
         /**
-         * Subscriber for the `ActiveUserPostUpdatedEvent`.
+         * Subscriber for the `nucleos_user.user.activated` event.
          *
-         * Occurs after a user is updated. All handlers are notified.
-         * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
-         * The User property is the *new* data. The oldUser property is the *old* data.
+         * Occurs when the user is activated with UserManipulator.
          *
-         * You can access the user and date in the event.
-         *
-         * The user:
-         *     `echo 'UID: ' . $event->getUser()->getUid();`
+         * This event allows you to access the activated user and to add some behaviour after the activation.
          */
-        public function update(ActiveUserPostUpdatedEvent $event): void
+        public function onUserActivated(UserEvent $event): void
         {
-            «IF hasLoggable»
-                // update changed user name in log entries if needed
-                $oldUser = $event->getOldUser();
-                $user = $event->getUser();
-                if ($user->getUsername() === $oldUser->getUsername()) {
-                    return;
-                }
-
-                «FOR entity : loggableEntities»
-                    $this->loggableHelper->updateUserName('«entity.name.formatForCode»', $oldUser->getUsername(), $user->getUsername());
-                «ENDFOR»
-            «ENDIF»
         }
 
         /**
-         * Subscriber for the `ActiveUserPostDeletedEvent`.
+         * Subscriber for the `nucleos_user.user.deactivated` event.
          *
-         * Occurs after the deletion of a user account.
-         * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
+         * Occurs when the user is deactivated with UserManipulator.
          *
-         * You can access the user and date in the event.
-         *
-         * The user:
-         *     `echo 'UID: ' . $event->getUser()->getUid();`
-         *
-         * Check if user is really deleted or "ghosted":
-         *     `if ($event->isFullDeletion())`
+         * This event allows you to access the deactivated user and to add some behaviour after the deactivation.
          */
-        public function delete(ActiveUserPostDeletedEvent $event): void
+        public function onUserDeactivated(UserEvent $event): void
+        {
+        }
+
+        /**
+         * Subscriber for the `nucleos_user.user.promoted` event.
+         *
+         * Occurs when the user is promoted with UserManipulator.
+         *
+         * This event allows you to access the promoted user and to add some behaviour after the promotion.
+         */
+        public function onUserPromoted(UserEvent $event): void
+        {
+        }
+
+        /**
+         * Subscriber for the `nucleos_user.user.demoted` event.
+         *
+         * Occurs when the user is demoted with UserManipulator.
+         *
+         * This event allows you to access the demoted user and to add some behaviour after the demotion.
+         */
+        public function onUserDemoted(UserEvent $event): void
+        {
+        }
+
+        /**
+         * Subscriber for the `nucleos_user.user.locale_changed` event.
+         *
+         * Occurs when the user changed the locale.
+         *
+         * This event allows you to access the user settings and to add some behaviour after the locale change.
+         */
+        public function onLocaleChanged(UserEvent $event): void
+        {
+        }
+
+        /**
+         * Subscriber for the `nucleos_user.user.timezone_changed` event.
+         *
+         * Occurs when the user changed the timezone.
+         *
+         * This event allows you to access the user settings and to add some behaviour after the timezone change.
+         */
+        public function onTimezoneChanged(UserEvent $event): void
+        {
+        }
+
+        /**
+         * Subscriber for the `nucleos_user.account_deletion.initialize` event.
+         *
+         * Occurs when the account deletion is initialized.
+         *
+         * This event allows you to modify the default values of the deletion request before binding the form.
+         */
+        public function onAccountDeletionInitialized(GetResponseAccountDeletionEvent $event): void
+        {
+        }
+
+        /**
+         * Subscriber for the `nucleos_user.account_deletion` event.
+         *
+         * Occurs when the account deletion is processed.
+         *
+         * This event allows you to process the user deletion request.
+         */
+        public function onAccountDeletion(AccountDeletionEvent $event): void
         {
             «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
-                if (!$event->isFullDeletion()) {
-                    return;
-                }
-
-                $userId = $event->getUser()->getUid();
+                $currentUser = $this->security->getUser();
+                $userId = $event->getUser()->getId();
                 «IF hasStandardFieldEntities || hasUserFields»
                     «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
@@ -123,6 +159,17 @@ class UserSubscriber {
                     «ENDFOR»
                 «ENDIF»
             «ENDIF»
+        }
+
+        /**
+         * Subscriber for the `nucleos_user.account_deletion.success` event.
+         *
+         * Occurs when the account was deleted successfully.
+         *
+         * This event allows you to set the response instead of using the default one.
+         */
+        public function onAccountDeletionSuccess(AccountDeletionResponseEvent $event): void
+        {
         }
     '''
 
@@ -137,14 +184,14 @@ class UserSubscriber {
                         $userId,
                         «application.adhUid(onAccountDeletionCreator)»,
                         $this->logger,
-                        $this->currentUserApi
+                        $currentUser
                     );
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» created by this user
                     $repo->deleteByCreator(
                         $userId,
                         $this->logger,
-                        $this->currentUserApi
+                        $currentUser
                     );
                 «ENDIF»
 
@@ -154,14 +201,14 @@ class UserSubscriber {
                         $userId,
                         «application.adhUid(onAccountDeletionLastEditor)»,
                         $this->logger,
-                        $this->currentUserApi
+                        $currentUser
                     );
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» recently updated by this user
                     $repo->deleteByLastEditor(
                         $userId,
                         $this->logger,
-                        $this->currentUserApi
+                        $currentUser
                     );
                 «ENDIF»
             «ENDIF»
@@ -173,7 +220,7 @@ class UserSubscriber {
 
             $logArgs = [
                 'app' => '«application.appName»',
-                'user' => $this->currentUserApi->get('uname'),
+                'user' => $currentUser,
                 'entities' => '«nameMultiple.formatForDisplay»',
             ];
             $this->logger->notice(
@@ -192,7 +239,7 @@ class UserSubscriber {
                     $userId,
                     «application.adhUid(onAccountDeletion)»,
                     $this->logger,
-                    $this->currentUserApi
+                    $currentUser
                 );
             «ELSE»
                 // delete all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
@@ -200,14 +247,14 @@ class UserSubscriber {
                     '«name.formatForCode»',
                     $userId,
                     $this->logger,
-                    $this->currentUserApi
+                    $currentUser
                 );
             «ENDIF»
         «ELSEIF null !== varContainer»
             if ($userId === $this->«name.formatForCode») {
                 $logArgs = [
                     'app' => '«application.appName»',
-                    'user' => $this->currentUserApi->get('uname'),
+                    'user' => $currentUser,
                 ];
                 $this->logger->warning(
                     '{app}: User {user} has been deleted, hence the "«name.formatForCode»" configuration definition should be changed to another user ID.',

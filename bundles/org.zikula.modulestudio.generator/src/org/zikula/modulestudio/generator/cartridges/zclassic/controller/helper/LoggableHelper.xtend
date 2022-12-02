@@ -96,8 +96,6 @@ class LoggableHelper {
 
         «undeleteEntity»
 
-        «updateUserName»
-
         «translateActionDescription»
 
         «getLogEntryRepository»
@@ -379,17 +377,6 @@ class LoggableHelper {
             }
 
             return $actionTranslated;
-        }
-    '''
-
-    def private updateUserName(Application it) '''
-        /**
-         * Updates a changed user name in all log entries for a given object type.
-         */
-        public function updateUserName(string $objectType, string $oldUserName, string $newUserName): void
-        {
-            $logEntriesRepository = $this->getLogEntryRepository($objectType);
-            $logEntriesRepository->updateUserName($oldUserName, $newUserName);
         }
     '''
 

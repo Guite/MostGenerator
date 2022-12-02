@@ -8,7 +8,7 @@ class FormTypeChoicesSubscriber {
         public static function getSubscribedEvents(): array
         {
             return [
-                FormTypeChoiceEvent::class => ['formTypeChoices'],
+                FormTypeChoiceEvent::class => 'formTypeChoices',
             ];
         }
 

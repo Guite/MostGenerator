@@ -23,7 +23,7 @@ class UserDeletion {
                 int $userId,
                 int $newUserId,
                 LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi
+                UserInterface $currentUser
             ): void;
 
             /**
@@ -35,7 +35,7 @@ class UserDeletion {
                 int $userId,
                 int $newUserId,
                 LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi
+                UserInterface $currentUser
             ): void;
 
             /**
@@ -46,7 +46,7 @@ class UserDeletion {
             public function deleteByCreator(
                 int $userId,
                 LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi
+                UserInterface $currentUser
             ): void;
 
             /**
@@ -57,7 +57,7 @@ class UserDeletion {
             public function deleteByLastEditor(
                 int $userId,
                 LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi
+                UserInterface $currentUser
             ): void;
         «ENDIF»
         «IF hasUserFieldsEntity»
@@ -72,7 +72,7 @@ class UserDeletion {
                 int $userId,
                 int $newUserId,
                 LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi
+                UserInterface $currentUser
             ): void;
 
             /**
@@ -84,7 +84,7 @@ class UserDeletion {
                 string $userFieldName,
                 int $userId,
                 LoggerInterface $logger,
-                CurrentUserApiInterface $currentUserApi
+                UserInterface $currentUser
             ): void;
         «ENDIF»
     '''
@@ -121,7 +121,7 @@ class UserDeletion {
             int $userId,
             int $newUserId,
             LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi
+            UserInterface $currentUser
         ): void {
             if (0 === $userId || 0 === $newUserId) {
                 throw new InvalidArgumentException('Invalid user identifier received.');
@@ -138,7 +138,7 @@ class UserDeletion {
 
             $logArgs = [
                 'app' => '«application.appName»',
-                'user' => $currentUserApi->get('uname'),
+                'user' => $currentUser,
                 'entities' => '«nameMultiple.formatForDisplay»',
                 'userid' => $userId,
             ];
@@ -151,7 +151,7 @@ class UserDeletion {
             int $userId,
             int $newUserId,
             LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi
+            UserInterface $currentUser
         ): void {
             if (0 === $userId || 0 === $newUserId) {
                 throw new InvalidArgumentException('Invalid user identifier received.');
@@ -168,7 +168,7 @@ class UserDeletion {
 
             $logArgs = [
                 'app' => '«application.appName»',
-                'user' => $currentUserApi->get('uname'),
+                'user' => $currentUser,
                 'entities' => '«nameMultiple.formatForDisplay»',
                 'userid' => $userId,
             ];
@@ -180,7 +180,7 @@ class UserDeletion {
         public function deleteByCreator(
             int $userId,
             LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi
+            UserInterface $currentUser
         ): void {
             if (0 === $userId) {
                 throw new InvalidArgumentException('Invalid user identifier received.');
@@ -196,7 +196,7 @@ class UserDeletion {
 
             $logArgs = [
                 'app' => '«application.appName»',
-                'user' => $currentUserApi->get('uname'),
+                'user' => $currentUser,
                 'entities' => '«nameMultiple.formatForDisplay»',
                 'userid' => $userId,
             ];
@@ -208,7 +208,7 @@ class UserDeletion {
         public function deleteByLastEditor(
             int $userId,
             LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi
+            UserInterface $currentUser
         ): void {
             if (0 === $userId) {
                 throw new InvalidArgumentException('Invalid user identifier received.');
@@ -224,7 +224,7 @@ class UserDeletion {
 
             $logArgs = [
                 'app' => '«application.appName»',
-                'user' => $currentUserApi->get('uname'),
+                'user' => $currentUser,
                 'entities' => '«nameMultiple.formatForDisplay»',
                 'userid' => $userId,
             ];
@@ -238,7 +238,7 @@ class UserDeletion {
             int $userId,
             int $newUserId,
             LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi
+            UserInterface $currentUser
         ): void {
             if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
                 throw new InvalidArgumentException('Invalid user field name received.');
@@ -258,7 +258,7 @@ class UserDeletion {
 
             $logArgs = [
                 'app' => '«application.appName»',
-                'user' => $currentUserApi->get('uname'),
+                'user' => $currentUser,
                 'entities' => '«nameMultiple.formatForDisplay»',
                 'field' => $userFieldName,
                 'userid' => $userId,
@@ -273,7 +273,7 @@ class UserDeletion {
             string $userFieldName,
             int $userId,
             LoggerInterface $logger,
-            CurrentUserApiInterface $currentUserApi
+            UserInterface $currentUser
         ): void {
             if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
                 throw new InvalidArgumentException('Invalid user field name received.');
@@ -292,7 +292,7 @@ class UserDeletion {
 
             $logArgs = [
                 'app' => '«application.appName»',
-                'user' => $currentUserApi->get('uname'),
+                'user' => $currentUser,
                 'entities' => '«nameMultiple.formatForDisplay»',
                 'field' => $userFieldName,
                 'userid' => $userId,

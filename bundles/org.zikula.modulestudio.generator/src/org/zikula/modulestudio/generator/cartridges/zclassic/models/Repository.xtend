@@ -379,9 +379,9 @@ class Repository {
         imports.addAll(#[
             'InvalidArgumentException',
             'Psr\\Log\\LoggerInterface',
+            'Symfony\\Component\\Security\\Core\\User\\UserInterface',
             'Zikula\\Bundle\\CoreBundle\\Doctrine\\Paginator',
             'Zikula\\Bundle\\CoreBundle\\Doctrine\\PaginatorInterface',
-            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
             entityClassName('', false),
             app.appNamespace + '\\Helper\\CollectionFilterHelper'
         ])

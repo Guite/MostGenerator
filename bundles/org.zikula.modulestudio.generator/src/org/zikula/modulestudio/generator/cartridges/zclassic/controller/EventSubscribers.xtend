@@ -4,13 +4,10 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.FormTypeChoicesSubscriber
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.GroupSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.IpTraceSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.KernelSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.LoggableSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.ThemeSubscriber
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserLoginSubscriber
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserLogoutSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserRegistrationSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.WorkflowSubscriber
@@ -19,6 +16,9 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserAuthenticationSubscriber
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserCredentialSubscriber
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserProfileSubscriber
 
 class EventSubscribers {
 
@@ -60,11 +60,11 @@ class EventSubscribers {
         subscriberFile('FormTypeChoices', formTypeChoicesFile)
         subscriberFile('Kernel', subscribersKernelFile)
         subscriberFile('Theme', subscribersThemeFile)
-        subscriberFile('UserLogin', subscribersUserLoginFile)
-        subscriberFile('UserLogout', subscribersUserLogoutFile)
+        subscriberFile('UserAuthentication', subscribersUserAuthenticationFile)
+        subscriberFile('UserCredential', subscribersUserCredentialFile)
         subscriberFile('User', subscribersUserFile)
+        subscriberFile('UserProfile', subscribersUserProfileFile)
         subscriberFile('UserRegistration', subscribersUserRegistrationFile)
-        subscriberFile('Group', subscribersGroupFile)
 
         if (!getAllEntities.filter[hasIpTraceableFields].empty) {
             subscriberFile('IpTrace', subscribersIpTraceFile)
@@ -157,48 +157,54 @@ class EventSubscribers {
         }
     '''
 
-    def private subscribersUserLoginFile(Application it) '''
+    def private subscribersUserAuthenticationFile(Application it) '''
         namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\EventSubscriber\Base\AbstractUserLoginSubscriber;
+            use «appNamespace»\EventSubscriber\Base\AbstractUserAuthenticationSubscriber;
         «ELSE»
+            use Nucleos\UserBundle\Event\GetResponseLoginEvent;
+            use Nucleos\UserBundle\Event\GetResponseUserEvent;
+            use Nucleos\UserBundle\Event\UserEvent;
+            use Nucleos\UserBundle\NucleosUserEvents;
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\UsersBundle\Event\UserPostLoginFailureEvent;
-            use Zikula\UsersBundle\Event\UserPostLoginSuccessEvent;
-            use Zikula\UsersBundle\Event\UserPreLoginSuccessEvent;
+            use Symfony\Component\Security\Http\Event\LogoutEvent;
         «ENDIF»
 
         /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user login events.
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user login and logout events.
          */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserLoginSubscriber«IF !isBase» extends AbstractUserLoginSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserAuthenticationSubscriber«IF !isBase» extends AbstractUserAuthenticationSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new UserLoginSubscriber().generate(it)»
+                «new UserAuthenticationSubscriber().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
         }
     '''
 
-    def private subscribersUserLogoutFile(Application it) '''
+    def private subscribersUserCredentialFile(Application it) '''
         namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\EventSubscriber\Base\AbstractUserLogoutSubscriber;
+            use «appNamespace»\EventSubscriber\Base\AbstractUserCredentialSubscriber;
         «ELSE»
+            use Nucleos\UserBundle\Event\FilterUserResponseEvent;
+            use Nucleos\UserBundle\Event\FormEvent;
+            use Nucleos\UserBundle\Event\GetResponseNullableUserEvent;
+            use Nucleos\UserBundle\Event\GetResponseUserEvent;
+            use Nucleos\UserBundle\Event\UserEvent;
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\UsersBundle\Event\UserPostLogoutSuccessEvent;
         «ENDIF»
 
         /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user logout events.
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user crendential related events.
          */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserLogoutSubscriber«IF !isBase» extends AbstractUserLogoutSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserCredentialSubscriber«IF !isBase» extends AbstractUserCredentialSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «IF isBase»
-                «new UserLogoutSubscriber().generate(it)»
+                «new UserCredentialSubscriber().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
@@ -208,23 +214,19 @@ class EventSubscribers {
     def private collectUserBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
-            'Symfony\\Component\\EventDispatcher\\EventSubscriberInterface',
-            'Zikula\\UsersBundle\\Event\\ActiveUserPostCreatedEvent',
-            'Zikula\\UsersBundle\\Event\\ActiveUserPostDeletedEvent',
-            'Zikula\\UsersBundle\\Event\\ActiveUserPostUpdatedEvent'
+            'Nucleos\\UserBundle\\Event\\AccountDeletionEvent',
+            'Nucleos\\UserBundle\\Event\\AccountDeletionResponseEvent',
+            'Nucleos\\UserBundle\\Event\\GetResponseAccountDeletionEvent',
+            'Nucleos\\UserBundle\\Event\\UserEvent',
+            'Nucleos\\UserBundle\\NucleosUserEvents',
+            'Symfony\\Component\\EventDispatcher\\EventSubscriberInterface'
         ])
-        if (hasStandardFieldEntities || hasUserFields || hasUserVariables) {
-            imports.add('Zikula\\UsersBundle\\UsersConstant')
-            if (hasStandardFieldEntities || hasUserFields) {
-                imports.addAll(#[
-                    'Psr\\Log\\LoggerInterface',
-                    'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
-                    appNamespace + '\\Entity\\Factory\\EntityFactory'
-                ])
-            }
-        }
-        if (hasLoggable) {
-            imports.add(appNamespace + '\\Helper\\LoggableHelper')
+        if (hasStandardFieldEntities || hasUserFields) {
+            imports.addAll(#[
+                'Psr\\Log\\LoggerInterface',
+                'Symfony\\Bundle\\SecurityBundle\\Security',
+                appNamespace + '\\Entity\\Factory\\EntityFactory'
+            ])
         }
         imports
     }
@@ -251,19 +253,45 @@ class EventSubscribers {
         }
     '''
 
+    def private subscribersUserProfileFile(Application it) '''
+        namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
+
+        «IF !isBase»
+            use «appNamespace»\EventSubscriber\Base\AbstractUserProfileSubscriber;
+        «ELSE»
+            use Nucleos\ProfileBundle\Event\UserFormEvent;
+            use Nucleos\ProfileBundle\NucleosProfileEvents;
+            use Nucleos\UserBundle\Event\FilterUserResponseEvent;
+            use Nucleos\UserBundle\Event\GetResponseUserEvent;
+            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+        «ENDIF»
+
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user profile events.
+         */
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserProfileSubscriber«IF !isBase» extends AbstractUserProfileSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
+        {
+            «IF isBase»
+                «new UserProfileSubscriber().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
+        }
+    '''
+
     def private subscribersUserRegistrationFile(Application it) '''
         namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
             use «appNamespace»\EventSubscriber\Base\AbstractUserRegistrationSubscriber;
         «ELSE»
+            use Nucleos\ProfileBundle\Event\GetResponseRegistrationEvent;
+            use Nucleos\ProfileBundle\Event\UserFormEvent;
+            use Nucleos\ProfileBundle\NucleosProfileEvents;
+            use Nucleos\UserBundle\Event\FilterUserResponseEvent;
+            use Nucleos\UserBundle\Event\FormEvent;
+            use Nucleos\UserBundle\Event\GetResponseUserEvent;
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\UsersBundle\Event\ActiveUserPreCreatedEvent;
-            use Zikula\UsersBundle\Event\RegistrationPostApprovedEvent;
-            use Zikula\UsersBundle\Event\RegistrationPostCreatedEvent;
-            use Zikula\UsersBundle\Event\RegistrationPostDeletedEvent;
-            use Zikula\UsersBundle\Event\RegistrationPostSuccessEvent;
-            use Zikula\UsersBundle\Event\RegistrationPostUpdatedEvent;
         «ENDIF»
 
         /**
@@ -273,36 +301,6 @@ class EventSubscribers {
         {
             «IF isBase»
                 «new UserRegistrationSubscriber().generate(it)»
-            «ELSE»
-                // feel free to enhance the parent methods
-            «ENDIF»
-        }
-    '''
-
-    def private subscribersGroupFile(Application it) '''
-        namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\EventSubscriber\Base\AbstractGroupSubscriber;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\GroupsBundle\Event\GroupApplicationPostCreatedEvent;
-            use Zikula\GroupsBundle\Event\GroupApplicationPostProcessedEvent;
-            use Zikula\GroupsBundle\Event\GroupPostCreatedEvent;
-            use Zikula\GroupsBundle\Event\GroupPostDeletedEvent;
-            use Zikula\GroupsBundle\Event\GroupPostUpdatedEvent;
-            use Zikula\GroupsBundle\Event\GroupPostUserAddedEvent;
-            use Zikula\GroupsBundle\Event\GroupPostUserRemovedEvent;
-            use Zikula\GroupsBundle\Event\GroupPreDeletedEvent;
-        «ENDIF»
-
-        /**
-         * Event handler implementation class for group-related events.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»GroupSubscriber«IF !isBase» extends AbstractGroupSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «IF isBase»
-                «new GroupSubscriber().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»

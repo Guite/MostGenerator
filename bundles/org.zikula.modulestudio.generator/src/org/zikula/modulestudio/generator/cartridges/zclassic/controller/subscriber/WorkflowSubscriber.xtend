@@ -26,13 +26,13 @@ class WorkflowSubscriber {
         public static function getSubscribedEvents(): array
         {
             return [
-                'workflow.guard' => ['onGuard', 5],
-                'workflow.leave' => ['onLeave', 5],
-                'workflow.transition' => ['onTransition', 5],
-                'workflow.enter' => ['onEnter', 5],
-                'workflow.entered' => ['onEntered', 5],
-                'workflow.completed' => ['onCompleted', 5],
-                'workflow.announce' => ['onAnnounce', 5],
+                'workflow.guard' => 'onGuard',
+                'workflow.leave' => 'onLeave',
+                'workflow.transition' => 'onTransition',
+                'workflow.enter' => 'onEnter',
+                'workflow.entered' => 'onEntered',
+                'workflow.completed' => 'onCompleted',
+                'workflow.announce' => 'onAnnounce',
             ];
         }
 
