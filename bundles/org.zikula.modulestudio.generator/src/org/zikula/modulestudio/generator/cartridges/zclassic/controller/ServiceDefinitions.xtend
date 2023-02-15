@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 /**
  * Service definitions in YAML format.
@@ -24,7 +23,6 @@ class ServiceDefinitions {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     IMostFileSystemAccess fsa
 
@@ -49,14 +47,6 @@ class ServiceDefinitions {
                 autowire: true
                 autoconfigure: true
                 public: false
-                bind:
-                    $twigLoader: '@twig.loader'
-                    «IF hasUploads»
-                        $projectDir: '%kernel.project_dir%'
-                    «ENDIF»
-                    «IF needsApproval»
-                        $mailLoggingEnabled: '%enable_mail_logging%'
-                    «ENDIF»
 
             «appNamespace»\:
                 resource: '../../*'
@@ -71,9 +61,8 @@ class ServiceDefinitions {
 
                 liip_imagine.cache.signer:
                     class: «appNamespace»\Imagine\Cache\DummySigner
-                    arguments:
-                        $secret: '%kernel.secret%'
             «ENDIF»
+
             «repositoryBindings»
     '''
 
@@ -87,14 +76,6 @@ class ServiceDefinitions {
             # public because EntityLifecycleListener accesses this using container
             «appNamespace»\Helper\UploadHelper:
                 public: true
-                arguments:
-                    $dataDirectory: '%data_directory%'
-        «ENDIF»
-        «IF generatePdfSupport»
-
-            «appNamespace»\Helper\ViewHelper:
-                arguments:
-                    $pageVars: '@zikula_core.common.theme.pagevars'
         «ENDIF»
 
         «appNamespace»\EventListener\EntityLifecycleListener:

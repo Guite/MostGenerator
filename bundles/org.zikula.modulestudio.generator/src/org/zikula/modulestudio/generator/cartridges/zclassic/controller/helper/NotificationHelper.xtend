@@ -27,6 +27,7 @@ class NotificationHelper {
         val imports = new ImportList
         imports.addAll(#[
             'Psr\\Log\\LoggerInterface',
+            'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'Symfony\\Component\\Mailer\\Exception\\TransportExceptionInterface',
             'Symfony\\Component\\Mailer\\MailerInterface',
@@ -104,6 +105,7 @@ class NotificationHelper {
             protected readonly UserRepositoryInterface $userRepository,
             protected readonly EntityDisplayHelper $entityDisplayHelper,
             protected readonly WorkflowHelper $workflowHelper,
+            #[Autowire('%enable_mail_logging%')]
             protected readonly bool $mailLoggingEnabled,
             protected readonly array $moderationConfig
         ) {

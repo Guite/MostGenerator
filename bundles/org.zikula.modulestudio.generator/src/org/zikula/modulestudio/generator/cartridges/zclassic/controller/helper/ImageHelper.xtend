@@ -35,6 +35,7 @@ class ImageHelper {
         ])
         if (hasImageFields || !getUploadVariables.filter[isImageField].empty) {
             imports.addAll(#[
+                'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
                 'Symfony\\Component\\Filesystem\\Exception\\IOExceptionInterface',
                 'Symfony\\Component\\Filesystem\\Filesystem'
             ])
@@ -66,6 +67,7 @@ class ImageHelper {
             protected readonly TranslatorInterface $translator,
             protected readonly RequestStack $requestStack,
             «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
+                #[Autowire('%kernel.project_dir%')]
                 protected readonly string $projectDir,
             «ENDIF»
             protected readonly array $imageConfig
@@ -223,19 +225,17 @@ class ImageHelper {
         namespace «appNamespace»\Imagine\Cache\Base;
 
         use Liip\ImagineBundle\Imagine\Cache\SignerInterface;
+        use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
         /**
          * Temporary dummy signer until https://github.com/liip/LiipImagineBundle/issues/837 has been resolved.
          */
         abstract class AbstractDummySigner implements SignerInterface
         {
-            /**
-             * @var string
-             */
-            protected $secret;
-
-            public function __construct(string $secret)
-            {
+            public function __construct(
+                #[Autowire('%kernel.secret%')]
+                protected readonly string $secret
+            ) {
                 $this->secret = $secret;
             }
 

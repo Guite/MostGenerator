@@ -36,6 +36,7 @@ class UploadHelper {
             'Imagine\\Image\\ImageInterface',
             'Imagine\\Image\\Metadata\\ExifMetadataReader',
             'Psr\\Log\\LoggerInterface',
+            'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
             'Symfony\\Component\\Filesystem\\Exception\\IOExceptionInterface',
             'Symfony\\Component\\Filesystem\\Filesystem',
             'Symfony\\Component\\HttpFoundation\\File\\File',
@@ -89,7 +90,9 @@ class UploadHelper {
             protected readonly LoggerInterface $logger,
             protected readonly CurrentUserApiInterface $currentUserApi,
             protected readonly array $imageConfig,
+            #[Autowire('%kernel.project_dir%')]
             protected readonly string $projectDir,
+            #[Autowire('%data_directory%')]
             protected readonly string $dataDirectory
         ) {
             $this->setTranslator($translator);

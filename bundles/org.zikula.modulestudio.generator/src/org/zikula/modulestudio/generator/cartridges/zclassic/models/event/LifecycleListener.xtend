@@ -42,7 +42,10 @@ class LifecycleListener {
             appNamespace + '\\Entity\\EntityInterface'
         ])
         if (!getUploadEntities.empty) {
-            imports.add(appNamespace + '\\Helper\\UploadHelper')
+            imports.addAll(#[
+                'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
+                appNamespace + '\\Helper\\UploadHelper'
+            ])
         }
         if (hasLoggable) {
             imports.addAll(#[
@@ -72,6 +75,7 @@ class LifecycleListener {
                 ContainerInterface $container,
                 protected readonly EventDispatcherInterface $eventDispatcher,
                 «IF !getUploadEntities.empty»
+                    #[Autowire('%kernel.project_dir%')]
                     protected readonly string $projectDir,
                 «ENDIF»
                 protected readonly LoggerInterface $logger«IF hasLoggable»

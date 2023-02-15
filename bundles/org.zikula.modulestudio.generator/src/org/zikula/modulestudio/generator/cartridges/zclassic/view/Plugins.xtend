@@ -96,6 +96,9 @@ class Plugins {
         if (hasListFields) {
             imports.add(appNamespace + '\\Helper\\ListEntriesHelper')
         }
+        if (hasUploads) {
+            imports.add('Symfony\\Component\\DependencyInjection\\Attribute\\Autowire')
+        }
         imports
     }
 
@@ -181,6 +184,7 @@ class Plugins {
             protected readonly ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
             protected readonly LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
             protected readonly MenuBuilder $menuBuilder«ENDIF»«IF hasUploads»,
+            #[Autowire('%kernel.project_dir%')]
             protected readonly string $projectDir«ENDIF»
         ) {
         }

@@ -24,6 +24,7 @@ class ViewHelper {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'Symfony\\Component\\HttpFoundation\\Response',
             'Twig\\Environment',
@@ -67,10 +68,12 @@ class ViewHelper {
                 protected readonly Filesystem $filesystem,
             «ENDIF»
             protected readonly Environment $twig,
+            #[Autowire(service: 'twig.loader')]
             protected readonly LoaderInterface $twigLoader,
             protected readonly RequestStack $requestStack,
             «IF generatePdfSupport»
                 protected readonly SiteDefinitionInterface $site,
+                #[Autowire(service: 'zikula_core.common.theme.pagevars')]
                 protected readonly ParameterBag $pageVars,
             «ENDIF»
             protected readonly ControllerHelper $controllerHelper,

@@ -22,6 +22,7 @@ class UploadType {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
             'Symfony\\Component\\Form\\AbstractType',
             'Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType',
             'Symfony\\Component\\Form\\Extension\\Core\\Type\\FileType',
@@ -58,6 +59,7 @@ class UploadType {
             public function __construct(
                 protected readonly ImageHelper $imageHelper,
                 protected readonly UploadHelper $uploadHelper,
+                #[Autowire('%kernel.project_dir%')]
                 protected readonly string $projectDir
             ) {
             }
