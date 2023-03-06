@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2022 Axel Guckelsberger
+ * Copyright (c) 2007-2023 Axel Guckelsberger
  */
 package org.zikula.modulestudio.generator.tests
 
