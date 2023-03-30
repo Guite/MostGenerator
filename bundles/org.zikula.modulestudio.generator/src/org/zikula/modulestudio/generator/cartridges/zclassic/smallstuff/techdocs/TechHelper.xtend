@@ -27,7 +27,7 @@ class TechHelper {
             <meta name="author" content="«author»">
             <title>«name.formatForDisplayCapital» &ndash; «title»</title>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css">
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
             <link rel="icon" href="../../public/images/admin.png">
             <link rel="stylesheet" href="../../public/css/techdocs.css">
         </head>
