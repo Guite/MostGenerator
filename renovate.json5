@@ -22,6 +22,10 @@
       matchManagers: ['composer'],
       rangeStrategy: 'update-lockfile',
     },
+    {
+      matchPackagePatterns: ['^de.guite.modulestudio', '^org.zikula.modulestudio', '^org.eclipse.m2e:'],
+      enabled: false,
+    },
     // group all docker updates together
     {
       matchManagers: ['docker-compose', 'dockerfile'],
