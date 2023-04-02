@@ -29,7 +29,7 @@ class ViewHelper {
             'Symfony\\Component\\HttpFoundation\\Response',
             'Twig\\Environment',
             'Twig\\Loader\\LoaderInterface',
-            'Zikula\\Bundle\\CoreBundle\\Response\\PlainResponse',
+            'Zikula\\CoreBundle\\Response\\PlainResponse',
             appNamespace + '\\Helper\\ControllerHelper',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
@@ -40,7 +40,7 @@ class ViewHelper {
         if (generatePdfSupport) {
             imports.addAll(#[
                 'Dompdf\\Dompdf',
-                'Zikula\\Bundle\\CoreBundle\\Site\\SiteDefinitionInterface',
+                'Zikula\\CoreBundle\\Site\\SiteDefinitionInterface',
                 'Zikula\\ThemeBundle\\Engine\\ParameterBag'
             ])
         }

@@ -33,7 +33,7 @@ class TranslatableHelper {
             'Symfony\\Component\\Form\\FormInterface',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\Bundle\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface',
+            'Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface',
             appNamespace + '\\Entity\\EntityInterface',
             appNamespace + '\\Entity\\Factory\\EntityFactory'
         ])

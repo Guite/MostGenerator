@@ -30,11 +30,11 @@ class BundleFile {
 
     def private collectBaseImports(Application it) {
         val imports = new ImportList
-        imports.add('Zikula\\Bundle\\CoreBundle\\AbstractModule')
+        imports.add('Zikula\\CoreBundle\\AbstractModule')
         if (needsInitializer) {
             imports.addAll(#[
-                'Zikula\\Bundle\\CoreBundle\\BundleInitializer\\BundleInitializerInterface',
-                'Zikula\\Bundle\\CoreBundle\\BundleInitializer\\InitializableBundleInterface',
+                'Zikula\\CoreBundle\\BundleInitializer\\BundleInitializerInterface',
+                'Zikula\\CoreBundle\\BundleInitializer\\InitializableBundleInterface',
                 appNamespace + '\\Initializer\\' + name.formatForCodeCapital + 'Initializer'
             ])
         }

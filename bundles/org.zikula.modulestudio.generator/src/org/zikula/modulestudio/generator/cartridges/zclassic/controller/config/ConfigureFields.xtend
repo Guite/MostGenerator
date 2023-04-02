@@ -90,7 +90,7 @@ class ConfigureFields implements ControllerMethodInterface {
             imports.add(nsSymfonyFormType + 'WeekType')
         }
         if (!formFields.filter(StringField).filter[role == StringRole.ICON].empty) {
-            imports.add('Zikula\\Bundle\\FormExtensionBundle\\Form\\Type\\IconType')
+            imports.add('Zikula\\FormExtensionBundle\\Form\\Type\\IconType')
         }
         if (!getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty) {
             imports.add(application.appNamespace + '\\Form\\Type\\Field\\UploadType')
@@ -102,10 +102,10 @@ class ConfigureFields implements ControllerMethodInterface {
         importsUNUSED.add(nsSymfonyFormType + 'ResetType')
         importsUNUSED.add(nsSymfonyFormType + 'SubmitType')
         if (hasLocaleFieldsEntity || hasTranslatableFields) {
-            importsUNUSED.add('Zikula\\Bundle\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
+            importsUNUSED.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
         }
         if (!formFields.filter(DerivedField).filter[!mandatory && !nullable].empty) {
-            importsUNUSED.add('Zikula\\Bundle\\FormExtensionBundle\\Form\\DataTransformer\\NullToEmptyTransformer')
+            importsUNUSED.add('Zikula\\FormExtensionBundle\\Form\\DataTransformer\\NullToEmptyTransformer')
         }
         if (categorisable) {
             importsUNUSED.add('Zikula\\CategoriesBundle\\Form\\Type\\CategoriesType')

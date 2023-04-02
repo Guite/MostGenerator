@@ -177,7 +177,7 @@ class ControllerLayer {
             'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
             'function Symfony\\Component\\Translation\\t',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait'
+            'Zikula\\CoreBundle\\Translation\\TranslatorTrait'
         ])
         if (hasIndexAction || hasEditAction) {
             imports.add('Exception')
@@ -198,10 +198,10 @@ class ControllerLayer {
             imports.add('Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException')
         }
         if (hasDeleteAction) {
-            imports.add('Zikula\\Bundle\\FormExtensionBundle\\Form\\Type\\DeletionType')
+            imports.add('Zikula\\FormExtensionBundle\\Form\\Type\\DeletionType')
         }
         if (hasEditAction && app.needsInlineEditing) {
-            imports.add('Zikula\\Bundle\\CoreBundle\\Response\\PlainResponse')
+            imports.add('Zikula\\CoreBundle\\Response\\PlainResponse')
         }
         if (hasIndexAction || hasDeleteAction) {
             imports.add('Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface')
@@ -211,7 +211,7 @@ class ControllerLayer {
         }
         imports.addAll(commonAppImports)
         if (hasLocaleFieldsEntity) {
-            imports.add('Zikula\\Bundle\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
+            imports.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
         }
         if (hasListFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\ListEntriesHelper')

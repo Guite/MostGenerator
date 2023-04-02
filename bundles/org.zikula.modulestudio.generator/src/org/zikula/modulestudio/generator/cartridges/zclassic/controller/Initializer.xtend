@@ -30,7 +30,7 @@ class Initializer {
         imports.addAll(#[
             'Exception',
             'Psr\\Log\\LoggerInterface',
-            'Zikula\\Bundle\\CoreBundle\\BundleInitializer\\BundleInitializerInterface'
+            'Zikula\\CoreBundle\\BundleInitializer\\BundleInitializerInterface'
         ])
         if (hasCategorisableEntities) {
             imports.addAll(#[

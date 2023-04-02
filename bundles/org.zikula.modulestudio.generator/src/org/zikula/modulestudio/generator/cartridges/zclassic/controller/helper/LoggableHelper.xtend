@@ -36,7 +36,7 @@ class LoggableHelper {
             'Gedmo\\Loggable\\Entity\\MappedSuperclass\\AbstractLogEntry',
             'Gedmo\\Loggable\\LoggableListener',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
             appNamespace + '\\Entity\\EntityInterface',
             appNamespace + '\\Entity\\Factory\\EntityFactory',
             appNamespace + '\\Helper\\EntityDisplayHelper',

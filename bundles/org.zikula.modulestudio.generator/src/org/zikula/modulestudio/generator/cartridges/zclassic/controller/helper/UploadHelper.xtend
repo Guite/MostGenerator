@@ -44,7 +44,7 @@ class UploadHelper {
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'function Symfony\\Component\\String\\s',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
             'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
             appNamespace + '\\Entity\\EntityInterface'
         ])

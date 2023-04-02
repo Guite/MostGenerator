@@ -32,7 +32,7 @@ class ControllerHelper {
             'Exception',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
             appNamespace + '\\Entity\\Factory\\EntityFactory',
             appNamespace + '\\Helper\\CollectionFilterHelper',
             appNamespace + '\\Helper\\PermissionHelper'

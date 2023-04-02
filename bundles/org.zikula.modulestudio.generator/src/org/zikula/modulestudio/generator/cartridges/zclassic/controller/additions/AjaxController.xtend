@@ -42,7 +42,7 @@ class AjaxController {
         if (isBase) {
             imports.addAll(#[
                 'Symfony\\Contracts\\Translation\\TranslatorInterface',
-                'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+                'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
                 'Zikula\\PermissionsBundle\\Api\\ApiInterface\\PermissionApiInterface'
             ])
         }

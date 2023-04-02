@@ -128,7 +128,7 @@ class FormHandler {
             'Symfony\\Component\\Routing\\RouterInterface',
             'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\Bundle\\CoreBundle\\Translation\\TranslatorTrait',
+            'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
             'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
             appNamespace + '\\Entity\\EntityInterface',
             appNamespace + '\\Entity\\Factory\\EntityFactory',
@@ -144,7 +144,7 @@ class FormHandler {
             imports.add('function Symfony\\Component\\String\\s')
         }
         if (hasTranslatable) {
-            imports.add('Zikula\\Bundle\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
+            imports.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
             imports.add(appNamespace + '\\Helper\\TranslatableHelper')
         }
         if (needsApproval) {

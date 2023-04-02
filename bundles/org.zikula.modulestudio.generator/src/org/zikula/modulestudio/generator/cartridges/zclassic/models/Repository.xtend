@@ -380,8 +380,8 @@ class Repository {
             'InvalidArgumentException',
             'Psr\\Log\\LoggerInterface',
             'Symfony\\Component\\Security\\Core\\User\\UserInterface',
-            'Zikula\\Bundle\\CoreBundle\\Doctrine\\Paginator',
-            'Zikula\\Bundle\\CoreBundle\\Doctrine\\PaginatorInterface',
+            'Zikula\\CoreBundle\\Doctrine\\Paginator',
+            'Zikula\\CoreBundle\\Doctrine\\PaginatorInterface',
             entityClassName('', false),
             app.appNamespace + '\\Helper\\CollectionFilterHelper'
         ])
