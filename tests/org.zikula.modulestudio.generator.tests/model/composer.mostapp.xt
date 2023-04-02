@@ -47,12 +47,6 @@ XPECT generated file composer.json ---
                 "user": {
                     "route": "acmesimpletestbundle_article_index"
                 }
-            },
-            "securityschema": {
-                "AcmeSimpleTestBundle::": "::",
-                "AcmeSimpleTestBundle:Article:": "Article ID::",
-                "AcmeSimpleTestBundle:Image:": "Image ID::",
-                "AcmeSimpleTestBundle::Ajax": "::"
             }
         }
     },

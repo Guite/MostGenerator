@@ -3,15 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.EmailValidationMode
-import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ReferredApplication
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ComposerFile {
@@ -20,7 +17,6 @@ class ComposerFile {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -91,11 +87,6 @@ class ComposerFile {
                 "icon": "fas fa-database",
                 "capabilities": {
                     «generateCapabilities»
-                },
-                "securityschema": {
-                    "«appName»::": "::",
-                    «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
-                    "«appName»::Ajax": "::"
                 }
             }
         },
@@ -127,18 +118,6 @@ class ComposerFile {
                 ]
             }
         «ENDIF»
-    '''
-
-    def private permissionSchema(Entity it, String appName) '''
-        "«appName»:«name.formatForCodeCapital»:": "«name.formatForCodeCapital» ID::",
-        «val incomingRelations = getIncomingJoinRelations/*.filter[r|r.source.container == it.container]*/»
-        «IF !incomingRelations.empty»
-            «FOR relation : incomingRelations»«relation.permissionSchema(appName)»«ENDFOR»
-        «ENDIF»
-    '''
-
-    def private permissionSchema(JoinRelationship it, String appName) '''
-        "«appName»:«source.name.formatForCodeCapital»:«target.name.formatForCodeCapital»": "«source.name.formatForCodeCapital» ID:«target.name.formatForCodeCapital» ID:",
     '''
 
     // Reference: http://www.spdx.org/licenses/

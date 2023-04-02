@@ -28,7 +28,7 @@ class ListEntriesHelper {
         namespace «appNamespace»\Helper\Base;
 
         use Symfony\Contracts\Translation\TranslatorInterface;
-        use Zikula\Bundle\CoreBundle\Translation\TranslatorTrait;
+        use Zikula\CoreBundle\Translation\TranslatorTrait;
 
         /**
          * Helper base class for list field entries related methods.

@@ -87,7 +87,7 @@ class EventSubscribers {
             use «appNamespace»\EventSubscriber\Base\AbstractFormTypeChoicesSubscriber;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\Bundle\FormExtensionBundle\Event\FormTypeChoiceEvent;
+            use Zikula\FormExtensionBundle\Event\FormTypeChoiceEvent;
         «ENDIF»
 
         /**
@@ -318,7 +318,6 @@ class EventSubscribers {
             use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Component\HttpKernel\Event\RequestEvent;
             use Symfony\Component\HttpKernel\KernelEvents;
-            use Zikula\Bundle\CoreBundle\Event\GenericEvent;
         «ENDIF»
 
         /**
