@@ -340,7 +340,7 @@ class EditEntityType {
 
     def private slugField(Entity it) '''
         «IF hasSluggableFields && slugUpdatable»
-            $helpText = /** @Translate */'You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.';
+            $helpText = t('You can input a custom permalink for the «name.formatForDisplay» or let this field free to create one automatically.');
             «IF hasTranslatableSlug»
                 if ('create' !== $options['mode']) {
                     $helpText = '';
@@ -356,10 +356,8 @@ class EditEntityType {
                     «IF slugUnique»
                         'class' => 'validate-unique',
                     «ENDIF»
-                    /** @Ignore */
                     'title' => $helpText,
                 ],
-                /** @Ignore */
                 'help' => $helpText,
             ]);
         «ENDIF»
@@ -395,7 +393,6 @@ class EditEntityType {
         {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], SubmitType::class, [
-                    /** @Ignore */
                     'label' => $action['title'],
                     'icon' => 'delete' === $action['id'] ? 'fa-trash-alt' : '',
                     'attr' => [

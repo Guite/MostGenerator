@@ -40,11 +40,6 @@ class WorkflowHelper {
             appNamespace + '\\Helper\\ListEntriesHelper',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
-        if (needsApproval) {
-            imports.addAll(#[
-                'Translation\\Extractor\\Annotation\\Desc'
-            ])
-        }
         imports
     }
 

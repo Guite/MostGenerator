@@ -46,7 +46,6 @@ class ConfigureFilters implements ControllerMethodInterface {
             imports.add(nsEabFilter + 'DateTimeFilter')
         }
         imports.add(nsEabFilter + 'TextFilter')
-        imports.add('Translation\\Extractor\\Annotation\\Ignore')
 
         val nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
         if (!allEntityFields.filter(StringField).filter[f|f.role === StringRole.COLOUR].empty) {
@@ -190,7 +189,7 @@ class ConfigureFilters implements ControllerMethodInterface {
         }
 
         $builder->add('«sourceAliasName.formatForCode»', ChoiceType::class, [
-            'choices' => /** @Ignore * /$choices,
+            'choices' => $choices,
             'choice_label' => function ($entity) use ($entityDisplayHelper) {
                 return $entityDisplayHelper->getFormattedTitle($entity);
             },

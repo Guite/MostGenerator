@@ -70,8 +70,6 @@ class ConfigureFields implements ControllerMethodInterface {
         if (hasSluggableFields) {
             imports.add(nsEabField + 'SlugField')
         }*/
-        imports.add('Translation\\Extractor\\Annotation\\Ignore')
-        imports.add('Translation\\Extractor\\Annotation\\Translate')
 
         val nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
         if (!formFields.filter(IntegerField).filter[range].empty) {
@@ -576,7 +574,7 @@ class ConfigureFields implements ControllerMethodInterface {
             'type' => 'integer',
         «ENDIF»
         «IF unit != ''»
-            'input_group' => ['right' => /** @Translate */'«unit»'],
+            'input_group' => ['right' => t('«unit»')],
         «ENDIF»
     '''
 
@@ -588,7 +586,7 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch additionalOptions(NumberField it) '''
         'scale' => «scale»,
         «IF unit != ''»
-            'input_group' => ['right' => /** @Translate */'«unit»'],
+            'input_group' => ['right' => t('«unit»')],
         «ENDIF»
     '''
 
@@ -605,27 +603,25 @@ class ConfigureFields implements ControllerMethodInterface {
             'placeholder' => t('All'),
         «ENDIF»
         «IF unit != ''»
-            'input_group' => ['right' => /** @Translate */'«unit»'],
+            'input_group' => ['right' => t('«unit»')],
         «ENDIF»
         «IF role == StringRole.DATE_INTERVAL»
-            /** @Ignore */
             'labels' => [
-                'years' => /** @Translate */'Years',
-                'months' => /** @Translate */'Months',
-                'days' => /** @Translate */'Days',
-                'hours' => /** @Translate */'Hours',
-                'minutes' => /** @Translate */'Minutes',
-                'seconds' => /** @Translate */'Seconds',
+                'years' => t('Years'),
+                'months' => t('Months'),
+                'days' => t('Days'),
+                'hours' => t('Hours'),
+                'minutes' => t('Minutes'),
+                'seconds' => t('Seconds'),
             ],
             «IF !mandatory»
-                /** @Ignore */
                 'placeholder' => [
-                    'years' => /** @Translate */'Years',
-                    'months' => /** @Translate */'Months',
-                    'days' => /** @Translate */'Days',
-                    'hours' => /** @Translate */'Hours',
-                    'minutes' => /** @Translate */'Minutes',
-                    'seconds' => /** @Translate */'Seconds',
+                    'years' => t('Years'),
+                    'months' => t('Months'),
+                    'days' => t('Days'),
+                    'hours' => t('Hours'),
+                    'minutes' => t('Minutes'),
+                    'seconds' => t('Seconds'),
                 ],
             «ENDIF»
             'input' => 'string',
@@ -857,10 +853,9 @@ class ConfigureFields implements ControllerMethodInterface {
     def private displayHelpMessages(Application it, ArrayList<String> messages, ArrayList<String> parameters) {
         if (!messages.empty) '''
             «IF messages.length > 1»
-                /** @Ignore */
                 'help' => [
                     «FOR message : messages»
-                        /** @Translate */«message»«IF message != messages.tail»,«ENDIF»
+                        t(«message»)«IF message != messages.tail»,«ENDIF»
                     «ENDFOR»
                 ],
             «ELSE»
