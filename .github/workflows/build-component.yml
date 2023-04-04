@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-java@master
       with:
         distribution: 'adopt'
-        java-version: 11
+        java-version: 17
         cache: 'maven'
 
     # https://stackoverflow.com/questions/71069/can-maven-be-made-less-verbose
