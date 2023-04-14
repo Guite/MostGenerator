@@ -163,7 +163,7 @@ class History {
                         </td>
                         <td headers="hUser hVersion{{ logEntry.version|e('html_attr') }}">
                             {% if logEntry.username %}
-                                {{ userAvatar(logEntry.username, {rating: 'g'}) }} {{ logEntry.username|profileLinkByUserName() }}
+                                {{ userAvatar(logEntry.username, {rating: 'g'}) }} {{ logEntry.username|profileLinkByUserId() }}
                             {% endif %}
                         </td>
                         <td headers="hOperation hVersion{{ logEntry.version|e('html_attr') }}">
