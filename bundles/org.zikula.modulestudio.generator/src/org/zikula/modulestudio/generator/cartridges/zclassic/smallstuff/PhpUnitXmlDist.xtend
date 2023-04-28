@@ -21,13 +21,11 @@ class PhpUnitXmlDist {
                  xsi:noNamespaceSchemaLocation="../../../vendor/phpunit/phpunit/phpunit.xsd"
                  bootstrap="../../../../tests/bootstrap.php"
                  colors="true"
-                 convertDeprecationsToExceptions="false"
                  executionOrder="depends,defects"
-                 forceCoversAnnotation="true"
-                 beStrictAboutCoversAnnotation="true"
+                 requireCoverageMetadata="true"
+                 beStrictAboutChangesToGlobalState="true"
                  beStrictAboutOutputDuringTests="true"
                  beStrictAboutTodoAnnotatedTests="true"
-                 verbose="true"
                  testdox="true"
         >
             <php>
@@ -38,7 +36,7 @@ class PhpUnitXmlDist {
                 <server name="APP_ENV" value="test" force="true"/>
                 <server name="SHELL_VERBOSITY" value="-1"/>
                 <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
-                <server name="SYMFONY_PHPUNIT_VERSION" value="9.3"/>
+                <server name="SYMFONY_PHPUNIT_VERSION" value="10.0"/>
             </php>
             <testsuites>
                 <testsuite name="«appName» Test Suite">
