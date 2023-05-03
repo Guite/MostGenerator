@@ -36,7 +36,7 @@ class PhpUnitXmlDist {
                 <server name="APP_ENV" value="test" force="true"/>
                 <server name="SHELL_VERBOSITY" value="-1"/>
                 <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
-                <server name="SYMFONY_PHPUNIT_VERSION" value="10.0"/>
+                <server name="SYMFONY_PHPUNIT_VERSION" value="10.1"/>
             </php>
 
             <testsuites>
