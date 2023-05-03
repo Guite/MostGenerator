@@ -38,6 +38,7 @@ class PhpUnitXmlDist {
                 <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
                 <server name="SYMFONY_PHPUNIT_VERSION" value="10.0"/>
             </php>
+
             <testsuites>
                 <testsuite name="«appName» Test Suite">
                     <directory>./Tests</directory>
@@ -45,14 +46,16 @@ class PhpUnitXmlDist {
                     <exclude>./vendor/</exclude>
                 </testsuite>
             </testsuites>
-            <coverage pathCoverage="true">
+
+            <source>
                 <include>
                     <directory suffix=".php">./</directory>
                 </include>
                 <exclude>
                     <directory suffix=".php">./Tests/</directory>
                 </exclude>
-            </coverage>
+            </source>
+
             <listeners>
                 <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
             </listeners>
