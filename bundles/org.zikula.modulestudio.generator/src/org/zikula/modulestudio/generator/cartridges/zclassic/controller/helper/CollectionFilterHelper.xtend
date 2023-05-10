@@ -336,8 +336,10 @@ class CollectionFilterHelper {
                     } else {
                         «IF hasUserFieldsEntity»
                             if (in_array($k, ['«getUserFieldsEntity.map[name.formatForCode].join('\', \'')»'], true)) {
-                                $qb->leftJoin('tbl.' . $k, 'tbl' . ucfirst($k))
-                                   ->andWhere('tbl' . ucfirst($k) . '.uid = :' . $k)
+                                if (!in_array('tbl' . ucfirst($k), $qb->getAllAliases(), true)) {
+                                    $qb->leftJoin('tbl.' . $k, 'tbl' . ucfirst($k));
+                                }
+                                $qb->andWhere('tbl' . ucfirst($k) . '.uid = :' . $k)
                                    ->setParameter($k, $v);
                             } else {
                                 $qb->andWhere('tbl.' . $k . ' = :' . $k)
