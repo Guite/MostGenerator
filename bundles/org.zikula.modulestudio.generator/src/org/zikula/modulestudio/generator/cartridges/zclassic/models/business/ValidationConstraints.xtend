@@ -193,6 +193,8 @@ class ValidationConstraints {
             #[Assert\Issn(caseSensitive: «(issn == StringIssnStyle.CASE_SENSITIVE || issn == StringIssnStyle.STRICT).displayBool», requireHyphen: «(issn == StringIssnStyle.REQUIRE_HYPHEN || issn == StringIssnStyle.STRICT).displayBool»)]
         «ELSEIF ipAddress != IpAddressScope.NONE»
             #[Assert\Ip(version: '«ipAddress.ipScopeAsConstant»')]
+        «ELSEIF role == StringRole.PASSWORD»
+            #[Assert\NotCompromisedPassword]
         «ELSEIF role == StringRole.TIME_ZONE»
             #[Assert\Timezone]
         «ELSEIF role == StringRole.ULID»
