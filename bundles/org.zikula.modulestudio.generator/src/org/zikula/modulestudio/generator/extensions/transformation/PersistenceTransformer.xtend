@@ -117,12 +117,14 @@ class PersistenceTransformer {
             }
 
 /** TODO
+            if (hasSluggableFields && (!inheriting || (parentType instanceof MappedSuperClass || !(parentType as Entity).hasSluggableFields))) {
     def getReservedSluggableFields() {
         #['slug']
     }
+            }
 */
 
-            if (hasSluggableFields && (!inheriting || (parentType instanceof MappedSuperClass || !(parentType as Entity).hasSluggableFields))) {
+            if (geographical && (!inheriting || (parentType instanceof MappedSuperClass || !(parentType as Entity).geographical))) {
                 fields += ModuleStudioFactory.eINSTANCE.createNumberField => [
                     numberType = NumberFieldType.DECIMAL
                     name = 'latitude'
