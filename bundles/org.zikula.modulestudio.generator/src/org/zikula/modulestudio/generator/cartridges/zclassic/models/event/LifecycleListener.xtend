@@ -36,7 +36,6 @@ class LifecycleListener {
             'Psr\\Log\\LoggerInterface',
             'Symfony\\Component\\DependencyInjection\\ContainerAwareInterface',
             'Symfony\\Component\\DependencyInjection\\ContainerAwareTrait',
-            'Symfony\\Component\\DependencyInjection\\ContainerInterface',
             'Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface',
             'Zikula\\UsersBundle\\Api\\CurrentUserApi',
             appNamespace + '\\Entity\\EntityInterface'
@@ -72,7 +71,6 @@ class LifecycleListener {
             use ContainerAwareTrait;
 
             public function __construct(
-                ContainerInterface $container,
                 protected readonly EventDispatcherInterface $eventDispatcher,
                 «IF !getUploadEntities.empty»
                     #[Autowire('%kernel.project_dir%')]
@@ -81,7 +79,6 @@ class LifecycleListener {
                 protected readonly LoggerInterface $logger«IF hasLoggable»
                 protected readonly array $loggableConfig«ENDIF»
             ) {
-                $this->setContainer($container);
             }
 
             /**

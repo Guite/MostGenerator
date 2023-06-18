@@ -80,6 +80,8 @@ class ServiceDefinitions {
 
         «appNamespace»\EventListener\EntityLifecycleListener:
             tags: ['doctrine.event_subscriber']
+            calls:
+                - [ setContainer, [ '@service_container' ]]
         «IF hasLoggable»
 
             # public because EntityLifecycleListener accesses this using container
