@@ -15,7 +15,10 @@ class InlineRedirect {
 
     def generate(Entity it, Boolean isBase) '''
 
-        «handleInlineRedirectDocBlock(isBase)»
+        «handleInlineRedirectDocBlock(isBase, false)»
+        «IF !isBase»
+            «handleInlineRedirectDocBlock(isBase, true)»
+        «ENDIF»
         «handleInlineRedirectSignature»: Response {
             «IF isBase»
                 «handleInlineRedirectBaseImpl»
@@ -31,14 +34,14 @@ class InlineRedirect {
         }
     '''
 
-    def private handleInlineRedirectDocBlock(Entity it, Boolean isBase) '''
+    def private handleInlineRedirectDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF isBase»
             /**
              * This method cares for a redirect within an inline frame.
              */
         «ELSE»
-            #[Route('/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}',
-                name: '«application.appName.formatForDB»_«name.formatForDB»_handleinlineredirect',
+            #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}',
+                name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_handleinlineredirect',
                 requirements: ['id' => '\d+'],
                 defaults: ['commandName' => '', 'id' => 0],
                 methods: ['GET']

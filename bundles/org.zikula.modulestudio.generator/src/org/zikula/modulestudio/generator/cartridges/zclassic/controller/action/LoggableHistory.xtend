@@ -20,7 +20,10 @@ class LoggableHistory {
     '''
 
     def private loggableHistory(Entity it, Boolean isBase) '''
-        «loggableHistoryDocBlock(isBase)»
+        «loggableHistoryDocBlock(isBase, false)»
+        «IF !isBase»
+            «loggableHistoryDocBlock(isBase, true)»
+        «ENDIF»
         public function loggableHistory(
             «loggableHistoryArguments»
         ): Response {
@@ -41,7 +44,7 @@ class LoggableHistory {
         }
     '''
 
-    def private loggableHistoryDocBlock(Entity it, Boolean isBase) '''
+    def private loggableHistoryDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
         «IF isBase»
             /**
              * This method provides a change history for a given «name.formatForDisplay».
@@ -50,8 +53,8 @@ class LoggableHistory {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
         «ELSE»
-            #[Route('/«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
-                name: '«application.appName.formatForDB»_«name.formatForDB»_loggablehistory',
+            #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
+                name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_loggablehistory',
                 «IF hasSluggableFields && slugUnique»
                 requirements: ['slug' => '«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»'],
                 «ELSE»
@@ -98,8 +101,8 @@ class LoggableHistory {
             );
         }
 
-        $isAdmin = false;«/*TODO*/»
-        $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
+        $isAdminArea = $request->attributes->get('isAdminArea', false);
+        $permLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
         if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
             throw new AccessDeniedException();
         }

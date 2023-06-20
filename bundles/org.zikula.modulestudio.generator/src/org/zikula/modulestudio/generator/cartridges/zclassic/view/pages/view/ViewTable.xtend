@@ -80,7 +80,7 @@ class ViewTable {
     def private viewForm(Entity it) '''
         «IF listType == LIST_TYPE_TABLE»
             {% if routeArea == 'admin' %}
-            <form action="{{ path('«appName.formatForDB»_«name.formatForDB»_handleselectedentries') }}" method="post" id="«nameMultiple.formatForCode»ViewForm">
+            <form action="{{ path('«appName.formatForDB»_admin_«name.formatForDB»_handleselectedentries') }}" method="post" id="«nameMultiple.formatForCode»ViewForm">
                 <div>
             {% endif %}
         «ENDIF»

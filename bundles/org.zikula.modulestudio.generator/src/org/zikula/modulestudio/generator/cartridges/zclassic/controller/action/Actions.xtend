@@ -52,22 +52,22 @@ class Actions {
         «ENDIF»
         $objectType = '«name.formatForCode»';
         // permission check
-        $isAdmin = false;«/*TODO*/»
-        $permLevel = $isAdmin ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
+        $isAdminArea = $request->attributes->get('isAdminArea', false);
+        $permLevel = $isAdminArea ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
         «IF action instanceof IndexAction && tree != EntityTreeType.NONE»
-            if (!$isAdmin && 'tree' === $request->query->getAlnum('tpl')) {
+            if (!$isAdminArea && 'tree' === $request->query->getAlnum('tpl')) {
                 $permLevel = ACCESS_EDIT;
             }
         «ELSEIF action instanceof DetailAction && loggable»
             $route = $request->attributes->get('_route', '');
-            if (!$isAdmin && '«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' === $route) {
+            if (!$isAdminArea && '«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' === $route) {
                 $permLevel = ACCESS_EDIT;
             }
         «ENDIF»
         «IF action instanceof DetailAction || action instanceof DeleteAction»
             if (!$this->permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
                 «IF ownerPermission && action instanceof DeleteAction»
-                    if ($isAdmin) {
+                    if ($isAdminArea) {
                         throw new AccessDeniedException();
                     }
                     $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
@@ -151,8 +151,8 @@ class Actions {
         «ENDIF»
         «IF loggable»
             $requestedVersion = $request->query->getInt('version');
-            $isAdmin = false;«/*TODO*/»
-            $versionPermLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
+            $isAdminArea = $request->attributes->get('isAdminArea', false);
+            $versionPermLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
             if (0 < $requestedVersion && $this->permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
                 // preview of a specific version is desired, but detach entity
                 $«name.formatForCode» = $loggableHelper->revert($«name.formatForCode», $requestedVersion, true);

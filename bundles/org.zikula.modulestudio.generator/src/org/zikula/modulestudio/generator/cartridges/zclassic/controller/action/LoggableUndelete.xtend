@@ -83,8 +83,8 @@ class LoggableUndelete {
             );
         }
 
-        $isAdmin = false;«/*TODO*/»
-        $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
+        $isAdminArea = $request->attributes->get('isAdminArea', false);
+        $permLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
         if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
             throw new AccessDeniedException();
         }

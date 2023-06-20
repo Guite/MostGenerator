@@ -9,20 +9,20 @@ import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Actions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Annotations
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.ActionRoute
 
 class ControllerAction {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
-    Annotations annotations
+    ActionRoute annotations
     Actions actionsImpl
 
     new(Application app) {
-        annotations = new Annotations(app)
+        annotations = new ActionRoute(app)
         actionsImpl = new Actions(app)
     }
 

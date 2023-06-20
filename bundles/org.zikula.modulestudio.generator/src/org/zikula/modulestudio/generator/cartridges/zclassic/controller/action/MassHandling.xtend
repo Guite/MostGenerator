@@ -46,8 +46,8 @@ class MassHandling {
              * @throws RuntimeException Thrown if executing the workflow action fails
              */
         «ELSE»
-            #[Route('/«nameMultiple.formatForCode»/handleSelectedEntries',
-                name: '«application.appName.formatForDB»_«name.formatForDB»_handleselectedentries',
+            #[Route('/admin/«nameMultiple.formatForCode»/handleSelectedEntries',
+                name: '«application.appName.formatForDB»_admin_«name.formatForDB»_handleselectedentries',
                 methods: ['POST']
             )]
         «ENDIF»
