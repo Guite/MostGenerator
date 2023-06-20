@@ -18,11 +18,11 @@ class ControllerAction {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
-    ActionRoute annotations
+    ActionRoute routeAnnotation
     Actions actionsImpl
 
     new(Application app) {
-        annotations = new ActionRoute(app)
+        routeAnnotation = new ActionRoute(app)
         actionsImpl = new Actions(app)
     }
 
@@ -62,7 +62,7 @@ class ControllerAction {
              */
         «ENDIF»
         «IF !isBase»
-            «annotations.generate(it)»
+            «routeAnnotation.generate(it)»
         «ENDIF»
     '''
 
