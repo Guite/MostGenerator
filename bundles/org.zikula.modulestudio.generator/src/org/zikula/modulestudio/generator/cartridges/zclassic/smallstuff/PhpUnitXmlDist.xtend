@@ -17,6 +17,7 @@ class PhpUnitXmlDist {
 
     def private phpUnitXml(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
+        <!-- https://docs.phpunit.de/en/10.2/configuration.html -->
         <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="../../../vendor/phpunit/phpunit/phpunit.xsd"
                  bootstrap="../../../../tests/bootstrap.php"
@@ -26,7 +27,6 @@ class PhpUnitXmlDist {
                  beStrictAboutChangesToGlobalState="true"
                  beStrictAboutOutputDuringTests="true"
                  beStrictAboutTodoAnnotatedTests="true"
-                 testdox="true"
         >
             <php>
                 <ini name="display_errors" value="1"/>
