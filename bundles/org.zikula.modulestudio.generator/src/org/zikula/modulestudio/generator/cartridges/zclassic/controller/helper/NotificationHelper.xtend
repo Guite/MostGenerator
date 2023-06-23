@@ -105,7 +105,7 @@ class NotificationHelper {
             protected readonly UserRepositoryInterface $userRepository,
             protected readonly EntityDisplayHelper $entityDisplayHelper,
             protected readonly WorkflowHelper $workflowHelper,
-            #[Autowire('%enable_mail_logging%')]
+            #[Autowire(param: 'enable_mail_logging')]
             protected readonly bool $mailLoggingEnabled,
             protected readonly array $moderationConfig
         ) {

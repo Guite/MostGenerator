@@ -73,7 +73,7 @@ class LifecycleListener {
             public function __construct(
                 protected readonly EventDispatcherInterface $eventDispatcher,
                 «IF !getUploadEntities.empty»
-                    #[Autowire('%kernel.project_dir%')]
+                    #[Autowire(param: 'kernel.project_dir')]
                     protected readonly string $projectDir,
                 «ENDIF»
                 protected readonly LoggerInterface $logger«IF hasLoggable»

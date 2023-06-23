@@ -59,7 +59,7 @@ class UploadType {
             public function __construct(
                 protected readonly ImageHelper $imageHelper,
                 protected readonly UploadHelper $uploadHelper,
-                #[Autowire('%kernel.project_dir%')]
+                #[Autowire(param: 'kernel.project_dir')]
                 protected readonly string $projectDir
             ) {
             }

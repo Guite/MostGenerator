@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.bundle
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -22,7 +22,7 @@ class Initializer {
         if (!hasUploads && !hasCategorisableEntities) {
             return
         }
-        fsa.generateClassPair('Initializer/' + name.formatForCodeCapital + 'Initializer.php', initializerBaseClass, initializerImpl)
+        fsa.generateClassPair('Bundle/Initializer/' + name.formatForCodeCapital + 'Initializer.php', initializerBaseClass, initializerImpl)
     }
 
     def private collectBaseImports(Application it) {
@@ -30,7 +30,7 @@ class Initializer {
         imports.addAll(#[
             'Exception',
             'Psr\\Log\\LoggerInterface',
-            'Zikula\\CoreBundle\\BundleInitializer\\BundleInitializerInterface'
+            'Zikula\\CoreBundle\\Bundle\\Initializer\\BundleInitializerInterface'
         ])
         if (hasCategorisableEntities) {
             imports.addAll(#[
@@ -46,7 +46,7 @@ class Initializer {
     }
 
     def private initializerBaseClass(Application it) '''
-        namespace «appNamespace»\Initializer\Base;
+        namespace «appNamespace»\Bundle\Initializer\Base;
 
         «collectBaseImports.print»
 
@@ -124,9 +124,9 @@ class Initializer {
     '''
 
     def private initializerImpl(Application it) '''
-        namespace «appNamespace»\Initializer;
+        namespace «appNamespace»\Bundle\Initializer;
 
-        use «appNamespace»\Initializer\Base\Abstract«name.formatForCodeCapital»Initializer;
+        use «appNamespace»\Bundle\Initializer\Base\Abstract«name.formatForCodeCapital»Initializer;
 
         /**
          * Initializer implementation class.

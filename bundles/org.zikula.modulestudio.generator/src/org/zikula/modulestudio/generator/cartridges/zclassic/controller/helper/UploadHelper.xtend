@@ -90,9 +90,9 @@ class UploadHelper {
             protected readonly LoggerInterface $logger,
             protected readonly CurrentUserApiInterface $currentUserApi,
             protected readonly array $imageConfig,
-            #[Autowire('%kernel.project_dir%')]
+            #[Autowire(param: 'kernel.project_dir')]
             protected readonly string $projectDir,
-            #[Autowire('%data_directory%')]
+            #[Autowire(param: 'data_directory')]
             protected readonly string $dataDirectory
         ) {
             $this->setTranslator($translator);

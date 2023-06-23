@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.EmailValidationMode
 import de.guite.modulestudio.metamodel.ReferredApplication
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -13,7 +12,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ComposerFile {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -59,10 +57,9 @@ class ComposerFile {
             «IF hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
                 "egulias/email-validator": "^2",
             «ENDIF»
-            "nucleos/profile-bundle": "^2",
-            "nucleos/user-bundle": "^2",
-            "symfony/maker-bundle": "^1",
-            "zikula/core-bundle": "^«targetZikulaVersion»"«IF !dependencies.empty»,«ENDIF»
+            "zikula/core-bundle": "^«targetZikulaVersion»",
+            "zikula/theme-bundle": "^«targetZikulaVersion»",
+            "zikula/users-bundle": "^«targetZikulaVersion»"«IF !dependencies.empty»,«ENDIF»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
@@ -79,17 +76,6 @@ class ComposerFile {
                 «ENDFOR»
             },
         «ENDIF»
-        "extra": {
-            "zikula": {
-                "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\«appName»",
-                "displayname": "«name.formatForDisplayCapital»",
-                "url": "«name.formatForDB»",
-                "icon": "fas fa-database",
-                "capabilities": {
-                    «generateCapabilities»
-                }
-            }
-        },
         "config": {
             "vendor-dir": "vendor",
             "preferred-install": "dist",
@@ -100,24 +86,6 @@ class ComposerFile {
 
     def private dependency(Application it, ReferredApplication dependency) '''
         "«dependency.name»:>=«dependency.minVersion»«/*,<=«dependency.maxVersion»*/»": "«IF null !== dependency.documentation && !dependency.documentation.empty»«dependency.documentation.formatForDisplay»«ELSE»«dependency.name» application«ENDIF»"
-    '''
-
-    def private generateCapabilities(Application it) '''
-        "admin": {
-            "route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"
-        },
-        "user": {
-            "route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»"
-        }«IF hasCategorisableEntities»,«ENDIF»
-        «IF hasCategorisableEntities»
-            "categorizable": {
-                "entities": [
-                    «FOR entity : getCategorisableEntities»
-                        "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
-                    «ENDFOR»
-                ]
-            }
-        «ENDIF»
     '''
 
     // Reference: http://www.spdx.org/licenses/

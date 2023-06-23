@@ -116,7 +116,7 @@ class Utils {
         switch symfonyVersion {
             case SF70:
                 #['7.0', '6.2'].contains(version)
-            case SF62:
+            case SF63:
                 #['6.2'].contains(version)
             default:
                 true
@@ -134,7 +134,7 @@ class Utils {
         switch symfonyVersion {
             case SF70:
                 '7.0'
-            case SF62:
+            case SF63:
                 '6.2'
         }
     }
@@ -150,7 +150,7 @@ class Utils {
         switch symfonyVersion {
             case SF70:
                 '4.0'
-            case SF62:
+            case SF63:
                 '4.0'
         }
     }

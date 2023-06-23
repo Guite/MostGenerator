@@ -67,7 +67,7 @@ class ImageHelper {
             protected readonly TranslatorInterface $translator,
             protected readonly RequestStack $requestStack,
             «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
-                #[Autowire('%kernel.project_dir%')]
+                #[Autowire(param: 'kernel.project_dir')]
                 protected readonly string $projectDir,
             «ENDIF»
             protected readonly array $imageConfig
@@ -233,7 +233,7 @@ class ImageHelper {
         abstract class AbstractDummySigner implements SignerInterface
         {
             public function __construct(
-                #[Autowire('%kernel.secret%')]
+                #[Autowire(param: 'kernel.secret')]
                 protected readonly string $secret
             ) {
                 $this->secret = $secret;

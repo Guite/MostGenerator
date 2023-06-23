@@ -52,6 +52,9 @@ class ServiceDefinitions {
                 resource: '../../*'
                 exclude: '../../{bootstrap.php,Base/bootstrap.php,Tests,vendor}'
 
+            «appNamespace»\Bundle\MetaData\«name.formatForCodeCapital»BundleMetaData:
+                public: true
+
             «appNamespace»\Helper\:
                 resource: '../../Helper/*'
                 lazy: true

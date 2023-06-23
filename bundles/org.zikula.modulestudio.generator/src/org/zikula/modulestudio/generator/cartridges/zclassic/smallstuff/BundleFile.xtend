@@ -19,10 +19,10 @@ class BundleFile {
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         needsInitializer = if (hasUploads || hasCategorisableEntities) true else false
-        fsa.generateClassPair(appName + '.php', moduleBaseClass, moduleInfoImpl)
+        fsa.generateClassPair(appName + '.php', bundleBaseClass, bundleImpl)
     }
 
-    def private moduleBaseClass(Application it) '''
+    def private bundleBaseClass(Application it) '''
         namespace «appNamespace»\Base;
 
         «moduleBaseImpl»
@@ -30,12 +30,17 @@ class BundleFile {
 
     def private collectBaseImports(Application it) {
         val imports = new ImportList
-        imports.add('Zikula\\CoreBundle\\AbstractModule')
+        imports.addAll(#[
+            'Symfony\\Component\\HttpKernel\\Bundle\\Bundle',
+            'Zikula\\CoreBundle\\Bundle\\MetaData\\BundleMetaDataInterface',
+            'Zikula\\CoreBundle\\Bundle\\MetaData\\MetaDataAwareBundleInterface',
+            appNamespace + '\\Bundle\\MetaData\\' + name.formatForCodeCapital + 'BundleMetaData'
+        ])
         if (needsInitializer) {
             imports.addAll(#[
-                'Zikula\\CoreBundle\\BundleInitializer\\BundleInitializerInterface',
-                'Zikula\\CoreBundle\\BundleInitializer\\InitializableBundleInterface',
-                appNamespace + '\\Initializer\\' + name.formatForCodeCapital + 'Initializer'
+                'Zikula\\CoreBundle\\Bundle\\Initializer\\BundleInitializerInterface',
+                'Zikula\\CoreBundle\\Bundle\\Initializer\\InitializableBundleInterface',
+                appNamespace + '\\Bundle\\Initializer\\' + name.formatForCodeCapital + 'Initializer'
             ])
         }
         imports
@@ -47,9 +52,14 @@ class BundleFile {
         /**
          * Bundle base class.
          */
-        abstract class Abstract«appName» extends AbstractModule«IF needsInitializer» implements InitializableBundleInterface«ENDIF»
+        abstract class Abstract«appName» extends Bundle implements «IF needsInitializer»InitializableBundleInterface, «ENDIF»MetaDataAwareBundleInterface
         {
+            public function getMetaData(): BundleMetaDataInterface
+            {
+                return $this->container->get(«name.formatForCodeCapital»BundleMetaData::class);
+            }
             «IF needsInitializer»
+
                 public function getInitializer(): BundleInitializerInterface
                 {
                     return $this->container->get(«name.formatForCodeCapital»Initializer::class);
@@ -58,7 +68,7 @@ class BundleFile {
         }
     '''
 
-    def private moduleInfoImpl(Application it) '''
+    def private bundleImpl(Application it) '''
         namespace «appNamespace»;
 
         use «appNamespace»\Base\Abstract«appName»;

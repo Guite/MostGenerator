@@ -184,7 +184,7 @@ class Plugins {
             protected readonly ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
             protected readonly LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
             protected readonly MenuBuilder $menuBuilder«ENDIF»«IF hasUploads»,
-            #[Autowire('%kernel.project_dir%')]
+            #[Autowire(param: 'kernel.project_dir')]
             protected readonly string $projectDir«ENDIF»
         ) {
         }

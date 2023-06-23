@@ -10,9 +10,10 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Controll
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Events
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.HelperServices
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Initializer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.bundle.Initializer
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.bundle.MetaData
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.di.Configuration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.di.DependencyInjection
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
@@ -103,6 +104,9 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Bundle initializer')
         'Generating bundle initializer'.printIfNotTesting(fsa)
         new Initializer().generate(it, fsa)
+        pm?.subTask('Controller: Bundle meta data')
+        'Generating bundle meta data'.printIfNotTesting(fsa)
+        new MetaData().generate(it, fsa)
         pm?.subTask('Controller: Controller classes')
         'Generating controller classes'.printIfNotTesting(fsa)
         new ControllerLayer().generate(it, fsa)

@@ -27,28 +27,11 @@ XPECT generated file composer.json ---
     "require": {
         "php": "^8.1",
         "doctrine/doctrine-migrations-bundle": "^3.2",
-        "nucleos/profile-bundle": "^2",
-        "nucleos/user-bundle": "^2",
-        "symfony/maker-bundle": "^1",
-        "zikula/core-bundle": "^4.0"
+        "zikula/core-bundle": "^4.0",
+        "zikula/theme-bundle": "^4.0",
+        "zikula/users-bundle": "^4.0"
     },
     "require-dev": {
-    },
-    "extra": {
-        "zikula": {
-            "class": "Acme\\SimpleTestBundle\\AcmeSimpleTestBundle",
-            "displayname": "Simple test",
-            "url": "simpletest",
-            "icon": "fas fa-database",
-            "capabilities": {
-                "admin": {
-                    "route": "acmesimpletestbundle_article_adminindex"
-                },
-                "user": {
-                    "route": "acmesimpletestbundle_article_index"
-                }
-            }
-        }
     },
     "config": {
         "vendor-dir": "vendor",
