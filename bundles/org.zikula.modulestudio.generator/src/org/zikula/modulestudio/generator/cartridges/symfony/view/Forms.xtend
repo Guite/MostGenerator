@@ -158,8 +158,8 @@ class Forms {
                     <ul class="{{ form.vars.id|lower }}-translation-locales nav nav-tabs" role="tablist">
                         {% for language in supportedLanguages %}
                             <li class="nav-item" role="presentation">
-                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}" class="nav-link{% if language == app.request.locale %} active{% endif %}">
-                                    {% if language != app.request.locale and form[language]|default and not form[language].vars.valid %}
+                                <a href="#" data-toggle="tab" data-target=".{{ form.vars.id|lower }}-translations-fields-{{ language }}" class="nav-link{% if language == app.locale %} active{% endif %}">
+                                    {% if language != app.locale and form[language]|default and not form[language].vars.valid %}
                                         <span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> <span class="sr-only">{% trans from 'messages' %}Errors{% endtrans %}</span></span>
                                     {% endif %}
                                     {% set hasRequiredFields = language in localesWithMandatoryFields %}
@@ -170,10 +170,10 @@ class Forms {
                     </ul>
                     <div class="{{ form.vars.id|lower }}-translation-fields tab-content">
                         {% for language in supportedLanguages %}
-                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.request.locale %} show active{% endif %}">
+                            <div class="{{ form.vars.id|lower }}-translations-fields-{{ language }} tab-pane fade{% if language == app.locale %} show active{% endif %}">
                                 <fieldset>
                                     <legend>{{ language|language_name }}</legend>
-                                    {% if language == app.request.locale %}
+                                    {% if language == app.locale %}
                                         «fieldSet(subElem)»
                                     {% else %}
                                         {{ form_row(attribute(form, 'translations' ~ language)) }}
@@ -184,7 +184,7 @@ class Forms {
                     </div>
                 </div>
             {% else %}
-                {% set language = app.request.locale %}
+                {% set language = app.locale %}
                 <fieldset>
                     <legend>{{ language|language_name }}</legend>
                     «fieldSet(subElem)»
@@ -297,7 +297,7 @@ class Forms {
     def private inlineRedirectHandlerImpl(Application it) '''
         {# purpose of this template: close an iframe from within this iframe #}
         <!DOCTYPE html>
-        <html xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}" dir="auto">
+        <html xml:lang="{{ app.locale }}" lang="{{ app.locale }}" dir="auto">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
             </head>

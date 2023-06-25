@@ -215,7 +215,7 @@ class Layout {
         {# purpose of this template: display pages without the theme #}
         {% trans_default_domain 'messages' %}
         <!DOCTYPE html>
-        <html lang="{{ app.request.locale }}" dir="auto">
+        <html lang="{{ app.locale }}" dir="auto">
         <head>
             <title>{{ block('pageTitle') is defined ? block('pageTitle') : block('title') }}</title>
         </head>
@@ -246,7 +246,7 @@ class Layout {
         {# purpose of this template: export pages to PDF #}
         {% trans_default_domain 'messages' %}
         <!DOCTYPE html>
-        <html lang="{{ app.request.locale }}" dir="auto">
+        <html lang="{{ app.locale }}" dir="auto">
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
             <title>{{ pageGetVar('title') }}</title>

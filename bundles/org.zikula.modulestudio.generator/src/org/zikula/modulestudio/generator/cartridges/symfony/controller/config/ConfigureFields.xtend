@@ -718,6 +718,7 @@ class ConfigureFields implements ControllerMethodInterface {
             'empty_data' => «IF null !== defaultValue && !defaultValue.empty && defaultValue != 'now'»'«defaultValue»'«ELSEIF nullable»''«ELSE»«defaultValueForNow»«ENDIF»,
         «ELSEIF isTimeField»
             'empty_data' => '«defaultValue»',
+            'with_seconds' => false,
         «ENDIF»
         «IF immutable»
             'input' => 'datetime_immutable',

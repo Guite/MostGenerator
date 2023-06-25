@@ -46,7 +46,7 @@ class Rss {
                 <link>{{ app.request.schemeAndHttpHost ~ app.request.basePath }}</link>
                 <atom:link href="{{ app.request.schemeAndHttpHost ~ app.request.basePath ~ app.request.pathInfo }}" rel="self" type="application/rss+xml" />
                 <description>{% trans %}A direct feed showing the list of «nameMultiple.formatForDisplay»{% endtrans %} - {{ siteSlogan() }}</description>
-                <language>{{ app.request.locale }}</language>
+                <language>{{ app.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
                     <title>{{ siteName() }}</title>
@@ -70,7 +70,7 @@ class Rss {
                     {% endif %}
                 «ENDIF»
                 «IF categorisable»
-                    <category><![CDATA[{% trans %}Categories{% endtrans %}: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.request.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
+                    <category><![CDATA[{% trans %}Categories{% endtrans %}: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
                 «ENDIF»
                 «description(objName)»
             </item>

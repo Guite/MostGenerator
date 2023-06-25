@@ -45,7 +45,7 @@ class Atom {
             <id>{{ uniqueID }}</id>
             <updated>{{ «IF standardFields»items[0].updatedDate«ELSE»'now'«ENDIF»|date('Y-m-dTH:M:SZ') }}</updated>
         {% endif %}
-            <link rel="alternate" type="text/html" hreflang="{{ app.request.locale }}" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_«IF hasIndexAction»index«ELSE»«defaultAction»«ENDIF»') }}" />
+            <link rel="alternate" type="text/html" hreflang="{{ app.locale }}" href="{{ url('«app.appName.formatForDB»_«name.formatForDB»_«IF hasIndexAction»index«ELSE»«defaultAction»«ENDIF»') }}" />
             <link rel="self" type="application/atom+xml" href="{{ app.request.schemeAndHttpHost ~ app.request.basePath }}" />
             <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.schemeAndHttpHost }}</rights>
         «val objName = name.formatForCode»
