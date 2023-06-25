@@ -455,14 +455,14 @@ class FormHandler {
                 if ($this->form->isValid()) {
                     $result = $this->handleCommand();
                     if (false === $result) {
-                        $this->templateParameters['form'] = $this->form->createView();
+                        $this->templateParameters['form'] = $this->form;
                     }
 
                     return $result;
                 }
             }
 
-            $this->templateParameters['form'] = $this->form->createView();
+            $this->templateParameters['form'] = $this->form;
 
             // everything okay, no initialisation errors occured
             return true;

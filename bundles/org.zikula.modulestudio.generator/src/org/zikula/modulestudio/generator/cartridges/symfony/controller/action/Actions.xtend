@@ -257,7 +257,7 @@ class Actions {
         }
 
         $templateParameters = [
-            'deleteForm' => $form->createView(),
+            'deleteForm' => $form,
             $objectType => $«name.formatForCode»,
         ];
 

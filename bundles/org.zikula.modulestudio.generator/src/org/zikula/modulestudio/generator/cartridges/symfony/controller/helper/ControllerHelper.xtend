@@ -347,7 +347,7 @@ class ControllerHelper {
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = $sortdir;
             $templateParameters['items'] = $entities;
-            $templateParameters['quickNavForm'] = $quickNavForm->createView();
+            $templateParameters['quickNavForm'] = $quickNavForm;
 
             $request->query->set('sort', $sort);
             $request->query->set('sortdir', $sortdir);
