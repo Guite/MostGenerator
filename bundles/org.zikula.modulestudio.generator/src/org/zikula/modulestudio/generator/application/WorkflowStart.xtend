@@ -102,7 +102,7 @@ class WorkflowStart {
             val progressMonitor = settings.progressMonitor
             progressMonitor.beginTask('Generating "' + settings.appVendor + File.separator + settings.appName + 'Bundle ' + settings.appVersion + '" ...', -1)
 
-            for (singleCartridge : #['zclassic']) { //$NON-NLS-1$
+            for (singleCartridge : #['symfony']) { //$NON-NLS-1$
                 // The generator cartridge to execute
                 currentCartridge = singleCartridge.toString
 
@@ -162,7 +162,7 @@ class WorkflowStart {
 
         // compute destination path for model files
         if (app.writeModelToDocs) {
-            //modelDestinationPath = File.separator + 'zclassic' + File.separator + settings.appName + File.separator
+            //modelDestinationPath = File.separator + 'symfony' + File.separator + settings.appName + File.separator
             var modelDestinationPath = settings.getPathToBundleRoot
             modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             settings.modelDestinationPath = modelDestinationPath

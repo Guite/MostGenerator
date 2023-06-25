@@ -93,7 +93,7 @@ class MostGeneratorTest {
         val context = createGeneratorContext(resource)
 
         val generator = new MostGenerator
-        generator.cartridge = 'zclassic' //$NON-NLS-1$
+        generator.cartridge = 'symfony' //$NON-NLS-1$
 
         generator.beforeGenerate(resource, fsa, context)
         generator.doGenerate(resource, fsa, context)

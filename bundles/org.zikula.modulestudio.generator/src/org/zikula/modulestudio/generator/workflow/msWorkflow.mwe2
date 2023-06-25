@@ -26,7 +26,7 @@ var vendorName
 var modelName
 // The path where to find the model, without trailing slash
 var modelPath
-// The generator cartridge to execute (zclassic, reporting)
+// The generator cartridge to execute (symfony, reporting)
 var cartridgeName
 
 // whether to validate the model before processing

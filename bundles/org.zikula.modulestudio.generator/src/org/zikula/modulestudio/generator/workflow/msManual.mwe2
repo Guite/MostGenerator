@@ -26,7 +26,7 @@ Workflow {
         vendorName = vendorName
         modelName = name
         modelPath = modelPath
-        cartridgeName = 'zclassic'
+        cartridgeName = 'symfony'
         targetDir = targetDir
         // whether to validate the model before processing
         doValidation = 'true'

@@ -9,7 +9,7 @@ import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.ZclassicGenerator
+import org.zikula.modulestudio.generator.cartridges.symfony.SymfonyBundleGenerator
 import org.zikula.modulestudio.generator.extensions.transformation.PersistenceTransformer
 
 class MostGenerator extends GeneratorDelegate implements IGenerator, IGenerator2 {
@@ -29,8 +29,8 @@ class MostGenerator extends GeneratorDelegate implements IGenerator, IGenerator2
             app.transform(mostFsa)
         }
 
-        if ('zclassic'.equals(cartridge)) { //$NON-NLS-1$
-            new ZclassicGenerator().generate(app, mostFsa, monitor)
+        if ('symfony'.equals(cartridge)) { //$NON-NLS-1$
+            new SymfonyBundleGenerator().generate(app, mostFsa, monitor)
         }
         //else if ('something'.equals(cartridge)) //$NON-NLS-1$
         //    new SomethingGenerator().generate(app, mostFsa, monitor)
