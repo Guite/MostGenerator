@@ -7,7 +7,11 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscrib
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.IpTraceSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.KernelSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.LoggableSubscriber
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.MailerSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.ThemeSubscriber
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserAuthenticationSubscriber
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserCredentialSubscriber
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserProfileSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserRegistrationSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserSubscriber
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.WorkflowSubscriber
@@ -16,9 +20,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserAuthenticationSubscriber
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserCredentialSubscriber
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.subscriber.UserProfileSubscriber
 
 class EventSubscribers {
 
@@ -59,6 +60,7 @@ class EventSubscribers {
     def private generateSubscriberClasses(Application it) {
         subscriberFile('FormTypeChoices', formTypeChoicesFile)
         subscriberFile('Kernel', subscribersKernelFile)
+        subscriberFile('Mailer', subscribersMailerFile)
         subscriberFile('Theme', subscribersThemeFile)
         subscriberFile('UserAuthentication', subscribersUserAuthenticationFile)
         subscriberFile('UserCredential', subscribersUserCredentialFile)
@@ -127,6 +129,33 @@ class EventSubscribers {
         {
             «IF isBase»
                 «new KernelSubscriber().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
+        }
+    '''
+
+    def private subscribersMailerFile(Application it) '''
+        namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
+
+        «IF !isBase»
+            use «appNamespace»\EventSubscriber\Base\AbstractMailerSubscriber;
+        «ELSE»
+            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            use Symfony\Component\Mailer\Event\FailedMessageEvent;
+            use Symfony\Component\Mailer\Event\MessageEvent;
+            use Symfony\Component\Mailer\Event\SentMessageEvent;
+            use Symfony\Component\Mailer\SentMessage;
+            use Symfony\Component\Mime\Email;
+        «ENDIF»
+
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailer events.
+         */
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»MailerSubscriber«IF !isBase» extends AbstractMailerSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
+        {
+            «IF isBase»
+                «new MailerSubscriber().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
