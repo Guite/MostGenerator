@@ -255,6 +255,10 @@ class ValidationConstraints {
         if (!maxSize.empty) {
             constraints += '''maxSize: '«maxSize»'«''»'''
         }
+
+        val extensionsString = '\'' + allowedExtensions.split(', ').join('\', \'') + '\''
+        constraints += '''extensions: [«extensionsString»]'''
+
         if (!mimeTypes.empty && '*' != mimeTypes) {
             val mimeTypesList = mimeTypes.replaceAll(', ', ',').split(',')
             var mimeTypeString = '\'' + mimeTypesList.join('\', \'') + '\''
