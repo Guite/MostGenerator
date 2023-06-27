@@ -195,6 +195,7 @@ class ValidationConstraints {
             #[Assert\Ip(version: '«ipAddress.ipScopeAsConstant»')]
         «ELSEIF role == StringRole.PASSWORD»
             #[Assert\NotCompromisedPassword]
+            #[Assert\PasswordStrength]
         «ELSEIF role == StringRole.TIME_ZONE»
             #[Assert\Timezone]
         «ELSEIF role == StringRole.ULID»
@@ -230,6 +231,7 @@ class ValidationConstraints {
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
         #[Assert\Url]
+        #[Assert\NoSuspiciousCharacters]
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
