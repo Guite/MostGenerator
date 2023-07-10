@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.FormTypeChoicesSubscriber
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.IpTraceSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.KernelSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.LoggableSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.MailerSubscriber
@@ -68,9 +67,6 @@ class EventSubscribers {
         subscriberFile('UserProfile', subscribersUserProfileFile)
         subscriberFile('UserRegistration', subscribersUserRegistrationFile)
 
-        if (!getAllEntities.filter[hasIpTraceableFields].empty) {
-            subscriberFile('IpTrace', subscribersIpTraceFile)
-        }
         if (hasLoggable) {
             subscriberFile('Loggable', subscribersLoggableFile)
         }
@@ -330,34 +326,6 @@ class EventSubscribers {
         {
             «IF isBase»
                 «new UserRegistrationSubscriber().generate(it)»
-            «ELSE»
-                // feel free to enhance the parent methods
-            «ENDIF»
-        }
-    '''
-
-    def private subscribersIpTraceFile(Application it) '''
-        namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\EventSubscriber\Base\AbstractIpTraceSubscriber;
-        «ELSE»
-            use Gedmo\IpTraceable\IpTraceableSubscriber;
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\HttpFoundation\RequestStack;
-            use Symfony\Component\HttpKernel\Event\RequestEvent;
-            use Symfony\Component\HttpKernel\KernelEvents;
-        «ENDIF»
-
-        /**
-         * Event handler implementation class for ip traceable support.
-         *
-         * Can be removed after https://github.com/stof/StofDoctrineExtensionsBundle/pull/233 has been merged.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»IpTraceSubscriber«IF !isBase» extends AbstractIpTraceSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «IF isBase»
-                «new IpTraceSubscriber().generate(it)»
             «ELSE»
                 // feel free to enhance the parent methods
             «ENDIF»
