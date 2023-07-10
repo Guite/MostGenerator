@@ -26,13 +26,18 @@ class LifecycleListener {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
-            'Doctrine\\Common\\EventSubscriber',
+            'Doctrine\\Bundle\\DoctrineBundle\\Attribute\\AsDoctrineListener',
             'Doctrine\\ORM\\Event\\OnFlushEventArgs',
             'Doctrine\\ORM\\Event\\PostFlushEventArgs',
+            'Doctrine\\ORM\\Event\\PostLoadEventArgs',
+            'Doctrine\\ORM\\Event\\PostPersistEventArgs',
+            'Doctrine\\ORM\\Event\\PostRemoveEventArgs',
+            'Doctrine\\ORM\\Event\\PostUpdateEventArgs',
             'Doctrine\\ORM\\Event\\PreFlushEventArgs',
+            'Doctrine\\ORM\\Event\\PrePersistEventArgs',
+            'Doctrine\\ORM\\Event\\PreRemoveEventArgs',
             'Doctrine\\ORM\\Event\\PreUpdateEventArgs',
             'Doctrine\\ORM\\Events',
-            'Doctrine\\Persistence\\Event\\LifecycleEventArgs',
             'Psr\\Log\\LoggerInterface',
             'Symfony\\Component\\DependencyInjection\\ContainerAwareInterface',
             'Symfony\\Component\\DependencyInjection\\ContainerAwareTrait',
@@ -64,9 +69,12 @@ class LifecycleListener {
         «collectBaseImports.print»
 
         /**
-         * Event subscriber base class for entity lifecycle events.
+         * Event listener base class for entity lifecycle events.
          */
-        abstract class AbstractEntityLifecycleListener implements EventSubscriber, ContainerAwareInterface
+        «FOR event : #['preFlush', 'onFlush', 'postFlush', 'preRemove', 'postRemove', 'prePersist', 'postPersist', 'preUpdate', 'postUpdate', 'postLoad']»
+        #[AsDoctrineListener(event: Events::«event»)]
+        «ENDFOR»
+        abstract class AbstractEntityLifecycleListener implements ContainerAwareInterface
         {
             use ContainerAwareTrait;
 
@@ -79,27 +87,6 @@ class LifecycleListener {
                 protected readonly LoggerInterface $logger«IF hasLoggable»
                 protected readonly array $loggableConfig«ENDIF»
             ) {
-            }
-
-            /**
-             * Returns list of events to subscribe.
-             *
-             * @return string[] List of events
-             */
-            public function getSubscribedEvents(): array
-            {
-                return [
-                    Events::preFlush,
-                    Events::onFlush,
-                    Events::postFlush,
-                    Events::preRemove,
-                    Events::postRemove,
-                    Events::prePersist,
-                    Events::postPersist,
-                    Events::preUpdate,
-                    Events::postUpdate,
-                    Events::postLoad,
-                ];
             }
 
             /**
@@ -139,7 +126,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preremove
              */
-            public function preRemove(LifecycleEventArgs $args): void
+            public function preRemove(PreRemoveEventArgs $args): void
             {
                 /** @var EntityInterface $entity */
                 $entity = $args->getObject();
@@ -162,7 +149,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
              */
-            public function postRemove(LifecycleEventArgs $args): void
+            public function postRemove(PostRemoveEventArgs $args): void
             {
                 /** @var EntityInterface $entity */
                 $entity = $args->getObject();
@@ -185,7 +172,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#prepersist
              */
-            public function prePersist(LifecycleEventArgs $args): void
+            public function prePersist(PrePersistEventArgs $args): void
             {
                 /** @var EntityInterface $entity */
                 $entity = $args->getObject();
@@ -205,7 +192,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
              */
-            public function postPersist(LifecycleEventArgs $args): void
+            public function postPersist(PostPersistEventArgs $args): void
             {
                 /** @var EntityInterface $entity */
                 $entity = $args->getObject();
@@ -243,7 +230,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postupdate-postremove-postpersist
              */
-            public function postUpdate(LifecycleEventArgs $args): void
+            public function postUpdate(PostUpdateEventArgs $args): void
             {
                 /** @var EntityInterface $entity */
                 $entity = $args->getObject();
@@ -267,7 +254,7 @@ class LifecycleListener {
              *
              * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postload
              */
-            public function postLoad(LifecycleEventArgs $args): void
+            public function postLoad(PostLoadEventArgs $args): void
             {
                 /** @var EntityInterface $entity */
                 $entity = $args->getObject();
@@ -368,6 +355,7 @@ class LifecycleListener {
                         }
                     «ENDIF»
 
+                    «/* TODO remove me
                     $currentUserApi = $this->container->get(CurrentUserApi::class);
                     $userName = $currentUserApi->isLoggedIn()
                         ? $currentUserApi->get('uname')
@@ -376,6 +364,7 @@ class LifecycleListener {
 
                     $customLoggableListener->setUsername($userName);
 
+                    */»
                     $eventManager->addEventSubscriber($customLoggableListener);
                 }
             «ENDIF»
@@ -388,7 +377,7 @@ class LifecycleListener {
         use «appNamespace»\EventListener\Base\AbstractEntityLifecycleListener;
 
         /**
-         * Event subscriber implementation class for entity lifecycle events.
+         * Event listener implementation class for entity lifecycle events.
          */
         class EntityLifecycleListener extends AbstractEntityLifecycleListener
         {

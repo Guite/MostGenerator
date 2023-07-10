@@ -82,7 +82,6 @@ class ServiceDefinitions {
         «ENDIF»
 
         «appNamespace»\EventListener\EntityLifecycleListener:
-            tags: ['doctrine.event_subscriber']
             calls:
                 - [ setContainer, [ '@service_container' ]]
         «IF hasLoggable»
