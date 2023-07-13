@@ -352,7 +352,7 @@ application "SimpleNews" {
         entity "article6" {
             nameMultiple "articles6"
             displayPattern "#usr1#"
-            identifierStrategy TABLE
+            identifierStrategy IDENTITY
             lockType PESSIMISTIC_READ
             slugStyle LOWERCASE
             fields {

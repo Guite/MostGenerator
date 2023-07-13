@@ -24,7 +24,7 @@ application "SimpleNews" targets SF70 {
             documentation "My article"
             nameMultiple "articles"
             displayPattern "#title#"
-            identifierStrategy TABLE
+            identifierStrategy IDENTITY
             changeTrackingPolicy DEFERRED_IMPLICIT
             lockType OPTIMISTIC
             slugLength 50
