@@ -291,18 +291,18 @@ class TechStructureEntity {
 
     def dispatch private enumDescription(EntityIdentifierStrategy it) {
         switch it {
-            case NONE:
-                return if (language == 'de') 'Keine explizite Strategie.' else 'No explicit strategy.'
             case AUTO:
                 return if (language == 'de') 'Automatische Auswahl.' else 'Choose automatically.'
             case SEQUENCE:
                 return if (language == 'de') 'Verwendet eine Datenbanksequenz.' else 'Uses a database sequence.'
-            case TABLE:
-                return if (language == 'de') 'Verwendet eine Datenbanktabelle mit einem Datensatz und einen Hi/Lo Algorithmus.' else 'Uses a single-row database table and a hi/lo algorithm.'
             case IDENTITY:
-                return if (language == 'de') 'Holt IDs von speziellen Identitätsspalten (auto_increment).' else 'Obtains IDs from special identity columns (auto_increment).'
+                return if (language == 'de') 'Verwendet spezielle Identitätsspalten (auto_increment).' else 'Uses special identity columns (auto_increment).'
+            case NONE:
+                return if (language == 'de') 'Keine explizite Strategie.' else 'No explicit strategy.'
             case UUID:
                 return if (language == 'de') 'Generiert Universally Unique Identifier.' else 'Generates universally unique identifiers.'
+            case ULID:
+                return if (language == 'de') 'Generiert Universally Unique Lexicographically Sortable Identifier.' else 'Generates universally unique lexicographically sortable identifiers.'
             case CUSTOM:
                 return if (language == 'de') 'Eigene Strategie.' else 'Custom strategy.'
         }
@@ -338,6 +338,8 @@ class TechStructureEntity {
                 return if (language == 'de') 'normaler Index' else 'normal index'
             case UNIQUE:
                 return if (language == 'de') 'eindeutiger Index' else 'unique index'
+            case FULLTEXT:
+                return if (language == 'de') 'Volltext Index' else 'fulltext index'
         }
     }
 }
