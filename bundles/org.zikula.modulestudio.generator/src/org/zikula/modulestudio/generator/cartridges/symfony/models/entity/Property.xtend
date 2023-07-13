@@ -86,7 +86,12 @@ class Property {
             «IF primaryKey»
                 #[ORM\Id]
                 «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy.NONE»
-                    #[ORM\GeneratedValue(strategy: '«(entity as Entity).identifierStrategy.literal»')]
+                    «IF #[EntityIdentifierStrategy.UUID, EntityIdentifierStrategy.ULID].contains((entity as Entity).identifierStrategy)»
+                        #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+                        #[ORM\CustomIdGenerator(class: 'doctrine.«(entity as Entity).identifierStrategy.literal.toLowerCase»_generator')]
+                    «ELSE»
+                        #[ORM\GeneratedValue(strategy: '«(entity as Entity).identifierStrategy.literal»')]
+                    «ENDIF»
                 «ENDIF»
             «ENDIF»
             «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»

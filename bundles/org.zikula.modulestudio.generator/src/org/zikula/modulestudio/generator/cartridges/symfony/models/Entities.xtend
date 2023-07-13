@@ -7,10 +7,12 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.EntityIndex
 import de.guite.modulestudio.metamodel.EntityIndexItem
+import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.EntityConstructor
@@ -26,8 +28,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
-import de.guite.modulestudio.metamodel.EntityIndexType
 
 class Entities {
 
