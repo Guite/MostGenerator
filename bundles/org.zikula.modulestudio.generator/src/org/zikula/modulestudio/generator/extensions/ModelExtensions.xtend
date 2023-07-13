@@ -224,7 +224,7 @@ class ModelExtensions {
      * Returns a list of all normal (non-unique) indexes for this entity.
      */
     def getNormalIndexes(Entity it) {
-        indexes.filter[type == EntityIndexType.NORMAL]
+        indexes.filter[type == EntityIndexType.NORMAL || type == EntityIndexType.FULLTEXT]
     }
 
     /**

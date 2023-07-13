@@ -27,6 +27,7 @@ import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.application.ImportList
+import de.guite.modulestudio.metamodel.EntityIndexType
 
 class Entities {
 
@@ -374,7 +375,7 @@ class Entities {
     '''
 
     def private index(EntityIndex it, String indexType) '''
-        #[ORM\«indexType.toFirstUpper»(name: '«name.formatForDB»', «IF 'Index' == indexType»fields«ELSE»columns«ENDIF»: [«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»])]
+        #[ORM\«indexType.toFirstUpper»(name: '«name.formatForDB»', fields: [«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»]«IF type == EntityIndexType.FULLTEXT», flags: ['fulltext']«ENDIF»)]
     '''
     def private indexField(EntityIndexItem it) '''«''»'«indexItemForEntity»'«''»'''
 

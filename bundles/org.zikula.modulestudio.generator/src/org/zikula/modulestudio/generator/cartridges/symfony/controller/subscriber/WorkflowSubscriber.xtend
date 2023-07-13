@@ -68,7 +68,7 @@ class WorkflowSubscriber {
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
-            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+            if (!$this->isEntityManagedByThisBundle($entity)) {
                 return;
             }
         }
@@ -84,7 +84,7 @@ class WorkflowSubscriber {
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
-            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+            if (!$this->isEntityManagedByThisBundle($entity)) {
                 return;
             }
         }
@@ -100,7 +100,7 @@ class WorkflowSubscriber {
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
-            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+            if (!$this->isEntityManagedByThisBundle($entity)) {
                 return;
             }
         }
@@ -117,7 +117,7 @@ class WorkflowSubscriber {
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
-            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+            if (!$this->isEntityManagedByThisBundle($entity)) {
                 return;
             }
         }
@@ -148,7 +148,7 @@ class WorkflowSubscriber {
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
-            if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+            if (!$this->isEntityManagedByThisBundle($entity)) {
                 return;
             }
         }
