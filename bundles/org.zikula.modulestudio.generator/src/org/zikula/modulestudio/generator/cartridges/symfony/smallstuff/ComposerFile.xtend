@@ -46,7 +46,7 @@ class ComposerFile {
         },
         "require": {
             «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
-            "php": "^8.1",
+            "php": ">=8.2",
             "doctrine/doctrine-migrations-bundle": "^3.2",
             «IF generatePdfSupport»
                 "dompdf/dompdf": "^2",
