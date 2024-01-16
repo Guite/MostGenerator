@@ -145,10 +145,6 @@ class Entities {
                 imports.add('Doctrine\\Common\\Collections\\Collection')
             }
         }
-        if (isBase && hasNotifyPolicy) {
-            imports.add('Doctrine\\Common\\NotifyPropertyChanged')
-            imports.add('Doctrine\\Common\\PropertyChangedListener')
-        }
         if (isBase || loggable || hasTranslatableFields || tree != EntityTreeType.NONE) {
             imports.add('Gedmo\\Mapping\\Annotation as Gedmo')
         }
@@ -236,7 +232,7 @@ class Entities {
          * inherit orm properties.
          */
         #[ORM\MappedSuperclass]
-        abstract class Abstract«name.formatForCodeCapital»«IF isInheriting» extends BaseEntity«ENDIF» implements AbstractEntityInterface«IF it instanceof Entity»«IF it.hasNotifyPolicy», NotifyPropertyChanged«ENDIF»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»«IF isInheriting» extends BaseEntity«ENDIF» implements AbstractEntityInterface«IF it instanceof Entity»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
         {
             «modelEntityBaseImplBody(app)»
         }
@@ -255,13 +251,6 @@ class Entities {
          * The tablename this object maps to
          */
         protected string $_objectType = '«name.formatForCode»';
-        «IF it instanceof Entity && (it as Entity).hasNotifyPolicy»
-
-            /**
-             * List of change notification listeners
-             */
-            protected array $_propertyChangedListeners = [];
-        «ENDIF»
         «IF hasUploadFieldsEntity»
 
             /**

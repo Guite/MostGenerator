@@ -12,7 +12,6 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.EmailValidationMode
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
@@ -28,11 +27,11 @@ import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.TextRole
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
-import de.guite.modulestudio.metamodel.TextRole
 
 /**
  * This class contains model related extension methods.
@@ -639,13 +638,6 @@ class ModelExtensions {
             case PESSIMISTIC_WRITE          : 'PESSIMISTIC_WRITE'
             default: ''
         }
-    }
-
-    /**
-     * Checks whether this entity has enabled the notify tracking policy.
-     */
-    def hasNotifyPolicy(Entity it) {
-        changeTrackingPolicy == EntityChangeTrackingPolicy.NOTIFY
     }
 
     /**

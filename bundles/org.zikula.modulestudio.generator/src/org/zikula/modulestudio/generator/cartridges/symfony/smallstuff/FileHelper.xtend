@@ -5,22 +5,17 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
-import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class FileHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
@@ -88,18 +83,11 @@ class FileHelper {
         }
     '''
 
-    def triggerPropertyChangeListeners(DerivedField it, String name) '''
-        «IF null !== entity && ((entity instanceof Entity && (entity as Entity).hasNotifyPolicy) || entity.getInheritingEntities.exists[hasNotifyPolicy])»
-            $this->_onPropertyChanged('«name.formatForCode»', $this->«name.formatForCode», $«name»);
-        «ENDIF»
-    '''
-
     def private dispatch setterMethodImpl(DerivedField it, String name, String type, Boolean nullable) '''
         «IF it instanceof NumberField»
             $«name» = «IF it.numberType == NumberFieldType::DECIMAL»(string) «ENDIF»round((float) $«name», «scale»);
         «ENDIF»
         if ($this->«name.formatForCode» !== $«name») {
-            «triggerPropertyChangeListeners(name)»
             «setterAssignment(name)»
         }
     '''

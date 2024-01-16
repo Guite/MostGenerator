@@ -32,7 +32,6 @@ class EntityMethods {
     '''
 
     def dispatch generate(Entity it, Application app, Property thProp) '''
-        «propertyChangedListener»
         «validationMethods»
 
         «createUrlArgs»
@@ -53,34 +52,6 @@ class EntityMethods {
 
                 «thVal.validationMethods(timeField)»
             «ENDFOR»
-        «ENDIF»
-    '''
-
-    def private propertyChangedListener(Entity it) '''
-        «IF hasNotifyPolicy»
-            /**
-             * Adds a property change listener.
-             */
-            public function addPropertyChangedListener(PropertyChangedListener $listener): void
-            {
-                $this->_propertyChangedListeners[] = $listener;
-            }
-
-            /**
-             * Notify all registered listeners about a changed property.
-             *
-             * @param mixed $oldValue The old property value
-             * @param mixed $newValue The new property value
-             */
-            protected function _onPropertyChanged(string $propName, $oldValue, $newValue): void
-            {
-                if ($this->_propertyChangedListeners) {
-                    foreach ($this->_propertyChangedListeners as $listener) {
-                        $listener->propertyChanged($this, $propName, $oldValue, $newValue);
-                    }
-                }
-            }
-
         «ENDIF»
     '''
 
