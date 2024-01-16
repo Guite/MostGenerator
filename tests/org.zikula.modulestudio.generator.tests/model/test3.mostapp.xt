@@ -26,7 +26,7 @@ application "SimpleNews" targets SF70 {
             nameMultiple "articles"
             displayPattern "#title#"
             identifierStrategy IDENTITY
-            changeTrackingPolicy NOTIFY
+            changeTrackingPolicy DEFERRED_EXPLICIT
             lockType PESSIMISTIC_WRITE
             slugLength 50
             slugUpdatable true
