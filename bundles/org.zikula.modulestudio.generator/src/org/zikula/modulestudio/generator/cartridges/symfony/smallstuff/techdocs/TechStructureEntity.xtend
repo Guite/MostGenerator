@@ -314,8 +314,6 @@ class TechStructureEntity {
                 return if (language == 'de') 'Änderungen werden durch Vergleich der Eigenschaften während des Commits ermittelt.' else 'Changes are determined by comparing properties during commit.'
             case DEFERRED_EXPLICIT:
                 return if (language == 'de') 'Änderungen werden durch Scannen lediglich der für Änderungserkennung markierten Entitäten ermittelt.' else 'Changes are determined by scanning only entities marked for change detection.'
-            case NOTIFY:
-                return if (language == 'de') 'Änderungen werden durch die Annahme, dass Entitäten Listener über ihre Änderungen informieren, ermittelt.' else 'Changes are determined by assuming that entities inform listeners about their changes.'
         }
     }
 
