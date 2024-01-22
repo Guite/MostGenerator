@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.techdocs
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Variables
@@ -30,44 +29,11 @@ class TechStructure {
 
     def private content(Application it) '''
         «helper.basicInfo(it, language)»
-        «IF !referredApplications.empty»
-            <h2><i class="fas fa-link"></i> «IF language == 'de'»Abhängigkeiten«ELSE»Dependencies«ENDIF»</h2>
-            «helper.table(it, dependenciesColumns, dependenciesHeader, dependenciesContent)»
-        «ENDIF»
         «entityInfo»
         «IF needsConfig»
             «variableInfo»
         «ENDIF»
         «settingsInfo»
-    '''
-
-    def private dependenciesColumns(Application it) '''
-        <colgroup>
-            <col id="cDepApplicationName" />
-            <col id="cDepMinVersion" />
-            <col id="cDepMaxVersion" />
-            <col id="cDepType" />
-        </colgroup>
-    '''
-
-    def private dependenciesHeader(Application it) '''
-        <tr>
-            <th id="hDepApplicationName" scope="col">«IF language == 'de'»Anwendung«ELSE»Application«ENDIF»</th>
-            <th id="hDepMinVersion" scope="col">«IF language == 'de'»Min. Version«ELSE»Min version«ENDIF»</th>
-            <th id="hDepMaxVersion" scope="col">«IF language == 'de'»Max. Version«ELSE»Max version«ENDIF»</th>
-            <th id="hDepType" scope="col">«IF language == 'de'»Art der Abhängigkeit«ELSE»Dependency type«ENDIF»</th>
-        </tr>
-    '''
-
-    def private dependenciesContent(Application it) '''
-        «FOR referredApp : referredApplications»
-            <tr>
-                <th id="hDep«referredApp.name.formatForCodeCapital»" scope="row" headers="hDepApplicationName">«referredApp.name.formatForCodeCapital»</th>
-                <td headers="hDepMinVersion hDep«referredApp.name.formatForCodeCapital»">«referredApp.minVersion»</td>
-                <td headers="hDepMaxVersion hDep«referredApp.name.formatForCodeCapital»">«referredApp.maxVersion»</td>
-                <td headers="hDepType hDep«referredApp.name.formatForCodeCapital»">«referredApp.dependencyType.literal» &ndash; «referredApp.dependencyType.dependencyTypeDescription»</td>
-            </tr>
-        «ENDFOR»
     '''
 
     def dispatch private CharSequence entityInfo(Application it) '''
@@ -135,15 +101,4 @@ class TechStructure {
         <h2><i class="fas fa-puzzle-piece"></i> «IF language == 'de'»Integrationseinstellungen«ELSE»Integration settings«ENDIF»</h2>
         «new TechStructureSettings().generate(it, language)»
     '''
-
-    def private dependencyTypeDescription(ApplicationDependencyType it) {
-        switch (it) {
-            case REQUIREMENT:
-                return if (language == 'de') 'wird benötigt, zum Beispiel zum Verknüpfen verbundener Entitäten' else 'is required, for example to join related entities'
-            case RECOMMENDATION:
-                return if (language == 'de') 'wird empfohlen, zum Beispiel zum Anbieten erweiterter Integrationsfunktionen' else 'is recommended, for example to provide enhanced integration functionality'
-            case CONFLICT:
-                return if (language == 'de') 'steht in Konflikt, zum Beispiel auf Grund überlappender Funktionalität' else 'is in conflict, for example due to overlapping functionality'
-        }
-    }
 }

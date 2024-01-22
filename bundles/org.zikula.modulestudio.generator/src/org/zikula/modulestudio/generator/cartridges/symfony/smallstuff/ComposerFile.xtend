@@ -1,9 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.EmailValidationMode
-import de.guite.modulestudio.metamodel.ReferredApplication
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -45,7 +43,6 @@ class ComposerFile {
             "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\": "" }
         },
         "require": {
-            «var dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.REQUIREMENT]»
             "php": ">=8.2",
             "doctrine/doctrine-migrations-bundle": "^3.2",
             «IF generatePdfSupport»
@@ -62,33 +59,16 @@ class ComposerFile {
             «ENDIF»
             "zikula/core-bundle": "^«targetZikulaVersion»",
             "zikula/theme-bundle": "^«targetZikulaVersion»",
-            "zikula/users-bundle": "^«targetZikulaVersion»"«IF !dependencies.empty»,«ENDIF»
-            «IF !dependencies.empty»
-                «FOR referredApp : dependencies»
-                    «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
-                «ENDFOR»
-            «ENDIF»
+            "zikula/users-bundle": "^«targetZikulaVersion»"
         },
         "require-dev": {
         },
-        «{ dependencies = referredApplications.filter[dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
-        «IF !dependencies.empty»
-            "suggest": {
-                «FOR referredApp : dependencies»
-                    «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
-                «ENDFOR»
-            },
-        «ENDIF»
         "config": {
             "vendor-dir": "vendor",
             "preferred-install": "dist",
             "optimize-autoloader": true,
             "sort-packages": true
         }
-    '''
-
-    def private dependency(Application it, ReferredApplication dependency) '''
-        "«dependency.name»:>=«dependency.minVersion»«/*,<=«dependency.maxVersion»*/»": "«IF null !== dependency.documentation && !dependency.documentation.empty»«dependency.documentation.formatForDisplay»«ELSE»«dependency.name» application«ENDIF»"
     '''
 
     // Reference: http://www.spdx.org/licenses/
