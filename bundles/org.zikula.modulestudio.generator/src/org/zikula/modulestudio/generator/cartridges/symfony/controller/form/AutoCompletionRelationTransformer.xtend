@@ -48,7 +48,7 @@ class AutoCompletionRelationTransformer {
             /**
              * Transforms a single object or a list of objects to a string with identifiers.
              */
-            public function transform($entities)
+            public function transform(mixed $entities): mixed
             {
                 $result = '';
                 if (null === $entities) {
@@ -78,7 +78,7 @@ class AutoCompletionRelationTransformer {
              *
              * @throws TransformationFailedException if entity is not found
              */
-            public function reverseTransform($value): mixed
+            public function reverseTransform(mixed $value): mixed
             {
                 if (!$value) {
                     return $this->isMultiple ? new ArrayCollection() : null;

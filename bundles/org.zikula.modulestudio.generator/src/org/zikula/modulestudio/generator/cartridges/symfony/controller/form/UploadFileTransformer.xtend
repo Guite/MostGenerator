@@ -52,7 +52,7 @@ class UploadFileTransformer {
             /**
              * Transforms a filename to the corresponding upload input array.
              */
-            public function transform($file)
+            public function transform(mixed $file): mixed
             {
                 return [
                     $this->fieldName => $file,
@@ -63,7 +63,7 @@ class UploadFileTransformer {
             /**
              * Transforms a result array back to the File object.
              */
-            public function reverseTransform($data): mixed
+            public function reverseTransform(mixed $data): mixed
             {
                 $deleteFile = false;
                 $uploadedFile = null;
