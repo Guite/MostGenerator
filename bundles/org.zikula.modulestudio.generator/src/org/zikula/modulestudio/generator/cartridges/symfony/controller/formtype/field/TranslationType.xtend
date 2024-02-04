@@ -42,12 +42,12 @@ class TranslationType {
             {
             }
 
-            public function buildForm(FormBuilderInterface $builder, array $options)
+            public function buildForm(FormBuilderInterface $builder, array $options): void
             {
                 $builder->addEventSubscriber($this->translationListener);
             }
 
-            public function configureOptions(OptionsResolver $resolver)
+            public function configureOptions(OptionsResolver $resolver): void
             {
                 $resolver
                     ->setDefaults([

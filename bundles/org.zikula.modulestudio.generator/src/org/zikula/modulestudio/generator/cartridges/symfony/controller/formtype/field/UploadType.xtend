@@ -64,7 +64,7 @@ class UploadType {
             ) {
             }
 
-            public function buildForm(FormBuilderInterface $builder, array $options)
+            public function buildForm(FormBuilderInterface $builder, array $options): void
             {
                 $options['compound'] = false;
                 $fieldName = $builder->getName();
@@ -112,7 +112,7 @@ class UploadType {
                 «ENDIF»
             }
 
-            public function buildView(FormView $view, FormInterface $form, array $options)
+            public function buildView(FormView $view, FormInterface $form, array $options): void
             {
                 $fieldName = $form->getConfig()->getName();
 
@@ -170,7 +170,7 @@ class UploadType {
                 «ENDIF»
             }
 
-            public function configureOptions(OptionsResolver $resolver)
+            public function configureOptions(OptionsResolver $resolver): void
             {
                 $resolver
                     ->setRequired(['entity'])

@@ -129,7 +129,7 @@ class EditEntityType {
             ) {
             }
 
-            public function buildForm(FormBuilderInterface $builder, array $options)
+            public function buildForm(FormBuilderInterface $builder, array $options): void
             {
                 «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
                     if ('create' === $options['mode']) {
@@ -192,7 +192,7 @@ class EditEntityType {
                 return '«app.appName.formatForDB»_«name.formatForDB»';
             }
 
-            public function configureOptions(OptionsResolver $resolver)
+            public function configureOptions(OptionsResolver $resolver): void
             {
                 $resolver
                     ->setDefaults([

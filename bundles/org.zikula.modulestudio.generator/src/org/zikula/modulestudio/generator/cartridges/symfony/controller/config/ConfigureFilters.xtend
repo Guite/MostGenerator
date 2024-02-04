@@ -251,7 +251,7 @@ class ConfigureFilters implements ControllerMethodInterface {
         ) {
         }
 
-        public function buildForm(FormBuilderInterface $builder, array $options)
+        public function buildForm(FormBuilderInterface $builder, array $options): void
         {
             «IF !incomingRelations.empty»
                 $this->addIncomingRelationshipFields($builder, $options);

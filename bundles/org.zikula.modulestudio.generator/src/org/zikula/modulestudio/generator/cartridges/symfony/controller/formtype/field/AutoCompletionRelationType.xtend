@@ -49,13 +49,13 @@ class AutoCompletionRelationType {
             {
             }
 
-            public function buildForm(FormBuilderInterface $builder, array $options)
+            public function buildForm(FormBuilderInterface $builder, array $options): void
             {
                 $transformer = new AutoCompletionRelationTransformer($this->entityFactory, $options['object_type'], $options['multiple']);
                 $builder->addModelTransformer($transformer);
             }
 
-            public function buildView(FormView $view, FormInterface $form, array $options)
+            public function buildView(FormView $view, FormInterface $form, array $options): void
             {
                 $view->vars['object_type'] = $options['object_type'];
                 $view->vars['multiple'] = $options['multiple'];
@@ -69,7 +69,7 @@ class AutoCompletionRelationType {
                 «ENDIF»
             }
 
-            public function configureOptions(OptionsResolver $resolver)
+            public function configureOptions(OptionsResolver $resolver): void
             {
                 parent::configureOptions($resolver);
 
