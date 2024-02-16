@@ -257,7 +257,7 @@ class CollectionFilterHelper {
                 }
                 «IF categorisable»
                     if ('catId' === $k) {
-                        if (0 < (int) $v) {
+                        if (0 < (int) $v && in_array('tblCategories', $qb->getAllAliases(), true)) {
                             // single category filter
                             $qb->andWhere('tblCategories.category = :category')
                                ->setParameter('category', $v);
