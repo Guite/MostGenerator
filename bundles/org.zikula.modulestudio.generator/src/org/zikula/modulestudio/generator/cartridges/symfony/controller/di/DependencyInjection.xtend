@@ -30,8 +30,8 @@ class DependencyInjection {
         imports.addAll(#[
             'Symfony\\Component\\Config\\FileLocator',
             'Symfony\\Component\\DependencyInjection\\ContainerBuilder',
+            'Symfony\\Component\\DependencyInjection\\Extension\\Extension',
             'Symfony\\Component\\DependencyInjection\\Loader\\YamlFileLoader',
-            'Symfony\\Component\\HttpKernel\\DependencyInjection\\Extension',
             appNamespace + '\\DependencyInjection\\Configuration'
         ])
         if (!needsConfig) {
