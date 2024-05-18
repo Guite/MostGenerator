@@ -69,9 +69,6 @@ class Rss {
                         <author>{{ «objName».createdBy.getEmail() }} ({{ creatorAttributes.get('realname')|default(creatorAttributes.get('name'))|default(«objName».createdBy.getUname()) }})</author>
                     {% endif %}
                 «ENDIF»
-                «IF categorisable»
-                    <category><![CDATA[{% trans %}Categories{% endtrans %}: {% for catMapping in «objName».categories %}{{ catMapping.category.display_name[app.locale]|default(catMapping.category.name) }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
-                «ENDIF»
                 «description(objName)»
             </item>
         {% endfor %}

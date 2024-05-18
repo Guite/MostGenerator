@@ -105,9 +105,6 @@ class ConfigureFields implements ControllerMethodInterface {
         if (!formFields.filter(DerivedField).filter[!mandatory && !nullable].empty) {
             importsUNUSED.add('Zikula\\FormExtensionBundle\\Form\\DataTransformer\\NullToEmptyTransformer')
         }
-        if (categorisable) {
-            importsUNUSED.add('Zikula\\CategoriesBundle\\Form\\Type\\CategoriesType')
-        }
         importsUNUSED.add(application.appNamespace + '\\Entity\\Factory\\EntityFactory')
         if (hasTranslatableFields) {
             importsUNUSED.add(application.appNamespace + '\\Form\\Type\\Field\\TranslationType')

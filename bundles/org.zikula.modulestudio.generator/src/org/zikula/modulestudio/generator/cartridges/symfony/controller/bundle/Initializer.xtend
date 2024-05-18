@@ -2,24 +2,22 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class Initializer {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     /**
      * Entry point for application initializer.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!hasUploads && !hasCategorisableEntities) {
+        if (!hasUploads) {
             return
         }
         fsa.generateClassPair('Bundle/Initializer/' + name.formatForCodeCapital + 'Initializer.php', initializerBaseClass, initializerImpl)
@@ -32,13 +30,6 @@ class Initializer {
             'Psr\\Log\\LoggerInterface',
             'Zikula\\CoreBundle\\Bundle\\Initializer\\BundleInitializerInterface'
         ])
-        if (hasCategorisableEntities) {
-            imports.addAll(#[
-                'Zikula\\CategoriesBundle\\Entity\\CategoryRegistry',
-                'Zikula\\CategoriesBundle\\Repository\\CategoryRepositoryInterface',
-                appNamespace + '\\Helper\\CategoryHelper'
-            ])
-        }
         if (hasUploads) {
             imports.add(appNamespace + '\\Helper\\UploadHelper')
         }
@@ -66,9 +57,7 @@ class Initializer {
 
     def private constructor(Application it) '''
         public function __construct(
-            protected readonly LoggerInterface $logger«IF hasCategorisableEntities»,
-            protected readonly CategoryHelper $categoryHelper,
-            protected readonly CategoryRepositoryInterface $categoryRepository«ENDIF»«IF hasUploads»,
+            protected readonly LoggerInterface $logger«IF hasUploads»,
             protected readonly UploadHelper $uploadHelper«ENDIF»
         ) {
         }
@@ -76,37 +65,6 @@ class Initializer {
 
     def private initialize(Application it) '''
         «processUploadFolders»
-
-        «IF hasCategorisableEntities»
-
-            // add default entry for category registry (property named Main)
-            $categoryGlobal = $this->categoryRepository->findOneBy(['name' => 'Global']);
-            if ($categoryGlobal) {
-                «FOR entity : getCategorisableEntities»
-
-                    $registry = (new CategoryRegistryEntity())
-                        ->setBundleName('«appName»')
-                        ->setEntityName('«entity.name.formatForCodeCapital»Entity')
-                        ->setProperty($this->categoryHelper->getPrimaryProperty('«entity.name.formatForCodeCapital»'))
-                        ->setCategory($categoryGlobal);
-
-                    try {
-                        $this->entityManager->persist($registry);
-                        $this->entityManager->flush();
-                    } catch (Exception $exception) {
-                        $this->logger->warning(
-                            '{app}: Could not create a category registry for the {entity} entity. If you want to use categorisation, register at least one registry in the Categories administration. Error details: {errorMessage}.',
-                            ['app' => '«appName»', 'entity' => '«entity.name.formatForDisplay»', 'errorMessage' => $exception->getMessage()]
-                        );
-                    }
-                «ENDFOR»
-            } else {
-                $this->logger->warning(
-                    '{app}: Could not create category registries. If you want to use categorisation, register at least one registry in the Categories administration.',
-                    ['app' => '«appName»']
-                );
-            }
-        «ENDIF»
     '''
 
     def private processUploadFolders(Application it) '''

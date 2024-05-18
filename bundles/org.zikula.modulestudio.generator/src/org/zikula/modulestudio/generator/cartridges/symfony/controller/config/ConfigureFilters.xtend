@@ -98,12 +98,7 @@ class ConfigureFilters implements ControllerMethodInterface {
     '''
 
     def private methodBody(Entity it) '''
-        «/* TODO categories
-        IF categorisable»
-            if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, '«name.formatForCode»')) {
-                $this->addCategoriesField($builder, $options);
-            }
-        «ENDIF*/»«FOR field : getAllEntityFields.filter[f|!f.name.equals('workflowState') || hasVisibleWorkflow]»«/* hide workflow filter if not needed */»
+        «FOR field : getAllEntityFields.filter[f|!f.name.equals('workflowState') || hasVisibleWorkflow]»«/* hide workflow filter if not needed */»
             «field.filter»
         «ENDFOR»
         «FOR relation : incomingRelations»
@@ -207,9 +202,6 @@ class ConfigureFilters implements ControllerMethodInterface {
         if (!incomingRelations.empty || !outgoingRelations.empty) {
             imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
         }
-        if (categorisable) {
-            imports.add('Zikula\\CategoriesBundle\\Form\\Type\\CategoriesType')
-        }
         if (!fields.filter(UserField).empty) {
             imports.add('Zikula\\UsersBundle\\Entity\\User')
         }
@@ -261,10 +253,6 @@ class ConfigureFilters implements ControllerMethodInterface {
             «ENDIF»
         }
 
-        «IF categorisable»
-            «addCategoriesField»
-
-        «ENDIF»
         «IF !incomingRelations.empty»
             «addRelationshipFields('incoming')»
 
@@ -273,28 +261,6 @@ class ConfigureFilters implements ControllerMethodInterface {
             «addRelationshipFields('outgoing')»
 
         «ENDIF»
-    '''
-
-    def private addCategoriesField(Entity it) '''
-        public function addCategoriesField(FormBuilderInterface $builder, array $options = []): void
-        {
-            $objectType = '«name.formatForCode»';
-            $entityCategoryClass = '«app.appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity';
-            $builder->add('categories', CategoriesType::class, [
-                'label' => '«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»',
-                'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
-                'attr' => [
-                    'class' => 'form-control-sm category-selector',
-                    'title' => 'This is an optional filter.',
-                ],
-                'required' => false,
-                'multiple' => «categorisableMultiSelection.displayBool»,
-                'bundle' => '«app.appName»',
-                'entity' => ucfirst($objectType) . 'Entity',
-                'entityCategoryClass' => $entityCategoryClass,
-                'showRegistryLabels' => true,
-            ]);
-        }
     '''
     */
 }

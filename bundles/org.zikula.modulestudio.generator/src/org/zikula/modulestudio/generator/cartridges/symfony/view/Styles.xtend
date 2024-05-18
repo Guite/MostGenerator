@@ -202,15 +202,6 @@ class Styles {
                 max-height: 24px;
             }
         «ENDIF»
-        «IF hasCategorisableEntities»
-
-            @media (max-width: 767px) {
-                div.form-group div.category-selector {
-                    height: auto;
-                    padding: 0;
-                }
-            }
-        «ENDIF»
         «IF hasLoggable»
 
             div.«cssPrefix»-history .table-responsive .table > tbody > tr > td.diff-old {
@@ -239,14 +230,6 @@ class Styles {
         div.«cssPrefix»-index form.«cssPrefix»-quicknav .form-group {
             display: inline-block;
         }
-        «IF hasCategorisableEntities»
-
-            div.«cssPrefix»-index form.«cssPrefix»-quicknav .col-md-3 fieldset {
-                border: none;
-                padding: 0;
-                background: none;
-            }
-        «ENDIF»
 
         div.«cssPrefix»-index form.«cssPrefix»-quicknav label {
            margin: 0 5px;

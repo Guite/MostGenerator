@@ -2,24 +2,22 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class MetaData {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     /**
      * Entry point for application initializer.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!hasUploads && !hasCategorisableEntities) {
+        if (!hasUploads) {
             return
         }
         fsa.generateClassPair('Bundle/MetaData/' + name.formatForCodeCapital + 'MetaData.php', metaDataBaseClass, metaDataImpl)
@@ -31,11 +29,6 @@ class MetaData {
             'Zikula\\CoreBundle\\Bundle\\MetaData\\BundleMetaDataInterface',
             'function Symfony\\Component\\Translation\\t'
         ])
-        if (hasCategorisableEntities) {
-            for (entity : getCategorisableEntities) {
-                imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
-            }
-        }
         imports
     }
 
@@ -62,19 +55,6 @@ class MetaData {
             public function getIcon(): string
             {
                 return 'fas fa-database';
-            }
-
-            public function getCategorizableEntityClasses(): array
-            {
-                «IF !hasCategorisableEntities»
-                    return [];
-                «ELSE»
-                    return [
-                        «FOR entity : getCategorisableEntities»
-                            «entity.name.formatForCodeCapital»::class,
-                        «ENDFOR»
-                    ];
-                «ENDIF»
             }
         }
     '''

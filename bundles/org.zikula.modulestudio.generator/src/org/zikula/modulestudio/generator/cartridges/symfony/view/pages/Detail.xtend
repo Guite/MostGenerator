@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.MenuViews
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -22,7 +23,6 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.MenuViews
 
 class Detail {
 
@@ -169,13 +169,6 @@ class Detail {
                         <a id="relationsTab" href="#tabRelations" title="{{ 'Related data'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Related data{% endtrans %}</a>
                     </li>
                 «ENDIF»
-                «IF categorisable»
-                    {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                        <li class="nav-item" role="presentation">
-                            <a id="categoriesTab" href="#tabCategories" title="{{ 'Categories'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Categories{% endtrans %}</a>
-                        </li>
-                    {% endif %}
-                «ENDIF»
                 «IF tree != EntityTreeType.NONE»
                     {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
                         <li class="nav-item" role="presentation">
@@ -269,11 +262,6 @@ class Detail {
         «ENDIF»
         «IF useGroupingTabs('detail')»
             {{ block('related_items') }}
-        «ENDIF»
-        «IF categorisable»
-            {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                {{ include('@«application.vendorAndName»/Helper/includeCategoriesDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('detail')», tabs: true«ENDIF»}) }}
-            {% endif %}
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}

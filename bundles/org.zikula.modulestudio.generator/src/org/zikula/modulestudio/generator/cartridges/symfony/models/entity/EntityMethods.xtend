@@ -189,19 +189,6 @@ class EntityMethods {
                     «ENDFOR»
                 «ENDFOR»
             «ENDIF»
-            «IF it instanceof Entity»
-                «IF categorisable»
-
-                    // clone categories
-                    $categories = $this->categories;
-                    $this->categories = new ArrayCollection();
-                    foreach ($categories as $c) {
-                        $newCat = clone $c;
-                        $this->categories->add($newCat);
-                        $newCat->setEntity($this);
-                    }
-                «ENDIF»
-            «ENDIF»
         }
         «IF it instanceof Entity && (it as Entity).loggable && hasUploadFieldsEntity»
 

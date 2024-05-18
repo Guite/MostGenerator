@@ -248,12 +248,6 @@ class TechStructureEntity {
             <td headers="h«name.formatForCodeCapital»BehaviourLoggable h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, loggable)»</td>
         </tr>
         <tr>
-            <th id="h«name.formatForCodeCapital»BehaviourCategorisable" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Kategorisierbar«ELSE»Categorisable«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourCategorisable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, categorisable)»</td>
-            <th id="h«name.formatForCodeCapital»BehaviourCategorisableMulti" scope="row" headers="h«name.formatForCodeCapital»BehaviourName2">«IF language == 'de'»Kategorien Mehrfachauswahl«ELSE»Categories multi selection«ENDIF»</th>
-            <td headers="h«name.formatForCodeCapital»BehaviourCategorisableMulti h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«helper.flag(application, categorisableMultiSelection)»</td>
-        </tr>
-        <tr>
             <th id="h«name.formatForCodeCapital»BehaviourSluggable" scope="row" headers="h«name.formatForCodeCapital»BehaviourName1">«IF language == 'de'»Permalinks«ELSE»Slugs«ENDIF»</th>
             <td headers="h«name.formatForCodeCapital»BehaviourSluggable h«name.formatForCodeCapital»BehaviourValue1" class="text-center">«helper.flag(application, hasSluggableFields)»</td>
             <td headers="h«name.formatForCodeCapital»BehaviourSluggable h«name.formatForCodeCapital»BehaviourValue2" class="text-center">«IF hasSluggableFields»«IF !slugUpdatable»«IF language == 'de'»nicht«ELSE»not«ENDIF» «ENDIF»«IF language == 'de'»änderbar«ELSE»updatable«ENDIF»«ENDIF»</td>

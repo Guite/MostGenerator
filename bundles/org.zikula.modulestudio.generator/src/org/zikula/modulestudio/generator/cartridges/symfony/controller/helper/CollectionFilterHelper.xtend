@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -12,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class CollectionFilterHelper {
 
@@ -75,9 +75,6 @@ class CollectionFilterHelper {
             «ENDIF»
             «IF hasUserFields»
                 protected readonly UserRepositoryInterface $userRepository,
-            «ENDIF»
-            «IF hasCategorisableEntities»
-                protected readonly CategoryHelper $categoryHelper,
             «ENDIF»
             protected readonly array $listViewConfig
         ) {
@@ -169,10 +166,6 @@ class CollectionFilterHelper {
                 «ENDFOR»
             «ENDIF»
 
-            «IF categorisable»
-                $parameters['catId'] = $request->query->get('catId', '');
-                $parameters['catIdList'] = $this->categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
-            «ENDIF»
             «IF !getBidirectionalIncomingJoinRelations.filter[source instanceof Entity].empty»
                 «FOR relation: getBidirectionalIncomingJoinRelations.filter[source instanceof Entity]»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
@@ -255,23 +248,6 @@ class CollectionFilterHelper {
                 if (null === $v) {
                     continue;
                 }
-                «IF categorisable»
-                    if ('catId' === $k) {
-                        if (0 < (int) $v && in_array('tblCategories', $qb->getAllAliases(), true)) {
-                            // single category filter
-                            $qb->andWhere('tblCategories.category = :category')
-                               ->setParameter('category', $v);
-                        }
-                        continue;
-                    }
-                    if ('catIdList' === $k) {
-                        // multi category filter«/* old 
-                        $qb->andWhere('tblCategories.category IN (:categories)')
-                           ->setParameter('categories', $v);*/»
-                        $this->categoryHelper->applyFilters($qb, '«name.formatForCode»', $v);
-                        continue;
-                    }
-                «ENDIF»
                 «IF hasBooleanFieldsEntity»
                     if (in_array($k, ['«getBooleanFieldsEntity.map[name.formatForCode].join('\', \'')»'], true)) {
                         // boolean filter

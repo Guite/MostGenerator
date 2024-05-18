@@ -100,13 +100,6 @@ class Forms {
                         </li>
                     «ENDIF»
                     «new Relations(fsa, app).generateTabTitles(it)»
-                    «IF categorisable»
-                        {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
-                            <li class="nav-item" role="presentation">
-                                <a id="categoriesTab" href="#tabCategories" title="{{ 'Categories'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Categories{% endtrans %}</a>
-                            </li>
-                        {% endif %}
-                    «ENDIF»
                     «IF standardFields»
                         {% if mode != 'create' %}
                             <li class="nav-item" role="presentation">

@@ -25,10 +25,6 @@ class Joins {
                 $selection = parent::addJoinsToSelection();
             «ENDIF»
             $selection «IF isInheriting».«ENDIF»= '«FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'select')»«ENDFOR»«FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'select')»«ENDFOR»';
-            «IF categorisable»
-
-                $selection .= ', tblCategories';
-            «ENDIF»
 
             return $selection;
         }
@@ -38,15 +34,12 @@ class Joins {
          */
         protected function addJoinsToFrom(QueryBuilder $qb): void
         {
-            «IF isInheriting || !getBidirectionalIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty || categorisable»
+            «IF isInheriting || !getBidirectionalIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
                 «IF isInheriting»
                     parent::addJoinsToFrom($qb);
                 «ENDIF»
                 «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'from')»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'from')»«ENDFOR»
-                «IF categorisable»
-                    $qb->leftJoin('tbl.categories', 'tblCategories');
-                «ENDIF»
             «ENDIF»
         }
     '''

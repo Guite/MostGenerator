@@ -164,10 +164,6 @@ class PersistenceTransformer {
         #['lft', 'lvl', 'rgt', 'root', 'parent', 'children']
     }
 
-    def getReservedCategorisableFields() {
-       #['categories']
-    }
-
  */
 
 

@@ -21,7 +21,7 @@ application "SimpleNews" targets SF71 {
     prefix "sinew"
     detailActionsStyle BUTTON
     entities {
-        entity "article" leading readOnly categorisable {
+        entity "article" leading readOnly {
             documentation "My article"
             nameMultiple "articles"
             displayPattern "#title#"

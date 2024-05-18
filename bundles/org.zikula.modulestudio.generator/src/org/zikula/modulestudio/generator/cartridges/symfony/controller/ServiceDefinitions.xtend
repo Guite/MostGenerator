@@ -122,9 +122,6 @@ class ServiceDefinitions {
     def private repositoryBindings(Application it) '''
         «FOR entity : getAllEntities»
             «entity.repoPath('')»Interface: '@«entity.repoPath('')»'
-            «IF entity.categorisable»
-                «entity.repoPath('category')»Interface: '@«entity.repoPath('category')»'
-            «ENDIF»
             «IF entity.tree == EntityTreeType.CLOSURE»
                 «entity.repoPath('closure')»Interface: '@«entity.repoPath('closure')»'
             «ENDIF»

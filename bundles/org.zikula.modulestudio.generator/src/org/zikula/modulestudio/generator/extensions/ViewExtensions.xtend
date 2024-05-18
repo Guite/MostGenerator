@@ -56,7 +56,6 @@ class ViewExtensions {
         if (page == 'edit' && incoming.filter(JoinRelationship).filter[isPartOfEditForm(true)].size > 1) weight = weight + 1
         if (page == 'edit' && outgoing.filter(JoinRelationship).filter[isPartOfEditForm(false)].size > 1) weight = weight + 1
 
-        if (categorisable) weight = weight + 1
         if (standardFields) weight = weight + 1
         if (geographical) weight = weight + 1
         //if (tree != EntityTreeType.NONE) weight = weight + 1

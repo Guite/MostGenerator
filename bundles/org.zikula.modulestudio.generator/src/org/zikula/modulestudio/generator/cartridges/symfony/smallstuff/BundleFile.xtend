@@ -2,23 +2,21 @@ package org.zikula.modulestudio.generator.cartridges.symfony.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class BundleFile {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     Boolean needsInitializer = false
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        needsInitializer = if (hasUploads || hasCategorisableEntities) true else false
+        needsInitializer = if (hasUploads) true else false
         fsa.generateClassPair(appName + '.php', bundleBaseClass, bundleImpl)
     }
 

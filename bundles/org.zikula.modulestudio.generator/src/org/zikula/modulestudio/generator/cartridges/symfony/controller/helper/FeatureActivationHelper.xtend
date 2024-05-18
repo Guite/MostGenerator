@@ -34,13 +34,6 @@ class FeatureActivationHelper {
     '''
 
     def private featureConstants(Application it) '''
-        «IF hasCategorisableEntities»
-            /**
-             * Categorisation feature.
-             */
-            public const CATEGORIES = 'categories';
-
-        «ENDIF»
         «IF hasTranslatable»
             /**
              * Translation feature.
@@ -63,16 +56,6 @@ class FeatureActivationHelper {
          */
         public function isEnabled(string $feature = '', string $objectType = ''): bool
         {
-            «IF hasCategorisableEntities»
-                if (self::CATEGORIES === $feature) {
-                    $method = 'hasCategories';
-                    if (method_exists($this, $method)) {
-                        return $this->$method($objectType);
-                    }
-
-                    return in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true);
-                }
-            «ENDIF»
             «IF hasTranslatable»
                 if (self::TRANSLATIONS === $feature) {
                     $method = 'hasTranslations';

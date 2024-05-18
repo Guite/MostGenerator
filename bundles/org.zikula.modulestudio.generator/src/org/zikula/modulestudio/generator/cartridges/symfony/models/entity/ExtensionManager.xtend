@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Blameable
-import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.EntityExtensionInterface
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.IpTraceable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Loggable
@@ -51,9 +50,6 @@ class ExtensionManager {
         }
         if (entity.tree != EntityTreeType.NONE) {
             this.extensions += new Tree
-        }
-        if (entity.categorisable) {
-            this.extensions += new Categories
         }
     }
 

@@ -57,10 +57,6 @@ class LoggableUndelete {
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
         EntityFactory $entityFactory,
-        «IF categorisable»
-            CategoryHelper $categoryHelper,
-            FeatureActivationHelper $featureActivationHelper,
-        «ENDIF»
         LoggableHelper $loggableHelper,
         «IF application.generateIcsTemplates && hasStartAndEndDateField»
             EntityDisplayHelper $entityDisplayHelper,
@@ -98,10 +94,6 @@ class LoggableUndelete {
                     $controllerHelper,
                     $viewHelper,
                     $entityFactory,
-                    «IF categorisable»
-                        $categoryHelper,
-                        $featureActivationHelper,
-                    «ENDIF»
                     $loggableHelper,
                     «IF application.generateIcsTemplates && hasStartAndEndDateField»
                         $entityDisplayHelper,

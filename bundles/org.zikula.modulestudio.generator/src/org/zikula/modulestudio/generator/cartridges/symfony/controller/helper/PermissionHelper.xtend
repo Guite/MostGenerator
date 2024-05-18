@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -13,7 +14,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class PermissionHelper {
 
@@ -45,10 +45,6 @@ class PermissionHelper {
             imports.add('ArrayIterator')
             imports.add('Doctrine\\Common\\Collections\\Collection')
         }
-        if (hasCategorisableEntities) {
-            imports.add(appNamespace + '\\Helper\\CategoryHelper')
-            imports.add(appNamespace + '\\Helper\\FeatureActivationHelper')
-        }
         imports
     }
 
@@ -71,9 +67,7 @@ class PermissionHelper {
             protected readonly RequestStack $requestStack,
             protected readonly PermissionApiInterface $permissionApi,
             protected readonly CurrentUserApiInterface $currentUserApi,
-            protected readonly UserRepositoryInterface $userRepository«IF hasCategorisableEntities»,
-            protected readonly FeatureActivationHelper $featureActivationHelper,
-            protected readonly CategoryHelper $categoryHelper«ENDIF»«IF hasLoggable»,
+            protected readonly UserRepositoryInterface $userRepository«IF hasLoggable»,
             protected readonly array $loggableConfig«ENDIF»
         ) {
         }
@@ -128,17 +122,6 @@ class PermissionHelper {
             $objectType = $entity->get_objectType();
             $instance = $entity->getKey() . '::';
 
-            «IF hasCategorisableEntities»
-                // check category permissions
-                if (in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
-                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                        if (!$this->categoryHelper->hasPermission($entity)) {
-                            return false;
-                        }
-                    }
-                }
-
-            «ENDIF»
             «IF hasEntitiesInheritingPermissions»
                 // check inherited permissions
                 «FOR entity : getEntitiesInheritingPermissions»

@@ -371,11 +371,6 @@ class Association {
     def initCollections(DataObject it) '''
         «FOR relation : getOutgoingCollections»«relation.initCollection(true)»«ENDFOR»
         «FOR relation : getIncomingCollections»«relation.initCollection(false)»«ENDFOR»
-        «IF it instanceof Entity»
-            «IF categorisable»
-                $this->categories = new ArrayCollection();
-            «ENDIF»
-        «ENDIF»
     '''
 
     def private initCollection(JoinRelationship it, Boolean outgoing) '''

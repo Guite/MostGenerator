@@ -140,7 +140,7 @@ class Entities {
         imports.add('Doctrine\\DBAL\\Types\\Types')
         imports.add('Doctrine\\ORM\\Mapping as ORM')
         if (isBase) {
-            if (hasCollections || categorisable || EntityTreeType.NONE != tree) {
+            if (hasCollections || EntityTreeType.NONE != tree) {
                 imports.add('Doctrine\\Common\\Collections\\ArrayCollection')
                 imports.add('Doctrine\\Common\\Collections\\Collection')
             }
@@ -191,9 +191,6 @@ class Entities {
                 imports.add(application.appNamespace + '\\Entity\\EntityInterface')
             } else {
                 imports.add(application.appNamespace + '\\Entity\\' + parentType.name.formatForCodeCapital + ' as BaseEntity')
-            }
-            if (categorisable) {
-                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'Category')
             }
             if (tree !== EntityTreeType.NONE) {
                 imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital)

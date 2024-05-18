@@ -92,7 +92,7 @@ application "SimpleNews" {
                 }
             }
         },
-        entity "article3" categorisable {
+        entity "article3" {
             nameMultiple "articles3"
             tree NESTED
             fields {
@@ -122,7 +122,7 @@ application "SimpleNews" {
                 }
             }
         },
-        entity "article4" categorisable categorisableMultiSelection {
+        entity "article4" {
             nameMultiple "articles4"
             identifierStrategy NONE
             fields {

@@ -432,9 +432,6 @@ class TechComplexity {
     def private countColumns(DataObject it) {
         var amount = getSelfAndParentDataObjects.map[fields].flatten.length
         if (it instanceof Entity) {
-            if (categorisable) {
-                amount += 1
-            }
             if (geographical) {
                 amount += 2
             }

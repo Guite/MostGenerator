@@ -46,7 +46,6 @@ class EditEntityType {
         }
         if (it instanceof Entity) {
             if (hasTranslatableFields) extensions.add('translatable')
-            if (categorisable) extensions.add('categories')
         }
         app = it.application
         fsa.generateClassPair('Form/Type/' + name.formatForCodeCapital + 'Type.php', editTypeBaseImpl, editTypeImpl)
@@ -55,9 +54,6 @@ class EditEntityType {
     def private collectBaseImports(DataObject it) {
         val imports = new ImportList
         imports.add(entityClassName('', false))
-        if (it instanceof Entity && (it as Entity).categorisable) {
-            imports.add(entityClassName('Category', false))
-        }
         imports.add('Symfony\\Component\\Form\\FormBuilderInterface')
         imports.add('Symfony\\Component\\Form\\FormInterface')
         imports.add('Symfony\\Component\\OptionsResolver\\OptionsResolver')
@@ -154,11 +150,6 @@ class EditEntityType {
                         'data_class' => «name.formatForCodeCapital»::class
                     ]);
                 «ENDIF»
-                «IF extensions.contains('categories')»
-                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, '«name.formatForCode»')) {
-                        $this->addCategoriesField($builder, $options);
-                    }
-                «ENDIF»
                 «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                     $this->addAdditionalNotificationRemarksField($builder, $options);
                 «ENDIF»
@@ -179,10 +170,6 @@ class EditEntityType {
 
             «addFields»
 
-            «IF extensions.contains('categories')»
-                «addCategoriesField(it as Entity)»
-
-            «ENDIF»
             «IF it instanceof Entity»
                 «addSubmitButtons»
 
@@ -361,28 +348,6 @@ class EditEntityType {
                 'help' => $helpText,
             ]);
         «ENDIF»
-    '''
-
-    def private addCategoriesField(Entity it) '''
-        /**
-         * Adds a categories field.
-         */
-        public function addCategoriesField(FormBuilderInterface $builder, array $options = []): void
-        {
-            $builder->add('categories', CategoriesType::class, [
-                'label' => '«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»',
-                'empty_data' => «IF categorisableMultiSelection»[]«ELSE»null«ENDIF»,
-                'attr' => [
-                    'class' => 'category-selector',
-                ],
-                'required' => false,
-                'multiple' => «categorisableMultiSelection.displayBool»,
-                'bundle' => '«app.appName»',
-                'entity' => '«name.formatForCodeCapital»Entity',
-                'entityCategoryClass' => «name.formatForCodeCapital»Category::class,
-                'showRegistryLabels' => true,
-            ]);
-        }
     '''
 
     def private addSubmitButtons(Entity it) '''

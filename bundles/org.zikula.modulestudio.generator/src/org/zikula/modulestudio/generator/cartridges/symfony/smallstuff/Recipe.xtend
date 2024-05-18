@@ -61,7 +61,7 @@ class Recipe {
             «'  '»* <fg=blue>Upload folder</>
             «'  '»  Ensure the directory `/public/uploads/«appName»/` is writable including all sub folders.
         «ENDIF»
-        «IF hasUploads || hasCategorisableEntities»
+        «IF hasUploads»
 
             «'  '»* <fg=blue>Additional setup tasks</>
             «'  '»  Execute <comment>php bin/console zikula:init-bundle «appName»</>.

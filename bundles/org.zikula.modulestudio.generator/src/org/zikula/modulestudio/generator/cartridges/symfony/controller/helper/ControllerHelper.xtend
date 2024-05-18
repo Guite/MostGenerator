@@ -2,13 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class ControllerHelper {
 
@@ -316,14 +316,11 @@ class ControllerHelper {
             }
             $resultsPerPage = $templateParameters['num'];
             $request->query->set('own', $templateParameters['own']);
-            «IF hasCategorisableEntities»
-                $useJoins = in_array($objectType, ['«getCategorisableEntities.map[name.formatForCode].join('\', \'')»'], true);
-            «ENDIF»
 
             $where = '';
             if (1 === $templateParameters['all']) {
                 // retrieve item list without pagination
-                $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir, «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»);
+                $entities = $repository->selectWhere($where, $sort . ' ' . $sortdir, false);
             } else {
                 // the current offset which is used to calculate the pagination
                 $currentPage = $request->query->getInt('page', 1);
@@ -335,7 +332,7 @@ class ControllerHelper {
                     $sort . ' ' . $sortdir,
                     $currentPage,
                     $resultsPerPage,
-                    «IF hasCategorisableEntities»$useJoins«ELSE»false«ENDIF»
+                    false
                 );
                 $paginator->setRoute('«appName.formatForDB»_' . mb_strtolower($objectType) . '_' . $templateParameters['routeArea'] . 'index');
                 $paginator->setRouteParameters($urlParameters);

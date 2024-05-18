@@ -34,14 +34,14 @@ class ModelBehaviourExtensions {
      * Checks whether the feature activation helper class should be generated or not.
      */
     def needsFeatureActivationHelper(Application it) {
-        hasCategorisableEntities || hasTranslatable || hasTrees
+        hasTranslatable || hasTrees
     }
 
     /**
      * Checks whether a specific entity needs functionality of the feature activation helper.
      */
     def needsFeatureActivationHelperEntity(Entity it) {
-        categorisable || hasTranslatableFields || tree != EntityTreeType.NONE
+        hasTranslatableFields || tree != EntityTreeType.NONE
     }
 
     /**
@@ -140,20 +140,6 @@ class ModelBehaviourExtensions {
      */
     def getTreeEntities(Application it) {
         getAllEntities.filter[tree != EntityTreeType.NONE]
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with the categorisable extension enabled.
-     */
-    def hasCategorisableEntities(Application it) {
-        !getCategorisableEntities.empty
-    }
-
-    /**
-     * Returns a list of all entities with the categorisable extension enabled.
-     */
-    def getCategorisableEntities(Application it) {
-        getAllEntities.filter[categorisable]
     }
 
     /**

@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.CategoryHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.CollectionFilterHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.ControllerHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.EntityDisplayHelper
@@ -36,9 +35,6 @@ class HelperServices {
         new PermissionHelper().generate(it, fsa)
         if (hasAutomaticExpiryHandling || hasLoggable) {
             new ExpiryHelper().generate(it, fsa)
-        }
-        if (hasCategorisableEntities) {
-            new CategoryHelper().generate(it, fsa)
         }
         new CollectionFilterHelper().generate(it, fsa)
         new ControllerHelper().generate(it, fsa)

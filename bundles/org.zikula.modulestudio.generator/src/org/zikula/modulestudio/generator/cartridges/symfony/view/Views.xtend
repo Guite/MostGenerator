@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.Categories
 import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.Emails
 import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.StandardFields
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
@@ -58,9 +57,6 @@ class Views {
         }
 
         // helper templates
-        if (hasCategorisableEntities) {
-            new Categories().generate(it, fsa)
-        }
         if (hasStandardFieldEntities) {
             new StandardFields().generate(it, fsa)
         }

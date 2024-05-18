@@ -54,9 +54,6 @@ class ComposerFile {
             «IF hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
                 "egulias/email-validator": "^2",
             «ENDIF»
-            «IF hasCategorisableEntities»
-                "zikula/categories-bundle": "^«targetZikulaVersion»",
-            «ENDIF»
             "zikula/core-bundle": "^«targetZikulaVersion»",
             "zikula/theme-bundle": "^«targetZikulaVersion»",
             "zikula/users-bundle": "^«targetZikulaVersion»"
