@@ -31,11 +31,6 @@ jobs:
       run: |
         mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
-    - name: Collect artifacts to deploy
-      run: |
-        mkdir -p deploy/repo
-        cp -R releng/org.zikula.modulestudio.generator.build/target/repository/* deploy/repo
-
     # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
       uses: WebFreak001/deploy-nightly@master
@@ -54,17 +49,6 @@ jobs:
       run: ./.github/scripts/regenerateModules.sh
       env:
         DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
-
-    # see https://github.com/SamKirkland/FTP-Deploy-Action
-    - name: Deploy repository
-      uses: SamKirkland/FTP-Deploy-Action@master
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: deploy/repo/
-        server-dir: components/generator/
-        dangerous-clean-slate: true
 
     # see https://github.com/peter-evans/repository-dispatch
     - name: Dispatch downstream job
