@@ -112,7 +112,7 @@ class ImageCreator {
         if (capitals.size > 1) {
             // If the application name contains more than one capital use the first and the last one of it
             // Example: VD for VerySimpleDownloads
-            initialsText = capitals.head + '' + capitals.last //$NON-NLS-1$
+            initialsText = capitals.head + '' + capitals.lastOrNull //$NON-NLS-1$
         } else {
             // Otherwise use the first capital of the vendor and the capital of the application name
             // Example: GN for Guite / News

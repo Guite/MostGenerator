@@ -17,7 +17,7 @@ class MostFileSystemHelper {
 
         var finalPath = filePath
         var filePathParts = filePath.split('\\.') //$NON-NLS-1$
-        val fileExtension = filePathParts.last
+        val fileExtension = filePathParts.lastOrNull
 
         if (shouldBeMarked(filePath)) {
             filePathParts = Arrays.copyOf(filePathParts, filePathParts.length - 1)
@@ -41,7 +41,7 @@ class MostFileSystemHelper {
      */
     def getPathToBaseClass(Application it, String concretePath) {
         var basePathSegments = concretePath.split('/') //$NON-NLS-1$
-        var baseFileName = basePathSegments.last
+        var baseFileName = basePathSegments.lastOrNull
         basePathSegments = Arrays.copyOf(basePathSegments, basePathSegments.length - 1)
 
         var basePathPartsChangeable = newArrayList(basePathSegments)

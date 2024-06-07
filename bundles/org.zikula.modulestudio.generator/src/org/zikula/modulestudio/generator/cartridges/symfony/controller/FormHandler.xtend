@@ -405,7 +405,11 @@ class FormHandler {
             }
 
             «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
-                if (null !== $entity->getSlug() && in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'], true)) {
+                if (
+                    in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'], true)
+                    && method_exists($entity, 'getSlug')
+                    && null !== $entity->getSlug()
+                ) {
                     $slugParts = explode('/', $entity->getSlug());
                     $entity->setSlug(end($slugParts));
                 }

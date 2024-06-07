@@ -361,7 +361,7 @@ class Association {
             if (orderByField.contains(':')) {
                 val criteriaParts = orderByField.split(':')
                 fieldName = criteriaParts.head
-                sorting = criteriaParts.last
+                sorting = criteriaParts.lastOrNull
             }
             criteria.add('"' + fieldName + '" = "' + sorting.toUpperCase + '"')
         }
