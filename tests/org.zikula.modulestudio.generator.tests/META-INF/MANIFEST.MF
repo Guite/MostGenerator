@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.zikula.modulestudio.generator.tests;singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Require-Bundle: com.google.guava;bundle-version="33.2.0",
  com.google.inject;bundle-version="7.0.0",
