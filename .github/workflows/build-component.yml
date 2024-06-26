@@ -22,9 +22,9 @@ jobs:
     - name: Setup JDK
       uses: actions/setup-java@master
       with:
-        distribution: 'adopt'
-        java-version: 17
-        cache: 'maven'
+        distribution: temurin
+        java-version: 21
+        cache: maven
 
     # https://stackoverflow.com/questions/71069/can-maven-be-made-less-verbose
     - name: Maven Build
