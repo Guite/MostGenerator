@@ -2,8 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.symfony.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.documents.License_GPL
-import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.documents.License_LGPL
+import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.documents.License_MIT
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.techdocs.TechComplexity
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.techdocs.TechStructure
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -165,16 +164,8 @@ class Docs {
     '''
 
     def private License(Application it) '''
-        «IF license == 'http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License'
-          || license == 'GNU Lesser General Public License'
-          || license == 'Lesser General Public License'
-          || license == 'LGPL'»
-            «new License_LGPL().generate(it)»
-        «ELSEIF license == 'http://www.gnu.org/copyleft/gpl.html GNU General Public License'
-          || license == 'GNU General Public License'
-          || license == 'General Public License'
-          || license == 'GPL'»
-            «new License_GPL().generate(it)»
+        «IF license == 'MIT'»
+            «new License_MIT().generate(it)»
         «ELSE»
             Please enter your license text here.
         «ENDIF»
