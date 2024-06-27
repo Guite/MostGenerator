@@ -58,7 +58,6 @@ application "SimpleNews" {
                     defaultValue "true"
                     mandatory true
                     visibleOnSort false
-                    cssClass "mybool"
                 }
             }
         },
@@ -81,7 +80,6 @@ application "SimpleNews" {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
-                    cssClass "myint"
                 },
                 integer "integ3" range version {
                     defaultValue "123"
@@ -110,7 +108,6 @@ application "SimpleNews" {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
-                    cssClass "mynum"
                     numberType DECIMAL
                 },
                 number "num3" aggregationField currency {
@@ -140,7 +137,6 @@ application "SimpleNews" {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
-                    cssClass "mystr"
                     minLength 3
                     regexp "foo"
                 },
@@ -149,42 +145,6 @@ application "SimpleNews" {
                     sluggablePosition 3
                     regexp "foo" opposite
                     length 8
-                },
-                string "str41" {
-                    length 30
-                    isbn NONE
-                },
-                string "str42" {
-                    length 30
-                    isbn ISBN10
-                },
-                string "str43" {
-                    length 30
-                    isbn ISBN13
-                },
-                string "str44" {
-                    length 30
-                    isbn ALL
-                },
-                string "str51" {
-                    length 30
-                    issn NONE
-                },
-                string "str52" {
-                    length 30
-                    issn NORMAL
-                },
-                string "str53" {
-                    length 30
-                    issn CASE_SENSITIVE
-                },
-                string "str54" {
-                    length 30
-                    issn REQUIRE_HYPHEN
-                },
-                string "str55" {
-                    length 30
-                    issn STRICT
                 },
                 string "str61" {
                     length 50
@@ -297,25 +257,15 @@ application "SimpleNews" {
                 },
                 string "str713" {
                     length 50
-                    role UUID
+                    role ULID
                 },
                 string "str714" {
                     length 50
+                    role UUID
+                },
+                string "str715" {
+                    length 50
                     role WEEK
-                },
-                string "str81" {
-                    ipTraceable NONE
-                },
-                string "str82" {
-                    ipTraceable CREATE
-                },
-                string "str83" {
-                    ipTraceable UPDATE
-                },
-                string "str84" {
-                    ipTraceable CHANGE
-                    ipTraceableChangeTriggerField "str71"
-                    ipTraceableChangeTriggerValue "foo"
                 }
             }
         },
@@ -337,7 +287,6 @@ application "SimpleNews" {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
-                    cssClass "mytxt"
                     regexp "foo"
                 },
                 text "txt3" fixed {
@@ -370,7 +319,6 @@ application "SimpleNews" {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
-                    cssClass "myuser"
                 },
                 user "usr3" sortablePosition {
                     defaultValue "123"
@@ -415,7 +363,6 @@ application "SimpleNews" {
                     mandatory true
                     visibleOnIndex false
                     visibleOnDetail false
-                    cssClass "myema"
                     minLength 3
                     regexp "foo"
                 },
@@ -446,7 +393,6 @@ application "SimpleNews" {
                     mandatory true
                     visibleOnIndex false
                     visibleOnDetail false
-                    cssClass "myurl"
                     minLength 3
                     regexp "foo"
                 },
@@ -477,7 +423,6 @@ application "SimpleNews" {
                 upload "file2" unique translatable {
                     mandatory true
                     visibleOnIndex false
-                    cssClass "myurl"
                     minLength 3
                     regexp "foo"
                     namingScheme FIELDNAMEWITHCOUNTER
@@ -534,7 +479,6 @@ application "SimpleNews" {
                     mandatory true
                     visibleOnIndex false
                     visibleOnDetail false
-                    cssClass "mylist"
                     minLength 3
                     regexp "foo"
                     items {
@@ -577,7 +521,6 @@ application "SimpleNews" {
                     mandatory true
                     visibleOnIndex false
                     visibleOnDetail false
-                    cssClass "myarr"
                     arrayType SIMPLE_ARRAY
                 },
                 array "arr3" translatable {
@@ -604,7 +547,6 @@ application "SimpleNews" {
                     defaultValue "now"
                     mandatory true
                     visibleOnSort false
-                    cssClass "mydate"
                     components TIME
                 },
                 datetime "dat3" immutable {

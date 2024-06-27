@@ -8,7 +8,6 @@ import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.EmailValidationMode
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityBlameableType
-import de.guite.modulestudio.metamodel.EntityIpTraceableType
 import de.guite.modulestudio.metamodel.EntitySlugStyle
 import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityTreeType
@@ -17,7 +16,6 @@ import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
-import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.UserField
 import java.util.List
 
@@ -70,13 +68,6 @@ class ModelBehaviourExtensions {
      */
     def getGeographicalEntities(Application it) {
         getAllEntities.filter[geographical]
-    }
-
-    /**
-     * Checks whether the generation of ics templates is needed or not.
-     */
-    def hasEntitiesWithIcsTemplates(Application it) {
-        generateIcsTemplates && getAllEntities.exists[supportsIcsTemplates]
     }
 
     /**
@@ -192,20 +183,6 @@ class ModelBehaviourExtensions {
     }
 
     /**
-     * Checks whether the entity contains at least one field with the ipTraceable extension enabled.
-     */
-    def hasIpTraceableFields(Entity it) {
-        !getIpTraceableFields.empty
-    }
-
-    /**
-     * Returns a list of all derived fields with the ipTraceable extension enabled.
-     */
-    def getIpTraceableFields(Entity it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[ipTraceable != EntityIpTraceableType.NONE]].flatten
-    }
-
-    /**
      * Checks whether the application provides automatic archiving or deletion.
      */
     def hasAutomaticExpiryHandling(Application it) {
@@ -238,13 +215,6 @@ class ModelBehaviourExtensions {
      */
     def getExpiryDeletionEntities(Application it) {
         getAllEntities.filter[deleteExpired && hasEndDateField]
-    }
-
-    /**
-     * Checks whether the entity supports ics templates.
-     */
-    def supportsIcsTemplates(Entity it) {
-        hasStartAndEndDateField
     }
 
     /**
@@ -445,6 +415,6 @@ class ModelBehaviourExtensions {
      * Checks whether a composer execution is required before installing the application.
      */
     def needsComposerInstall(Application it) {
-        hasGeographical || generatePdfSupport || hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT) 
+        hasGeographical || hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT) 
     }
 }

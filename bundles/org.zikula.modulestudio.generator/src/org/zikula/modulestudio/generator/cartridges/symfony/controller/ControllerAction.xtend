@@ -8,10 +8,10 @@ import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.IndexAction
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.ActionRoute
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.Actions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.ActionRoute
 
 class ControllerAction {
 
@@ -22,7 +22,7 @@ class ControllerAction {
     Actions actionsImpl
 
     new(Application app) {
-        routeAnnotation = new ActionRoute(app)
+        routeAnnotation = new ActionRoute()
         actionsImpl = new Actions(app)
     }
 

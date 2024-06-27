@@ -209,11 +209,6 @@ class ConfigureFields implements ControllerMethodInterface {
         if (entity.hasIndexAction && !visibleOnSort) {
             calls += '->setSortable(false)'
         }
-        if (entity.hasEditAction) {
-            if (null !== cssClass && !cssClass.empty) {
-                calls += '''->setColumns('«cssClass»')'''
-            }
-        }
         calls
     }
 

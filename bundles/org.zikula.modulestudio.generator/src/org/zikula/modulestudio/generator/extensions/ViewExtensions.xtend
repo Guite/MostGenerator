@@ -63,64 +63,6 @@ class ViewExtensions {
     }
 
     /**
-     * Returns a list of view formats supported by an application.
-     */
-    def getListOfViewFormats(Application it) {
-        var formats = newArrayList
-        if (!hasIndexActions) {
-            return formats
-        }
-        if (generateCsvTemplates) {
-            formats.add('csv')
-        }
-        if (generateRssTemplates) {
-            formats.add('rss')
-        }
-        if (generateAtomTemplates) {
-            formats.add('atom')
-        }
-        if (generateXmlTemplates) {
-            formats.add('xml')
-        }
-        if (generateJsonTemplates) {
-            formats.add('json')
-        }
-        if (generateKmlTemplates && hasGeographical) {
-            formats.add('kml')
-        }
-        if (generatePdfSupport) {
-            formats.add('pdf')
-        }
-        formats
-    }
-
-    /**
-     * Returns a list of display formats supported by an application.
-     */
-    def getListOfDisplayFormats(Application it) {
-        var formats = newArrayList
-        if (!hasDetailActions) {
-            return formats
-        }
-        if (generateXmlTemplates) {
-            formats.add('xml')
-        }
-        if (generateJsonTemplates) {
-            formats.add('json')
-        }
-        if (generateKmlTemplates && hasGeographical) {
-            formats.add('kml')
-        }
-        if (hasEntitiesWithIcsTemplates && hasDetailActions) {
-            formats.add('ics')
-        }
-        if (generatePdfSupport) {
-            formats.add('pdf')
-        }
-        formats
-    }
-
-    /**
      * Returns whether jQuery UI is needed or not.
      */
     def needsJQueryUI(Application it) {

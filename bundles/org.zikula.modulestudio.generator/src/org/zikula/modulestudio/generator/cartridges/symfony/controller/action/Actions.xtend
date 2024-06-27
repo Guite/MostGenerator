@@ -11,7 +11,6 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -19,7 +18,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Actions {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
@@ -170,21 +168,7 @@ class Actions {
 
     def private processDisplayOutput(Entity it) '''
         // fetch and return the appropriate template
-        $response = $viewHelper->processTemplate($objectType, 'detail', $templateParameters);
-        «IF app.generateIcsTemplates && hasStartAndEndDateField»
-
-            if ('ics' === $request->getRequestFormat()) {
-                $fileName = $objectType . '_' .
-                    (property_exists($«name.formatForCode», 'slug')
-                        ? $«name.formatForCode»['slug']
-                        : $this->entityDisplayHelper->getFormattedTitle($«name.formatForCode»)
-                    ) . '.ics'
-                ;
-                $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
-            }
-        «ENDIF»
-
-        return $response;
+        return $viewHelper->processTemplate($objectType, 'detail', $templateParameters);
     '''
 
     def private dispatch actionImplBody(Entity it, EditAction action) '''

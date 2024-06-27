@@ -161,12 +161,10 @@ class WorkflowStart {
         settings.appVersion = if (null !== app.version) app.version else '1.0.0' //$NON-NLS-1$
 
         // compute destination path for model files
-        if (app.writeModelToDocs) {
-            //modelDestinationPath = File.separator + 'symfony' + File.separator + settings.appName + File.separator
-            var modelDestinationPath = settings.getPathToBundleRoot
-            modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            settings.modelDestinationPath = modelDestinationPath
-        }
+        //modelDestinationPath = File.separator + 'symfony' + File.separator + settings.appName + File.separator
+        var modelDestinationPath = settings.getPathToBundleRoot
+        modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        settings.modelDestinationPath = modelDestinationPath
 
         return
     }

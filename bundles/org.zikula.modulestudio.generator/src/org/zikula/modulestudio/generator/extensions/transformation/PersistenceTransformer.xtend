@@ -413,7 +413,6 @@ class PersistenceTransformer {
                     defaultValue = 'false'
                     documentation = 'Whether to enable shrinking huge images to maximum dimensions. Stores downscaled version of the original image.'
                     mandatory = false
-                    cssClass = 'shrink-enabler'
                 ]
                 varContainer.fields += factory.createIntegerField => [
                     name = 'shrinkWidth' + fieldSuffix

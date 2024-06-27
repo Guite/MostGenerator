@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -10,7 +9,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class LoggableUndelete {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
@@ -58,9 +56,6 @@ class LoggableUndelete {
         ViewHelper $viewHelper,
         EntityFactory $entityFactory,
         LoggableHelper $loggableHelper,
-        «IF application.generateIcsTemplates && hasStartAndEndDateField»
-            EntityDisplayHelper $entityDisplayHelper,
-        «ENDIF»
         «IF hasTranslatableFields»
             TranslatableHelper $translatableHelper,
         «ENDIF»
@@ -95,9 +90,6 @@ class LoggableUndelete {
                     $viewHelper,
                     $entityFactory,
                     $loggableHelper,
-                    «IF application.generateIcsTemplates && hasStartAndEndDateField»
-                        $entityDisplayHelper,
-                    «ENDIF»
                     $«name.formatForCode»,
                     null
                 );

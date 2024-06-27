@@ -21,13 +21,11 @@ application "SimpleNews" targets SF71 {
     license "My license"
     prefix "sinew"
     generateAccountApi false
-    generatePdfSupport true
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles false
     versionAllGeneratedFiles false
     generatePoweredByBacklinksIntoFooterTemplates false
     generateTests false
-    writeModelToDocs false
     generateTechnicalDocumentation false
     indexActionsPosition END
     indexActionsStyle DROPDOWN

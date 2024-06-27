@@ -4,15 +4,12 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.StringIsbnStyle
-import de.guite.modulestudio.metamodel.StringIssnStyle
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
@@ -86,14 +83,8 @@ class ValidationHelpProvider {
             messages += '''«''»'Note: this value must be a valid credit card number.'«''»'''
         } else if (role == StringRole.IBAN) {
             messages += '''«''»'Note: this value must be a valid IBAN (International Bank Account Number).'«''»'''
-        } else if (isbn != StringIsbnStyle.NONE) {
-            messages += '''«''»'Note: this value must be a valid ISBN (International Standard Book Number).«isbn.isbnMessage»'«''»'''
         } else if (role == StringRole.ISIN) {
             messages += '''«''»'Note: this value must be a valid ISIN (international securities identification number).'«''»'''
-        } else if (issn != StringIssnStyle.NONE) {
-            messages += '''«''»'Note: this value must be a valid ISSN (International Standard Serial Number.«issn.issnMessage»'«''»'''
-        } else if (ipAddress != IpAddressScope.NONE) {
-            messages += '''«''»'Note: this value must be a valid IP address.«ipAddress.scopeMessage»'«''»'''
         //} else if (role == StringRole.PHONE_NUMBER) {
         //    messages += '''«''»'Note: this value must be a valid telephone number.'«''»'''
         } else if (role == StringRole.ULID) {
@@ -168,65 +159,6 @@ class ValidationHelpProvider {
         }
 
         parameters
-    }
-
-    def private isbnMessage(StringIsbnStyle it) {
-        switch (it) {
-            case NONE:
-                ''
-            case ISBN10:
-                ' It needs to be an ISBN-10 code.'
-            case ISBN13:
-                ' It needs to be an ISBN-13 code.'
-            case ALL:
-                ' It needs to be either an ISBN-10 or an ISBN-13 code.'
-        }
-    }
-
-    def private issnMessage(StringIssnStyle it) {
-        switch (it) {
-            case NONE:
-                ''
-            case NORMAL:
-                ''
-            case CASE_SENSITIVE:
-                ' The X at the end needs to be upper case.'
-            case REQUIRE_HYPHEN:
-                ' The value needs to be hyphenated.'
-            case STRICT:
-                ' The value needs to be hyphenated and the X at the end needs to be upper case.'
-        }
-    }
-
-    def private scopeMessage(IpAddressScope it) {
-        switch (it) {
-            case NONE:
-                ''
-            case IP4:
-                ' Allowed are IPv4 addresses in all ranges.'
-            case IP6:
-                ' Allowed are IPv6 addresses in all ranges.'
-            case ALL:
-                ' Allowed IPv4 and IPv6 addresses in all ranges.'
-            case IP4_NO_PRIV:
-                ' Allowed are IPv4 addresses without private ranges.'
-            case IP6_NO_PRIV:
-                ' Allowed are IPv6 addresses without private ranges.'
-            case ALL_NO_PRIV:
-                ' Allowed IPv4 and IPv6 addresses without private ranges.'
-            case IP4_NO_RES:
-                ' Allowed are IPv4 addresses without reserved ranges.'
-            case IP6_NO_RES:
-                ' Allowed are IPv6 addresses without reserved ranges.'
-            case ALL_NO_RES:
-                ' Allowed IPv4 and IPv6 addresses without reserved ranges.'
-            case IP4_PUBLIC:
-                ' Allowed are IPv4 addresses using only public ranges (without private and reserved ranges).'
-            case IP6_PUBLIC:
-                ' Allowed are IPv6 addresses using only public ranges (without private and reserved ranges).'
-            case ALL_PUBLIC:
-                ' Allowed IPv4 and IPv6 addresses using only public ranges (without private and reserved ranges).'
-        }
     }
 
     def dispatch helpMessages(TextField it) {

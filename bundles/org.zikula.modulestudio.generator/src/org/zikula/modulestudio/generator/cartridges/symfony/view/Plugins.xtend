@@ -4,8 +4,8 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.FormatGeoData
-import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.FormatIcalText
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetFileSize
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetListEntry
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.IncreaseCounter
@@ -16,7 +16,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class Plugins {
 
@@ -81,7 +80,7 @@ class Plugins {
                 appNamespace + '\\Helper\\LoggableHelper'
             ])
         }
-        if ((generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty) {
+        if (!getEntitiesWithCounterFields.empty) {
             imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
         }
         if (hasTrees) {
@@ -147,9 +146,6 @@ class Plugins {
                 «IF hasGeographical»
                     new TwigFilter('«appNameLower»_geoData', [TwigRuntime::class, 'formatGeoData']),
                 «ENDIF»
-                «IF hasEntitiesWithIcsTemplates»
-                    new TwigFilter('«appNameLower»_icalText', [TwigRuntime::class, 'formatIcalText']),
-                «ENDIF»
                 «IF hasLoggable»
                     new TwigFilter('«appNameLower»_logDescription', [TwigRuntime::class, 'getLogDescription']),
                 «ENDIF»
@@ -174,7 +170,7 @@ class Plugins {
         public function __construct(
             protected readonly TranslatorInterface $translator«IF !getEntitiesWithCounterFields.empty»,
             protected readonly Connection $databaseConnection«ENDIF»«IF hasTrees»,
-            protected readonly RouterInterface $router«ENDIF»«IF (generateIcsTemplates && hasEntitiesWithIcsTemplates) || !getEntitiesWithCounterFields.empty»,
+            protected readonly RouterInterface $router«ENDIF»«IF !getEntitiesWithCounterFields.empty»,
             protected readonly RequestStack $requestStack«ENDIF»,
             «IF hasTrees»
                 protected readonly EntityFactory $entityFactory,
@@ -321,9 +317,6 @@ class Plugins {
         }
         if (!getEntitiesWithCounterFields.empty) {
             result += new IncreaseCounter().generate(it)
-        }
-        if (generateIcsTemplates && hasEntitiesWithIcsTemplates) {
-            result += new FormatIcalText().generate(it)
         }
         result.join("\n")
     }

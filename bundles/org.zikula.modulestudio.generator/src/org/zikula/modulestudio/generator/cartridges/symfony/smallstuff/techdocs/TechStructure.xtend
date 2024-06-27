@@ -33,7 +33,6 @@ class TechStructure {
         «IF needsConfig»
             «variableInfo»
         «ENDIF»
-        «settingsInfo»
     '''
 
     def dispatch private CharSequence entityInfo(Application it) '''
@@ -95,10 +94,5 @@ class TechStructure {
             <h4><i class="fas fa-bars"></i> «IF language == 'de'»Felder«ELSE»Fields«ENDIF»</h4>
             «new TechStructureFields().generate(it, language)»
         «ENDIF»
-    '''
-
-    def private settingsInfo(Application it) '''
-        <h2><i class="fas fa-puzzle-piece"></i> «IF language == 'de'»Integrationseinstellungen«ELSE»Integration settings«ENDIF»</h2>
-        «new TechStructureSettings().generate(it, language)»
     '''
 }

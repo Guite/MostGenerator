@@ -14,18 +14,10 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Delete
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Detail
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.History
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Index
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.export.Csv
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.export.Ics
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.export.Json
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.export.Kml
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.export.Xml
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.feed.Atom
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.feed.Rss
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.view.ViewHierarchy
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.view.ViewMap
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.view.ViewTable
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -35,7 +27,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Views {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension DateTimeExtensions = new DateTimeExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -65,9 +56,6 @@ class Views {
         if (needsApproval) {
             new Emails().generate(it, fsa)
         }
-        if (generatePdfSupport) {
-            layoutHelper.pdfHeaderFile(it)
-        }
     }
 
     def private generateViews(Application it, Entity entity) {
@@ -81,31 +69,6 @@ class Views {
             }
             if (entity.tree != EntityTreeType.NONE) {
                 new ViewHierarchy().generate(entity, appName, fsa)
-            }
-            if (generateCsvTemplates) {
-                new Csv().generate(entity, fsa)
-            }
-            if (generateRssTemplates) {
-                new Rss().generate(entity, fsa)
-            }
-            if (generateAtomTemplates) {
-                new Atom().generate(entity, fsa)
-            }
-        }
-        if (entity.hasIndexAction || entity.hasDetailAction) {
-            if (generateXmlTemplates) {
-                new Xml().generate(entity, fsa)
-            }
-            if (generateJsonTemplates) {
-                new Json().generate(entity, fsa)
-            }
-            if (generateKmlTemplates && entity.geographical) {
-                new Kml().generate(entity, fsa)
-            }
-        }
-        if (entity.hasDetailAction) {
-            if (generateIcsTemplates && null !== entity.startDateField && null !== entity.endDateField) {
-                new Ics().generate(entity, fsa)
             }
         }
         if (entity.hasDetailAction) {

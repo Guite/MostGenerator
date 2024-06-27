@@ -39,7 +39,6 @@ var targetDir
 
 // calculated from input vars
 var modelFile = '${modelPath}/${modelName}.mostapp'
-// note: this does not consider the writeModelToDocs generator setting (yet)
 var modelFileCopy = '${targetDir}/model/${modelName}.mostapp'
 //var modelFileEnriched = '${modelPath}/${modelName}_enriched.mostapp'
 //var modelFileEnrichedCopy = '${targetDir}/model/${modelName}_enriched.mostapp'

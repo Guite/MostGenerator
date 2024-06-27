@@ -45,10 +45,6 @@ class Docs {
         fileName = 'LICENSE'
         fsa.generateFile(getAppLicencePath + fileName, License)
 
-        if (writeModelToDocs) {
-            fsa.generateFile(docPath + '/model/.htaccess', htAccessForModel)
-        }
-
         if (generateTechnicalDocumentation) {
             val techDocPath = docPath + '/model/'
             for (language : #['en', 'de']) {
@@ -169,23 +165,5 @@ class Docs {
         «ELSE»
             Please enter your license text here.
         «ENDIF»
-    '''
-
-    def private htAccessForModel(Application it) '''
-        # «generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
-        # ------------------------------------------------------------
-        # Purpose of file: block any web access to unallowed files
-        # stored in this directory
-        # ------------------------------------------------------------
-
-        # Apache 2.2
-        <IfModule !mod_authz_core.c>
-            Deny from all
-        </IfModule>
-
-        # Apache 2.4
-        <IfModule mod_authz_core.c>
-            Require all denied
-        </IfModule>
     '''
 }

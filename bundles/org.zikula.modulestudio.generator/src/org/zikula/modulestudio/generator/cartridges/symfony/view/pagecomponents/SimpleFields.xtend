@@ -169,7 +169,7 @@ class SimpleFields {
             <a href="{{ «realName»Url }}" title="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"{% if «realName»Meta.isImage %} class="image-link"{% endif %}>
             {% if «realName»Meta.isImage %}
                 {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
-                <img src="«IF application.generatePdfSupport»{% if app.request.requestFormat == 'pdf' %}{{ «realName».getPathname() }}{% else %}«ENDIF»{{ «realName».getPathname()|«application.appName.formatForDB»_relativePath|imagine_filter('zkroot', thumbOptions) }}«IF application.generatePdfSupport»{% endif %}«ENDIF»" alt="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
+                <img src="{{ «realName».getPathname()|«application.appName.formatForDB»_relativePath|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
             {% else %}
                 {% trans from 'messages' %}Download{% endtrans %} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
             {% endif %}

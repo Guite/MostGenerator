@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.action
 
 import de.guite.modulestudio.metamodel.Action
-import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
@@ -13,7 +12,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ActionRoute {
 
@@ -21,13 +19,6 @@ class ActionRoute {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
-    extension ViewExtensions = new ViewExtensions
-
-    Application app
-
-    new(Application app) {
-        this.app = app
-    }
 
     def generate(Action it) '''
         «actionRoute(false)»
@@ -40,7 +31,7 @@ class ActionRoute {
     def private dispatch actionRoute(IndexAction it, Boolean isAdmin) '''
         #[Route('«IF isAdmin»/admin«ENDIF»/«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{page}/{num}.{_format}',
             name: '«entity.application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«entity.name.formatForDB»_index',
-            requirements: ['sortdir' => 'asc|desc|ASC|DESC', 'page' => '\d+', 'num' => '\d+', '_format' => 'html«IF app.getListOfViewFormats.size > 0»|«app.getListOfViewFormats.join('|')»«ENDIF»'],
+            requirements: ['sortdir' => 'asc|desc|ASC|DESC', 'page' => '\d+', 'num' => '\d+', '_format' => 'html'],
             defaults: ['sort' => '', 'sortdir' => 'asc', 'page' => 1, 'num' => 10, '_format' => 'html'],
             methods: ['GET']
         )]
@@ -49,7 +40,7 @@ class ActionRoute {
     def private actionRouteForSingleEntity(Entity it, Action action, Boolean isAdmin) '''
         #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/«IF !(action instanceof DetailAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}',
             name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_detail',
-            requirements: [«actionRouteRequirementsForSingleEntity(action)», '_format' => 'html«IF action instanceof DetailAction && app.getListOfDisplayFormats.size > 0»|«app.getListOfDisplayFormats.join('|')»«ENDIF»'],
+            requirements: [«actionRouteRequirementsForSingleEntity(action)», '_format' => 'html'],
             defaults: [«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»'_format' => 'html'],
             methods: ['GET'«IF action instanceof EditAction || action instanceof DeleteAction», 'POST'«ENDIF»]«IF tree != EntityTreeType.NONE»,
             options: ['expose' => true]«ENDIF»

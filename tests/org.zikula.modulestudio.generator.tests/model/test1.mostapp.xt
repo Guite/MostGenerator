@@ -21,14 +21,6 @@ application "SimpleNews" targets SF71 {
     license "My license"
     prefix "sinew"
     generateAccountApi true
-    generateRssTemplates true
-    generateAtomTemplates true
-    generateCsvTemplates true
-    generateXmlTemplates true
-    generateJsonTemplates true
-    generateKmlTemplates true
-    generateIcsTemplates true
-    generatePdfSupport true
     generateOnlyBaseClasses false
     timestampAllGeneratedFiles true
     versionAllGeneratedFiles true

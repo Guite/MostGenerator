@@ -7,7 +7,6 @@ import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Blameable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.EntityExtensionInterface
-import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.IpTraceable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Loggable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Sluggable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Sortable
@@ -29,9 +28,6 @@ class ExtensionManager {
         this.extensions = newArrayList
         if (entity.hasBlameableFields) {
             this.extensions += new Blameable
-        }
-        if (entity.hasIpTraceableFields) {
-            this.extensions += new IpTraceable
         }
         if (entity.loggable) {
             this.extensions += new Loggable

@@ -9,18 +9,14 @@ import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.EntityBlameableType
-import de.guite.modulestudio.metamodel.EntityIpTraceableType
 import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.StringIsbnStyle
-import de.guite.modulestudio.metamodel.StringIssnStyle
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
@@ -270,17 +266,9 @@ class TechStructureFields {
         if (language == 'de') {
             if (sluggablePosition > 0) result += 'Ist Teil des Permalinks (Position ' + sluggablePosition + ').'
             if (role != StringRole.NONE) result += '' + role.enumDescription
-            if (isbn != StringIsbnStyle.NONE) result += '' + isbn.enumDescription
-            if (issn != StringIssnStyle.NONE) result += 'Repräsentiert eine ISSN (internationale Standardsammelwerknummer).'
-            if (ipAddress != IpAddressScope.NONE) result += 'Repräsentiert eine IP-Adresse (' + ipAddress.literal + ').'
-            if (ipTraceable != EntityIpTraceableType.NONE) result += 'Verwendet die IpTraceable-Erweiterung (' + ipTraceable.literal + ').'
         } else {
             if (sluggablePosition > 0) result += 'Is part of the slug (position ' + sluggablePosition + ').'
             if (role != StringRole.NONE) result += '' + role.enumDescription
-            if (isbn != StringIsbnStyle.NONE) result += '' + isbn.enumDescription
-            if (issn != StringIssnStyle.NONE) result += 'Represents an ISSN (international standard serial number).'
-            if (ipAddress != IpAddressScope.NONE) result += 'Represents an IP address (' + ipAddress.literal + ').'
-            if (ipTraceable != EntityIpTraceableType.NONE) result += 'Uses the IpTraceable extension (' + ipTraceable.literal + ').'
         }
         result
     }
@@ -410,19 +398,6 @@ class TechStructureFields {
                 return if (language == 'de') 'Repräsentiert eine UUID (Universally Unique Identifier).' else 'Represents an UUID (Universally Unique Identifier).'
             case WEEK:
                 return if (language == 'de') 'Repräsentiert eine Wochennummer.' else 'Represents a week number.'
-        }
-    }
-
-    def dispatch private enumDescription(StringIsbnStyle it) {
-        switch it {
-            case NONE:
-                return ''
-            case ISBN10:
-                return if (language == 'de') 'Repräsentiert eine ISBN (internationale Standardbuchnummer) mit ISBN-10 Format.' else 'Represents an ISBN (international standard book number) with ISBN-10 format.'
-            case ISBN13:
-                return if (language == 'de') 'Repräsentiert eine ISBN (internationale Standardbuchnummer) mit ISBN-13 Format.' else 'Represents an ISBN (international standard book number) with ISBN-13 format.'
-            case ALL:
-                return if (language == 'de') 'Repräsentiert eine ISBN (internationale Standardbuchnummer) mit ISBN-10 und ISBN-13 Formaten.' else 'Represents an ISBN (international standard book number) with ISBN-10 and ISBN-13 formats.'
         }
     }
 

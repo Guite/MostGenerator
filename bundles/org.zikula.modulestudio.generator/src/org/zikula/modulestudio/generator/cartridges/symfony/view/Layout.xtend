@@ -233,25 +233,4 @@ class Layout {
     def private rawJsInit(Application it) '''
         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».RawPage.js')) }}
     '''
-
-    def pdfHeaderFile(Application it) {
-        if (!generatePdfSupport) {
-            return
-        }
-        val fileName = 'includePdfHeader.html.twig'
-        fsa.generateFile(getViewPath + fileName, pdfHeaderImpl)
-    }
-
-    def private pdfHeaderImpl(Application it) '''
-        {# purpose of this template: export pages to PDF #}
-        {% trans_default_domain 'messages' %}
-        <!DOCTYPE html>
-        <html lang="{{ app.locale }}" dir="auto">
-        <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-            <title>{{ pageGetVar('title') }}</title>
-            {{ pageAddAsset('stylesheet', zasset('@«appName»:css/pdf.css')) }}
-        </head>
-        <body>
-    '''
 }

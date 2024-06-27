@@ -97,16 +97,6 @@ class ServiceDefinitions {
                 «IF hasIndexActions»
                 - { name: knp_menu.menu_builder, method: createViewActionsMenu, alias: «vendorAndName.toFirstLower»MenuViewActions }
                 «ENDIF»
-        «IF !getAllEntities.filter[hasIpTraceableFields].empty»
-
-            gedmo_doctrine_extensions.listener.ip_traceable:
-                class: Gedmo\IpTraceable\IpTraceableListener
-                public: false
-                calls:
-                    - setAnnotationReader: ['@annotation_reader']
-                tags:
-                    - { name: doctrine.event_subscriber, connection: default }
-        «ENDIF»
         «IF hasSluggable»
 
             stof_doctrine_extensions.listener.sluggable:

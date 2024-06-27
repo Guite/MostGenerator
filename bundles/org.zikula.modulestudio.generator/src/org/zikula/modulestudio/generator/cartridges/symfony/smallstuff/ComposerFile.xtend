@@ -45,9 +45,6 @@ class ComposerFile {
         "require": {
             "php": ">=8.2",
             "doctrine/doctrine-migrations-bundle": "^3.3",
-            «IF generatePdfSupport»
-                "dompdf/dompdf": "^2",
-            «ENDIF»
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
             «ENDIF»

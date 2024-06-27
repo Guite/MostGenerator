@@ -17,7 +17,6 @@ import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
@@ -657,28 +656,6 @@ class ModelExtensions {
      */
     def hasPessimisticWriteLock(Entity it) {
         lockType == EntityLockType.PESSIMISTIC_WRITE
-    }
-
-    /**
-     * Prints an output string corresponding to the given entity lock type.
-     */
-    def ipScopeAsConstant(IpAddressScope scope) {
-        switch scope {
-            case NONE           : ''
-            case IP4            : '4'
-            case IP6            : '6'
-            case ALL            : 'all'
-            case IP4_NO_PRIV    : '4_no_priv'
-            case IP6_NO_PRIV    : '6_no_priv'
-            case ALL_NO_PRIV    : 'all_no_priv'
-            case IP4_NO_RES     : '4_no_res'
-            case IP6_NO_RES     : '6_no_res'
-            case ALL_NO_RES     : 'all_no_res'
-            case IP4_PUBLIC     : '4_public'
-            case IP6_PUBLIC     : '6_public'
-            case ALL_PUBLIC     : 'all_public'
-            default: ''
-        }
     }
 
     /**

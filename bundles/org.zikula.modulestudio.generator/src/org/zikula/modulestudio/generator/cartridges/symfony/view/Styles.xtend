@@ -33,11 +33,6 @@ class Styles {
         fileName = 'custom.css'
         fsa.generateFile(getAppCssPath + fileName, '/* this file is intended for custom styles */')
 
-        if (generatePdfSupport) {
-            fileName = 'pdf.css'
-            fsa.generateFile(getAppCssPath + fileName, pdfStyles)
-        }
-
         if (generateTechnicalDocumentation) {
             fileName = 'techdocs.css'
             fsa.generateFile(getAppCssPath + fileName, techDocsStyles)
@@ -234,16 +229,6 @@ class Styles {
         div.«cssPrefix»-index form.«cssPrefix»-quicknav label {
            margin: 0 5px;
            display: inline;
-        }
-    '''
-
-    def private pdfStyles(Application it) '''
-        @page {
-            margin: 1cm 2cm 1cm 1cm;
-        }
-        img {
-            border-width: 0;
-            vertical-align: top;
         }
     '''
 

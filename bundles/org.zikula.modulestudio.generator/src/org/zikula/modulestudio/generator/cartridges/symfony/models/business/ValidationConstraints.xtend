@@ -11,13 +11,10 @@ import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityIndex
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.IpAddressScope
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.StringIsbnStyle
-import de.guite.modulestudio.metamodel.StringIssnStyle
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
@@ -187,12 +184,6 @@ class ValidationConstraints {
             #[Assert\Language]
         «ELSEIF role == StringRole.LOCALE»
             #[Assert\Locale]
-        «ELSEIF isbn != StringIsbnStyle.NONE»
-            #[Assert\Isbn(«IF isbn != StringIsbnStyle.ALL»type: '«IF isbn == StringIsbnStyle.ISBN10»isbn10«ELSEIF isbn == StringIsbnStyle.ISBN13»isbn13«ENDIF»'«ENDIF»)]
-        «ELSEIF issn != StringIssnStyle.NONE»
-            #[Assert\Issn(caseSensitive: «(issn == StringIssnStyle.CASE_SENSITIVE || issn == StringIssnStyle.STRICT).displayBool», requireHyphen: «(issn == StringIssnStyle.REQUIRE_HYPHEN || issn == StringIssnStyle.STRICT).displayBool»)]
-        «ELSEIF ipAddress != IpAddressScope.NONE»
-            #[Assert\Ip(version: '«ipAddress.ipScopeAsConstant»')]
         «ELSEIF role == StringRole.PASSWORD»
             #[Assert\NotCompromisedPassword]
             #[Assert\PasswordStrength]

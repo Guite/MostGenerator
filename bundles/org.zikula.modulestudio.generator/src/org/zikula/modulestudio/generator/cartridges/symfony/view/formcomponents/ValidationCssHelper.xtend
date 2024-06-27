@@ -13,8 +13,8 @@ class ValidationCssHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
 
-    def fieldValidationCssClass(DerivedField it) '''«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')»«IF unique» «ENDIF»«cssClass»«ENDIF»«fieldValidationCssClassAdditions»'''
-    def fieldValidationCssClassOptional(UploadField it)'''«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')»«IF unique» «ENDIF»«cssClass»«ENDIF»«fieldValidationCssClassAdditions»'''
+    def fieldValidationCssClass(DerivedField it) '''«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»'''
+    def fieldValidationCssClassOptional(UploadField it)'''«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»'''
 
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
