@@ -26,10 +26,17 @@ jobs:
         java-version: 21
         cache: maven
 
+    # Tycho 4 requires Maven 3.8 at least
+    - name: Update Maven
+      run: |
+        wget -q https://dlcdn.apache.org/maven/maven-3/3.9.8/binaries/apache-maven-3.9.8-bin.tar.gz
+        tar xzf apache-maven-3.9.8-bin.tar.gz && rm apache-maven-3.9.8-bin.tar.gz
+        mv apache-maven-3.9.8 maven
+
     # https://stackoverflow.com/questions/71069/can-maven-be-made-less-verbose
     - name: Maven Build
       run: |
-        mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        maven/bin/mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
     # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
