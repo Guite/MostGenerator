@@ -145,59 +145,6 @@ application "SimpleNews" {
                     regexp "foo" opposite
                     length 8
                 },
-                string "str61" {
-                    length 50
-                    ipAddress NONE
-                },
-                string "str62" {
-                    length 50
-                    ipAddress IP4
-                },
-                string "str63" {
-                    length 50
-                    ipAddress IP6
-                },
-                string "str64" {
-                    length 50
-                    ipAddress ALL
-                },
-                string "str65" {
-                    length 50
-                    ipAddress IP4_NO_PRIV
-                },
-                string "str66" {
-                    length 50
-                    ipAddress IP6_NO_PRIV
-                },
-                string "str67" {
-                    length 50
-                    ipAddress ALL_NO_PRIV
-                },
-                string "str68" {
-                    length 50
-                    ipAddress IP4_NO_RES
-                },
-                string "str69" {
-                    length 50
-                    ipAddress IP6_NO_RES
-                },
-                string "str610" {
-                    length 50
-                    ipAddress ALL_NO_RES
-                },
-                string "str611" {
-                    length 50
-                    ipAddress IP4_PUBLIC
-                },
-                string "str612" {
-                    length 50
-                    ipAddress IP6_PUBLIC
-                },
-                string "str613" {
-                    length 50
-                    ipAddress ALL_PUBLIC
-                    role NONE
-                },
                 string "str71" {
                     length 15
                     role BIC
