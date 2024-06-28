@@ -86,7 +86,6 @@ application "SimpleNews" {
                     length 6
                     minValue 2
                     maxValue 2000
-                    aggregateFor "articles3.num2"
                 }
             }
         },
@@ -110,7 +109,7 @@ application "SimpleNews" {
                     visibleOnSort false
                     numberType DECIMAL
                 },
-                number "num3" aggregationField currency {
+                number "num3" currency {
                     defaultValue "123.45"
                     numberType FLOAT
                     length 8
@@ -303,7 +302,6 @@ application "SimpleNews" {
             displayPattern "#usr1#"
             identifierStrategy IDENTITY
             lockType PESSIMISTIC_READ
-            slugStyle LOWERCASE
             fields {
                 user "usr1" nullable readonly sortableGroup {
                     dbName "usr1"
@@ -347,7 +345,6 @@ application "SimpleNews" {
             identifierStrategy IDENTITY
             changeTrackingPolicy DEFERRED_IMPLICIT
             lockType PESSIMISTIC_WRITE
-            slugStyle UPPERCASE
             fields {
                 email "ema1" nullable readonly sortableGroup {
                     dbName "ema1"
@@ -376,7 +373,6 @@ application "SimpleNews" {
         entity "article8" {
             nameMultiple "articles8"
             lockType NONE
-            slugStyle CAMEL
             tree NONE
             fields {
                 url "url1" nullable readonly sortableGroup {

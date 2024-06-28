@@ -86,11 +86,6 @@ class Detail {
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display">
                 «content(appName)»
             </div>
-            «IF hasCounterFieldsEntity»
-                «FOR counterField : getCounterFields»
-                    {{ «appName.toLowerCase»_increaseCounter(«objName», '«counterField.name.formatForCode»') }}
-                «ENDFOR»
-            «ENDIF»
         {% endblock %}
         «val refedElems = getReferredElements»
         «IF !refedElems.empty»

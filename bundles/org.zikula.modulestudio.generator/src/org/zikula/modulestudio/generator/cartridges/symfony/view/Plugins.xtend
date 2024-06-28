@@ -8,7 +8,6 @@ import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.FormatGeoData
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetFileSize
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetListEntry
-import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.IncreaseCounter
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.ObjectState
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.TreeData
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.TreeSelection
@@ -71,17 +70,11 @@ class Plugins {
         if (!getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty) {
             imports.add('DateInterval')
         }
-        if (!getEntitiesWithCounterFields.empty) {
-            imports.add('Doctrine\\DBAL\\Driver\\Connection')
-        }
         if (hasLoggable) {
             imports.addAll(#[
                 'Gedmo\\Loggable\\Entity\\MappedSuperclass\\AbstractLogEntry',
                 appNamespace + '\\Helper\\LoggableHelper'
             ])
-        }
-        if (!getEntitiesWithCounterFields.empty) {
-            imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
         }
         if (hasTrees) {
             imports.addAll(#[
@@ -124,9 +117,6 @@ class Plugins {
                     new TwigFunction('«appNameLower»_treeData', [TwigRuntime::class, 'getTreeData'], ['is_safe' => ['html']]),
                     new TwigFunction('«appNameLower»_treeSelection', [TwigRuntime::class, 'getTreeSelection']),
                 «ENDIF»
-                «IF !getEntitiesWithCounterFields.empty»
-                    new TwigFunction('«appNameLower»_increaseCounter', [TwigRuntime::class, 'increaseCounter']),
-                «ENDIF»
             ];
         }
 
@@ -168,10 +158,8 @@ class Plugins {
 
     def private twigRuntimeBody(Application it) '''
         public function __construct(
-            protected readonly TranslatorInterface $translator«IF !getEntitiesWithCounterFields.empty»,
-            protected readonly Connection $databaseConnection«ENDIF»«IF hasTrees»,
-            protected readonly RouterInterface $router«ENDIF»«IF !getEntitiesWithCounterFields.empty»,
-            protected readonly RequestStack $requestStack«ENDIF»,
+            protected readonly TranslatorInterface $translator«IF hasTrees»,
+            protected readonly RouterInterface $router«ENDIF»,
             «IF hasTrees»
                 protected readonly EntityFactory $entityFactory,
             «ENDIF»
@@ -314,9 +302,6 @@ class Plugins {
         if (hasTrees) {
             result += new TreeData().generate(it)
             result += new TreeSelection().generate(it)
-        }
-        if (!getEntitiesWithCounterFields.empty) {
-            result += new IncreaseCounter().generate(it)
         }
         result.join("\n")
     }

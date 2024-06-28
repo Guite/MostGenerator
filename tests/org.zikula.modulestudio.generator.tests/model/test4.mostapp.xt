@@ -31,7 +31,6 @@ application "SimpleNews" targets SF71 {
             slugUpdatable false
             slugUnique false
             slugSeparator "_"
-            slugStyle LOWERCASE
             tree CLOSURE
             standardFields false
             onAccountDeletionCreator GUEST

@@ -46,10 +46,6 @@ class EventSubscribers {
         isBase = true
         generateSubscriberClasses
 
-        if (generateOnlyBaseClasses) {
-            return
-        }
-
         'Generating event subscriber implementation classes'.printIfNotTesting(fsa)
         subscriberPath = 'EventSubscriber/'
         isBase = false

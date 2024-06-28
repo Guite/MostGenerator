@@ -32,9 +32,7 @@ class MostFileSystemAccess extends JavaIoFileSystemAccess implements IMostFileSy
     override generateClassPair(String concretePath, CharSequence baseContent, CharSequence concreteContent) {
         val basePath = app.getPathToBaseClass(concretePath)
         generateFile(basePath, baseContent)
-        if (!app.generateOnlyBaseClasses) {
-            generateFile(concretePath, concreteContent)
-        }
+        generateFile(concretePath, concreteContent)
     }
 
     /* to be added later if needed

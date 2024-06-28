@@ -183,7 +183,7 @@ class Property {
     '''
 
     def dispatch fieldAccessor(IntegerField it) '''
-        «IF isIndexByField/* || (null !== aggregateFor && !aggregateFor.empty*/»
+        «IF isIndexByField»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), true)»
         «ELSE»
             «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), true, '', '')»

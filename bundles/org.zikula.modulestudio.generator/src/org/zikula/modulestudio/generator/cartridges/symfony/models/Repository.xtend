@@ -80,13 +80,11 @@ class Repository {
         content = if (!isInheriting || parentType instanceof MappedSuperClass) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
         fsa.generateFile(repositoryPath + fileName, content)
 
-        if (!app.generateOnlyBaseClasses) {
-            fileName = name.formatForCodeCapital + fileSuffix + 'Interface.php'
-            fsa.generateFile(repositoryPath + fileName, modelRepositoryInterfaceImpl)
+        fileName = name.formatForCodeCapital + fileSuffix + 'Interface.php'
+        fsa.generateFile(repositoryPath + fileName, modelRepositoryInterfaceImpl)
 
-            fileName = name.formatForCodeCapital + fileSuffix + '.php'
-            fsa.generateFile(repositoryPath + fileName, modelRepositoryImpl)
-        }
+        fileName = name.formatForCodeCapital + fileSuffix + '.php'
+        fsa.generateFile(repositoryPath + fileName, modelRepositoryImpl)
     }
 
     def private getDefaultSortingField(Entity it) {

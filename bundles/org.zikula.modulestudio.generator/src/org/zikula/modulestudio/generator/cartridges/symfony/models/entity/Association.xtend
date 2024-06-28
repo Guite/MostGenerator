@@ -464,13 +464,8 @@ class Association {
         }
     }
 
-    def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
+    def private addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
         «type» $«name»'''
-    def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type) '''
-        «IF !useTarget && !source.getAggregateFields.empty»
-            «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-            «targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode»
-        «ELSE»«type» $«name»«ENDIF»'''
 
     def private addMethodSignature(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»): self'''
@@ -495,27 +490,6 @@ class Association {
             {
                 $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
                 «addInverseCalls(useTarget, nameSingle)»
-
-                return $this;
-            }
-        «ELSEIF !useTarget && !source.getAggregateFields.empty»
-            «addMethodSignature(useTarget, name, nameSingle, type)»
-            {
-                «val sourceField = source.getAggregateFields.head»
-                «val targetField = sourceField.getAggregateTargetField»
-                $«getRelationAliasName(true)» = new «target.entityClassName('', false)»($this, $«targetField.name.formatForCode»);
-                $this->«name»[] = $«nameSingle»;
-                $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
-
-                return $this;
-            }
-
-            /**
-             * Additional add function for internal use.
-             */
-            protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»(«targetField.fieldTypeAsString(true)» $«targetField.name.formatForCode»): self
-            {
-                $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
 
                 return $this;
             }

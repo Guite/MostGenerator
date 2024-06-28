@@ -10,7 +10,6 @@ import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
-import de.guite.modulestudio.metamodel.EmailValidationMode
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityIndexType
@@ -61,20 +60,6 @@ class ModelExtensions {
      */
     def getLeadingEntity(Application it) {
         getAllEntities.findFirst[leading]
-    }
-
-    /**
-     * Checks whether the application contains at least one email field with the given validation mode.
-     */
-    def hasEmailFieldsWithValidationMode(Application it, EmailValidationMode mode) {
-        getAllEntities.exists[!getEmailFieldsWithValidationModeEntity(mode).empty] || !getAllVariables.filter(EmailField).filter[validationMode == mode].empty
-    }
-
-    /**
-     * Returns a list of all email fields of this entity.
-     */
-    def getEmailFieldsWithValidationModeEntity(DataObject it, EmailValidationMode mode) {
-        getSelfAndParentDataObjects.map[fields.filter(EmailField).filter[validationMode == mode]].flatten
     }
 
     /**
@@ -609,13 +594,6 @@ class ModelExtensions {
      */
     def getBooleanFieldsEntity(DataObject it) {
         getSelfAndParentDataObjects.map[fields.filter(BooleanField)].flatten
-    }
-
-    /**
-     * Returns a list of all integer fields which are used as aggregates.
-     */
-    def getAggregateFields(DataObject it) {
-        getSelfAndParentDataObjects.map[fields].flatten.filter(IntegerField).filter[null !== aggregateFor && !aggregateFor.empty]
     }
 
     /**

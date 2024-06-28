@@ -215,7 +215,7 @@ class ValidationConstraints {
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
         «IF mandatory»
-            #[Assert\Email(mode: '«validationMode.validationModeAsString»')]
+            #[Assert\Email]
         «ENDIF»
     '''
     def dispatch fieldAnnotations(UrlField it) '''

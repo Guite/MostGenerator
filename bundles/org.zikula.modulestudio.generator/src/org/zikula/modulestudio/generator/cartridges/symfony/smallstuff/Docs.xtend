@@ -160,7 +160,7 @@ class Docs {
     '''
 
     def private License(Application it) '''
-        «IF license == 'MIT'»
+        «IF license == 'MIT' || license == 'MIT License'»
             «new License_MIT().generate(it)»
         «ELSE»
             Please enter your license text here.

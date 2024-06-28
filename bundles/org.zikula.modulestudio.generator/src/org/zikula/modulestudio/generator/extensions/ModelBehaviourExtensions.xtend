@@ -5,10 +5,8 @@ import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.EmailValidationMode
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityBlameableType
-import de.guite.modulestudio.metamodel.EntitySlugStyle
 import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.IntegerField
@@ -145,27 +143,6 @@ class ModelBehaviourExtensions {
      */
     def getStandardFieldEntities(Application it) {
         getAllEntities.filter[standardFields]
-    }
-
-    /**
-     * Returns a list of all entities with at least one counter field.
-     */
-    def getEntitiesWithCounterFields(Application it) {
-        getAllEntities.filter[hasCounterFieldsEntity]
-    }
-
-    /**
-     * Checks whether the entity contains at least one counter field.
-     */
-    def hasCounterFieldsEntity(Entity it) {
-        !getCounterFields.empty
-    }
-
-    /**
-     * Returns a list of all integer fields with the counter flag enabled.
-     */
-    def getCounterFields(Entity it) {
-        getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[counter]].flatten
     }
 
     /**
@@ -364,18 +341,6 @@ class ModelBehaviourExtensions {
     }
 
     /**
-     * Prints an output string corresponding to the given slug style.
-     */
-    def slugStyleAsConstant(EntitySlugStyle slugStyle) {
-        switch slugStyle {
-            case LOWERCASE  : 'lower'
-            case UPPERCASE  : 'upper'
-            case CAMEL      : 'camel'
-            default: 'default'
-        }
-    }
-
-    /**
      * Prints an output string corresponding to the given account deletion handler type.
      */
     def adhAsConstant(AccountDeletionHandler handler) {
@@ -400,21 +365,9 @@ class ModelBehaviourExtensions {
     }
 
     /**
-     * Returns the validation string for a given email validation mode.
-     */
-    def validationModeAsString(EmailValidationMode mode) {
-        switch mode {
-            case LOOSE    : 'loose'
-            case STRICT   : 'strict'
-            case HTML5    : 'html5'
-            default: 'html5'
-        }
-    }
-
-    /**
      * Checks whether a composer execution is required before installing the application.
      */
     def needsComposerInstall(Application it) {
-        hasGeographical || hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT) 
+        hasGeographical 
     }
 }

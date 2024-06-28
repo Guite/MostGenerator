@@ -16,13 +16,11 @@ import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
 class ValidationDocProvider {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
 
     String language
@@ -123,11 +121,9 @@ class ValidationDocProvider {
         if (language == 'de') {
             result += 'Hat eine Länge von ' + length + ' Zeichen.'
             result += commonStringConstraints
-            result += 'Der Validierungsmodus ist auf "' + validationMode.validationModeAsString + '" eingestellt.'
         } else {
             result += 'Has a length of ' + length + ' chars.'
             result += commonStringConstraints
-            result += 'Validation mode is set to "' + validationMode.validationModeAsString + '".'
         }
         result
     }

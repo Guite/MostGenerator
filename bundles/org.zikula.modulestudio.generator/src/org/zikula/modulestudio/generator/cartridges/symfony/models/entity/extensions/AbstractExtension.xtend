@@ -53,15 +53,13 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.php'
         fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseImpl)
 
-        if (!app.generateOnlyBaseClasses) {
-            fileName = classPrefix + entitySuffix + '.php'
-            fsa.generateFile(entityPath + fileName, extensionClassImpl)
+        fileName = classPrefix + entitySuffix + '.php'
+        fsa.generateFile(entityPath + fileName, extensionClassImpl)
 
-            fileName = classPrefix + repositorySuffix + 'Interface.php'
-            fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryInterfaceImpl)
-            fileName = classPrefix + repositorySuffix + '.php'
-            fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryImpl)
-        }
+        fileName = classPrefix + repositorySuffix + 'Interface.php'
+        fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryInterfaceImpl)
+        fileName = classPrefix + repositorySuffix + '.php'
+        fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryImpl)
     }
 
     def protected extensionClassBaseImpl(Entity it) '''

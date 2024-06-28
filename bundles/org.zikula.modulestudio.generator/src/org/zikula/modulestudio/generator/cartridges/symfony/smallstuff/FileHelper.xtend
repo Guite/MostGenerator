@@ -10,13 +10,11 @@ import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class FileHelper {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
     new(Application it) {
@@ -135,16 +133,7 @@ class FileHelper {
     '''
 
     def private setterAssignmentNumeric(DerivedField it, String name) '''
-        «val aggregators = getAggregatingRelationships»
-        «IF !aggregators.empty»
-            $diff = abs($this->«name» - $«name»);
-        «ENDIF»
         $this->«name» = $«name»;
-        «IF !aggregators.empty»
-            «FOR aggregator : aggregators»
-            $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
-            «ENDFOR»
-        «ENDIF»
     '''
 
     def private dispatch setterAssignment(DatetimeField it, String name) '''

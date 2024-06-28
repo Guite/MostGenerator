@@ -361,7 +361,7 @@ class PersistenceTransformer {
                 defaultValue = '10'
                 documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page.'
             ]
-            if (generateAccountApi && entity.standardFields) {
+            if (entity.standardFields) {
                 varContainer.fields += factory.createBooleanField => [
                     name = 'linkOwn' + entity.nameMultiple.formatForCodeCapital + 'OnAccountPage'
                     defaultValue = 'true'

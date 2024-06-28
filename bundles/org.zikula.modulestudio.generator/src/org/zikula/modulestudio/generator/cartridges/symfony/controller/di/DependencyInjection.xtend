@@ -1,15 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.di
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import de.guite.modulestudio.metamodel.UserField
-import org.zikula.modulestudio.generator.application.ImportList
 
 class DependencyInjection {
 
@@ -71,9 +71,7 @@ class DependencyInjection {
         if (hasGeographical) {
             imports.add(appNamespace + '\\Helper\\ViewHelper')
         }
-        if (generateAccountApi) {
-            imports.add(appNamespace + '\\Menu\\ExtensionMenu')
-        }
+        imports.add(appNamespace + '\\Menu\\ExtensionMenu')
         if (hasIndexActions) {
             imports.add(appNamespace + '\\Menu\\MenuBuilder')
         }
@@ -151,10 +149,8 @@ class DependencyInjection {
                         $container->getDefinition(ViewHelper::class)
                             ->setArgument('$geoConfig', $config['geo']);
                     «ENDIF»
-                    «IF generateAccountApi»
-                        $container->getDefinition(ExtensionMenu::class)
-                            ->setArgument('$listViewConfig', $config['list_views']);
-                    «ENDIF»
+                    $container->getDefinition(ExtensionMenu::class)
+                        ->setArgument('$listViewConfig', $config['list_views']);
                     «IF hasIndexActions»
                         $container->getDefinition(MenuBuilder::class)
                             ->setArgument('$listViewConfig', $config['list_views']);

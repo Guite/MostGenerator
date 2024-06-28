@@ -48,7 +48,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
 
     '''
 
-    def private slugDetails(Entity it) '''fields: [«FOR field : getSluggableFields SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], updatable: «slugUpdatable.displayBool», unique: «slugUnique.displayBool», separator: '«slugSeparator»', style: '«slugStyle.slugStyleAsConstant»'«''»'''
+    def private slugDetails(Entity it) '''fields: [«FOR field : getSluggableFields SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], updatable: «slugUpdatable.displayBool», unique: «slugUnique.displayBool», separator: '«slugSeparator»', style: 'default'«''»'''
 
     def private slugHandler(Entity it) {
         if (tree != EntityTreeType.NONE) {

@@ -20,8 +20,6 @@ application "SimpleNews" targets SF71 {
     version "0.0.5"
     license "My license"
     prefix "sinew"
-    generateAccountApi true
-    generateOnlyBaseClasses false
     timestampAllGeneratedFiles true
     versionAllGeneratedFiles true
     generatePoweredByBacklinksIntoFooterTemplates true

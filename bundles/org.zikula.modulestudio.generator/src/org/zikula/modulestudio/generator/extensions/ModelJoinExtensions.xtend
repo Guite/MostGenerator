@@ -5,15 +5,14 @@ import de.guite.modulestudio.metamodel.CascadeType
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.Relationship
-import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 
 /**
  * This class contains model join relationship related extension methods.
@@ -322,59 +321,5 @@ class ModelJoinExtensions {
             ManyToManyRelationship: it.indexBy
             default: ''
         }
-    }
-
-    /**
-     * Returns the outgoing one2many relationship using this field as aggregate. 
-     */
-    def getAggregateRelationship(IntegerField it) {
-        val aggregateDetails = aggregateFor.split('\\.')
-        entity.outgoing.filter(OneToManyRelationship).findFirst[bidirectional && targetAlias == aggregateDetails.head]
-    }
-
-    /**
-     * Returns the target entity of the outgoing one2many relationship using this field as aggregate. 
-     */
-    def getAggregateTargetEntity(IntegerField it) {
-        getAggregateRelationship.target
-    }
-
-    /**
-     * Returns the target field of the outgoing one2many relationship using this field as aggregate. 
-     */
-    def dispatch getAggregateTargetField(DerivedField it) {
-    }
-    /**
-     * Returns the target field of the outgoing one2many relationship using this field as aggregate. 
-     */
-    def dispatch getAggregateTargetField(IntegerField it) {
-        val aggregateDetails = aggregateFor.split('\\.')
-        getAggregateTargetEntity.fields.filter(DerivedField).findFirst[name == aggregateDetails.get(1)]
-    }
-
-    /**
-     * Returns a list of all incoming relationships aggregating this field. 
-     */
-    def getAggregatingRelationships(DerivedField it) {
-        val thisField = it
-        if (null !== entity)
-            entity.incoming.filter(OneToManyRelationship)
-                           .filter[!source.getAggregateFields.empty]
-                           .filter[!source.getAggregateFields.filter[getAggregateTargetField == thisField].empty]
-        else #[]
-    }
-
-    /**
-     * Returns a list of all incoming relationships aggregating any fields of this entity. 
-     */
-    def getAggregators(DataObject it) {
-        getDerivedFields.filter[!getAggregatingRelationships.empty]
-    }
-
-    /**
-     * Checks whether there is at least one field used as aggregate field. 
-     */
-    def isAggregated(DataObject it) {
-        !getAggregators.empty
     }
 }

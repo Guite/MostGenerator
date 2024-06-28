@@ -1,17 +1,14 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.EmailValidationMode
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ComposerFile {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
@@ -47,9 +44,6 @@ class ComposerFile {
             "doctrine/doctrine-migrations-bundle": "^3.3",
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
-            «ENDIF»
-            «IF hasEmailFieldsWithValidationMode(EmailValidationMode.STRICT)»
-                "egulias/email-validator": "^2",
             «ENDIF»
             "zikula/core-bundle": "^«targetZikulaVersion»",
             "zikula/theme-bundle": "^«targetZikulaVersion»",
