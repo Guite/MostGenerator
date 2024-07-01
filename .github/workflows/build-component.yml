@@ -59,7 +59,7 @@ jobs:
 
     # see https://github.com/SamKirkland/FTP-Deploy-Action
     - name: Deploy repository
-      uses: SamKirkland/FTP-Deploy-Action@v4
+      uses: SamKirkland/FTP-Deploy-Action@master
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
