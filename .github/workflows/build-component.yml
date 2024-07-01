@@ -38,6 +38,11 @@ jobs:
       run: |
         maven/bin/mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
+    - name: Collect artifacts to deploy
+      run: |
+        mkdir -p deploy/repo
+        cp -R releng/org.zikula.modulestudio.generator.build/target/repository/* deploy/repo
+
     # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
       uses: WebFreak001/deploy-nightly@master
