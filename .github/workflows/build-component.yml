@@ -57,6 +57,17 @@ jobs:
       env:
         DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
 
+    # see https://github.com/SamKirkland/FTP-Deploy-Action
+    - name: Deploy repository
+      uses: SamKirkland/FTP-Deploy-Action@v4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: deploy/repo/
+        server-dir: components/generator/
+        dangerous-clean-slate: true
+
     # see https://github.com/peter-evans/repository-dispatch
     - name: Dispatch downstream job
       uses: peter-evans/repository-dispatch@main
