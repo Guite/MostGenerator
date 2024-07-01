@@ -12,7 +12,7 @@ XPECT generated file composer.json ---
     "version": "1.0.0",
     "description": "Just a simple test application.",
     "type": "symfony-bundle",
-    "license": "LGPL-3.0-or-later",
+    "license": "MIT",
     "authors": [
         {
             "name": "Michael Smith",
