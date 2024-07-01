@@ -46,8 +46,6 @@ jobs:
     # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
       uses: WebFreak001/deploy-nightly@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: https://uploads.github.com/repos/Guite/MostGenerator/releases/22066470/assets{?name,label}
         release_id: 22066470
@@ -57,8 +55,8 @@ jobs:
         asset_content_type: application/java-archive
         max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
-    - name: Regenerate modules
-      run: ./.github/scripts/regenerateModules.sh
+    - name: Regenerate apps
+      run: ./.github/scripts/regenerateApps.sh
       env:
         DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
 

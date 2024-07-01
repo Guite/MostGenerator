@@ -4,12 +4,12 @@
 PROJECTS=(
     "Guite/test-actions"
     "Guite/Awards"
-    "zikula-modules/Content"
-    "zikula-modules/MultiHook"
-    "zikula-modules/Multisites"
-    "zikula-modules/News"
-    "zikula-modules/Pages"
-    "zikula-modules/Ratings"
+#    "zikula-modules/Content"
+#    "zikula-modules/MultiHook"
+#    "zikula-modules/Multisites"
+#    "zikula-modules/News"
+#    "zikula-modules/Pages"
+#    "zikula-modules/Ratings"
 )
 
 # loop through projects
