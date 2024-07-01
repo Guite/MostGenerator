@@ -32,7 +32,6 @@ application "SimpleNews" targets SF71 {
             slugUpdatable true
             slugUnique true
             slugSeparator "~"
-            slugStyle CAMEL
             tree NESTED
             standardFields true
             onAccountDeletionCreator ADMIN
