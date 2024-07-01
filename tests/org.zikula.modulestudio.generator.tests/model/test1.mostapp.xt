@@ -24,7 +24,6 @@ application "SimpleNews" targets SF71 {
     versionAllGeneratedFiles true
     generatePoweredByBacklinksIntoFooterTemplates true
     generateTests true
-    writeModelToDocs true
     generateTechnicalDocumentation true
     indexActionsPosition START
     indexActionsStyle ICON
