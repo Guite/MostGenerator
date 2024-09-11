@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
-Require-Bundle: com.google.guava;bundle-version="33.2.0",
+Require-Bundle: com.google.guava;bundle-version="33.3.0",
  com.google.inject;bundle-version="7.0.0",
  de.guite.modulestudio.mostdsl;bundle-version="1.5.0",
  de.guite.modulestudio.mostdsl.ui;bundle-version="1.5.0",
