@@ -5,13 +5,13 @@ Bundle-SymbolicName: org.zikula.modulestudio.generator; singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Require-Bundle: de.guite.modulestudio.mostdsl;bundle-version="1.5.0",
  org.apache.log4j;bundle-version="1.2.25",
- org.eclipse.core.runtime;bundle-version="3.31.100",
- org.eclipse.emf.mwe2.launch;bundle-version="2.19.0",
- org.eclipse.emf.mwe.utils;bundle-version="1.13.0",
+ org.eclipse.core.runtime;bundle-version="3.32.0",
+ org.eclipse.emf.mwe2.launch;bundle-version="2.20.0",
+ org.eclipse.emf.mwe.utils;bundle-version="1.14.0",
  org.eclipse.xtend.core;bundle-version="2.37.0",
  org.eclipse.xtend.standalone;bundle-version="2.37.0";resolution:=optional,
  org.eclipse.xtext;bundle-version="2.37.0",
- org.objectweb.asm;bundle-version="9.7.0"
+ org.objectweb.asm;bundle-version="9.7.1"
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zikula.modulestudio.generator.application,
