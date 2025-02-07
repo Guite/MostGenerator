@@ -17,7 +17,7 @@ class PhpUnitXmlDist {
 
     def private phpUnitXml(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
-        <!-- https://docs.phpunit.de/en/11.5/configuration.html -->
+        <!-- https://docs.phpunit.de/en/12.0/configuration.html -->
         <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="../../../vendor/phpunit/phpunit/phpunit.xsd"
                  bootstrap="../../../../tests/bootstrap.php"
@@ -36,7 +36,7 @@ class PhpUnitXmlDist {
                 <server name="APP_ENV" value="test" force="true"/>
                 <server name="SHELL_VERBOSITY" value="-1"/>
                 <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
-                <server name="SYMFONY_PHPUNIT_VERSION" value="11.5"/>
+                <server name="SYMFONY_PHPUNIT_VERSION" value="12.0"/>
             </php>
 
             <testsuites>
