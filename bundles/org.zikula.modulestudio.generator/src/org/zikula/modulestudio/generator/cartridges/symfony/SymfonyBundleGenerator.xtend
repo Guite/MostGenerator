@@ -24,7 +24,7 @@ import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.BundleFil
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.ComposerFile
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.Docs
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.GitIgnore
-import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.PhpUnitXmlDist
+import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.PhpUnitXml
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.Recipe
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.symfony.tests.Tests
@@ -74,7 +74,7 @@ class SymfonyBundleGenerator implements IGenerator {
         new ComposerFile().generate(it, fsa)
         new GitIgnore().generate(it, fsa)
         if (generateTests) {
-            new PhpUnitXmlDist().generate(it, fsa)
+            new PhpUnitXml().generate(it, fsa)
         }
         new DependencyInjection().generate(it, fsa)
         if (needsConfig) {

@@ -11,5 +11,8 @@ class GitIgnore {
 
     def private gitIgnoreContent(Application it) '''
         vendor/
+        composer.lock
+        /phpunit.xml
+        /.phpunit.cache/
     '''
 }
