@@ -6,9 +6,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
-import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
@@ -43,7 +41,7 @@ class Property {
         this.extMan = extMan
     }
 
-    def dispatch persistentProperty(DerivedField it) {
+    def dispatch persistentProperty(Field it) {
         persistentProperty(name.formatForCode, fieldTypeAsString(true), fieldTypeAsString(false), '')
     }
 
@@ -70,13 +68,13 @@ class Property {
      * Note we use protected and not private to let the developer change things in
      * concrete implementations
      */
-    def persistentProperty(DerivedField it, String name, String typePhp, String typeDoctrine, String init) {
+    def persistentProperty(Field it, String name, String typePhp, String typeDoctrine, String init) {
         persistentProperty(name, typePhp, typeDoctrine, init, 'protected')
     }
 
     // NOTE: DateTime fields are always treated as nullable (for PHP, not for Doctrine) enforcing a default value
     // in order to to avoid "$foo must not be accessed before initialization"
-    def persistentProperty(DerivedField it, String name, String typePhp, String typeDoctrine, String init, String modifier) '''
+    def persistentProperty(Field it, String name, String typePhp, String typeDoctrine, String init, String modifier) '''
         «IF null !== documentation && !documentation.empty»
             /**
              * «documentation»«IF !documentation.endsWith('.')».«ENDIF»
@@ -85,12 +83,12 @@ class Property {
         «IF null !== entity»
             «IF primaryKey»
                 #[ORM\Id]
-                «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy.NONE»
-                    «IF #[EntityIdentifierStrategy.UUID, EntityIdentifierStrategy.ULID].contains((entity as Entity).identifierStrategy)»
+                «IF entity.identifierStrategy != EntityIdentifierStrategy.NONE»
+                    «IF #[EntityIdentifierStrategy.UUID, EntityIdentifierStrategy.ULID].contains(entity.identifierStrategy)»
                         #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-                        #[ORM\CustomIdGenerator(class: 'doctrine.«(entity as Entity).identifierStrategy.literal.toLowerCase»_generator')]
+                        #[ORM\CustomIdGenerator(class: 'doctrine.«entity.identifierStrategy.literal.toLowerCase»_generator')]
                     «ELSE»
-                        #[ORM\GeneratedValue(strategy: '«(entity as Entity).identifierStrategy.literal»')]
+                        #[ORM\GeneratedValue(strategy: '«entity.identifierStrategy.literal»')]
                     «ENDIF»
                 «ENDIF»
             «ENDIF»
@@ -105,7 +103,7 @@ class Property {
         «/* this last line is on purpose */»
     '''
 
-    def private persistentPropertyImpl(DerivedField it, String type) {
+    def private persistentPropertyImpl(Field it, String type) {
         switch it {
             NumberField: '''type: Types::«type.toUpperCase»«IF numberType == NumberFieldType.DECIMAL», precision: «it.length», scale: «it.scale»«ENDIF»'''
             TextField: '''type: Types::«type.toUpperCase», length: «it.length»'''
@@ -127,10 +125,10 @@ class Property {
         }
     }
 
-    def private persistentPropertyAdditions(DerivedField it) {
+    def private persistentPropertyAdditions(Field it) {
         switch it {
             IntegerField:
-                if (it.version && entity instanceof Entity && (entity as Entity).hasOptimisticLock) '''
+                if (it.version && entity.hasOptimisticLock) '''
                     #[ORM\Version]
                 '''
             UserField:
@@ -170,7 +168,7 @@ class Property {
 
     def static private listItemValue(ListFieldItem it) '''«IF null !== value»«value.replace("'", "")»«ELSE»«name/*.formatForCode.replace("'", "")*/»«ENDIF»'''
 
-    def private fieldAccessorDefault(DerivedField it) '''
+    def private fieldAccessorDefault(Field it) '''
         «IF isIndexByField»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), true)»
         «ELSE»
@@ -178,7 +176,7 @@ class Property {
         «ENDIF»
     '''
 
-    def dispatch fieldAccessor(DerivedField it) '''
+    def dispatch fieldAccessor(Field it) '''
         «fieldAccessorDefault»
     '''
 

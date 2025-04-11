@@ -9,9 +9,6 @@ class PhpUnitXml {
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!generateTests) {
-            return
-        }
         fsa.generateFile('phpunit.dist.xml', phpUnitConfig)
     }
 

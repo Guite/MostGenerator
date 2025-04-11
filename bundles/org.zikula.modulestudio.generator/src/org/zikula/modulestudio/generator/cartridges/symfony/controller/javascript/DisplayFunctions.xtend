@@ -1,12 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ItemActionsStyle
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -15,7 +13,6 @@ class DisplayFunctions {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -44,11 +41,7 @@ class DisplayFunctions {
 
             «initMassToggle»
         «ENDIF»
-        «IF hasIndexActions || hasDetailActions»
-
-            «initItemActions»
-        «ENDIF»
-        «IF (!getJoinRelations.empty || hasLoggable) && hasDetailActions»
+        «IF (!relations.empty || hasLoggable) && hasDetailActions»
 
             «initInlineWindow»
 
@@ -127,68 +120,6 @@ class DisplayFunctions {
                 });
             }
         }
-    '''
-
-    def private initItemActions(Application it) '''
-        /**
-         * Creates a dropdown menu for the item actions.
-         */
-        function «vendorAndName»InitItemActions(context) {
-            «FOR styleWithJs : #[ItemActionsStyle.ICON, ItemActionsStyle.BUTTON_GROUP, ItemActionsStyle.DROPDOWN]»
-            «IF #[indexActionsStyle, detailActionsStyle].contains(styleWithJs)»
-                «IF indexActionsStyle == styleWithJs && detailActionsStyle == styleWithJs»
-                    «initItemActionStyle(styleWithJs, '')»
-                «ELSEIF indexActionsStyle == styleWithJs && detailActionsStyle != styleWithJs»
-                    if ('index' === context) {
-                        «initItemActionStyle(styleWithJs, '')»
-                    }
-                «ELSEIF indexActionsStyle != styleWithJs && detailActionsStyle == styleWithJs»
-                    if ('detail' === context) {
-                        «initItemActionStyle(styleWithJs, '')»
-                    }
-                «ENDIF»
-            «ENDIF»
-            «ENDFOR»
-        }
-    '''
-
-    def private initItemActionStyle(Application it, ItemActionsStyle style, String context) '''
-        «IF style == ItemActionsStyle.ICON»
-            jQuery('ul.nav > li > a > i.tooltips').tooltip();
-        «ELSEIF style == ItemActionsStyle.BUTTON_GROUP»
-            jQuery('.btn-group-sm.item-actions').each(function (index) {
-                var innerList;
-                innerList = jQuery(this).children('ul.nav').first().detach();
-                jQuery(this).append(innerList.find('a.btn'));
-            });
-        «ELSEIF style == ItemActionsStyle.DROPDOWN»
-            var containerSelector;
-            var containers;
-
-            containerSelector = '';
-            if ('index' === context) {
-                containerSelector = '.«appName.toLowerCase»-index';
-            } else if ('detail' === context) {
-                containerSelector = 'h2, h3';
-            }
-
-            if ('' === containerSelector) {
-                return;
-            }
-
-            containers = jQuery(containerSelector);
-            if (containers.length < 1) {
-                return;
-            }
-
-            containers.find('.dropdown > ul').removeClass('nav').addClass('list-unstyled dropdown-menu');
-            containers.find('.dropdown > ul > li').addClass('dropdown-item').css('padding', 0);
-            containers.find('.dropdown > ul a').addClass('d-block').css('padding', '3px 5px');
-            containers.find('.dropdown > ul a i').addClass('fa-fw mr-1');
-            if (0 < containers.find('.dropdown-toggle').length) {
-                containers.find('.dropdown-toggle').removeClass('d-none').dropdown();
-            }
-        «ENDIF»
     '''
 
     def private initInlineWindow(Application it) '''
@@ -316,7 +247,7 @@ class DisplayFunctions {
             } else if (isDetailPage) {
                 «vendorAndName»InitItemActions('detail');
             }
-            «IF (!getJoinRelations.empty || hasLoggable) && hasDetailActions»
+            «IF (!relations.empty || hasLoggable) && hasDetailActions»
 
                 «vendorAndName»InitQuickViewModals();
             «ENDIF»

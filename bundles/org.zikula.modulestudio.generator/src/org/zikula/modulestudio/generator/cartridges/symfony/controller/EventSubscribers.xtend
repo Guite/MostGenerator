@@ -363,7 +363,7 @@ class EventSubscribers {
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\Workflow\Event\Event;
             use Symfony\Component\Workflow\Event\GuardEvent;
-            «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+            «IF !relations.empty && !getAllEntities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty»
                 use Symfony\Component\Workflow\TransitionBlocker;
             «ENDIF»
             use Symfony\Contracts\Translation\TranslatorInterface;

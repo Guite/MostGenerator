@@ -204,7 +204,7 @@ class WorkflowSubscriber {
             return;
         }
 
-        «IF needsApproval || !getAllEntities.filter[ownerPermission].empty || (!getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty)»
+        «IF needsApproval || !getAllEntities.filter[ownerPermission].empty || (!relations.empty && !getAllEntities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty)»
             $objectType = $entity->get_objectType();
         «ENDIF»
         $permissionLevel = ACCESS_READ;
@@ -246,14 +246,14 @@ class WorkflowSubscriber {
 
             return;
         }
-        «IF !getJoinRelations.empty && !getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty].empty»
+        «IF !relations.empty && !getAllEntities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty»
 
             if ('delete' === $transitionName) {
                 // check if deleting the entity would break related child entities
-                «FOR entity : getAllEntities.filter[!getOutgoingJoinRelationsWithoutDeleteCascade.empty]»
+                «FOR entity : getAllEntities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty]»
                     if ('«entity.name.formatForCode»' === $objectType) {
                         $isBlocked = false;
-                        «FOR relation : entity.getOutgoingJoinRelationsWithoutDeleteCascade»
+                        «FOR relation : entity.getOutgoingRelationsWithoutDeleteCascade»
                             «IF relation.isManySide(true)»
                                 if (null !== $entity->get«relation.targetAlias.formatForCodeCapital»() && 0 < count($entity->get«relation.targetAlias.formatForCodeCapital»())) {
                                     $event->addTransitionBlocker(

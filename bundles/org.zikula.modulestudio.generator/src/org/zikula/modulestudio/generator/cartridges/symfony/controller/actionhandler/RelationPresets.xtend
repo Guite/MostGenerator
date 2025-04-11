@@ -2,8 +2,8 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.actionha
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -93,23 +93,23 @@ class RelationPresets {
         «ENDIF»
     '''
 
-    def private initSinglePreset(JoinRelationship it, Boolean useTarget) '''
+    def private initSinglePreset(Relationship it, Boolean useTarget) '''
         «val alias = getRelationAliasName(useTarget)»
         $this->relationPresets['«alias»'] = $this->requestStack->getCurrentRequest()->query->get('«alias»', '');
     '''
 
     def private getOwningAssociations(Entity it, Application refApp) {
-        getBidirectionalIncomingJoinRelations
+        getBidirectionalIncomingRelations
             .filter[source.application == refApp]
     }
 
     def private getOwnedMMAssociations(Entity it, Application refApp) {
-        getOutgoingJoinRelations
+        outgoing
             .filter(ManyToManyRelationship)
             .filter[source.application == refApp]
     }
 
-    def private isShownInForm(JoinRelationship it, Boolean incoming) {
+    def private isShownInForm(Relationship it, Boolean incoming) {
         getEditStageCode(incoming) > 0
     }
 
@@ -136,12 +136,12 @@ class RelationPresets {
         «ENDIF»
     '''
 
-    def private saveSinglePreset(JoinRelationship it, Boolean useTarget) '''
+    def private saveSinglePreset(Relationship it, Boolean useTarget) '''
         «val alias = getRelationAliasName(useTarget)»
         «val aliasInverse = getRelationAliasName(!useTarget)»
         «val otherEntity = (if (useTarget) target else source)»
         «val otherObjectType = otherEntity.name.formatForCode»
-        «val selectField = if (otherEntity instanceof Entity && (otherEntity as Entity).hasSluggableFields && (otherEntity as Entity).slugUnique) 'slug' else 'id'»
+        «val selectField = if (otherEntity.hasSluggableFields && otherEntity.slugUnique) 'slug' else 'id'»
         if (!empty($this->relationPresets['«alias»'])) {
             $repository = $this->entityFactory->getRepository('«otherObjectType»');
             $relObj = $repository->selectBy«selectField.toFirstUpper»($this->relationPresets['«alias»']);

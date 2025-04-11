@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.config
 
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.CalculatedField
+import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
@@ -14,7 +14,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import de.guite.modulestudio.metamodel.DateTimeComponents
 
 class ConfigureCrud implements ControllerMethodInterface {
 
@@ -98,7 +97,6 @@ class ConfigureCrud implements ControllerMethodInterface {
             BooleanField: false
             UserField: false
             ArrayField: false
-            CalculatedField: false
             default: true
         }
     }

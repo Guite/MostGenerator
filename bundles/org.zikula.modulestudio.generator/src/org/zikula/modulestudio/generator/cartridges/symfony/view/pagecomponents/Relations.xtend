@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -82,10 +82,10 @@ class Relations {
         «ENDIF»
     '''
 
-    def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity, Boolean useTarget) '''
+    def displayRelatedItems(Relationship it, String appName, Entity relatedEntity, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode.toFirstLower»
         «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCode»
-        «val otherEntity = (if (!useTarget) source else target) as Entity»
+        «val otherEntity = (if (!useTarget) source else target)»
         «val many = isManySideDisplay(useTarget)»
         «IF otherEntity.hasEditAction»
             {% set createLink = null %}
@@ -127,5 +127,5 @@ class Relations {
         «ENDIF»
     '''
 
-    def private createLink(JoinRelationship it, String title) '''<a href="{{ createLink|e('html_attr') }}" title="{{ createTitle|e('html_attr') }}"><i class="fas fa-plus"></i>«title»</a>'''
+    def private createLink(Relationship it, String title) '''<a href="{{ createLink|e('html_attr') }}" title="{{ createTitle|e('html_attr') }}"><i class="fas fa-plus"></i>«title»</a>'''
 }

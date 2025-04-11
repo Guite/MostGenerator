@@ -6,14 +6,12 @@ import de.guite.modulestudio.metamodel.ListFieldItem
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ListEntriesHelper {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
 
     /**
@@ -168,11 +166,7 @@ class ListEntriesHelper {
                         switch ($fieldName) {
                             «FOR listField : entity.getListFieldsEntity»
                                 case '«listField.name.formatForCode»':
-                                    «IF entity.isInheriting»
-                                        $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«listField.entity.name.formatForCodeCapital»();
-                                    «ELSE»
-                                        $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
-                                    «ENDIF»
+                                    $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
                                     break;
                             «ENDFOR»
                         }

@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ValidationConstraints
@@ -21,17 +20,7 @@ class EntityMethods {
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
 
-    def dispatch generate(DataObject it, Application app, Property thProp) '''
-        «validationMethods»
-
-        «relatedObjectsImpl(app)»
-
-        «toStringImpl(app)»
-
-        «cloneImpl(app, thProp)»
-    '''
-
-    def dispatch generate(Entity it, Application app, Property thProp) '''
+    def generate(Entity it, Application app, Property thProp) '''
         «validationMethods»
 
         «createUrlArgs»
@@ -45,7 +34,7 @@ class EntityMethods {
         «cloneImpl(app, thProp)»
     '''
 
-    def validationMethods(DataObject it) '''
+    def validationMethods(Entity it) '''
         «val thVal = new ValidationConstraints»
         «IF hasDirectTimeFields»
             «FOR timeField : getDirectTimeFields»
@@ -93,21 +82,21 @@ class EntityMethods {
         }
     '''
 
-    def private toStringImpl(DataObject it, Application app) '''
+    def private toStringImpl(Entity it, Application app) '''
         public function __toString(): string
         {
             return «IF hasDisplayStringFieldsEntity»$this->get«getDisplayStringFieldsEntity.head.name.formatForCodeCapital»()«ELSE»'«name.formatForDisplayCapital» ' . $this->getKey()«ENDIF»;
         }
     '''
 
-    def private relatedObjectsImpl(DataObject it, Application app) '''
+    def private relatedObjectsImpl(Entity it, Application app) '''
         /**
          * Returns an array of all related objects that need to be persisted after clone.
          */
         public function getRelatedObjectsToPersist(array &$objects = []): array
         {
-            «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
-            «val joinsOut = outgoingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
+            «val joinsIn = incomingRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
+            «val joinsOut = outgoingRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «IF !joinsIn.empty || !joinsOut.empty»
                 «FOR out : newArrayList(false, true)»
                     «FOR relation : if (out) joinsOut else joinsIn»
@@ -128,9 +117,9 @@ class EntityMethods {
         }
     '''
 
-    def private cloneImpl(DataObject it, Application app, Property thProp) '''
-        «val joinsIn = incomingJoinRelationsForCloning»
-        «val joinsOut = outgoingJoinRelationsForCloning»
+    def private cloneImpl(Entity it, Application app, Property thProp) '''
+        «val joinsIn = incomingRelationsForCloning»
+        «val joinsOut = outgoingRelationsForCloning»
         /**
          * Clone interceptor implementation.
          * This method is for example called by the reuse functionality.
@@ -166,7 +155,7 @@ class EntityMethods {
                     $this->set«field.name.formatForCodeCapital»(null);
                 «ENDFOR»
             «ENDIF»
-            «IF it instanceof Entity && (it as Entity).standardFields»
+            «IF standardFields»
 
                 $this->setCreatedBy(null);
                 $this->setCreatedDate(null);
@@ -190,7 +179,7 @@ class EntityMethods {
                 «ENDFOR»
             «ENDIF»
         }
-        «IF it instanceof Entity && (it as Entity).loggable && hasUploadFieldsEntity»
+        «IF loggable && hasUploadFieldsEntity»
 
             /**
              * Custom serialise method to process File objects during serialisation.

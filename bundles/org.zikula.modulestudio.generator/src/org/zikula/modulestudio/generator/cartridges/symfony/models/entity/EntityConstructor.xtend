@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity
 
-import de.guite.modulestudio.metamodel.DataObject
-import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -12,7 +11,7 @@ class EntityConstructor {
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
 
-    def constructor(DataObject it, Boolean isInheriting) '''
+    def constructor(Entity it, Boolean isInheriting) '''
         /**
          * «name.formatForCodeCapital» constructor.
          *
@@ -30,7 +29,7 @@ class EntityConstructor {
         }
     '''
 
-    def private constructorArguments(DataObject it, Boolean withTypeHints) '''
+    def private constructorArguments(Entity it, Boolean withTypeHints) '''
         «IF isIndexByTarget»
             «val indexRelation = getIndexByRelation»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
@@ -39,17 +38,17 @@ class EntityConstructor {
         «ENDIF»
     '''
 
-    def private getIndexByRelation(DataObject it) {
-        getIncomingJoinRelations.filter[isIndexed].head
+    def private getIndexByRelation(Entity it) {
+        incoming.filter[isIndexed].head
     }
 
-    def private constructorImpl(DataObject it, Boolean isInheriting) '''
+    def private constructorImpl(Entity it, Boolean isInheriting) '''
         «IF isInheriting»
             parent::__construct(«constructorArguments(false)»);
         «ENDIF»
         «IF isIndexByTarget»
 
-            «val indexRelation = incoming.filter(JoinRelationship).filter[isIndexed].head»
+            «val indexRelation = incoming.filter[isIndexed].head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val targetAlias = getRelationAliasName(indexRelation, true)»
             «val indexBy = indexRelation.getIndexByField»

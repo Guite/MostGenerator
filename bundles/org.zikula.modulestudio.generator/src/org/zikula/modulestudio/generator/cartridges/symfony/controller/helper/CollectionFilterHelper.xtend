@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.Field
+import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -166,8 +166,8 @@ class CollectionFilterHelper {
                 «ENDFOR»
             «ENDIF»
 
-            «IF !getBidirectionalIncomingJoinRelations.filter[source instanceof Entity].empty»
-                «FOR relation: getBidirectionalIncomingJoinRelations.filter[source instanceof Entity]»
+            «IF !getBidirectionalIncomingRelations.empty»
+                «FOR relation: getBidirectionalIncomingRelations»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
                     $parameters['«sourceAliasName»'] = $request->query->get('«sourceAliasName»', 0);
                     if (is_object($parameters['«sourceAliasName»'])) {
@@ -175,8 +175,8 @@ class CollectionFilterHelper {
                     }
                 «ENDFOR»
             «ENDIF»
-            «IF !getOutgoingJoinRelations.filter[target instanceof Entity].empty»
-                «FOR relation: getOutgoingJoinRelations.filter[target instanceof Entity]»
+            «IF !outgoing.empty»
+                «FOR relation: outgoing»
                     «val targetAliasName = relation.getRelationAliasName(true)»
                     $parameters['«targetAliasName»'] = $request->query->get('«targetAliasName»', 0);
                     if (is_object($parameters['«targetAliasName»'])) {
@@ -259,8 +259,8 @@ class CollectionFilterHelper {
                         continue;
                     }
                 «ENDIF»
-                «IF !getBidirectionalIncomingJoinRelations.filter[source instanceof Entity].filter[isManySide(false)].empty»
-                    if (in_array($k, ['«getBidirectionalIncomingJoinRelations.filter[source instanceof Entity].filter[isManySide(false)].map[getRelationAliasName(false)].join('\', \'')»']) && !empty($v)) {
+                «IF !getBidirectionalIncomingRelations.filter[isManySide(false)].empty»
+                    if (in_array($k, ['«getBidirectionalIncomingRelations.filter[isManySide(false)].map[getRelationAliasName(false)].join('\', \'')»']) && !empty($v)) {
                         // multi-valued source of incoming relation (many2many)
                         $qb->andWhere(
                             $qb->expr()->isMemberOf(':' . $k, 'tbl.' . $k)
@@ -270,8 +270,8 @@ class CollectionFilterHelper {
                         continue;
                     }
                 «ENDIF»
-                «IF !getOutgoingJoinRelations.filter[source instanceof Entity].filter[isManySide(true)].empty»
-                    if (in_array($k, ['«getOutgoingJoinRelations.filter[source instanceof Entity].filter[isManySide(true)].map[getRelationAliasName(true)].join('\', \'')»']) && !empty($v)) {
+                «IF !outgoing.filter[isManySide(true)].empty»
+                    if (in_array($k, ['«outgoing.filter[isManySide(true)].map[getRelationAliasName(true)].join('\', \'')»']) && !empty($v)) {
                         // multi-valued target of outgoing relation (one2many or many2many)
                         $qb->andWhere(
                             $qb->expr()->isMemberOf(':' . $k, 'tbl.' . $k)
@@ -406,16 +406,16 @@ class CollectionFilterHelper {
 
                 $this->applyDateRangeFilterFor«name.formatForCodeCapital»($qb);
             «ENDIF»
-            «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addDateRangeFilterForJoin(false)»«ENDFOR»
-            «FOR relation : getOutgoingJoinRelations»«relation.addDateRangeFilterForJoin(true)»«ENDFOR»
+            «FOR relation : getBidirectionalIncomingRelations»«relation.addDateRangeFilterForJoin(false)»«ENDFOR»
+            «FOR relation : outgoing»«relation.addDateRangeFilterForJoin(true)»«ENDFOR»
 
             return $qb;
         }
     '''
 
-    def addDateRangeFilterForJoin(JoinRelationship it, Boolean useTarget) {
+    def addDateRangeFilterForJoin(Relationship it, Boolean useTarget) {
         val relatedEntity = if (useTarget) target else source
-        if (relatedEntity instanceof Entity && (relatedEntity as Entity).hasStartOrEndDateField) {
+        if (relatedEntity.hasStartOrEndDateField) {
             val aliasName = 'tbl' + getRelationAliasName(useTarget).formatForCodeCapital
             '''
                 if (in_array('«aliasName»', $qb->getAllAliases(), true)) {
@@ -466,7 +466,7 @@ class CollectionFilterHelper {
         }
     '''
 
-    def private whereClauseForDateRangeFilter(DerivedField it, String operator, String paramName) {
+    def private whereClauseForDateRangeFilter(Field it, String operator, String paramName) {
         val fieldName = name.formatForCode
         if (mandatory)
             '''$alias . '.«fieldName» «operator» :«paramName»'«''»'''

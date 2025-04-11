@@ -2,9 +2,9 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -168,7 +168,7 @@ class PermissionHelper {
         getAllEntities.filter[!getBidirectionalIncomingPermissionInheriters.empty]
     }
 
-    def dispatch private inheritedPermissionCheck(Entity it, JoinRelationship relation) '''
+    def dispatch private inheritedPermissionCheck(Entity it, Relationship relation) '''
         if (null !== $entity->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
             $parent = $entity->get«relation.getRelationAliasName(false).formatForCodeCapital»();
             if (!$this->hasEntityPermission($parent, $permissionLevel, $userId)) {

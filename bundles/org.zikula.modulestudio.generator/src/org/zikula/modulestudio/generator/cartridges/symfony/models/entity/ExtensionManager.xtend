@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity
 
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.Field
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Blameable
@@ -70,7 +70,7 @@ class ExtensionManager {
     /**
      * Additional field annotations.
      */
-    def columnAnnotations(DerivedField it) '''
+    def columnAnnotations(Field it) '''
         «FOR ext : this.extensions»
             «ext.columnAnnotations(it)»
         «ENDFOR»

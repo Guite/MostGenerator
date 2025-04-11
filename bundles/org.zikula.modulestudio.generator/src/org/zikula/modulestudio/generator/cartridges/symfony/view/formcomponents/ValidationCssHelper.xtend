@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view.formcomponents
 
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -13,10 +13,10 @@ class ValidationCssHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
 
-    def fieldValidationCssClass(DerivedField it) '''«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»'''
+    def fieldValidationCssClass(Field it) '''«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»'''
     def fieldValidationCssClassOptional(UploadField it)'''«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»'''
 
-    def private fieldValidationCssClassAdditions(DerivedField it) {
+    def private fieldValidationCssClassAdditions(Field it) {
         switch it {
             UploadField: ' validate-upload'
             DatetimeField: '''«fieldValidationCssClassAdditionsDefault»«IF !isTimeField»«fieldValidationCssClassDateRange»«ENDIF»'''

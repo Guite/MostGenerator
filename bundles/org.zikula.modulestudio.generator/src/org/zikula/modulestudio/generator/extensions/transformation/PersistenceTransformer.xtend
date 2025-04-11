@@ -2,14 +2,12 @@ package org.zikula.modulestudio.generator.extensions.transformation
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayType
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityBlameableType
 import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
-import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.OneToOneRelationship
@@ -22,7 +20,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -35,7 +32,6 @@ class PersistenceTransformer {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension WorkflowExtensions = new WorkflowExtensions
     extension Utils = new Utils
 
@@ -98,12 +94,12 @@ class PersistenceTransformer {
     /**
      * Transformation processing for a single entity.
      *
-     * @param it The currently treated {@link DataObject} instance.
+     * @param it The currently treated {@link Entity} instance.
      */
-    def private void handleEntity(DataObject it) {
+    def private void handleEntity(Entity it) {
         //('Transforming entity ' + name).printIfNotTesting(fsa)
         //('Field size before: ' + fields.size + ' fields').printIfNotTesting(fsa)
-        if (getDerivedFields.filter[primaryKey].empty
+        if (fields.filter[primaryKey].empty
              && outgoing.filter(OneToOneRelationship).filter[primaryKey].empty
              && outgoing.filter(ManyToOneRelationship).filter[primaryKey].empty
         ) {
@@ -111,49 +107,46 @@ class PersistenceTransformer {
         }
         //('Added primary key, field size now: ' + fields.size + ' fields').printIfNotTesting(fsa)
 
-        if (it instanceof Entity) {
-            if (!inheriting || parentType instanceof MappedSuperClass) {
-                addWorkflowState
-            }
+        addWorkflowState
 
 /** TODO
-            if (hasSluggableFields && (!inheriting || (parentType instanceof MappedSuperClass || !(parentType as Entity).hasSluggableFields))) {
+            if (hasSluggableFields) {
     def getReservedSluggableFields() {
         #['slug']
     }
             }
 */
 
-            if (geographical && (!inheriting || (parentType instanceof MappedSuperClass || !(parentType as Entity).geographical))) {
-                fields += ModuleStudioFactory.eINSTANCE.createNumberField => [
-                    numberType = NumberFieldType.DECIMAL
-                    name = 'latitude'
-                    documentation = 'The coordinate\'s latitude part.'
-                    defaultValue = '0.00'
-                    length = 12
-                    scale = 7
-                    mandatory = false
-                    visibleOnIndex = false
-                    visibleOnDetail = false
-                    visibleOnNew = false
-                    visibleOnEdit = false
-                    visibleOnSort = true
-                ]
-                fields += ModuleStudioFactory.eINSTANCE.createNumberField => [
-                    numberType = NumberFieldType.DECIMAL
-                    name = 'longitude'
-                    documentation = 'The coordinate\'s longitude part.'
-                    defaultValue = '0.00'
-                    length = 12
-                    scale = 7
-                    mandatory = false
-                    visibleOnIndex = false
-                    visibleOnDetail = false
-                    visibleOnNew = false
-                    visibleOnEdit = false
-                    visibleOnSort = true
-                ]
-            }
+        if (geographical) {
+            fields += ModuleStudioFactory.eINSTANCE.createNumberField => [
+                numberType = NumberFieldType.DECIMAL
+                name = 'latitude'
+                documentation = 'The coordinate\'s latitude part.'
+                defaultValue = '0.00'
+                length = 12
+                scale = 7
+                mandatory = false
+                visibleOnIndex = false
+                visibleOnDetail = false
+                visibleOnNew = false
+                visibleOnEdit = false
+                visibleOnSort = true
+            ]
+            fields += ModuleStudioFactory.eINSTANCE.createNumberField => [
+                numberType = NumberFieldType.DECIMAL
+                name = 'longitude'
+                documentation = 'The coordinate\'s longitude part.'
+                defaultValue = '0.00'
+                length = 12
+                scale = 7
+                mandatory = false
+                visibleOnIndex = false
+                visibleOnDetail = false
+                visibleOnNew = false
+                visibleOnEdit = false
+                visibleOnSort = true
+            ]
+        }
 /** TODO
 
     def getReservedTranslatableFields() {
@@ -167,74 +160,73 @@ class PersistenceTransformer {
  */
 
 
-            if (standardFields && (!inheriting || ((parentType instanceof MappedSuperClass || !(parentType as Entity).standardFields)))) {
-                // add standard fields
-                fields += ModuleStudioFactory.eINSTANCE.createUserField => [
-                    name = 'createdBy'
-                    mandatory = false
-                    visibleOnIndex = true
-                    visibleOnDetail = true
-                    visibleOnNew = false
-                    visibleOnEdit = false
-                    visibleOnSort = true
-                    blameable = EntityBlameableType.CREATE
-                ]
-                fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
-                    name = 'createdDate'
-                    mandatory = false
-                    visibleOnIndex = true
-                    visibleOnDetail = true
-                    visibleOnNew = false
-                    visibleOnEdit = false
-                    visibleOnSort = true
-                    immutable = true
-                    timestampable = EntityTimestampableType.CREATE
-                ]
-                fields += ModuleStudioFactory.eINSTANCE.createUserField => [
-                    name = 'updatedBy'
-                    mandatory = false
-                    visibleOnIndex = true
-                    visibleOnDetail = true
-                    visibleOnNew = false
-                    visibleOnEdit = false
-                    visibleOnSort = true
-                    blameable = EntityBlameableType.UPDATE
-                ]
-                fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
-                    name = 'updatedDate'
-                    mandatory = false
-                    visibleOnIndex = true
-                    visibleOnDetail = true
-                    visibleOnNew = false
-                    visibleOnEdit = false
-                    visibleOnSort = true
-                    immutable = true
-                    timestampable = EntityTimestampableType.UPDATE
-                ]
-            }
+        if (standardFields) {
+            // add standard fields
+            fields += ModuleStudioFactory.eINSTANCE.createUserField => [
+                name = 'createdBy'
+                mandatory = false
+                visibleOnIndex = true
+                visibleOnDetail = true
+                visibleOnNew = false
+                visibleOnEdit = false
+                visibleOnSort = true
+                blameable = EntityBlameableType.CREATE
+            ]
+            fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
+                name = 'createdDate'
+                mandatory = false
+                visibleOnIndex = true
+                visibleOnDetail = true
+                visibleOnNew = false
+                visibleOnEdit = false
+                visibleOnSort = true
+                immutable = true
+                timestampable = EntityTimestampableType.CREATE
+            ]
+            fields += ModuleStudioFactory.eINSTANCE.createUserField => [
+                name = 'updatedBy'
+                mandatory = false
+                visibleOnIndex = true
+                visibleOnDetail = true
+                visibleOnNew = false
+                visibleOnEdit = false
+                visibleOnSort = true
+                blameable = EntityBlameableType.UPDATE
+            ]
+            fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
+                name = 'updatedDate'
+                mandatory = false
+                visibleOnIndex = true
+                visibleOnDetail = true
+                visibleOnNew = false
+                visibleOnEdit = false
+                visibleOnSort = true
+                immutable = true
+                timestampable = EntityTimestampableType.UPDATE
+            ]
+        }
 
-            if (loggable && hasTranslatableFields) {
-                // add array field to store revisions of translations
-                fields += ModuleStudioFactory.eINSTANCE.createArrayField => [
-                    name = 'translationData'
-                    mandatory = false
-                    visibleOnIndex = false
-                    visibleOnDetail = false
-                    visibleOnNew = false
-                    visibleOnEdit = false
-                    visibleOnSort = false
-                    arrayType = ArrayType.JSON
-                ]
-            }
+        if (loggable && hasTranslatableFields) {
+            // add array field to store revisions of translations
+            fields += ModuleStudioFactory.eINSTANCE.createArrayField => [
+                name = 'translationData'
+                mandatory = false
+                visibleOnIndex = false
+                visibleOnDetail = false
+                visibleOnNew = false
+                visibleOnEdit = false
+                visibleOnSort = false
+                arrayType = ArrayType.JSON
+            ]
         }
     }
 
     /**
      * Adds a primary key to a given entity.
      * 
-     * @param entity The given {@link DataObject} instance.
+     * @param entity The given {@link Entity} instance.
      */
-    def private addPrimaryKey(DataObject entity) {
+    def private addPrimaryKey(Entity entity) {
         val idField = ModuleStudioFactory.eINSTANCE.createIntegerField => [
             name = 'id'
             length = 9
@@ -335,15 +327,6 @@ class PersistenceTransformer {
         ]
 
         entity.fields.add(1, listField)
-
-        val wfIndex = factory.createEntityIndex => [
-            name = 'workflowStateIndex'
-        ]
-        wfIndex.items += factory.createEntityIndexItem => [
-            name = 'workflowState'
-        ]
-
-        entity.indexes += wfIndex
     }
 
     def private addViewSettings(Application it) {

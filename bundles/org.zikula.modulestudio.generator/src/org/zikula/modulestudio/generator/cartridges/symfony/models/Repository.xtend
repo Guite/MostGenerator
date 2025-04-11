@@ -1,20 +1,17 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.CalculatedField
-import de.guite.modulestudio.metamodel.DataObject
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.models.repository.Joins
 import org.zikula.modulestudio.generator.cartridges.symfony.models.repository.LinkTable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.repository.Tree
@@ -23,11 +20,9 @@ import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelpe
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class Repository {
 
@@ -35,7 +30,6 @@ class Repository {
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -43,8 +37,8 @@ class Repository {
     FileHelper fh
     Application app
 
-    Iterable<? extends JoinRelationship> sortRelationsIn
-    Iterable<? extends JoinRelationship> sortRelationsOut
+    Iterable<? extends Relationship> sortRelationsIn
+    Iterable<? extends Relationship> sortRelationsOut
 
     /**
      * Entry point for Doctrine repository classes.
@@ -56,7 +50,7 @@ class Repository {
         getAllEntities.forEach(e|e.generate)
 
         val linkTable = new LinkTable
-        for (relation : getJoinRelations.filter(ManyToManyRelationship)) {
+        for (relation : relations.filter(ManyToManyRelationship)) {
             linkTable.generate(relation, it, fsa)
         }
     }
@@ -69,16 +63,14 @@ class Repository {
         val repositoryPath = 'Repository/'
         var fileSuffix = 'Repository'
 
-        sortRelationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]
-        sortRelationsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]
+        sortRelationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional]
+        sortRelationsOut = outgoing.filter(OneToOneRelationship)
 
         var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + 'Interface.php'
-        var content = if (!isInheriting || parentType instanceof MappedSuperClass) modelRepositoryInterfaceBaseImpl else modelChildRepositoryInterfaceBaseImpl
-        fsa.generateFile(repositoryPath + fileName, content)
+        fsa.generateFile(repositoryPath + fileName, modelRepositoryInterfaceBaseImpl)
 
         fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
-        content = if (!isInheriting || parentType instanceof MappedSuperClass) modelRepositoryBaseImpl else modelChildRepositoryBaseImpl
-        fsa.generateFile(repositoryPath + fileName, content)
+        fsa.generateFile(repositoryPath + fileName, modelRepositoryBaseImpl)
 
         fileName = name.formatForCodeCapital + fileSuffix + 'Interface.php'
         fsa.generateFile(repositoryPath + fileName, modelRepositoryInterfaceImpl)
@@ -101,7 +93,7 @@ class Repository {
             if (!stringFields.empty) {
                 stringFields.head
             } else {
-                getDerivedFields.head
+                fields.head
             }
         }
     }
@@ -221,29 +213,6 @@ class Repository {
         }
     '''
 
-    def private collectChildRepositoryInterfaceBaseImports(Entity it) {
-        val imports = new ImportList
-        imports.add(app.appNamespace + '\\Repository\\' + parentType.name.formatForCodeCapital + 'RepositoryInterface')
-        if (!incoming.empty || !outgoing.empty) {
-            imports.add('Doctrine\\ORM\\QueryBuilder')
-        }
-        imports
-    }
-
-    def private modelChildRepositoryInterfaceBaseImpl(Entity it) '''
-        namespace «app.appNamespace»\Repository\Base;
-
-        «collectChildRepositoryInterfaceBaseImports.print»
-
-        /**
-         * Repository interface for «name.formatForDisplay» entities.
-         */
-        interface Abstract«name.formatForCodeCapital»RepositoryInterface extends «parentType.name.formatForCodeCapital»RepositoryInterface
-        {
-            // nothing additional
-        }
-    '''
-
     def private modelRepositoryBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Repository\Base;
 
@@ -324,47 +293,6 @@ class Repository {
             «getQueryFromBuilder»
 
             «new Joins().generate(it, app)»
-        }
-    '''
-
-    def private collectChildRepositoryBaseImports(Entity it) {
-        val imports = new ImportList
-        imports.add(app.appNamespace + '\\Repository\\' + parentType.name.formatForCodeCapital + 'Repository')
-        if (!incoming.empty || !outgoing.empty) {
-            imports.add('Doctrine\\ORM\\QueryBuilder')
-        }
-        imports
-    }
-
-    def private modelChildRepositoryBaseImpl(Entity it) '''
-        namespace «app.appNamespace»\Repository\Base;
-
-        «collectChildRepositoryBaseImports.print»
-
-        /**
-         * Repository class used to implement own convenience methods for performing certain DQL queries.
-         *
-         * This is the base repository class for «name.formatForDisplay» entities.
-         */
-        abstract class Abstract«name.formatForCodeCapital»Repository extends «parentType.name.formatForCodeCapital»Repository
-        {
-            /**
-             * @return string[]
-             */
-            public function getAllowedSortingFields(): array
-            {
-                $parentFields = parent::getAllowedSortingFields();
-
-                $additionalFields = [
-                    «sortingCriteria»
-                ];
-
-                return array_unique(array_merge($parentFields, $additionalFields));
-            }
-            «IF !incoming.empty || !outgoing.empty»
-
-                «new Joins().generate(it, app)»
-            «ENDIF»
         }
     '''
 
@@ -872,20 +800,18 @@ class Repository {
         «ENDIF»
     '''
 
-    def private orderByExpression(JoinRelationship it, Boolean useTarget) '''
+    def private orderByExpression(Relationship it, Boolean useTarget) '''
         case '«getRelationAliasName(useTarget).formatForCode»':
             $orderBy = 'tbl«getRelationAliasName(useTarget).formatForCodeCapital».«(if (useTarget) target else source).orderByFieldNameForRelatedEntity»';
             break;
     '''
 
-    def private orderByFieldNameForRelatedEntity(DataObject it) {
-        if (it instanceof Entity) {
-            for (patternPart : displayPatternParts) {
-                /* check if patternPart equals a field name */
-                var matchedFields = fields.filter[name == patternPart]
-                if (!matchedFields.empty) {
-                    return patternPart.formatForCode
-                }
+    def private orderByFieldNameForRelatedEntity(Entity it) {
+        for (patternPart : displayPatternParts) {
+            /* check if patternPart equals a field name */
+            var matchedFields = fields.filter[name == patternPart]
+            if (!matchedFields.empty) {
+                return patternPart.formatForCode
             }
         }
 
@@ -912,36 +838,29 @@ class Repository {
         }
     '''
 
-    def private sortingCriteria(DataObject it) '''
+    def private sortingCriteria(Entity it) '''
         «FOR field : getSortingFields»«field.sortingCriteria»«ENDFOR»
-        «val relationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
-        «val relationsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
+        «val relationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional]»
+        «val relationsOut = outgoing.filter(OneToOneRelationship)»
         «FOR relation : relationsIn»«relation.sortingCriteria(false)»«ENDFOR»
         «FOR relation : relationsOut»«relation.sortingCriteria(true)»«ENDFOR»
-        «IF it instanceof Entity && (it as Entity).standardFields»«/* add two user fields which are rejected in getSortingFields otherwise */»
+        «IF standardFields»«/* add two user fields which are rejected in getSortingFields otherwise */»
              'createdBy',
              'updatedBy',
         «ENDIF»
     '''
 
     def private sortingCriteria(Field it) {
-        switch it {
-            DerivedField : {
-                val joins = if (null !== entity) entity.incoming.filter(JoinRelationship).filter[e|formatForDB(e.getSourceFields.head) == name.formatForDB] else #[]
-                if (!joins.empty) '''
-                     '«joins.head.source.name.formatForCode»',
-                     '''
-                else '''
-                     '«name.formatForCode»',
-                     '''
-            }
-            CalculatedField: '''
-                     '«name.formatForCode»',
-                     '''
-        }
+        val joins = if (null !== entity) entity.incoming.filter[e|formatForDB(e.getSourceFields.head) == name.formatForDB] else #[]
+        if (!joins.empty) '''
+             '«joins.head.source.name.formatForCode»',
+             '''
+        else '''
+             '«name.formatForCode»',
+             '''
     }
 
-    def private sortingCriteria(JoinRelationship it, Boolean useTarget) '''
+    def private sortingCriteria(Relationship it, Boolean useTarget) '''
         '«getRelationAliasName(useTarget).formatForCode»',
     '''
 

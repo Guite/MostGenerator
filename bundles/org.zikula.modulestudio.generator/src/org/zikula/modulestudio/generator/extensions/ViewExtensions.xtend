@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.Relationship
 
 /**
  * This class contains view related extension methods.
@@ -31,12 +31,12 @@ class ViewExtensions {
      * Determines if a given relationship is part
      * of an edit form or not.
      *
-     * @param it Given {@link JoinRelationship} instance.
+     * @param it Given {@link Relationship} instance.
      * @param useTarget Whether the target side or the source side should be used.
      *
      * @return Boolean The determined result.
      */
-    def private isPartOfEditForm(JoinRelationship it, Boolean useTarget) {
+    def private isPartOfEditForm(Relationship it, Boolean useTarget) {
         (getEditStageCode(!useTarget) > 0)
     }
 
@@ -53,8 +53,8 @@ class ViewExtensions {
         var weight = 1
         //if (fields.size > 5) weight = weight + 1
         //if (fields.size > 10) weight = weight + 1
-        if (page == 'edit' && incoming.filter(JoinRelationship).filter[isPartOfEditForm(true)].size > 1) weight = weight + 1
-        if (page == 'edit' && outgoing.filter(JoinRelationship).filter[isPartOfEditForm(false)].size > 1) weight = weight + 1
+        if (page == 'edit' && incoming.filter(Relationship).filter[isPartOfEditForm(true)].size > 1) weight = weight + 1
+        if (page == 'edit' && outgoing.filter(Relationship).filter[isPartOfEditForm(false)].size > 1) weight = weight + 1
 
         if (standardFields) weight = weight + 1
         if (geographical) weight = weight + 1

@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.Field
 
 /**
  * This class contains extension methods for building routes.
@@ -93,7 +93,7 @@ class UrlExtensions {
      * @param objName The name of the object variable carrying the entity object in the output
      * @return String collected URL parameter string.
      */
-    def private CharSequence routeParamsForCode(DerivedField it, String objName) {
+    def private CharSequence routeParamsForCode(Field it, String objName) {
         ", '" + name.formatForCode + "' => $" + objName + '->get' + name.formatForCodeCapital + '()'
     }
 
@@ -104,7 +104,7 @@ class UrlExtensions {
      * @param objName The name of the object variable carrying the entity object in the output
      * @return String collected URL parameter string.
      */
-    def private CharSequence routeParamsForTemplate(DerivedField it, String objName) {
+    def private CharSequence routeParamsForTemplate(Field it, String objName) {
         '\'' + name.formatForCode + '\': ' + objName + '.get' + name.formatForCodeCapital + '()'
     }
 
@@ -116,7 +116,7 @@ class UrlExtensions {
      * @param customVarName Custom name for using another field name as URL parameter
      * @return String collected URL parameter string.
      */
-    def private routeParamsForCode(DerivedField it, String objName, String customVarName) {
+    def private routeParamsForCode(Field it, String objName, String customVarName) {
         ", '" + customVarName + "' => $" + objName + '->get' + name.formatForCodeCapital + '()'
     }
 
@@ -128,7 +128,7 @@ class UrlExtensions {
      * @param customVarName Custom name for using another field name as URL parameter
      * @return String collected URL parameter string.
      */
-    def private routeParamsForTemplate(DerivedField it, String objName, String customVarName) {
+    def private routeParamsForTemplate(Field it, String objName, String customVarName) {
         '\'' + customVarName + '\': ' + objName + '.get' + name.formatForCodeCapital + '()'
     }
 }

@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
@@ -63,7 +62,7 @@ class FormHandler {
                 entity.generate('edit', fsa)
             }
             // form types
-            for (entity : entities.filter[it instanceof MappedSuperClass || (it as Entity).hasEditAction]) {
+            for (entity : entities.filter[hasEditAction]) {
                 new EditEntityType().generate(entity, fsa)
             }
             if (hasUploads) {
@@ -208,10 +207,10 @@ class FormHandler {
              * Url of current form with all parameters for multiple creations.
              */
             protected string $repeatReturnUrl;
-            «IF !getJoinRelations.empty»
+            «IF !relations.empty»
                 «relationPresetsHelper.memberFields(it)»
             «ENDIF»
-            «IF !getJoinRelations.empty || needsAutoCompletion»
+            «IF !relations.empty || needsAutoCompletion»
 
                 /**
                  * Full prefix for related items.
@@ -296,10 +295,10 @@ class FormHandler {
         {
             $request = $this->requestStack->getCurrentRequest();
             $this->templateParameters = $templateParameters;
-            «IF !getJoinRelations.empty»
+            «IF !relations.empty»
                 $this->templateParameters['inlineUsage'] = $request->query->getBoolean('raw');
             «ENDIF»
-            «IF !getJoinRelations.empty || app.needsAutoCompletion»
+            «IF !relations.empty || app.needsAutoCompletion»
                 $this->idPrefix = $request->query->get('idp', '');
             «ENDIF»
             $session = $request->hasSession() ? $request->getSession() : null;
@@ -417,7 +416,7 @@ class FormHandler {
             // save entity reference for later reuse
             $this->entityRef = $entity;
             «initialiseExtensions»
-            «IF !getJoinRelations.empty»
+            «IF !relations.empty»
                 «relationPresetsHelper.callBaseMethod(it)»
             «ENDIF»
 
@@ -489,7 +488,7 @@ class FormHandler {
             // to be customised in sub classes
             return [];
         }
-        «IF !getJoinRelations.empty»
+        «IF !relations.empty»
             «relationPresetsHelper.baseMethod(it)»
         «ENDIF»
         «fh.getterMethod(it, 'templateParameters', 'array', false)»
@@ -1040,7 +1039,7 @@ class FormHandler {
 
             return $result;
         }
-        «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
+        «IF !incoming.empty || !outgoing.empty»
             «relationPresetsHelper.childMethod(it)»
         «ENDIF»
 
@@ -1065,10 +1064,8 @@ class FormHandler {
                     'allow_moderation_specific_creator' => $this->moderationConfig['allow_moderation_specific_creator_for_' . $configSuffix],
                     'allow_moderation_specific_creation_date' => $this->moderationConfig['allow_moderation_specific_creation_date_for_' . $configSuffix],
                 «ENDIF»
-                «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
+                «IF !incoming.empty || !outgoing.empty»
                     'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD),
-                «ENDIF»
-                «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
                     'inline_usage' => $this->templateParameters['inlineUsage'],
                 «ENDIF»
             ];
@@ -1227,7 +1224,7 @@ class FormHandler {
                 // store new identifier
                 $this->idValue = $entity->getKey();
             }
-            «IF !getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty»
+            «IF !incoming.empty || !outgoing.empty»
                 «relationPresetsHelper.saveNonEditablePresets(it, app)»
             «ENDIF»
 

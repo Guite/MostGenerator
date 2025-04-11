@@ -73,9 +73,7 @@ class SymfonyBundleGenerator implements IGenerator {
         new BundleFile().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
         new GitIgnore().generate(it, fsa)
-        if (generateTests) {
-            new PhpUnitXml().generate(it, fsa)
-        }
+        new PhpUnitXml().generate(it, fsa)
         new DependencyInjection().generate(it, fsa)
         if (needsConfig) {
             new Configuration().generate(it, fsa)
@@ -161,11 +159,8 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('Additions: Flex recipe')
         'Generating Flex recipe'.printIfNotTesting(fsa)
         new Recipe().generate(it, fsa)
-
-        if (generateTests) {
-            pm?.subTask('Additions: Tests')
-            'Generating unit tests'.printIfNotTesting(fsa)
-            new Tests().generate(it, fsa)
-        }
+        pm?.subTask('Additions: Tests')
+        'Generating unit tests'.printIfNotTesting(fsa)
+        new Tests().generate(it, fsa)
     }
 }

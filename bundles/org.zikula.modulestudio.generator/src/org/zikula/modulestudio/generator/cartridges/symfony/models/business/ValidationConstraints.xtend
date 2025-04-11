@@ -4,14 +4,11 @@ import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityIndex
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.StringField
@@ -22,27 +19,23 @@ import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
-import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class ValidationConstraints {
 
     extension DateTimeExtensions = new DateTimeExtensions
-    extension EntityIndexExtensions = new EntityIndexExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
 
-    def dispatch fieldAnnotations(DerivedField it) {
+    def dispatch fieldAnnotations(Field it) {
     }
 
-    def private fieldAnnotationsMandatory(DerivedField it) '''
+    def private fieldAnnotationsMandatory(Field it) '''
         «IF mandatory»
             #[Assert\NotBlank]
         «/*ELSEIF !nullable»
@@ -58,7 +51,7 @@ class ValidationConstraints {
         */»«ENDIF»
     '''
 
-    def private fieldAnnotationsNumeric(DerivedField it) '''
+    def private fieldAnnotationsNumeric(Field it) '''
         #[Assert\Type(type: 'numeric')]
         «IF mandatory»
             #[Assert\NotBlank]
@@ -79,8 +72,8 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(AbstractIntegerField it) '''
         «IF null === entity
          || (
-            entity.incoming.filter(JoinRelationship).filter[r|r.targetField == name].empty
-             && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty
+            entity.incoming.filter[r|r.targetField == name].empty
+             && entity.outgoing.filter[r|r.sourceField == name].empty
          )»
             «fieldAnnotationsInteger»
         «ENDIF»
@@ -88,8 +81,8 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(IntegerField it) '''
         «IF null === entity
          || (
-            entity.incoming.filter(JoinRelationship).filter[r|r.targetField == name].empty
-             && entity.outgoing.filter(JoinRelationship).filter[r|r.sourceField == name].empty
+            entity.incoming.filter[r|r.targetField == name].empty
+             && entity.outgoing.filter[r|r.sourceField == name].empty
          )»
             «fieldAnnotationsInteger»
             «IF minValue.toString != '0' && maxValue.toString != '0'»
@@ -370,35 +363,26 @@ class ValidationConstraints {
         «ENDIF»
     '''
 
-    def classAnnotations(DataObject it) '''
-        «IF !getUniqueDerivedFields.filter[!primaryKey].empty»
-            «FOR udf : getUniqueDerivedFields.filter[!primaryKey]»
+    def classAnnotations(Entity it) '''
+        «IF !getUniqueFields.empty»
+            «FOR udf : getUniqueFields»
                 #[UniqueEntity(fields: '«udf.name.formatForCode»', ignoreNull: «udf.nullable.displayBool»)]
             «ENDFOR»
         «ENDIF»
-        «IF it instanceof Entity && (it as Entity).slugUnique && (it as Entity).hasSluggableFields»
+        «IF slugUnique && hasSluggableFields»
             #[UniqueEntity(fields: 'slug', ignoreNull: false)]
         «ENDIF»
-        «IF !getIncomingJoinRelations.filter[unique].empty»
-            «FOR rel : getIncomingJoinRelations.filter[unique]»
+        «IF !incoming.filter[unique].empty»
+            «FOR rel : incoming.filter[unique]»
                 «val aliasName = rel.getRelationAliasName(false).toFirstLower»
                 #[UniqueEntity(fields: '«aliasName.formatForCode»', ignoreNull: «rel.nullable.displayBool»)]
             «ENDFOR»
         «ENDIF»
-        «IF !getOutgoingJoinRelations.filter[unique].empty»
-            «FOR rel : getOutgoingJoinRelations.filter[unique]»
+        «IF !outgoing.filter[unique].empty»
+            «FOR rel : outgoing.filter[unique]»
                 «val aliasName = rel.getRelationAliasName(true).toFirstLower»
                 #[UniqueEntity(fields: '«aliasName.formatForCode»', ignoreNull: «rel.nullable.displayBool»)]
             «ENDFOR»
         «ENDIF»
-        «IF it instanceof Entity && !(it as Entity).getUniqueIndexes.empty»
-            «FOR index : (it as Entity).getUniqueIndexes»
-                «index.uniqueAnnotation»
-            «ENDFOR»
-        «ENDIF»
-    '''
-
-    def private uniqueAnnotation(EntityIndex it) '''
-        #[UniqueEntity(fields: [«FOR item : items SEPARATOR ', '»'«item.indexItemForSymfonyValidator»'«ENDFOR»], ignoreNull: «(!includesNotNullableItem).displayBool»)]
     '''
 }

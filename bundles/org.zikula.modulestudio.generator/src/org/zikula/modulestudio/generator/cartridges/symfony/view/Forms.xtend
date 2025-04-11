@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.Field
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.formcomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.symfony.view.formcomponents.Section
@@ -12,7 +12,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -24,7 +23,6 @@ class Forms {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension SharedFormElements = new SharedFormElements
@@ -138,8 +136,7 @@ class Forms {
         «IF tree != EntityTreeType.NONE
           || !hasTranslatableFields
           || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
-          || geographical
-          || isInheriting»
+          || geographical»
             «fieldDetailsFurtherOptions(subElem)»
         «ENDIF»
     '''
@@ -209,13 +206,6 @@ class Forms {
             «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
                 «slugField(subElem)»
             «ENDIF»
-            «IF isInheriting»
-                «IF !subElem.empty»
-                    {{ form_row(attribute(«subElem», 'parentFields')) }}
-                «ELSE»
-                    {{ form_row(form.parentFields) }}
-                «ENDIF»
-            «ENDIF»
         </fieldset>
     '''
 
@@ -234,7 +224,7 @@ class Forms {
             «includeLeaflet('edit', name.formatForCode)»
         «ENDIF»
         <div id="formEditingDefinition" data-mode="{{ mode|e('html_attr') }}" data-entityid="{% if mode != 'create' %}{{ «name.formatForCode».«primaryKey.name.formatForCode»|e('html_attr') }}{% endif %}"></div>
-        «FOR field : getDerivedFields»«field.jsDefinition»«ENDFOR»
+        «FOR field : fields»«field.jsDefinition»«ENDFOR»
         «IF standardFields»
             {% if form.moderationSpecificCreator is defined %}
                 <div class="field-editing-definition" data-field-type="user" data-field-name="«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator"></div>
@@ -243,8 +233,8 @@ class Forms {
         «new Relations(fsa, app).jsInitDefinitions(it)»
     '''
 
-    def private fieldWrapper(DerivedField it, String subElem) '''
-        «IF entity.getIncomingJoinRelations.filter[r|r.getSourceFields.head == name.formatForDB].empty»«/* No input fields for foreign keys, relations are processed further down */»
+    def private fieldWrapper(Field it, String subElem) '''
+        «IF entity.incoming.filter[r|r.getSourceFields.head == name.formatForDB].empty»«/* No input fields for foreign keys, relations are processed further down */»
             «fieldFormRow(subElem)»
         «ENDIF»
     '''
@@ -256,7 +246,7 @@ class Forms {
                 «submitActionsImpl»
             </div>
         </div>
-        «IF !getOutgoingJoinRelationsWithoutDeleteCascade.empty»
+        «IF !getOutgoingRelationsWithoutDeleteCascade.empty»
             {% if mode != 'create' and not workflow_can(«name.formatForCode», 'delete') %}
                 <div class="alert alert-info">
                     <h4>{% trans %}Deletion of this «name.formatForDisplay» is not possible{% endtrans %}</h4>

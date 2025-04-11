@@ -231,9 +231,9 @@ class UserSubscriber {
     '''
 
     def private onAccountDeletionHandler(UserField it) '''
-        «IF null !== entity && entity instanceof Entity»
+        «IF null !== entity»
             «IF onAccountDeletion != AccountDeletionHandler.DELETE»
-                // set «name.formatForDisplay» to «onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
+                // set «name.formatForDisplay» to «onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)») for all «entity.nameMultiple.formatForDisplay» affected by this user
                 $repo->updateUserField(
                     '«name.formatForCode»',
                     $userId,
@@ -242,7 +242,7 @@ class UserSubscriber {
                     $currentUser
                 );
             «ELSE»
-                // delete all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
+                // delete all «entity.nameMultiple.formatForDisplay» affected by this user
                 $repo->deleteByUserField(
                     '«name.formatForCode»',
                     $userId,

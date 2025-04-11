@@ -11,9 +11,6 @@ class BacklinkIntegrator {
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (!generatePoweredByBacklinksIntoFooterTemplates) {
-            return
-        }
         'Generating JavaScript for backlink integration'.printIfNotTesting(fsa)
         val fileName = appName + '.Backlink.Integration.js'
         fsa.generateFile(getAppJsPath + fileName, generate)

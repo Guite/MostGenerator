@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 
+import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
@@ -12,20 +13,17 @@ import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.AbstractStringField
-import org.zikula.modulestudio.generator.application.ImportList
 
 class EntityDisplayHelper {
 
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -207,7 +205,7 @@ class EntityDisplayHelper {
         {
             «FOR entity : getAllEntities»
                 if ('«entity.name.formatForCode»' === $objectType) {
-                    «val textFields = entity.getSelfAndParentDataObjects.map[fields.filter(TextField)].flatten.filter[length >= 50]»
+                    «val textFields = entity.fields.filter(TextField).filter[length >= 50]»
                     «val stringFields = entity.getDisplayStringFieldsEntity.filter[length >= 50 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
                     «IF !textFields.empty»
                         return '«textFields.head.name.formatForCode»';
@@ -265,7 +263,7 @@ class EntityDisplayHelper {
         for (patternPart : displayPatternParts) {
             var CharSequence formattedPart = ''
             // check if patternPart equals a field name
-            var matchedFields = getSelfAndParentDataObjects.map[fields].flatten.filter[name == patternPart]
+            var matchedFields = fields.filter[name == patternPart]
             if (!matchedFields.empty) {
                 // field referencing part
                 if (matchedFields.head instanceof UploadField) {

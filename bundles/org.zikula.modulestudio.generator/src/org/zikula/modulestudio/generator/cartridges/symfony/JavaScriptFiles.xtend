@@ -48,9 +48,7 @@ class JavaScriptFiles {
             new TreeFunctions().generate(it, fsa)
         }
         new Validation().generate(it, fsa)
-        if (generatePoweredByBacklinksIntoFooterTemplates) {
-            new BacklinkIntegrator().generate(it, fsa)
-        }
+        new BacklinkIntegrator().generate(it, fsa)
         new RawPageFunctions().generate(it, fsa)
     }
 }

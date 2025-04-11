@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.ItemActionsStyle
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -15,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
+// TODO https://symfony.com/bundles/EasyAdminBundle/current/actions.html#dropdown-and-inline-entity-actions
 class ItemActions {
 
     extension ControllerExtensions = new ControllerExtensions
@@ -142,8 +142,8 @@ class ItemActions {
     '''
 
     def private itemActionsForAddingRelatedItems(Entity it, Application app) '''
-        «val refedElems = getJoinRelationsWithEntities(false).filter[r|(r.target as Entity).hasEditAction && !(r instanceof ManyToOneRelationship)]
-            + incoming.filter(ManyToManyRelationship).filter[r|r.bidirectional && r.source.application == it.application && r.source instanceof Entity && (r.source as Entity).hasEditAction]»
+        «val refedElems = getCommonRelations(false).filter[r|r.target.hasEditAction && !(r instanceof ManyToOneRelationship)]
+            + incoming.filter(ManyToManyRelationship).filter[r|r.bidirectional && r.source.application == it.application && r.source.hasEditAction]»
         «IF !refedElems.empty»
 
             // more actions for adding new related items
@@ -153,7 +153,7 @@ class ItemActions {
                 «val relationAliasNameParam = elem.getRelationAliasName(!useTarget)»
                 «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
-                if («IF standardFields»$isOwner || «ENDIF»$this->permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity instanceof Entity && (otherEntity as Entity).ownerPermission»ADD«ELSEIF (otherEntity as Entity).workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+                if («IF standardFields»$isOwner || «ENDIF»$this->permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF otherEntity.workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (null === $entity->get«relationAliasName»()) {
@@ -221,26 +221,10 @@ class ItemActions {
     '''
 
     def private addLinkClass(Application it, String linkClass) '''
-        «IF indexActionsStyle.hasButtons && detailActionsStyle.hasButtons»
-            ->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»')
-        «ELSEIF indexActionsStyle.hasButtons && !detailActionsStyle.hasButtons»
-            ->setLinkAttribute('class', 'index' === $context ? 'btn btn-sm btn-«linkClass»' : '')
-        «ELSEIF !indexActionsStyle.hasButtons && detailActionsStyle.hasButtons»
-            ->setLinkAttribute('class', 'detail' === $context ? 'btn btn-sm btn-«linkClass»' : '')
-        «ENDIF»
+        ->setLinkAttribute('class', 'btn btn-sm btn-«linkClass»')
     '''
 
-    def private hasButtons(ItemActionsStyle style) {
-        #[ItemActionsStyle.BUTTON, ItemActionsStyle.BUTTON_GROUP].contains(style)
-    }
-
     def private addIcon(Application it, String icon) '''
-        «IF indexActionsWithIcons && detailActionsWithIcons»
-            ->setAttribute('icon', 'fas fa-«icon»')
-        «ELSEIF indexActionsWithIcons && !detailActionsWithIcons»
-            ->setAttribute('icon', 'index' === $context ? 'fas fa-«icon»' : '')
-        «ELSEIF !indexActionsWithIcons && detailActionsWithIcons»
-            ->setAttribute('icon', 'detail' === $context ? 'fas fa-«icon»' : '')
-        «ENDIF»
+        ->setAttribute('icon', 'fas fa-«icon»')
     '''
 }

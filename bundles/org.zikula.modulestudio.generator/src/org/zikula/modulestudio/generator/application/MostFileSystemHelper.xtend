@@ -26,8 +26,7 @@ class MostFileSystemHelper {
 
         var CharSequence finalContent
         if (fileExtension == 'php') { //$NON-NLS-1$
-            val isBootstrapFile = #['Base/bootstrap.php', 'bootstrap.php'].contains(finalPath) //$NON-NLS-1$ //$NON-NLS-2$
-            finalContent = phpFile(contents, isBootstrapFile)
+            finalContent = phpFile(contents)
         } else {
             finalContent = contents
         }
@@ -98,18 +97,18 @@ class MostFileSystemHelper {
         list
     }
 
-    def private phpFile(Application it, CharSequence content, Boolean isBootstrapFile) '''
-        «phpFileHeader(isBootstrapFile)»
+    def private phpFile(Application it, CharSequence content) '''
+        «phpFileHeader»
         «content»
     '''
 
-    def private phpFileHeader(Application it, Boolean isBootstrapFile) '''
+    def private phpFileHeader(Application it) '''
         <?php
 
         /**
          «phpFileHeaderImpl»
          *
-         * @version «generatedBy(timestampAllGeneratedFiles || isBootstrapFile, versionAllGeneratedFiles || isBootstrapFile)»
+         * @version «generatedBy(false, false)»
          *
          * For the full copyright and license information, please view the LICENSE
          * file that was distributed with this source code.

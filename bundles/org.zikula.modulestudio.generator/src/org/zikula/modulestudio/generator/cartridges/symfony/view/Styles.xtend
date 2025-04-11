@@ -1,12 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.ItemActionsStyle
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -15,7 +13,6 @@ class Styles {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -32,11 +29,6 @@ class Styles {
 
         fileName = 'custom.css'
         fsa.generateFile(getAppCssPath + fileName, '/* this file is intended for custom styles */')
-
-        if (generateTechnicalDocumentation) {
-            fileName = 'techdocs.css'
-            fsa.generateFile(getAppCssPath + fileName, techDocsStyles)
-        }
     }
 
     def private appStyles(Application it) '''
@@ -58,14 +50,6 @@ class Styles {
                 margin: 18px 0 0 18px;
             }
 
-            «IF detailActionsStyle == ItemActionsStyle.DROPDOWN»
-                .z-module-«appName.formatForDB» h2 .dropdown.item-actions,
-                .z-module-«appName.formatForDB» h3 .dropdown.item-actions {
-                    display: inline;
-                    font-size: 18px;
-                }
-
-            «ENDIF»
         «ENDIF»
         «IF hasGeographical»
             div.«cssPrefix»-mapcontainer {
@@ -111,11 +95,10 @@ class Styles {
     '''
 
     def private autoCompletion(Application it) '''
-        «val joinRelations = getJoinRelations»
-        «IF !joinRelations.empty»
+        «IF !relations.empty»
 
             /* edit pages */
-            «IF !joinRelations.empty»
+            «IF !relations.empty»
                 div.«cssPrefix»-relation-leftside {
                     float: left;
                     width: 25%;
@@ -229,24 +212,6 @@ class Styles {
         div.«cssPrefix»-index form.«cssPrefix»-quicknav label {
            margin: 0 5px;
            display: inline;
-        }
-    '''
-
-    def private techDocsStyles(Application it) '''
-        body {
-            padding-bottom: 80px;
-        }
-        h2 {
-            margin-top: 80px;
-        }
-        h3 {
-            margin-top: 50px;
-        }
-        table {
-            width: 100%;
-        }
-        th, td {
-            vertical-align: top;
         }
     '''
 }

@@ -4,11 +4,11 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -432,7 +432,7 @@ class ValidationHelpProvider {
         messages
     }
 
-    def dispatch ArrayList<String> relationHelpMessages(JoinRelationship it, Boolean outgoing) {
+    def dispatch ArrayList<String> relationHelpMessages(Relationship it, Boolean outgoing) {
         newArrayList
     }
     def dispatch relationHelpMessages(OneToManyRelationship it, Boolean outgoing) {
@@ -487,7 +487,7 @@ class ValidationHelpProvider {
 
         messages
     }
-    def dispatch ArrayList<String> relationHelpMessageParameters(JoinRelationship it, Boolean outgoing) {
+    def dispatch ArrayList<String> relationHelpMessageParameters(Relationship it, Boolean outgoing) {
         newArrayList
     }
     def dispatch relationHelpMessageParameters(OneToManyRelationship it, Boolean outgoing) {

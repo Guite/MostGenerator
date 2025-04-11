@@ -20,17 +20,6 @@ application "SimpleNews" targets SF73 {
     version "0.0.5"
     license "My license"
     prefix "sinew"
-    timestampAllGeneratedFiles false
-    versionAllGeneratedFiles false
-    generatePoweredByBacklinksIntoFooterTemplates false
-    generateTests false
-    generateTechnicalDocumentation false
-    indexActionsPosition END
-    indexActionsStyle DROPDOWN
-    indexActionsWithIcons false
-    detailActionsPosition NONE
-    detailActionsStyle BUTTON_GROUP
-    detailActionsWithIcons false
     skipFiles "foo, bar"
     markFiles "foo, bar"
     entities {

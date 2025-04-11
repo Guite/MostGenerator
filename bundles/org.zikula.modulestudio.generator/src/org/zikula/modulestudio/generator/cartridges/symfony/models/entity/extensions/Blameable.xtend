@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityBlameableType
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
@@ -19,7 +19,7 @@ class Blameable extends AbstractExtension implements EntityExtensionInterface {
     /**
      * Additional field annotations.
      */
-    override columnAnnotations(DerivedField it) '''
+    override columnAnnotations(Field it) '''
         «IF it instanceof UserField && (it as UserField).blameable != EntityBlameableType.NONE»
             #[Gedmo\Blameable(on: '«(it as UserField).blameable.literal.toLowerCase»'«(it as UserField).blameableDetails»)]
         «ENDIF»

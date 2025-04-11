@@ -2,11 +2,10 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.config
 
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.Relationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerMethodInterface
@@ -24,12 +23,12 @@ class ConfigureFilters implements ControllerMethodInterface {
     extension NamingExtensions = new NamingExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
-    Iterable<JoinRelationship> incomingRelations
-    Iterable<JoinRelationship> outgoingRelations
+    Iterable<Relationship> incomingRelations
+    Iterable<Relationship> outgoingRelations
 
     override void init(Entity it) {
-        incomingRelations = getJoinRelationsWithEntities(true)
-        outgoingRelations = getJoinRelationsWithEntities(false)
+        incomingRelations = getCommonRelations(true)
+        outgoingRelations = getCommonRelations(false)
     }
 
     override imports(Entity it) {
@@ -109,11 +108,10 @@ class ConfigureFilters implements ControllerMethodInterface {
         «ENDFOR»
     '''
 
-    def private dispatch filter(Field it) ''''''
-    def private dispatch filter(DerivedField it) '''
+    def private dispatch filter(Field it) '''
         ->add('«name.formatForCode»')«options»
     '''
-    def private dispatch options(DerivedField it) ''''''
+    def private dispatch options(Field it) ''''''
     def private placeholderOption(Object it) ''', 'value_type_options.placeholder' => t('All')'''
 
     /*def private dispatch filter(UserField it) '''
@@ -151,7 +149,7 @@ class ConfigureFilters implements ControllerMethodInterface {
     def private dispatch filter(DatetimeField it) '''
         ->add(DateTimeFilter::new('«name.formatForCode»')«IF immutable»«/* avoid choices */»->setFormTypeOption('value_type_options.widget', 'single_text')«ENDIF»)
     '''
-    def private relationFilter(JoinRelationship it, Boolean outgoing) '''
+    def private relationFilter(Relationship it, Boolean outgoing) '''
         «val aliasName = getRelationAliasName(outgoing)»
         ->add('«aliasName.formatForCode»')
     '''
@@ -170,7 +168,7 @@ class ConfigureFilters implements ControllerMethodInterface {
         }
     '''
 
-    def private relationImpl(JoinRelationship it, Boolean useTarget) '''
+    def private relationImpl(Relationship it, Boolean useTarget) '''
         «val sourceAliasName = getRelationAliasName(useTarget)»
         $objectType = '«(if (useTarget) target else source).name.formatForCode»';
         // select without joins

@@ -1,9 +1,8 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.Relationship
 
 /**
  * Extension methods for naming classes and building file pathes.
@@ -68,7 +67,7 @@ class NamingExtensions {
     /**
      * Returns the alias name for one side of a given relationship.
      */
-    def getRelationAliasName(JoinRelationship it, Boolean useTarget) {
+    def getRelationAliasName(Relationship it, Boolean useTarget) {
         var String result
         if (useTarget && null !== targetAlias && !targetAlias.empty) {
             result = targetAlias
@@ -84,7 +83,7 @@ class NamingExtensions {
     /**
      * Returns the class name for a certain entity class.
      */
-    def entityClassName(DataObject it, String suffix, Boolean isBase) {
+    def entityClassName(Entity it, String suffix, Boolean isBase) {
         application.appNamespace + '\\Entity\\' + (if (isBase) 'Base\\Abstract' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
     }
 

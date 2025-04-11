@@ -44,7 +44,7 @@ class Uploads {
     }
 
     def private htAccess(UploadField it) '''
-        # «generatedBy(application, application.timestampAllGeneratedFiles, application.versionAllGeneratedFiles)»
+        # «generatedBy(application, false, false)»
         # ------------------------------------------------------------
         # Purpose of file: block any web access to unallowed files
         # stored in this directory
@@ -75,7 +75,7 @@ class Uploads {
     '''
 
     def private htAccessTemplate(Application it) '''
-        # «generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
+        # «generatedBy(it, false, false)»
         # ------------------------------------------------------------
         # Purpose of file: block any web access to unallowed files
         # stored in this directory

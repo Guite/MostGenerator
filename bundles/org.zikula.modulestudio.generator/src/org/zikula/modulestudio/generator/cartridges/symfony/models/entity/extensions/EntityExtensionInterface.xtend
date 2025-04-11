@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
-import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import de.guite.modulestudio.metamodel.Field
 import java.util.List
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 
 interface EntityExtensionInterface {
 
@@ -15,7 +15,7 @@ interface EntityExtensionInterface {
     /**
      * Additional field annotations.
      */
-    def CharSequence columnAnnotations(DerivedField it)
+    def CharSequence columnAnnotations(Field it)
 
     /**
      * Generates additional entity properties.

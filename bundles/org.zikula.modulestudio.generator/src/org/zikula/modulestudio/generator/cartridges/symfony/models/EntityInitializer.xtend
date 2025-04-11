@@ -80,8 +80,8 @@ class EntityInitializer {
                         $entity->set«field.name.formatForCodeCapital»($this->requestStack->getCurrentRequest()->getLocale());
 
                     «ENDFOR»
-                    «IF !entity.getDerivedFields.filter(DatetimeField).empty»
-                        «FOR field : entity.getDerivedFields.filter(DatetimeField)»
+                    «IF !entity.fields.filter(DatetimeField).empty»
+                        «FOR field : entity.fields.filter(DatetimeField)»
                             «field.setDefaultValue»
                         «ENDFOR»
                     «ENDIF»

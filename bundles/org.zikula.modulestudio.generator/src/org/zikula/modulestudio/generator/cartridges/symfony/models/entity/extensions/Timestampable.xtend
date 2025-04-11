@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTimestampableType
+import de.guite.modulestudio.metamodel.Field
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class Timestampable extends AbstractExtension implements EntityExtensionInterface {
@@ -19,7 +19,7 @@ class Timestampable extends AbstractExtension implements EntityExtensionInterfac
     /**
      * Additional field annotations.
      */
-    override columnAnnotations(DerivedField it) '''
+    override columnAnnotations(Field it) '''
         «IF it instanceof DatetimeField && (it as DatetimeField).timestampable != EntityTimestampableType.NONE»
             #[Gedmo\Timestampable(on: '«(it as DatetimeField).timestampable.literal.toLowerCase»'«(it as DatetimeField).timestampableDetails»)]
         «ENDIF»

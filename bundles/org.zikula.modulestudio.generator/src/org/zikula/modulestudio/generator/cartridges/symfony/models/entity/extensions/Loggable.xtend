@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
 import de.guite.modulestudio.metamodel.AbstractIntegerField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.Field
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -22,8 +22,8 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
     /**
      * Additional field annotations.
      */
-    override columnAnnotations(DerivedField it) '''
-        «IF entity instanceof Entity && (entity as Entity).loggable && !translatable»«/* if loggable and translatable are combined we add store this into a translationData array field instead */»
+    override columnAnnotations(Field it) '''
+        «IF entity.loggable && !translatable»«/* if loggable and translatable are combined we add store this into a translationData array field instead */»
             #[Gedmo\Versioned]
         «ENDIF»
     '''

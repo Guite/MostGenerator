@@ -1,14 +1,13 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity
 
 import de.guite.modulestudio.metamodel.CascadeType
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationFetchType
+import de.guite.modulestudio.metamodel.Relationship
 import java.util.ArrayList
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -39,7 +38,7 @@ class Association {
     /**
      * If we have an outgoing association useTarget is true; for an incoming one it is false.
      */
-    def importRelatedEntity(JoinRelationship it, Boolean useTarget) {
+    def importRelatedEntity(Relationship it, Boolean useTarget) {
         val imports = newArrayList
         val entityClassName = (if (useTarget) target else source).simpleEntityClassName
         if (!importedEntities.contains(entityClassName)) {
@@ -49,14 +48,14 @@ class Association {
         imports
     }
 
-    def private simpleEntityClassName(DataObject it) {
+    def private simpleEntityClassName(Entity it) {
         name.formatForCodeCapital
     }
 
     /**
      * If we have an outgoing association useTarget is true; for an incoming one it is false.
      */
-    def generate(JoinRelationship it, Boolean useTarget) {
+    def generate(Relationship it, Boolean useTarget) {
         fh = new FileHelper(application)
         val sourceName = getRelationAliasName(false).toFirstLower
         val targetName = getRelationAliasName(true).toFirstLower
@@ -64,20 +63,20 @@ class Association {
         directionSwitch(useTarget, sourceName, targetName, entityClass)
     }
 
-    def private directionSwitch(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) {
+    def private directionSwitch(Relationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) {
         if (!bidirectional)
             unidirectionalImpl(useTarget, sourceName, targetName, entityClass)
         else
             bidirectionalImpl(useTarget, sourceName, targetName, entityClass)
     }
 
-    def private unidirectionalImpl(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
+    def private unidirectionalImpl(Relationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
         «IF useTarget»
             «outgoing(sourceName, targetName, entityClass)»
         «ENDIF»
     '''
 
-    def private bidirectionalImpl(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
+    def private bidirectionalImpl(Relationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
         «IF !useTarget»
             «incoming(sourceName, targetName, entityClass)»
         «ELSE»
@@ -85,7 +84,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private dispatch incoming(JoinRelationship it, String sourceName, String targetName, String entityClass) '''
+    def private dispatch incoming(Relationship it, String sourceName, String targetName, String entityClass) '''
         /**
          * Bidirectional - «incomingMappingDescription(it, sourceName, targetName)».
         «IF isManySide(false)»
@@ -110,28 +109,20 @@ class Association {
         «/* this last line is on purpose */»
     '''
 
-    def private getDisplayNameDependingOnType(DataObject it) {
-        if (it instanceof Entity) {
-            nameMultiple.formatForDisplay
-        } else {
-            name.formatForDisplay
-        }
-    }
-
-    def private dispatch incomingMappingDescription(JoinRelationship it, String sourceName, String targetName) {
+    def private dispatch incomingMappingDescription(Relationship it, String sourceName, String targetName) {
         switch it {
             OneToOneRelationship: '''One «targetName» [«target.name.formatForDisplay»] is linked by one «sourceName» [«source.name.formatForDisplay»] (INVERSE SIDE)'''
-            OneToManyRelationship: '''Many «targetName» [«target.getDisplayNameDependingOnType»] are linked by one «sourceName» [«source.name.formatForDisplay»] (OWNING SIDE)'''
+            OneToManyRelationship: '''Many «targetName» [«target.nameMultiple.formatForDisplay»] are linked by one «sourceName» [«source.name.formatForDisplay»] (OWNING SIDE)'''
             default: ''
         }
     }
-    def private incomingMappingDetails(JoinRelationship it) {
+    def private incomingMappingDetails(Relationship it) {
         switch it {
             OneToOneRelationship case it.primaryKey: '''#[ORM\Id]'''
             default: ''
         }
     }
-    def private incomingMappingType(JoinRelationship it) {
+    def private incomingMappingType(Relationship it) {
         switch it {
             OneToOneRelationship: 'OneToOne'
             OneToManyRelationship: 'ManyToOne'
@@ -157,7 +148,7 @@ class Association {
         «/* this last line is on purpose */»
     '''
 
-    def private dispatch incomingMappingDescription(ManyToOneRelationship it, String sourceName, String targetName) '''One «targetName» [«target.name.formatForDisplay»] is linked by many «sourceName» [«source.getDisplayNameDependingOnType»] (INVERSE SIDE)'''
+    def private dispatch incomingMappingDescription(ManyToOneRelationship it, String sourceName, String targetName) '''One «targetName» [«target.name.formatForDisplay»] is linked by many «sourceName» [«source.nameMultiple.formatForDisplay»] (INVERSE SIDE)'''
 
     def private dispatch incoming(ManyToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         «IF bidirectional»
@@ -180,12 +171,12 @@ class Association {
         «ENDIF»
     '''
 
-    def private dispatch incomingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «targetName» [«target.getDisplayNameDependingOnType»] are linked by many «sourceName» [«source.getDisplayNameDependingOnType»] (INVERSE SIDE)'''
+    def private dispatch incomingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «targetName» [«target.nameMultiple.formatForDisplay»] are linked by many «sourceName» [«source.nameMultiple.formatForDisplay»] (INVERSE SIDE)'''
 
     /**
      * This default rule is used for OneToOne and ManyToOne.
      */
-    def private dispatch outgoing(JoinRelationship it, String sourceName, String targetName, String entityClass) '''
+    def private dispatch outgoing(Relationship it, String sourceName, String targetName, String entityClass) '''
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          */
@@ -209,14 +200,14 @@ class Association {
         «/* this last line is on purpose */»
     '''
 
-    def private dispatch outgoingMappingDescription(JoinRelationship it, String sourceName, String targetName) {
+    def private dispatch outgoingMappingDescription(Relationship it, String sourceName, String targetName) {
         switch it {
             OneToOneRelationship: '''One «sourceName» [«source.name.formatForDisplay»] has one «targetName» [«target.name.formatForDisplay»] (INVERSE SIDE)'''
-            ManyToOneRelationship: '''Many «sourceName» [«source.getDisplayNameDependingOnType»] have one «targetName» [«target.name.formatForDisplay»] (OWNING SIDE)'''
+            ManyToOneRelationship: '''Many «sourceName» [«source.nameMultiple.formatForDisplay»] have one «targetName» [«target.name.formatForDisplay»] (OWNING SIDE)'''
             default: ''
         }
     }
-    def private outgoingMappingType(JoinRelationship it) {
+    def private outgoingMappingType(Relationship it) {
         switch it {
             OneToOneRelationship: 'OneToOne'
             ManyToOneRelationship: 'ManyToOne'
@@ -224,7 +215,7 @@ class Association {
         }
     }
 
-    def private dispatch outgoingMappingAdditions(JoinRelationship it) ''''''
+    def private dispatch outgoingMappingAdditions(Relationship it) ''''''
     def private dispatch outgoingMappingAdditions(OneToOneRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»'''
     def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy: '«indexBy»'«ENDIF»)'''
     def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy: '«indexBy»'«ENDIF»'''
@@ -254,7 +245,7 @@ class Association {
         «/* this last line is on purpose */»
     '''
 
-    def private dispatch outgoingMappingDescription(OneToManyRelationship it, String sourceName, String targetName) '''One «sourceName» [«source.name.formatForDisplay»] has many «targetName» [«target.getDisplayNameDependingOnType»] (INVERSE SIDE)'''
+    def private dispatch outgoingMappingDescription(OneToManyRelationship it, String sourceName, String targetName) '''One «sourceName» [«source.name.formatForDisplay»] has many «targetName» [«target.nameMultiple.formatForDisplay»] (INVERSE SIDE)'''
 
     def private dispatch outgoing(ManyToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
@@ -276,10 +267,10 @@ class Association {
         protected ?Collection $«targetName» = null;
     '''
 
-    def private dispatch outgoingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «sourceName» [«source.getDisplayNameDependingOnType»] have many «targetName» [«target.getDisplayNameDependingOnType»] (OWNING SIDE)'''
+    def private dispatch outgoingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «sourceName» [«source.nameMultiple.formatForDisplay»] have many «targetName» [«target.nameMultiple.formatForDisplay»] (OWNING SIDE)'''
 
 
-    def private joinDetails(JoinRelationship it, Boolean useTarget) {
+    def private joinDetails(Relationship it, Boolean useTarget) {
         val joinedEntityLocal = { if (useTarget) source else target }
         val joinedEntityForeign = { if (useTarget) target else source }
         val joinColumnsLocal = { if (useTarget) getSourceFields else getTargetFields }
@@ -295,7 +286,7 @@ class Association {
 '''
     }
 
-    def private joinTableDetails(JoinRelationship it, Boolean useTarget) '''
+    def private joinTableDetails(Relationship it, Boolean useTarget) '''
         «val joinedEntityLocal = { if (useTarget) source else target }»
         «val joinedEntityForeign = { if (useTarget) target else source }»
         «val joinColumnsLocal = { if (useTarget) getSourceFields else getTargetFields }»
@@ -308,14 +299,14 @@ class Association {
         «ENDIF»
     '''
 
-    def private joinColumnsMultiple(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) '''«FOR joinColumnLocal : joinColumnsLocal»«joinColumn(joinColumnLocal, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget, false)»«ENDFOR»'''
+    def private joinColumnsMultiple(Relationship it, Boolean useTarget, Entity joinedEntityLocal, String[] joinColumnsLocal) '''«FOR joinColumnLocal : joinColumnsLocal»«joinColumn(joinColumnLocal, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget, false)»«ENDFOR»'''
 
-    def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) '''«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget, false)»'''
+    def private joinColumnsSingle(Relationship it, Boolean useTarget, Entity joinedEntityLocal, String[] joinColumnsLocal) '''«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getPrimaryKey.name.formatForDB, !useTarget, false)»'''
 
-    def private joinColumn(JoinRelationship it, String columnName, String referencedColumnName, Boolean useTarget, Boolean inverse) '''
+    def private joinColumn(Relationship it, String columnName, String referencedColumnName, Boolean useTarget, Boolean inverse) '''
         #[ORM\«IF inverse»Inverse«ENDIF»JoinColumn(name: '«joinColumnName(columnName, useTarget)»', referencedColumnName: '«referencedColumnName»'«IF unique», unique: true«ENDIF»«IF !nullable», nullable: false«ENDIF»«IF !onDelete.empty», onDelete: '«onDelete»'«ENDIF»)]'''
 
-    def private joinColumnName(JoinRelationship it, String columnName, Boolean useTarget) {
+    def private joinColumnName(Relationship it, String columnName, Boolean useTarget) {
         switch it {
             case columnName == 'id': (if (useTarget) target else source).name.formatForDB + '_id' //$NON-NLS-1$ //$NON-NLS-2$
             default: columnName
@@ -323,16 +314,16 @@ class Association {
         //(if (useTarget) target else source).name.formatForDB + '_' + columnName //$NON-NLS-1$
     }
 
-    def private additionalOptions(JoinRelationship it, Boolean useReverse) '''«cascadeOptions(useReverse)»«fetchTypeTag»'''
-    def private cascadeOptions(JoinRelationship it, Boolean useReverse) {
+    def private additionalOptions(Relationship it, Boolean useReverse) '''«cascadeOptions(useReverse)»«fetchTypeTag»'''
+    def private cascadeOptions(Relationship it, Boolean useReverse) {
         val cascadeProperty = { if (useReverse) cascadeReverse else cascade }
         if (cascadeProperty == CascadeType.NONE) ''
         else ''', cascade: [«cascadeOptionsImpl(useReverse)»]'''
     }
 
-    def private fetchTypeTag(JoinRelationship it) { if (fetchType != RelationFetchType.LAZY) ''', fetch: '«fetchType.literal»'«''»''' }
+    def private fetchTypeTag(Relationship it) { if (fetchType != RelationFetchType.LAZY) ''', fetch: '«fetchType.literal»'«''»''' }
 
-    def private cascadeOptionsImpl(JoinRelationship it, Boolean useReverse) {
+    def private cascadeOptionsImpl(Relationship it, Boolean useReverse) {
         val cascadeProperty = { if (useReverse) cascadeReverse else cascade }
         if (cascadeProperty == CascadeType.PERSIST) '\'persist\''
         else if (cascadeProperty == CascadeType.REMOVE) '\'remove\''
@@ -368,23 +359,23 @@ class Association {
         criteria.join(', ')
     }
 
-    def initCollections(DataObject it) '''
+    def initCollections(Entity it) '''
         «FOR relation : getOutgoingCollections»«relation.initCollection(true)»«ENDFOR»
         «FOR relation : getIncomingCollections»«relation.initCollection(false)»«ENDFOR»
     '''
 
-    def private initCollection(JoinRelationship it, Boolean outgoing) '''
+    def private initCollection(Relationship it, Boolean outgoing) '''
         «IF isManySide(outgoing)»
             $this->«getRelationAliasName(outgoing)» = new ArrayCollection();
         «ENDIF»
     '''
 
-    def relationAccessor(JoinRelationship it, Boolean useTarget) '''
+    def relationAccessor(Relationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget)»
         «relationAccessorImpl(useTarget, relationAliasName)»
     '''
 
-    def private relationAccessorImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
+    def private relationAccessorImpl(Relationship it, Boolean useTarget, String aliasName) '''
         «val entityClass = { (if (useTarget) target else source).simpleEntityClassName }»
         «val nameSingle = { (if (useTarget) target else source).name }»
         «val isMany = isManySide(useTarget)»
@@ -400,7 +391,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private relationSetterCustomImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
+    def private relationSetterCustomImpl(Relationship it, Boolean useTarget, String aliasName) '''
         «val otherIsMany = isManySide(useTarget)»
         «IF otherIsMany»
             «val nameSingle = { (if (useTarget) target else source).name + 'Single' }»
@@ -427,7 +418,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private dispatch relationAccessorAdditions(JoinRelationship it, Boolean useTarget, String aliasName, String singleName) '''
+    def private dispatch relationAccessorAdditions(Relationship it, Boolean useTarget, String aliasName, String singleName) '''
     '''
 
     def private dispatch relationAccessorAdditions(OneToManyRelationship it, Boolean useTarget, String aliasName, String singleName) '''
@@ -438,7 +429,7 @@ class Association {
              *
              * @throws InvalidArgumentException If desired index does not exist
              */
-            public function get«singleName.formatForCodeCapital»(«source.getDerivedFields.findFirst[e|e.name.equals(indexBy)].fieldTypeAsString(true)» $«indexBy.formatForCode»): «source.entityClassName('', false)»
+            public function get«singleName.formatForCodeCapital»(«source.fields.findFirst[e|e.name.equals(indexBy)].fieldTypeAsString(true)» $«indexBy.formatForCode»): «source.entityClassName('', false)»
             {
                 if (!isset($this->«aliasName.formatForCode»[$«indexBy.formatForCode»])) {
                     throw new InvalidArgumentException("«indexBy.formatForDisplayCapital» is not available on this list of «aliasName.formatForDisplay».");
@@ -449,7 +440,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private addMethod(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
+    def private addMethod(Relationship it, Boolean useTarget, String name, String nameSingle, String type) '''
 
         /**
          * Adds an instance of «type» to the list of «name.formatForDisplay».
@@ -457,20 +448,20 @@ class Association {
         «addMethodImpl(useTarget, name, nameSingle, type)»
     '''
 
-    def private isManyToMany(JoinRelationship it) {
+    def private isManyToMany(Relationship it) {
         switch it {
             ManyToManyRelationship: true
             default: false
         }
     }
 
-    def private addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
+    def private addParameters(Relationship it, Boolean useTarget, String name, String type) '''
         «type» $«name»'''
 
-    def private addMethodSignature(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
+    def private addMethodSignature(Relationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»): self'''
 
-    def private addMethodImplDefault(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
+    def private addMethodImplDefault(Relationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         «addMethodSignature(useTarget, name, nameSingle, type)»
         {
             if (!$this->«name»->contains($«nameSingle»)) {
@@ -481,7 +472,7 @@ class Association {
             return $this;
         }
     '''
-    def private dispatch addMethodImpl(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
+    def private dispatch addMethodImpl(Relationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         «addMethodImplDefault(useTarget, name, nameSingle, type)»
     '''
     def private dispatch addMethodImpl(OneToManyRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
@@ -511,7 +502,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private addInverseCalls(JoinRelationship it, Boolean useTarget, String nameSingle) '''
+    def private addInverseCalls(Relationship it, Boolean useTarget, String nameSingle) '''
         «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
         «IF generateInverseCalls»
             «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
@@ -524,7 +515,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private removeMethod(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
+    def private removeMethod(Relationship it, Boolean useTarget, String name, String nameSingle, String type) '''
 
         /**
          * Removes an instance of «type» from the list of «name.formatForDisplay».
@@ -551,7 +542,7 @@ class Association {
         }
     '''
 
-    def private isBidirectional(JoinRelationship it) {
+    def private isBidirectional(Relationship it) {
         switch (it) {
             OneToOneRelationship:
                 return it.bidirectional

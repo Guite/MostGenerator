@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
@@ -11,12 +10,12 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IndexAction
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
+import de.guite.modulestudio.metamodel.Relationship
 
 /**
  * This class contains controller related extension methods.
@@ -26,7 +25,6 @@ class ControllerExtensions {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
 
     /**
      * Returns name of container (entity). 
@@ -42,42 +40,35 @@ class ControllerExtensions {
      * Checks whether an entity owns an index action.
      */
     def Boolean hasIndexAction(Entity it) {
-        !actions.filter(IndexAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasIndexAction)
+        !actions.filter(IndexAction).empty
     }
 
     /**
      * Checks whether an entity owns a display action.
      */
     def Boolean hasDetailAction(Entity it) {
-        !actions.filter(DetailAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasDetailAction)
+        !actions.filter(DetailAction).empty
     }
 
     /**
      * Checks whether an entity owns an edit action.
      */
     def Boolean hasEditAction(Entity it) {
-        !actions.filter(EditAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasEditAction)
+        !actions.filter(EditAction).empty
     }
 
     /**
      * Checks whether an entity owns a delete action.
      */
     def Boolean hasDeleteAction(Entity it) {
-        !actions.filter(DeleteAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasDeleteAction)
+        !actions.filter(DeleteAction).empty
     }
 
     /**
      * Checks whether an entity owns a custom action.
      */
     def Boolean hasCustomAction(Entity it) {
-        !actions.filter(CustomAction).empty || (isInheriting && parentType instanceof Entity && (parentType as Entity).hasCustomAction)
-    }
-
-    /**
-     * Returns all actions for a given entity.
-     */
-    def getAllEntityActions(Entity it) {
-        getSelfAndParentDataObjects.filter(Entity).map[actions].flatten
+        !actions.filter(CustomAction).empty
     }
 
     /**
@@ -93,11 +84,11 @@ class ControllerExtensions {
         return actions.head.name.formatForDB
     }
 
-    def getPermissionAccessLevel(DataObject it, Action action) {
+    def getPermissionAccessLevel(Entity it, Action action) {
         switch action {
             IndexAction: 'ACCESS_OVERVIEW'
             DetailAction: 'ACCESS_READ'
-            EditAction: if (it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
+            EditAction: if (workflow != EntityWorkflowType.NONE) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
             DeleteAction: 'ACCESS_DELETE'
             CustomAction: 'ACCESS_OVERVIEW'
             default: 'ACCESS_ADMIN'
@@ -176,7 +167,7 @@ class ControllerExtensions {
         false
     }
 
-    def getSourceEditMode(JoinRelationship it) {
+    def getSourceEditMode(Relationship it) {
         switch it {
             OneToOneRelationship:
                 return sourceEditing
@@ -191,7 +182,7 @@ class ControllerExtensions {
         RelationEditMode.NONE
     }
 
-    def getTargetEditMode(JoinRelationship it) {
+    def getTargetEditMode(Relationship it) {
         switch it {
             OneToOneRelationship:
                 return targetEditing
@@ -213,7 +204,7 @@ class ControllerExtensions {
      *    2    Select related objects including inline creation and editing
      *    3    Embedded editing
      */
-    def getEditStageCode(JoinRelationship it, Boolean incoming) {
+    def getEditStageCode(Relationship it, Boolean incoming) {
         switch if (incoming) getTargetEditMode else getSourceEditMode {
             case NONE:
                 0
@@ -231,7 +222,7 @@ class ControllerExtensions {
     /**
      * Checks for whether a certain relationship side uses auto completion or not.
      */
-    def usesAutoCompletion(JoinRelationship it, boolean useTarget) {
+    def usesAutoCompletion(Relationship it, boolean useTarget) {
         switch it.useAutoCompletion {
             case NONE: false
             case ONLY_SOURCE_SIDE: !useTarget
@@ -245,7 +236,7 @@ class ControllerExtensions {
      * Returns an internal name for the field type used for a relationship side
      * with in-line editing enabled.
      */
-    def getFieldTypeForInlineEditing(JoinRelationship it, Boolean incoming) {
+    def getFieldTypeForInlineEditing(Relationship it, Boolean incoming) {
         if (usesAutoCompletion(!incoming)) {
             return 'autocomplete'
         }
@@ -263,6 +254,6 @@ class ControllerExtensions {
      * Checks whether inline editing is required or not.
      */
     def needsInlineEditing(Application it) {
-        !getJoinRelations.filter[getEditStageCode(false) == 2 || getEditStageCode(true) == 2].empty
+        !relations.filter[getEditStageCode(false) == 2 || getEditStageCode(true) == 2].empty
     }
 }

@@ -1,12 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -27,7 +27,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
     /**
      * Additional field annotations.
      */
-    override columnAnnotations(DerivedField it) '''
+    override columnAnnotations(Field it) '''
     '''
 
     /**
@@ -90,7 +90,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
 «ENDFOR»
 '''
 
-    def private relativeSlugHandlerImpl(Entity it, JoinRelationship relation) '''
+    def private relativeSlugHandlerImpl(Entity it, Relationship relation) '''
         #[Gedmo\SlugHandler(class: RelativeSlugHandler::class, options: [
             «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
                 'relationField' => '«relation.getRelationAliasName(false).formatForCodeCapital»',
@@ -108,7 +108,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
 «ENDFOR»
  '''
 
-    def private inversedRelativeSlugHandlerImpl(Entity it, JoinRelationship relation) '''
+    def private inversedRelativeSlugHandlerImpl(Entity it, Relationship relation) '''
         #[Gedmo\SlugHandler(class: InversedRelativeSlugHandler::class, options: [
             «IF relation instanceof OneToOneRelationship || relation instanceof OneToManyRelationship»
                 'relationClass' => '«relation.target.name.formatForCodeCapital + 'Entity'»',

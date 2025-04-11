@@ -1,20 +1,16 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
 import java.util.ArrayList
-import de.guite.modulestudio.metamodel.MappedSuperClass
 
 /**
  * This class contains extension methods for workflow-related queries.
  */
 class WorkflowExtensions {
-
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
 
     /**
      * Determines whether any entity in the given application uses a certain workflow type.
@@ -67,7 +63,7 @@ class WorkflowExtensions {
     def getRequiredStateList(Application it) {
         var states = new ArrayList<ListFieldItem>
         var stateIds = new ArrayList<String>
-        for (entity : entities.filter(Entity).filter[!isInheriting]) {
+        for (entity : entities) {
             for (item : entity.getWorkflowStateField.items) {
                 if (!stateIds.contains(item.value)) {
                     states.add(item)
@@ -119,12 +115,8 @@ class WorkflowExtensions {
     /**
      * Returns the list field storing the possible workflow states for the given entity. 
      */
-    def ListField getWorkflowStateField(DataObject it) {
-        if (isInheriting && !(parentType instanceof MappedSuperClass)) {
-            parentType.getWorkflowStateField
-        } else {
-            fields.filter(ListField).filter[name == 'workflowState'].head
-        }
+    def ListField getWorkflowStateField(Entity it) {
+        fields.filter(ListField).filter[name == 'workflowState'].head
     }
 
     /**

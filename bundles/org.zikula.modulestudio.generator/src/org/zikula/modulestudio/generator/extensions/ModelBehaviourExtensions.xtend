@@ -3,17 +3,16 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityBlameableType
 import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import de.guite.modulestudio.metamodel.UserField
 import java.util.List
 
@@ -24,7 +23,6 @@ class ModelBehaviourExtensions {
 
     extension DateTimeExtensions = new DateTimeExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
 
     /**
      * Checks whether the feature activation helper class should be generated or not.
@@ -156,7 +154,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the blameable extension enabled.
      */
     def getBlameableFields(Entity it) {
-        getSelfAndParentDataObjects.map[fields.filter(UserField).filter[blameable != EntityBlameableType.NONE]].flatten
+        fields.filter(UserField).filter[blameable != EntityBlameableType.NONE]
     }
 
     /**
@@ -205,7 +203,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all string type fields with the sluggable extension enabled.
      */
     def getSluggableFields(Entity it) {
-        getSelfAndParentDataObjects.map[fields.filter(AbstractStringField).filter[sluggablePosition > 0]].flatten.sortBy[sluggablePosition]
+        fields.filter(AbstractStringField).filter[sluggablePosition > 0].sortBy[sluggablePosition]
     }
 
     def needsSlugHandler(Entity it) {
@@ -244,10 +242,9 @@ class ModelBehaviourExtensions {
      */
     def getSlugRelations(Application it) {
         val allSlugRelations = relations
-            .filter(JoinRelationship)
             .filter[r|r instanceof OneToOneRelationship || r instanceof OneToManyRelationship || r instanceof ManyToOneRelationship]
-            .filter[r|r.source instanceof Entity && (r.source as Entity).hasSluggableFields && r.target instanceof Entity && (r.target as Entity).hasSluggableFields]
-        val List<JoinRelationship> uniqueSlugRelations = newArrayList
+            .filter[r|r.source.hasSluggableFields && r.target.hasSluggableFields]
+        val List<Relationship> uniqueSlugRelations = newArrayList
         for (relation : allSlugRelations) {
             var isRedundant = false
             for (uniqueRelation : uniqueSlugRelations) {
@@ -274,7 +271,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the sortable extension enabled.
      */
     def getSortableFields(Entity it) {
-        getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[sortablePosition]].flatten
+        fields.filter(IntegerField).filter[sortablePosition]
     }
 
     /**
@@ -288,7 +285,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the timestampable extension enabled.
      */
     def getTimestampableFields(Entity it) {
-        getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[timestampable != EntityTimestampableType.NONE]].flatten
+        fields.filter(DatetimeField).filter[timestampable != EntityTimestampableType.NONE]
     }
 
     /**
@@ -302,7 +299,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the translatable extension enabled.
      */
     def getTranslatableFields(Entity it) {
-        getSelfAndParentDataObjects.map[getDerivedFields.filter[translatable]].flatten
+        fields.filter[translatable]
     }
 
     /**
@@ -315,12 +312,8 @@ class ModelBehaviourExtensions {
     /**
      * Returns a list of all editable fields with the translatable extension disabled.
      */
-    def getEditableNonTranslatableFields(DataObject it) {
-        if (it instanceof Entity) {
-            getEditableFields.filter[!translatable]
-        } else {
-            getEditableFields
-        }
+    def getEditableNonTranslatableFields(Entity it) {
+        getEditableFields.filter[!translatable]
     }
 
     /**
@@ -333,8 +326,8 @@ class ModelBehaviourExtensions {
     /**
      * Determines the version field of a data object if there is one.
      */
-    def getVersionField(DataObject it) {
-        val intVersions = getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[version]].flatten
+    def getVersionField(Entity it) {
+        val intVersions = fields.filter(IntegerField).filter[version]
         if (!intVersions.empty) {
             return intVersions.head
         }

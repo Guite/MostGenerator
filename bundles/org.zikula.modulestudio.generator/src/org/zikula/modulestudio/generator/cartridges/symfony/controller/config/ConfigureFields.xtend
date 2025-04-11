@@ -6,16 +6,15 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.RelationEditMode
+import de.guite.modulestudio.metamodel.Relationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -50,12 +49,12 @@ class ConfigureFields implements ControllerMethodInterface {
     extension Utils = new Utils
 
     ValidationHelpProvider validationHelpProvider = new ValidationHelpProvider
-    Iterable<JoinRelationship> incomingRelations
-    Iterable<JoinRelationship> outgoingRelations
+    Iterable<Relationship> incomingRelations
+    Iterable<Relationship> outgoingRelations
 
     override void init(Entity it) {
-        incomingRelations = getJoinRelationsWithEntities(true)
-        outgoingRelations = getJoinRelationsWithEntities(false)
+        incomingRelations = getCommonRelations(true)
+        outgoingRelations = getCommonRelations(false)
     }
 
     override imports(Entity it) {
@@ -102,7 +101,7 @@ class ConfigureFields implements ControllerMethodInterface {
         if (hasLocaleFieldsEntity || hasTranslatableFields) {
             importsUNUSED.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
         }
-        if (!formFields.filter(DerivedField).filter[!mandatory && !nullable].empty) {
+        if (!formFields.filter[!mandatory && !nullable].empty) {
             importsUNUSED.add('Zikula\\FormExtensionBundle\\Form\\DataTransformer\\NullToEmptyTransformer')
         }
         importsUNUSED.add(application.appNamespace + '\\Entity\\Factory\\EntityFactory')
@@ -170,8 +169,8 @@ class ConfigureFields implements ControllerMethodInterface {
 
     def private definition(Field it) '''
         yield '«name.formatForCode»' => «fieldType»Field::new('«name.formatForCode»', t('«name.formatForDisplayCapital»'))
-            «IF !visibility(entity as Entity).empty»
-                «visibility(entity as Entity)»
+            «IF !visibility(entity).empty»
+                «visibility(entity)»
             «ENDIF»
             «IF !options.empty»
                 «options»
@@ -241,8 +240,7 @@ class ConfigureFields implements ControllerMethodInterface {
         }
     }
 
-    def private dispatch requiredOption(Field it) { 'true' }
-    def private dispatch requiredOption(DerivedField it) '''«mandatory.displayBool»'''
+    def private dispatch requiredOption(Field it) '''«mandatory.displayBool»'''
     def private dispatch requiredOption(UploadField it) {
         if (mandatory) '''Crud::PAGE_NEW === $pageName'''
         else 'false'
@@ -489,9 +487,8 @@ class ConfigureFields implements ControllerMethodInterface {
 
     ValidationCssHelper validationCssHelper = new ValidationCssHelper
 
-    def private dispatch formOptions(Field it) ''''''
-    def private dispatch formOptions(DerivedField it) '''«/* No input fields for foreign keys, relations are processed further down */»
-        «IF entity.getIncomingJoinRelations.filter[r|r.getSourceFields.head == name.formatForDB].empty»
+    def private formOptions(Field it) '''«/* No input fields for foreign keys, relations are processed further down */»
+        «IF entity.incoming.filter[r|r.getSourceFields.head == name.formatForDB].empty»
             «IF null !== documentation && !documentation.empty»
                 'label_attr' => [
                     'title' => '«documentation.replace("'", '"')»',
@@ -530,7 +527,7 @@ class ConfigureFields implements ControllerMethodInterface {
         «ENDIF»
     '''
 
-    def private helpAttribute(DerivedField it) {
+    def private helpAttribute(Field it) {
         displayHelpMessages(application, helpMessages, validationHelpProvider.helpMessageParameters(it))
         /* TODO eliminate redundant ways for 'help' attribute
             ->setHelp(
@@ -539,7 +536,7 @@ class ConfigureFields implements ControllerMethodInterface {
          */
     }
 
-    def private helpMessages(DerivedField it) {
+    def private helpMessages(Field it) {
         val messages = newArrayList
         if (null !== documentation && !documentation.empty) {
             messages += '\'' + documentation.replace("'", '"') + '\''
@@ -717,7 +714,7 @@ class ConfigureFields implements ControllerMethodInterface {
         «ENDIF»
     '''
 
-    def private relationDefinition(JoinRelationship it, Boolean outgoing, Boolean autoComplete) '''
+    def private relationDefinition(Relationship it, Boolean outgoing, Boolean autoComplete) '''
         «val aliasName = getRelationAliasName(outgoing)»
         «val editMode = if (outgoing) getSourceEditMode else getTargetEditMode»
         yield '«aliasName.formatForCode»' => «relationFieldType(outgoing)»Field::new('«aliasName.formatForCode»', t('«aliasName.formatForDisplayCapital»'))«IF RelationEditMode.NONE === editMode»->hideOnForm()«ENDIF»«/*
@@ -737,25 +734,25 @@ class ConfigureFields implements ControllerMethodInterface {
             «ENDIF»
     '''
 
-    def private relationFieldType(JoinRelationship it, Boolean outgoing) {
+    def private relationFieldType(Relationship it, Boolean outgoing) {
         val editMode = if (outgoing) getSourceEditMode else getTargetEditMode
         if (editMode == RelationEditMode.EMBEDDED) 'Collection' // TODO maybe only for multi-valued sides...
         else 'Association'
     }
 
 /*
-    def private formType(JoinRelationship it, Boolean autoComplete) {
+    def private formType(Relationship it, Boolean autoComplete) {
         if (autoComplete) '''«application.appNamespace»\Form\Type\Field\AutoCompletionRelation'''
         else '''Symfony\Bridge\Doctrine\Form\Type\Entity'''
     }
 */
 
-    def private relationFormOptions(JoinRelationship it, Boolean outgoing) '''
+    def private relationFormOptions(Relationship it, Boolean outgoing) '''
         «relationHelp(outgoing)»
     '''
 
 /*
-    def private relationDefinition(JoinRelationship it, Boolean outgoing, Boolean autoComplete) '''
+    def private relationDefinition(Relationship it, Boolean outgoing, Boolean autoComplete) '''
         «val relatedEntity = if (outgoing) target else source»
         «val editMode = if (outgoing) getSourceEditMode else getTargetEditMode»
         «IF editMode == RelationEditMode.EMBEDDED»«/* TODO entity option is missing if related entity contains an upload field * /»
@@ -839,7 +836,7 @@ class ConfigureFields implements ControllerMethodInterface {
     '''
 */
 
-    def private relationHelp(JoinRelationship it, Boolean outgoing) {
+    def private relationHelp(Relationship it, Boolean outgoing) {
         displayHelpMessages(application, validationHelpProvider.relationHelpMessages(it, outgoing), validationHelpProvider.relationHelpMessageParameters(it, outgoing))
     }
 

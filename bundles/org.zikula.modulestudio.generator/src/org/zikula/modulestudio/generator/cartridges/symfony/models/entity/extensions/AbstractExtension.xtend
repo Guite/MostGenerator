@@ -3,17 +3,15 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.exten
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 abstract class AbstractExtension implements EntityExtensionInterface {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -121,7 +119,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         namespace «app.appNamespace»\Entity;
 
         use Doctrine\ORM\Mapping as ORM;
-        use «app.appNamespace»\Entity\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Entity as BaseEntity;
+        use «app.appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity as BaseEntity;
         use «app.appNamespace»\Repository\«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository;
 
         /**
@@ -237,12 +235,12 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     def protected extensionClassRepositoryInterfaceImpl(Entity it) '''
         namespace «app.appNamespace»\Repository;
 
-        use «app.appNamespace»\Repository\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»RepositoryInterface;
+        use «app.appNamespace»\Repository\Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»RepositoryInterface;
 
         /**
          * Repository interface for «it.name.formatForDisplay» «classType.formatForDisplay» entities.
          */
-        interface «name.formatForCodeCapital»«classType.formatForCodeCapital»RepositoryInterface extends Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»RepositoryInterface
+        interface «name.formatForCodeCapital»«classType.formatForCodeCapital»RepositoryInterface extends Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»RepositoryInterface
         {
             // feel free to add your own interface methods
         }
@@ -251,14 +249,14 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     def protected extensionClassRepositoryImpl(Entity it) '''
         namespace «app.appNamespace»\Repository;
 
-        use «app.appNamespace»\Repository\Base\Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Repository;
+        use «app.appNamespace»\Repository\Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository;
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *
          * This is the concrete repository class for «it.name.formatForDisplay» «classType.formatForDisplay» entities.
          */
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Repository extends Abstract«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»Repository implements «name.formatForCodeCapital»«classType.formatForCodeCapital»RepositoryInterface
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Repository extends Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository implements «name.formatForCodeCapital»«classType.formatForCodeCapital»RepositoryInterface
         {
             // feel free to add your own methods here
         }

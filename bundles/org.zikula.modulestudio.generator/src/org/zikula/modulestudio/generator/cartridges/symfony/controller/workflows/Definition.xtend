@@ -3,12 +3,10 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.workflow
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
-import de.guite.modulestudio.metamodel.MappedSuperClass
 import java.util.ArrayList
 import java.util.HashMap
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -19,7 +17,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Definition {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
@@ -71,9 +68,7 @@ class Definition {
                         property: workflowState
                     supports:
                         «FOR entity : app.getEntitiesForWorkflow(wfType)»
-                            «IF !entity.isInheriting || entity.parentType instanceof MappedSuperClass»
-                                - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»
-                            «ENDIF»
+                            - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»
                         «ENDFOR»
                     «/*initial_marking: [initial]*/»«statesImpl»
                     «actionsImpl»

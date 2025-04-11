@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
 import de.guite.modulestudio.metamodel.AbstractIntegerField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.Field
 
 class Sortable extends AbstractExtension implements EntityExtensionInterface {
 
@@ -15,7 +15,7 @@ class Sortable extends AbstractExtension implements EntityExtensionInterface {
     /**
      * Additional field annotations.
      */
-    override columnAnnotations(DerivedField it) '''
+    override columnAnnotations(Field it) '''
         «IF sortableGroup»
             #[Gedmo\SortableGroup]
         «ENDIF»

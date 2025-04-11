@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view.formcomponents
 
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
@@ -15,13 +14,13 @@ class SharedFormElements {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def fieldFormRow(DerivedField it, String subElem) '''
+    def fieldFormRow(Field it, String subElem) '''
         {% if «formElemAccessor(subElem)» is defined %}
             «fieldFormRowImpl(subElem)»
         {% endif %}
     '''
 
-    def fieldFormRowImpl(DerivedField it, String subElem) '''
+    def fieldFormRowImpl(Field it, String subElem) '''
         «IF !visibleOnNew || !visibleOnEdit»
             <div class="«IF !visibleOnNew && !visibleOnEdit»d-none«ELSEIF visibleOnNew»{{ mode == 'create' ? '' : 'd-none' }}«ELSEIF visibleOnEdit»{{ mode != 'create' ? '' : 'd-none' }}«ENDIF»">
                 «formRow(it, subElem)»

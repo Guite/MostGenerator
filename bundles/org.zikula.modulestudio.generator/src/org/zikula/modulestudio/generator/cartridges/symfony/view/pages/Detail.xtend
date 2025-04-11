@@ -1,14 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view.pages
 
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.ItemActionsPosition
-import de.guite.modulestudio.metamodel.ItemActionsStyle
-import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.MenuViews
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
@@ -17,7 +15,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -30,7 +27,6 @@ class Detail {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
@@ -54,11 +50,11 @@ class Detail {
     }
 
     def private getOutgoingReferredElements(Entity it) {
-        outgoingJoinRelations.filter[r|r.target instanceof Entity && r.target.application == it.application]
+        outgoing.filter[r|r.target.application == it.application]
     }
 
     def private getIncomingReferredElements(Entity it) {
-        incoming.filter(ManyToManyRelationship).filter[r|r.bidirectional && r.source instanceof Entity && r.source.application == it.application]
+        incoming.filter(ManyToManyRelationship).filter[r|r.bidirectional && r.source.application == it.application]
     }
 
     def private displayView(Entity it, String appName) '''
@@ -69,16 +65,12 @@ class Detail {
         {% trans_default_domain '«name.formatForCode»' %}
         {% block pageTitle %}{{ «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) }}{% endblock %}
         {% block title %}
-            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.detailActionsPosition) && application.detailActionsStyle == ItemActionsStyle.DROPDOWN»
-                {% set isQuickView = app.request.query.getBoolean('raw', false) %}
-            «ENDIF»
+            {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) %}
             «templateHeading(appName)»
-            «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.detailActionsPosition) && application.detailActionsStyle == ItemActionsStyle.DROPDOWN»
-                {% if not isQuickView %}
-                    «new MenuViews().itemActions(it, 'detail', 'Start')»
-                {% endif %}
-            «ENDIF»
+            {% if not isQuickView %}
+                «new MenuViews().itemActions(it, 'detail')»
+            {% endif %}
         {% endblock %}
         {% block admin_page_icon 'eye' %}
         {% block content %}
@@ -128,14 +120,12 @@ class Detail {
                     «fieldSection(true)»
                 </div>
                 «displayExtensions(name.formatForCode)»
-                «displayAdditions»
             </div>
         «ELSEIF !refedElems.empty»
             <div class="row">
                 <div class="col-md-9">
                     «fieldSection(false)»
                     «displayExtensions(name.formatForCode)»
-                    «displayAdditions»
                 </div>
                 <div class="col-md-3">
                     {{ block('related_items') }}
@@ -144,7 +134,6 @@ class Detail {
         «ELSE»
             «fieldSection(false)»
             «displayExtensions(name.formatForCode)»
-            «displayAdditions»
         «ENDIF»
     '''
 
@@ -181,24 +170,19 @@ class Detail {
     '''
 
     def private fieldSection(Entity it, Boolean withHeading) '''
-        «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.detailActionsPosition) && application.detailActionsStyle != ItemActionsStyle.DROPDOWN»
-            {% if not isQuickView %}
-                «new MenuViews().itemActions(it, 'detail', 'Start')»
-            {% endif %}
-        «ENDIF»
         «IF withHeading»
             <h3>{% trans from 'messages' %}Fields{% endtrans %}</h3>
         «ENDIF»
         <dl>
             «FOR field : getFieldsForDetailPage»«field.displayEntry»«ENDFOR»
-            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»«relation.displayEntry(false)»«ENDFOR»
-            «/*«FOR relation : outgoing.filter[OneToOneRelationship).filter[target instanceof Entity]»«relation.displayEntry(true)»«ENDFOR»*/»
+            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayEntry(false)»«ENDFOR»
+            «/*«FOR relation : outgoing.filter[OneToOneRelationship)»«relation.displayEntry(true)»«ENDFOR»*/»
         </dl>
     '''
 
     def private templateHeading(Entity it, String appName) '''{{ templateTitle }}«IF hasVisibleWorkflow»{% if routeArea == 'admin' %} <small>({{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }})</small>{% endif %}«ENDIF»'''
 
-    def private dispatch displayEntry(DerivedField it) '''
+    def private dispatch displayEntry(Field it) '''
         {% if «entity.name.formatForCode».«name.formatForCode» is not empty«IF name == 'workflowState'» and routeArea == 'admin'«ENDIF» %}
             «displayEntryInner»
         {% endif %}
@@ -207,20 +191,20 @@ class Detail {
         «displayEntryInner»
     '''
 
-    def private displayEntryInner(DerivedField it) '''
+    def private displayEntryInner(Field it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
         <dt>{% trans %}«fieldLabel.formatForDisplayCapital»{% endtrans %}</dt>
         <dd>«displayEntryImpl»</dd>
     '''
 
-    def private displayEntryImpl(DerivedField it) {
+    def private displayEntryImpl(Field it) {
         new SimpleFields().displayField(it, entity.name.formatForCode, 'detail')
     }
 
-    def private displayEntry(JoinRelationship it, Boolean useTarget) '''
+    def private displayEntry(Relationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
-        «val mainEntity = (if (useTarget) source else target) as Entity»
-        «val linkEntity = (if (useTarget) target else source) as Entity»
+        «val mainEntity = (if (useTarget) source else target)»
+        «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {% if «relObjName»|default %}
             <dt>{% trans from '«linkEntity.name.formatForCode»' %}«relationAliasName.formatForDisplayCapital»{% endtrans %}</dt>
@@ -277,14 +261,6 @@ class Detail {
         «ENDIF»
         «IF standardFields»
             {{ include('@«application.vendorAndName»/Helper/includeStandardFieldsDisplay.html.twig', {obj: «objName»«IF useGroupingTabs('detail')», tabs: true«ENDIF»}) }}
-        «ENDIF»
-    '''
-
-    def private displayAdditions(Entity it) '''
-        «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.detailActionsPosition)»
-            {% if not isQuickView %}
-                «new MenuViews().itemActions(it, 'detail', 'End')»
-            {% endif %}
         «ENDIF»
     '''
 

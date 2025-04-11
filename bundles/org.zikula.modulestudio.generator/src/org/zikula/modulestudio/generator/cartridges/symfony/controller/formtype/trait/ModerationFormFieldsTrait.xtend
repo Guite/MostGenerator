@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.trait
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.JoinRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -44,7 +43,7 @@ class ModerationFormFieldsTrait {
             if (!$options['has_moderate_permission']) {
                 return;
             }
-            «IF !relations.filter(JoinRelationship).empty»
+            «IF !relations.empty»
                 if (isset($options['inline_usage']) && $options['inline_usage']) {
                     return;
                 }

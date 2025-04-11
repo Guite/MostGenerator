@@ -32,7 +32,7 @@ class Validation {
 
             «dateFunctions»
         «ENDIF»
-        «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
+        «IF entities.exists[!getUniqueFields.empty]»
 
             «uniqueCheck»
         «ENDIF»
@@ -315,7 +315,7 @@ class Validation {
                     }
                 });
             «ENDFOR»
-            «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
+            «IF entities.exists[!getUniqueFields.empty]»
                 jQuery('.validate-unique').each(function () {
                     if (!«vendorAndName»UniqueCheck(jQuery(this), currentEntityId)) {
                         jQuery(this).get(0).setCustomValidity(Translator.trans('This value is already assigned, but must be unique. Please change it.', {}, 'validators'));
@@ -387,7 +387,7 @@ class Validation {
 
     def private uniqueCheck(Application it) '''
         «FOR entity : entities»
-            «FOR field : entity.getUniqueDerivedFields.filter[!primaryKey]»
+            «FOR field : entity.getUniqueFields»
                 var last«entity.name.formatForCodeCapital»«field.name.formatForCodeCapital» = '';
             «ENDFOR»
         «ENDFOR»

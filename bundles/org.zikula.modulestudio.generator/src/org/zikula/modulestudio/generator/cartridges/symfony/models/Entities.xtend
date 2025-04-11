@@ -2,15 +2,9 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
-import de.guite.modulestudio.metamodel.EntityIndex
-import de.guite.modulestudio.metamodel.EntityIndexItem
-import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.InheritanceRelationship
-import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ValidationConstraints
@@ -21,22 +15,18 @@ import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.Extens
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.Property
 import org.zikula.modulestudio.generator.cartridges.symfony.models.event.LifecycleListener
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.EntityIndexExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Entities {
 
-    extension EntityIndexExtensions = new EntityIndexExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
 
     FileHelper fh
@@ -89,53 +79,15 @@ class Entities {
     /**
      * Creates an entity class file for every Entity instance.
      */
-    def private generate(DataObject it, Application app, IMostFileSystemAccess fsa) {
+    def private generate(Entity it, Application app, IMostFileSystemAccess fsa) {
         ('Generating entity classes for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
-        if (it instanceof Entity) {
-            extMan = new ExtensionManager(it)
-        }
+        extMan = new ExtensionManager(it)
         thProp = new Property(app, extMan)
         thAssoc.resetImports
         fsa.generateClassPair('Entity/' + name.formatForCodeCapital + '.php', modelEntityBaseImpl(app), modelEntityImpl(app))
     }
 
-    def private dispatch collectBaseImports(MappedSuperClass it, Boolean isBase) {
-        val imports = new ImportList
-        imports.add('Doctrine\\ORM\\Mapping as ORM')
-        if (isBase && hasCollections) {
-            imports.add('Doctrine\\Common\\Collections\\ArrayCollection')
-        }
-        if (isBase/* || loggable || hasTranslatableFields || tree != EntityTreeType.NONE*/) {
-            imports.add('Gedmo\\Mapping\\Annotation as Gedmo')
-        }
-        if (isBase) {
-            if (hasCollections) {
-                imports.add('InvalidArgumentException')
-            }
-            if (hasUploadFieldsEntity) {
-                imports.add('RuntimeException')
-                imports.add('Symfony\\Component\\HttpFoundation\\File\\File')
-            }
-            imports.add('Symfony\\Component\\Validator\\Constraints as Assert')
-        }
-        if (!getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty) {
-            imports.add('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')
-        }
-        if (isBase) {
-            if (hasUserFieldsEntity) {
-                imports.add('Zikula\\UsersBundle\\Entity\\User')
-            }
-            imports.add(application.appNamespace + '\\Entity\\EntityInterface')
-            if (hasListFieldsEntity) {
-                imports.add(application.appNamespace + '\\Validator\\Constraints as ' + application.name.formatForCodeCapital + 'Assert')
-            }
-        } else {
-            imports.add(application.appNamespace + '\\Entity\\Base\\Abstract' + name.formatForCodeCapital + ' as BaseEntity')
-        }
-        imports
-    }
-
-    def private dispatch collectBaseImports(Entity it, Boolean isBase) {
+    def private collectBaseImports(Entity it, Boolean isBase) {
         val imports = new ImportList
         imports.add('Doctrine\\DBAL\\Types\\Types')
         imports.add('Doctrine\\ORM\\Mapping as ORM')
@@ -169,7 +121,7 @@ class Entities {
             }
             imports.add('Symfony\\Component\\Validator\\Constraints as Assert')
         }
-        if (!getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty) {
+        if (!getUniqueFields.empty || (hasSluggableFields && slugUnique) || !incoming.filter[unique].empty || !outgoing.filter[unique].empty) {
             imports.add('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')
         }
         if (!isBase) {
@@ -187,18 +139,14 @@ class Entities {
             if (hasUserFieldsEntity) {
                 imports.add('Zikula\\UsersBundle\\Entity\\User')
             }
-            if (!isInheriting) {
-                imports.add(application.appNamespace + '\\Entity\\EntityInterface')
-            } else {
-                imports.add(application.appNamespace + '\\Entity\\' + parentType.name.formatForCodeCapital + ' as BaseEntity')
-            }
+            imports.add(application.appNamespace + '\\Entity\\EntityInterface')
             if (tree !== EntityTreeType.NONE) {
                 imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital)
             }
-            for (relation : getBidirectionalIncomingJoinRelations) {
+            for (relation : getBidirectionalIncomingRelations) {
                 imports.addAll(thAssoc.importRelatedEntity(relation, false))
             }
-            for (relation : getOutgoingJoinRelations) {
+            for (relation : outgoing) {
                 imports.addAll(thAssoc.importRelatedEntity(relation, true))
             }
             imports.add(application.appNamespace + '\\Repository\\' + name.formatForCodeCapital + 'Repository')
@@ -212,7 +160,7 @@ class Entities {
         imports
     }
 
-    def private modelEntityBaseImpl(DataObject it, Application app) '''
+    def private modelEntityBaseImpl(Entity it, Application app) '''
         namespace «app.appNamespace»\Entity\Base;
 
         «collectBaseImports(true).print»
@@ -220,7 +168,7 @@ class Entities {
         «modelEntityBaseImplClass(app)»
     '''
 
-    def private modelEntityBaseImplClass(DataObject it, Application app) '''
+    def private modelEntityBaseImplClass(Entity it, Application app) '''
         /**
          * Entity class that defines the entity structure and behaviours.
          *
@@ -229,13 +177,13 @@ class Entities {
          * inherit orm properties.
          */
         #[ORM\MappedSuperclass]
-        abstract class Abstract«name.formatForCodeCapital»«IF isInheriting» extends BaseEntity«ENDIF» implements AbstractEntityInterface«IF it instanceof Entity»«IF it.hasTranslatableFields», Translatable«ENDIF»«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital» implements AbstractEntityInterface«IF it.hasTranslatableFields», Translatable«ENDIF»
         {
             «modelEntityBaseImplBody(app)»
         }
     '''
 
-    def private modelEntityBaseImplBody(DataObject it, Application app) '''
+    def private modelEntityBaseImplBody(Entity it, Application app) '''
         «memberVars»
 
         «new EntityConstructor().constructor(it, false)»
@@ -243,7 +191,7 @@ class Entities {
         «new EntityMethods().generate(it, app, thProp)»
     '''
 
-    def private memberVars(DataObject it) '''
+    def private memberVars(Entity it) '''
         /**
          * The tablename this object maps to
          */
@@ -266,11 +214,11 @@ class Entities {
             protected string $_uploadBaseUrl = '';
         «ENDIF»
 
-        «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
+        «FOR field : fields»«thProp.persistentProperty(field)»«ENDFOR»
         «extMan.additionalProperties»
-        «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
-        «IF it instanceof Entity && (it as Entity).loggable && (it as Entity).hasTranslatableFields && getDerivedFields.filter(ArrayField).filter[name.equals('translationData')].empty»
+        «FOR relation : getBidirectionalIncomingRelations»«thAssoc.generate(relation, false)»«ENDFOR»
+        «FOR relation : outgoing»«thAssoc.generate(relation, true)»«ENDFOR»
+        «IF loggable && hasTranslatableFields && fields.filter(ArrayField).filter[name.equals('translationData')].empty»
             /**
              * Log data for refreshing translations during revert to another revision
              */
@@ -279,23 +227,23 @@ class Entities {
         «ENDIF»
     '''
 
-    def private accessors(DataObject it) '''
+    def private accessors(Entity it) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, '', '')»
         «IF hasUploadFieldsEntity»
             «fh.getterAndSetterMethods(it, '_uploadBasePathRelative', 'string', false, '', '')»
             «fh.getterAndSetterMethods(it, '_uploadBasePathAbsolute', 'string', false, '', '')»
             «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, '', '')»
         «ENDIF»
-        «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
+        «FOR field : fields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»
-        «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
-        «IF it instanceof Entity && (it as Entity).loggable && (it as Entity).hasTranslatableFields && getDerivedFields.filter(ArrayField).filter[name.equals('translationData')].empty»
+        «FOR relation : getBidirectionalIncomingRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
+        «FOR relation : outgoing»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
+        «IF loggable && hasTranslatableFields && fields.filter(ArrayField).filter[name.equals('translationData')].empty»
             «fh.getterAndSetterMethods(it, 'translationData', 'array', true, '[]', '')»
         «ENDIF»
     '''
 
-    def private modelEntityImpl(DataObject it, Application app) '''
+    def private modelEntityImpl(Entity it, Application app) '''
         namespace «app.appNamespace»\Entity;
 
         «collectBaseImports(false).print»
@@ -307,65 +255,27 @@ class Entities {
         }
     '''
 
-    def private entityImplClassDocblock(DataObject it, Application app) '''
+    def private entityImplClassDocblock(Entity it, Application app) '''
         /**
          * Entity class that defines the entity structure and behaviours.
          *
          * This is the concrete entity class for «name.formatForDisplay» entities.
          */
         «extMan.classAnnotations»
-        «classAnnotation»
-        «IF it instanceof Entity»
-            «entityImplClassAdditionalAttributes(app)»
-        «ENDIF»
-        «new ValidationConstraints().classAnnotations(it)»
-    '''
-
-    def dispatch private classAnnotation(DataObject it) '''
-    '''
-
-    def dispatch private classAnnotation(MappedSuperClass it) '''
-        #[ORM\MappedSuperclass]«/*IF isTopSuperClass»
-        #[ORM\InheritanceType('«getChildRelations.head.strategy.literal»')]
-        #[ORM\DiscriminatorColumn(name: '«getChildRelations.head.discriminatorColumn.formatForCode»'«/*, type: 'string'* /»)]
-        #[ORM\DiscriminatorMap([«FOR relation : getChildRelations SEPARATOR ', '»«relation.discriminatorInfo»«ENDFOR»])]
-        «ENDIF*/»
-    '''
-
-    def dispatch private classAnnotation(Entity it) '''
         #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»Repository::class«IF readOnly», readOnly: true«ENDIF»)]
+        «entityImplClassAdditionalAttributes(app)»
+        «new ValidationConstraints().classAnnotations(it)»
     '''
 
     def private entityImplClassAdditionalAttributes(Entity it, Application app) '''
         #[ORM\Table(name: '«fullEntityTableName»')]
-        «IF !indexes.empty»
-        «IF hasNormalIndexes»
-            «FOR index : getNormalIndexes»
-                «index.index('Index')»
-            «ENDFOR»
-        «ENDIF»
-        «IF hasUniqueIndexes»
-            «FOR index : getUniqueIndexes»
-                «index.index('UniqueConstraint')»
-            «ENDFOR»
-        «ENDIF»
-        «ENDIF»
-        «IF isTopSuperClass»
-            #[ORM\InheritanceType('«getChildRelations.head.strategy.literal»')]
-            #[ORM\DiscriminatorColumn(name: '«getChildRelations.head.discriminatorColumn.formatForCode»'«/*, type: 'string'*/»)]
-            #[ORM\DiscriminatorMap(['«name.formatForCode»' => «name.formatForCodeCapital»::class«FOR relation : getChildRelations», «relation.discriminatorInfo»«ENDFOR»])]
-        «ENDIF»
+        «workflowIndex('Index')»
         «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
             #[ORM\ChangeTrackingPolicy('«changeTrackingPolicy.literal»')]
         «ENDIF»
     '''
 
-    def private index(EntityIndex it, String indexType) '''
-        #[ORM\«indexType.toFirstUpper»(name: '«name.formatForDB»', fields: [«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»]«IF type == EntityIndexType.FULLTEXT», flags: ['fulltext']«ENDIF»)]
-    '''
-    def private indexField(EntityIndexItem it) '''«''»'«indexItemForEntity»'«''»'''
-
-    def private discriminatorInfo(InheritanceRelationship it) '''
-        '«source.name.formatForCode»' => «source.name.formatForCodeCapital»::class
+    def private workflowIndex(Entity it, String indexType) '''
+        #[ORM\«indexType.toFirstUpper»(name: '«'workflowStateIndex'.formatForDB»', fields: ['workflowState'])]
     '''
 }

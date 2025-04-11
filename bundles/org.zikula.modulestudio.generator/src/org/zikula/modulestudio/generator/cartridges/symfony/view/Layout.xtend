@@ -72,10 +72,8 @@ class Layout {
     '''
 
     def private commonFooter(Application it) '''
-        «IF generatePoweredByBacklinksIntoFooterTemplates»
-            «new FileHelper(it).msWeblink»
-            {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Backlink.Integration.js')) }}
-        «ENDIF»
+        «new FileHelper(it).msWeblink»
+        {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Backlink.Integration.js')) }}
         {{ pageAddAsset('stylesheet', zasset('@«appName»:css/custom.css'), 120) }}
         «IF needsJQueryUI»
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}

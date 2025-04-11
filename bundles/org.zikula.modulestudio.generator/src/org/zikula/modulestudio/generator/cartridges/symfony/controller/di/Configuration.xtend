@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
@@ -79,14 +78,14 @@ class Configuration {
             «ENDIF»
             ->addDefaultsIfNotSet()
             ->children()
-                «FOR field : fields.filter(DerivedField)»
+                «FOR field : fields»
                     «field.definition»
                 «ENDFOR»
             ->end()
         ->end()
     '''
 
-    def private definition(DerivedField it) '''
+    def private definition(Field it) '''
         ->«nodeType»Node('«name.formatForSnakeCase»')
             «IF null !== documentation && !documentation.empty»
                 ->info('«documentation.formatForDisplayCapital»«IF null !== additionalInfo» «additionalInfo»«ENDIF»')
@@ -98,7 +97,7 @@ class Configuration {
         ->end()
     '''
 
-    def private additionalInfo(DerivedField it) {
+    def private additionalInfo(Field it) {
         if (it instanceof UserField) {
             return 'Needs to be a user ID.'
         } else if (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) {
@@ -107,7 +106,7 @@ class Configuration {
         null
     }
 
-    def private nodeType(DerivedField it) {
+    def private nodeType(Field it) {
         switch (it) {
             BooleanField: 'boolean'
             AbstractIntegerField: 'integer'
@@ -146,13 +145,13 @@ class Configuration {
             ->values([«FOR item : items SEPARATOR ', '»'«item.listEntry»'«ENDFOR»])
         «ENDIF»
         «IF it instanceof ArrayField»
-            «IF (it as DerivedField).mandatory»
+            «IF mandatory»
                 ->isRequired()
                 ->requiresAtLeastOneElement()
             «ENDIF»
             ->ignoreExtraKeys()
         «ELSE»
-            «IF (it as DerivedField).mandatory»
+            «IF mandatory»
                 ->isRequired()
                 «IF !(it instanceof BooleanField || it instanceof AbstractIntegerField || it instanceof NumberField)»
                 ->cannotBeEmpty()

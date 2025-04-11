@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.addition
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -10,7 +11,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class AjaxController {
 
@@ -296,7 +296,7 @@ class AjaxController {
         $result = false;
         switch ($objectType) {
             «FOR entity : getAllEntities»
-                «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
+                «val uniqueFields = entity.getUniqueFields»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
                         $repository = $entityFactory->getRepository($objectType);
@@ -340,7 +340,7 @@ class AjaxController {
         $uniqueFields = [];
         switch ($objectType) {
             «FOR entity : getAllEntities»
-                «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
+                «val uniqueFields = entity.getUniqueFields»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
                         $uniqueFields = [«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.empty», «ENDIF»'slug'«ENDIF»];
@@ -886,7 +886,7 @@ class AjaxController {
     '''
 
     def private needsDuplicateCheck(Application it) {
-        entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
+        entities.exists[!getUniqueFields.empty]
         || (hasSluggable && !getAllEntities.filter[hasSluggableFields && slugUnique].empty)
     }
 }

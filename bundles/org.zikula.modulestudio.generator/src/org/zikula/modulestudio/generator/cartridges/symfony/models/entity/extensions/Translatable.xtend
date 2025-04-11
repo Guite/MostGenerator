@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
 import de.guite.modulestudio.metamodel.AbstractIntegerField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.Field
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -22,7 +22,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
     /**
      * Additional field annotations.
      */
-    override columnAnnotations(DerivedField it) '''
+    override columnAnnotations(Field it) '''
         «IF translatable»
             #[Gedmo\Translatable]
         «ENDIF»

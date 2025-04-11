@@ -1,12 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListField
-import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
@@ -19,7 +17,6 @@ import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -30,7 +27,6 @@ class EditEntityType {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -40,27 +36,22 @@ class EditEntityType {
     /**
      * Entry point for entity editing form type.
      */
-    def generate(DataObject it, IMostFileSystemAccess fsa) {
-        if (!(it instanceof MappedSuperClass) && !(it as Entity).hasEditAction) {
+    def generate(Entity it, IMostFileSystemAccess fsa) {
+        if (!hasEditAction) {
             return
         }
-        if (it instanceof Entity) {
-            if (hasTranslatableFields) extensions.add('translatable')
-        }
+        if (hasTranslatableFields) extensions.add('translatable')
         app = it.application
         fsa.generateClassPair('Form/Type/' + name.formatForCodeCapital + 'Type.php', editTypeBaseImpl, editTypeImpl)
     }
 
-    def private collectBaseImports(DataObject it) {
+    def private collectBaseImports(Entity it) {
         val imports = new ImportList
         imports.add(entityClassName('', false))
         imports.add('Symfony\\Component\\Form\\FormBuilderInterface')
         imports.add('Symfony\\Component\\Form\\FormInterface')
         imports.add('Symfony\\Component\\OptionsResolver\\OptionsResolver')
-        if (isInheriting) {
-            imports.add(app.appNamespace + '\\Form\\Type\\' + getParentDataObjects(newArrayList).head.name.formatForCodeCapital + 'Type')
-        }
-        if (it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE) {
+        if (tree != EntityTreeType.NONE) {
             imports.add(app.appNamespace + '\\Form\\Type\\Field\\EntityTreeType')
         }
         if (!incoming.empty || !outgoing.empty) {
@@ -79,16 +70,16 @@ class EditEntityType {
         if (hasUploadFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\UploadHelper')
         }
-        if (it instanceof Entity && (it as Entity).standardFields) {
+        if (standardFields) {
             imports.add(app.appNamespace + '\\Traits\\ModerationFormFieldsTrait')
         }
-        if (it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE) {
+        if (workflow != EntityWorkflowType.NONE) {
             imports.add(app.appNamespace + '\\Traits\\WorkflowFormFieldsTrait')
         }
         imports
     }
 
-    def private editTypeBaseImpl(DataObject it) '''
+    def private editTypeBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\Base;
 
         «collectBaseImports.print»
@@ -98,16 +89,14 @@ class EditEntityType {
          */
         abstract class Abstract«name.formatForCodeCapital»Type extends AbstractType
         {
-            «IF it instanceof Entity»
-                «IF it.standardFields || it.workflow != EntityWorkflowType.NONE»
-                    «IF it.standardFields»
-                        use ModerationFormFieldsTrait;
-                    «ENDIF»
-                    «IF it.workflow != EntityWorkflowType.NONE»
-                        use WorkflowFormFieldsTrait;
-                    «ENDIF»
-
+            «IF it.standardFields || it.workflow != EntityWorkflowType.NONE»
+                «IF it.standardFields»
+                    use ModerationFormFieldsTrait;
                 «ENDIF»
+                «IF it.workflow != EntityWorkflowType.NONE»
+                    use WorkflowFormFieldsTrait;
+                «ENDIF»
+
             «ENDIF»
             public function __construct(
                 «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
@@ -127,7 +116,7 @@ class EditEntityType {
 
             public function buildForm(FormBuilderInterface $builder, array $options): void
             {
-                «IF it instanceof Entity && (it as Entity).tree != EntityTreeType.NONE»
+                «IF tree != EntityTreeType.NONE»
                     if ('create' === $options['mode']) {
                         $builder->add('parent', EntityTreeType::class, [
                             'class' => «name.formatForCodeCapital»::class,
@@ -142,38 +131,19 @@ class EditEntityType {
                     }
                 «ENDIF»
                 $this->addEntityFields($builder, $options);
-                «IF isInheriting»
-                    «val parents = getParentDataObjects(newArrayList)»
-                    $builder->add('parentFields', «parents.head.name.formatForCodeCapital»Type::class, [
-                        'label' => '«parents.head.name.formatForDisplayCapital» data',
-                        'inherit_data' => true,
-                        'data_class' => «name.formatForCodeCapital»::class
-                    ]);
-                «ENDIF»
-                «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
+                «IF workflow != EntityWorkflowType.NONE»
                     $this->addAdditionalNotificationRemarksField($builder, $options);
                 «ENDIF»
-                «IF isInheriter»
-                    if (!$options['inherit_data']) {
-                        «IF it instanceof Entity && (it as Entity).standardFields»
-                            $this->addModerationFields($builder, $options);
-                        «ENDIF»
-                        $this->addSubmitButtons($builder, $options);
-                    }
-                «ELSE»
-                    «IF it instanceof Entity && (it as Entity).standardFields»
-                        $this->addModerationFields($builder, $options);
-                    «ENDIF»
-                    $this->addSubmitButtons($builder, $options);
+                «IF standardFields»
+                    $this->addModerationFields($builder, $options);
                 «ENDIF»
+                $this->addSubmitButtons($builder, $options);
             }
 
             «addFields»
 
-            «IF it instanceof Entity»
-                «addSubmitButtons»
+            «addSubmitButtons»
 
-            «ENDIF»
             public function getBlockPrefix(): string
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»';
@@ -211,20 +181,20 @@ class EditEntityType {
                             «ENDIF»
                         ],
                         'mode' => 'create',
-                        «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
+                        «IF workflow != EntityWorkflowType.NONE»
                             'is_moderator' => false,
-                            «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
+                            «IF workflow == EntityWorkflowType.ENTERPRISE»
                                 'is_super_moderator' => false,
                             «ENDIF»
                             'is_creator' => false,
                         «ENDIF»
                         'actions' => [],
-                        «IF it instanceof Entity && (it as Entity).standardFields»
+                        «IF standardFields»
                             'has_moderate_permission' => false,
                             'allow_moderation_specific_creator' => false,
                             'allow_moderation_specific_creation_date' => false,
                         «ENDIF»
-                        «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
+                        «IF hasTranslatableFields»
                             'translations' => [],
                         «ENDIF»
                         «IF !incoming.empty || !outgoing.empty»
@@ -234,20 +204,20 @@ class EditEntityType {
                     ])
                     ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
                     ->setAllowedTypes('mode', 'string')
-                    «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
+                    «IF workflow != EntityWorkflowType.NONE»
                         ->setAllowedTypes('is_moderator', 'bool')
-                        «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
+                        «IF workflow == EntityWorkflowType.ENTERPRISE»
                             ->setAllowedTypes('is_super_moderator', 'bool')
                         «ENDIF»
                         ->setAllowedTypes('is_creator', 'bool')
                     «ENDIF»
                     ->setAllowedTypes('actions', 'array')
-                    «IF it instanceof Entity && (it as Entity).standardFields»
+                    «IF standardFields»
                         ->setAllowedTypes('has_moderate_permission', 'bool')
                         ->setAllowedTypes('allow_moderation_specific_creator', 'bool')
                         ->setAllowedTypes('allow_moderation_specific_creation_date', 'bool')
                     «ENDIF»
-                    «IF it instanceof Entity && (it as Entity).hasTranslatableFields»
+                    «IF hasTranslatableFields»
                         ->setAllowedTypes('translations', 'array')
                     «ENDIF»
                     «IF !incoming.empty || !outgoing.empty»
@@ -260,24 +230,24 @@ class EditEntityType {
         }
     '''
 
-    def private addFields(DataObject it) '''
+    def private addFields(Entity it) '''
         /**
          * Adds basic entity fields.
          */
         public function addEntityFields(FormBuilderInterface $builder, array $options = []): void
         {
-            «IF it instanceof Entity && isTranslatable»
-                «translatableFields(it as Entity)»
+            «IF isTranslatable»
+                «processTranslatableFields»
             «ENDIF»
             «fieldAdditions(isTranslatable)»
         }
     '''
 
-    def private isTranslatable(DataObject it) {
+    def private isTranslatable(Entity it) {
         extensions.contains('translatable')
     }
 
-    def private translatableFields(Entity it) '''
+    def private processTranslatableFields(Entity it) '''
         «translatableFieldSet»
 
         if ($this->localeApi->multilingual() && $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
@@ -300,7 +270,7 @@ class EditEntityType {
         }
     '''
 
-    def private fieldAdditions(DataObject it, Boolean isTranslatable) '''
+    def private fieldAdditions(Entity it, Boolean isTranslatable) '''
         «IF !isTranslatable || !getEditableNonTranslatableFields.empty»
             «/* TODO obsolete
             IF isTranslatable»
@@ -309,11 +279,9 @@ class EditEntityType {
                 «FOR field : getEditableFields»«field.definition»«ENDFOR»
             «ENDIF*/»
         «ENDIF»
-        «IF it instanceof Entity»
-            «IF hasSluggableFields && (!isTranslatable || !hasTranslatableSlug)»
+        «IF hasSluggableFields && (!isTranslatable || !hasTranslatableSlug)»
 
-                «slugField»
-            «ENDIF»
+            «slugField»
         «ENDIF»
     '''
 
@@ -394,7 +362,7 @@ class EditEntityType {
         ]);
     '''
 
-    def private editTypeImpl(DataObject it) '''
+    def private editTypeImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type;
 
         use «app.appNamespace»\Form\Type\Base\Abstract«name.formatForCodeCapital»Type;

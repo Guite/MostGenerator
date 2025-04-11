@@ -50,7 +50,7 @@ class ServiceDefinitions {
 
             «appNamespace»\:
                 resource: '../../*'
-                exclude: '../../{bootstrap.php,Base/bootstrap.php,Tests,vendor}'
+                exclude: '../../{Tests,vendor}'
 
             «appNamespace»\Bundle\MetaData\«name.formatForCodeCapital»BundleMetaData:
                 public: true
@@ -121,7 +121,7 @@ class ServiceDefinitions {
             «IF entity.hasTranslatableFields»
                 «entity.repoPath('translation')»Interface: '@«entity.repoPath('translation')»'
             «ENDIF»
-        «ENDFOR»«/*FOR relation : getJoinRelations.filter(ManyToManyRelationship)»
+        «ENDFOR»«/*FOR relation : relations.filter(ManyToManyRelationship)»
             «relation.repoPath»Interface: '@«relation.repoPath»'
         «ENDFOR*/»
     '''

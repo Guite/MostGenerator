@@ -1,19 +1,17 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view.pages.view
 
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DataObject
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.ItemActionsPosition
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import de.guite.modulestudio.metamodel.UrlField
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -97,8 +95,8 @@ class ViewTable {
 
     def private viewItemList(Entity it) '''
         «val listItemsFields = getFieldsForIndexPage»
-        «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
-        «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
+        «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional]»
+        «val listItemsOut = outgoing.filter(OneToOneRelationship)»
         «viewItemListHeader(listItemsFields, listItemsIn, listItemsOut)»
 
         «viewItemListBody(listItemsFields, listItemsIn, listItemsOut)»
@@ -106,8 +104,7 @@ class ViewTable {
         «viewItemListFooter»
     '''
 
-    def private viewItemListHeader(Entity it, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
-        «val app = application»
+    def private viewItemListHeader(Entity it, List<Field> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asListTag»>
         «ELSE»
@@ -120,9 +117,7 @@ class ViewTable {
                     {% if routeArea == 'admin' %}
                         <col id="cSelect" />
                     {% endif %}
-                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.indexActionsPosition)»
-                        <col id="cItemActionsStart" />
-                    «ENDIF»
+                    <col id="cItemActions" />
                     «IF hasSortableFields»
                         {% if activateSortable %}
                             <col id="cSortable" />
@@ -131,9 +126,6 @@ class ViewTable {
                     «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
-                    «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.indexActionsPosition)»
-                        <col id="cItemActionsEnd" />
-                    «ENDIF»
                 </colgroup>
                 <thead>
                 <tr>
@@ -142,9 +134,7 @@ class ViewTable {
                             <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
                         </th>
                     {% endif %}
-                    «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(app.indexActionsPosition)»
-                        <th id="hItemActionsStart" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
-                    «ENDIF»
+                    <th id="hItemActions" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
                     «IF hasSortableFields»
                         {% if activateSortable %}
                             <th id="hSortable" scope="col">{% trans from 'messages' %}Sorting{% endtrans %}</th>
@@ -153,16 +143,13 @@ class ViewTable {
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
-                    «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(app.indexActionsPosition)»
-                        <th id="hItemActionsEnd" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
-                    «ENDIF»
                 </tr>
                 </thead>
                 <tbody>
         «ENDIF»
     '''
 
-    def private viewItemListBody(Entity it, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
+    def private viewItemListBody(Entity it, List<Field> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
         {% for «name.formatForCode» in items %}
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 <li><ul>
@@ -176,9 +163,7 @@ class ViewTable {
                         </td>
                     {% endif %}
             «ENDIF»
-                «IF #[ItemActionsPosition.START, ItemActionsPosition.BOTH].contains(application.indexActionsPosition)»
-                    «itemActions('Start')»
-                «ENDIF»
+                «itemActions»
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <td headers="hSortable" class="text-center">
@@ -189,9 +174,6 @@ class ViewTable {
                 «FOR field : listItemsFields»«IF field.name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»«field.displayEntry(false)»«IF field.name == 'workflowState'»{% endif %}«ENDIF»«ENDFOR»
                 «FOR relation : listItemsIn»«relation.displayEntry(false)»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true)»«ENDFOR»
-                «IF #[ItemActionsPosition.END, ItemActionsPosition.BOTH].contains(application.indexActionsPosition)»
-                    «itemActions('End')»
-                «ENDIF»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 </ul></li>
             «ELSEIF listType == LIST_TYPE_DL»
@@ -269,17 +251,17 @@ class ViewTable {
         </div>
     '''
 
-    def private columnDef(DerivedField it) '''
+    def private columnDef(Field it) '''
         «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
         <col id="c«markupIdCode(false)»" />
         «IF name == 'workflowState'»{% endif %}«ENDIF»
     '''
 
-    def private columnDef(JoinRelationship it, Boolean useTarget) '''
+    def private columnDef(Relationship it, Boolean useTarget) '''
         <col id="c«markupIdCode(useTarget)»" />
     '''
 
-    def private headerLine(DerivedField it) '''
+    def private headerLine(Field it) '''
         «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
         <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
@@ -288,14 +270,14 @@ class ViewTable {
         «IF name == 'workflowState'»{% endif %}«ENDIF»
     '''
 
-    def private headerLine(JoinRelationship it, Boolean useTarget) '''
+    def private headerLine(Relationship it, Boolean useTarget) '''
         <th id="h«markupIdCode(useTarget)»" scope="col" class="text-left">
             «val mainEntity = (if (useTarget) source else target)»
             «headerTitle(mainEntity, getRelationAliasName(useTarget).formatForCode, getRelationAliasName(useTarget).formatForCodeCapital)»
         </th>
     '''
 
-    def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''
+    def private headerTitle(Object it, Entity entity, String fieldName, String label) '''
         {% trans %}«label.formatForDisplayCapital»{% endtrans %}
     '''
 
@@ -322,10 +304,10 @@ class ViewTable {
     def private dispatch displayEntryInner(Object it, Boolean useTarget) {
     }
 
-    def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
+    def private dispatch displayEntryInner(Field it, Boolean useTarget) '''
         «IF #['name', 'title'].contains(name)»
-            «IF entity instanceof Entity && (entity as Entity).hasDetailAction»
-                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_detail'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayLeadingEntry»</a>
+            «IF entity.hasDetailAction»
+                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_detail'«entity.routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayLeadingEntry»</a>
             «ELSE»
                 «displayLeadingEntry»
             «ENDIF»
@@ -336,14 +318,14 @@ class ViewTable {
         «ENDIF»
     '''
 
-    def private displayLeadingEntry(DerivedField it) {
+    def private displayLeadingEntry(Field it) {
         '''{{ «entity.name.formatForCode».«name.formatForCode» }}'''
     }
 
-    def private dispatch displayEntryInner(JoinRelationship it, Boolean useTarget) '''
+    def private dispatch displayEntryInner(Relationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
-        «val mainEntity = (if (!useTarget) target else source) as Entity»
-        «val linkEntity = (if (useTarget) target else source) as Entity»
+        «val mainEntity = (if (!useTarget) target else source)»
+        «val linkEntity = (if (useTarget) target else source)»
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {% if «relObjName»|default %}
             «IF linkEntity.hasDetailAction»
@@ -364,10 +346,10 @@ class ViewTable {
     def private dispatch markupIdCode(NamedObject it, Boolean useTarget) {
         name.formatForCodeCapital
     }
-    def private dispatch markupIdCode(DerivedField it, Boolean useTarget) {
+    def private dispatch markupIdCode(Field it, Boolean useTarget) {
         name.formatForCodeCapital
     }
-    def private dispatch markupIdCode(JoinRelationship it, Boolean useTarget) {
+    def private dispatch markupIdCode(Relationship it, Boolean useTarget) {
         getRelationAliasName(useTarget).toFirstUpper
     }
 
@@ -382,13 +364,13 @@ class ViewTable {
         }
     }
 
-    def private itemActions(Entity it, String idSuffix) '''
+    def private itemActions(Entity it) '''
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new MenuViews().itemActionContainerViewId(it)»«idSuffix»" headers="hItemActions«idSuffix»" class="actions">
+            <td id="«new MenuViews().itemActionContainerViewId(it)»" headers="hItemActions" class="actions">
         «ENDIF»
-            «new MenuViews().itemActions(it, 'index', idSuffix)»
+            «new MenuViews().itemActions(it, 'index')»
         </«listType.asItemTag»>
     '''
 

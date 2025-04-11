@@ -62,8 +62,8 @@ class Redirect {
                 // admin detail page of treated «name.formatForDisplay»
                 $codes[] = 'adminDetail';
             «ENDIF»
-            «FOR incomingRelation : getBidirectionalIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
-                «val sourceEntity = incomingRelation.source as Entity»
+            «FOR incomingRelation : getBidirectionalIncomingRelationsWithOneSource.filter[source.application == app]»
+                «val sourceEntity = incomingRelation.source»
                 «IF sourceEntity.name != it.name»
 
                     «IF sourceEntity.hasIndexAction»
@@ -134,7 +134,7 @@ class Redirect {
          */
         protected function getRedirectUrl(array $args = []): string
         {
-            «IF app.needsInlineEditing && (!getIncomingJoinRelations.empty || !getOutgoingJoinRelations.empty)»
+            «IF app.needsInlineEditing && (!incoming.empty || !outgoing.empty)»
                 if (isset($this->templateParameters['inlineUsage']) && true === $this->templateParameters['inlineUsage']) {
                     $commandName = 'submit' === mb_substr($args['commandName'], 0, 6) ? 'create' : $args['commandName'];
                     $urlArgs = [
@@ -199,8 +199,8 @@ class Redirect {
 
                         return $this->getDefaultReturnUrl($args);
                 «ENDIF»
-                «FOR incomingRelation : getBidirectionalIncomingJoinRelationsWithOneSource.filter[source.application == app && source instanceof Entity]»
-                    «val sourceEntity = incomingRelation.source as Entity»
+                «FOR incomingRelation : getBidirectionalIncomingRelationsWithOneSource.filter[source.application == app]»
+                    «val sourceEntity = incomingRelation.source»
                     «IF sourceEntity.name != it.name»
                         «IF sourceEntity.hasIndexAction»
                             case 'userIndex«sourceEntity.nameMultiple.formatForCodeCapital»':

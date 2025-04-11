@@ -5,18 +5,14 @@ import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
-import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.NumberField
@@ -37,7 +33,6 @@ import de.guite.modulestudio.metamodel.UserField
 class ModelExtensions {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -185,7 +180,7 @@ class ModelExtensions {
     /**
      * Returns the full table name for a given entity instance.
      */
-    def fullEntityTableName(DataObject it) {
+    def fullEntityTableName(Entity it) {
         tableNameWithPrefix(application, name.formatForDB)
     }
 
@@ -197,46 +192,18 @@ class ModelExtensions {
     }
 
     /**
-     * Checks whether this entity has at least one normal (non-unique) index.
+     * Returns a list of all unique fields of the given entity
      */
-    def hasNormalIndexes(Entity it) {
-        !getNormalIndexes.empty
-    }
-
-    /**
-     * Returns a list of all normal (non-unique) indexes for this entity.
-     */
-    def getNormalIndexes(Entity it) {
-        indexes.filter[type == EntityIndexType.NORMAL || type == EntityIndexType.FULLTEXT]
-    }
-
-    /**
-     * Checks whether this entity has at least one unique index.
-     */
-    def hasUniqueIndexes(Entity it) {
-        !getUniqueIndexes.empty
-    }
-
-    /**
-     * Returns a list of all unique indexes for this entity.
-     */
-    def getUniqueIndexes(Entity it) {
-        indexes.filter[type == EntityIndexType.UNIQUE]
-    }
-
-    /**
-     * Returns a list of all derived and unique fields of the given entity
-     */
-    def getUniqueDerivedFields(DataObject it) {
-        getDerivedFields.filter[unique]
+    def getUniqueFields(Entity it) {
+        fields.filter[unique].filter[!primaryKey]
     }
 
     /**
      * Returns the primary key field of the given entity.
      */
-    def DerivedField getPrimaryKey(DataObject it) {
-        if (!getDerivedFields.filter[primaryKey].empty) {
-            return getDerivedFields.findFirst[primaryKey]
+    def Field getPrimaryKey(Entity it) {
+        if (!fields.filter[primaryKey].empty) {
+            return fields.findFirst[primaryKey]
         }
         if (!outgoing.filter(OneToOneRelationship).filter[primaryKey].empty) {
             return outgoing.filter(OneToOneRelationship).findFirst[primaryKey].source.getPrimaryKey
@@ -264,15 +231,13 @@ class ModelExtensions {
     /**
      * Returns a list of all fields which should be displayed.
      */
-    def getDisplayFields(DataObject it) {
-        var fields = getSelfAndParentDataObjects.map[getDerivedFields].flatten
-        if (it instanceof Entity) {
-            if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
-                fields = fields.filter[!primaryKey]
-            }
-            if (!hasVisibleWorkflow) {
-                fields = fields.filter[name != 'workflowState']
-            }
+    def getDisplayFields(Entity it) {
+        var fields = fields.filter[true]
+        if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
+            fields = fields.filter[!primaryKey]
+        }
+        if (!hasVisibleWorkflow) {
+            fields = fields.filter[name != 'workflowState']
         }
         fields
     }
@@ -280,7 +245,7 @@ class ModelExtensions {
     /**
      * Returns a list of all fields which may be used for sorting.
      */
-    def getSortingFields(DataObject it) {
+    def getSortingFields(Entity it) {
         getDisplayFields.filter[f|f.visibleOnSort].reject(UserField).reject(ArrayField).toList
     }
 
@@ -289,21 +254,21 @@ class ModelExtensions {
      * At the moment version fields are excluded as these are incremented automatically.
      * In addition all fields which are used as join columns are excluded as well.
      */
-    def getEditableFields(DataObject it) {
-        var fields = getDerivedFields.filter[name != 'workflowState' && name != 'translationData']
-        if (!(it instanceof Entity) || (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
+    def getEditableFields(Entity it) {
+        var fields = fields.filter[name != 'workflowState' && name != 'translationData']
+        if (identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter[!primaryKey]
         }
         var filteredFields = fields.filter[!isVersionField]
         val joinFieldNames = newArrayList
-        for (relation : incoming.filter(JoinRelationship).filter[targetField != 'id']) {
+        for (relation : incoming.filter[targetField != 'id']) {
             joinFieldNames += relation.targetField
         }
-        for (relation : outgoing.filter(JoinRelationship).filter[sourceField != 'id']) {
+        for (relation : outgoing.filter[sourceField != 'id']) {
             joinFieldNames += relation.sourceField
         }
 
-        filteredFields = filteredFields.filter(DerivedField).filter[!joinFieldNames.contains(name)]
+        filteredFields = filteredFields.filter[!joinFieldNames.contains(name)]
 
         filteredFields.toList
     }
@@ -322,52 +287,51 @@ class ModelExtensions {
     /**
      * Checks whether this entity has at least one user field.
      */
-    def hasUserFieldsEntity(DataObject it) {
+    def hasUserFieldsEntity(Entity it) {
         !getUserFieldsEntity.empty
     }
 
     /**
      * Returns a list of all fields of this entity.
      */
-    def dispatch getAllEntityFields(DataObject it) {
-        it.fields.filter(DerivedField).filter[f|f.primaryKey]
+    def dispatch getAllEntityFields(Entity it) {
+        it.fields.filter[f|f.primaryKey]
         + 
-        getSelfAndParentDataObjects.map[fields].flatten
-            .filter[f|!(f instanceof DerivedField) || !(f as DerivedField).primaryKey]
+        fields.filter[f|!f.primaryKey]
     }
 
     /**
      * Returns a list of all user fields of this entity.
      */
-    def getUserFieldsEntity(DataObject it) {
+    def getUserFieldsEntity(Entity it) {
         getAllEntityFields.filter(UserField)
     }
 
     /**
      * Checks whether this entity has at least one upload field.
      */
-    def hasUploadFieldsEntity(DataObject it) {
+    def hasUploadFieldsEntity(Entity it) {
         !getUploadFieldsEntity.empty
     }
 
     /**
      * Returns a list of all upload fields of this entity.
      */
-    def getUploadFieldsEntity(DataObject it) {
+    def getUploadFieldsEntity(Entity it) {
         getAllEntityFields.filter(UploadField)
     }
 
     /**
      * Checks whether this entity has at least one list field.
      */
-    def hasListFieldsEntity(DataObject it) {
+    def hasListFieldsEntity(Entity it) {
         !getListFieldsEntity.empty
     }
 
     /**
      * Returns a list of all list fields of this entity.
      */
-    def getListFieldsEntity(DataObject it) {
+    def getListFieldsEntity(Entity it) {
         getAllEntityFields.filter(ListField)
     }
 
@@ -391,13 +355,6 @@ class ModelExtensions {
     def getUsedDisplayPattern(Entity it) {
         var usedDisplayPattern = displayPattern
 
-        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern.empty)) {
-            // fetch inherited display pattern from parent entity
-            if (parentType instanceof Entity) {
-                usedDisplayPattern = (parentType as Entity).displayPattern
-            }
-        }
-
         if (null === usedDisplayPattern || usedDisplayPattern.empty) {
             usedDisplayPattern = name.formatForDisplay
         }
@@ -416,22 +373,20 @@ class ModelExtensions {
      * Returns any decimal or float fields.
      */
     def getNumberFields(Application it) {
-        getAllEntities.map[getSelfAndParentDataObjects.map[
-            fields.filter(NumberField)
-        ].flatten].flatten
+        getAllEntities.map[fields.filter(NumberField)].flatten
     }
 
     /**
      * Checks whether this entity has at least one image field.
      */
-    def hasImageFieldsEntity(DataObject it) {
+    def hasImageFieldsEntity(Entity it) {
         !getImageFieldsEntity.empty
     }
 
     /**
      * Returns a list of all image fields of this entity.
      */
-    def getImageFieldsEntity(DataObject it) {
+    def getImageFieldsEntity(Entity it) {
         getUploadFieldsEntity.filter[isImageField]
     }
 
@@ -452,29 +407,29 @@ class ModelExtensions {
     /**
      * Checks whether this entity has at least one string field which is not a password.
      */
-    def hasDisplayStringFieldsEntity(DataObject it) {
+    def hasDisplayStringFieldsEntity(Entity it) {
         !getDisplayStringFieldsEntity.empty
     }
 
     /**
      * Returns a list of all string fields of this entity which are not passwords.
      */
-    def getDisplayStringFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role != StringRole.PASSWORD]].flatten
+    def getDisplayStringFieldsEntity(Entity it) {
+        fields.filter(StringField).filter[role != StringRole.PASSWORD]
     }
 
     /**
      * Checks whether this entity has at least one country field.
      */
-    def hasCountryFieldsEntity(DataObject it) {
+    def hasCountryFieldsEntity(Entity it) {
         !getCountryFieldsEntity.empty
     }
 
     /**
      * Returns a list of all country fields of this entity.
      */
-    def getCountryFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.COUNTRY]].flatten
+    def getCountryFieldsEntity(Entity it) {
+        fields.filter(StringField).filter[role == StringRole.COUNTRY]
     }
 
     /**
@@ -487,113 +442,113 @@ class ModelExtensions {
     /**
      * Checks whether this entity has at least one language field.
      */
-    def hasLanguageFieldsEntity(DataObject it) {
+    def hasLanguageFieldsEntity(Entity it) {
         !getLanguageFieldsEntity.empty
     }
 
     /**
      * Returns a list of all language fields of this entity.
      */
-    def getLanguageFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.LANGUAGE]].flatten
+    def getLanguageFieldsEntity(Entity it) {
+        fields.filter(StringField).filter[role == StringRole.LANGUAGE]
     }
 
     /**
      * Checks whether this entity has at least one locale field.
      */
-    def hasLocaleFieldsEntity(DataObject it) {
+    def hasLocaleFieldsEntity(Entity it) {
         !getLocaleFieldsEntity.empty
     }
 
     /**
      * Returns a list of all locale fields of this entity.
      */
-    def getLocaleFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.LOCALE]].flatten
+    def getLocaleFieldsEntity(Entity it) {
+        fields.filter(StringField).filter[role == StringRole.LOCALE]
     }
 
     /**
      * Checks whether this entity has at least one time zone field.
      */
-    def hasTimezoneFieldsEntity(DataObject it) {
+    def hasTimezoneFieldsEntity(Entity it) {
         !getTimezoneFieldsEntity.empty
     }
 
     /**
      * Returns a list of all time zone fields of this entity.
      */
-    def getTimezoneFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.TIME_ZONE]].flatten
+    def getTimezoneFieldsEntity(Entity it) {
+        fields.filter(StringField).filter[role == StringRole.TIME_ZONE]
     }
 
     /**
      * Checks whether this entity has at least one currency field.
      */
-    def hasCurrencyFieldsEntity(DataObject it) {
+    def hasCurrencyFieldsEntity(Entity it) {
         !getCurrencyFieldsEntity.empty
     }
 
     /**
      * Returns a list of all currency fields of this entity.
      */
-    def getCurrencyFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[role == StringRole.CURRENCY]].flatten
+    def getCurrencyFieldsEntity(Entity it) {
+        fields.filter(StringField).filter[role == StringRole.CURRENCY]
     }
 
     /**
      * Checks whether this entity has at least one textual field.
      */
-    def hasAbstractStringFieldsEntity(DataObject it) {
+    def hasAbstractStringFieldsEntity(Entity it) {
         !getAbstractStringFieldsEntity.empty
     }
 
     /**
      * Returns a list of all textual fields of this entity.
      */
-    def getAbstractStringFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(AbstractStringField)].flatten
+    def getAbstractStringFieldsEntity(Entity it) {
+        fields.filter(AbstractStringField)
     }
 
     /**
      * Checks whether this entity has at least one string field.
      */
-    def hasStringFieldsEntity(DataObject it) {
+    def hasStringFieldsEntity(Entity it) {
         !getStringFieldsEntity.empty
     }
 
     /**
      * Returns a list of all string fields of this entity.
      */
-    def getStringFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten
+    def getStringFieldsEntity(Entity it) {
+        fields.filter(StringField)
     }
 
     /**
      * Checks whether this entity has at least one text field.
      */
-    def hasTextFieldsEntity(DataObject it) {
+    def hasTextFieldsEntity(Entity it) {
         !getTextFieldsEntity.empty
     }
 
     /**
      * Returns a list of all text fields of this entity.
      */
-    def getTextFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(TextField)].flatten
+    def getTextFieldsEntity(Entity it) {
+        fields.filter(TextField)
     }
 
     /**
      * Checks whether this entity has at least one boolean field.
      */
-    def hasBooleanFieldsEntity(DataObject it) {
+    def hasBooleanFieldsEntity(Entity it) {
         !getBooleanFieldsEntity.empty
     }
 
     /**
      * Returns a list of all boolean fields of this entity.
      */
-    def getBooleanFieldsEntity(DataObject it) {
-        getSelfAndParentDataObjects.map[fields.filter(BooleanField)].flatten
+    def getBooleanFieldsEntity(Entity it) {
+        fields.filter(BooleanField)
     }
 
     /**
@@ -639,7 +594,7 @@ class ModelExtensions {
     /**
      * Prints an output string describing the type of the given derived field.
      */
-    def fieldTypeAsString(DerivedField it, Boolean forPhp) {
+    def fieldTypeAsString(Field it, Boolean forPhp) {
         switch it {
             BooleanField: if (forPhp) 'bool' else 'boolean'
             UserField: 'User'

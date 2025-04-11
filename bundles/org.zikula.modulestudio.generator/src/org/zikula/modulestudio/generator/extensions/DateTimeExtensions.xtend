@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Variables
 
 /**
@@ -12,56 +12,53 @@ import de.guite.modulestudio.metamodel.Variables
 class DateTimeExtensions {
 
     extension ModelExtensions = new ModelExtensions
-    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
 
     /**
      * Returns whether any date or time fields exist or not.
      */
     def hasAnyDateTimeFields(Application it) {
-        !getAllEntities.filter[!getSelfAndParentDataObjects.map[
-            fields.filter(DatetimeField)
-        ].flatten.empty].empty
+        !getAllEntities.filter[!fields.filter(DatetimeField).empty].empty
     }
 
     /**
      * Returns whether a data object directly owns any date time fields or not.
      */
-    def hasDirectDateTimeFields(DataObject it) {
+    def hasDirectDateTimeFields(Entity it) {
         !getDirectDateTimeFields.empty
     }
 
     /**
      * Returns date time fields directly owned by a data object.
      */
-    def getDirectDateTimeFields(DataObject it) {
+    def getDirectDateTimeFields(Entity it) {
         fields.filter(DatetimeField).filter[isDateTimeField]
     }
 
     /**
      * Returns whether a data object directly owns any date fields or not.
      */
-    def hasDirectDateFields(DataObject it) {
+    def hasDirectDateFields(Entity it) {
         !getDirectDateFields.empty
     }
 
     /**
      * Returns date time fields directly owned by a data object.
      */
-    def getDirectDateFields(DataObject it) {
+    def getDirectDateFields(Entity it) {
         fields.filter(DatetimeField).filter[isDateField]
     }
 
     /**
      * Returns whether a data object directly owns any time fields or not.
      */
-    def hasDirectTimeFields(DataObject it) {
+    def hasDirectTimeFields(Entity it) {
         !getDirectTimeFields.empty
     }
 
     /**
      * Returns date time fields directly owned by a data object.
      */
-    def getDirectTimeFields(DataObject it) {
+    def getDirectTimeFields(Entity it) {
         fields.filter(DatetimeField).filter[isTimeField]
     }
 
@@ -89,8 +86,8 @@ class DateTimeExtensions {
     /**
      * Determines the start date field of a data object if there is one.
      */
-    def dispatch getStartDateField(DataObject it) {
-        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[startDate && components != DateTimeComponents.TIME]].flatten
+    def dispatch getStartDateField(Entity it) {
+        val datetimeFields = fields.filter(DatetimeField).filter[startDate && components != DateTimeComponents.TIME]
         if (!datetimeFields.empty) {
             return datetimeFields.head
         }
@@ -99,8 +96,8 @@ class DateTimeExtensions {
     /**
      * Determines the end date field of a data object if there is one.
      */
-    def dispatch getEndDateField(DataObject it) {
-        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[endDate && components != DateTimeComponents.TIME]].flatten
+    def dispatch getEndDateField(Entity it) {
+        val datetimeFields = fields.filter(DatetimeField).filter[endDate && components != DateTimeComponents.TIME]
         if (!datetimeFields.empty) {
             return datetimeFields.head
         }
@@ -126,16 +123,16 @@ class DateTimeExtensions {
         }
     }
 
-    def dispatch hasStartOrEndDateField(DataObject it) {
+    def dispatch hasStartOrEndDateField(Entity it) {
         hasStartDateField || hasEndDateField
     }
-    def dispatch hasStartAndEndDateField(DataObject it) {
+    def dispatch hasStartAndEndDateField(Entity it) {
         hasStartDateField && hasEndDateField
     }
-    def dispatch hasStartDateField(DataObject it) {
+    def dispatch hasStartDateField(Entity it) {
         null !== getStartDateField
     }
-    def dispatch hasEndDateField(DataObject it) {
+    def dispatch hasEndDateField(Entity it) {
         null !== getEndDateField
     }
 

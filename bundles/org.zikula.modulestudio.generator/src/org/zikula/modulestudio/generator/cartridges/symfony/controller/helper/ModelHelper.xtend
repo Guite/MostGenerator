@@ -2,8 +2,8 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
+import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -82,7 +82,7 @@ class ModelHelper {
     '''
 
     def private canBeCreatedImpl(Entity it) '''
-        «var incomingAndMandatoryRelations = getBidirectionalIncomingAndMandatoryJoinRelations»
+        «var incomingAndMandatoryRelations = getBidirectionalIncomingAndMandatoryRelations»
         «IF incomingAndMandatoryRelations.empty»«/* has no incoming bidirectional non-nullable relationships */»
             $result = true;
         «ELSE»«/* we can leave out those relations which have INLINE OR EMBEDDED as target edit type and use auto completion on the target side
@@ -101,7 +101,7 @@ class ModelHelper {
         «ENDIF»
     '''
 
-    def private getUniqueListOfSourceEntityTypes(Entity it, Iterable<JoinRelationship> relations) {
+    def private getUniqueListOfSourceEntityTypes(Entity it, Iterable<Relationship> relations) {
         var sourceTypes = newArrayList
         for (relation : relations) {
             if (!sourceTypes.contains(relation.source)) {

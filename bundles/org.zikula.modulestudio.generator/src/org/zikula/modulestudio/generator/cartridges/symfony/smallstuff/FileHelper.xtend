@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
@@ -81,7 +81,7 @@ class FileHelper {
         }
     '''
 
-    def private dispatch setterMethodImpl(DerivedField it, String name, String type, Boolean nullable) '''
+    def private dispatch setterMethodImpl(Field it, String name, String type, Boolean nullable) '''
         «IF it instanceof NumberField»
             $«name» = «IF it.numberType == NumberFieldType::DECIMAL»(string) «ENDIF»round((float) $«name», «scale»);
         «ENDIF»
@@ -97,14 +97,14 @@ class FileHelper {
             $this->«name» = $«name» ?? «IF type == 'float'»0.00«ELSEIF type == 'int'»0«ELSE»''«ENDIF»;
         «ENDIF»
     '''
-    def private dispatch setterAssignment(DerivedField it, String name) '''
+    def private dispatch setterAssignment(Field it, String name) '''
         «IF nullable»
             $this->«name» = $«name»;
         «ELSE»
             $this->«name» = $«name» ?? «fallbackValue»;
         «ENDIF»
     '''
-    def private dispatch fallbackValue(DerivedField it) {
+    def private dispatch fallbackValue(Field it) {
         '\'\''
     }
     def private dispatch fallbackValue(ArrayField it) {
@@ -132,7 +132,7 @@ class FileHelper {
         «setterAssignmentNumeric(name)»
     '''
 
-    def private setterAssignmentNumeric(DerivedField it, String name) '''
+    def private setterAssignmentNumeric(Field it, String name) '''
         $this->«name» = $«name»;
     '''
 

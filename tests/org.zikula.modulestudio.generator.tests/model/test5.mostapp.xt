@@ -512,22 +512,6 @@ application "SimpleNews" {
                     validatorAddition "foo bar"
                 }
             }
-            indexes {
-                index "myIndex" {
-                    documentation "foo bar"
-                    type NORMAL
-                    items {
-                        indexItem "dat4",
-                        indexItem "dat5"
-                    }
-                },
-                index "otherIndex" {
-                    type UNIQUE
-                    items {
-                        indexItem "dat3"
-                    }
-                }
-            }
             actions {
                 customAction "myReport" {
                     documentation "This is my special report action."

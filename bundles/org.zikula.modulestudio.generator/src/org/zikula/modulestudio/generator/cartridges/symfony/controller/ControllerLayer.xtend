@@ -113,7 +113,7 @@ class ControllerLayer {
                 «method.generateMethod(it)»
             «ENDFOR»
 
-            «FOR action : getAllEntityActions»
+            «FOR action : actions»
                 «actionImpl(action, true)»
 
             «ENDFOR»
@@ -257,7 +257,7 @@ class ControllerLayer {
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
             «/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
-            «FOR action : getAllEntityActions.reject(DetailAction)»
+            «FOR action : actions.reject(DetailAction)»
                 «actionImpl(action, false)»
 
             «ENDFOR»
@@ -265,7 +265,7 @@ class ControllerLayer {
                 «new LoggableUndelete().generate(it, false)»
                 «new LoggableHistory().generate(it, false)»
             «ENDIF»
-            «FOR action : getAllEntityActions.filter(DetailAction)»
+            «FOR action : actions.filter(DetailAction)»
                 «actionImpl(action, false)»
 
             «ENDFOR»
