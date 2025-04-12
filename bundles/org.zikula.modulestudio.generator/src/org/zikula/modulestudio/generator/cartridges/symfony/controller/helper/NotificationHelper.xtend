@@ -3,19 +3,17 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class NotificationHelper {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -182,7 +180,7 @@ class NotificationHelper {
             $this->recipients = [];
 
             if (in_array($this->recipientType, ['moderator', 'superModerator'], true)) {
-                «val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]»
+                «val entitiesWithWorkflow = entities.filter[workflow != EntityWorkflowType.NONE]»
                 $configSuffixes = [
                     «FOR entity : entitiesWithWorkflow»
                         '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForSnakeCase»',
@@ -377,8 +375,8 @@ class NotificationHelper {
             $session = null !== $request && $request->hasSession() ? $request->getSession() : null;
             $remarks = null !== $session ? $session->get($this->applicationName . 'AdditionalNotificationRemarks', '') : '';
 
-            $hasDetailAction = in_array($objectType, ['«getAllEntities.filter[hasDetailAction].map[name.formatForCode].join('\', \'')»'], true);
-            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
+            $hasDetailAction = in_array($objectType, ['«entities.filter[hasDetailAction].map[name.formatForCode].join('\', \'')»'], true);
+            $hasEditAction = in_array($objectType, ['«entities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
             $routePrefix = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_';
 
             $urlArgs = $this->entity->createUrlArgs();
@@ -387,8 +385,8 @@ class NotificationHelper {
                 : ''
             ;
 
-            «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].empty»
-                $needsArg = in_array($objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
+            «IF !entities.filter[hasEditAction && hasSluggableFields && slugUnique].empty»
+                $needsArg = in_array($objectType, ['«entities.filter[hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
                 $urlArgs = $needsArg ? $this->entity->createUrlArgs(true) : $this->entity->createUrlArgs();
             «ENDIF»
             $editUrl = $hasEditAction

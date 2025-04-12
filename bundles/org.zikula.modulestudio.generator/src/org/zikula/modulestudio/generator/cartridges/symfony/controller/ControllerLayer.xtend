@@ -55,7 +55,7 @@ class ControllerLayer {
         ]
 
         // controller classes
-        getAllEntities.forEach[generateController(fsa)]
+        entities.forEach[generateController(fsa)]
         new AjaxController().generate(it, fsa)
 
         new ExtensionMenu().generate(it, fsa)

@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.subscrib
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class WorkflowSubscriber {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -164,9 +162,9 @@ class WorkflowSubscriber {
         «IF needsApproval»
 
             $workflowShortName = 'none';
-            if (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'], true)) {
+            if (in_array($entity->get_objectType(), ['«entities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'], true)) {
                 $workflowShortName = 'standard';
-            } elseif (in_array($entity->get_objectType(), ['«getAllEntities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'], true)) {
+            } elseif (in_array($entity->get_objectType(), ['«entities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'], true)) {
                 $workflowShortName = 'enterprise';
             }
             if ('none' !== $workflowShortName) {
@@ -204,13 +202,13 @@ class WorkflowSubscriber {
             return;
         }
 
-        «IF needsApproval || !getAllEntities.filter[ownerPermission].empty || (!relations.empty && !getAllEntities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty)»
+        «IF needsApproval || !entities.filter[ownerPermission].empty || (!relations.empty && !entities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty)»
             $objectType = $entity->get_objectType();
         «ENDIF»
         $permissionLevel = ACCESS_READ;
         $transitionName = $event->getTransition()->getName();
         «/*not used atm $targetState = $event->getTransition()->getTos()[0];*/»
-        $hasApproval = «IF needsApproval»in_array($objectType, ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'], true)«ELSE»false«ENDIF»;
+        $hasApproval = «IF needsApproval»in_array($objectType, ['«entities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'], true)«ELSE»false«ENDIF»;
 
         switch ($transitionName) {
             case 'defer':
@@ -232,8 +230,8 @@ class WorkflowSubscriber {
                 $permissionLevel = ACCESS_ADD;
                 break;
             case 'delete':
-                «IF !getAllEntities.filter[ownerPermission].empty»
-                    $permissionLevel = in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\', \'')»'], true) ? ACCESS_EDIT : ACCESS_DELETE;
+                «IF !entities.filter[ownerPermission].empty»
+                    $permissionLevel = in_array($objectType, ['«entities.filter[ownerPermission].map[name.formatForCode].join('\', \'')»'], true) ? ACCESS_EDIT : ACCESS_DELETE;
                 «ELSE»
                     $permissionLevel = ACCESS_DELETE;
                 «ENDIF»
@@ -246,11 +244,11 @@ class WorkflowSubscriber {
 
             return;
         }
-        «IF !relations.empty && !getAllEntities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty»
+        «IF !relations.empty && !entities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty»
 
             if ('delete' === $transitionName) {
                 // check if deleting the entity would break related child entities
-                «FOR entity : getAllEntities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty]»
+                «FOR entity : entities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty]»
                     if ('«entity.name.formatForCode»' === $objectType) {
                         $isBlocked = false;
                         «FOR relation : entity.getOutgoingRelationsWithoutDeleteCascade»

@@ -295,7 +295,7 @@ class AjaxController {
 
         $result = false;
         switch ($objectType) {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 «val uniqueFields = entity.getUniqueFields»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
@@ -339,7 +339,7 @@ class AjaxController {
         // check if the given field is existing and unique
         $uniqueFields = [];
         switch ($objectType) {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 «val uniqueFields = entity.getUniqueFields»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
@@ -578,13 +578,13 @@ class AjaxController {
         try {
             // execute the workflow action
             $success = $workflowHelper->executeAction($childEntity, $action);
-            «IF hasEditActions && !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].empty»
+            «IF hasEditActions && !entities.filter[tree != EntityTreeType.NONE && hasEditAction].empty»
                 if (!$success) {
                     $returnValue['result'] = 'failure';
-                } elseif (in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true)) {
+                } elseif (in_array($objectType, ['«entities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true)) {
                     $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_edit';
-                    «IF !getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].empty»
-                        $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
+                    «IF !entities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].empty»
+                        $needsArg = in_array($objectType, ['«entities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
                         $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();
                     «ELSE»
                         $urlArgs = $childEntity->createUrlArgs();
@@ -758,7 +758,7 @@ class AjaxController {
 
         $repository = $entityFactory->getRepository($objectType);
         $sortableFieldMap = [
-            «FOR entity : getAllEntities.filter[hasSortableFields]»
+            «FOR entity : entities.filter[hasSortableFields]»
                 '«entity.name.formatForCode»' => '«entity.getSortableFields.head.name.formatForCode»',
             «ENDFOR»
         ];
@@ -887,6 +887,6 @@ class AjaxController {
 
     def private needsDuplicateCheck(Application it) {
         entities.exists[!getUniqueFields.empty]
-        || (hasSluggable && !getAllEntities.filter[hasSluggableFields && slugUnique].empty)
+        || (hasSluggable && !entities.filter[hasSluggableFields && slugUnique].empty)
     }
 }

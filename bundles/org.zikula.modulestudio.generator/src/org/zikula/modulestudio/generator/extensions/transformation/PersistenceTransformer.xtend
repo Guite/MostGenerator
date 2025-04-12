@@ -3,8 +3,6 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityBlameableType
-import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
@@ -170,7 +168,6 @@ class PersistenceTransformer {
                 visibleOnNew = false
                 visibleOnEdit = false
                 visibleOnSort = true
-                blameable = EntityBlameableType.CREATE
             ]
             fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
                 name = 'createdDate'
@@ -181,7 +178,6 @@ class PersistenceTransformer {
                 visibleOnEdit = false
                 visibleOnSort = true
                 immutable = true
-                timestampable = EntityTimestampableType.CREATE
             ]
             fields += ModuleStudioFactory.eINSTANCE.createUserField => [
                 name = 'updatedBy'
@@ -191,7 +187,6 @@ class PersistenceTransformer {
                 visibleOnNew = false
                 visibleOnEdit = false
                 visibleOnSort = true
-                blameable = EntityBlameableType.UPDATE
             ]
             fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
                 name = 'updatedDate'
@@ -202,7 +197,6 @@ class PersistenceTransformer {
                 visibleOnEdit = false
                 visibleOnSort = true
                 immutable = true
-                timestampable = EntityTimestampableType.UPDATE
             ]
         }
 
@@ -330,7 +324,7 @@ class PersistenceTransformer {
     }
 
     def private addViewSettings(Application it) {
-        val entitiesWithIndex = getAllEntities.filter[hasIndexAction]
+        val entitiesWithIndex = entities.filter[hasIndexAction]
         if (entitiesWithIndex.empty) {
             return
         }
@@ -353,7 +347,7 @@ class PersistenceTransformer {
                 ]
             }
         }
-        for (entity : getAllEntities.filter[ownerPermission]) {
+        for (entity : entities.filter[ownerPermission]) {
             varContainer.fields += factory.createBooleanField => [
                 name = entity.name.formatForCode + 'PrivateMode'
                 defaultValue = 'false'
@@ -387,7 +381,7 @@ class PersistenceTransformer {
         val varContainer = createVarContainerForImageSettings
         val factory = ModuleStudioFactory.eINSTANCE
 
-        val entitiesWithImageUploads = getAllEntities.filter[hasImageFieldsEntity]
+        val entitiesWithImageUploads = entities.filter[hasImageFieldsEntity]
         for (entity : entitiesWithImageUploads) {
             for (imageUploadField : entity.imageFieldsEntity) {
                 val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital
@@ -446,8 +440,8 @@ class PersistenceTransformer {
     }
 
     def private addModerationSettings(Application it) {
-        val entitiesWithApproval = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
-        val entitiesWithEditActionsAndStandardFields = getAllEntities.filter[hasEditAction && standardFields]
+        val entitiesWithApproval = entities.filter[workflow != EntityWorkflowType.NONE]
+        val entitiesWithEditActionsAndStandardFields = entities.filter[hasEditAction && standardFields]
         if (entitiesWithApproval.empty && entitiesWithEditActionsAndStandardFields.empty) {
             return
         }

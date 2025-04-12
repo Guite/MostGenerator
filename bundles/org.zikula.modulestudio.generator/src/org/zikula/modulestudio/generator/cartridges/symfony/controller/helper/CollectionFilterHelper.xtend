@@ -89,7 +89,7 @@ class CollectionFilterHelper {
                 $context = 'controllerAction';
             }
 
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 if ('«entity.name.formatForCode»' === $objectType) {
                     return $this->getViewQuickNavParametersFor«entity.name.formatForCodeCapital»($context, $args);
                 }
@@ -103,7 +103,7 @@ class CollectionFilterHelper {
          */
         public function addCommonViewFilters(string $objectType, QueryBuilder $qb): QueryBuilder
         {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 if ('«entity.name.formatForCode»' === $objectType) {
                     return $this->addCommonViewFiltersFor«entity.name.formatForCodeCapital»($qb);
                 }
@@ -117,7 +117,7 @@ class CollectionFilterHelper {
          */
         public function applyDefaultFilters(string $objectType, QueryBuilder $qb, array $parameters = []): QueryBuilder
         {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 if ('«entity.name.formatForCode»' === $objectType) {
                     return $this->applyDefaultFiltersFor«entity.name.formatForCodeCapital»($qb, $parameters);
                 }
@@ -125,19 +125,19 @@ class CollectionFilterHelper {
 
             return $qb;
         }
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
 
             «entity.getViewQuickNavParameters»
         «ENDFOR»
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
 
             «entity.addCommonViewFilters»
         «ENDFOR»
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
 
             «entity.applyDefaultFilters»
         «ENDFOR»
-        «FOR entity : getAllEntities.filter[hasStartOrEndDateField]»
+        «FOR entity : entities.filter[hasStartOrEndDateField]»
 
             «entity.applyDateRangeFilter»
         «ENDFOR»

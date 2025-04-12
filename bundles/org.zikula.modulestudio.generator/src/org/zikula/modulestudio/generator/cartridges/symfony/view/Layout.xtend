@@ -98,7 +98,7 @@ class Layout {
         {# purpose of this template: apply some general form extensions #}
         {% extends '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
         {% trans_default_domain 'messages' %}
-        «IF !getAllEntities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
+        «IF !entities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
 
             {%- block datetime_widget -%}
                 {{- parent() -}}
@@ -109,7 +109,7 @@ class Layout {
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
-        «IF !getAllEntities.filter[e|e.hasDirectDateFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateField].empty»
+        «IF !entities.filter[e|e.hasDirectDateFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateField].empty»
 
             {%- block date_widget -%}
                 {{- parent() -}}

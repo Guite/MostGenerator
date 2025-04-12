@@ -2,18 +2,16 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class Factory {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     FileHelper fh
@@ -37,7 +35,7 @@ class Factory {
             appNamespace + '\\Entity\\Factory\\EntityInitializer',
             appNamespace + '\\Helper\\CollectionFilterHelper'
         ])
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
         }
         if (hasTranslatable) {
@@ -85,7 +83,7 @@ class Factory {
 
                 return $repository;
             }
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
 
                 /**
                  * Creates a new «entity.name.formatForCode» instance.

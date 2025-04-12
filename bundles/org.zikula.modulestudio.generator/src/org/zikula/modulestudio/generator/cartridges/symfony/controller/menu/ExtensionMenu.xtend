@@ -33,7 +33,7 @@ class ExtensionMenu {
             appNamespace + '\\Helper\\PermissionHelper'
         ])
         imports.add('Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface')
-        for (entity : getAllEntities.filter[hasIndexAction]) {
+        for (entity : entities.filter[hasIndexAction]) {
             imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
         }
         if (needsApproval) {
@@ -75,7 +75,7 @@ class ExtensionMenu {
                         return;
                     }
 
-                    «FOR entity : getAllEntities.filter[hasIndexAction && standardFields]»
+                    «FOR entity : entities.filter[hasIndexAction && standardFields]»
                         if ($this->listViewConfig['link_own_«entity.nameMultiple.formatForSnakeCase»_on_account_page']) {
                             $objectType = '«entity.name.formatForCode»';
                             if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
@@ -110,7 +110,7 @@ class ExtensionMenu {
     def menuEntries(Application it) '''
         «menuEntriesBetweenControllers»
 
-        «FOR entity : getAllEntities.filter[hasIndexAction]»
+        «FOR entity : entities.filter[hasIndexAction]»
             «entity.menuEntryForCrud»
         «ENDFOR»
         «IF needsApproval»

@@ -10,7 +10,6 @@ import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -20,7 +19,6 @@ class PermissionHelper {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -165,7 +163,7 @@ class PermissionHelper {
     }
 
     def private getEntitiesInheritingPermissions(Application it) {
-        getAllEntities.filter[!getBidirectionalIncomingPermissionInheriters.empty]
+        entities.filter[!getBidirectionalIncomingPermissionInheriters.empty]
     }
 
     def dispatch private inheritedPermissionCheck(Entity it, Relationship relation) '''

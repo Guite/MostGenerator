@@ -67,15 +67,9 @@ class ValidationHelpProvider {
         val isSelector = #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)
 
         if (!isSelector) {
-            if (true === fixed) {
-                messages += '''«''»'Note: this value must have a length of %length% characters.'«''»'''
-            }
             if (0 < minLength) {
                 messages += '''«''»'Note: this value must have a minimum length of %minLength% characters.'«''»'''
             }
-        }
-        if (null !== regexp && !regexp.empty) {
-            messages += '''«''»'Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".'«''»'''
         }
         if (role == StringRole.BIC) {
             messages += '''«''»'Note: this value must be a valid BIC (Business Identifier Code).'«''»'''
@@ -147,15 +141,9 @@ class ValidationHelpProvider {
         val isSelector = #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)
 
         if (!isSelector) {
-            if (true === fixed) {
-                parameters += '''«''»'%length%' => «length»'''
-            }
             if (0 < minLength) {
                 parameters += '''«''»'%minLength%' => «minLength»'''
             }
-        }
-        if (null !== regexp && !regexp.empty) {
-            parameters += '''«''»'%pattern%' => '«regexp.replace('\'', '')»'«''»'''
         }
 
         parameters
@@ -164,16 +152,9 @@ class ValidationHelpProvider {
     def dispatch helpMessages(TextField it) {
         val messages = newArrayList
 
-        if (true === fixed) {
-            messages += '''«''»'Note: this value must have a length of %length% characters.'«''»'''
-        } else {
-            messages += '''«''»'Note: this value must not exceed %length% characters.'«''»'''
-        }
+        messages += '''«''»'Note: this value must not exceed %length% characters.'«''»'''
         if (0 < minLength) {
             messages += '''«''»'Note: this value must have a minimum length of %minLength% characters.'«''»'''
-        }
-        if (null !== regexp && !regexp.empty) {
-            messages += '''«''»'Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".'«''»'''
         }
 
         messages
@@ -182,9 +163,6 @@ class ValidationHelpProvider {
     def dispatch helpMessages(ListField it) {
         val messages = newArrayList
 
-        if (true === fixed) {
-            messages += '''«''»'Note: this value must have a length of %length% characters.'«''»'''
-        }
         if (0 < minLength) {
             messages += '''«''»'Note: this value must have a minimum length of %minLength% characters.'«''»'''
         }
@@ -209,54 +187,6 @@ class ValidationHelpProvider {
 
     def dispatch helpMessages(UploadField it) {
         val messages = newArrayList
-
-        if (0 < minWidth && 0 < maxWidth) {
-            if (minWidth == maxWidth) {
-                messages += '''«''»'Note: the image must have a width of %fixedWidth% pixels.'«''»'''
-            } else {
-                messages += '''«''»'Note: the image must have a width between %minWidth% and %maxWidth% pixels.'«''»'''
-            }
-        } else if (0 < minWidth) {
-            messages += '''«''»'Note: the image must have a width of at least %minWidth% pixels.'«''»'''
-        } else if (0 < maxWidth) {
-            messages += '''«''»'Note: the image must have a width of at most %maxWidth% pixels.'«''»'''
-        }
-
-        if (0 < minHeight && 0 < maxHeight) {
-            if (minHeight == maxHeight) {
-                messages += '''«''»'Note: the image must have a height of %fixedHeight% pixels.'«''»'''
-            } else {
-                messages += '''«''»'Note: the image must have a height between %minHeight% and %maxHeight% pixels.'«''»'''
-            }
-        } else if (0 < minHeight) {
-            messages += '''«''»'Note: the image must have a height of at least %minHeight% pixels.'«''»'''
-        } else if (0 < maxHeight) {
-            messages += '''«''»'Note: the image must have a height of at most %maxHeight% pixels.'«''»'''
-        }
-
-        if (0 < minPixels && 0 < maxPixels) {
-            if (minPixels == maxPixels) {
-                messages += '''«''»'Note: the amount of pixels must be exactly equal to %fixedPixels% pixels.'«''»'''
-            } else {
-                messages += '''«''»'Note: the amount of pixels must be between %minPixels% and %maxPixels% pixels.'«''»'''
-            }
-        } else if (0 < minPixels) {
-            messages += '''«''»'Note: the amount of pixels must be at least %minPixels% pixels.'«''»'''
-        } else if (0 < maxPixels) {
-            messages += '''«''»'Note: the amount of pixels must be at most %maxPixels% pixels.'«''»'''
-        }
-
-        if (0 < minRatio && 0 < maxRatio) {
-            if (minRatio == maxRatio) {
-                messages += '''«''»'Note: the image aspect ratio (width / height) must be %fixedRatio%.'«''»'''
-            } else {
-                messages += '''«''»'Note: the image aspect ratio (width / height) must be between %minRatio% and %maxRatio%.'«''»'''
-            }
-        } else if (0 < minRatio) {
-            messages += '''«''»'Note: the image aspect ratio (width / height) must be at least %minRatio%.'«''»'''
-        } else if (0 < maxRatio) {
-            messages += '''«''»'Note: the image aspect ratio (width / height) must be at most %maxRatio%.'«''»'''
-        }
 
         if (!(allowSquare && allowLandscape && allowPortrait)) {
             if (allowSquare && !allowLandscape && !allowPortrait) {
@@ -298,16 +228,9 @@ class ValidationHelpProvider {
     def dispatch helpMessageParameters(TextField it) {
         val parameters = newArrayList
 
-        if (true === fixed) {
-            parameters += '''«''»'%length%' => «length»'''
-        } else {
-            parameters += '''«''»'%length%' => «length»'''
-        }
+        parameters += '''«''»'%length%' => «length»'''
         if (0 < minLength) {
             parameters += '''«''»'%minLength%' => «minLength»'''
-        }
-        if (null !== regexp && !regexp.empty) {
-            parameters += '''«''»'%pattern%' => '«regexp.replace('\'', '')»'«''»'''
         }
 
         parameters
@@ -316,9 +239,6 @@ class ValidationHelpProvider {
     def dispatch helpMessageParameters(ListField it) {
         val parameters = newArrayList
 
-        if (true === fixed) {
-            parameters += '''«''»'%length%' => «length»'''
-        }
         if (0 < minLength) {
             parameters += '''«''»'%minLength%' => «minLength»'''
         }
@@ -337,65 +257,6 @@ class ValidationHelpProvider {
             parameters += '''«''»'%min%' => «min»'''
         } else if (0 < max) {
             parameters += '''«''»'%max%' => «max»'''
-        }
-
-        parameters
-    }
-
-    def dispatch helpMessageParameters(UploadField it) {
-        val parameters = newArrayList
-
-        if (0 < minWidth && 0 < maxWidth) {
-            if (minWidth == maxWidth) {
-                parameters += '''«''»'%fixedWidth%' => «minWidth»'''
-            } else {
-                parameters += '''«''»'%minWidth%' => «minWidth»'''
-                parameters += '''«''»'%maxWidth%' => «maxWidth»'''
-            }
-        } else if (0 < minWidth) {
-            parameters += '''«''»'%minWidth%' => «minWidth»'''
-        } else if (0 < maxWidth) {
-            parameters += '''«''»'%maxWidth%' => «maxWidth»'''
-        }
-
-        if (0 < minHeight && 0 < maxHeight) {
-            if (minHeight == maxHeight) {
-                parameters += '''«''»'%fixedHeight%' => «minHeight»'''
-            } else {
-                parameters += '''«''»'%minHeight%' => «minHeight»'''
-                parameters += '''«''»'%maxHeight%' => «maxHeight»'''
-            }
-        } else if (0 < minHeight) {
-            parameters += '''«''»'%minHeight%' => «minHeight»'''
-        } else if (0 < maxHeight) {
-            parameters += '''«''»'%maxHeight%' => «maxHeight»'''
-        }
-
-        if (0 < minPixels && 0 < maxPixels) {
-            if (minPixels == maxPixels) {
-                parameters += '''«''»'%fixedPixels%' => «minPixels»'''
-            } else {
-                parameters += '''«''»'%minPixels%' => «minPixels»'''
-                parameters += '''«''»'%maxPixels%' => «maxPixels»'''
-            }
-        }
-        else if (0 < minPixels) {
-            parameters += '''«''»'%minPixels%' => «minPixels»'''
-        } else if (0 < maxPixels) {
-            parameters += '''«''»'%maxPixels%' => «maxPixels»'''
-        }
-
-        if (0 < minRatio && 0 < maxRatio) {
-            if (minRatio == maxRatio) {
-                parameters += '''«''»'%fixedRatio%' => «minRatio»'''
-            } else {
-                parameters += '''«''»'%minRatio%' => «minRatio»'''
-                parameters += '''«''»'%maxRatio%' => «maxRatio»'''
-            }
-        } else if (0 < minRatio) {
-            parameters += '''«''»'%minRatio%' => «minRatio»'''
-        } else if (0 < maxRatio) {
-            parameters += '''«''»'%maxRatio%' => «maxRatio»'''
         }
 
         parameters

@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TreeData {
@@ -13,7 +12,6 @@ class TreeData {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it) {
@@ -28,7 +26,7 @@ class TreeData {
         public function getTreeData(string $objectType, array $tree = [], string $routeArea = '', int $rootId = 1): array
         {
             // check whether an edit action is available
-            $hasEditAction = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
+            $hasEditAction = in_array($objectType, ['«entities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
 
             $repository = $this->entityFactory->getRepository($objectType);
             $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
@@ -73,7 +71,7 @@ class TreeData {
                 $title = strip_tags($node->$getter() ?? '');
             }
 
-            $needsArg = in_array($objectType, ['«getAllEntities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
+            $needsArg = in_array($objectType, ['«entities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
             $urlArgs = $needsArg ? $node->createUrlArgs(true) : $node->createUrlArgs();
             $urlDataAttributes = '';
             foreach ($urlArgs as $field => $value) {

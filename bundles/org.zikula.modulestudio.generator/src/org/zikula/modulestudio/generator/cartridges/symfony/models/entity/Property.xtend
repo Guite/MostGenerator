@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
@@ -18,7 +17,6 @@ import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
@@ -109,10 +107,6 @@ class Property {
             TextField: '''type: Types::«type.toUpperCase», length: «it.length»'''
             StringField:
                 '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type: Types::DATEINTERVAL«ELSE»«/*type: Types::«type.toUpperCase», */»length: «it.length»«ENDIF»'''
-            EmailField:
-                '''length: «it.length»'''
-            UrlField:
-                '''length: «it.length»'''
             ArrayField:
                 '''type: Types::«arrayType.literal.toUpperCase»«/*», length: «it.length*/»'''
             UploadField:
@@ -133,8 +127,17 @@ class Property {
                 '''
             UserField:
                 '''
+                    «IF #['createdBy', 'updatedBy'].contains(name)»
+                        #[Gedmo\Blameable(on: '«name.substring(0, 6)»')]
+                    «ENDIF»
                     #[ORM\ManyToOne(targetEntity: User::class)]
                     #[ORM\JoinColumn(referencedColumnName: 'uid'«IF !nullable», nullable: false«ENDIF»)]
+                '''
+            DatetimeField:
+                '''
+                    «IF #['createdDate', 'updatedDate'].contains(name)»
+                        #[Gedmo\Timestampable(on: '«name.substring(0, 6)»')]
+                    «ENDIF»
                 '''
         }
     }

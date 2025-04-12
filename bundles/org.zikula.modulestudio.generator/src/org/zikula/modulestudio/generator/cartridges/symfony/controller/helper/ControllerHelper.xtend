@@ -219,10 +219,10 @@ class ControllerHelper {
                 (int) $this->listViewConfig['show_only_own_entries']
             );
             $showOnlyOwnEntriesSetting = $showOnlyOwnEntriesSetting ? 1 : 0;
-            «IF !getAllEntities.filter[ownerPermission].empty»
+            «IF !entities.filter[ownerPermission].empty»
                 $routeName = $request->get('_route');
                 $isAdminArea = 'admin' === $templateParameters['routeArea'];
-                if (!$isAdminArea && in_array($objectType, ['«getAllEntities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'], true)) {
+                if (!$isAdminArea && in_array($objectType, ['«entities.filter[ownerPermission].map[name.formatForCode].join('\',  \'')»'], true)) {
                     $showOnlyOwnEntries = $this->listViewConfig[$configName . '_private_mode'];
                     if (true === $showOnlyOwnEntries) {
                         $templateParameters['own'] = 1;

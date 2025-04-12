@@ -23,7 +23,6 @@ import de.guite.modulestudio.metamodel.Relationship
 class ControllerExtensions {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
 
     /**
@@ -106,7 +105,7 @@ class ControllerExtensions {
      * Returns a list of all index actions in the given application.
      */
     def getIndexActions(Application it) {
-        getAllEntities.map[actions].flatten.filter(IndexAction)
+        entities.map[actions].flatten.filter(IndexAction)
     }
 
     /**
@@ -120,7 +119,7 @@ class ControllerExtensions {
      * Returns a list of all detail actions in the given application.
      */
     def getDetailActions(Application it) {
-        getAllEntities.map[actions].flatten.filter(DetailAction)
+        entities.map[actions].flatten.filter(DetailAction)
     }
 
     /**
@@ -134,7 +133,7 @@ class ControllerExtensions {
      * Returns a list of all edit actions in the given application.
      */
     def getEditActions(Application it) {
-        getAllEntities.map[actions].flatten.filter(EditAction)
+        entities.map[actions].flatten.filter(EditAction)
     }
 
     /**
@@ -148,7 +147,7 @@ class ControllerExtensions {
      * Returns a list of all delete actions in the given application.
      */
     def getDeleteActions(Application it) {
-        getAllEntities.map[actions].flatten.filter(DeleteAction)
+        entities.map[actions].flatten.filter(DeleteAction)
     }
 
     /**

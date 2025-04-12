@@ -1,12 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.config
 
-import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DateTimeComponents
+import de.guite.modulestudio.metamodel.DateTimeRole
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
@@ -21,7 +19,6 @@ import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TextRole
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
-import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
 import java.util.ArrayList
@@ -234,8 +231,7 @@ class ConfigureFields implements ControllerMethodInterface {
             BooleanField: 'center'
             IntegerField: 'right'
             NumberField: 'right'
-            //EmailField: 'center'
-            //UrlField: 'center'
+            StringField: if (#[StringRole.MAIL, StringRole.URL].contains(role)) 'center' else 'left'
             default: 'left'
         }
     }
@@ -250,7 +246,7 @@ class ConfigureFields implements ControllerMethodInterface {
     // https://symfony.com/bundles/EasyAdminBundle/current/fields/BooleanField.html
     def private dispatch options(BooleanField it) {
         var calls = commonOptions
-        if (!ajaxTogglability) {
+        if (!renderAsSwitch) {
             calls += '->renderAsSwitch(false)'
         }
         calls
@@ -318,14 +314,17 @@ class ConfigureFields implements ControllerMethodInterface {
         calls
     }
 
+    // see https://symfony.com/bundles/EasyAdminBundle/current/fields.html#field-types
     def private dispatch fieldType(StringField it) {
         if (role === StringRole.COLOUR) 'Color' else
         if (role === StringRole.COUNTRY) 'Country' else
         if (role === StringRole.CURRENCY) 'Currency' else
         if (role === StringRole.LANGUAGE) 'Language' else
         if (role === StringRole.LOCALE) 'Locale' else
+        if (role === StringRole.MAIL) 'Email' else
         if (role === StringRole.PHONE_NUMBER) 'Telephone' else
         if (role === StringRole.TIME_ZONE) 'Timezone' else
+        if (role === StringRole.URL) 'Url' else
         'Text'
     }
     def private dispatch options(StringField it) {
@@ -415,12 +414,6 @@ class ConfigureFields implements ControllerMethodInterface {
         calls
     }
 
-    def private dispatch fieldType(EmailField it) { 'Email' }
-    // https://symfony.com/bundles/EasyAdminBundle/current/fields/EmailField.html
-
-    def private dispatch fieldType(UrlField it) { 'Url' }
-    // https://symfony.com/bundles/EasyAdminBundle/current/fields/UrlField.html
-
     def private dispatch fieldType(UploadField it) {
         if (isOnlyImageField) 'Image'
         else 'Text' // TODO
@@ -459,8 +452,8 @@ class ConfigureFields implements ControllerMethodInterface {
     // https://symfony.com/bundles/EasyAdminBundle/current/fields/ArrayField.html
 
     def private dispatch fieldType(DatetimeField it) {
-        if (components == DateTimeComponents.DATE) 'Date' else
-        if (components == DateTimeComponents.TIME) '' else
+        if (role == DateTimeRole.DATE) 'Date' else
+        if (role == DateTimeRole.TIME) '' else
         'DateTime'
     }
     // https://symfony.com/bundles/EasyAdminBundle/current/fields/DateTimeField.html
@@ -583,9 +576,6 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch titleAttribute(StringField it) '''«IF #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.DATE_INTERVAL, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF» of the «entity.name.formatForDisplay».'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
-        «IF null !== regexp && !regexp.empty && !regexpOpposite»
-            'pattern' => '«regexWithoutLeadingAndTrailingSlashes»',
-        «ENDIF»
     '''
     def private dispatch additionalOptions(StringField it) '''
         «IF !mandatory && #[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»
@@ -637,6 +627,7 @@ class ConfigureFields implements ControllerMethodInterface {
         */»«ELSEIF role == StringRole.TIME_ZONE»
             'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
             'intl' => true,
+        «ELSEIF role == StringRole.URL»«/*'default_protocol' => 'http'*/»
         «ELSEIF role == StringRole.WEEK»
             'input' => 'string',
         «ENDIF»
@@ -644,27 +635,7 @@ class ConfigureFields implements ControllerMethodInterface {
 
     def private dispatch additionalAttributes(TextField it) '''
         'maxlength' => «length»,
-        «IF null !== regexp && !regexp.empty && !regexpOpposite»
-            'pattern' => '«regexWithoutLeadingAndTrailingSlashes»',
-        «ENDIF»
     '''
-
-    def private dispatch additionalAttributes(EmailField it) '''
-        'maxlength' => «length»,
-        «IF null !== regexp && !regexp.empty && !regexpOpposite»
-            'pattern' => '«regexWithoutLeadingAndTrailingSlashes»',
-        «ENDIF»
-    '''
-
-    def private dispatch additionalAttributes(UrlField it) '''
-        'maxlength' => «length»,
-        «IF null !== regexp && !regexp.empty && !regexpOpposite»
-            'pattern' => '«regexWithoutLeadingAndTrailingSlashes»',
-        «ENDIF»
-    '''
-    def private dispatch additionalOptions(UrlField it) '''«/*'default_protocol' => 'http'*/»'''
-
-    def private regexWithoutLeadingAndTrailingSlashes(AbstractStringField it) '''«regexp.replaceAll('\'', '').replaceAll('^/+', '').replaceAll('/+$', '')»'''
 
     // TODO UploadField
     def private dispatch customFormType(UploadField it) '''«IF !isOnlyImageField»Upload«ENDIF»'''

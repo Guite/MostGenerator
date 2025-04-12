@@ -3,17 +3,13 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityBlameableType
-import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.Relationship
-import de.guite.modulestudio.metamodel.UserField
 import java.util.List
 
 /**
@@ -49,7 +45,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the loggable extension enabled.
      */
     def getLoggableEntities(Application it) {
-        getAllEntities.filter[loggable]
+        entities.filter[loggable]
     }
 
     /**
@@ -63,28 +59,21 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the geographical extension enabled.
      */
     def getGeographicalEntities(Application it) {
-        getAllEntities.filter[geographical]
+        entities.filter[geographical]
     }
 
     /**
      * Checks whether the application contains at least one entity with the sluggable extension enabled.
      */
     def hasSluggable(Application it) {
-        getAllEntities.exists[hasSluggableFields]
+        entities.exists[hasSluggableFields]
     }
 
     /**
      * Checks whether the application contains at least one entity with the sortable extension enabled.
      */
     def hasSortable(Application it) {
-        getAllEntities.exists[hasSortableFields]
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with the timestampable extension enabled.
-     */
-    def hasTimestampable(Application it) {
-        getAllEntities.exists[hasTimestampableFields]
+        entities.exists[hasSortableFields]
     }
 
     /**
@@ -98,7 +87,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the translatable extension enabled.
      */
     def getTranslatableEntities(Application it) {
-        getAllEntities.filter[hasTranslatableFields]
+        entities.filter[hasTranslatableFields]
     }
 
     /**
@@ -112,7 +101,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with loggable and translatable extensions enabled.
      */
     def getLoggableTranslatableEntities(Application it) {
-        getAllEntities.filter[loggable && hasTranslatableFields]
+        entities.filter[loggable && hasTranslatableFields]
     }
 
     /**
@@ -126,7 +115,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the tree extension enabled.
      */
     def getTreeEntities(Application it) {
-        getAllEntities.filter[tree != EntityTreeType.NONE]
+        entities.filter[tree != EntityTreeType.NONE]
     }
 
     /**
@@ -140,21 +129,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the standard field extension enabled.
      */
     def getStandardFieldEntities(Application it) {
-        getAllEntities.filter[standardFields]
-    }
-
-    /**
-     * Checks whether the entity contains at least one field with the blameable extension enabled.
-     */
-    def hasBlameableFields(Entity it) {
-        !getBlameableFields.empty
-    }
-
-    /**
-     * Returns a list of all derived fields with the blameable extension enabled.
-     */
-    def getBlameableFields(Entity it) {
-        fields.filter(UserField).filter[blameable != EntityBlameableType.NONE]
+        entities.filter[standardFields]
     }
 
     /**
@@ -175,7 +150,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities supporting automatic archiving.
      */
     def getArchivingEntities(Application it) {
-        getAllEntities.filter[hasArchive && hasEndDateField]
+        entities.filter[hasArchive && hasEndDateField]
     }
 
     /**
@@ -189,7 +164,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities supporting automatic deletion.
      */
     def getExpiryDeletionEntities(Application it) {
-        getAllEntities.filter[deleteExpired && hasEndDateField]
+        entities.filter[deleteExpired && hasEndDateField]
     }
 
     /**
@@ -275,20 +250,6 @@ class ModelBehaviourExtensions {
     }
 
     /**
-     * Checks whether the entity contains at least one field with the timestampable extension enabled.
-     */
-    def hasTimestampableFields(Entity it) {
-        !getTimestampableFields.empty
-    }
-
-    /**
-     * Returns a list of all derived fields with the timestampable extension enabled.
-     */
-    def getTimestampableFields(Entity it) {
-        fields.filter(DatetimeField).filter[timestampable != EntityTimestampableType.NONE]
-    }
-
-    /**
      * Checks whether the entity contains at least one field with the translatable extension enabled.
      */
     def hasTranslatableFields(Entity it) {
@@ -324,7 +285,7 @@ class ModelBehaviourExtensions {
     }
 
     /**
-     * Determines the version field of a data object if there is one.
+     * Determines the version field of an entity if there is one.
      */
     def getVersionField(Entity it) {
         val intVersions = fields.filter(IntegerField).filter[version]

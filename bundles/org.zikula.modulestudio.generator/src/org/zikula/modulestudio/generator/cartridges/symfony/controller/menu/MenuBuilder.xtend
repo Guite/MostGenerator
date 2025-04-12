@@ -2,20 +2,17 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.menu
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.menu.ItemActions
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class MenuBuilder {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -33,10 +30,10 @@ class MenuBuilder {
             appNamespace + '\\Event\\ItemActionsMenuPreConfigurationEvent',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
-        if ((!getAllEntities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty) {
+        if ((!entities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty) {
             imports.add('Zikula\\UsersBundle\\UsersConstant')
         }
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
         }
         if (hasIndexActions) {

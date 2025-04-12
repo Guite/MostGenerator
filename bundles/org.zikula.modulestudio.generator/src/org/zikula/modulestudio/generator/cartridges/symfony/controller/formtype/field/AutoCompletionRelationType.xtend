@@ -63,7 +63,7 @@ class AutoCompletionRelationType {
 
                 $view->vars['create_url'] = '';
                 «IF hasEditActions»
-                    if (true === $options['allow_editing'] && in_array($options['object_type'], ['«getAllEntities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
+                    if (true === $options['allow_editing'] && in_array($options['object_type'], ['«entities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'])) {
                         $view->vars['create_url'] = $this->router->generate('«appName.formatForDB»_' . strtolower($options['object_type']) . '_edit');
                     }
                 «ENDIF»

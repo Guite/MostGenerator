@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view.pages.view
 
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.Field
@@ -12,7 +11,6 @@ import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.Relationship
-import de.guite.modulestudio.metamodel.UrlField
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.IndexPagesHelper
@@ -358,8 +356,6 @@ class ViewTable {
             BooleanField: 'center'
             IntegerField: 'right'
             NumberField: 'right'
-            EmailField: 'center'
-            UrlField: 'center'
             default: 'left'
         }
     }

@@ -33,16 +33,16 @@ class EntityInitializer {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.add(appNamespace + '\\Helper\\PermissionHelper')
-        if (!getAllEntities.filter[!fields.filter(DatetimeField).filter[!immutable].empty].empty) {
+        if (!entities.filter[!fields.filter(DatetimeField).filter[!immutable].empty].empty) {
             imports.add('DateTime')
         }
-        if (!getAllEntities.filter[!fields.filter(DatetimeField).filter[immutable].empty].empty) {
+        if (!entities.filter[!fields.filter(DatetimeField).filter[immutable].empty].empty) {
             imports.add('DateTimeImmutable')
         }
         if (supportLocaleFilter) {
             imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
         }
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
         }
         if (hasListFieldsExceptWorkflowState) {
@@ -69,7 +69,7 @@ class EntityInitializer {
                 protected readonly string $defaultLongitude«ENDIF»
             ) {
             }
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
 
                 /**
                  * Initialises a given «entity.name.formatForCode» instance.

@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateTimeComponents
+import de.guite.modulestudio.metamodel.DateTimeRole
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Variables
@@ -11,93 +11,105 @@ import de.guite.modulestudio.metamodel.Variables
  */
 class DateTimeExtensions {
 
-    extension ModelExtensions = new ModelExtensions
-
     /**
      * Returns whether any date or time fields exist or not.
      */
     def hasAnyDateTimeFields(Application it) {
-        !getAllEntities.filter[!fields.filter(DatetimeField).empty].empty
+        !entities.filter[hasAnyDateTimeFieldsEntity].empty
     }
 
     /**
-     * Returns whether a data object directly owns any date time fields or not.
+     * Checks whether this entity has at least one date or time field.
+     */
+    def hasAnyDateTimeFieldsEntity(Entity it) {
+        !anyDateTimeFieldsEntity.empty
+    }
+
+    /**
+     * Returns any date or time field from given entity.
+     */
+    def getAnyDateTimeFieldsEntity(Entity it) {
+        fields.filter(DatetimeField)
+    }
+
+    /**
+     * Returns whether an entity directly owns any date time fields or not.
      */
     def hasDirectDateTimeFields(Entity it) {
         !getDirectDateTimeFields.empty
     }
 
     /**
-     * Returns date time fields directly owned by a data object.
+     * Returns date time fields directly owned by an entity.
      */
     def getDirectDateTimeFields(Entity it) {
-        fields.filter(DatetimeField).filter[isDateTimeField]
+        anyDateTimeFieldsEntity.filter[isDateTimeField]
     }
 
     /**
-     * Returns whether a data object directly owns any date fields or not.
+     * Returns whether an entity directly owns any date fields or not.
      */
     def hasDirectDateFields(Entity it) {
         !getDirectDateFields.empty
     }
 
     /**
-     * Returns date time fields directly owned by a data object.
+     * Returns date time fields directly owned by an entity.
      */
     def getDirectDateFields(Entity it) {
-        fields.filter(DatetimeField).filter[isDateField]
+        anyDateTimeFieldsEntity.filter[isDateField]
     }
 
     /**
-     * Returns whether a data object directly owns any time fields or not.
+     * Returns whether an entity directly owns any time fields or not.
      */
     def hasDirectTimeFields(Entity it) {
         !getDirectTimeFields.empty
     }
 
     /**
-     * Returns date time fields directly owned by a data object.
+     * Returns date time fields directly owned by an entity.
      */
     def getDirectTimeFields(Entity it) {
-        fields.filter(DatetimeField).filter[isTimeField]
+        anyDateTimeFieldsEntity.filter[isTimeField]
     }
 
     /**
      * Returns whether a date time field represents a datetime value.
      */
     def isDateTimeField(DatetimeField it) {
-        #[DateTimeComponents.DATE_TIME, DateTimeComponents.DATE_TIME_TZ].contains(components)
+        #[DateTimeRole.DATE_TIME, DateTimeRole.DATE_TIME_TZ].contains(role)
     }
 
     /**
      * Returns whether a date time field represents a date value.
      */
     def isDateField(DatetimeField it) {
-        components == DateTimeComponents.DATE
+        role == DateTimeRole.DATE
     }
 
     /**
      * Returns whether a date time field represents a time value.
      */
     def isTimeField(DatetimeField it) {
-        components == DateTimeComponents.TIME
+        role == DateTimeRole.TIME
     }
 
     /**
-     * Determines the start date field of a data object if there is one.
+     * Determines the start date field of an entity if there is one.
      */
     def dispatch getStartDateField(Entity it) {
-        val datetimeFields = fields.filter(DatetimeField).filter[startDate && components != DateTimeComponents.TIME]
+        val datetimeFields = fields.filter(DatetimeField).filter[startDate && role != DateTimeRole.TIME]
         if (!datetimeFields.empty) {
             return datetimeFields.head
         }
     }
 
     /**
-     * Determines the end date field of a data object if there is one.
+     * Determines the end date field of an entity if there is one.
      */
     def dispatch getEndDateField(Entity it) {
-        val datetimeFields = fields.filter(DatetimeField).filter[endDate && components != DateTimeComponents.TIME]
+        val datetimeFields = fields.filter(DatetimeField).filter[endDate && role != DateTimeRole.TIME]
         if (!datetimeFields.empty) {
             return datetimeFields.head
         }

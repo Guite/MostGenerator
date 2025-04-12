@@ -5,12 +5,10 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Blameable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.EntityExtensionInterface
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Loggable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Sluggable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Sortable
-import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Timestampable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Translatable
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Tree
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -26,9 +24,6 @@ class ExtensionManager {
         this.entity = entity
 
         this.extensions = newArrayList
-        if (entity.hasBlameableFields) {
-            this.extensions += new Blameable
-        }
         if (entity.loggable) {
             this.extensions += new Loggable
         }
@@ -40,9 +35,6 @@ class ExtensionManager {
         }
         if (entity.hasSortableFields) {
             this.extensions += new Sortable
-        }
-        if (entity.hasTimestampableFields) {
-            this.extensions += new Timestampable
         }
         if (entity.tree != EntityTreeType.NONE) {
             this.extensions += new Tree

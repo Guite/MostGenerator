@@ -9,7 +9,6 @@ import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -20,19 +19,18 @@ class ItemActions {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def actionsImpl(Application it) '''
-        «IF (!getAllEntities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
+        «IF (!entities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
             $currentUserId = $this->currentUserApi->isLoggedIn()
                 ? $this->currentUserApi->get('uid')
                 : UsersConstant::USER_ID_ANONYMOUS
             ;
         «ENDIF»
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
                 «entity.actionsImpl»
             }

@@ -35,7 +35,7 @@ class Forms {
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         this.app = it
-        for (entity : getAllEntities.filter[hasEditAction]) {
+        for (entity : entities.filter[hasEditAction]) {
             entity.generate('edit')
             if (needsInlineEditing) {
                 entity.entityInlineRedirectHandlerFile

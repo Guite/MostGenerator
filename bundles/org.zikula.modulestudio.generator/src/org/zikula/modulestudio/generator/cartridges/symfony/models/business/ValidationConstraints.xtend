@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
@@ -15,7 +14,6 @@ import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -120,9 +118,6 @@ class ValidationConstraints {
 
     def private fieldAnnotationsString(AbstractStringField it) '''
         «fieldAnnotationsMandatory»
-        «IF null !== regexp && !regexp.empty»
-            #[Assert\Regex(pattern: '«regexp»'«IF regexpOpposite», match: false«ENDIF»)]
-        «ENDIF»
     '''
 
     def dispatch fieldAnnotations(AbstractStringField it) {
@@ -131,9 +126,6 @@ class ValidationConstraints {
         «fieldAnnotationsString»
         «IF mandatory»
             #[Assert\Length(min: «minLength», max: «length»)]
-            «IF fixed && minLength != length»
-                #[Assert\Length(min: «length», max: «length»)]
-            «ENDIF»
         «ELSE»
             #[Assert\AtLeastOneOf(
                 constraints: [
@@ -141,14 +133,6 @@ class ValidationConstraints {
                     new Assert\Length(min: «minLength», max: «length»),
                 ]
             )]
-            «IF fixed && minLength != length»
-                #[Assert\AtLeastOneOf(
-                    constraints: [
-                        new Assert\Blank(),
-                        new Assert\Length(min: «length», max: «length»),
-                    ]
-                )]
-            «ENDIF»
         «ENDIF»
         «IF role == StringRole.BIC»
             «IF null !== entity && !entity.allEntityFields.filter(StringField).filter[role == StringRole.IBAN].empty»
@@ -177,6 +161,8 @@ class ValidationConstraints {
             #[Assert\Language]
         «ELSEIF role == StringRole.LOCALE»
             #[Assert\Locale]
+        «ELSEIF role == StringRole.MAIL»
+            #[Assert\Email]
         «ELSEIF role == StringRole.PASSWORD»
             #[Assert\NotCompromisedPassword]
             #[Assert\PasswordStrength]
@@ -184,6 +170,9 @@ class ValidationConstraints {
             #[Assert\Timezone]
         «ELSEIF role == StringRole.ULID»
             #[Assert\Ulid]
+        «ELSEIF role == StringRole.URL»
+            #[Assert\Url]
+            #[Assert\NoSuspiciousCharacters]
         «ELSEIF role == StringRole.UUID»
             #[Assert\Uuid(strict: true)]
         «ENDIF»
@@ -203,19 +192,6 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(TextField it) '''
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
-    '''
-    def dispatch fieldAnnotations(EmailField it) '''
-        «fieldAnnotationsString»
-        «lengthAnnotationString(length)»
-        «IF mandatory»
-            #[Assert\Email]
-        «ENDIF»
-    '''
-    def dispatch fieldAnnotations(UrlField it) '''
-        «fieldAnnotationsString»
-        «lengthAnnotationString(length)»
-        #[Assert\Url]
-        #[Assert\NoSuspiciousCharacters]
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
@@ -256,30 +232,6 @@ class ValidationConstraints {
     def private getUploadImageConstraints(UploadField it) {
         val constraints = newArrayList
 
-        if (minWidth > 0) {
-            constraints += '''minWidth: «minWidth»'''
-        }
-        if (maxWidth > 0) {
-            constraints += '''maxWidth: «maxWidth»'''
-        }
-        if (minHeight > 0) {
-            constraints += '''minHeight: «minHeight»'''
-        }
-        if (maxHeight > 0) {
-            constraints += '''maxHeight: «maxHeight»'''
-        }
-        if (minPixels > 0) {
-            constraints += '''minPixels: «minPixels»'''
-        }
-        if (maxPixels > 0) {
-            constraints += '''maxPixels: «maxPixels»'''
-        }
-        if (minRatio > 0) {
-            constraints += '''minRatio: «minRatio»'''
-        }
-        if (maxRatio > 0) {
-            constraints += '''maxRatio: «maxRatio»'''
-        }
         if (!allowSquare) {
             constraints += 'allowSquare: false'
         }
@@ -288,9 +240,6 @@ class ValidationConstraints {
         }
         if (!allowPortrait) {
             constraints += 'allowPortrait: false'
-        }
-        if (detectCorrupted) {
-            constraints += 'detectCorrupted: true'
         }
 
         constraints
@@ -327,9 +276,6 @@ class ValidationConstraints {
                 «ENDIF»
             «ENDIF»«/*ELSEIF isTimeField» causes issues with EABs TimeField during editing
             #[Assert\Time] */»
-        «ENDIF»
-        «IF null !== validatorAddition && !validatorAddition.empty»
-            #[Assert\«validatorAddition»]
         «ENDIF»
     '''
 

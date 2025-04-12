@@ -46,7 +46,7 @@ class DependencyInjection {
             imports.add(appNamespace + '\\EventListener\\EntityLifecycleListener')
         }
         if (hasTranslatable || needsApproval || hasStandardFieldEntities) {
-            for (entity : getAllEntities.filter[hasEditAction]) {
+            for (entity : entities.filter[hasEditAction]) {
                 imports.add(appNamespace + '\\Form\\Handler\\' + entity.name.formatForCodeCapital + '\\EditHandler as Edit' + entity.name.formatForCodeCapital + 'Handler')
             }
         }
@@ -114,7 +114,7 @@ class DependencyInjection {
                         ;
                     «ENDIF»
                     «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-                        «FOR entity : getAllEntities.filter[hasEditAction]»
+                        «FOR entity : entities.filter[hasEditAction]»
                             $container->getDefinition(Edit«entity.name.formatForCodeCapital»Handler::class)
                                 ->setArgument('$moderationConfig', $config['moderation']);
                         «ENDFOR»

@@ -58,7 +58,7 @@ class FormHandler {
         if (hasEditActions()) {
             // form handlers
             generateCommon('edit', fsa)
-            for (entity : getAllEntities.filter[hasEditAction]) {
+            for (entity : entities.filter[hasEditAction]) {
                 entity.generate('edit', fsa)
             }
             // form types
@@ -136,7 +136,7 @@ class FormHandler {
             appNamespace + '\\Helper\\PermissionHelper',
             appNamespace + '\\Helper\\WorkflowHelper'
         ])
-        if (!getAllEntities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty) {
+        if (!entities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty) {
             imports.add('Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface')
         }
         if (hasTranslatable || needsApproval || hasStandardFieldEntities) {
@@ -345,8 +345,8 @@ class FormHandler {
                     if (!$this->permissionHelper->mayEdit($entity)) {
                         throw new AccessDeniedException();
                     }
-                    «IF !getAllEntities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty»
-                        if (null !== $session && in_array($this->objectType, ['«getAllEntities.filter[hasDetailAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
+                    «IF !entities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty»
+                        if (null !== $session && in_array($this->objectType, ['«entities.filter[hasDetailAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
                             // map display return urls to redirect codes because slugs may change
                             $routePrefix = '«app.appName.formatForDB»_' . mb_strtolower($this->objectType) . '_';
                             $userDetailUrl = $this->router->generate(
@@ -370,7 +370,7 @@ class FormHandler {
                 }
             } else {
                 «IF needsApproval»
-                    $objectTypesNeedingApproval = ['«getAllEntities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'];
+                    $objectTypesNeedingApproval = ['«entities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'];
                     $permissionLevel = in_array($this->objectType, $objectTypesNeedingApproval, true) ? ACCESS_COMMENT : ACCESS_EDIT;
                 «ELSE»
                     $permissionLevel = ACCESS_EDIT;
@@ -403,9 +403,9 @@ class FormHandler {
                 return new RedirectResponse($this->router->generate('home'), 302);
             }
 
-            «IF !getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
+            «IF !entities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
                 if (
-                    in_array($this->objectType, ['«getAllEntities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'], true)
+                    in_array($this->objectType, ['«entities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'], true)
                     && method_exists($entity, 'getSlug')
                     && null !== $entity->getSlug()
                 ) {

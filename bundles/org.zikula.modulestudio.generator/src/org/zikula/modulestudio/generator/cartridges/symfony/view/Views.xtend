@@ -19,14 +19,12 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.view.View
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.view.ViewTable
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Views {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
@@ -41,7 +39,7 @@ class Views {
         relationHelper = new Relations()
 
         // main action templates
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             generateViews(entity)
         }
 

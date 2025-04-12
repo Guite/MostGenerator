@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -15,7 +14,6 @@ class ModelHelper {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
@@ -70,7 +68,7 @@ class ModelHelper {
             $result = false;
 
             switch ($objectType) {
-                «FOR entity : getAllEntities.filter[hasEditAction]»
+                «FOR entity : entities.filter[hasEditAction]»
                     case '«entity.name.formatForCode»':
                         «entity.canBeCreatedImpl»
                         break;
@@ -121,7 +119,7 @@ class ModelHelper {
                 return 'RAND()';
             }
 
-            $hasStandardFields = in_array($objectType, ['«getAllEntities.filter[standardFields].map[name.formatForCode].join('\', \'')»']);
+            $hasStandardFields = in_array($objectType, ['«entities.filter[standardFields].map[name.formatForCode].join('\', \'')»']);
 
             $sortParam = '';
             if ('newest' === $sorting) {

@@ -46,7 +46,7 @@ class EntityDisplayHelper {
         if (hasAnyDateTimeFields || hasNumberFields) {
             imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
         }
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
         }
         if (hasListFields) {
@@ -103,7 +103,7 @@ class EntityDisplayHelper {
          */
         public function getFormattedTitle(EntityInterface $entity): string
         {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 if ($entity instanceof «entity.name.formatForCodeCapital») {
                     return $this->format«entity.name.formatForCodeCapital»($entity);
                 }
@@ -117,7 +117,7 @@ class EntityDisplayHelper {
          */
         public function getDescription(EntityInterface $entity): string
         {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 if ($entity instanceof «entity.name.formatForCodeCapital») {
                     return $this->get«entity.name.formatForCodeCapital»Description($entity);
                 }
@@ -125,7 +125,7 @@ class EntityDisplayHelper {
 
             return '';
         }
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
 
             «entity.formatMethod»
 
@@ -186,7 +186,7 @@ class EntityDisplayHelper {
          */
         public function getTitleFieldName(string $objectType = ''): string
         {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 if ('«entity.name.formatForCode»' === $objectType) {
                     «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.PASSWORD].contains(role)]»
                     return '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
@@ -203,7 +203,7 @@ class EntityDisplayHelper {
          */
         public function getDescriptionFieldName(string $objectType = ''): string
         {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 if ('«entity.name.formatForCode»' === $objectType) {
                     «val textFields = entity.fields.filter(TextField).filter[length >= 50]»
                     «val stringFields = entity.getDisplayStringFieldsEntity.filter[length >= 50 && !#[StringRole.COLOUR, StringRole.COUNTRY, StringRole.LANGUAGE, StringRole.LOCALE].contains(role)]»
@@ -231,7 +231,7 @@ class EntityDisplayHelper {
          */
         public function getPreviewFieldName(string $objectType = ''): string
         {
-            «FOR entity : getAllEntities.filter[hasImageFieldsEntity]»
+            «FOR entity : entities.filter[hasImageFieldsEntity]»
                 if ('«entity.name.formatForCode»' === $objectType) {
                     return '«entity.getImageFieldsEntity.head.name.formatForCode»';
                 }
@@ -248,7 +248,7 @@ class EntityDisplayHelper {
          */
         public function getStartDateFieldName(string $objectType = ''): string
         {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 if ('«entity.name.formatForCode»' === $objectType) {
                     return '«IF null !== entity.getStartDateField»«entity.getStartDateField.name.formatForCode»«ELSEIF entity.standardFields»createdDate«ENDIF»';
                 }

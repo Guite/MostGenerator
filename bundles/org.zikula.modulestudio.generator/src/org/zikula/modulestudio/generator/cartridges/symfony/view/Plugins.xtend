@@ -67,7 +67,7 @@ class Plugins {
             appNamespace + '\\Helper\\EntityDisplayHelper',
             appNamespace + '\\Helper\\WorkflowHelper'
         ])
-        if (!getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty) {
+        if (!entities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty) {
             imports.add('DateInterval')
         }
         if (hasLoggable) {
@@ -123,7 +123,7 @@ class Plugins {
         public function getFilters()
         {
             return [
-                «IF !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
+                «IF !entities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
                     new TwigFilter('«appNameLower»_dateInterval', [TwigRuntime::class, 'getFormattedDateInterval']),
                 «ENDIF»
                 «IF hasUploads»
@@ -174,7 +174,7 @@ class Plugins {
         }
 
         «viewPlugins»
-        «IF !getAllEntities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
+        «IF !entities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty»
 
             /**
              * The «appName.formatForDB»_dateInterval filter outputs a formatted description for a given date interval (duration string).

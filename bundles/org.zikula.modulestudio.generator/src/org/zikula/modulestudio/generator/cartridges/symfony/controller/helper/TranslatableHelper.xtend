@@ -3,17 +3,15 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class TranslatableHelper {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     Boolean needsDynamicLoggableEnablement
@@ -23,7 +21,7 @@ class TranslatableHelper {
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         'Generating helper class for translatable entities'.printIfNotTesting(fsa)
-        needsDynamicLoggableEnablement = if (!getAllEntities.filter[loggable && hasTranslatableFields].empty) true else false
+        needsDynamicLoggableEnablement = if (!entities.filter[loggable && hasTranslatableFields].empty) true else false
         fsa.generateClassPair('Helper/TranslatableHelper.php', translatableFunctionsBaseImpl, translatableFunctionsImpl)
     }
 
@@ -202,8 +200,8 @@ class TranslatableHelper {
                 foreach ($fields as $fieldName) {
                     $translationData[$fieldName] = $entityTranslations[$language][$fieldName] ?? '';
                 }
-                «IF !getAllEntities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].empty»
-                    if (isset($translationData['slug']) && in_array($objectType, ['«getAllEntities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
+                «IF !entities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].empty»
+                    if (isset($translationData['slug']) && in_array($objectType, ['«entities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
                         $slugParts = explode('/', $translationData['slug']);
                         $translationData['slug'] = end($slugParts);
                     }

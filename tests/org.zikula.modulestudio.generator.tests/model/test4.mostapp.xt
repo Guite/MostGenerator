@@ -66,14 +66,6 @@ application "SimpleNews" targets SF73 {
         }
     }
     relations {
-        inheritance {
-            source "image"
-            sourceAlias "image"
-            target "article"
-            targetAlias "article"
-            strategy JOINED
-            discriminatorColumn "discr"
-        },
         one2many bidirectional inheritPermissions {
             source "article"
             sourceAlias "article"

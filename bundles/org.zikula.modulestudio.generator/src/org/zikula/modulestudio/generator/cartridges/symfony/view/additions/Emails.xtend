@@ -6,18 +6,16 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Emails {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
+        val entitiesWithWorkflow = entities.filter[workflow != EntityWorkflowType.NONE]
         if (entitiesWithWorkflow.empty) {
             return
         }

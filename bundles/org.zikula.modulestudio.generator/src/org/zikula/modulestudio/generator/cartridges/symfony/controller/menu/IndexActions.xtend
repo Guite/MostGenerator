@@ -6,21 +6,19 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class IndexActions {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def actionsImpl(Application it) '''
         $mainRequest = $this->requestStack->getMainRequest();
         $query = $mainRequest->query;
         $currentTemplate = $query->getAlnum('tpl', '');
-        «FOR entity : getAllEntities.filter[hasIndexAction]»
+        «FOR entity : entities.filter[hasIndexAction]»
             if ('«entity.name.formatForCode»' === $objectType) {
                 «entity.actionsImpl(it)»
             }

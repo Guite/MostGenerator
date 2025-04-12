@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
@@ -12,7 +11,6 @@ import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -72,7 +70,17 @@ class SimpleFields {
         '''
     }
 
-    def dispatch displayField(StringField it, String objName, String page) {
+    def dispatch displayField(StringField it, String objName, String page) '''
+        «IF !mandatory»
+            {% if «objName».«name.formatForCode» is not empty %}
+        «ENDIF»
+        «displayFieldInner(objName, page)»
+        «IF !mandatory»
+            {% else %}&nbsp;{% endif %}
+        «ENDIF»
+    '''
+
+    def displayFieldInner(StringField it, String objName, String page) {
         if (role == StringRole.PASSWORD) return ''
         if (role == StringRole.COLOUR) '''
             <span class="badge badge-default" style="background-color: {{ «objName».«name.formatForCode»|e('html_attr') }}">{{ «objName».«name.formatForCode» }}«displayUnit»</span>'''
@@ -90,6 +98,28 @@ class SimpleFields {
             {{ «objName».«name.formatForCode»|timezone_name }}«displayUnit»'''
         else if (role == StringRole.ICON) '''
             {% if «objName».«name.formatForCode» %}<i class="fa-fw {{ «objName».«name.formatForCode»|e('html_attr') }}"></i>«displayUnit»{% endif %}'''
+        else if (role == StringRole.MAIL) '''
+            «IF page == 'detail'»
+                  {% if not isQuickView %}
+            «ENDIF»
+               <a href="mailto:{{ «objName».«name.formatForCode»|protectMail }}" title="{{ 'Send an email'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-envelope"></i></a>
+            «IF page == 'detail'»
+                {% else %}
+                    {{ «objName».«name.formatForCode»|protectMail }}
+                {% endif %}
+            «ENDIF»
+        '''
+        else if (role == StringRole.URL) '''
+            «IF page == 'detail'»
+                  {% if not isQuickView %}
+            «ENDIF»
+                <a href="{{ «objName».«name.formatForCode» }}" title="{{ 'Visit this page'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-external-link-square-alt"></i></a>
+            «IF page == 'detail'»
+                {% else %}
+                    {{ «objName».«name.formatForCode» }}
+                {% endif %}
+            «ENDIF»
+        '''
         else '''
             {{ «objName».«name.formatForCode»«IF page == 'viewjson'»|e('html_attr')«ENDIF» }}«displayUnit»'''
     }
@@ -98,50 +128,6 @@ class SimpleFields {
 
     def dispatch displayField(TextField it, String objName, String page) '''
         {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|u.truncate(50)«ELSE»«ENDIF» }}'''
-
-    def dispatch displayField(EmailField it, String objName, String page) {
-        val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml' || page == 'viewjson') '''{{ «realName»«IF page == 'viewjson'»|e('html_attr')«ENDIF» }}'''
-        else '''
-            «IF !mandatory»
-                {% if «realName» is not empty %}
-            «ENDIF»
-            «IF page == 'detail'»
-                  {% if not isQuickView %}
-            «ENDIF»
-            <a href="mailto:{{ «realName»|protectMail }}" title="{{ 'Send an email'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-envelope"></i></a>
-            «IF page == 'detail'»
-                {% else %}
-                    {{ «realName»|protectMail }}
-                {% endif %}
-            «ENDIF»
-            «IF !mandatory»
-                {% else %}&nbsp;{% endif %}
-            «ENDIF»
-        '''
-    }
-
-    def dispatch displayField(UrlField it, String objName, String page) {
-        val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml' || page == 'viewjson') '''{{ «realName»«IF page == 'viewjson'»|e('html_attr')«ENDIF» }}'''
-        else '''
-            «IF !mandatory»
-                {% if «realName» is not empty %}
-            «ENDIF»
-            «IF page == 'detail'»
-                  {% if not isQuickView %}
-            «ENDIF»
-            <a href="{{ «realName» }}" title="{{ 'Visit this page'|trans({}, 'messages')|e('html_attr') }}"><i class="fas fa-external-link-square-alt"></i></a>
-            «IF page == 'detail'»
-                {% else %}
-                    {{ «realName» }}
-                {% endif %}
-            «ENDIF»
-            «IF !mandatory»
-                {% else %}&nbsp;{% endif %}
-            «ENDIF»
-        '''
-    }
 
     def dispatch displayField(UploadField it, String objName, String page) {
         val appNameSmall = application.appName.formatForDB

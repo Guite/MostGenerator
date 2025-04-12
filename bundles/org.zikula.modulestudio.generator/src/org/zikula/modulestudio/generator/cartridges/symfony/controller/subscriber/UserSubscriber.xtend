@@ -150,7 +150,7 @@ class UserSubscriber {
                 $currentUser = $this->security->getUser();
                 $userId = $event->getUser()->getId();
                 «IF hasStandardFieldEntities || hasUserFields»
-                    «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
+                    «FOR entity : entities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
                 «IF hasUserVariables»
 

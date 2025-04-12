@@ -5,9 +5,8 @@ import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DateTimeComponents
+import de.guite.modulestudio.metamodel.DateTimeRole
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityLockType
@@ -24,7 +23,6 @@ import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TextRole
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
-import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 
 /**
@@ -44,31 +42,24 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all entities (data objects except mapped super classes).
-     */
-    def getAllEntities(Application it) {
-        entities.filter(Entity)
-    }
-
-    /**
      * Returns the leading entity in the primary model container.
      */
     def getLeadingEntity(Application it) {
-        getAllEntities.findFirst[leading]
+        entities.findFirst[leading]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one image field.
      */
     def hasImageFields(Application it) {
-        getAllEntities.exists[hasImageFieldsEntity]
+        entities.exists[hasImageFieldsEntity]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one country field.
      */
     def hasCountryFields(Application it) {
-        getAllEntities.exists[hasCountryFieldsEntity]
+        entities.exists[hasCountryFieldsEntity]
     }
 
     /**
@@ -105,7 +96,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one upload field.
      */
     def getUploadEntities(Application it) {
-        getAllEntities.filter[hasUploadFieldsEntity]
+        entities.filter[hasUploadFieldsEntity]
     }
 
     /**
@@ -154,7 +145,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one list field.
      */
     def getListEntities(Application it) {
-        getAllEntities.filter[hasListFieldsEntity]
+        entities.filter[hasListFieldsEntity]
     }
 
     /**
@@ -373,7 +364,7 @@ class ModelExtensions {
      * Returns any decimal or float fields.
      */
     def getNumberFields(Application it) {
-        getAllEntities.map[fields.filter(NumberField)].flatten
+        entities.map[fields.filter(NumberField)].flatten
     }
 
     /**
@@ -436,7 +427,7 @@ class ModelExtensions {
      * Checks whether locale-based filtering is possible or not.
      */
     def supportLocaleFilter(Application it) {
-        !getAllEntities.filter[hasLanguageFieldsEntity || hasLocaleFieldsEntity].empty
+        !entities.filter[hasLanguageFieldsEntity || hasLocaleFieldsEntity].empty
     }
 
     /**
@@ -612,8 +603,6 @@ class ModelExtensions {
             }
             StringField: 'string'
             TextField: if (forPhp) 'string' else 'text'
-            EmailField: 'string'
-            UrlField: 'string'
             UploadField: 'string'
             ListField: if (multiple) 'array' else 'string'
             ArrayField: 'array'
@@ -626,10 +615,11 @@ class ModelExtensions {
      * Prints an output string describing the type of the given date time field.
      */
     def private dateTimeFieldTypeAsString(DatetimeField it) {
-        if (components == DateTimeComponents.DATE_TIME) 'datetime' else
-        if (components == DateTimeComponents.DATE_TIME_TZ) 'datetimetz' else
-        if (components == DateTimeComponents.DATE) 'date' else
-        'time'
+        if (role == DateTimeRole.DATE_TIME) 'datetime' else
+        if (role == DateTimeRole.DATE_TIME_TZ) 'datetimetz' else
+        if (role == DateTimeRole.DATE) 'date' else
+        if (role == DateTimeRole.TIME) 'time' else
+        ''
     }
 
     /**

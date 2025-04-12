@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.config
 
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DateTimeComponents
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
@@ -11,6 +10,7 @@ import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerMethodInterface
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -18,6 +18,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 class ConfigureCrud implements ControllerMethodInterface {
 
     extension ControllerExtensions = new ControllerExtensions
+    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -25,7 +26,7 @@ class ConfigureCrud implements ControllerMethodInterface {
     Iterable<DatetimeField> dateTimeFields
 
     override void init(Entity it) {
-        dateTimeFields = allEntityFields.filter(DatetimeField)
+        dateTimeFields = getAnyDateTimeFieldsEntity
     }
 
     override imports(Entity it) {
@@ -72,14 +73,14 @@ class ConfigureCrud implements ControllerMethodInterface {
                 ->setHelp(Crud::PAGE_INDEX, t('«documentation.replaceAll('\'', '"')»'))
             «ENDIF»
         «ENDIF»
-        «IF !dateTimeFields.empty»
-            «IF !dateTimeFields.filter[f|f.components === DateTimeComponents.DATE].empty»
+        «IF hasAnyDateTimeFieldsEntity»
+            «IF hasDirectDateFields»
                 ->setDateFormat(DateTimeField::FORMAT_MEDIUM)
             «ENDIF»
-            «IF !dateTimeFields.filter[f|f.components === DateTimeComponents.TIME].empty»
+            «IF hasDirectTimeFields»
                 ->setTimeFormat(DateTimeField::FORMAT_SHORT)
             «ENDIF»
-            «IF !dateTimeFields.filter[f|#[DateTimeComponents.DATE_TIME, DateTimeComponents.DATE_TIME_TZ].contains(f.components)].empty»
+            «IF hasDirectDateTimeFields»
                 ->setDateTimeFormat(DateTimeField::FORMAT_MEDIUM, DateTimeField::FORMAT_SHORT)
             «ENDIF»
         «ENDIF»

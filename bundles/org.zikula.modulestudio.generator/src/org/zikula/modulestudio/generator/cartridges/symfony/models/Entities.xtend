@@ -44,7 +44,7 @@ class Entities {
 
         new LifecycleListener().generate(it, fsa)
 
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             extMan = new ExtensionManager(entity)
             extMan.extensionClasses(fsa)
         }

@@ -47,7 +47,7 @@ class Repository {
         this.fsa = fsa
         app = it
         fh = new FileHelper(it)
-        getAllEntities.forEach(e|e.generate)
+        entities.forEach(e|e.generate)
 
         val linkTable = new LinkTable
         for (relation : relations.filter(ManyToManyRelationship)) {
