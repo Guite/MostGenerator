@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -180,7 +179,7 @@ class NotificationHelper {
             $this->recipients = [];
 
             if (in_array($this->recipientType, ['moderator', 'superModerator'], true)) {
-                «val entitiesWithWorkflow = entities.filter[workflow != EntityWorkflowType.NONE]»
+                «val entitiesWithWorkflow = entities.filter[approval]»
                 $configSuffixes = [
                     «FOR entity : entitiesWithWorkflow»
                         '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForSnakeCase»',

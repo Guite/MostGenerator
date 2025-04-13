@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
@@ -370,7 +369,7 @@ class FormHandler {
                 }
             } else {
                 «IF needsApproval»
-                    $objectTypesNeedingApproval = ['«entities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'];
+                    $objectTypesNeedingApproval = ['«entities.filter[approval].map[name.formatForCode].join('\', \'')»'];
                     $permissionLevel = in_array($this->objectType, $objectTypesNeedingApproval, true) ? ACCESS_COMMENT : ACCESS_EDIT;
                 «ELSE»
                     $permissionLevel = ACCESS_EDIT;
@@ -836,9 +835,9 @@ class FormHandler {
 
     def private prepareWorkflowAdditions(Application it) '''
         /**
-         * Prepares properties related to advanced workflows.
+         * Prepares properties related to approval handling.
          */
-        protected function prepareWorkflowAdditions(bool $enterprise = false): array
+        protected function prepareWorkflowAdditions(): array
         {
             $roles = [];
             $currentUserId = $this->currentUserApi->isLoggedIn()
@@ -859,14 +858,6 @@ class FormHandler {
                 'group' => $this->moderationConfig['moderation_group_for_' . $configSuffix],
             ];
             $roles['is_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
-
-            if (true === $enterprise) {
-                $groupApplicationArgs = [
-                    'user' => $currentUserId,
-                    'group' => $this->moderationConfig['super_moderation_group_for_' . $configSuffix],
-                ];
-                $roles['is_super_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
-            }
 
             return $roles;
         }
@@ -1069,9 +1060,9 @@ class FormHandler {
                     'inline_usage' => $this->templateParameters['inlineUsage'],
                 «ENDIF»
             ];
-            «IF workflow != EntityWorkflowType.NONE»
+            «IF approval»
 
-                $workflowRoles = $this->prepareWorkflowAdditions(«(workflow == EntityWorkflowType.ENTERPRISE).displayBool»);
+                $workflowRoles = $this->prepareWorkflowAdditions();
                 $options = array_merge($options, $workflowRoles);
             «ENDIF»
             «IF hasTranslatableFields»
@@ -1129,7 +1120,7 @@ class FormHandler {
                     } else {
                         $message = $this->trans('Done! «name.formatForDisplayCapital» updated.', [], '«name.formatForCode»');
                     }
-                    «IF EntityWorkflowType.NONE !== workflow»
+                    «IF approval»
                         if ('waiting' === $this->entityRef->getWorkflowState()) {
                             $message .= ' ' . $this->trans('It is now waiting for approval by our moderators.');
                         }

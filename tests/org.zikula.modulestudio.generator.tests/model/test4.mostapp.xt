@@ -37,7 +37,6 @@ application "SimpleNews" targets SF73 {
             onAccountDeletionLastEditor DELETE
             workflow NONE
             hasArchive false
-            hasTray false
             ownerPermission false
             fields {
                 string "title" {

@@ -376,7 +376,6 @@ class CollectionFilterHelper {
                     if ($showOnlyOwnEntries) {
                         // allow the owner to see his «nameMultiple.formatForDisplay»
                         $onlineStates[] = 'deferred';
-                        $onlineStates[] = 'trashed';
                     }
                 «ENDIF»
                 $qb->andWhere('tbl.workflowState IN (:onlineStates)')

@@ -21,7 +21,7 @@ application "SimpleNews" targets SF73 {
     prefix "sinew"
     detailActionsStyle BUTTON
     entities {
-        entity "article" leading readOnly {
+        entity "article" leading tree {
             documentation "My article"
             nameMultiple "articles"
             displayPattern "#title#"
@@ -32,13 +32,11 @@ application "SimpleNews" targets SF73 {
             slugUpdatable true
             slugUnique true
             slugSeparator "~"
-            tree NESTED
             standardFields true
             onAccountDeletionCreator ADMIN
             onAccountDeletionLastEditor ADMIN
             workflow STANDARD
             hasArchive true
-            hasTray true
             ownerPermission true
             fields {
                 string "title" {

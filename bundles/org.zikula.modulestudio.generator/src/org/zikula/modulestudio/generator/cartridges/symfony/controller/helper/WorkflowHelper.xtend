@@ -2,14 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.application.ImportList
 
 class WorkflowHelper {
 
@@ -117,11 +116,8 @@ class WorkflowHelper {
             case 'initial': 'danger'
             case 'deferred': 'danger'
             case 'waiting': 'warning'
-            case 'accepted': 'warning'
             case 'approved': 'success'
-            case 'suspended': 'primary'
             case 'archived': 'info'
-            case 'trashed': 'danger'
             case 'deleted': 'danger'
             default: 'default'
         }
@@ -195,25 +191,15 @@ class WorkflowHelper {
                         $title = $currentState == 'initial' ? $this->translator->trans('Submit and accept') : $this->translator->trans('Accept');
                         break;
                 «ENDIF»
-                «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
+                «IF needsApproval»
                     case 'approve':
                         $title = 'initial' === $currentState
                             ? $this->translator->trans('Submit and approve')
                             : $this->translator->trans('Approve')
                         ;
                         break;
-                «ENDIF»
-                «IF hasWorkflowState('accepted')»
                     case 'demote':
                         $title = $this->translator->trans('Demote');
-                        break;
-                «ENDIF»
-                «IF hasWorkflowState('suspended')»
-                    case 'unpublish':
-                        $title = $this->translator->trans('Unpublish');
-                        break;
-                    case 'publish':
-                        $title = $this->translator->trans('Publish');
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('archived')»
@@ -222,14 +208,6 @@ class WorkflowHelper {
                         break;
                     case 'unarchive':
                         $title = $this->translator->trans('Unarchive');
-                        break;
-                «ENDIF»
-                «IF hasWorkflowState('trashed')»
-                    case 'trash':
-                        $title = $this->translator->trans('Trash');
-                        break;
-                    case 'recover':
-                        $title = $this->translator->trans('Recover');
                         break;
                 «ENDIF»
                 case 'delete':
@@ -270,26 +248,11 @@ class WorkflowHelper {
                         $buttonClass = '';
                         break;
                 «ENDIF»
-                «IF hasWorkflowState('accepted')»
-                    case 'accept':
-                        $buttonClass = 'default';
-                        break;
-                «ENDIF»
-                «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
+                «IF needsApproval»
                     case 'approve':
                         $buttonClass = 'success';
                         break;
-                «ENDIF»
-                «IF hasWorkflowState('accepted')»
                     case 'demote':
-                        $buttonClass = '';
-                        break;
-                «ENDIF»
-                «IF hasWorkflowState('suspended')»
-                    case 'unpublish':
-                        $buttonClass = '';
-                        break;
-                    case 'publish':
                         $buttonClass = '';
                         break;
                 «ENDIF»
@@ -298,14 +261,6 @@ class WorkflowHelper {
                         $buttonClass = '';
                         break;
                     case 'unarchive':
-                        $buttonClass = '';
-                        break;
-                «ENDIF»
-                «IF hasWorkflowState('trashed')»
-                    case 'trash':
-                        $buttonClass = '';
-                        break;
-                    case 'recover':
                         $buttonClass = '';
                         break;
                 «ENDIF»
@@ -408,23 +363,12 @@ class WorkflowHelper {
         {
             $amounts = [];
 
-            «val entitiesStandard = getEntitiesForWorkflow(EntityWorkflowType::STANDARD)»
-            «val entitiesEnterprise = getEntitiesForWorkflow(EntityWorkflowType::ENTERPRISE)»
-            // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
+            «val entitiesStandard = getEntitiesForWorkflow(true)»
+            // check if objects are waiting for approval
             $state = 'waiting';
             «FOR entity : entitiesStandard»
                 «entity.readAmountForObjectTypeAndState('approval')»
             «ENDFOR»
-            «FOR entity : entitiesEnterprise»
-                «entity.readAmountForObjectTypeAndState('acceptance')»
-            «ENDFOR»
-            «IF !entitiesEnterprise.empty»
-                // check if objects are waiting for approval
-                $state = 'accepted';
-                «FOR entity : entitiesEnterprise»
-                    «entity.readAmountForObjectTypeAndState('approval')»
-                «ENDFOR»
-            «ENDIF»
 
             return $amounts;
         }
@@ -432,7 +376,7 @@ class WorkflowHelper {
 
     def private readAmountForObjectTypeAndState(Entity it, String requiredAction) '''
         $objectType = '«name.formatForCode»';
-        «val permissionLevel = if (requiredAction == 'approval') 'ADD' else if (requiredAction == 'acceptance') 'EDIT' else 'MODERATE'»
+        «val permissionLevel = if (requiredAction == 'approval') 'ADD' else 'MODERATE'»
         if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«permissionLevel»)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if (0 < $amount) {

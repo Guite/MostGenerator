@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -162,10 +161,8 @@ class WorkflowSubscriber {
         «IF needsApproval»
 
             $workflowShortName = 'none';
-            if (in_array($entity->get_objectType(), ['«entities.filter[workflow == EntityWorkflowType.STANDARD].map[name.formatForCode].join('\', \'')»'], true)) {
+            if (in_array($entity->get_objectType(), ['«entities.filter[approval].map[name.formatForCode].join('\', \'')»'], true)) {
                 $workflowShortName = 'standard';
-            } elseif (in_array($entity->get_objectType(), ['«entities.filter[workflow == EntityWorkflowType.ENTERPRISE].map[name.formatForCode].join('\', \'')»'], true)) {
-                $workflowShortName = 'enterprise';
             }
             if ('none' !== $workflowShortName) {
                 $action = $event->getTransition()->getName();
@@ -208,7 +205,7 @@ class WorkflowSubscriber {
         $permissionLevel = ACCESS_READ;
         $transitionName = $event->getTransition()->getName();
         «/*not used atm $targetState = $event->getTransition()->getTos()[0];*/»
-        $hasApproval = «IF needsApproval»in_array($objectType, ['«entities.filter[workflow != EntityWorkflowType.NONE].map[name.formatForCode].join('\', \'')»'], true)«ELSE»false«ENDIF»;
+        $hasApproval = «IF needsApproval»in_array($objectType, ['«entities.filter[approval].map[name.formatForCode].join('\', \'')»'], true)«ELSE»false«ENDIF»;
 
         switch ($transitionName) {
             case 'defer':
@@ -218,11 +215,7 @@ class WorkflowSubscriber {
             case 'update':
             case 'reject':
             case 'accept':
-            case 'publish':
-            case 'unpublish':
             case 'archive':
-            case 'trash':
-            case 'recover':
                 $permissionLevel = ACCESS_EDIT;
                 break;
             case 'approve':

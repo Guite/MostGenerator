@@ -552,7 +552,7 @@ class UploadHelper {
                 return $entity;
             }
 
-            «val loggableEntitiesWithUploads = getUploadEntities.filter(Entity).filter[loggable]»
+            «val loggableEntitiesWithUploads = getUploadEntities.filter[loggable]»
             // remove the file«IF !loggableEntitiesWithUploads.empty» (but not for loggable entities)«ENDIF»
             «IF !loggableEntitiesWithUploads.empty»
                 if (!in_array($objectType, ['«loggableEntitiesWithUploads.map[name.formatForCode].join('\', \'')»'])) {

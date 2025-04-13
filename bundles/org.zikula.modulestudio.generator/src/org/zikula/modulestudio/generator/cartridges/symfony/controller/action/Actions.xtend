@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -137,7 +136,7 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, DetailAction action) '''
-        «IF workflow != EntityWorkflowType.NONE»
+        «IF approval»
             if (
                 'approved' !== $«name.formatForCode»->getWorkflowState()
                 && !$this->permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)

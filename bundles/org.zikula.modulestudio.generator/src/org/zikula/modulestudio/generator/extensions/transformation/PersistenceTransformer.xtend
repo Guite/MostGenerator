@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
@@ -266,20 +265,12 @@ class PersistenceTransformer {
             ]
         }
 
-        if (entity.workflow != EntityWorkflowType.NONE) {
+        if (entity.approval) {
             listField.items += factory.createListFieldItem => [
                 name = 'Waiting'
                 value = 'waiting'
                 documentation = 'Content has been submitted and waits for approval.'
             ]
-
-            if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
-                listField.items += factory.createListFieldItem => [
-                    name = 'Accepted'
-                    value = 'accepted'
-                    documentation = 'Content has been submitted and accepted, but still waits for approval.'
-                ]
-            }
         }
 
         listField.items += factory.createListFieldItem => [
@@ -288,14 +279,6 @@ class PersistenceTransformer {
             documentation = 'Content has been approved and is available online.'
         ]
 
-        if (entity.hasTray) {
-            listField.items += factory.createListFieldItem => [
-                name = 'Suspended'
-                value = 'suspended'
-                documentation = 'Content has been approved, but is temporarily offline.'
-            ]
-        }
-
         if (entity.hasArchive) {
             listField.items += factory.createListFieldItem => [
                 name = 'Archived'
@@ -303,14 +286,6 @@ class PersistenceTransformer {
                 documentation = 'Content has reached the end and became archived.'
             ]
         }
-
-        //if (entity.softDeleteable) {
-            listField.items += factory.createListFieldItem => [
-                name = 'Trashed'
-                value = 'trashed'
-                documentation = 'Content has been marked as deleted, but is still persisted in the database.'
-            ]
-        //}
 
         listField.items += factory.createListFieldItem => [
             name = 'Deleted'
@@ -438,7 +413,7 @@ class PersistenceTransformer {
     }
 
     def private addModerationSettings(Application it) {
-        val entitiesWithApproval = entities.filter[workflow != EntityWorkflowType.NONE]
+        val entitiesWithApproval = entities.filter[approval]
         val entitiesWithEditActionsAndStandardFields = entities.filter[hasEditAction && standardFields]
         if (entitiesWithApproval.empty && entitiesWithEditActionsAndStandardFields.empty) {
             return
@@ -453,13 +428,6 @@ class PersistenceTransformer {
                 defaultValue = '2' // use admin group (gid=2) as fallback
                 documentation = 'Used to determine moderator user accounts for sending email notifications.'
             ]
-            if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
-                varContainer.fields += factory.createNumberField => [
-                    name = 'superModerationGroupFor' + entity.nameMultiple.formatForCodeCapital
-                    defaultValue = '2' // use admin group (gid=2) as fallback
-                    documentation = 'Used to determine moderator user accounts for sending email notifications.'
-                ]
-            }
         }
         for (entity : entitiesWithEditActionsAndStandardFields) {
             varContainer.fields += factory.createBooleanField => [

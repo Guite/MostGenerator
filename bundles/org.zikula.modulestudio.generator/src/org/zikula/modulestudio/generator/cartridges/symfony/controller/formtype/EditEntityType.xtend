@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
@@ -72,7 +71,7 @@ class EditEntityType {
         if (standardFields) {
             imports.add(app.appNamespace + '\\Traits\\ModerationFormFieldsTrait')
         }
-        if (workflow != EntityWorkflowType.NONE) {
+        if (approval) {
             imports.add(app.appNamespace + '\\Traits\\WorkflowFormFieldsTrait')
         }
         imports
@@ -88,11 +87,11 @@ class EditEntityType {
          */
         abstract class Abstract«name.formatForCodeCapital»Type extends AbstractType
         {
-            «IF it.standardFields || it.workflow != EntityWorkflowType.NONE»
+            «IF it.standardFields || it.approval»
                 «IF it.standardFields»
                     use ModerationFormFieldsTrait;
                 «ENDIF»
-                «IF it.workflow != EntityWorkflowType.NONE»
+                «IF it.approval»
                     use WorkflowFormFieldsTrait;
                 «ENDIF»
 
@@ -130,7 +129,7 @@ class EditEntityType {
                     }
                 «ENDIF»
                 $this->addEntityFields($builder, $options);
-                «IF workflow != EntityWorkflowType.NONE»
+                «IF approval»
                     $this->addAdditionalNotificationRemarksField($builder, $options);
                 «ENDIF»
                 «IF standardFields»
@@ -180,11 +179,8 @@ class EditEntityType {
                             «ENDIF»
                         ],
                         'mode' => 'create',
-                        «IF workflow != EntityWorkflowType.NONE»
+                        «IF approval»
                             'is_moderator' => false,
-                            «IF workflow == EntityWorkflowType.ENTERPRISE»
-                                'is_super_moderator' => false,
-                            «ENDIF»
                             'is_creator' => false,
                         «ENDIF»
                         'actions' => [],
@@ -203,11 +199,8 @@ class EditEntityType {
                     ])
                     ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
                     ->setAllowedTypes('mode', 'string')
-                    «IF workflow != EntityWorkflowType.NONE»
+                    «IF approval»
                         ->setAllowedTypes('is_moderator', 'bool')
-                        «IF workflow == EntityWorkflowType.ENTERPRISE»
-                            ->setAllowedTypes('is_super_moderator', 'bool')
-                        «ENDIF»
                         ->setAllowedTypes('is_creator', 'bool')
                     «ENDIF»
                     ->setAllowedTypes('actions', 'array')

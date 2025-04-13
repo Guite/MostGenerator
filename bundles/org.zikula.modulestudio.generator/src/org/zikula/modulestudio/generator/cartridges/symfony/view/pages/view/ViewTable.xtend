@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.pages.view
 
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NamedObject
@@ -222,25 +221,18 @@ class ViewTable {
         <div class="col-md-6">
             <select id="«appName.toFirstLower»Action" name="action" class="form-control form-control-sm">
                 <option value="">{% trans from 'messages' %}Choose action{% endtrans %}</option>
-                «IF workflow != EntityWorkflowType.NONE»
-                    «IF workflow == EntityWorkflowType.ENTERPRISE»
-                        <option value="accept" title="{{ '«getWorkflowActionDescription(workflow, 'Accept')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Accept{% endtrans %}</option>
-                        «IF ownerPermission»
-                            <option value="reject" title="{{ '«getWorkflowActionDescription(workflow, 'Reject')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Reject{% endtrans %}</option>
-                        «ENDIF»
-                        <option value="demote" title="{{ '«getWorkflowActionDescription(workflow, 'Demote')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Demote{% endtrans %}</option>
+                «IF approval»
+                    <option value="approve" title="{{ '«getWorkflowActionDescription('Approve')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Approve{% endtrans %}</option>
+                    <option value="demote" title="{{ '«getWorkflowActionDescription('Demote')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Demote{% endtrans %}</option>
+                    «IF ownerPermission»
+                        <option value="reject" title="{{ '«getWorkflowActionDescription('Reject')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Reject{% endtrans %}</option>
                     «ENDIF»
-                    <option value="approve" title="{{ '«getWorkflowActionDescription(workflow, 'Approve')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Approve{% endtrans %}</option>
-                «ENDIF»
-                «IF hasTray»
-                    <option value="publish" title="{{ '«getWorkflowActionDescription(workflow, 'Publish')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Publish{% endtrans %}</option>
-                    <option value="unpublish" title="{{ '«getWorkflowActionDescription(workflow, 'Unpublish')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Unpublish{% endtrans %}</option>
                 «ENDIF»
                 «IF hasArchive»
-                    <option value="archive" title="{{ '«getWorkflowActionDescription(workflow, 'Archive')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Archive{% endtrans %}</option>
-                    <option value="unarchive" title="{{ '«getWorkflowActionDescription(workflow, 'Unarchive')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Unarchive{% endtrans %}</option>
+                    <option value="archive" title="{{ '«getWorkflowActionDescription('Archive')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Archive{% endtrans %}</option>
+                    <option value="unarchive" title="{{ '«getWorkflowActionDescription('Unarchive')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Unarchive{% endtrans %}</option>
                 «ENDIF»
-                <option value="delete" title="{{ '«getWorkflowActionDescription(workflow, 'Delete')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Delete{% endtrans %}</option>
+                <option value="delete" title="{{ '«getWorkflowActionDescription('Delete')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Delete{% endtrans %}</option>
             </select>
         </div>
         <div class="col-md-3">

@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.workflows
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListFieldItem
 import java.util.ArrayList
 import java.util.HashMap
@@ -22,7 +21,7 @@ class Definition {
     extension WorkflowExtensions = new WorkflowExtensions
 
     Application app
-    EntityWorkflowType wfType
+    boolean withApproval
     ArrayList<ListFieldItem> states
     HashMap<String, ArrayList<String>> transitionsFrom
     HashMap<String, String> transitionsTo
@@ -39,35 +38,34 @@ class Definition {
         this.fsa = fsa
         outputPath = getResourcesPath + 'workflows/'
 
-        generate(EntityWorkflowType.NONE)
-        generate(EntityWorkflowType.STANDARD)
-        generate(EntityWorkflowType.ENTERPRISE)
+        generate(false)
+        generate(true)
     }
 
-    def private generate(EntityWorkflowType wfType) {
-        if (!app.hasWorkflow(wfType)) {
+    def private generate(boolean withApproval) {
+        if (!app.hasWorkflow(withApproval)) {
             return
         }
 
-        this.wfType = wfType
+        this.withApproval = withApproval
         // generate only those states which are required by any entity using this workflow type
-        this.states = getRequiredStateList(app, wfType)
+        this.states = getRequiredStateList(app, withApproval)
         this.collectTransitions
 
-        val fileName = wfType.textualName + '.yaml'
+        val fileName = withApproval.textualName + '.yaml'
         fsa.generateFile(outputPath + fileName, workflowDefinition)
     }
 
     def private workflowDefinition() '''
         framework:
             workflows:
-                «app.appName.formatForDB»_«wfType.textualName.formatForDB»:
+                «app.appName.formatForDB»_«withApproval.textualName.formatForDB»:
                     type: state_machine
                     marking_store:
                         type: method
                         property: workflowState
                     supports:
-                        «FOR entity : app.getEntitiesForWorkflow(wfType)»
+                        «FOR entity : app.getEntitiesForWorkflow(withApproval)»
                             - «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»
                         «ENDFOR»
                     «/*initial_marking: [initial]*/»«statesImpl»
@@ -108,10 +106,8 @@ class Definition {
             case 'waiting' : actionsForWaiting
             case 'accepted' : actionsForAccepted
             case 'approved' : actionsForApproved
-            case 'suspended' : actionsForSuspended
             case 'archived' : actionsForArchived
             // done in actionsForDestructionImpl below
-            case 'trashed' : ''
             case 'deleted' : ''
         }
     }
@@ -143,13 +139,6 @@ class Definition {
     def private actionsForApproved(ListFieldItem it) '''
         «updateAction»
         «demoteAction»
-        «suspendAction»
-        «archiveAction»
-    '''
-
-    def private actionsForSuspended(ListFieldItem it) '''
-        «updateAction»
-        «unsuspendAction»
         «archiveAction»
     '''
 
@@ -159,13 +148,13 @@ class Definition {
     '''
 
     def private deferAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'deferred')»
+        «IF app.hasWorkflowState(withApproval, 'deferred')»
             «addTransition('defer', it.value, 'deferred')»
         «ENDIF»
     '''
 
     def private submitAction(ListFieldItem it) '''
-        «IF wfType == EntityWorkflowType.NONE»
+        «IF !withApproval»
             «addTransition('submit', it.value, 'approved')»
         «ELSE»
             «addTransition('submit', it.value, 'waiting')»
@@ -177,13 +166,13 @@ class Definition {
     '''
 
     def private rejectAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'deferred')»
+        «IF app.hasWorkflowState(withApproval, 'deferred')»
             «addTransition('reject', it.value, 'deferred')»
         «ENDIF»
     '''
 
     def private acceptAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'accepted')»
+        «IF app.hasWorkflowState(withApproval, 'accepted')»
             «addTransition('accept', it.value, 'accepted')»
         «ENDIF»
     '''
@@ -193,60 +182,38 @@ class Definition {
     '''
 
     def private submitAndAcceptAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'accepted')»
+        «IF app.hasWorkflowState(withApproval, 'accepted')»
             «addTransition('accept', it.value, 'accepted')»
         «ENDIF»
     '''
 
     def private submitAndApproveAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'waiting')»
+        «IF app.hasWorkflowState(withApproval, 'waiting')»
             «addTransition('approve', it.value, 'approved')»
         «ENDIF»
     '''
 
     def private demoteAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'accepted')»
+        «IF app.hasWorkflowState(withApproval, 'accepted')»
             «addTransition('demote', it.value, 'accepted')»
         «ENDIF»
     '''
 
-    def private suspendAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'suspended')»
-            «addTransition('unpublish', it.value, 'suspended')»
-        «ENDIF»
-    '''
-
-    def private unsuspendAction(ListFieldItem it) '''
-        «IF it.value == 'suspended'»
-            «addTransition('publish', it.value, 'approved')»
-        «ENDIF»
-    '''
-
     def private archiveAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'archived')»
+        «IF app.hasWorkflowState(withApproval, 'archived')»
             «addTransition('archive', it.value, 'archived')»
         «ENDIF»
     '''
 
     def private unarchiveAction(ListFieldItem it) '''
-        «IF app.hasWorkflowState(wfType, 'archived')»
+        «IF app.hasWorkflowState(withApproval, 'archived')»
             «addTransition('unarchive', it.value, 'approved')»
         «ENDIF»
     '''
 
     def private actionsForDestructionImpl(ListFieldItem it) '''
         «IF it.value != 'initial' && it.value != 'deleted'»
-            «IF it.value != 'trashed' && app.hasWorkflowState(wfType, 'trashed')»
-                «trashAndRecoverActions»
-            «ENDIF»
             «deleteAction»
-        «ENDIF»
-    '''
-
-    def private trashAndRecoverActions(ListFieldItem it) '''
-        «addTransition('trash', it.value, 'trashed')»
-        «IF !transitionsTo.containsKey('recovertrashed')»
-            «addTransition('recover', 'trashed', it.value)»
         «ENDIF»
     '''
 

@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -35,7 +34,7 @@ class Relations {
         {% trans_default_domain '«name.formatForCode»' %}
         {% set hasAdminPermission = permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_ADD')) %}
         «IF ownerPermission»
-            {% set hasEditPermission = permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
+            {% set hasEditPermission = permissionHelper.hasComponentPermission('«name.formatForCode»', constant('ACCESS_«IF !approval»EDIT«ELSE»COMMENT«ENDIF»')) %}
         «ENDIF»
         «IF hasDetailAction»
             {% if noLink is not defined %}
@@ -46,7 +45,7 @@ class Relations {
             {% if items|default and items|length > 0 %}
             <ul class="list-group «app.appName.toLowerCase»-related-item-list «name.formatForDB»">
             {% for item in items %}
-                {% if hasAdminPermission or (item.workflowState == 'approved' and permissionHelper.mayRead(item))«IF ownerPermission» or (item.workflowState in ['defered', 'trashed'] and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
+                {% if hasAdminPermission or (item.workflowState == 'approved' and permissionHelper.mayRead(item))«IF ownerPermission» or ('defered' == item.workflowState and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
                 <li class="list-group-item">
         «ENDIF»
         <h5>
@@ -92,7 +91,7 @@ class Relations {
             {% set createTitle = null %}
             {% set creationPossible = not isQuickView«IF !many» and not «relatedEntity.name.formatForCode».«relationAliasName»|default«ENDIF» %}
             {% if creationPossible %}
-                {% set mayManage = permissionHelper.hasComponentPermission('«otherEntity.name.formatForCode»', constant('ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF otherEntity.workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»')) %}
+                {% set mayManage = permissionHelper.hasComponentPermission('«otherEntity.name.formatForCode»', constant('ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF !otherEntity.approval»EDIT«ELSE»COMMENT«ENDIF»')) %}
                 {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
                     {% set createLink = path('«appName.formatForDB»_«otherEntity.name.formatForDB»_edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».get«IF relatedEntity.hasSluggableFields && relatedEntity.slugUnique»Slug«ELSE»Key«ENDIF»()}) %}
                     {% set createTitle = 'Create «otherEntity.name.formatForDisplay»'|trans({}, '«otherEntity.name.formatForCode»') %}

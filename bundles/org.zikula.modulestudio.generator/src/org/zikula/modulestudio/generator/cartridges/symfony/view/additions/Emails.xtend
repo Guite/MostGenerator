@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -15,7 +14,7 @@ class Emails {
     extension NamingExtensions = new NamingExtensions
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        val entitiesWithWorkflow = entities.filter[workflow != EntityWorkflowType.NONE]
+        val entitiesWithWorkflow = entities.filter[approval]
         if (entitiesWithWorkflow.empty) {
             return
         }

@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.formcomponents
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -56,7 +55,7 @@ class Section {
     '''
 
     def private additionalRemark(Entity it) '''
-        «IF workflow != EntityWorkflowType.NONE»
+        «IF approval»
             <fieldset>
                 <legend>{% trans from 'messages' %}Communication{% endtrans %}</legend>
                 {{ form_row(form.additionalNotificationRemarks) }}

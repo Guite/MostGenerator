@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.menu
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -32,7 +31,7 @@ class IndexActions {
         «IF tree»
             if ('tree' === $currentTemplate) {
                 «IF hasEditAction»
-                    if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+                    if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF !approval»EDIT«ELSE»COMMENT«ENDIF»)) {
                         $menu->addChild('Add root node', [
                             'uri' => 'javascript:void(0)',
                         ])
@@ -106,7 +105,7 @@ class IndexActions {
     def private linkToEntityCreationImpl(Entity it) '''
         $canBeCreated = $this->modelHelper->canBeCreated($objectType);
         if ($canBeCreated) {
-            if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+            if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF !approval»EDIT«ELSE»COMMENT«ENDIF»)) {
                 $menu->addChild('Create «name.formatForDisplay»', [
                     'route' => $routePrefix . 'edit',
                 ])
@@ -145,7 +144,7 @@ class IndexActions {
 
     def private linkToggleOwner(Entity it) '''
         «IF standardFields»
-            if («IF ownerPermission»!$showOnlyOwn && «ENDIF»$this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+            if («IF ownerPermission»!$showOnlyOwn && «ENDIF»$this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF !approval»EDIT«ELSE»COMMENT«ENDIF»)) {
                 «linkToggleOwnerImpl»
             }
         «ENDIF»

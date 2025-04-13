@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.menu
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -150,7 +149,7 @@ class ItemActions {
                 «val relationAliasNameParam = elem.getRelationAliasName(!useTarget)»
                 «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
-                if («IF standardFields»$isOwner || «ENDIF»$this->permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF otherEntity.workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
+                if («IF standardFields»$isOwner || «ENDIF»$this->permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF !otherEntity.approval»EDIT«ELSE»COMMENT«ENDIF»)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (null === $entity->get«relationAliasName»()) {

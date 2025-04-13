@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.trait
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -42,7 +41,7 @@ class WorkflowFormFieldsTrait {
         public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options = []): void
         {
             $helpText = '';
-            if ($options['is_moderator']«IF hasWorkflow(EntityWorkflowType.ENTERPRISE)» || $options['is_super_moderator']«ENDIF») {
+            if ($options['is_moderator']) {
                 $helpText = t('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.');
             } elseif ($options['is_creator']) {
                 $helpText = t('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
