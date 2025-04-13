@@ -1,8 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
+import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberFieldType
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -92,7 +93,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
         #[ORM\Column(name: 'object_class', type: Types::STRING, length: 140)]
         protected «/* no type allowed because we override a parent field */»$objectClass;
 
-        «IF primaryKey instanceof AbstractIntegerField»
+        «IF primaryKey instanceof NumberField && (it as NumberField).numberType == NumberFieldType.INTEGER»
             /**
              * Use integer instead of string for increased performance.
              *

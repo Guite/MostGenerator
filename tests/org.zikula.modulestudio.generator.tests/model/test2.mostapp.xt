@@ -235,7 +235,9 @@ application "SimpleNews" targets SF73 {
                 user "myUser6" {
                     onAccountDeletion DELETE
                 },
-                number "myNumber",
+                number "myNumber" {
+                    numberType DECIMAL
+                },
                 datetime "myDate" {
                     components DATE
                 },

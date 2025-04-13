@@ -9,9 +9,9 @@ import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IndexAction
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.RelationEditMode
@@ -154,7 +154,7 @@ class ControllerExtensions {
      * Determines whether the given integer field instance represents a user group
      * selector variable for moderation purposes.
      */
-    def isUserGroupSelector(IntegerField it) {
+    def isUserGroupSelector(NumberField it) {
         if (null !== entity) {
             return false
         }

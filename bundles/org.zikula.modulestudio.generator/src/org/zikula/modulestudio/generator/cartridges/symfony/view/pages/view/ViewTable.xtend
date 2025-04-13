@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.NumberField
@@ -354,7 +353,6 @@ class ViewTable {
     def private alignment(Object it) {
         switch it {
             BooleanField: 'center'
-            IntegerField: 'right'
             NumberField: 'right'
             default: 'left'
         }

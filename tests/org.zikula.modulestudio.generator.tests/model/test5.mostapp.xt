@@ -102,6 +102,7 @@ application "SimpleNews" {
                     visibleOnNew false
                     visibleOnEdit false
                     visibleOnSort false
+                    numberType DECIMAL
                 },
                 number "num2" unique percentage translatable {
                     defaultValue "123"

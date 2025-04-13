@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
@@ -8,11 +7,11 @@ import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
+import de.guite.modulestudio.metamodel.NumberRole
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -121,8 +120,8 @@ class Property {
 
     def private persistentPropertyAdditions(Field it) {
         switch it {
-            IntegerField:
-                if (it.version && entity.hasOptimisticLock) '''
+            NumberField:
+                if (it.role == NumberRole.VERSION && entity.hasOptimisticLock) '''
                     #[ORM\Version]
                 '''
             UserField:
@@ -146,13 +145,12 @@ class Property {
         switch it {
             BooleanField:
                 if (it.defaultValue == 'true') 'true' else 'false'
-            AbstractIntegerField:
-                if (it instanceof IntegerField && (it as IntegerField).version) '1' 
+            NumberField:
+                if (it.role == NumberRole.VERSION) '1' 
                 else if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue
                 else if (it.nullable) 'null'
-                else '0'
-            NumberField:
-                if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
+                else if (it.numberType == NumberFieldType.INTEGER) '0'
+                else '0.00'
             ArrayField: '[]'
             UploadField: 'null'
             ListField:
@@ -183,7 +181,7 @@ class Property {
         «fieldAccessorDefault»
     '''
 
-    def dispatch fieldAccessor(IntegerField it) '''
+    def dispatch fieldAccessor(NumberField it) '''
         «IF isIndexByField»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), true)»
         «ELSE»

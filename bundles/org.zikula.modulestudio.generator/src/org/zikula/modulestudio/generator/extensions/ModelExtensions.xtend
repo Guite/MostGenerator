@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
@@ -11,11 +10,11 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityLockType
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
+import de.guite.modulestudio.metamodel.NumberRole
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
@@ -268,8 +267,8 @@ class ModelExtensions {
      * Checks whether a given field is a version field or not.
      */
     def private isVersionField(Field it) {
-        if (it instanceof IntegerField) {
-            return it.version
+        if (it instanceof NumberField) {
+            return NumberRole.VERSION == role;
         }
 
         false
@@ -589,7 +588,8 @@ class ModelExtensions {
         switch it {
             BooleanField: if (forPhp) 'bool' else 'boolean'
             UserField: 'User'
-            AbstractIntegerField: {
+            NumberField:
+                if (NumberFieldType.INTEGER == numberType) {
                     if (forPhp) 'int'
                     else {
                         // choose mapping type depending on length
@@ -597,10 +597,11 @@ class ModelExtensions {
                         else if (it.length < 12) 'integer'
                         else 'bigint'
                     }
-            }
-            NumberField: if (forPhp) 'float' else {
-                if (numberType == NumberFieldType.DECIMAL) 'decimal' else 'float'
-            }
+                } else {
+                    if (forPhp) 'float' else {
+                        if (numberType == NumberFieldType.DECIMAL) 'decimal' else 'float'
+                    }
+                }
             StringField: 'string'
             TextField: if (forPhp) 'string' else 'text'
             UploadField: 'string'

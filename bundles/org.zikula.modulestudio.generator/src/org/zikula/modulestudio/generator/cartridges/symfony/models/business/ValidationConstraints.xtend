@@ -1,15 +1,14 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.business
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -59,7 +58,7 @@ class ValidationConstraints {
         */»«ENDIF»
     '''
 
-    def private fieldAnnotationsInteger(AbstractIntegerField it) '''
+    def private fieldAnnotationsInteger(NumberField it) '''
         «IF mandatory && (!primaryKey || (null !== entity && entity.getVersionField == this))»
             #[Assert\NotBlank]
             #[Assert\NotEqualTo(value: 0)]
@@ -67,45 +66,37 @@ class ValidationConstraints {
             #[Assert\NotNull]
         */»«ENDIF»
     '''
-    def dispatch fieldAnnotations(AbstractIntegerField it) '''
-        «IF null === entity
-         || (
-            entity.incoming.filter[r|r.targetField == name].empty
-             && entity.outgoing.filter[r|r.sourceField == name].empty
-         )»
-            «fieldAnnotationsInteger»
-        «ENDIF»
-    '''
-    def dispatch fieldAnnotations(IntegerField it) '''
-        «IF null === entity
-         || (
-            entity.incoming.filter[r|r.targetField == name].empty
-             && entity.outgoing.filter[r|r.sourceField == name].empty
-         )»
-            «fieldAnnotationsInteger»
-            «IF minValue.toString != '0' && maxValue.toString != '0'»
+    def dispatch fieldAnnotations(NumberField it) '''
+        «IF NumberFieldType.INTEGER == numberType»
+            «IF null === entity
+             || (
+                entity.incoming.filter[r|r.targetField == name].empty
+                 && entity.outgoing.filter[r|r.sourceField == name].empty
+             )»
+                «fieldAnnotationsInteger»
+                «IF minValue.toString != '0' && maxValue.toString != '0'»
+                    #[Assert\Range(min: «minValue», max: «maxValue»)]
+                «ELSEIF minValue.toString != '0'»
+                    #[Assert\GreaterThanOrEqual(value: «minValue»)]
+                    #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
+                «ELSEIF maxValue.toString != '0'»
+                    #[Assert\LessThanOrEqual(value: «maxValue»)]
+                «ELSE»
+                    #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
+                «ENDIF»
+            «ENDIF»
+        «ELSE»
+            «fieldAnnotationsNumeric»
+            «IF minValue.toString != '0.0' && maxValue.toString != '0.0'»
                 #[Assert\Range(min: «minValue», max: «maxValue»)]
-            «ELSEIF minValue.toString != '0'»
+            «ELSEIF minValue.toString != '0.0'»
                 #[Assert\GreaterThanOrEqual(value: «minValue»)]
                 #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
-            «ELSEIF maxValue.toString != '0'»
+            «ELSEIF maxValue.toString != '0.0'»
                 #[Assert\LessThanOrEqual(value: «maxValue»)]
             «ELSE»
                 #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
             «ENDIF»
-        «ENDIF»
-    '''
-    def dispatch fieldAnnotations(NumberField it) '''
-        «fieldAnnotationsNumeric»
-        «IF minValue.toString != '0.0' && maxValue.toString != '0.0'»
-            #[Assert\Range(min: «minValue», max: «maxValue»)]
-        «ELSEIF minValue.toString != '0.0'»
-            #[Assert\GreaterThanOrEqual(value: «minValue»)]
-            #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
-        «ELSEIF maxValue.toString != '0.0'»
-            #[Assert\LessThanOrEqual(value: «maxValue»)]
-        «ELSE»
-            #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
         «ENDIF»
     '''
     def dispatch fieldAnnotations(UserField it) '''

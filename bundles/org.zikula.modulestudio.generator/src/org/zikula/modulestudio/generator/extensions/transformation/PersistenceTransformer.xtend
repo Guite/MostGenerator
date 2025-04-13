@@ -121,8 +121,6 @@ class PersistenceTransformer {
                 name = 'latitude'
                 documentation = 'The coordinate\'s latitude part.'
                 defaultValue = '0.00'
-                length = 12
-                scale = 7
                 mandatory = false
                 visibleOnIndex = false
                 visibleOnDetail = false
@@ -135,8 +133,6 @@ class PersistenceTransformer {
                 name = 'longitude'
                 documentation = 'The coordinate\'s longitude part.'
                 defaultValue = '0.00'
-                length = 12
-                scale = 7
                 mandatory = false
                 visibleOnIndex = false
                 visibleOnDetail = false
@@ -221,9 +217,8 @@ class PersistenceTransformer {
      * @param entity The given {@link Entity} instance.
      */
     def private addPrimaryKey(Entity entity) {
-        val idField = ModuleStudioFactory.eINSTANCE.createIntegerField => [
+        val idField = ModuleStudioFactory.eINSTANCE.createNumberField => [
             name = 'id'
-            length = 9
             primaryKey = true
             unique = true
             visibleOnIndex = true
@@ -333,7 +328,7 @@ class PersistenceTransformer {
         val factory = ModuleStudioFactory.eINSTANCE
 
         for (entity : entitiesWithIndex) {
-            varContainer.fields += factory.createIntegerField => [
+            varContainer.fields += factory.createNumberField => [
                 name = entity.name.formatForCode + 'EntriesPerPage'
                 defaultValue = '10'
                 documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page.'
@@ -391,13 +386,13 @@ class PersistenceTransformer {
                     documentation = 'Whether to enable shrinking huge images to maximum dimensions. Stores downscaled version of the original image.'
                     mandatory = false
                 ]
-                varContainer.fields += factory.createIntegerField => [
+                varContainer.fields += factory.createNumberField => [
                     name = 'shrinkWidth' + fieldSuffix
                     defaultValue = '800'
                     documentation = 'The maximum image width in pixels.'
                     unit = 'pixels'
                 ]
-                varContainer.fields += factory.createIntegerField => [
+                varContainer.fields += factory.createNumberField => [
                     name = 'shrinkHeight' + fieldSuffix
                     defaultValue = '600'
                     documentation = 'The maximum image height in pixels.'
@@ -419,13 +414,13 @@ class PersistenceTransformer {
                 varContainer.fields += thumbModeField
                 for (action : #['index', 'detail', 'edit']) {
                     if ((action == 'index' && entity.hasIndexAction) || (action == 'detail' && entity.hasDetailAction) || (action == 'edit' && entity.hasEditAction)) {
-                        varContainer.fields += factory.createIntegerField => [
+                        varContainer.fields += factory.createNumberField => [
                             name = 'thumbnailWidth' + fieldSuffix + action.toFirstUpper
                             defaultValue = if (action == 'index') '32' else '240'
                             documentation = 'Thumbnail width on ' + action + ' pages in pixels.'
                             unit = 'pixels'
                         ]
-                        varContainer.fields += factory.createIntegerField => [
+                        varContainer.fields += factory.createNumberField => [
                             name = 'thumbnailHeight' + fieldSuffix + action.toFirstUpper
                             defaultValue = if (action == 'index') '24' else '180'
                             documentation = 'Thumbnail height on ' + action + ' pages in pixels.'
@@ -450,13 +445,13 @@ class PersistenceTransformer {
         val factory = ModuleStudioFactory.eINSTANCE
 
         for (entity : entitiesWithApproval) {
-            varContainer.fields += factory.createIntegerField => [
+            varContainer.fields += factory.createNumberField => [
                 name = 'moderationGroupFor' + entity.nameMultiple.formatForCodeCapital
                 defaultValue = '2' // use admin group (gid=2) as fallback
                 documentation = 'Used to determine moderator user accounts for sending email notifications.'
             ]
             if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
-                varContainer.fields += factory.createIntegerField => [
+                varContainer.fields += factory.createNumberField => [
                     name = 'superModerationGroupFor' + entity.nameMultiple.formatForCodeCapital
                     defaultValue = '2' // use admin group (gid=2) as fallback
                     documentation = 'Used to determine moderator user accounts for sending email notifications.'
@@ -491,6 +486,7 @@ class PersistenceTransformer {
 
         varContainer.fields += factory.createNumberField => [
             name = 'defaultLatitude'
+            numberType = NumberFieldType.DECIMAL
             defaultValue = '55.88'
             documentation = 'The default latitude.'
         ]
@@ -499,7 +495,7 @@ class PersistenceTransformer {
             defaultValue = '12.36'
             documentation = 'The default longitude.'
         ]
-        varContainer.fields += factory.createIntegerField => [
+        varContainer.fields += factory.createNumberField => [
             name = 'defaultZoomLevel'
             defaultValue = '5'
             documentation = 'The default zoom level.'

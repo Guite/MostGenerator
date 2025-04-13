@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.UserField
@@ -125,14 +124,7 @@ class FileHelper {
         «ENDIF»
     '''
 
-    def private dispatch setterAssignment(IntegerField it, String name) '''
-        «setterAssignmentNumeric(name)»
-    '''
     def private dispatch setterAssignment(NumberField it, String name) '''
-        «setterAssignmentNumeric(name)»
-    '''
-
-    def private setterAssignmentNumeric(Field it, String name) '''
         $this->«name» = $«name»;
     '''
 

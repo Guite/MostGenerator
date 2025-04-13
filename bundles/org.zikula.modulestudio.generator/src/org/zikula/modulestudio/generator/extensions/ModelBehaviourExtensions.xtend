@@ -5,8 +5,9 @@ import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberRole
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.Relationship
@@ -246,7 +247,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the sortable extension enabled.
      */
     def getSortableFields(Entity it) {
-        fields.filter(IntegerField).filter[sortablePosition]
+        fields.filter(NumberField).filter[NumberRole.SORTABLE_POSITION == role]
     }
 
     /**
@@ -288,10 +289,7 @@ class ModelBehaviourExtensions {
      * Determines the version field of an entity if there is one.
      */
     def getVersionField(Entity it) {
-        val intVersions = fields.filter(IntegerField).filter[version]
-        if (!intVersions.empty) {
-            return intVersions.head
-        }
+        fields.filter(NumberField).filter[NumberRole.VERSION == role].head
     }
 
     /**

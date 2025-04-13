@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberRole
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -291,7 +292,7 @@ class EntityDisplayHelper {
 
     def private formatFieldValue(Field it, CharSequence value) {
         switch it {
-            NumberField: '''$this->«IF currency»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
+            NumberField: '''$this->«IF NumberRole.MONEY == role»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
             UserField: '''(«value» ? «value»->getUname() : '')'''
             ListField: '''«IF null !== entity»$this->listEntriesHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')«ELSE»«value»«ENDIF»'''
             DatetimeField: '''$this->dateFormatter->formatObject(«value», [«IF isDateTimeField»IntlDateFormatter::SHORT, IntlDateFormatter::SHORT«ELSEIF isDateField»IntlDateFormatter::SHORT, IntlDateFormatter::NONE«ELSEIF isTimeField»IntlDateFormatter::NONE, IntlDateFormatter::SHORT«ENDIF»])'''

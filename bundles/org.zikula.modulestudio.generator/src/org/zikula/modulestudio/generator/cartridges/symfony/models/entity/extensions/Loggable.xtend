@@ -1,8 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
+import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberFieldType
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -83,7 +84,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class implementation.
      */
     override extensionClassBaseImplementation(Entity it) '''
-        «IF primaryKey instanceof AbstractIntegerField»
+        «IF primaryKey instanceof NumberField && (it as NumberField).numberType == NumberFieldType.INTEGER»
             /**
              * Use integer instead of string for increased performance.
              */

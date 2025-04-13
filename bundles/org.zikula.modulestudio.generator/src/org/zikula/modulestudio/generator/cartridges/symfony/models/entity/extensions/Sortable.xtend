@@ -1,8 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
+import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberRole
 
 class Sortable extends AbstractExtension implements EntityExtensionInterface {
 
@@ -19,7 +20,7 @@ class Sortable extends AbstractExtension implements EntityExtensionInterface {
         «IF sortableGroup»
             #[Gedmo\SortableGroup]
         «ENDIF»
-        «IF it instanceof AbstractIntegerField && (it as AbstractIntegerField).sortablePosition»
+        «IF it instanceof NumberField && (it as NumberField).role == NumberRole.SORTABLE_POSITION»
             #[Gedmo\SortablePosition]
         «ENDIF»
     '''

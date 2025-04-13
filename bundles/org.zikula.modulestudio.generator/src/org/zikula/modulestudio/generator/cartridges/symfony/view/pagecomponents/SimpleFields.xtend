@@ -4,9 +4,9 @@ import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberRole
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
@@ -35,17 +35,18 @@ class SimpleFields {
         {% endif %}
     '''
 
-    def dispatch displayField(IntegerField it, String objName, String page) '''
-        {{ «objName».«name.formatForCode» }}«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ELSEIF percentage»%«ENDIF»'''
-
     def dispatch displayField(NumberField it, String objName, String page) {
-        if (percentage) '''
+        if (NumberRole.PERCENTAGE == role) '''
             {{ («objName».«name.formatForCode» * 100)|format_number }}«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ELSE»%«ENDIF»'''
         else if (#['latitude', 'longitude'].contains(name)) '''
             {{ «objName».«name.formatForCode»|«application.appName.formatForDB»_geoData }}'''
         else '''
-            {{ «objName».«name.formatForCode»|format_«IF currency»currency('EUR')«ELSE»number«ENDIF» }}«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ENDIF»'''
+            {{ «objName».«name.formatForCode»|format_«IF NumberRole.MONEY == role»currency(«currencyForMoney(objName)»)«ELSE»number«ENDIF» }}«displayUnit»'''
     }
+
+    def private currencyForMoney(NumberField it, String objName) '''«IF entity.hasCurrencyFieldsEntity»«objName».«entity.getCurrencyFieldsEntity.head.name.formatForCode»|default('EUR')«ELSE»'EUR'«ENDIF»'''
+
+    def private dispatch displayUnit(NumberField it) '''«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ELSEIF NumberRole.PERCENTAGE == role»%«ENDIF»'''
 
     def dispatch displayField(UserField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
@@ -124,7 +125,7 @@ class SimpleFields {
             {{ «objName».«name.formatForCode»«IF page == 'viewjson'»|e('html_attr')«ENDIF» }}«displayUnit»'''
     }
 
-    def private displayUnit(StringField it) '''«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ENDIF»'''
+    def private dispatch displayUnit(StringField it) '''«IF unit != ''»&nbsp;{% trans %}«unit»{% endtrans %}«ENDIF»'''
 
     def dispatch displayField(TextField it, String objName, String page) '''
         {{ «objName».«name.formatForCode»«IF page == 'view'»|striptags|u.truncate(50)«ELSE»«ENDIF» }}'''

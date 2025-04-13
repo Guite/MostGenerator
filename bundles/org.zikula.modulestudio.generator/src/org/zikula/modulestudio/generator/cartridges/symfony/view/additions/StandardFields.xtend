@@ -1,7 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view.additions
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberRole
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -94,7 +95,7 @@ class StandardFields {
         {% endif %}
         «FOR entity : getLoggableEntities»
             {% if obj._objectType == '«entity.name.formatForCode»' %}
-                <li>{% trans %}Current version{% endtrans %}: {{ obj.«entity.fields.filter(IntegerField).filter[version].head.name.formatForCode» }}</li>
+                <li>{% trans %}Current version{% endtrans %}: {{ obj.«entity.fields.filter(NumberField).filter[NumberRole.VERSION == role].head.name.formatForCode» }}</li>
             {% endif %}
         «ENDFOR»
         </ul>

@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models.business
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.NumberField
@@ -13,35 +12,12 @@ import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
-import java.math.BigInteger
 import java.util.ArrayList
 
 class ValidationHelpProvider {
 
     def dispatch ArrayList<String> helpMessages(Field it) {
         newArrayList
-    }
-
-    def dispatch helpMessages(IntegerField it) {
-        val messages = newArrayList
-
-        val hasMin = 0 < minValue.compareTo(BigInteger.valueOf(0))
-        val hasMax = 0 < maxValue.compareTo(BigInteger.valueOf(0))
-        if (!range && (hasMin || hasMax)) {
-            if (hasMin && hasMax) {
-                if (minValue == maxValue) {
-                    messages += '''«''»'Note: this value must exactly be %value%.'«''»'''
-                } else {
-                    messages += '''«''»'Note: this value must be between %minValue% and %maxValue%.'«''»'''
-                }
-            } else if (hasMin) {
-                messages += '''«''»'Note: this value must not be lower than %minValue%.'«''»'''
-            } else if (hasMax) {
-                messages += '''«''»'Note: this value must not be greater than %maxValue%.'«''»'''
-            }
-        }
-
-        messages
     }
 
     def dispatch helpMessages(NumberField it) {
@@ -92,29 +68,6 @@ class ValidationHelpProvider {
 
     def dispatch ArrayList<String> helpMessageParameters(Field it) {
         newArrayList
-    }
-
-    def dispatch helpMessageParameters(IntegerField it) {
-        val parameters = newArrayList
-
-        val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0
-        val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0
-        if (!range && (hasMin || hasMax)) {
-            if (hasMin && hasMax) {
-                if (minValue == maxValue) {
-                    parameters += '''«''»'%value%' => «minValue»'''
-                } else {
-                    parameters += '''«''»'%minValue%' => «minValue»'''
-                    parameters += '''«''»'%maxValue%' => «maxValue»'''
-                }
-            } else if (hasMin) {
-                parameters += '''«''»'%minValue%' => «minValue»'''
-            } else if (hasMax) {
-                parameters += '''«''»'%maxValue%' => «maxValue»'''
-            }
-        }
-
-        parameters
     }
 
     def dispatch helpMessageParameters(NumberField it) {

@@ -7,9 +7,10 @@ import de.guite.modulestudio.metamodel.DateTimeRole
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberFieldType
+import de.guite.modulestudio.metamodel.NumberRole
 import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.RelationEditMode
 import de.guite.modulestudio.metamodel.Relationship
@@ -20,7 +21,6 @@ import de.guite.modulestudio.metamodel.TextRole
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UserField
-import java.math.BigInteger
 import java.util.ArrayList
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerMethodInterface
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ValidationHelpProvider
@@ -68,7 +68,7 @@ class ConfigureFields implements ControllerMethodInterface {
         }*/
 
         val nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
-        if (!formFields.filter(IntegerField).filter[range].empty) {
+        if (!formFields.filter(NumberField).filter[NumberRole.RANGE == role].empty) {
             imports.add(nsSymfonyFormType + 'RangeType')
         }
         if (geographical) {
@@ -229,7 +229,6 @@ class ConfigureFields implements ControllerMethodInterface {
     def private alignment(Object it) {
         switch it {
             BooleanField: 'center'
-            IntegerField: 'right'
             NumberField: 'right'
             StringField: if (#[StringRole.MAIL, StringRole.URL].contains(role)) 'center' else 'left'
             default: 'left'
@@ -252,51 +251,19 @@ class ConfigureFields implements ControllerMethodInterface {
         calls
     }
 
-    def private dispatch fieldType(IntegerField it) {
-        if (primaryKey) 'Id' else
-        if (percentage) 'Percent' else
-        if (length >= 12) 'Integer' else 'Integer' // EAB recommends Text for bigint, changing this would require passing the value as string though
+    def private dispatch fieldType(NumberField it) {
+        if (primaryKey) 'Id'
+        else if (NumberRole.MONEY == role) 'Money'
+        else if (NumberRole.PERCENTAGE == role) 'Percent'
+        else if (NumberFieldType.DECIMAL == numberType) 'Integer'
+        else 'Number'
     }
-    def private dispatch options(IntegerField it) {
+    def private dispatch options(NumberField it) {
         var calls = commonOptions
         if (primaryKey) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/IdField.html
             calls += '''->setMaxLength(«length»)'''
-        } else if (percentage) {
-            // https://symfony.com/bundles/EasyAdminBundle/current/fields/PercentField.html
-            calls += '''->setNumDecimals(0)'''
-            // setRoundingMode(...)
-            calls += '''->setStoredAsFractional(false)'''
-            if (null !== unit && !unit.empty) {
-                calls += '''->setSymbol('«unit»')'''
-            }
-        /*} else if (length >= 12) {
-            // https://symfony.com/bundles/EasyAdminBundle/current/fields/TextField.html
-            // renderAsHtml()
-            calls += '''->setMaxLength(«length»)'''
-            calls += '''->stripTags()'''*/
-        } else {
-            // https://symfony.com/bundles/EasyAdminBundle/current/fields/IntegerField.html
-            // setNumberFormat(...)
-        }
-        calls
-    }
-
-    def private dispatch fieldType(NumberField it) {
-        if (percentage) 'Percent' else
-        if (currency) 'Money' else 'Number'
-    }
-    def private dispatch options(NumberField it) {
-        var calls = commonOptions
-        if (percentage) {
-            // https://symfony.com/bundles/EasyAdminBundle/current/fields/PercentField.html
-            calls += '''->setNumDecimals(«scale»)'''
-            // setRoundingMode(...)
-            // setStoredAsFractional(...)
-            if (null !== unit && !unit.empty) {
-                calls += '''->setSymbol('«unit»')'''
-            }
-        } else if (currency) {
+        } else if (NumberRole.MONEY == role) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/MoneyField.html
             if (entity.hasCurrencyFieldsEntity) {
                 calls += '''->setCurrencyPropertyPath('«entity.getCurrencyFieldsEntity.head.name.formatForCode»')'''
@@ -305,6 +272,19 @@ class ConfigureFields implements ControllerMethodInterface {
             }
             calls += '''->setNumDecimals(«scale»)'''
             // setStoredAsCents()
+        } else if (NumberRole.PERCENTAGE == role) {
+            // https://symfony.com/bundles/EasyAdminBundle/current/fields/PercentField.html
+            calls += '''->setNumDecimals(«scale»)'''
+            // setRoundingMode(...)
+            if (NumberFieldType.INTEGER == fieldType) {
+                calls += '''->setStoredAsFractional(false)'''
+            }
+            if (null !== unit && !unit.empty) {
+                calls += '''->setSymbol('«unit»')'''
+            }
+        } else if (NumberFieldType.INTEGER == fieldType) {
+            // https://symfony.com/bundles/EasyAdminBundle/current/fields/IntegerField.html
+            // setNumberFormat(...)
         } else {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/NumberField.html
             // setNumberFormat(...)
@@ -493,24 +473,17 @@ class ConfigureFields implements ControllerMethodInterface {
                 «IF readonly»
                     'readonly' => 'readonly',
                 «ENDIF»
-                «IF it instanceof IntegerField»
-                    «IF range»
+                «IF it instanceof NumberField»
+                    «IF NumberRole.RANGE == role»
                         'min' => «minValue»,
                         'max' => «maxValue»,
                     «ELSE»
-                        «IF minValue.compareTo(BigInteger.valueOf(0)) > 0»
+                        «IF minValue > 0»
                             'min' => «minValue»,
                         «ENDIF»
-                        «IF maxValue.compareTo(BigInteger.valueOf(0)) > 0»
+                        «IF maxValue > 0»
                             'max' => «maxValue»,
                         «ENDIF»
-                    «ENDIF»
-                «ELSEIF it instanceof NumberField»
-                    «IF minValue > 0»
-                        'min' => «minValue»,
-                    «ENDIF»
-                    «IF maxValue > 0»
-                        'max' => «maxValue»,
                     «ENDIF»
                 «ENDIF»
                 'title' => '«titleAttribute»',
@@ -546,27 +519,22 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch titleAttribute(BooleanField it) '''«name.formatForDisplay» ?'''
     def private dispatch additionalAttributes(BooleanField it) ''''''
 
-    def private dispatch customFormType(IntegerField it) '''«IF range»Range«ENDIF»'''
-    def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay». Only digits are allowed.'''
-    def private dispatch additionalAttributes(IntegerField it) '''
-        'maxlength' => «length»,
-    '''
-    def private dispatch additionalOptions(IntegerField it) '''
-        «IF percentage»
-            'type' => 'integer',
-        «ENDIF»
-        «IF unit != ''»
-            'input_group' => ['right' => t('«unit»')],
-        «ENDIF»
-    '''
-
-    def private dispatch customFormType(NumberField it) '''«IF #['latitude', 'longitude'].contains(name)»Geo«ENDIF»'''
+    def private dispatch customFormType(NumberField it) '''«IF NumberRole.RANGE == role»Range«ELSEIF #['latitude', 'longitude'].contains(name)»Geo«ENDIF»'''
 
     def private dispatch additionalAttributes(NumberField it) '''
-        'maxlength' => «(length+3+scale)»,
+        «IF NumberFieldType.INTEGER == numberType»
+            'maxlength' => «length»,
+        «ELSE»
+            'maxlength' => «(length+3+scale)»,
+        «ENDIF»
     '''
     def private dispatch additionalOptions(NumberField it) '''
-        'scale' => «scale»,
+        «IF NumberRole.PERCENTAGE == role»
+            'type' => 'integer',
+        «ENDIF»
+        «IF NumberFieldType.INTEGER != numberType»
+            'scale' => «scale»,
+        «ENDIF»
         «IF unit != ''»
             'input_group' => ['right' => t('«unit»')],
         «ENDIF»

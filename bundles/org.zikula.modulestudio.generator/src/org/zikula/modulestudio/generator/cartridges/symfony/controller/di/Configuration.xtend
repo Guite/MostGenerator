@@ -1,17 +1,16 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.di
 
-import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.NumberFieldType
+import de.guite.modulestudio.metamodel.NumberRole
 import de.guite.modulestudio.metamodel.UserField
 import de.guite.modulestudio.metamodel.Variables
-import java.math.BigInteger
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.Property
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -100,7 +99,7 @@ class Configuration {
     def private additionalInfo(Field it) {
         if (it instanceof UserField) {
             return 'Needs to be a user ID.'
-        } else if (it instanceof IntegerField && (it as IntegerField).isUserGroupSelector) {
+        } else if (it instanceof NumberField && (it as NumberField).isUserGroupSelector) {
             return 'Needs to be a group ID.';
         }
         null
@@ -109,7 +108,7 @@ class Configuration {
     def private nodeType(Field it) {
         switch (it) {
             BooleanField: 'boolean'
-            AbstractIntegerField: 'integer'
+            NumberField case NumberFieldType.INTEGER === numberType: 'integer'
             NumberField/* case NumberFieldType.FLOAT === numberType*/: 'float'
             ListField: 'enum'
             ArrayField: 'array'
@@ -122,24 +121,17 @@ class Configuration {
     }
 
     def private validation(Field it) '''
-        «IF it instanceof IntegerField»
-            «IF range»
+        «IF it instanceof NumberField»
+            «IF NumberRole.RANGE == role»
                 ->min(«minValue»)
                 ->max(«maxValue»)
             «ELSE»
-                «IF minValue.compareTo(BigInteger.valueOf(0)) > 0»
+                «IF minValue > 0»
                     ->min(«minValue»)
                 «ENDIF»
-                «IF maxValue.compareTo(BigInteger.valueOf(0)) > 0»
+                «IF maxValue > 0»
                     ->max(«maxValue»)
                 «ENDIF»
-            «ENDIF»
-        «ELSEIF it instanceof NumberField»
-            «IF minValue > 0»
-                ->min(«minValue»)
-            «ENDIF»
-            «IF maxValue > 0»
-                ->max(«maxValue»)
             «ENDIF»
         «ELSEIF it instanceof ListField»
             ->values([«FOR item : items SEPARATOR ', '»'«item.listEntry»'«ENDFOR»])
@@ -153,7 +145,7 @@ class Configuration {
         «ELSE»
             «IF mandatory»
                 ->isRequired()
-                «IF !(it instanceof BooleanField || it instanceof AbstractIntegerField || it instanceof NumberField)»
+                «IF !(it instanceof BooleanField || it instanceof NumberField)»
                 ->cannotBeEmpty()
                 «ENDIF»
             «ENDIF»
