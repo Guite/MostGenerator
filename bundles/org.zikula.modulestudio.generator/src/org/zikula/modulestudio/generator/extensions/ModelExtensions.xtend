@@ -543,10 +543,10 @@ class ModelExtensions {
 
     /**
      * Returns the sub folder path segment for this upload field,
-     * that is either the subFolderName attribute (if set) or the name otherwise.
+     * that is actually field name by default.
      */
     def subFolderPathSegment(UploadField it) {
-        (if (null !== subFolderName && !subFolderName.empty) subFolderName else name).formatForDB
+        name.formatForCode
     }
 
     /**
