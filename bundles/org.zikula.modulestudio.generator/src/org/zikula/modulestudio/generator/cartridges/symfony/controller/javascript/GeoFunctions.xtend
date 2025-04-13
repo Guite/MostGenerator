@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.javascri
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -11,7 +10,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class GeoFunctions {
 
     extension ControllerExtensions = new ControllerExtensions
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -174,7 +172,6 @@ class GeoFunctions {
 
         var map;
         var objectType;
-        var fieldPrefix;
         var entityMarkers;
         var labelMarkers;
 
@@ -219,7 +216,7 @@ class GeoFunctions {
 
             for (var i = 0; i < markerData.length; i++) {
                 var marker = markerData[i];
-                var markerCaption = (marker.image ? '<img src="' + marker.image + '" alt="Logo" style="max-width: 100px !important" /><br />' : '') + marker.title;
+                var markerCaption = (marker.image ? '<img src="' + marker.image + '" alt="Image" style="max-width: 100px !important" /><br />' : '') + marker.title;
                 if ('undefined' !== typeof marker.detailUrl && marker.detailUrl) {
                     markerCaption += '<br /><a href="' + marker.detailUrl + '" target="_blank"><i class="fas fa-arrow-circle-right"></i> Details</a>';
                 }
@@ -267,7 +264,6 @@ class GeoFunctions {
             }
 
             objectType = infoElem.data('object-type');
-            fieldPrefix = '#«appName.toLowerCase»_' + objectType + 'quicknav_';
 
             parameters = {
                 tileLayerUrl: infoElem.data('tile-layer-url'),
@@ -276,11 +272,13 @@ class GeoFunctions {
 
             if ('index' == infoElem.data('context')) {
                 «vendorAndName»InitGeographicalView(parameters);
-
+«/* TODO
                 jQuery('.«appName.formatForDB»-quicknav').removeClass('form-inline');
                 jQuery('.«appName.formatForDB»-quicknav input, .«appName.formatForDB»-quicknav select')
                     .css('width', '100%')
                 ;
+*/»
+                */
             }
         });
     '''
