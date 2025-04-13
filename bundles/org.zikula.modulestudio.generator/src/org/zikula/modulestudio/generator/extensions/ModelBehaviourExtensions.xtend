@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberRole
@@ -32,7 +31,7 @@ class ModelBehaviourExtensions {
      * Checks whether a specific entity needs functionality of the feature activation helper.
      */
     def needsFeatureActivationHelperEntity(Entity it) {
-        hasTranslatableFields || tree != EntityTreeType.NONE
+        hasTranslatableFields || tree
     }
 
     /**
@@ -116,7 +115,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the tree extension enabled.
      */
     def getTreeEntities(Application it) {
-        entities.filter[tree != EntityTreeType.NONE]
+        entities.filter[tree]
     }
 
     /**
@@ -183,7 +182,7 @@ class ModelBehaviourExtensions {
     }
 
     def needsSlugHandler(Entity it) {
-        tree != EntityTreeType.NONE || needsRelativeOrInversedRelativeSlugHandler
+        tree || needsRelativeOrInversedRelativeSlugHandler
     }
 
     def needsRelativeOrInversedRelativeSlugHandler(Entity it) {

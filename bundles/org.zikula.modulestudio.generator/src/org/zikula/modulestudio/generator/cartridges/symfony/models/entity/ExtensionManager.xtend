@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity
 
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -36,7 +35,7 @@ class ExtensionManager {
         if (entity.hasSortableFields) {
             this.extensions += new Sortable
         }
-        if (entity.tree != EntityTreeType.NONE) {
+        if (entity.tree) {
             this.extensions += new Tree
         }
     }

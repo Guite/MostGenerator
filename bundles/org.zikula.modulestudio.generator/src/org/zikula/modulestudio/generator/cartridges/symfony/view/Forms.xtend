@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.formcomponents.Relations
@@ -133,7 +132,7 @@ class Forms {
 
     def fieldDetails(Entity it, String subElem) '''
         «translatableFieldDetails(subElem)»
-        «IF tree != EntityTreeType.NONE
+        «IF tree
           || !hasTranslatableFields
           || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
           || geographical»
@@ -193,7 +192,7 @@ class Forms {
     def private fieldDetailsFurtherOptions(Entity it, String subElem) '''
         <fieldset>
             <legend>{% trans from 'messages' %}«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»{% endtrans %}</legend>
-            «IF tree != EntityTreeType.NONE»
+            «IF tree»
                 {% if mode == 'create' and form.parent is defined %}
                     {{ form_row(form.parent) }}
                 {% endif %}

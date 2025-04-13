@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.pages
 
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
@@ -39,7 +38,7 @@ class Detail {
         var templateFilePath = templateFile('detail')
         fsa.generateFile(templateFilePath, displayView(appName))
 
-        if (tree != EntityTreeType.NONE) {
+        if (tree) {
             templateFilePath = templateFile('detailTreeRelatives')
             fsa.generateFile(templateFilePath, treeRelatives(appName))
         }
@@ -153,7 +152,7 @@ class Detail {
                         <a id="relationsTab" href="#tabRelations" title="{{ 'Related data'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Related data{% endtrans %}</a>
                     </li>
                 «ENDIF»
-                «IF tree != EntityTreeType.NONE»
+                «IF tree»
                     {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
                         <li class="nav-item" role="presentation">
                             <a id="relativesTab" href="#tabRelatives" title="{{ 'Relatives'|trans({}, 'messages')|e('html_attr') }}" role="tab" data-toggle="tab" class="nav-link">{% trans from 'messages' %}Relatives{% endtrans %}</a>
@@ -242,7 +241,7 @@ class Detail {
         «IF useGroupingTabs('detail')»
             {{ block('related_items') }}
         «ENDIF»
-        «IF tree != EntityTreeType.NONE»
+        «IF tree»
             {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Bundle\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
                 «IF useGroupingTabs('detail')»
                 <div role="tabpanel" class="tab-pane fade" id="tabRelatives" aria-labelledby="relativesTab">

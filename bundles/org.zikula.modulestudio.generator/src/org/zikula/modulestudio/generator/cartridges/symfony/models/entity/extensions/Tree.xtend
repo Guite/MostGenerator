@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -16,10 +15,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-        #[Gedmo\Tree(type: '«tree.literal.toLowerCase»')]
-        «IF tree == EntityTreeType.CLOSURE»
-             #[Gedmo\TreeClosure(class: «name.formatForCodeCapital»Closure::class)]
-        «ENDIF»
+        #[Gedmo\Tree(type: 'nested')]
     '''
 
     /**
@@ -88,11 +84,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class type.
      */
     override extensionClassType(Entity it) {
-        if (EntityTreeType.CLOSURE === tree) {
-            'closure'
-        } else {
-            ''
-        }
+        ''
     }
 
     /**

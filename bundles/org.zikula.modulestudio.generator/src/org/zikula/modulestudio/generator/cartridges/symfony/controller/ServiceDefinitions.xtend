@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -112,9 +111,6 @@ class ServiceDefinitions {
     def private repositoryBindings(Application it) '''
         «FOR entity : entities»
             «entity.repoPath('')»Interface: '@«entity.repoPath('')»'
-            «IF entity.tree == EntityTreeType.CLOSURE»
-                «entity.repoPath('closure')»Interface: '@«entity.repoPath('closure')»'
-            «ENDIF»
             «IF entity.loggable»
                 «entity.repoPath('logEntry')»Interface: '@«entity.repoPath('logEntry')»'
             «ENDIF»

@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ValidationConstraints
@@ -91,16 +90,16 @@ class Entities {
         imports.add('Doctrine\\DBAL\\Types\\Types')
         imports.add('Doctrine\\ORM\\Mapping as ORM')
         if (isBase) {
-            if (hasCollections || EntityTreeType.NONE != tree) {
+            if (hasCollections || tree) {
                 imports.add('Doctrine\\Common\\Collections\\ArrayCollection')
                 imports.add('Doctrine\\Common\\Collections\\Collection')
             }
         }
-        if (isBase || loggable || hasTranslatableFields || tree != EntityTreeType.NONE) {
+        if (isBase || loggable || hasTranslatableFields || tree) {
             imports.add('Gedmo\\Mapping\\Annotation as Gedmo')
         }
         if (hasSluggableFields) {
-            if (tree != EntityTreeType.NONE) {
+            if (tree) {
                 imports.add('Gedmo\\Sluggable\\Handler\\TreeSlugHandler')
             } else if (needsRelativeOrInversedRelativeSlugHandler) {
                 imports.add('Gedmo\\Sluggable\\Handler\\InversedRelativeSlugHandler')
@@ -124,9 +123,6 @@ class Entities {
             imports.add('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')
         }
         if (!isBase) {
-            if (tree === EntityTreeType.CLOSURE) {
-                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'Closure')
-            }
             if (loggable) {
                 imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'LogEntry')
             }
@@ -139,7 +135,7 @@ class Entities {
                 imports.add('Zikula\\UsersBundle\\Entity\\User')
             }
             imports.add(application.appNamespace + '\\Entity\\EntityInterface')
-            if (tree !== EntityTreeType.NONE) {
+            if (tree) {
                 imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital)
             }
             for (relation : getBidirectionalIncomingRelations) {

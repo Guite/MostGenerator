@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -52,7 +51,7 @@ class Actions {
         // permission check
         $isAdminArea = $request->attributes->get('isAdminArea', false);
         $permLevel = $isAdminArea ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
-        «IF action instanceof IndexAction && tree != EntityTreeType.NONE»
+        «IF action instanceof IndexAction && tree»
             if (!$isAdminArea && 'tree' === $request->query->getAlnum('tpl')) {
                 $permLevel = ACCESS_EDIT;
             }
@@ -108,7 +107,7 @@ class Actions {
         $request->query->set('num', $num);
 
         $routeName = '«app.appName.formatForDB»_«name.toLowerCase»_index';
-        «IF tree != EntityTreeType.NONE»
+        «IF tree»
 
             if ('tree' === $request->query->getAlnum('tpl')) {
                 $templateParameters = $controllerHelper->processIndexActionParameters(

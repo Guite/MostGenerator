@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.additions
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerHelperFunctions
@@ -578,13 +577,13 @@ class AjaxController {
         try {
             // execute the workflow action
             $success = $workflowHelper->executeAction($childEntity, $action);
-            «IF hasEditActions && !entities.filter[tree != EntityTreeType.NONE && hasEditAction].empty»
+            «IF hasEditActions && !entitiesWithEditableTree.empty»
                 if (!$success) {
                     $returnValue['result'] = 'failure';
-                } elseif (in_array($objectType, ['«entities.filter[tree != EntityTreeType.NONE && hasEditAction].map[name.formatForCode].join('\', \'')»'], true)) {
+                } elseif (in_array($objectType, ['«entitiesWithEditableTree.map[name.formatForCode].join('\', \'')»'], true)) {
                     $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_edit';
-                    «IF !entities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].empty»
-                        $needsArg = in_array($objectType, ['«entities.filter[tree != EntityTreeType.NONE && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
+                    «IF !entities.filter[tree && hasEditAction && hasSluggableFields && slugUnique].empty»
+                        $needsArg = in_array($objectType, ['«entitiesWithEditableTree.filter[hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
                         $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();
                     «ELSE»
                         $urlArgs = $childEntity->createUrlArgs();
@@ -610,6 +609,10 @@ class AjaxController {
             return $this->json($returnValue);
         }
     '''
+
+    def private entitiesWithEditableTree(Application it) {
+        entities.filter[tree && hasEditAction]
+    }
 
     def private treeOperationDeleteNode(Application it) '''
         // remove node from tree and reparent all children

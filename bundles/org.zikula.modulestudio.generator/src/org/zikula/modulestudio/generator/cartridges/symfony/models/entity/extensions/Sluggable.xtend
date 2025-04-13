@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions
 
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
@@ -51,7 +50,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
     def private slugDetails(Entity it) '''fields: [«FOR field : getSluggableFields SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], updatable: «slugUpdatable.displayBool», unique: «slugUnique.displayBool», separator: '«slugSeparator»', style: 'default'«''»'''
 
     def private slugHandler(Entity it) {
-        if (tree != EntityTreeType.NONE) {
+        if (tree) {
             return treeSlugHandler
         }
         if (needsRelativeOrInversedRelativeSlugHandler) {

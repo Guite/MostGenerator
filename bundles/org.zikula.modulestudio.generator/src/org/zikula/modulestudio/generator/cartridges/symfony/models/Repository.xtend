@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
@@ -225,9 +224,9 @@ class Repository {
          *
         «methodAnnotations»
          */
-        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»ServiceEntityRepository«ENDIF» implements Abstract«name.formatForCodeCapital»RepositoryInterface«IF tree != EntityTreeType.NONE || hasSortableFields», ServiceEntityRepositoryInterface«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF tree»NestedTreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»ServiceEntityRepository«ENDIF» implements Abstract«name.formatForCodeCapital»RepositoryInterface«IF tree || hasSortableFields», ServiceEntityRepositoryInterface«ENDIF»
         {
-            «IF tree != EntityTreeType.NONE || hasSortableFields»
+            «IF tree || hasSortableFields»
                 public function __construct(EntityManagerInterface $manager)
                 {
                     parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»::class));
@@ -297,7 +296,7 @@ class Repository {
     '''
 
     def private canDirectlyExtendServiceRepo(Entity it) {
-        tree == EntityTreeType.NONE && !hasSortableFields
+        tree && !hasSortableFields
     }
 
     def private collectBaseImports(Entity it, Boolean isInterface) {
@@ -336,11 +335,11 @@ class Repository {
             if (hasPessimisticReadLock || hasPessimisticWriteLock) {
                 imports.add('Doctrine\\DBAL\\LockMode')
             }
-            if (tree == EntityTreeType.NONE && hasSortableFields) {
+            if (!tree && hasSortableFields) {
                 imports.add('Gedmo\\Sortable\\Entity\\Repository\\SortableRepository')
             }
-            if (tree != EntityTreeType.NONE) {
-                imports.add('Gedmo\\Tree\\Entity\\Repository\\' + tree.literal.toLowerCase.toFirstUpper + 'TreeRepository')
+            if (tree) {
+                imports.add('Gedmo\\Tree\\Entity\\Repository\\NestedTreeRepository')
             }
             if (hasTranslatableFields) {
                 imports.add('Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker')

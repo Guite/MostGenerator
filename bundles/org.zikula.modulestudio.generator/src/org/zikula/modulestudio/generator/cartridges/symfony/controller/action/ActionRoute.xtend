@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.IndexAction
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -42,7 +41,7 @@ class ActionRoute {
             name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_detail',
             requirements: [«actionRouteRequirementsForSingleEntity(action)», '_format' => 'html'],
             defaults: [«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»'_format' => 'html'],
-            methods: ['GET'«IF action instanceof EditAction || action instanceof DeleteAction», 'POST'«ENDIF»]«IF tree != EntityTreeType.NONE»,
+            methods: ['GET'«IF action instanceof EditAction || action instanceof DeleteAction», 'POST'«ENDIF»]«IF tree»,
             options: ['expose' => true]«ENDIF»
         )]
     '''
@@ -64,7 +63,7 @@ class ActionRoute {
     def private actionRouteRequirementsForSingleEntity(Entity it, Action action) {
         var output = ''
         if (hasSluggableFields && !(action instanceof EditAction)) {
-            output = '''«''»'slug' => '«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»'«''»'''
+            output = '''«''»'slug' => '«IF tree»[^.]+«ELSE»[^/.]+«ENDIF»'«''»'''
             if (slugUnique) {
                 return output
             }

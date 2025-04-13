@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.menu
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -30,7 +29,7 @@ class IndexActions {
         «IF ownerPermission»
             $showOnlyOwn = 'admin' !== $routeArea && $this->listViewConfig['«name.formatForSnakeCase»_private_mode'];
         «ENDIF»
-        «IF tree != EntityTreeType.NONE»
+        «IF tree»
             if ('tree' === $currentTemplate) {
                 «IF hasEditAction»
                     if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF workflow == EntityWorkflowType.NONE»EDIT«ELSE»COMMENT«ENDIF»)) {
@@ -58,10 +57,10 @@ class IndexActions {
                 «linkToggleOwner»
             }
         «ENDIF»
-        if (!in_array($currentTemplate, [«IF tree != EntityTreeType.NONE»'tree'«IF geographical», «ENDIF»«ENDIF»«IF geographical»'map'«ENDIF»])) {
+        if (!in_array($currentTemplate, [«IF tree»'tree'«IF geographical», «ENDIF»«ENDIF»«IF geographical»'map'«ENDIF»])) {
             «linkToEntityCreation»
             «linkTogglePagination»
-            «IF tree != EntityTreeType.NONE»
+            «IF tree»
                 $menu->addChild('Switch to hierarchy view', [
                     'route' => $routePrefix . 'index',
                     'routeParameters' => ['tpl' => 'tree'],

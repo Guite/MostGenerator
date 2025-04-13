@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.menu
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
@@ -198,7 +197,7 @@ class ItemActions {
             «application.addIcon('copy')»
             ->setExtra('translation_domain', '«name.formatForCode»')
         ;
-        «IF tree != EntityTreeType.NONE»
+        «IF tree»
             if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
                 $menu->addChild('Add sub «name.formatForDisplay»', [
                     'route' => $routePrefix . 'edit',

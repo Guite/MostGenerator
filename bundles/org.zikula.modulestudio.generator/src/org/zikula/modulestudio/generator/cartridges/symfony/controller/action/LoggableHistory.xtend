@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.action
 
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -56,7 +55,7 @@ class LoggableHistory {
             #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
                 name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_loggablehistory',
                 «IF hasSluggableFields && slugUnique»
-                requirements: ['slug' => '«IF tree != EntityTreeType.NONE»[^.]+«ELSE»[^/.]+«ENDIF»'],
+                requirements: ['slug' => '«IF tree»[^.]+«ELSE»[^/.]+«ENDIF»'],
                 «ELSE»
                 requirements: ['id' => '\d+'],
                 defaults: ['id' => 0],

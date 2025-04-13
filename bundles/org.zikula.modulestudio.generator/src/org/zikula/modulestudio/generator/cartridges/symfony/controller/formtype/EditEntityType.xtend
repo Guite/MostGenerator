@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
@@ -51,7 +50,7 @@ class EditEntityType {
         imports.add('Symfony\\Component\\Form\\FormBuilderInterface')
         imports.add('Symfony\\Component\\Form\\FormInterface')
         imports.add('Symfony\\Component\\OptionsResolver\\OptionsResolver')
-        if (tree != EntityTreeType.NONE) {
+        if (tree) {
             imports.add(app.appNamespace + '\\Form\\Type\\Field\\EntityTreeType')
         }
         if (!incoming.empty || !outgoing.empty) {
@@ -116,7 +115,7 @@ class EditEntityType {
 
             public function buildForm(FormBuilderInterface $builder, array $options): void
             {
-                «IF tree != EntityTreeType.NONE»
+                «IF tree»
                     if ('create' === $options['mode']) {
                         $builder->add('parent', EntityTreeType::class, [
                             'class' => «name.formatForCodeCapital»::class,

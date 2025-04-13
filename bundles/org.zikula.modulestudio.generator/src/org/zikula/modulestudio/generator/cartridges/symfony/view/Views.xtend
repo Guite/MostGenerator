@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.Emails
@@ -63,7 +62,7 @@ class Views {
             if (entity.geographical) {
                 new ViewMap().generate(entity, appName, fsa)
             }
-            if (entity.tree != EntityTreeType.NONE) {
+            if (entity.tree) {
                 new ViewHierarchy().generate(entity, appName, fsa)
             }
         }
