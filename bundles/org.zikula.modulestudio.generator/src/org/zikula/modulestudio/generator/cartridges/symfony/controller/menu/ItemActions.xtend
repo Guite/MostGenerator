@@ -180,17 +180,15 @@ class ItemActions {
     '''
 
     def private itemActionsForEditAction(Entity it) '''
-        «IF !readOnly»«/*create is allowed, but editing not*/»
-            $menu->addChild('Edit', [
-                'route' => $routePrefix . 'edit',
-                'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»),
-            ])
-                ->setLinkAttribute('title', 'Edit this «name.formatForDisplay»')
-                «application.addLinkClass('secondary')»
-                «application.addIcon('edit')»
-                ->setExtra('translation_domain', '«name.formatForCode»')
-            ;
-        «ENDIF»
+        $menu->addChild('Edit', [
+            'route' => $routePrefix . 'edit',
+            'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»),
+        ])
+            ->setLinkAttribute('title', 'Edit this «name.formatForDisplay»')
+            «application.addLinkClass('secondary')»
+            «application.addIcon('edit')»
+            ->setExtra('translation_domain', '«name.formatForCode»')
+        ;
         $menu->addChild('Reuse', [
             'route' => $routePrefix . 'edit',
             'routeParameters' => ['astemplate' => $entity->getKey()],

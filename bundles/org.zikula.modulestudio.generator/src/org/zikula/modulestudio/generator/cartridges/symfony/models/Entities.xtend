@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
@@ -262,7 +261,7 @@ class Entities {
          * This is the concrete entity class for «name.formatForDisplay» entities.
          */
         «extMan.classAnnotations»
-        #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»Repository::class«IF readOnly», readOnly: true«ENDIF»)]
+        #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»Repository::class)]
         «entityImplClassAdditionalAttributes(app)»
         «new ValidationConstraints().classAnnotations(it)»
     '''
@@ -270,9 +269,6 @@ class Entities {
     def private entityImplClassAdditionalAttributes(Entity it, Application app) '''
         #[ORM\Table(name: '«fullEntityTableName»')]
         «workflowIndex('Index')»
-        «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
-            #[ORM\ChangeTrackingPolicy('«changeTrackingPolicy.literal»')]
-        «ENDIF»
     '''
 
     def private workflowIndex(Entity it, String indexType) '''
