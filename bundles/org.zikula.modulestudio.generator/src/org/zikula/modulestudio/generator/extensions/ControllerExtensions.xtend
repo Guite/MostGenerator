@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.IndexAction
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
@@ -87,7 +86,7 @@ class ControllerExtensions {
         switch action {
             IndexAction: 'ACCESS_OVERVIEW'
             DetailAction: 'ACCESS_READ'
-            EditAction: if (workflow != EntityWorkflowType.NONE) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
+            EditAction: if (approval) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
             DeleteAction: 'ACCESS_DELETE'
             CustomAction: 'ACCESS_OVERVIEW'
             default: 'ACCESS_ADMIN'
