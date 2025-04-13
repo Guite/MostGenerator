@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CascadeType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
@@ -66,15 +65,6 @@ class ModelJoinExtensions {
         incoming.filter(OneToOneRelationship).filter[bidirectional]
             + incoming.filter(OneToManyRelationship).filter[bidirectional]
             + incoming.filter(ManyToManyRelationship).filter[bidirectional]
-    }
-
-    /**
-     * Returns a list of all incoming bidirectional join relations which inherit permissions.
-     */
-    def getBidirectionalIncomingPermissionInheriters(Entity it) {
-        incoming.filter(OneToOneRelationship).filter[bidirectional && inheritPermissions]
-            + incoming.filter(OneToManyRelationship).filter[bidirectional && inheritPermissions]
-            + incoming.filter(ManyToManyRelationship).filter[bidirectional && inheritPermissions != ManyToManyPermissionInheritanceType.NONE]
     }
 
     /**

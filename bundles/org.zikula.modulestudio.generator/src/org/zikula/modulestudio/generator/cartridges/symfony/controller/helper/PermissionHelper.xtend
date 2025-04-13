@@ -1,17 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.ManyToManyPermissionInheritanceType
-import de.guite.modulestudio.metamodel.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class PermissionHelper {
@@ -19,8 +13,6 @@ class PermissionHelper {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -120,17 +112,6 @@ class PermissionHelper {
             $objectType = $entity->get_objectType();
             $instance = $entity->getKey() . '::';
 
-            «IF hasEntitiesInheritingPermissions»
-                // check inherited permissions
-                «FOR entity : getEntitiesInheritingPermissions»
-                    if ('«entity.name.formatForCode»' === $objectType) {
-                        «FOR relation : entity.getBidirectionalIncomingPermissionInheriters»
-                            «entity.inheritedPermissionCheck(relation)»
-                        «ENDFOR»
-                    }
-                «ENDFOR»
-
-            «ENDIF»
             return $this->permissionApi->hasPermission(
                 '«appName»:' . ucfirst($objectType) . ':',
                 $instance,
@@ -154,46 +135,6 @@ class PermissionHelper {
                 }
 
                 return $filteredEntities;
-            }
-        «ENDIF»
-    '''
-
-    def private hasEntitiesInheritingPermissions(Application it) {
-        !getEntitiesInheritingPermissions.empty
-    }
-
-    def private getEntitiesInheritingPermissions(Application it) {
-        entities.filter[!getBidirectionalIncomingPermissionInheriters.empty]
-    }
-
-    def dispatch private inheritedPermissionCheck(Entity it, Relationship relation) '''
-        if (null !== $entity->get«relation.getRelationAliasName(false).formatForCodeCapital»()) {
-            $parent = $entity->get«relation.getRelationAliasName(false).formatForCodeCapital»();
-            if (!$this->hasEntityPermission($parent, $permissionLevel, $userId)) {
-                return false;
-            }
-        }
-    '''
-
-    def dispatch private inheritedPermissionCheck(Entity it, ManyToManyRelationship relation) '''
-        «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-            $parentAccess = false;
-        «ENDIF»
-        foreach ($entity->get«relation.getRelationAliasName(false).formatForCodeCapital»() as $parent) {
-            «IF relation.inheritPermissions == ManyToManyPermissionInheritanceType.AFFIRMATIVE»
-                if ($this->hasEntityPermission($parent, $permissionLevel, $userId)) {
-                    $parentAccess = true;
-                    break;
-                }
-            «ELSEIF ManyToManyPermissionInheritanceType.UNANIMOUS == relation.inheritPermissions»
-                if (!$this->hasEntityPermission($parent, $permissionLevel, $userId)) {
-                    return false;
-                }
-            «ENDIF»
-        }
-        «IF ManyToManyPermissionInheritanceType.AFFIRMATIVE == relation.inheritPermissions»
-            if (true !== $parentAccess) {
-                return false;
             }
         «ENDIF»
     '''

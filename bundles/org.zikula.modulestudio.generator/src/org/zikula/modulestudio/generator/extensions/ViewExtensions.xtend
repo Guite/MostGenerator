@@ -58,7 +58,7 @@ class ViewExtensions {
 
         if (standardFields) weight = weight + 1
         if (geographical) weight = weight + 1
-        //if (tree != EntityTreeType.NONE) weight = weight + 1
+        //if (tree) weight = weight + 1
         weight
     }
 
