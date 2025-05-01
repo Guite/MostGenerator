@@ -146,8 +146,12 @@ class ValidationConstraints {
             #[Assert\Hostname]
         «ELSEIF role == StringRole.IBAN»
             #[Assert\Iban]
+        «ELSEIF role == StringRole.ISBN»
+            #[Assert\Isbn]
         «ELSEIF role == StringRole.ISIN»
             #[Assert\Isin]
+        «ELSEIF role == StringRole.ISSN»
+            #[Assert\Issn]
         «ELSEIF role == StringRole.LANGUAGE»
             #[Assert\Language]
         «ELSEIF role == StringRole.LOCALE»

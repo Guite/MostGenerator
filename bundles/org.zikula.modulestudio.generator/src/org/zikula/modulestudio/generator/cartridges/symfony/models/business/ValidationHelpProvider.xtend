@@ -53,8 +53,12 @@ class ValidationHelpProvider {
             messages += '''«''»'Note: this value must be a valid credit card number.'«''»'''
         } else if (role == StringRole.IBAN) {
             messages += '''«''»'Note: this value must be a valid IBAN (International Bank Account Number).'«''»'''
+        } else if (role == StringRole.ISBN) {
+            messages += '''«''»'Note: this value must be a valid ISBN (International Standard Book Number). It needs to be either an ISBN-10 or an ISBN-13 code.'«''»'''
         } else if (role == StringRole.ISIN) {
-            messages += '''«''»'Note: this value must be a valid ISIN (international securities identification number).'«''»'''
+            messages += '''«''»'Note: this value must be a valid ISIN (International Securities Identification Number).'«''»'''
+        } else if (role == StringRole.ISSN) {
+            messages += '''«''»'Note: this value must be a valid ISSN (International Standard Serial Number.'«''»'''
         //} else if (role == StringRole.PHONE_NUMBER) {
         //    messages += '''«''»'Note: this value must be a valid telephone number.'«''»'''
         } else if (role == StringRole.ULID) {

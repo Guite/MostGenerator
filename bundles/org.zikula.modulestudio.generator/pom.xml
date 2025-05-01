@@ -54,7 +54,7 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <target>
-                                <ant antfile="${project.basedir}/../../releng/org.zikula.modulestudio.generator.build/fatjar/fat-jar-in-jar.xml">
+                                <ant antfile="${project.basedir}/../../repository/fatjar/fat-jar-in-jar.xml">
                                     <property name="jar.filename" value="ModuleStudio-generator.jar" />
                                     <property name="main.class" value="org.zikula.modulestudio.generator.Main" />
                                 </ant>
