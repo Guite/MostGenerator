@@ -1,17 +1,24 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class BundleFile {
 
+    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     Boolean needsInitializer = false
 
@@ -29,7 +36,7 @@ class BundleFile {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
-            'Symfony\\Component\\HttpKernel\\Bundle\\Bundle',
+            'Symfony\\Component\\HttpKernel\\Bundle\\AbstractBundle',
             'Zikula\\CoreBundle\\Bundle\\MetaData\\BundleMetaDataInterface',
             'Zikula\\CoreBundle\\Bundle\\MetaData\\MetaDataAwareBundleInterface',
             appNamespace + '\\Bundle\\MetaData\\' + name.formatForCodeCapital + 'BundleMetaData'
@@ -41,6 +48,53 @@ class BundleFile {
                 appNamespace + '\\Bundle\\Initializer\\' + name.formatForCodeCapital + 'Initializer'
             ])
         }
+
+        imports.addAll(#[
+            'Symfony\\Component\\Config\\Definition\\Configurator\\DefinitionConfigurator',
+            'Symfony\\Component\\DependencyInjection\\ContainerBuilder',
+            'Symfony\\Component\\DependencyInjection\\Loader\\Configurator\\ContainerConfigurator'
+        ])
+        if (!needsConfig) {
+            return imports
+        }
+        imports.add(appNamespace + '\\EventListener\\UserListener')
+        imports.add(appNamespace + '\\Helper\\CollectionFilterHelper')
+        if (hasGeographical) {
+            imports.add(appNamespace + '\\Entity\\Factory\\EntityInitializer')
+        }
+        if (hasLoggable) {
+            imports.add(appNamespace + '\\EventListener\\EntityLifecycleListener')
+        }
+        if (hasTranslatable || needsApproval || hasStandardFieldEntities) {
+            for (entity : entities.filter[hasEditAction]) {
+                imports.add(appNamespace + '\\Form\\Handler\\' + entity.name.formatForCodeCapital + '\\EditHandler as Edit' + entity.name.formatForCodeCapital + 'Handler')
+            }
+        }
+        if (hasIndexActions) {
+            imports.add(appNamespace + '\\Helper\\ControllerHelper')
+        }
+        if (hasAutomaticExpiryHandling || hasLoggable) {
+            imports.add(appNamespace + '\\Helper\\ExpiryHelper')
+        }
+        if (hasUploads) {
+            imports.add(appNamespace + '\\Helper\\ImageHelper')
+        }
+        if (needsApproval) {
+            imports.add(appNamespace + '\\Helper\\NotificationHelper')
+        }
+        if (hasLoggable) {
+            imports.add(appNamespace + '\\Helper\\PermissionHelper')
+        }
+        if (hasUploads) {
+            imports.add(appNamespace + '\\Helper\\UploadHelper')
+        }
+        if (hasGeographical) {
+            imports.add(appNamespace + '\\Helper\\ViewHelper')
+        }
+        imports.add(appNamespace + '\\Menu\\ExtensionMenu')
+        if (hasIndexActions) {
+            imports.add(appNamespace + '\\Menu\\MenuBuilder')
+        }
         imports
     }
 
@@ -50,7 +104,7 @@ class BundleFile {
         /**
          * Bundle base class.
          */
-        abstract class Abstract«appName» extends Bundle implements «IF needsInitializer»InitializableBundleInterface, «ENDIF»MetaDataAwareBundleInterface
+        abstract class Abstract«appName» extends AbstractBundle implements «IF needsInitializer»InitializableBundleInterface, «ENDIF»MetaDataAwareBundleInterface
         {
             public function getMetaData(): BundleMetaDataInterface
             {
@@ -63,6 +117,82 @@ class BundleFile {
                     return $this->container->get(«name.formatForCodeCapital»Initializer::class);
                 }
             «ENDIF»
+            «IF needsConfig»
+
+                public function configure(DefinitionConfigurator $definition): void
+                {
+                    $definition->import('../config/definition.php');
+                }
+            «ENDIF»
+
+            public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+            {
+                $container->import('../config/services.yaml');
+                «IF needsConfig»
+
+                    // configure services
+                    $services = $container->services();
+
+                    «IF hasGeographical»
+                        $services->get(EntityInitializer::class)
+                            ->arg('$defaultLatitude', $config['geo']['default_latitude'])
+                            ->arg('$defaultLongitude', $config['geo']['default_longitude']);
+                    «ENDIF»
+                    «IF hasLoggable»
+                        $services->get(EntityLifecycleListener::class)
+                            ->arg('$loggableConfig', $config['versioning']);
+                    «ENDIF»
+                    «IF hasUserVariables»
+                        $services->get(UserListener::class)
+                            «FOR userVar : getAllVariables.filter(UserField)»
+                                ->arg('$«userVar.name.formatForCode»', $config['«userVar.varContainer.name.formatForSnakeCase»']['«userVar.name.formatForSnakeCase»'])
+                            «ENDFOR»
+                        ;
+                    «ENDIF»
+                    «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
+                        «FOR entity : entities.filter[hasEditAction]»
+                            $services->get(Edit«entity.name.formatForCodeCapital»Handler::class)
+                                ->arg('$moderationConfig', $config['moderation']);
+                        «ENDFOR»
+                    «ENDIF»
+                    $services->get(CollectionFilterHelper::class)
+                        ->arg('$listViewConfig', $config['list_views']);
+                    «IF hasIndexActions»
+                        $services->get(ControllerHelper::class)
+                            ->arg('$listViewConfig', $config['list_views']);
+                    «ENDIF»
+                    «IF hasAutomaticExpiryHandling || hasLoggable»
+                        $services->get(ExpiryHelper::class)
+                            ->arg('$loggableConfig', $config['versioning']);
+                    «ENDIF»
+                    «IF hasUploads»
+                        $services->get(ImageHelper::class)
+                            ->arg('$imageConfig', $config['images']);
+                    «ENDIF»
+                    «IF hasLoggable»
+                        $services->get(PermissionHelper::class)
+                            ->arg('$loggableConfig', $config['versioning']);
+                    «ENDIF»
+                    «IF needsApproval»
+                        $services->get(NotificationHelper::class)
+                            ->arg('$moderationConfig', $config['moderation']);
+                    «ENDIF»
+                    «IF hasUploads»
+                        $services->get(UploadHelper::class)
+                            ->arg('$imageConfig', $config['images']);
+                    «ENDIF»
+                    «IF hasGeographical»
+                        $services->get(ViewHelper::class)
+                            ->arg('$geoConfig', $config['geo']);
+                    «ENDIF»
+                    $services->get(ExtensionMenu::class)
+                        ->arg('$listViewConfig', $config['list_views']);
+                    «IF hasIndexActions»
+                        $services->get(MenuBuilder::class)
+                            ->arg('$listViewConfig', $config['list_views']);
+                    «ENDIF»
+                «ENDIF»
+            }
         }
     '''
 

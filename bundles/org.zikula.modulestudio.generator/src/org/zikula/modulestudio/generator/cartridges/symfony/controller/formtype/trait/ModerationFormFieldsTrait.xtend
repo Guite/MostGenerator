@@ -14,7 +14,7 @@ class ModerationFormFieldsTrait {
         if (!hasStandardFieldEntities) {
             return
         }
-        val filePath = 'Traits/ModerationFormFieldsTrait.php'
+        val filePath = 'src/Traits/ModerationFormFieldsTrait.php'
         fsa.generateFile(filePath, traitFile)
     }
 

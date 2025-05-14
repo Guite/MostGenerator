@@ -7,15 +7,15 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerLayer
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.EventSubscribers
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.Events
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.FormHandler
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.HelperServices
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.Workflow
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Configuration
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Initializer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.MetaData
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.di.Configuration
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.di.DependencyInjection
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Entities
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Factory
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Repository
@@ -24,7 +24,9 @@ import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.BundleFil
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.ComposerFile
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.Docs
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.GitIgnore
+import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.PhpCsFixer
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.PhpUnitXml
+import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.Phpstan
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.Recipe
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.symfony.tests.Tests
@@ -35,7 +37,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.Styles
 import org.zikula.modulestudio.generator.cartridges.symfony.view.Views
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.EventSubscribers
 
 class SymfonyBundleGenerator implements IGenerator {
 
@@ -73,11 +74,9 @@ class SymfonyBundleGenerator implements IGenerator {
         new BundleFile().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
         new GitIgnore().generate(it, fsa)
+        new PhpCsFixer().generate(it, fsa)
+        new Phpstan().generate(it, fsa)
         new PhpUnitXml().generate(it, fsa)
-        new DependencyInjection().generate(it, fsa)
-        if (needsConfig) {
-            new Configuration().generate(it, fsa)
-        }
     }
 
     def private generateModel(Application it) {
@@ -105,6 +104,14 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('Controller: Bundle meta data')
         'Generating bundle meta data'.printIfNotTesting(fsa)
         new MetaData().generate(it, fsa)
+        if (needsConfig) {
+            pm?.subTask('Controller: Bundle configuration definition')
+            'Generating bundle configuration definition'.printIfNotTesting(fsa)
+            new Configuration().generate(it, fsa)
+        }
+        pm?.subTask('Controller: Bundle service definitions')
+        'Generating bundle service definitions'.printIfNotTesting(fsa)
+        new ServiceDefinitions().generate(it, fsa)
         pm?.subTask('Controller: Controller classes')
         'Generating controller classes'.printIfNotTesting(fsa)
         new ControllerLayer().generate(it, fsa)
@@ -117,9 +124,6 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('Controller: Event listeners')
         'Generating Event listeners'.printIfNotTesting(fsa)
         new EventSubscribers().generate(it, fsa)
-        pm?.subTask('Controller: Service definitions')
-        'Generating service definitions'.printIfNotTesting(fsa)
-        new ServiceDefinitions().generate(it, fsa)
         pm?.subTask('Controller: Custom event definitions')
         'Generating custom event definitions'.printIfNotTesting(fsa)
         new Events().generate(it, fsa)

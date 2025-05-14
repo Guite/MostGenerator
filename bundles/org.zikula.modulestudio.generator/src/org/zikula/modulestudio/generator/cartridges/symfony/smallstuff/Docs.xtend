@@ -43,7 +43,7 @@ class Docs {
         fsa.generateFile(docPath + fileName, VersionInfo)
 
         fileName = 'LICENSE'
-        fsa.generateFile(getAppLicencePath + fileName, License)
+        fsa.generateFile(fileName, License)
     }
 
     def private Credits(Application it) '''
@@ -124,7 +124,7 @@ class Docs {
 
         `php -dmemory_limit=2G bin/console translation:extract --bundle «appName» extension en`
 
-        4. Translate the resulting `.yaml` files in `«relativeAppRootPath»/Resources/translations/`.
+        4. Translate the resulting `.yaml` files in `«relativeAppRootPath»/translations/`.
 
         For questions and other remarks visit our homepage <«url»>.
 

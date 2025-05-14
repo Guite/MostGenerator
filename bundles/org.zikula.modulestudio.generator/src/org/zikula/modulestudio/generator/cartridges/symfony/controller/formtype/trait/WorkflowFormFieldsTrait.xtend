@@ -14,7 +14,7 @@ class WorkflowFormFieldsTrait {
         if (!needsApproval) {
             return
         }
-        val filePath = 'Traits/WorkflowFormFieldsTrait.php'
+        val filePath = 'src/Traits/WorkflowFormFieldsTrait.php'
         fsa.generateFile(filePath, traitFile)
     }
 

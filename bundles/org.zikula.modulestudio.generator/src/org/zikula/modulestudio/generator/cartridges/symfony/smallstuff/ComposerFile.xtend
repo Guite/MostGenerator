@@ -26,6 +26,7 @@ class ComposerFile {
         "name": "«vendor.formatForDB»/«name.formatForDB»-bundle",
         "version": "«version»",
         "description": "«appDescription»",
+        "homepage": "«url»",
         "type": "symfony-bundle",
         "license": "«licenseSPDX»",
         "authors": [
@@ -37,11 +38,14 @@ class ComposerFile {
             }
         ],
         "autoload": {
-            "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\": "" }
+            "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\": "src" }
+        },
+        "autoload-dev": {
+            "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\Tests\\": "tests" }
         },
         "require": {
             "php": ">=8.2",
-            "doctrine/doctrine-migrations-bundle": "^3.3",
+            "doctrine/doctrine-migrations-bundle": "^3.4",
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
             «ENDIF»

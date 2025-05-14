@@ -14,13 +14,15 @@ class PhpUnitXml {
 
     def private phpUnitConfig(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
-        <!-- https://docs.phpunit.de/en/12.0/configuration.html -->
+        <!-- https://docs.phpunit.de/en/12.1/configuration.html -->
         <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="../../../vendor/phpunit/phpunit/phpunit.xsd"
                  bootstrap="../../../../tests/bootstrap.php"
                  cacheDirectory=".phpunit.cache"
                  colors="true"
                  executionOrder="depends,defects"
+                 failOnNotice="true"
+                 failOnWarning="true"
                  requireCoverageMetadata="true"
                  beStrictAboutChangesToGlobalState="true"
                  beStrictAboutOutputDuringTests="true"
@@ -42,19 +44,14 @@ class PhpUnitXml {
 
             <testsuites>
                 <testsuite name="«appName» Test Suite">
-                    <directory>./Tests</directory>
-                    <exclude>./Tests/Entity/*/Repository</exclude>
-                    <exclude>./vendor/</exclude>
+                    <directory>tests</directory>
                 </testsuite>
             </testsuites>
 
-            <source>
+            <source ignoreSuppressionOfDeprecations="true" restrictNotices="true" restrictWarnings="true">
                 <include>
-                    <directory suffix=".php">./</directory>
+                    <directory suffix=".php">src</directory>
                 </include>
-                <exclude>
-                    <directory suffix=".php">./Tests/</directory>
-                </exclude>
             </source>
         </phpunit>
     '''

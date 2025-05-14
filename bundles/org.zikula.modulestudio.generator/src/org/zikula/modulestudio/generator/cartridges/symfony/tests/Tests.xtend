@@ -2,19 +2,17 @@ package org.zikula.modulestudio.generator.cartridges.symfony.tests
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Tests {
 
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     /**
      * Entry point for bundle unit test classes.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        var testsPath = getAppTestsPath
+        var testsPath = 'tests/'
 
         var fileName = 'Unit/StackTest.php'
         fsa.generateFile(testsPath + fileName, stackUnitTest)

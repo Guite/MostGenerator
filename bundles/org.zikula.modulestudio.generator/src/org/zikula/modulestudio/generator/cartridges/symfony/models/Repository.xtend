@@ -59,7 +59,7 @@ class Repository {
      */
     def private generate(Entity it) {
         ('Generating repository classes for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
-        val repositoryPath = 'Repository/'
+        val repositoryPath = 'src/Repository/'
         var fileSuffix = 'Repository'
 
         sortRelationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional]

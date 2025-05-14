@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.symfony.controller.di
+package org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
@@ -27,39 +27,24 @@ class Configuration {
      * Entry point for application settings class.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
-        if (variables.empty) {
+        if (getAllVariables.empty) {
             return
         }
-        'Generating bundle configuration class'.printIfNotTesting(fsa)
-        fsa.generateClassPair('DependencyInjection/Configuration.php', configurationBaseImpl, configurationImpl)
+        val definitionFilePath = 'config/definition.php'
+        fsa.generateFile(definitionFilePath, configurationImpl)
     }
 
-    def private configurationBaseImpl(Application it) '''
+    def private configurationImpl(Application it) '''
         namespace «appNamespace»\DependencyInjection\Base;
 
-        use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-        use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-        /**
-         * Bundle configuration class.
-         */
-        abstract class AbstractConfiguration implements ConfigurationInterface
+        use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
+        
+        return static function (DefinitionConfigurator $definition): void
         {
-            «getConfigTreeBuilder»
-        }
-    '''
-
-    def private getConfigTreeBuilder(Application it) '''
-        public function getConfigTreeBuilder(): TreeBuilder
-        {
-            $treeBuilder = new TreeBuilder('«vendor.formatForDB»_«name.formatForDB»');
-
-            $treeBuilder->getRootNode()
+            $definition->rootNode()
                 «configurationBuilder»
             ;
-
-            return $treeBuilder;
-        }
+        };
     '''
 
     def private configurationBuilder(Application it) '''
@@ -153,18 +138,4 @@ class Configuration {
     '''
 
     def private listEntry(ListFieldItem it) '''«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»'''
-
-    def private configurationImpl(Application it) '''
-        namespace «appNamespace»\DependencyInjection;
-
-        use «appNamespace»\DependencyInjection\Base\AbstractConfiguration;
-
-        /**
-         * Bundle configuration class.
-         */
-        class Configuration extends AbstractConfiguration
-        {
-            // feel free to add your own methods here
-        }
-    '''
 }

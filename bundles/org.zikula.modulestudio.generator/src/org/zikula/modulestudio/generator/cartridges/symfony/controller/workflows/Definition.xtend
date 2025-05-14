@@ -6,7 +6,6 @@ import java.util.ArrayList
 import java.util.HashMap
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -16,7 +15,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Definition {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -36,7 +34,7 @@ class Definition {
     def generate(Application it, IMostFileSystemAccess fsa) {
         app = it
         this.fsa = fsa
-        outputPath = getResourcesPath + 'workflows/'
+        outputPath = 'workflows/'
 
         generate(false)
         generate(true)

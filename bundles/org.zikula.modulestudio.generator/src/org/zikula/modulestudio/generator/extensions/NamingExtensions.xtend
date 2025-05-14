@@ -105,28 +105,7 @@ class NamingExtensions {
      * Returns the base path for any documentation.
      */
     def getAppDocPath(Application it) {
-        getResourcesPath + 'docs/'
-    }
-
-    /**
-     * Returns the base path for the licence file.
-     */
-    def getAppLicencePath(Application it) {
-        getResourcesPath + 'meta/'
-    }
-
-    /**
-     * Returns the base path for the locale artifacts.
-     */
-    def getAppLocalePath(Application it) {
-        getResourcesPath + 'translations/'
-    }
-
-    /**
-     * Returns the base path for any resources.
-     */
-    def getResourcesPath(Application it) {
-        'Resources/'
+        'docs/'
     }
 
     /**
@@ -140,14 +119,14 @@ class NamingExtensions {
      * Returns the base path for any assets.
      */
     def getAssetPath(Application it) {
-        getResourcesPath + 'public/'
+        'public/'
     }
 
     /**
      * Returns the base path for all view templates.
      */
     def getViewPath(Application it) {
-        getResourcesPath + 'views/'
+        'templates/'
     }
 
     /**
@@ -176,12 +155,5 @@ class NamingExtensions {
      */
     def getAppUploadPath(Application it) {
         getRecipePath + 'public/uploads/' + appName + '/'
-    }
-
-    /**
-     * Returns the base path for the test source code of the generated application.
-     */
-    def getAppTestsPath(Application it) {
-        'Tests/'
     }
 }

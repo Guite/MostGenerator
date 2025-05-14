@@ -42,12 +42,12 @@ class EventSubscribers {
         subscriberSuffix = 'Subscriber.php'
 
         'Generating event subscriber base classes'.printIfNotTesting(fsa)
-        subscriberPath = 'EventSubscriber/Base/'
+        subscriberPath = 'src/EventSubscriber/Base/'
         isBase = true
         generateSubscriberClasses
 
         'Generating event subscriber implementation classes'.printIfNotTesting(fsa)
-        subscriberPath = 'EventSubscriber/'
+        subscriberPath = 'src/EventSubscriber/'
         isBase = false
         generateSubscriberClasses
     }
