@@ -39,8 +39,7 @@ class Configuration {
 
         use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
         
-        return static function (DefinitionConfigurator $definition): void
-        {
+        return static function (DefinitionConfigurator $definition): void {
             $definition->rootNode()
                 «configurationBuilder»
             ;
