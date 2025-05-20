@@ -18,24 +18,21 @@ application "SimpleNews" targets SF73 {
     email "info@guite.de"
     url "https://guite.de"
     license "GPL"
-    prefix "sinew"
     entities {
-        entity "article" leading {
+        entity "article" leading tree {
             documentation "My article"
             nameMultiple "articles"
             displayPattern "#title#"
             identifierStrategy IDENTITY
-            changeTrackingPolicy DEFERRED_IMPLICIT
             lockType OPTIMISTIC
             slugLength 50
             slugUpdatable false
             slugUnique false
             slugSeparator "_"
-            tree CLOSURE
             standardFields false
             onAccountDeletionCreator GUEST
             onAccountDeletionLastEditor DELETE
-            workflow NONE
+            approval false
             hasArchive false
             ownerPermission false
             fields {

@@ -19,18 +19,16 @@ application "SimpleNews" targets SF73 {
     url "https://guite.de"
     version "0.0.5"
     license "My license"
-    prefix "sinew"
     skipFiles "foo, bar"
     markFiles "foo, bar"
     entities {
-        entity "article" leading loggable {
+        entity "article" leading tree loggable {
             nameMultiple "articles"
             displayPattern "#title#"
             lockType OPTIMISTIC
-            tree CLOSURE
             onAccountDeletionCreator GUEST
             onAccountDeletionLastEditor GUEST
-            workflow ENTERPRISE
+            approval true
             fields {
                 string "title" {
                     sluggablePosition 1
@@ -52,7 +50,6 @@ application "SimpleNews" targets SF73 {
         entity "image" loggable geographical {
             nameMultiple "images"
             displayPattern "#title#"
-            changeTrackingPolicy DEFERRED_EXPLICIT
             lockType OPTIMISTIC
             onAccountDeletionCreator DELETE
             onAccountDeletionLastEditor DELETE

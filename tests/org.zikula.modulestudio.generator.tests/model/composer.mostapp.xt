@@ -49,7 +49,6 @@ application "SimpleTest" {
     author "Michael Smith"
     email "info@example.org"
     url "http://example.org"
-    prefix "simtest"
     entities {
         entity "article" leading {
             nameMultiple "articles"

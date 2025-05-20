@@ -17,7 +17,6 @@ application "SimpleNews" {
     author "Axel Guckelsberger"
     email "info@guite.de"
     url "https://guite.de"
-    prefix "sinew"
     indexActionsStyle BUTTON_GROUP
     entities {
         entity "post" {
@@ -41,7 +40,7 @@ application "SimpleNews" {
         entity "article1" leading {
             documentation "My entity with {{some}} {{ vars }} and {{ foo}} as well as {{    bar          }}"
             nameMultiple "articles1"
-            workflow ENTERPRISE
+            approval true
             ownerPermission true
             fields {
                 boolean "bool1" nullable readonly sortableGroup {
@@ -89,9 +88,8 @@ application "SimpleNews" {
                 }
             }
         },
-        entity "article3" {
+        entity "article3" tree {
             nameMultiple "articles3"
-            tree NESTED
             fields {
                 number "num1" nullable readonly sortableGroup {
                     dbName "num1"
@@ -291,7 +289,6 @@ application "SimpleNews" {
         entity "article7" {
             nameMultiple "articles7"
             identifierStrategy IDENTITY
-            changeTrackingPolicy DEFERRED_IMPLICIT
             lockType PESSIMISTIC_WRITE
             fields {
                 email "ema1" nullable readonly sortableGroup {
@@ -321,7 +318,6 @@ application "SimpleNews" {
         entity "article8" {
             nameMultiple "articles8"
             lockType NONE
-            tree NONE
             fields {
                 url "url1" nullable readonly sortableGroup {
                     dbName "url1"
@@ -347,10 +343,9 @@ application "SimpleNews" {
                 }
             }
         },
-        entity "article9" {
+        entity "article9" tree {
             nameMultiple "articles9"
             lockType OPTIMISTIC
-            tree NESTED
             fields {
                 integer "myVersion" version,
                 upload "file1" nullable readonly sortableGroup {
@@ -403,7 +398,6 @@ application "SimpleNews" {
         entity "article10" {
             nameMultiple "articles10"
             lockType PESSIMISTIC_READ
-            tree CLOSURE
             fields {
                 list "list1" nullable readonly sortableGroup {
                     dbName "ema1"

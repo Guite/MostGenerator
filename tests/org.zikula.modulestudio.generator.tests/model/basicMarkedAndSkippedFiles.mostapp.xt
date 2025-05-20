@@ -9,15 +9,15 @@ test which files are contained in the output
 XPECT files ---
     .gitignore
     !composer.json
-    !AcmeSimpleTestBundle.php
-    AcmeSimpleTestBundle.generated.php
-    Base/AbstractAcmeSimpleTestBundle.php
-    Entity/Base/AbstractArticle.php
-    Resources/views/Article/index.html.twig
-    !Resources/views/Article/detail.html.twig
-    Resources/views/Article/detail.html.generated.twig
-    !Resources/views/Article/delete.html.twig
-    !Resources/views/Article/delete.html.generated.twig
+    !src/AcmeSimpleTestBundle.php
+    src/AcmeSimpleTestBundle.generated.php
+    src/Base/AbstractAcmeSimpleTestBundle.php
+    src/Entity/Base/AbstractArticle.php
+    templates/Article/index.html.twig
+    !templates/Article/detail.html.twig
+    templates/Article/detail.html.generated.twig
+    !templates/Article/delete.html.twig
+    !templates/Article/delete.html.generated.twig
 --- */
 
 application "SimpleTest" {
@@ -26,14 +26,13 @@ application "SimpleTest" {
     author "Michael Smith"
     email "info@example.org"
     url "http://example.org"
-    prefix "simtest"
     skipFiles "
         composer.json,
-        Resources/views/Article/delete.html.twig
+        templates/Article/delete.html.twig
     "
     markFiles "
         AcmeSimpleTestBundle.php,
-        Resources/views/Article/detail.html.twig
+        templates/Article/detail.html.twig
     "
     entities {
         entity "article" leading {

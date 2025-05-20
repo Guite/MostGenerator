@@ -9,8 +9,8 @@ test which files are contained in the output
 XPECT files ---
     .gitignore
     composer.json
-    AcmeSimpleTestBundle.php
-    Base/AbstractAcmeSimpleTestBundle.php
+    src/AcmeSimpleTestBundle.php
+    src/Base/AbstractAcmeSimpleTestBundle.php
     !this/file/not.foo
     !also/NOT/this/file.html
 --- */
@@ -21,7 +21,6 @@ application "SimpleTest" {
     author "Michael Smith"
     email "info@example.org"
     url "http://example.org"
-    prefix "simtest"
     entities {
         entity "article" leading {
             nameMultiple "articles"

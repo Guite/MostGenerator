@@ -18,15 +18,12 @@ application "SimpleNews" targets SF73 {
     author "Axel Guckelsberger"
     email "info@guite.de"
     url "https://guite.de"
-    prefix "sinew"
-    detailActionsStyle BUTTON
     entities {
         entity "article" leading tree {
             documentation "My article"
             nameMultiple "articles"
             displayPattern "#title#"
             identifierStrategy IDENTITY
-            changeTrackingPolicy DEFERRED_EXPLICIT
             lockType PESSIMISTIC_WRITE
             slugLength 50
             slugUpdatable true
@@ -35,7 +32,7 @@ application "SimpleNews" targets SF73 {
             standardFields true
             onAccountDeletionCreator ADMIN
             onAccountDeletionLastEditor ADMIN
-            workflow STANDARD
+            approval true
             hasArchive true
             ownerPermission true
             fields {
