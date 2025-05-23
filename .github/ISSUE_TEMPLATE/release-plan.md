@@ -24,10 +24,8 @@ assignees: 'Guite'
 ## Spread the word
 
 - [ ] Provide news article at <https://modulestudio.de>
-- [ ] Link in Slack (`#modulestudio` and `#german` channels)
 - [ ] Create blog post at <https://get-the-most.de>
   - [ ] Forwarded to Xing
-- [ ] Post on Twitter
 - [ ] Post on Facebook
 - [ ] Post on #mdsd chanel in Symfony slack
 

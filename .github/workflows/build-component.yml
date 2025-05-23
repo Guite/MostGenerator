@@ -41,7 +41,7 @@ jobs:
     - name: Collect artifacts to deploy
       run: |
         mkdir -p deploy/repo
-        cp -R releng/org.zikula.modulestudio.generator.build/target/repository/* deploy/repo
+        cp -R repository/target/repository/* deploy/repo
 
     # see https://github.com/WebFreak001/deploy-nightly
     - name: Deploy standalone generator
