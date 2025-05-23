@@ -13,8 +13,11 @@ import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import java.util.ArrayList
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
 class ValidationHelpProvider {
+
+    extension ModelExtensions = new ModelExtensions
 
     def dispatch ArrayList<String> helpMessages(Field it) {
         newArrayList
@@ -23,15 +26,15 @@ class ValidationHelpProvider {
     def dispatch helpMessages(NumberField it) {
         val messages = newArrayList
 
-        if (0 < minValue && 0 < maxValue) {
-            if (minValue == maxValue) {
+        if (hasMinValue && hasMaxValue) {
+            if (formattedMinValue == formattedMaxValue) {
                 messages += '''«''»'Note: this value must exactly be %value%.'«''»'''
             } else {
                 messages += '''«''»'Note: this value must be between %minValue% and %maxValue%.'«''»'''
             }
-        } else if (0 < minValue) {
+        } else if (hasMinValue) {
             messages += '''«''»'Note: this value must not be lower than %minValue%.'«''»'''
-        } else if (0 < maxValue) {
+        } else if (hasMaxValue) {
             messages += '''«''»'Note: this value must not be greater than %maxValue%.'«''»'''
         }
 
@@ -49,8 +52,12 @@ class ValidationHelpProvider {
         }
         if (role == StringRole.BIC) {
             messages += '''«''»'Note: this value must be a valid BIC (Business Identifier Code).'«''»'''
+        } else if (role == StringRole.CIDR) {
+            messages += '''«''»'Note: this value must be a valid CIDR (classless inter-domain routing) block.'«''»'''
         } else if (role == StringRole.CREDIT_CARD) {
             messages += '''«''»'Note: this value must be a valid credit card number.'«''»'''
+        } else if (role == StringRole.HOSTNAME) {
+            messages += '''«''»'Note: this value must be a valid host name including a top-level domain.'«''»'''
         } else if (role == StringRole.IBAN) {
             messages += '''«''»'Note: this value must be a valid IBAN (International Bank Account Number).'«''»'''
         } else if (role == StringRole.ISBN) {
@@ -77,17 +84,17 @@ class ValidationHelpProvider {
     def dispatch helpMessageParameters(NumberField it) {
         val parameters = newArrayList
 
-        if (0 < minValue && 0 < maxValue) {
-            if (minValue == maxValue) {
-                parameters += '''«''»'%value%' => «minValue»'''
+        if (hasMinValue && hasMaxValue) {
+            if (formattedMinValue == formattedMaxValue) {
+                parameters += '''«''»'%value%' => «formattedMinValue»'''
             } else {
-                parameters += '''«''»'%minValue%' => «minValue»'''
-                parameters += '''«''»'%maxValue%' => «maxValue»'''
+                parameters += '''«''»'%minValue%' => «formattedMinValue»'''
+                parameters += '''«''»'%maxValue%' => «formattedMaxValue»'''
             }
-        } else if (0 < minValue) {
-            parameters += '''«''»'%minValue%' => «minValue»'''
-        } else if (0 < maxValue) {
-            parameters += '''«''»'%maxValue%' => «maxValue»'''
+        } else if (hasMinValue) {
+            parameters += '''«''»'%minValue%' => «formattedMinValue»'''
+        } else if (hasMaxValue) {
+            parameters += '''«''»'%maxValue%' => «formattedMaxValue»'''
         }
 
         parameters

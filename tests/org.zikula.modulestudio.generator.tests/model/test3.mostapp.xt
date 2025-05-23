@@ -55,10 +55,15 @@ application "SimpleNews" targets SF73 {
                 editAction "Edit"
             }
         },
-        mappedSuperClass "image" {
+        entity "image" {
             documentation "My image"
+            nameMultiple "images"
+            displayPattern "#title#"
             fields {
                 string "title"
+            }
+            actions {
+                indexAction "Index"
             }
         }
     }

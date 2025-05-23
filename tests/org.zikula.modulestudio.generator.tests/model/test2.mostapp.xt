@@ -34,7 +34,9 @@ application "SimpleNews" targets SF73 {
                     sluggablePosition 1
                     length 200
                 },
-                integer "currentVersion" version,
+                number "currentVersion" {
+                    role VERSION
+                },
                 datetime "myPast" past,
                 datetime "myFuture" future
             }
@@ -62,15 +64,17 @@ application "SimpleNews" targets SF73 {
                     mandatory false
                 },
                 text "description",
-                integer "currentVersion" unique version,
+                number "currentVersion" unique {
+                    role VERSION
+                },
                 upload "myImage",
                 datetime "myStart" startDate,
                 datetime "myEnd" endDate,
                 datetime "myPast" past {
-                    components TIME
+                    role TIME
                 },
                 datetime "myFuture" future {
-                    components TIME
+                    role TIME
                 }
             }
             actions {
@@ -126,19 +130,19 @@ application "SimpleNews" targets SF73 {
                 },
                 datetime "myTime" immutable {
                     defaultValue "now"
-                    components TIME
+                    role TIME
                 },
                 datetime "myStart" startDate {
-                    components DATE
+                    role DATE
                 },
                 datetime "myEnd" endDate {
-                    components DATE
+                    role DATE
                 },
                 datetime "myPast" past {
-                    components DATE
+                    role DATE
                 },
                 datetime "myFuture" future {
-                    components DATE
+                    role DATE
                 },
                 upload "myImage",
                 user "myUser1" {
@@ -200,7 +204,6 @@ application "SimpleNews" targets SF73 {
             maxSource 3
             minTarget 1
             maxTarget 3
-            inheritPermissions AFFIRMATIVE
         }
     }
     variables {
@@ -236,7 +239,7 @@ application "SimpleNews" targets SF73 {
                     numberType DECIMAL
                 },
                 datetime "myDate" {
-                    components DATE
+                    role DATE
                 },
                 datetime "myStart" startDate,
                 datetime "myEnd" endDate

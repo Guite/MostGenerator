@@ -11,6 +11,7 @@ XPECT generated file composer.json ---
     "name": "acme/simpletest-bundle",
     "version": "1.0.0",
     "description": "Just a simple test application.",
+    "homepage": "http://example.org",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
@@ -22,11 +23,14 @@ XPECT generated file composer.json ---
         }
     ],
     "autoload": {
-        "psr-4": { "Acme\\SimpleTestBundle\\": "" }
+        "psr-4": { "Acme\\SimpleTestBundle\\": "src" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Acme\\SimpleTestBundle\\Tests\\": "tests" }
     },
     "require": {
         "php": ">=8.2",
-        "doctrine/doctrine-migrations-bundle": "^3.3",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
         "zikula/core-bundle": "^4.0",
         "zikula/theme-bundle": "^4.0",
         "zikula/users-bundle": "^4.0"

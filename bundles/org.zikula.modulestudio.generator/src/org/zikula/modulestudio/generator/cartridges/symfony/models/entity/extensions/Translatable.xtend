@@ -93,7 +93,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
         #[ORM\Column(name: 'object_class', type: Types::STRING, length: 140)]
         protected «/* no type allowed because we override a parent field */»$objectClass;
 
-        «IF primaryKey instanceof NumberField && (it as NumberField).numberType == NumberFieldType.INTEGER»
+        «IF primaryKey instanceof NumberField && (primaryKey as NumberField).numberType == NumberFieldType.INTEGER»
             /**
              * Use integer instead of string for increased performance.
              *

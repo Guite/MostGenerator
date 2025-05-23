@@ -40,8 +40,10 @@ application "SimpleNews" targets SF73 {
                     sluggablePosition 1
                     length 200
                 },
-                integer "myVersion" version,
-                integer "parentIdentifier" nullable {
+                number "myVersion" {
+                    role VERSION
+                },
+                number "parentIdentifier" nullable {
                     mandatory false
                 }
             }
@@ -53,16 +55,20 @@ application "SimpleNews" targets SF73 {
         },
         entity "image" {
             nameMultiple "images"
+            displayPattern "#caption#"
             fields {
                 string "caption" translatable {
                     mandatory false
                     sluggablePosition 2
                 }
             }
+            actions {
+                indexAction "Index"
+            }
         }
     }
     relations {
-        one2many bidirectional inheritPermissions {
+        one2many bidirectional {
             source "article"
             sourceAlias "article"
             sourceField "parentIdentifier"

@@ -23,6 +23,7 @@ import de.guite.modulestudio.metamodel.TextRole
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UserField
+import java.math.BigInteger
 
 /**
  * This class contains model related extension methods.
@@ -272,6 +273,40 @@ class ModelExtensions {
         }
 
         false
+    }
+
+    def hasMinValue(NumberField it) {
+        if (NumberFieldType.INTEGER == role) {
+            return minValueInteger.compareTo(BigInteger.ZERO) > 0
+        }
+		null !== minValueFloat && 0 < minValueFloat
+    }
+
+    def getFormattedMinValue(NumberField it) {
+        if (!hasMinValue) {
+            return 0
+        }
+        if (NumberFieldType.INTEGER == role) {
+            return minValueInteger
+        }
+        minValueFloat
+    }
+
+    def hasMaxValue(NumberField it) {
+        if (NumberFieldType.INTEGER == role) {
+            return maxValueInteger.compareTo(BigInteger.ZERO) > 0
+        }
+        null !== maxValueFloat && 0 < maxValueFloat
+    }
+
+    def getFormattedMaxValue(NumberField it) {
+        if (!hasMaxValue) {
+            return 0
+        }
+        if (NumberFieldType.INTEGER == role) {
+            return maxValueInteger
+        }
+        maxValueFloat
     }
 
     /**

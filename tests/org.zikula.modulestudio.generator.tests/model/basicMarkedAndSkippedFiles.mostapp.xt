@@ -9,10 +9,10 @@ test which files are contained in the output
 XPECT files ---
     .gitignore
     !composer.json
-    !src/AcmeSimpleTestBundle.php
-    src/AcmeSimpleTestBundle.generated.php
-    src/Base/AbstractAcmeSimpleTestBundle.php
-    src/Entity/Base/AbstractArticle.php
+    !AcmeSimpleTestBundle.php
+    AcmeSimpleTestBundle.generated.php
+    Base/AbstractAcmeSimpleTestBundle.php
+    Entity/Base/AbstractArticle.php
     templates/Article/index.html.twig
     !templates/Article/detail.html.twig
     templates/Article/detail.html.generated.twig

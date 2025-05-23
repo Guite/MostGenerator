@@ -84,7 +84,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class implementation.
      */
     override extensionClassBaseImplementation(Entity it) '''
-        «IF primaryKey instanceof NumberField && (it as NumberField).numberType == NumberFieldType.INTEGER»
+        «IF primaryKey instanceof NumberField && (primaryKey as NumberField).numberType == NumberFieldType.INTEGER»
             /**
              * Use integer instead of string for increased performance.
              */

@@ -17,10 +17,8 @@ application "SimpleNews" {
     author "Axel Guckelsberger"
     email "info@guite.de"
     url "https://guite.de"
-    indexActionsStyle BUTTON_GROUP
     entities {
         entity "post" {
-            documentation "The posts"
             nameMultiple "posts"
             displayPattern "#title#"
             fields {
@@ -28,22 +26,19 @@ application "SimpleNews" {
                     sluggablePosition 1
                     length 200
                 },
-                integer "sortValue" sortablePosition
+                number "sortValue" {
+                    role SORTABLE_POSITION
+                }
             }
             actions {
-                indexAction "Index",
-                detailAction "Detail",
-                editAction "Edit",
-                deleteAction "Delete"
+                indexAction "Index"
             }
         },
         entity "article1" leading {
-            documentation "My entity with {{some}} {{ vars }} and {{ foo}} as well as {{    bar          }}"
             nameMultiple "articles1"
-            approval true
-            ownerPermission true
+            displayPattern "#bool1#"
             fields {
-                boolean "bool1" nullable readonly sortableGroup {
+                boolean "bool1" nullable readonly {
                     dbName "bool1"
                     documentation "My field"
                     defaultValue "true"
@@ -53,19 +48,23 @@ application "SimpleNews" {
                     visibleOnEdit false
                     visibleOnSort false
                 },
-                boolean "bool2" unique translatable ajaxTogglability {
+                boolean "bool2" unique translatable renderAsSwitch {
                     defaultValue "true"
                     mandatory true
                     visibleOnSort false
                 }
             }
+            actions {
+                indexAction "Index"
+            }
         },
-        entity "article2" loggable {
+        entity "article2" {
             nameMultiple "articles2"
+            displayPattern "#integ1#"
             identifierStrategy AUTO
             lockType OPTIMISTIC
             fields {
-                integer "integ1" nullable readonly sortableGroup {
+                number "integ1" nullable readonly {
                     dbName "integ1"
                     documentation "My field"
                     defaultValue "123"
@@ -75,23 +74,34 @@ application "SimpleNews" {
                     visibleOnEdit false
                     visibleOnSort false
                 },
-                integer "integ2" unique percentage translatable {
+                number "integ2" unique translatable {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
+                    role PERCENTAGE
                 },
-                integer "integ3" range version {
+                number "integ3" {
                     defaultValue "123"
-                    length 6
                     minValue 2
                     maxValue 2000
+                    role RANGE
+                },
+                number "integ4" {
+                    defaultValue "123"
+                    minValue 2
+                    maxValue 2000
+                    role VERSION
                 }
             }
+            actions {
+                indexAction "Index"
+            }
         },
-        entity "article3" tree {
+        entity "article3" {
             nameMultiple "articles3"
+            displayPattern "#num1#"
             fields {
-                number "num1" nullable readonly sortableGroup {
+                number "num1" nullable readonly {
                     dbName "num1"
                     documentation "My field"
                     defaultValue "123"
@@ -102,26 +112,31 @@ application "SimpleNews" {
                     visibleOnSort false
                     numberType DECIMAL
                 },
-                number "num2" unique percentage translatable {
+                number "num2" unique translatable {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
                     numberType DECIMAL
+                    role PERCENTAGE
                 },
-                number "num3" currency {
+                number "num3" {
                     defaultValue "123.45"
                     numberType FLOAT
-                    length 8
                     minValue 2.45
                     maxValue 2000.43
+                    role MONEY
                 }
+            }
+            actions {
+                indexAction "Index"
             }
         },
         entity "article4" {
             nameMultiple "articles4"
+            displayPattern "#str1#"
             identifierStrategy NONE
             fields {
-                string "str1" nullable readonly sortableGroup {
+                string "str1" nullable readonly {
                     dbName "str1"
                     documentation "My field"
                     defaultValue "123"
@@ -136,12 +151,10 @@ application "SimpleNews" {
                     mandatory true
                     visibleOnSort false
                     minLength 3
-                    regexp "foo"
                 },
-                string "str3" fixed {
+                string "str3" {
                     defaultValue "foo bar"
                     sluggablePosition 3
-                    regexp "foo" opposite
                     length 8
                 },
                 string "str71" {
@@ -165,20 +178,12 @@ application "SimpleNews" {
                     role CURRENCY
                 },
                 string "str76" {
-                    length 20
+                    length 32
                     role DATE_INTERVAL
-                },
-                string "str762" {
-                    length 50
-                    role HOSTNAME
                 },
                 string "str77" {
                     length 50
                     role IBAN
-                },
-                string "str772" {
-                    length 50
-                    role ICON
                 },
                 string "str78" {
                     length 10
@@ -189,7 +194,6 @@ application "SimpleNews" {
                     role LOCALE
                 },
                 string "str710" {
-                    length 10
                     role PASSWORD
                 },
                 string "str711" {
@@ -197,7 +201,7 @@ application "SimpleNews" {
                     role PHONE_NUMBER
                 },
                 string "str712" {
-                    length 50
+                    length 30
                     role TIME_ZONE
                 },
                 string "str713" {
@@ -207,18 +211,18 @@ application "SimpleNews" {
                 string "str714" {
                     length 50
                     role UUID
-                },
-                string "str715" {
-                    length 50
-                    role WEEK
                 }
+            }
+            actions {
+                indexAction "Index"
             }
         },
         entity "article5" {
             nameMultiple "articles5"
+            displayPattern "#txt1#"
             identifierStrategy SEQUENCE
             fields {
-                text "txt1" nullable readonly sortableGroup {
+                text "txt1" nullable readonly {
                     dbName "txt1"
                     documentation "My field"
                     defaultValue "123"
@@ -232,15 +236,16 @@ application "SimpleNews" {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
-                    regexp "foo"
                 },
-                text "txt3" fixed {
+                text "txt3" {
                     defaultValue "foo bar"
                     sluggablePosition 3
                     minLength 5
-                    regexp "foo" opposite
                     length 1234
                 }
+            }
+            actions {
+                indexAction "Index"
             }
         },
         entity "article6" {
@@ -249,7 +254,7 @@ application "SimpleNews" {
             identifierStrategy IDENTITY
             lockType PESSIMISTIC_READ
             fields {
-                user "usr1" nullable readonly sortableGroup {
+                user "usr1" nullable readonly {
                     dbName "usr1"
                     documentation "My field"
                     defaultValue "123"
@@ -264,21 +269,8 @@ application "SimpleNews" {
                     mandatory true
                     visibleOnSort false
                 },
-                user "usr3" sortablePosition {
+                user "usr3" {
                     defaultValue "123"
-                    length 6
-                    blameable NONE
-                },
-                user "usr4" {
-                    blameable CREATE
-                },
-                user "usr5" {
-                    blameable UPDATE
-                },
-                user "usr6" {
-                    blameable CHANGE
-                    blameableChangeTriggerField "usr3"
-                    blameableChangeTriggerValue "foo"
                     onAccountDeletion ADMIN
                 }
             }
@@ -288,10 +280,11 @@ application "SimpleNews" {
         },
         entity "article7" {
             nameMultiple "articles7"
+            displayPattern "#ema1#"
             identifierStrategy IDENTITY
             lockType PESSIMISTIC_WRITE
             fields {
-                email "ema1" nullable readonly sortableGroup {
+                string "ema1" nullable readonly {
                     dbName "ema1"
                     documentation "My field"
                     defaultValue "info@guite.de"
@@ -300,26 +293,30 @@ application "SimpleNews" {
                     visibleOnNew false
                     visibleOnEdit false
                     visibleOnSort false
+                    role MAIL
                 },
-                email "ema2" unique translatable {
+                string "ema2" unique translatable {
                     mandatory true
                     visibleOnIndex false
                     visibleOnDetail false
                     minLength 3
-                    regexp "foo"
+                    role MAIL
                 },
-                email "ema3" fixed {
+                string "ema3" {
                     sluggablePosition 3
-                    regexp "foo" opposite
-                    length 50
+                    role MAIL
                 }
+            }
+            actions {
+                indexAction "Index"
             }
         },
         entity "article8" {
             nameMultiple "articles8"
+            displayPattern "#url1#"
             lockType NONE
             fields {
-                url "url1" nullable readonly sortableGroup {
+                string "url1" nullable readonly {
                     dbName "url1"
                     documentation "My field"
                     defaultValue "https://guite.de"
@@ -328,27 +325,33 @@ application "SimpleNews" {
                     visibleOnNew false
                     visibleOnEdit false
                     visibleOnSort false
+                    role URL
                 },
-                url "url2" unique translatable {
+                string "url2" unique translatable {
                     mandatory true
                     visibleOnIndex false
                     visibleOnDetail false
                     minLength 3
-                    regexp "foo"
+                    role URL
                 },
-                url "url3" fixed {
+                string "url3" {
                     sluggablePosition 3
-                    regexp "foo" opposite
-                    length 50
+                    role URL
                 }
+            }
+            actions {
+                indexAction "Index"
             }
         },
         entity "article9" tree {
             nameMultiple "articles9"
+            displayPattern "#file1#"
             lockType OPTIMISTIC
             fields {
-                integer "myVersion" version,
-                upload "file1" nullable readonly sortableGroup {
+                number "myVersion" {
+                    role VERSION
+                },
+                upload "file1" nullable readonly {
                     dbName "str1"
                     documentation "My field"
                     defaultValue "foo"
@@ -363,43 +366,35 @@ application "SimpleNews" {
                     mandatory true
                     visibleOnIndex false
                     minLength 3
-                    regexp "foo"
                     namingScheme FIELDNAMEWITHCOUNTER
                     allowSquare true
                     allowLandscape true
                     allowPortrait true
                 },
-                upload "file3" fixed multiple {
+                upload "file3" multiple {
                     sluggablePosition 3
-                    regexp "foo" opposite
                     length 50
                     allowedExtensions "foo, bar"
                     namingScheme USERDEFINEDWITHCOUNTER
-                    subFolderName "foo"
                     maxSize "20M"
                     mimeTypes "images and other stuff"
-                    minWidth 500
-                    maxWidth 600
-                    minHeight 200
-                    maxHeight 400
-                    minPixels 2
-                    maxPixels 4000
-                    minRatio 2.4
-                    maxRatio 4.2
                     allowLandscape false
                     allowPortrait false
-                    detectCorrupted true
                 },
                 upload "file4" {
                     namingScheme ORIGINALWITHCOUNTER
                 }
             }
+            actions {
+                indexAction "Index"
+            }
         },
         entity "article10" {
             nameMultiple "articles10"
+            displayPattern "#list1#"
             lockType PESSIMISTIC_READ
             fields {
-                list "list1" nullable readonly sortableGroup {
+                list "list1" nullable readonly {
                     dbName "ema1"
                     documentation "My field"
                     defaultValue "info@guite.de"
@@ -418,15 +413,13 @@ application "SimpleNews" {
                     visibleOnIndex false
                     visibleOnDetail false
                     minLength 3
-                    regexp "foo"
                     items {
                         listItem "foo",
                         default listItem "bar"
                     }
                 },
-                list "list3" fixed multiple expanded {
+                list "list3" multiple expanded {
                     sluggablePosition 3
-                    regexp "foo" opposite
                     length 50
                     min 2
                     max 3
@@ -435,17 +428,20 @@ application "SimpleNews" {
                         default listItem "bar" (   "2"   ),
                         listItem "baz" (   "foobar"   ) {
                             documentation "something"
-                            image "my image"
                         }
                     }
                 }
             }
+            actions {
+                indexAction "Index"
+            }
         },
         entity "article11" {
             nameMultiple "articles11"
+            displayPattern "#arr1#"
             lockType PESSIMISTIC_WRITE
             fields {
-                array "arr1" nullable readonly sortableGroup {
+                array "arr1" nullable readonly {
                     dbName "arr1"
                     documentation "My field"
                     defaultValue "foo"
@@ -467,11 +463,15 @@ application "SimpleNews" {
                     max 10
                 }
             }
+            actions {
+                indexAction "Index"
+            }
         },
         entity "article13" {
             nameMultiple "articles13"
+            displayPattern "#dat1#"
             fields {
-                datetime "dat1" nullable readonly sortableGroup {
+                datetime "dat1" nullable readonly {
                     dbName "dat1"
                     documentation "My field"
                     defaultValue "now"
@@ -485,29 +485,22 @@ application "SimpleNews" {
                     defaultValue "now"
                     mandatory true
                     visibleOnSort false
-                    components TIME
+                    role TIME
                 },
                 datetime "dat3" immutable {
                     defaultValue "2017-12-21 13:15:00"
-                    components DATE_TIME
-                    timestampable NONE
+                    role DATE_TIME
                 },
                 datetime "dat4" past startDate {
                     defaultValue "2017-12-21"
-                    components DATE
-                    timestampable CREATE
+                    role DATE
                 },
-                datetime "dat5" future endDate {
-                    timestampable UPDATE
-                },
-                datetime "dat6" {
-                    timestampable CHANGE
-                    timestampableChangeTriggerField "dat3"
-                    timestampableChangeTriggerValue "foo"
-                    validatorAddition "foo bar"
-                }
+                datetime "dat5" future endDate
             }
             actions {
+                detailAction "Detail",
+                editAction "Edit",
+                deleteAction "Delete",
                 customAction "myReport" {
                     documentation "This is my special report action."
                 }

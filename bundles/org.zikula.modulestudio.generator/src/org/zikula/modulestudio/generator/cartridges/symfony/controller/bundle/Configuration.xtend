@@ -15,12 +15,14 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.Property
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Configuration {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     /**
@@ -107,14 +109,14 @@ class Configuration {
     def private validation(Field it) '''
         «IF it instanceof NumberField»
             «IF NumberRole.RANGE == role»
-                ->min(«minValue»)
-                ->max(«maxValue»)
+                ->min(«formattedMinValue»)
+                ->max(«formattedMaxValue»)
             «ELSE»
-                «IF minValue > 0»
-                    ->min(«minValue»)
+                «IF hasMinValue»
+                    ->min(«formattedMinValue»)
                 «ENDIF»
-                «IF maxValue > 0»
-                    ->max(«maxValue»)
+                «IF hasMaxValue»
+                    ->max(«formattedMaxValue»)
                 «ENDIF»
             «ENDIF»
         «ELSEIF it instanceof ListField»

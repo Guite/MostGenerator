@@ -1,0 +1,4 @@
+<site>
+  <bundle id="org.zikula.modulestudio.generator" version="0.0.0"/>
+  <category-def name="all" label="All Bundles"/>
+</site>

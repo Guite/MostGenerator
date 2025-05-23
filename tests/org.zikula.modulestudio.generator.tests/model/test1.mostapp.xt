@@ -30,12 +30,12 @@ application "SimpleNews" targets SF73 {
                     sluggablePosition 1
                     length 200
                 },
-                integer "mySortField" sortablePosition
+                number "mySortField" {
+                    role SORTABLE_POSITION
+                }
             }
             actions {
-                indexAction "Index",
-                detailAction "Detail",
-                editAction "Edit"
+                indexAction "Index"
             }
         },
         entity "image" {
@@ -48,9 +48,7 @@ application "SimpleNews" targets SF73 {
                 }
             }
             actions {
-                indexAction "Index",
-                detailAction "Detail",
-                editAction "Edit"
+                indexAction "Index"
             }
         }
     }
@@ -68,7 +66,7 @@ application "SimpleNews" targets SF73 {
             //cascade NONE
             //cascadeReverse PERSIST
         },
-        one2one bidirectional unique orphanRemoval inheritPermissions {
+        one2one bidirectional unique orphanRemoval {
             source "article"
             sourceAlias "article12"
             sourceField "id"
@@ -97,7 +95,7 @@ application "SimpleNews" targets SF73 {
             //cascade DETACH
             //cascadeReverse PERSIST_REMOVE
         },
-        one2many bidirectional unique orphanRemoval inheritPermissions {
+        one2many bidirectional unique orphanRemoval {
             source "article"
             sourceAlias "article22"
             sourceField "id"
@@ -154,7 +152,7 @@ application "SimpleNews" targets SF73 {
             expandedTarget true
             useAutoCompletion ONLY_TARGET_SIDE
             fetchType EXTRA_LAZY
-            sourceEditing EMBEDDED
+            sourceEditing CHOOSE
             //cascade PERSIST_REMOVE_DETACH
             //cascadeReverse PERSIST_MERGE_DETACH
             //onDelete "foo"
@@ -183,7 +181,6 @@ application "SimpleNews" targets SF73 {
             //cascade MERGE_DETACH
             //cascadeReverse PERSIST_REMOVE_MERGE
             refClass "articleImage1"
-            inheritPermissions NONE 
         },
         many2many bidirectional unique orphanRemoval {
             source "article"
@@ -203,7 +200,6 @@ application "SimpleNews" targets SF73 {
             //cascadeReverse PERSIST_MERGE_DETACH
             //onDelete "foo"
             refClass "articleImage2"
-            inheritPermissions AFFIRMATIVE 
         },
         many2many {
             source "article"
@@ -221,7 +217,6 @@ application "SimpleNews" targets SF73 {
             maxSource 5
             minTarget 3
             maxTarget 3
-            inheritPermissions UNANIMOUS 
         }
     }
 }

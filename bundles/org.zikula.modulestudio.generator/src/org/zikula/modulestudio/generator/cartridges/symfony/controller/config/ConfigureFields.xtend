@@ -475,14 +475,14 @@ class ConfigureFields implements ControllerMethodInterface {
                 «ENDIF»
                 «IF it instanceof NumberField»
                     «IF NumberRole.RANGE == role»
-                        'min' => «minValue»,
-                        'max' => «maxValue»,
+                        'min' => «formattedMinValue»,
+                        'max' => «formattedMaxValue»,
                     «ELSE»
-                        «IF minValue > 0»
-                            'min' => «minValue»,
+                        «IF hasMinValue»
+                            'min' => «formattedMinValue»,
                         «ENDIF»
-                        «IF maxValue > 0»
-                            'max' => «maxValue»,
+                        «IF hasMaxValue»
+                            'max' => «formattedMaxValue»,
                         «ENDIF»
                     «ENDIF»
                 «ENDIF»

@@ -74,26 +74,26 @@ class ValidationConstraints {
                  && entity.outgoing.filter[r|r.sourceField == name].empty
              )»
                 «fieldAnnotationsInteger»
-                «IF minValue.toString != '0' && maxValue.toString != '0'»
-                    #[Assert\Range(min: «minValue», max: «maxValue»)]
-                «ELSEIF minValue.toString != '0'»
-                    #[Assert\GreaterThanOrEqual(value: «minValue»)]
+                «IF hasMinValue && hasMaxValue»
+                    #[Assert\Range(min: «formattedMinValue», max: «formattedMinValue»)]
+                «ELSEIF hasMinValue»
+                    #[Assert\GreaterThanOrEqual(value: «formattedMinValue»)]
                     #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
-                «ELSEIF maxValue.toString != '0'»
-                    #[Assert\LessThanOrEqual(value: «maxValue»)]
+                «ELSEIF hasMaxValue»
+                    #[Assert\LessThanOrEqual(value: «maxValueInteger»)]
                 «ELSE»
                     #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
                 «ENDIF»
             «ENDIF»
         «ELSE»
             «fieldAnnotationsNumeric»
-            «IF minValue.toString != '0.0' && maxValue.toString != '0.0'»
-                #[Assert\Range(min: «minValue», max: «maxValue»)]
-            «ELSEIF minValue.toString != '0.0'»
-                #[Assert\GreaterThanOrEqual(value: «minValue»)]
+            «IF hasMinValue && hasMaxValue»
+                #[Assert\Range(min: «formattedMinValue», max: «formattedMinValue»)]
+            «ELSEIF hasMinValue»
+                #[Assert\GreaterThanOrEqual(value: «formattedMinValue»)]
                 #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
-            «ELSEIF maxValue.toString != '0.0'»
-                #[Assert\LessThanOrEqual(value: «maxValue»)]
+            «ELSEIF hasMaxValue»
+                #[Assert\LessThanOrEqual(value: «maxValueFloat»)]
             «ELSE»
                 #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
             «ENDIF»
