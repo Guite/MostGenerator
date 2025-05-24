@@ -121,7 +121,7 @@ class WorkflowSettings {
      */
     def getPathToBundleImageAssets() {
         val targetBasePath = getPathToBundleRoot
-        var imagePath = 'Resources' + File.separator + 'public' + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        var imagePath = 'public' + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         var targetFolder = new File(targetBasePath + imagePath)
 
         targetFolder

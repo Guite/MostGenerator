@@ -32,12 +32,6 @@ class ModelFileCopier implements IWorkflowComponent {
     String sourceModelFileEnriched = '' //$NON-NLS-1$
 
     /**
-     * Path to the source diagram model file.
-     * /
-    @Accessors
-    String sourceDiagramFile = '' //$NON-NLS-1$*/
-
-    /**
      * Path to the target application model file.
      */
     @Accessors

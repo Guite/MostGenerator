@@ -163,7 +163,7 @@ class WorkflowStart {
         // compute destination path for model files
         //modelDestinationPath = File.separator + 'symfony' + File.separator + settings.appName + File.separator
         var modelDestinationPath = settings.getPathToBundleRoot
-        modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        modelDestinationPath += 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         settings.modelDestinationPath = modelDestinationPath
 
         return
