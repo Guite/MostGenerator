@@ -40,7 +40,7 @@ class ServiceDefinitions {
             «appNamespace»\:
                 resource: '../src/*'
             «IF hasUploads»
-            
+
                 «appNamespace»\Bundle\Initializer\«name.formatForCodeCapital»Initializer:
                     public: true
             «ENDIF»

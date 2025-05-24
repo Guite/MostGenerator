@@ -41,7 +41,7 @@ class Recipe {
 
     def private Routes(Application it) '''
         «vendor.formatForDB»_«name.formatForDB»:
-            resource: '@«appName»/Resources/config/routing.yaml'
+            resource: '@«appName»/config/routing.yaml'
     '''
 
     def private Instructions(Application it) '''

@@ -188,7 +188,7 @@ class ControllerLayer {
         if (hasIndexAction || hasEditAction || hasDeleteAction) {
             imports.add('RuntimeException')
         }
-        if (hasEditAction) {
+        if (hasIndexAction || hasEditAction) {
             imports.add('Symfony\\Component\\HttpFoundation\\RedirectResponse')
         }
         if (hasIndexAction) {

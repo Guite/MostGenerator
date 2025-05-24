@@ -26,6 +26,7 @@ class MetaData {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Symfony\\Component\\Translation\\TranslatableMessage',
             'Zikula\\CoreBundle\\Bundle\\MetaData\\BundleMetaDataInterface',
             'function Symfony\\Component\\Translation\\t'
         ])

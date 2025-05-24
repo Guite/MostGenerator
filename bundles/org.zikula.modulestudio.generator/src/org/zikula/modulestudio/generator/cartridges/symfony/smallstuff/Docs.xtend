@@ -92,7 +92,7 @@ class Docs {
 
         ### When not using Flex
 
-        1. Add the bundle to `/config/bundles.php` adding `"«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\«appName»": ["all"]`.
+        1. Add the bundle to `/config/bundles.php` adding `«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Bundle\«appName»::class => ['all' => true]`.
         2. Copy `docs/recipe/config/routes/«vendor.formatForDB»_«name.formatForDB».yaml` to `/config/routes/«vendor.formatForDB»_«name.formatForDB».yaml`.
         3. Create database tables
            1. Create a database migration using `php bin/console make:migration`.
