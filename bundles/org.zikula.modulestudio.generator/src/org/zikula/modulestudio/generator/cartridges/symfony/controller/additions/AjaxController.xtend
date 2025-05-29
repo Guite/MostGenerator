@@ -34,15 +34,14 @@ class AjaxController {
             imports.addAll(#[
                 'Psr\\Log\\LoggerInterface',
                 'Symfony\\Component\\Routing\\RouterInterface',
-                'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
-                'Zikula\\UsersBundle\\Repository\\UserRepositoryInterface'
+                'Symfony\\Component\\Security\\Core\\User\\UserInterface',
+                'Symfony\\Component\\Security\\Http\\Attribute\\CurrentUser'
             ])
         }
         if (isBase) {
             imports.addAll(#[
                 'Symfony\\Contracts\\Translation\\TranslatorInterface',
-                'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-                'Zikula\\PermissionsBundle\\Api\\ApiInterface\\PermissionApiInterface'
+                'Zikula\\CoreBundle\\Translation\\TranslatorTrait'
             ])
         }
         imports
@@ -83,7 +82,7 @@ class AjaxController {
             imports.add('Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface')
         }
         if (needsAutoCompletion || needsDuplicateCheck || hasTrees || hasSortable) {
-            imports.add('Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException')
+            imports.add('Symfony\\Component\\Security\\Http\\Attribute\\IsGranted')
         }
         imports.addAll(commonSystemImports(true))
         imports.addAll(commonAppImports)
@@ -100,7 +99,7 @@ class AjaxController {
          */
         abstract class AbstractAjaxController extends AbstractController
         {
-            public function __construct(private readonly PermissionApiInterface $permissionApi, TranslatorInterface $translator)
+            public function __construct(TranslatorInterface $translator)
             {
                 $this->setTranslator($translator);
             }
@@ -140,6 +139,7 @@ class AjaxController {
             /**
              * Searches for entities for auto completion usage.
              */
+            #[IsGranted('ROLE_EDITOR')]
         «ELSE»
             #[Route('/getItemListAutoCompletion',
                 name: '«appName.formatForDB»_ajax_getitemlistautocompletion',
@@ -162,10 +162,6 @@ class AjaxController {
     def private getItemListAutoCompletionBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            throw new AccessDeniedException();
         }
 
         $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
@@ -262,9 +258,8 @@ class AjaxController {
         «IF isBase»
             /**
              * Checks whether a field value is a duplicate or not.
-             *
-             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
+            #[IsGranted('ROLE_EDITOR')]
         «ELSE»
             #[Route('/checkForDuplicate',
                 name: '«appName.formatForDB»_ajax_checkforduplicate',
@@ -284,10 +279,6 @@ class AjaxController {
     def private checkForDuplicateBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            throw new AccessDeniedException();
         }
 
         «prepareDuplicateCheckParameters»
@@ -365,9 +356,8 @@ class AjaxController {
         «IF isBase»
             /**
              * Performs different operations on tree hierarchies.
-             *
-             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
+            #[IsGranted('ROLE_EDITOR')]
         «ELSE»
             #[Route('/handleTreeOperation',
                 name: '«appName.formatForDB»_ajax_handletreeoperation',
@@ -384,18 +374,13 @@ class AjaxController {
             LoggerInterface $logger,
             EntityFactory $entityFactory,
             EntityDisplayHelper $entityDisplayHelper,
-            CurrentUserApiInterface $currentUserApi,
-            UserRepositoryInterface $userRepository,
+            #[CurrentUser] ?UserInterface $currentUser,
             WorkflowHelper $workflowHelper
         ): JsonResponse'''
 
     def private handleTreeOperationBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            throw new AccessDeniedException();
         }
 
         «val treeEntities = getTreeEntities»
@@ -467,12 +452,7 @@ class AjaxController {
     '''
 
     def private treeOperationSwitch(Application it) '''
-        $logArgs = ['app' => '«appName»', 'user' => $currentUserApi->get('uname'), 'entity' => $objectType];
-        «IF hasStandardFieldEntities»
-
-            $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : 1;
-            $currentUser = $userRepository->find($currentUserId);
-        «ENDIF»
+        $logArgs = ['app' => '«appName»', 'user' => $currentUser?->getUserIdentifier(), 'entity' => $objectType];
 
         switch ($op) {
             case 'addRootNode':
@@ -723,9 +703,8 @@ class AjaxController {
         «IF isBase»
             /**
              * Updates the sort positions for a given list of entities.
-             *
-             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
+            #[IsGranted('ROLE_EDITOR')]
         «ELSE»
             #[Route('/updateSortPositions',
                 name: '«appName.formatForDB»_ajax_updatesortpositions',
@@ -744,10 +723,6 @@ class AjaxController {
     def private updateSortPositionsBaseImpl(Application it) '''
         if (!$request->isXmlHttpRequest()) {
             return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$this->permissionApi->hasPermission('«appName»::Ajax', '::', ACCESS_EDIT)) {
-            throw new AccessDeniedException();
         }
 
         $objectType = $request->request->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
@@ -841,8 +816,7 @@ class AjaxController {
                 $logger,
                 $entityFactory,
                 $entityDisplayHelper,
-                $currentUserApi,
-                $userRepository,
+                $currentUser,
                 $workflowHelper
             );
         }

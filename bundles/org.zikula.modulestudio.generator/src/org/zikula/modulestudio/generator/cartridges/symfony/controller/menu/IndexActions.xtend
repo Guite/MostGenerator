@@ -80,7 +80,7 @@ class IndexActions {
                 if ($this->permissionHelper->mayUseHistory($objectType)) {
                     // check if there exist any deleted «nameMultiple.formatForDisplay»
                     $hasDeletedEntities = false;
-                    if ($this->permissionHelper->hasPermission(ACCESS_EDIT)) {
+                    if ($this->permissionHelper->hasPermission(/*ACCESS_EDIT*/)) {
                         $hasDeletedEntities = $this->loggableHelper->hasDeletedEntities($objectType);
                     }
                     if ($hasDeletedEntities) {

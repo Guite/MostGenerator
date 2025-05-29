@@ -166,7 +166,7 @@ class WorkflowSubscriber {
             }
             if ('none' !== $workflowShortName) {
                 $action = $event->getTransition()->getName();
-                $mayApprove = $this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD);
+                $mayApprove = $this->permissionHelper->hasEntityPermission($entity/*, ACCESS_ADD*/);
                 $needsNotification = 'submit' !== $action || !$mayApprove;
                 if ($needsNotification) {
                     $this->sendNotifications($entity, $action, $workflowShortName);
@@ -231,7 +231,7 @@ class WorkflowSubscriber {
                 break;
         }
 
-        if (!$this->permissionHelper->hasEntityPermission($entity, $permissionLevel)) {
+        if (!$this->permissionHelper->hasEntityPermission($entity/*, $permissionLevel*/)) {
             // no permission for this transition, so disallow it
             $event->setBlocked(true, $this->translator->trans('No permission for this action.'));
 

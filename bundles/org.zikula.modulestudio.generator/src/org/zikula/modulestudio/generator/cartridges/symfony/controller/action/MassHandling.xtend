@@ -28,7 +28,7 @@ class MassHandling {
                     $request,
                     $repository,
                     $workflowHelper,
-                    $currentUserApi,
+                    $currentUser,
                     $logger
                 );
             «ENDIF»
@@ -57,7 +57,7 @@ class MassHandling {
         Request $request,
         «name.formatForCodeCapital»RepositoryInterface $repository,
         WorkflowHelper $workflowHelper,
-        CurrentUserApiInterface $currentUserApi,
+        #[CurrentUser] ?UserInterface $currentUser,
         LoggerInterface $logger
     '''
 
@@ -71,7 +71,7 @@ class MassHandling {
 
         $action = mb_strtolower($action);
 
-        $userName = $currentUserApi->get('uname');
+        $userName = $currentUser?->getUserIdentifier();
 
         // process each item
         foreach ($items as $itemId) {

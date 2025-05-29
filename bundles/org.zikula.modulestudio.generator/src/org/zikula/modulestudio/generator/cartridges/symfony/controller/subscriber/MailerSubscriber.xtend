@@ -68,7 +68,7 @@ class MailerSubscriber {
         /**
          * Allows acting on the the initial message in case of a failure.
          */
-        public function onSentMessage(FailedMessageEvent $event): void
+        public function onFailedMessage(FailedMessageEvent $event): void
         {
             // e.g you can get more information on this error when sending an email
             // $event->getError();

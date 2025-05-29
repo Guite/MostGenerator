@@ -31,9 +31,9 @@ class WorkflowHelper {
             'Exception',
             'Psr\\Log\\LoggerInterface',
             'RuntimeException',
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\Workflow\\Registry',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
             appNamespace + '\\Entity\\EntityInterface',
             appNamespace + '\\Entity\\Factory\\EntityFactory',
             appNamespace + '\\Helper\\ListEntriesHelper',
@@ -60,11 +60,11 @@ class WorkflowHelper {
         public function __construct(
             protected readonly TranslatorInterface $translator,
             protected readonly Registry $workflowRegistry,
-            protected readonly LoggerInterface $logger,
-            protected readonly CurrentUserApiInterface $currentUserApi,
+            protected readonly Security $security,
             protected readonly EntityFactory $entityFactory,
             protected readonly ListEntriesHelper $listEntriesHelper,
-            protected readonly PermissionHelper $permissionHelper
+            protected readonly PermissionHelper $permissionHelper,
+            protected readonly LoggerInterface $logger,
         ) {
         }
 
@@ -294,7 +294,7 @@ class WorkflowHelper {
 
             // get entity manager
             $entityManager = $this->entityFactory->getEntityManager();
-            $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
+            $logArgs = ['app' => '«appName»', 'user' => $this->security->getUser()?->getUserIdentifier()];
 
             «IF hasLoggable»
                 $objectType = $entity->get_objectType();

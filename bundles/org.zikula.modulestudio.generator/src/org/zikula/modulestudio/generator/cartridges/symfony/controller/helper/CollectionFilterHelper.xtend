@@ -38,15 +38,15 @@ class CollectionFilterHelper {
         ])
         if (hasStandardFieldEntities) {
             imports.addAll(#[
-                'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
+                'Symfony\\Bundle\\SecurityBundle\\Security',
                 'Zikula\\UsersBundle\\UsersConstant',
                 appNamespace + '\\Helper\\CategoryHelper'
             ])
         }
         if (hasUserFields) {
             imports.addAll(#[
-                'Zikula\\UsersBundle\\Entity\\User',
-                'Zikula\\UsersBundle\\Repository\\UserRepositoryInterface'
+                'Nucleos\\UserBundle\\Model\\UserManager',
+                'Zikula\\UsersBundle\\Entity\\User'
             ])
         }
         imports
@@ -71,10 +71,10 @@ class CollectionFilterHelper {
             protected readonly RequestStack $requestStack,
             protected readonly PermissionHelper $permissionHelper,
             «IF hasStandardFieldEntities»
-                protected readonly CurrentUserApiInterface $currentUserApi,
+                protected readonly Security $security,
             «ENDIF»
             «IF hasUserFields»
-                protected readonly UserRepositoryInterface $userRepository,
+                protected readonly UserManager $userManager,
             «ENDIF»
             protected readonly array $listViewConfig
         ) {
@@ -193,7 +193,7 @@ class CollectionFilterHelper {
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = 0 < $«fieldName» ? $this->userRepository->find($«fieldName») : null;
+                    $parameters['«fieldName»'] = 0 < $«fieldName» ? $this->userManager->findUserBy(['id' => $«fieldName»]) : null;
                 «ENDFOR»
             «ENDIF»
             «IF hasCountryFieldsEntity»
@@ -290,7 +290,7 @@ class CollectionFilterHelper {
                 if ((!is_numeric($v) && '' !== $v) || (is_numeric($v) && 0 < $v)) {
                     «IF hasUserFieldsEntity»
                         if ($v instanceof User) {
-                            $v = $v->getUid();
+                            $v = $v->getId();
                         } else {
                             $v = (string) $v;
                         }
@@ -454,10 +454,7 @@ class CollectionFilterHelper {
         public function addCreatorFilter(QueryBuilder $qb, ?int $userId = null): void
         {
             if (null === $userId) {
-                $userId = $this->currentUserApi->isLoggedIn()
-                    ? (int) $this->currentUserApi->get('uid')
-                    : UsersConstant::USER_ID_ANONYMOUS
-                ;
+                $userId = $this->security->getUser()?->getId() ?? UsersConstant::USER_ID_ANONYMOUS;
             }
 
             $qb->andWhere('tbl.createdBy = :userId')

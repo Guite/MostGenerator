@@ -204,7 +204,8 @@ class ControllerLayer {
             imports.add('Zikula\\CoreBundle\\Response\\PlainResponse')
         }
         if (hasIndexAction || hasDeleteAction) {
-            imports.add('Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface')
+            imports.add('Symfony\\Component\\Security\\Core\\User\\UserInterface')
+            imports.add('Symfony\\Component\\Security\\Http\\Attribute\\CurrentUser')
         }
         if (ownerPermission && hasDeleteAction) {
             imports.add('Zikula\\UsersBundle\\UsersConstant')
@@ -239,7 +240,8 @@ class ControllerLayer {
                 imports.add('Symfony\\Component\\HttpFoundation\\RedirectResponse')
                 imports.add('Symfony\\Component\\Routing\\RouterInterface')
             }
-            imports.add('Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface')
+            imports.add('Symfony\\Component\\Security\\Core\\User\\UserInterface')
+            imports.add('Symfony\\Component\\Security\\Http\\Attribute\\CurrentUser')
         }
         imports.addAll(commonAppImports)
         imports

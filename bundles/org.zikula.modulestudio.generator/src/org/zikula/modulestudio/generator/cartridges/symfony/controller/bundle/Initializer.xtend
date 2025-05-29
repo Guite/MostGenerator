@@ -3,13 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Initializer {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
@@ -20,7 +18,7 @@ class Initializer {
         if (!hasUploads) {
             return
         }
-        fsa.generateClassPair('Bundle/Initializer/' + name.formatForCodeCapital + 'Initializer.php', initializerBaseClass, initializerImpl)
+        fsa.generateClassPair('Bundle/Initializer/' + appName + 'Initializer.php', initializerBaseClass, initializerImpl)
     }
 
     def private collectBaseImports(Application it) {
@@ -44,7 +42,7 @@ class Initializer {
         /**
          * Initializer base class.
          */
-        abstract class Abstract«name.formatForCodeCapital»Initializer implements BundleInitializerInterface
+        abstract class Abstract«appName»Initializer implements BundleInitializerInterface
         {
             «constructor»
 
@@ -84,12 +82,12 @@ class Initializer {
     def private initializerImpl(Application it) '''
         namespace «appNamespace»\Bundle\Initializer;
 
-        use «appNamespace»\Bundle\Initializer\Base\Abstract«name.formatForCodeCapital»Initializer;
+        use «appNamespace»\Bundle\Initializer\Base\Abstract«appName»Initializer;
 
         /**
          * Initializer implementation class.
          */
-        class «name.formatForCodeCapital»Initializer extends Abstract«name.formatForCodeCapital»Initializer
+        class «appName»Initializer extends Abstract«appName»Initializer
         {
             // feel free to extend the bundle initializer here
         }

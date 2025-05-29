@@ -41,11 +41,11 @@ class ServiceDefinitions {
                 resource: '../src/*'
             «IF hasUploads»
 
-                «appNamespace»\Bundle\Initializer\«name.formatForCodeCapital»Initializer:
+                «appNamespace»\Bundle\Initializer\«appName»Initializer:
                     public: true
             «ENDIF»
 
-            «appNamespace»\Bundle\MetaData\«name.formatForCodeCapital»BundleMetaData:
+            «appNamespace»\Bundle\MetaData\«appName»MetaData:
                 public: true
 
             «appNamespace»\Helper\:
@@ -63,27 +63,6 @@ class ServiceDefinitions {
     '''
 
     def private specificServices(Application it) '''
-        # public because EntityLifecycleListener accesses this using container
-        «appNamespace»\Entity\Factory\EntityFactory:
-            public: true
-
-        «IF hasUploads»
-
-            # public because EntityLifecycleListener accesses this using container
-            «appNamespace»\Helper\UploadHelper:
-                public: true
-        «ENDIF»
-
-        «appNamespace»\EventListener\EntityLifecycleListener:
-            calls:
-                - [ setContainer, [ '@service_container' ]]
-        «IF hasLoggable»
-
-            # public because EntityLifecycleListener accesses this using container
-            «appNamespace»\EventListener\LoggableListener:
-                public: true
-        «ENDIF»
-
         «appNamespace»\Menu\MenuBuilder:
             tags:
                 - { name: knp_menu.menu_builder, method: createItemActionsMenu, alias: «vendorAndName.toFirstLower»MenuItemActions }

@@ -20,7 +20,7 @@ class MetaData {
         if (!hasUploads) {
             return
         }
-        fsa.generateClassPair('Bundle/MetaData/' + name.formatForCodeCapital + 'MetaData.php', metaDataBaseClass, metaDataImpl)
+        fsa.generateClassPair('Bundle/MetaData/' + appName + 'MetaData.php', metaDataBaseClass, metaDataImpl)
     }
 
     def private collectBaseImports(Application it) {
@@ -41,7 +41,7 @@ class MetaData {
         /**
          * Meta data base class.
          */
-        abstract class Abstract«name.formatForCodeCapital»BundleMetaData implements BundleMetaDataInterface
+        abstract class Abstract«appName»MetaData implements BundleMetaDataInterface
         {
             public function getDisplayName(): TranslatableMessage
             {
@@ -63,12 +63,12 @@ class MetaData {
     def private metaDataImpl(Application it) '''
         namespace «appNamespace»\Bundle\MetaData;
 
-        use «appNamespace»\Bundle\MetaData\Base\Abstract«name.formatForCodeCapital»BundleMetaData;
+        use «appNamespace»\Bundle\MetaData\Base\Abstract«appName»MetaData;
 
         /**
          * Meta data implementation class.
          */
-        class «name.formatForCodeCapital»BundleMetaData extends Abstract«name.formatForCodeCapital»BundleMetaData
+        class «appName»MetaData extends Abstract«appName»MetaData
         {
             // feel free to extend the bundle meta data here
         }

@@ -23,6 +23,7 @@ class NotificationHelper {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Nucleos\\UserBundle\\Model\\UserManager',
             'Psr\\Log\\LoggerInterface',
             'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
@@ -36,8 +37,6 @@ class NotificationHelper {
             'Twig\\Environment',
             'Zikula\\CoreBundle\\Site\\SiteDefinitionInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-            'Zikula\\GroupsBundle\\GroupsConstant',
-            'Zikula\\GroupsBundle\\Repository\\GroupRepositoryInterface',
             'Zikula\\UsersBundle\\Entity\\User',
             'Zikula\\UsersBundle\\Repository\\UserRepositoryInterface',
             'Zikula\\UsersBundle\\UsersConstant',
@@ -98,7 +97,7 @@ class NotificationHelper {
             protected readonly SiteDefinitionInterface $site,
             protected readonly MailerInterface $mailer,
             protected readonly LoggerInterface $mailLogger, // $mailLogger var name auto-injects the mail channel handler
-            protected readonly GroupRepositoryInterface $groupRepository,
+            protected readonly UserManager $userManager,
             protected readonly UserRepositoryInterface $userRepository,
             protected readonly EntityDisplayHelper $entityDisplayHelper,
             protected readonly WorkflowHelper $workflowHelper,
@@ -192,11 +191,9 @@ class NotificationHelper {
                     $moderatorGroupId = $this->moderationConfig['super_moderation_group_for_' . $configSuffix];
                 }
 
-                $moderatorGroup = $this->groupRepository->find($moderatorGroupId);
-                if (null !== $moderatorGroup) {
-                    foreach ($moderatorGroup['users'] as $user) {
-                        $this->addRecipient($user);
-                    }
+                $moderators = $this->userRepository->findUsersByGroupId($moderatorGroupId);
+                foreach ($moderators as $user) {
+                    $this->addRecipient($user);
                 }
             } elseif ('creator' === $this->recipientType && method_exists($this->entity, 'getCreatedBy')) {
                 $this->addRecipient($this->entity->getCreatedBy());
@@ -206,7 +203,7 @@ class NotificationHelper {
 
             if ($debug) {
                 // add the admin, too
-                $this->addRecipient($this->userRepository->find(UsersConstant::USER_ID_ADMIN));
+                $this->addRecipient($this->userManager->findUserBy(['id' => UsersConstant::USER_ID_ADMIN]));
             }
         }
     '''

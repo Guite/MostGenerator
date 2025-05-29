@@ -39,13 +39,13 @@ class BundleFile {
             'Symfony\\Component\\HttpKernel\\Bundle\\AbstractBundle',
             'Zikula\\CoreBundle\\Bundle\\MetaData\\BundleMetaDataInterface',
             'Zikula\\CoreBundle\\Bundle\\MetaData\\MetaDataAwareBundleInterface',
-            appNamespace + '\\Bundle\\MetaData\\' + name.formatForCodeCapital + 'BundleMetaData'
+            appNamespace + '\\Bundle\\MetaData\\' + appName + 'MetaData'
         ])
         if (needsInitializer) {
             imports.addAll(#[
                 'Zikula\\CoreBundle\\Bundle\\Initializer\\BundleInitializerInterface',
                 'Zikula\\CoreBundle\\Bundle\\Initializer\\InitializableBundleInterface',
-                appNamespace + '\\Bundle\\Initializer\\' + name.formatForCodeCapital + 'Initializer'
+                appNamespace + '\\Bundle\\Initializer\\' + appName + 'Initializer'
             ])
         }
 
@@ -108,13 +108,13 @@ class BundleFile {
         {
             public function getMetaData(): BundleMetaDataInterface
             {
-                return $this->container->get(«name.formatForCodeCapital»BundleMetaData::class);
+                return $this->container->get(«appName»MetaData::class);
             }
             «IF needsInitializer»
 
                 public function getInitializer(): BundleInitializerInterface
                 {
-                    return $this->container->get(«name.formatForCodeCapital»Initializer::class);
+                    return $this->container->get(«appName»Initializer::class);
                 }
             «ENDIF»
             «IF needsConfig»

@@ -50,10 +50,10 @@ class SimpleFields {
 
     def dispatch displayField(UserField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml' || page == 'viewjson') '''«IF !mandatory»{% if «realName»|default and «realName».getUid() > 0 %}«ENDIF»{{ «realName».getUname() }}«IF !mandatory»{% endif %}«ENDIF»'''
+        if (page == 'viewcsv' || page == 'viewxml' || page == 'viewjson') '''«IF !mandatory»{% if «realName»|default and «realName».getId() > 0 %}«ENDIF»{{ «realName».getUname() }}«IF !mandatory»{% endif %}«ENDIF»'''
         else '''
             «IF !mandatory»
-                {% if «realName»|default and «realName».getUid() > 0 %}
+                {% if «realName»|default and «realName».getId() > 0 %}
             «ENDIF»
             «IF page == 'detail'»
                   {% if not isQuickView %}

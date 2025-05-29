@@ -80,7 +80,7 @@ class Locking {
                 }
                 $logArgs = [
                     'app' => '«application.appName»',
-                    'user' => $this->currentUserApi->get('uname'),
+                    'user' => $this->security->getUser()?->getUserIdentifier(),
                     'entity' => '«name.formatForDisplay»',
                     'id' => $entity->getKey(),
                 ];

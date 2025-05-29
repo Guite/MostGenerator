@@ -36,6 +36,7 @@ class UploadHelper {
             'Imagine\\Image\\ImageInterface',
             'Imagine\\Image\\Metadata\\ExifMetadataReader',
             'Psr\\Log\\LoggerInterface',
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
             'Symfony\\Component\\Filesystem\\Exception\\IOExceptionInterface',
             'Symfony\\Component\\Filesystem\\Filesystem',
@@ -45,7 +46,6 @@ class UploadHelper {
             'function Symfony\\Component\\String\\s',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
             appNamespace + '\\Entity\\EntityInterface'
         ])
         imports
@@ -87,8 +87,8 @@ class UploadHelper {
             TranslatorInterface $translator,
             protected readonly Filesystem $filesystem,
             protected readonly RequestStack $requestStack,
+            protected readonly Security $security,
             protected readonly LoggerInterface $logger,
-            protected readonly CurrentUserApiInterface $currentUserApi,
             protected readonly array $imageConfig,
             #[Autowire(param: 'kernel.project_dir')]
             protected readonly string $projectDir,
@@ -173,7 +173,7 @@ class UploadHelper {
                 }
                 $logArgs = [
                     'app' => '«appName»',
-                    'user' => $this->currentUserApi->get('uname'),
+                    'user' => $this->security->getUser()?->getUserIdentifier(),
                     'entity' => $objectType,
                     'field' => $fieldName,
                 ];
@@ -250,7 +250,7 @@ class UploadHelper {
                 }
                 $this->logger->error(
                     '{app}: User {user} tried to upload a file with errors: ' . $file->getErrorMessage(),
-                    ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]
+                    ['app' => '«appName»', 'user' => $this->security->getUser()?->getUserIdentifier()]
                 );
 
                 return false;
@@ -271,7 +271,7 @@ class UploadHelper {
                 }
                 $logArgs = [
                     'app' => '«appName»',
-                    'user' => $this->currentUserApi->get('uname'),
+                    'user' => $this->security->getUser()?->getUserIdentifier(),
                     'extension' => $extension,
                 ];
                 $this->logger->error(
@@ -297,7 +297,7 @@ class UploadHelper {
                 }
                 $this->logger->error(
                     '{app}: User {user} tried to upload a file which is seems not to be a valid image.',
-                    ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]
+                    ['app' => '«appName»', 'user' => $this->security->getUser()?->getUserIdentifier()]
                 );
 
                 return $result;
@@ -652,7 +652,7 @@ class UploadHelper {
             $uploadPath = $this->projectDir . '/' . $this->getFileBaseFolder($objectType, $fieldName, true);
 
             $request = $this->requestStack->getCurrentRequest();
-            $session = $request->hasSession() ? $request->getSession() : null;
+            $session = $request?->hasSession() ? $request->getSession() : null;
             $flashBag = null !== $session ? $session->getFlashBag() : null;
 
             // Check if directory exist and try to create it if needed

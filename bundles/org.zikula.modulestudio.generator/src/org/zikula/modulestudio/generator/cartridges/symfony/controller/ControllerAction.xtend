@@ -167,8 +167,8 @@ class ControllerAction {
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
         «name.formatForCodeCapital»RepositoryInterface $repository,
-        CurrentUserApiInterface $currentUserApi,
         WorkflowHelper $workflowHelper,
+        #[CurrentUser] ?UserInterface $currentUser,
         «IF hasUniqueSlug»string $slug«ELSE»int $id«ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, DeleteAction action) {
@@ -178,8 +178,8 @@ class ControllerAction {
             $controllerHelper,
             $viewHelper,
             $repository,
-            $currentUserApi,
             $workflowHelper,
+            $currentUser,
             $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»
         '''
     }

@@ -25,11 +25,10 @@ class EventAction {
             // prepare helper fields for uploaded files
             $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
             if (0 < count($uploadFields)) {
-                $uploadHelper = $this->container->get(UploadHelper::class);
-                $request = $this->container->get('request_stack')->getCurrentRequest();
+                $request = $this->requestStack->getCurrentRequest();
                 $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
 
-                $uploadBaseDirectory = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType());
+                $uploadBaseDirectory = $this->uploadHelper->getFileBaseFolder(«entityVar»->get_objectType());
                 if ('/public' !== mb_substr($uploadBaseDirectory, -7)) {
                     «entityVar»->set_uploadBasePathRelative(mb_substr($uploadBaseDirectory, 7));
                 } else {
@@ -52,14 +51,14 @@ class EventAction {
                         continue;
                     }
 
-                    $basePath = $uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
+                    $basePath = $this->uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
                     $filePath = $this->projectDir . '/' . $basePath . $fileName;
                     if (!file_exists($filePath)) {
                         continue;
                     }
 
                     $setter = 'set' . ucfirst($fieldName) . 'Meta';
-                    «entityVar»->$setter($uploadHelper->readMetaDataForFile($fileName, $filePath));
+                    «entityVar»->$setter($this->uploadHelper->readMetaDataForFile($fileName, $filePath));
                 }
             }
         «ENDIF»
@@ -79,7 +78,7 @@ class EventAction {
                     return;
                 }
 
-                $entityManager = $this->container->get(EntityFactory::class)->getEntityManager();
+                $entityManager = $this->entityFactory->getEntityManager();
                 $repository = $entityManager->getRepository(«entityVar»->getObjectClass());
                 $object = $repository->find(«entityVar»->getObjectId());
                 if (null === $object || !method_exists($object, 'get_objectType')) {
@@ -103,10 +102,9 @@ class EventAction {
 
     def postPersist(Application it) '''
 
-        $currentUserApi = $this->container->get(CurrentUserApi::class);
         $logArgs = [
             'app' => '«appName»',
-            'user' => $currentUserApi->get('uname'),
+            'user' => $this->security->getUser()?->getUserIdentifier(),
             'entity' => «entityVar»->get_objectType(),
             'id' => «entityVar»->getKey(),
         ];
@@ -127,7 +125,6 @@ class EventAction {
 
             $uploadFields = $this->getUploadFields($objectType);
             if (0 < count($uploadFields)) {
-                $uploadHelper = $this->container->get(UploadHelper::class);
                 foreach ($uploadFields as $fieldName) {
                     $getter = 'get' . ucfirst($fieldName);
                     $uploadFile = «entityVar»->$getter();
@@ -136,7 +133,7 @@ class EventAction {
                     }
 
                     // remove upload file
-                    $uploadHelper->deleteUploadFile(«entityVar», $fieldName);
+                    $this->uploadHelper->deleteUploadFile(«entityVar», $fieldName);
                 }
             }
         «ENDIF»
@@ -145,10 +142,9 @@ class EventAction {
             $this->purgeHistory($objectType);
         «ENDIF»
 
-        $currentUserApi = $this->container->get(CurrentUserApi::class);
         $logArgs = [
             'app' => '«appName»',
-            'user' => $currentUserApi->get('uname'),
+            'user' => $this->security->getUser()?->getUserIdentifier(),
             'entity' => $objectType,
             'id' => «entityVar»->getKey(),
         ];
@@ -160,10 +156,9 @@ class EventAction {
 
     def postUpdate(Application it) '''
 
-        $currentUserApi = $this->container->get(CurrentUserApi::class);
         $logArgs = [
             'app' => '«appName»',
-            'user' => $currentUserApi->get('uname'),
+            'user' => $this->security->getUser()?->getUserIdentifier(),
             'entity' => «entityVar»->get_objectType(),
             'id' => «entityVar»->getKey(),
         ];

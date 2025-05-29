@@ -236,10 +236,9 @@ class ImageHelper {
                 #[Autowire(param: 'kernel.secret')]
                 protected readonly string $secret
             ) {
-                $this->secret = $secret;
             }
 
-            public function sign($path, array $runtimeConfig = null)
+            public function sign($path, ?array $runtimeConfig = null)
             {
                 if ($runtimeConfig) {
                     array_walk_recursive($runtimeConfig, function (&$value) {
@@ -264,7 +263,7 @@ class ImageHelper {
                 );
             }
 
-            public function check($hash, $path, array $runtimeConfig = null)
+            public function check($hash, $path, ?array $runtimeConfig = null)
             {
                 return true; //$hash === $this->sign($path, $runtimeConfig);
             }

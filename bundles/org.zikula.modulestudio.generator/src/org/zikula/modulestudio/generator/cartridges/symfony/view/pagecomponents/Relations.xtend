@@ -45,7 +45,7 @@ class Relations {
             {% if items|default and items|length > 0 %}
             <ul class="list-group «app.appName.toLowerCase»-related-item-list «name.formatForDB»">
             {% for item in items %}
-                {% if hasAdminPermission or (item.workflowState == 'approved' and permissionHelper.mayRead(item))«IF ownerPermission» or ('defered' == item.workflowState and hasEditPermission and currentUser|default and item.createdBy.getUid() == currentUser.uid)«ENDIF» %}
+                {% if hasAdminPermission or (item.workflowState == 'approved' and permissionHelper.mayRead(item))«IF ownerPermission» or ('defered' == item.workflowState and hasEditPermission and currentUser|default and item.createdBy.getId() == currentUser.id)«ENDIF» %}
                 <li class="list-group-item">
         «ENDIF»
         <h5>
@@ -92,7 +92,7 @@ class Relations {
             {% set creationPossible = not isQuickView«IF !many» and not «relatedEntity.name.formatForCode».«relationAliasName»|default«ENDIF» %}
             {% if creationPossible %}
                 {% set mayManage = permissionHelper.hasComponentPermission('«otherEntity.name.formatForCode»', constant('ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF !otherEntity.approval»EDIT«ELSE»COMMENT«ENDIF»')) %}
-                {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getUid() == currentUser.uid)«ENDIF» %}
+                {% if mayManage«IF otherEntity.ownerPermission» or (currentUser|default and «relatedEntity.name.formatForCode».createdBy|default and «relatedEntity.name.formatForCode».createdBy.getId() == currentUser.id)«ENDIF» %}
                     {% set createLink = path('«appName.formatForDB»_«otherEntity.name.formatForDB»_edit', {«relationAliasNameParam»: «relatedEntity.name.formatForCode».get«IF relatedEntity.hasSluggableFields && relatedEntity.slugUnique»Slug«ELSE»Key«ENDIF»()}) %}
                     {% set createTitle = 'Create «otherEntity.name.formatForDisplay»'|trans({}, '«otherEntity.name.formatForCode»') %}
                 {% endif %}

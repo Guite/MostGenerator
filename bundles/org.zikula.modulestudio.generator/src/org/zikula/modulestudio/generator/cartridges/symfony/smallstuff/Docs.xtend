@@ -95,14 +95,13 @@ class Docs {
         1. Add the bundle to `/config/bundles.php` adding `«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Bundle\«appName»::class => ['all' => true]`.
         2. Copy `docs/recipe/config/routes/«vendor.formatForDB»_«name.formatForDB».yaml` to `/config/routes/«vendor.formatForDB»_«name.formatForDB».yaml`.
         3. Create database tables
-           1. Create a database migration using `php bin/console make:migration`.
+           1. Create a database migration using `php bin/console doctrine:migrations:diff`.
            2. Review the generated migration file and execute it using `php bin/console doctrine:migrations:migrate`.
 
            Alternatively the quick and dirty way during development: `php bin/console doctrine:schema:update --force`.
-        4. JavaScript routes  
-          If you use the `FOSJsRoutingBundle` dump JS routes using `php bin/console fos:js-routing:dump`.
-        5. Execute `php bin/console zikula:init-bundle «appName»`.
-        6. Move or copy the directory `public/` to `/public/bundles/«appName.formatForDB»/`.
+        4. JavaScript routes: If you use the `FOSJsRoutingBundle` dump JS routes using `php bin/console fos:js-routing:dump`.
+        5. Symlink the `public/` directory to `/public/bundles/«vendor.formatForDB»«name.formatForDB»/` (if this was not already done).
+        6. Execute `php bin/console zikula:init-bundle «appName»`.
         7. Optional: dump the default configuration using `php bin/console config:dump-reference «appName»` and put it into `/config/packages/«vendor.formatForDB»_«name.formatForDB».yaml`.
         «IF hasUploads»
             8. Move or copy the directory `docs/recipe/public/uploads/«appName»` to `/public/uploads/«appName»/` and make it writable including all sub folders.

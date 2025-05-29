@@ -130,7 +130,7 @@ class Property {
                         #[Gedmo\Blameable(on: '«name.substring(0, 6)»')]
                     «ENDIF»
                     #[ORM\ManyToOne(targetEntity: User::class)]
-                    #[ORM\JoinColumn(referencedColumnName: 'uid'«IF !nullable», nullable: false«ENDIF»)]
+                    #[ORM\JoinColumn(referencedColumnName: 'id'«IF !nullable», nullable: false«ENDIF»)]
                 '''
             DatetimeField:
                 '''

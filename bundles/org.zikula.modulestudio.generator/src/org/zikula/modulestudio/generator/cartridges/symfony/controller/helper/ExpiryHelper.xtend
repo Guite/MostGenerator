@@ -92,7 +92,7 @@ class ExpiryHelper {
             }
 
             «IF hasAutomaticArchiving»
-                if ($this->permissionHelper->hasPermission(ACCESS_EDIT)) {
+                if ($this->permissionHelper->hasPermission(/*ACCESS_EDIT*/)) {
                     «FOR entity : getArchivingEntities»
                         // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
                         $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
@@ -103,7 +103,7 @@ class ExpiryHelper {
                 }
             «ENDIF»
             «IF hasAutomaticExpiryDeletion»
-                if ($this->permissionHelper->hasPermission(ACCESS_DELETE)) {
+                if ($this->permissionHelper->hasPermission(/*ACCESS_DELETE*/)) {
                     «FOR entity : getArchivingEntities»
                         // perform deletion for expired «entity.nameMultiple.formatForDisplay»
                         $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];

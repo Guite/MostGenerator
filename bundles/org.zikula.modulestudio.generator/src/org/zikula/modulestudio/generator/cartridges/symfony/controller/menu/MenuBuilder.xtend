@@ -23,9 +23,9 @@ class MenuBuilder {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
-            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
             appNamespace + '\\Event\\ItemActionsMenuPostConfigurationEvent',
             appNamespace + '\\Event\\ItemActionsMenuPreConfigurationEvent',
             appNamespace + '\\Helper\\PermissionHelper'
@@ -77,7 +77,7 @@ class MenuBuilder {
             «IF hasLoggable»
                 protected readonly LoggableHelper $loggableHelper,
             «ENDIF»
-            protected readonly CurrentUserApiInterface $currentUserApi«IF hasIndexActions && hasEditActions»,
+            protected readonly Security $security«IF hasIndexActions && hasEditActions»,
             protected readonly ModelHelper $modelHelper«ENDIF»«IF hasIndexActions»,
             protected readonly array $listViewConfig«ENDIF»
             

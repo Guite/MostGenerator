@@ -23,12 +23,10 @@ class PermissionHelper {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'Zikula\\GroupsBundle\\Entity\\Group',
-            'Zikula\\PermissionsBundle\\Api\\ApiInterface\\PermissionApiInterface',
-            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
             'Zikula\\UsersBundle\\Entity\\User',
-            'Zikula\\UsersBundle\\Repository\\UserRepositoryInterface',
             appNamespace + '\\Entity\\EntityInterface'
         ])
         if (hasIndexActions) {
@@ -55,9 +53,7 @@ class PermissionHelper {
     def private helperBaseImpl(Application it) '''
         public function __construct(
             protected readonly RequestStack $requestStack,
-            protected readonly PermissionApiInterface $permissionApi,
-            protected readonly CurrentUserApiInterface $currentUserApi,
-            protected readonly UserRepositoryInterface $userRepository«IF hasLoggable»,
+            protected readonly Security $security«IF hasLoggable»,
             protected readonly array $loggableConfig«ENDIF»
         ) {
         }
@@ -73,7 +69,7 @@ class PermissionHelper {
          */
         public function mayRead(EntityInterface $entity, ?int $userId = null): bool
         {
-            return $this->hasEntityPermission($entity, ACCESS_READ, $userId);
+            return $this->hasEntityPermission($entity, /*ACCESS_READ, */$userId);
         }
 
         /**
@@ -81,7 +77,7 @@ class PermissionHelper {
          */
         public function mayEdit(EntityInterface $entity, ?int $userId = null): bool
         {
-            return $this->hasEntityPermission($entity, ACCESS_EDIT, $userId);
+            return $this->hasEntityPermission($entity, /*ACCESS_EDIT, */$userId);
         }
         «IF hasLoggable»
 
@@ -101,16 +97,17 @@ class PermissionHelper {
          */
         public function mayDelete(EntityInterface $entity, ?int $userId = null): bool
         {
-            return $this->hasEntityPermission($entity, ACCESS_DELETE, $userId);
+            return $this->hasEntityPermission($entity, /*ACCESS_DELETE, */$userId);
         }
 
         /**
          * Checks if a certain permission level is granted for the given entity instance.
          */
-        public function hasEntityPermission(EntityInterface $entity, int $permissionLevel, ?int $userId = null): bool
+        public function hasEntityPermission(EntityInterface $entity, /*int $permissionLevel, */?int $userId = null): bool
         {
             $objectType = $entity->get_objectType();
             $instance = $entity->getKey() . '::';
+            «/* TODO add custom security voters
 
             return $this->permissionApi->hasPermission(
                 '«appName»:' . ucfirst($objectType) . ':',
@@ -118,17 +115,19 @@ class PermissionHelper {
                 $permissionLevel,
                 $userId
             );
+            */»
+            return $this->security->isGranted('ROLE_ADMIN');
         }
         «IF hasIndexActions»
 
             /**
              * Filters a given collection of entities based on different permission checks.
              */
-            public function filterCollection(string $objectType, array|Collection|ArrayIterator $entities, int $permissionLevel, ?int $userId = null): array
+            public function filterCollection(string $objectType, array|Collection|ArrayIterator $entities, /*int $permissionLevel, */?int $userId = null): array
             {
                 $filteredEntities = [];
                 foreach ($entities as $entity) {
-                    if (!$this->hasEntityPermission($entity, $permissionLevel, $userId)) {
+                    if (!$this->hasEntityPermission($entity, /*$permissionLevel, */$userId)) {
                         continue;
                     }
                     $filteredEntities[] = $entity;
@@ -143,14 +142,17 @@ class PermissionHelper {
         /**
          * Checks if a certain permission level is granted for the given object type.
          */
-        public function hasComponentPermission(string $objectType, int $permissionLevel, ?int $userId = null): bool
+        public function hasComponentPermission(string $objectType, /*int $permissionLevel, */?int $userId = null): bool
         {
+            «/* TODO add custom security voters
             return $this->permissionApi->hasPermission(
                 '«appName»:' . ucfirst($objectType) . ':',
                 '::',
                 $permissionLevel,
                 $userId
             );
+            */»
+            return $this->security->isGranted('ROLE_ADMIN');
         }
         «IF hasIndexActions»
 
@@ -159,7 +161,7 @@ class PermissionHelper {
              */
             public function mayUseQuickNav(string $objectType, ?int $userId = null): bool
             {
-                return $this->hasComponentPermission($objectType, ACCESS_READ, $userId);
+                return $this->hasComponentPermission($objectType, /*ACCESS_READ, */$userId);
             }
         «ENDIF»
         «IF hasLoggable»
@@ -182,14 +184,17 @@ class PermissionHelper {
         /**
          * Checks if a certain permission level is granted for the application in general.
          */
-        public function hasPermission(int $permissionLevel, ?int $userId = null): bool
+        public function hasPermission(/*int $permissionLevel, */?int $userId = null): bool
         {
+            «/* TODO add custom security voters
             return $this->permissionApi->hasPermission(
                 '«appName»::',
                 '::',
                 $permissionLevel,
                 $userId
             );
+            */»
+            return $this->security->isGranted('ROLE_ADMIN');
         }
 
         /**
@@ -199,35 +204,19 @@ class PermissionHelper {
          */
         public function getUserGroupIds(): array
         {
-            $isLoggedIn = $this->currentUserApi->isLoggedIn();
-            if (!$isLoggedIn) {
+            $currentUser = $this->security->getUser();
+            if (null === $currentUser) {
                 return [];
             }
 
             $groupIds = [];
-            $groups = $this->currentUserApi->get('groups');
+            $groups = $currentUser->getGroups();
             /** @var Group $group */
             foreach ($groups as $group) {
-                $groupIds[] = $group->getGid();
+                $groupIds[] = $group->getId();
             }
 
             return $groupIds;
-        }
-
-        /**
-         * Returns the the current user's id.
-         */
-        public function getUserId(): int
-        {
-            return (int) $this->currentUserApi->get('uid');
-        }
-
-        /**
-         * Returns the the current user's entity.
-         */
-        public function getUser(): User
-        {
-            return $this->userRepository->find($this->getUserId());
         }
     '''
 

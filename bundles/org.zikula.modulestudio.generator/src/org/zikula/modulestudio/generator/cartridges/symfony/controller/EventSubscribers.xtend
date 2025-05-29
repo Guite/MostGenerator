@@ -216,6 +216,7 @@ class EventSubscribers {
             use Nucleos\UserBundle\Event\GetResponseNullableUserEvent;
             use Nucleos\UserBundle\Event\GetResponseUserEvent;
             use Nucleos\UserBundle\Event\UserEvent;
+            use Nucleos\UserBundle\NucleosUserEvents;
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
         «ENDIF»
 

@@ -191,8 +191,9 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
+        «uploadFileAnnotations»
     '''
-    def uploadFileAnnotations(UploadField it) '''
+    def private uploadFileAnnotations(UploadField it) '''
         #[Assert\File(
             «FOR constraint : getUploadConstraints»
         «' '»    «constraint»,

@@ -118,6 +118,7 @@ class FormHandler {
         imports.addAll(#[
             'Psr\\Log\\LoggerInterface',
             'RuntimeException',
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\Form\\Form',
             'Symfony\\Component\\Form\\FormFactoryInterface',
             'Symfony\\Component\\Form\\FormInterface',
@@ -127,7 +128,6 @@ class FormHandler {
             'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-            'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface',
             appNamespace + '\\Entity\\EntityInterface',
             appNamespace + '\\Entity\\Factory\\EntityFactory',
             appNamespace + '\\Helper\\ControllerHelper',
@@ -146,12 +146,11 @@ class FormHandler {
             imports.add(appNamespace + '\\Helper\\TranslatableHelper')
         }
         if (needsApproval) {
-            imports.add('Zikula\\GroupsBundle\\GroupsConstant')
-            imports.add('Zikula\\GroupsBundle\\Repository\\GroupApplicationRepositoryInterface')
+            imports.add('Doctrine\\Common\\Collections\\ArrayCollection')
             imports.add('Zikula\\UsersBundle\\UsersConstant')
         }
         if (hasNonNullableUserFields) {
-            imports.add('Zikula\\UsersBundle\\Repository\\UserRepositoryInterface')
+            imports.add('Nucleos\\UserBundle\\Model\\UserManager')
         }
         if (needsFeatureActivationHelper) {
             imports.add(appNamespace + '\\Helper\\FeatureActivationHelper')
@@ -240,15 +239,12 @@ class FormHandler {
                 protected readonly RequestStack $requestStack,
                 protected readonly RouterInterface $router,
                 protected readonly LoggerInterface $logger,
+                protected readonly Security $security,
                 «IF hasTranslatable»
                     protected readonly LocaleApiInterface $localeApi,
                 «ENDIF»
-                protected readonly CurrentUserApiInterface $currentUserApi,
-                «IF needsApproval»
-                    protected readonly GroupApplicationRepositoryInterface $groupApplicationRepository,
-                «ENDIF»
                 «IF hasNonNullableUserFields»
-                    protected readonly UserRepositoryInterface $userRepository,
+                    protected readonly UserManager $userManager,
                 «ENDIF»
                 protected readonly EntityFactory $entityFactory,
                 protected readonly ControllerHelper $controllerHelper,
@@ -429,7 +425,7 @@ class FormHandler {
                 }
                 $logArgs = [
                     'app' => '«appName»',
-                    'user' => $this->currentUserApi->get('uname'),
+                    'user' => $this->security->getUser()?->getUserIdentifier(),
                     'entity' => $this->objectType,
                     'id' => $entity->getKey(),
                 ];
@@ -761,7 +757,7 @@ class FormHandler {
             }
             $logArgs = [
                 'app' => '«appName»',
-                'user' => $this->currentUserApi->get('uname'),
+                'user' => $this->security->getUser()?->getUserIdentifier(),
                 'entity' => $this->objectType,
                 'id' => $this->entityRef->getKey(),
             ];
@@ -840,24 +836,18 @@ class FormHandler {
         protected function prepareWorkflowAdditions(): array
         {
             $roles = [];
-            $currentUserId = $this->currentUserApi->isLoggedIn()
-                ? $this->currentUserApi->get('uid')
-                : UsersConstant::USER_ID_ANONYMOUS
-            ;
+            $currentUserId = $this->security->getUser()?->getId() ?? UsersConstant::USER_ID_ANONYMOUS;
             $roles['is_creator'] = 'create' === $this->templateParameters['mode']
                 || (
                     method_exists($this->entityRef, 'getCreatedBy')
-                    && null !== $this->entityRef->getCreatedBy()
-                    && $this->entityRef->getCreatedBy()->getUid() === $currentUserId
+                    && $currentUserId === $this->entityRef->getCreatedBy()?->getId()
                 )
             ;
 
             $configSuffix = s($this->objectType)->snake();
-            $groupApplicationArgs = [
-                'user' => $currentUserId,
-                'group' => $this->moderationConfig['moderation_group_for_' . $configSuffix],
-            ];
-            $roles['is_moderator'] = 0 < count($this->groupApplicationRepository->findBy($groupApplicationArgs));
+            $userGroups = $this->security->getUser()?->getGroups() ?? new ArrayCollection();
+            $moderationGroupId = $this->moderationConfig['moderation_group_for_' . $configSuffix];
+            $roles['is_moderator'] = !$userGroups->filter(fn(Group $group) => $moderationGroupId === $group->getId())->isEmpty();
 
             return $roles;
         }
@@ -954,15 +944,9 @@ class FormHandler {
             «IF ownerPermission»
 
                 // only allow editing for the owner or people with higher permissions
-                $currentUserId = $this->currentUserApi->isLoggedIn()
-                    ? $this->currentUserApi->get('uid')
-                    : UsersConstant::USER_ID_ANONYMOUS
-                ;
-                $isOwner = null !== $entity
-                    && null !== $entity->getCreatedBy()
-                    && $currentUserId === $entity->getCreatedBy()->getUid()
-                ;
-                if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
+                $currentUserId = $this->security->getUser()?->getId() ?? UsersConstant::USER_ID_ANONYMOUS;
+                $isOwner = null !== $entity && $currentUserId === $entity->getCreatedBy()?->getId();
+                if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity/*, ACCESS_ADD*/)) {
                     throw new AccessDeniedException();
                 }
             «ENDIF»
@@ -1012,7 +996,7 @@ class FormHandler {
                 }
                 $logArgs = [
                     'app' => '«app.appName»',
-                    'user' => $this->currentUserApi->get('uname'),
+                    'user' => $this->security->getUser()?->getUserIdentifier(),
                     'entity' => $this->objectType,
                 ];
                 $this->logger->notice(
@@ -1051,12 +1035,12 @@ class FormHandler {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
-                    'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADMIN),
+                    'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef/*, ACCESS_ADMIN*/),
                     'allow_moderation_specific_creator' => $this->moderationConfig['allow_moderation_specific_creator_for_' . $configSuffix],
                     'allow_moderation_specific_creation_date' => $this->moderationConfig['allow_moderation_specific_creation_date_for_' . $configSuffix],
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef, ACCESS_ADD),
+                    'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef/*, ACCESS_ADD*/),
                     'inline_usage' => $this->templateParameters['inlineUsage'],
                 «ENDIF»
             ];
@@ -1171,7 +1155,7 @@ class FormHandler {
                 if ('delete' !== $action) {
                     «FOR field : fields.filter(UserField).filter[!nullable]»
                         if (!$entity->get«field.name.formatForCodeCapital»()) {
-                            $entity->set«field.name.formatForCodeCapital»($this->userRepository->find(UsersConstant::USER_ID_ANONYMOUS));
+                            $entity->set«field.name.formatForCodeCapital»($this->userManager->findUserBy(['id' => UsersConstant::USER_ID_ANONYMOUS]));
                         }
                     «ENDFOR»
                 }
@@ -1197,7 +1181,7 @@ class FormHandler {
                 }
                 $logArgs = [
                     'app' => '«app.appName»',
-                    'user' => $this->currentUserApi->get('uname'),
+                    'user' => $this->security->getUser()?->getUserIdentifier(),
                     'entity' => '«name.formatForDisplay»',
                     'id' => $entity->getKey(),
                     'errorMessage' => $exception->getMessage(),

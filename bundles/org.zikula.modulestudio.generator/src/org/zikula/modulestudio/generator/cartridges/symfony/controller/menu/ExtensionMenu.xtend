@@ -26,13 +26,13 @@ class ExtensionMenu {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'EasyCorp\\Bundle\\EasyAdminBundle\\Config\\MenuItem',
             'function Symfony\\Component\\Translation\\t',
             'Zikula\\ThemeBundle\\ExtensionMenu\\ExtensionMenuInterface',
             appNamespace + '\\Helper\\ControllerHelper',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
-        imports.add('Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface')
         for (entity : entities.filter[hasIndexAction]) {
             imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
         }
@@ -53,7 +53,7 @@ class ExtensionMenu {
         abstract class AbstractExtensionMenu implements ExtensionMenuInterface
         {
             public function __construct(
-                protected readonly CurrentUserApiInterface $currentUserApi,
+                protected readonly Security $security,
                 protected readonly ControllerHelper $controllerHelper,
                 protected readonly PermissionHelper $permissionHelper«IF needsApproval»,
                 protected readonly WorkflowHelper $workflowHelper«ENDIF»,
@@ -65,20 +65,20 @@ class ExtensionMenu {
             {
                 $contextArgs = ['api' => 'extensionMenu', 'action' => 'get'];
         
-                $permLevel = ExtensionMenuInterface::CONTEXT_ADMIN === $context ? ACCESS_ADMIN : ACCESS_READ;
+                // $permLevel = ExtensionMenuInterface::CONTEXT_ADMIN === $context ? ACCESS_ADMIN : ACCESS_READ;
 
                 if (ExtensionMenuInterface::CONTEXT_ACCOUNT === $context) {
-                    if (!$this->currentUserApi->isLoggedIn()) {
+                    if (null === $this->security->getUser()) {
                         return;
                     }
-                    if (!$this->permissionHelper->hasPermission(ACCESS_OVERVIEW)) {
+                    if (!$this->permissionHelper->hasPermission(/*ACCESS_OVERVIEW*/)) {
                         return;
                     }
 
                     «FOR entity : entities.filter[hasIndexAction && standardFields]»
                         if ($this->listViewConfig['link_own_«entity.nameMultiple.formatForSnakeCase»_on_account_page']) {
                             $objectType = '«entity.name.formatForCode»';
-                            if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
+                            if ($this->permissionHelper->hasComponentPermission($objectType/*, ACCESS_READ*/)) {
                                 $routeParameters = ['own' => 1];
                                 «IF entity.ownerPermission»
                                     $showOnlyOwnEntries = $this->listViewConfig['«entity.name.formatForSnakeCase»_private_mode'];
@@ -91,7 +91,7 @@ class ExtensionMenu {
                         }
 
                     «ENDFOR»
-                    if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
+                    if ($this->permissionHelper->hasPermission(/*ACCESS_ADMIN*/)) {
                         yield 'backend' => MenuItem::linktoRoute(t('«name.formatForDisplayCapital» Backend'), 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
                     }
                 }
@@ -126,18 +126,18 @@ class ExtensionMenu {
     '''
 
     def private menuEntryForCrud(Entity it) '''
-        if ($this->permissionHelper->hasComponentPermission('«name.formatForCode»', $permLevel)) {
+        if ($this->permissionHelper->hasComponentPermission('«name.formatForCode»'/*, $permLevel*/)) {
             yield '«name.formatForCode»' => MenuItem::linktoCrud(t('«nameMultiple.formatForDisplayCapital»'), 'fa fa-square', «name.formatForCodeCapital»::class);
         }
     '''
 
     def private menuEntriesBetweenControllers(Application it) '''
         if ($isAdmin) {
-            if ($this->permissionHelper->hasPermission(ACCESS_READ)) {
+            if ($this->permissionHelper->hasPermission(/*ACCESS_READ*/)) {
                 yield 'frontend' => MenuItem::linktoRoute(t('Frontend'), 'fas fa-home', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»');
             }
         } else {
-            if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
+            if ($this->permissionHelper->hasPermission(/*ACCESS_ADMIN*/)) {
                 yield 'backend' => MenuItem::linktoRoute(t('Backend'), 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
             }
         }

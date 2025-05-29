@@ -49,7 +49,7 @@ class Actions {
         $objectType = '«name.formatForCode»';
         // permission check
         $isAdminArea = $request->attributes->get('isAdminArea', false);
-        $permLevel = $isAdminArea ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
+        /*$permLevel = $isAdminArea ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
         «IF action instanceof IndexAction && tree»
             if (!$isAdminArea && 'tree' === $request->query->getAlnum('tpl')) {
                 $permLevel = ACCESS_EDIT;
@@ -60,14 +60,15 @@ class Actions {
                 $permLevel = ACCESS_EDIT;
             }
         «ENDIF»
+        */
         «IF action instanceof DetailAction || action instanceof DeleteAction»
-            if (!$this->permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
+            if (!$this->permissionHelper->hasEntityPermission($«name.formatForCode»/*, $permLevel*/)) {
                 «IF ownerPermission && action instanceof DeleteAction»
                     if ($isAdminArea) {
                         throw new AccessDeniedException();
                     }
-                    $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
-                    $isOwner = 0 < $currentUserId && null !== $«name.formatForCode»->getCreatedBy() && $currentUserId === $«name.formatForCode»->getCreatedBy()->getUid();
+                    $currentUserId = $currentUser?->getId() ?? UsersConstant::USER_ID_ANONYMOUS;
+                    $isOwner = 0 < $currentUserId && $currentUserId === $«name.formatForCode»->getCreatedBy()?->getId();
                     if (!$isOwner || !$this->permissionHelper->mayEdit($«name.formatForCode»)) {
                         throw new AccessDeniedException();
                     }
@@ -76,7 +77,7 @@ class Actions {
                 «ENDIF»
             }
         «ELSE»
-            if (!$this->permissionHelper->hasComponentPermission($objectType, $permLevel)) {
+            if (!$this->permissionHelper->hasComponentPermission($objectType/*, $permLevel*/)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
@@ -93,7 +94,7 @@ class Actions {
 
             // check if deleted entities should be displayed
             $viewDeleted = $request->query->getInt('deleted');
-            if (1 === $viewDeleted && $this->permissionHelper->hasComponentPermission('«name.formatForCode»', ACCESS_EDIT)) {
+            if (1 === $viewDeleted && $this->permissionHelper->hasComponentPermission('«name.formatForCode»'/*, ACCESS_EDIT*/)) {
                 $templateParameters['deletedEntities'] = $loggableHelper->getDeletedEntities($objectType);
 
                 return $viewHelper->processTemplate($objectType, 'viewDeleted', $templateParameters);
@@ -139,7 +140,7 @@ class Actions {
         «IF approval»
             if (
                 'approved' !== $«name.formatForCode»->getWorkflowState()
-                && !$this->permissionHelper->hasEntityPermission($«name.formatForCode», ACCESS_EDIT)
+                && !$this->permissionHelper->hasEntityPermission($«name.formatForCode»/*, ACCESS_EDIT*/)
             ) {
                 throw new AccessDeniedException();
             }
@@ -149,7 +150,7 @@ class Actions {
             $requestedVersion = $request->query->getInt('version');
             $isAdminArea = $request->attributes->get('isAdminArea', false);
             $versionPermLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
-            if (0 < $requestedVersion && $this->permissionHelper->hasEntityPermission($«name.formatForCode», $versionPermLevel)) {
+            if (0 < $requestedVersion && $this->permissionHelper->hasEntityPermission($«name.formatForCode»/*, $versionPermLevel*/)) {
                 // preview of a specific version is desired, but detach entity
                 $«name.formatForCode» = $loggableHelper->revert($«name.formatForCode», $requestedVersion, true);
             }
@@ -188,7 +189,7 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
-        $logArgs = ['app' => '«app.appName»', 'user' => $currentUserApi->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->getKey()];
+        $logArgs = ['app' => '«app.appName»', 'user' => $currentUser?->getUserIdentifier(), 'entity' => '«name.formatForDisplay»', 'id' => $«name.formatForCode»->getKey()];
 
         // determine available workflow actions
         $actions = $workflowHelper->getActionsForObject($«name.formatForCode»);

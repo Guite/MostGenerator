@@ -9,9 +9,9 @@ class UserCredentialSubscriber {
         {
             return [
                 NucleosUserEvents::USER_PASSWORD_CHANGED => 'onPasswordChanged',
-                NucleosUserEvents::CHANGE_PASSWORD_INITIALIZE => 'onPasswordChangeInitialized',
-                NucleosUserEvents::CHANGE_PASSWORD_SUCCESS => 'onPasswordChangeSuccess',
-                NucleosUserEvents::CHANGE_PASSWORD_COMPLETED => 'onPasswordChangeCompleted',
+                NucleosUserEvents::UPDATE_SECURITY_INITIALIZE => 'onSecurityUpdateInitialized',
+                NucleosUserEvents::UPDATE_SECURITY_SUCCESS => 'onSecurityUpdateSuccess',
+                NucleosUserEvents::UPDATE_SECURITY_COMPLETED => 'onSecurityUpdateCompleted',
                 NucleosUserEvents::RESETTING_RESET_REQUEST => 'onPasswordResettingRequested',
                 NucleosUserEvents::RESETTING_RESET_INITIALIZE => 'onPasswordResettingInitialized',
                 NucleosUserEvents::RESETTING_RESET_SUCCESS => 'onPasswordResettingSuccess',
@@ -32,35 +32,35 @@ class UserCredentialSubscriber {
         }
 
         /**
-         * Subscriber for the `nucleos_user.change_password.edit.initialize` event.
+         * Subscriber for the `nucleos_user.update_security.edit.initialize` event.
          *
-         * Occurs when the change password process is initialized.
+         * Occurs when the security update process is initialized.
          *
          * This event allows you to modify the default values of the user before binding the form.
          */
-        public function onPasswordChangeInitialized(GetResponseUserEvent $event): void
+        public function onSecurityUpdateInitialized(GetResponseUserEvent $event): void
         {
         }
 
         /**
-         * Subscriber for the `nucleos_user.change_password.edit.success` event.
+         * Subscriber for the `nucleos_user.update_security.edit.success` event.
          *
-         * Occurs when the change password form is submitted successfully.
+         * Occurs when the security update form is submitted successfully.
          *
          * This event allows you to set the response instead of using the default one.
          */
-        public function onPasswordChangeSuccess(FormEvent $event): void
+        public function onSecurityUpdateSuccess(FormEvent $event): void
         {
         }
 
         /**
-         * Subscriber for the `nucleos_user.change_password.edit.completed` event.
+         * Subscriber for the `nucleos_user.update_security.edit.completed` event.
          *
-         * Occurs after saving the user in the change password process.
+         * Occurs after saving the user in the security update process.
          *
          * This event allows you to access the response which will be sent.
          */
-        public function onPasswordChangeCompleted(FilterUserResponseEvent $event): void
+        public function onSecurityUpdateCompleted(FilterUserResponseEvent $event): void
         {
         }
 

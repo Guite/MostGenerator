@@ -48,7 +48,7 @@ class Recipe {
         «'  '»* To finish installation of <info>«appName»</> please follow these steps:
 
         «'  '»* <fg=blue>Create database tables</>
-        «'  '»  1. Create a database migration using <comment>php bin/console make:migration</>.
+        «'  '»  1. Create a database migration using <comment>php bin/console doctrine:migrations:diff</>.
         «'  '»  2. Review the generated migration file and execute it using <comment>php bin/console doctrine:migrations:migrate</>.
         «'  '»* Alternatively the quick and dirty way during development: <comment>php bin/console doctrine:schema:update --force</>.
 

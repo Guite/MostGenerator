@@ -567,7 +567,7 @@ class PersistenceTransformer {
         val newSortNumber = getNextVarContainerSortNumber
         ModuleStudioFactory.eINSTANCE.createVariables => [
             name = 'Moderation'
-            documentation = 'Moderation-related settings.'
+            documentation = 'Moderation related settings.'
             sortOrder = newSortNumber
         ]
     }

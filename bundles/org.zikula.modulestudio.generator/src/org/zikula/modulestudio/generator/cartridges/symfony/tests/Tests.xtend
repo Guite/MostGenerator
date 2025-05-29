@@ -46,8 +46,11 @@ class Tests {
     def private stackIntegrationTest(Application it) '''
         namespace «appNamespace»\Tests\Integration;
 
+        use PHPUnit\Framework\Attributes\CoversNothing;
+        use PHPUnit\Framework\Attributes\Depends;
         use PHPUnit\Framework\TestCase;
 
+        #[CoversNothing]
         class StackTest extends TestCase
         {
             public function testEmpty(): array
@@ -58,9 +61,7 @@ class Tests {
                 return $stack;
             }
 
-            /**
-             * @depends testEmpty
-             */
+            #[Depends('testEmpty')]
             public function testPush(array $stack): array
             {
                 $stack[] = 'foo';
@@ -70,9 +71,7 @@ class Tests {
                 return $stack;
             }
 
-            /**
-             * @depends testPush
-             */
+            #[Depends('testPush')]
             public function testPop(array $stack): void
             {
                 self::assertEquals('foo', array_pop($stack));

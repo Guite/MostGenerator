@@ -47,13 +47,13 @@ class ListEntryValidator {
             public ?int $max = null;
 
             public function __construct(
-                array $options = null,
+                mixed $options = null,
                 string $entityName = '',
                 string $propertyName = '',
                 bool $multiple = false,
                 ?int $min = null,
                 ?int $max = null,
-                array $groups = null,
+                ?array $groups = null,
                 $payload = null
             ) {
                 parent::__construct($options, $groups, $payload);

@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-// TODO https://symfony.com/bundles/EasyAdminBundle/current/actions.html#dropdown-and-inline-entity-actions
 class ItemActions {
 
     extension ControllerExtensions = new ControllerExtensions
@@ -23,10 +22,7 @@ class ItemActions {
 
     def actionsImpl(Application it) '''
         «IF (!entities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
-            $currentUserId = $this->currentUserApi->isLoggedIn()
-                ? $this->currentUserApi->get('uid')
-                : UsersConstant::USER_ID_ANONYMOUS
-            ;
+            $currentUserId = $this->security->getUser()?->getId() ?? UsersConstant::USER_ID_ANONYMOUS;
         «ENDIF»
         «FOR entity : entities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
@@ -38,10 +34,7 @@ class ItemActions {
     def private actionsImpl(Entity it) '''
         $routePrefix = '«application.appName.formatForDB»_«name.formatForDB»_';
         «IF (ownerPermission && (hasEditAction || hasDeleteAction)) || (standardFields && !application.relations.empty)»
-            $isOwner = 0 < $currentUserId
-                && null !== $entity->getCreatedBy()
-                && $currentUserId === $entity->getCreatedBy()->getUid()
-            ;
+            $isOwner = 0 < $currentUserId && $currentUserId === $entity->getCreatedBy()?->getId();
         «ENDIF»
         «IF hasDetailAction || hasEditAction || loggable || hasDeleteAction»
 
@@ -86,7 +79,7 @@ class ItemActions {
             if ($this->permissionHelper->mayEdit($entity)) {
                 «IF ownerPermission»
                     // only allow editing for the owner or people with higher permissions
-                    if ($isOwner || $this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
+                    if ($isOwner || $this->permissionHelper->hasEntityPermission($entity/*, ACCESS_ADD*/)) {
                         «itemActionsForEditAction»
                     }
                 «ELSE»
@@ -197,7 +190,7 @@ class ItemActions {
             ->setExtra('translation_domain', '«name.formatForCode»')
         ;
         «IF tree»
-            if ($this->permissionHelper->hasEntityPermission($entity, ACCESS_ADD)) {
+            if ($this->permissionHelper->hasEntityPermission($entity/*, ACCESS_ADD*/)) {
                 $menu->addChild('Add sub «name.formatForDisplay»', [
                     'route' => $routePrefix . 'edit',
                     'routeParameters' => ['parent' => $entity->getKey()],

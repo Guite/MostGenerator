@@ -39,15 +39,14 @@ class LifecycleListener {
             'Doctrine\\ORM\\Event\\PreUpdateEventArgs',
             'Doctrine\\ORM\\Events',
             'Psr\\Log\\LoggerInterface',
-            'Symfony\\Component\\DependencyInjection\\ContainerAwareInterface',
-            'Symfony\\Component\\DependencyInjection\\ContainerAwareTrait',
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface',
-            'Zikula\\UsersBundle\\Api\\CurrentUserApi',
             appNamespace + '\\Entity\\EntityInterface'
         ])
         if (!getUploadEntities.empty) {
             imports.addAll(#[
                 'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
+                'Symfony\\Component\\HttpFoundation\\RequestStack',
                 appNamespace + '\\Helper\\UploadHelper'
             ])
         }
@@ -74,13 +73,18 @@ class LifecycleListener {
         «FOR event : #['preFlush', 'onFlush', 'postFlush', 'preRemove', 'postRemove', 'prePersist', 'postPersist', 'preUpdate', 'postUpdate', 'postLoad']»
         #[AsDoctrineListener(event: Events::«event»)]
         «ENDFOR»
-        abstract class AbstractEntityLifecycleListener implements ContainerAwareInterface
+        abstract class AbstractEntityLifecycleListener
         {
-            use ContainerAwareTrait;
-
             public function __construct(
                 protected readonly EventDispatcherInterface $eventDispatcher,
+                «IF hasLoggable»
+                    protected readonly EntityFactory $entityFactory,
+                    protected readonly LoggableListener $loggableListener,
+                «ENDIF»
+                protected readonly Security $security,
                 «IF !getUploadEntities.empty»
+                    protected readonly RequestStack $requestStack,
+                    protected readonly UploadHelper $uploadHelper,
                     #[Autowire(param: 'kernel.project_dir')]
                     protected readonly string $projectDir,
                 «ENDIF»
@@ -306,7 +310,7 @@ class LifecycleListener {
                         return;
                     }
 
-                    $entityManager = $this->container->get(EntityFactory::class)->getEntityManager();
+                    $entityManager = $this->entityFactory->getEntityManager();
                     $configSuffix = s($objectType)->snake();
 
                     $revisionHandling = $this->loggableConfig['revision_handling_for_' . $configSuffix];
@@ -328,9 +332,9 @@ class LifecycleListener {
                  */
                 protected function activateCustomLoggableListener(): void
                 {
-                    $entityManager = $this->container->get(EntityFactory::class)->getEntityManager();
+                    $entityManager = $this->entityFactory->getEntityManager();
                     $eventManager = $entityManager->getEventManager();
-                    $customLoggableListener = $this->container->get(LoggableListener::class);
+                    $customLoggableListener = $this->loggableListener;
 
                     «IF hasTranslatable»
                         $hasLoggableActivated = false;
@@ -356,12 +360,7 @@ class LifecycleListener {
                     «ENDIF»
 
                     «/* TODO remove me
-                    $currentUserApi = $this->container->get(CurrentUserApi::class);
-                    $userName = $currentUserApi->isLoggedIn()
-                        ? $currentUserApi->get('uname')
-                        : 'Guest'
-                    ;
-
+                    $userName = $this->security->getUser()?->getUserIdentifier() ?? 'Guest';
                     $customLoggableListener->setUsername($userName);
 
                     */»

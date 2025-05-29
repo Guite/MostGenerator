@@ -102,7 +102,7 @@ class LoggableHistory {
 
         $isAdminArea = $request->attributes->get('isAdminArea', false);
         $permLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
-        if (!$permissionHelper->hasEntityPermission($«name.formatForCode», $permLevel)) {
+        if (!$permissionHelper->hasEntityPermission($«name.formatForCode»/*, $permLevel*/)) {
             throw new AccessDeniedException();
         }
 

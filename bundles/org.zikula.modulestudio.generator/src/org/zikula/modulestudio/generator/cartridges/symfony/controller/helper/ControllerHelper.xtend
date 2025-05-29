@@ -48,7 +48,7 @@ class ControllerHelper {
         if (hasGeographical) {
             imports.addAll(#[
                 'Psr\\Log\\LoggerInterface',
-                'Zikula\\UsersBundle\\Api\\ApiInterface\\CurrentUserApiInterface'
+                'Symfony\\Bundle\\SecurityBundle\\Security'
             ])
         }
         if (hasIndexActions && hasUserFields) {
@@ -93,8 +93,8 @@ class ControllerHelper {
                 protected readonly FormFactoryInterface $formFactory,
             «ENDIF»
             «IF hasGeographical»
+                protected readonly Security $security,
                 protected readonly LoggerInterface $logger,
-                protected readonly CurrentUserApiInterface $currentUserApi,
             «ENDIF»
             protected readonly EntityFactory $entityFactory,
             protected readonly CollectionFilterHelper $collectionFilterHelper,
@@ -303,7 +303,7 @@ class ControllerHelper {
                         // set filter as query argument, fetched inside CollectionFilterHelper
                         «IF hasUserFields»
                             if ($fieldValue instanceof User) {
-                                $fieldValue = $fieldValue->getUid();
+                                $fieldValue = $fieldValue->getId();
                             }
                         «ENDIF»
                         $request->query->set($fieldName, $fieldValue);
@@ -530,7 +530,7 @@ class ControllerHelper {
                 $result['latitude'] = str_replace(',', '.', $location->lat);
                 $result['longitude'] = str_replace(',', '.', $location->lng);
             } else {
-                $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'field' => $field, 'address' => $address];
+                $logArgs = ['app' => '«appName»', 'user' => $this->security->getUser()?->getUserIdentifier(), 'field' => $field, 'address' => $address];
                 $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', $logArgs);
             }
 
