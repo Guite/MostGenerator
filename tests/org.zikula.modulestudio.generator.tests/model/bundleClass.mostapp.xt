@@ -62,7 +62,7 @@ XPECT generated file AcmeSimpleTestBundle.php ---
   
   namespace Acme\SimpleTestBundle\Base;
   
-  use Acme\SimpleTestBundle\Bundle\MetaData\SimpleTestBundleMetaData;
+  use Acme\SimpleTestBundle\Bundle\MetaData\AcmeSimpleTestBundleMetaData;
   use Acme\SimpleTestBundle\EventListener\UserListener;
   use Acme\SimpleTestBundle\Helper\CollectionFilterHelper;
   use Acme\SimpleTestBundle\Helper\ControllerHelper;
@@ -82,7 +82,7 @@ XPECT generated file AcmeSimpleTestBundle.php ---
   {
       public function getMetaData(): BundleMetaDataInterface
       {
-          return $this->container->get(SimpleTestBundleMetaData::class);
+          return $this->container->get(AcmeSimpleTestBundleMetaData::class);
       }
   
       public function configure(DefinitionConfigurator $definition): void
