@@ -14,12 +14,12 @@ class WorkflowFormFieldsTrait {
         if (!needsApproval) {
             return
         }
-        val filePath = 'src/Traits/WorkflowFormFieldsTrait.php'
+        val filePath = 'src/Form/Type/Field/WorkflowFormFieldsTrait.php'
         fsa.generateFile(filePath, traitFile)
     }
 
     def private traitFile(Application it) '''
-        namespace «appNamespace»\Traits;
+        namespace «appNamespace»\Form\Type\Field;
 
         use Symfony\Component\Form\Extension\Core\Type\TextareaType;
         use Symfony\Component\Form\FormBuilderInterface;

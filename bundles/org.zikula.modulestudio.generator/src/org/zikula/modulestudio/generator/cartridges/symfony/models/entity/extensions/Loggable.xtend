@@ -124,7 +124,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
          */
         public function selectDeleted(?int $limit = null): array
         {
-            $objectClass = str_replace('LogEntry', '', $this->_entityName);
+            $objectClass = str_replace('LogEntry', '', $this->entityName);
 
             // avoid selecting logs for those entries which already had been undeleted
             $qbExisting = $this->getEntityManager()->createQueryBuilder();
@@ -133,7 +133,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select('log')
-               ->from($this->_entityName, 'log')
+               ->from($this->entityName, 'log')
                ->andWhere('log.objectClass = :objectClass')
                ->setParameter('objectClass', $objectClass)
                ->andWhere('log.action = :action')
@@ -167,12 +167,12 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 return;
             }
 
-            $objectClass = str_replace('LogEntry', '', $this->_entityName);
+            $objectClass = str_replace('LogEntry', '', $this->entityName);
 
             // step 1 - determine obsolete revisions
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select('log')
-               ->from($this->_entityName, 'log')
+               ->from($this->entityName, 'log')
                ->andWhere('log.objectClass = :objectClass')
                ->setParameter('objectClass', $objectClass)
                ->addOrderBy('log.objectId', 'ASC')
@@ -189,7 +189,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
                 $qbMatchingObjects = $this->getEntityManager()->createQueryBuilder();
                 $qbMatchingObjects->select('log.objectId, COUNT(log.objectId) amountOfRevisions')
-                    ->from($this->_entityName, 'log')
+                    ->from($this->entityName, 'log')
                     ->andWhere('log.objectClass = :objectClass')
                     ->setParameter('objectClass', $objectClass)
                     ->groupBy('log.objectId')

@@ -1,25 +1,22 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber
 
-import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserSubscriber {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
-        «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
+        «IF hasUserFields || hasUserVariables»
             public function __construct(
-                «IF hasStandardFieldEntities || hasUserFields»
+                «IF hasUserFields»
                     protected readonly Security $security,
                     protected readonly EntityFactory $entityFactory,
                     protected readonly LoggerInterface $logger«IF hasUserVariables»,«ENDIF»
@@ -146,10 +143,10 @@ class UserSubscriber {
          */
         public function onAccountDeletion(AccountDeletionEvent $event): void
         {
-            «IF hasStandardFieldEntities || hasUserFields || hasUserVariables»
+            «IF hasUserFields || hasUserVariables»
                 $currentUser = $this->security->getUser();
                 $userId = $event->getUser()->getId();
-                «IF hasStandardFieldEntities || hasUserFields»
+                «IF hasUserFields»
                     «FOR entity : entities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
                 «IF hasUserVariables»
@@ -174,49 +171,12 @@ class UserSubscriber {
     '''
 
     def private userDelete(Entity it) '''
-        «IF standardFields || hasUserFieldsEntity»
+        «IF hasUserFieldsEntity»
 
             $repo = $this->entityFactory->getRepository('«name.formatForCode»');
-            «IF standardFields»
-                «IF onAccountDeletionCreator != AccountDeletionHandler.DELETE»
-                    // set creator to «onAccountDeletionCreator.adhAsConstant» («application.adhUid(onAccountDeletionCreator)») for all «nameMultiple.formatForDisplay» created by this user
-                    $repo->updateCreator(
-                        $userId,
-                        «application.adhUid(onAccountDeletionCreator)»,
-                        $this->logger,
-                        $currentUser
-                    );
-                «ELSE»
-                    // delete all «nameMultiple.formatForDisplay» created by this user
-                    $repo->deleteByCreator(
-                        $userId,
-                        $this->logger,
-                        $currentUser
-                    );
-                «ENDIF»
-
-                «IF onAccountDeletionLastEditor != AccountDeletionHandler.DELETE»
-                    // set last editor to «onAccountDeletionLastEditor.adhAsConstant» («application.adhUid(onAccountDeletionLastEditor)») for all «nameMultiple.formatForDisplay» updated by this user
-                    $repo->updateLastEditor(
-                        $userId,
-                        «application.adhUid(onAccountDeletionLastEditor)»,
-                        $this->logger,
-                        $currentUser
-                    );
-                «ELSE»
-                    // delete all «nameMultiple.formatForDisplay» recently updated by this user
-                    $repo->deleteByLastEditor(
-                        $userId,
-                        $this->logger,
-                        $currentUser
-                    );
-                «ENDIF»
-            «ENDIF»
-            «IF hasUserFieldsEntity»
-                «FOR userField : getUserFieldsEntity»
-                    «userField.onAccountDeletionHandler»
-                «ENDFOR»
-            «ENDIF»
+            «FOR userField : getUserFieldsEntity»
+                «userField.onAccountDeletionHandler»
+            «ENDFOR»
 
             $logArgs = [
                 'app' => '«application.appName»',
@@ -232,24 +192,10 @@ class UserSubscriber {
 
     def private onAccountDeletionHandler(UserField it) '''
         «IF null !== entity»
-            «IF onAccountDeletion != AccountDeletionHandler.DELETE»
-                // set «name.formatForDisplay» to «onAccountDeletion.adhAsConstant» («application.adhUid(onAccountDeletion)») for all «entity.nameMultiple.formatForDisplay» affected by this user
-                $repo->updateUserField(
-                    '«name.formatForCode»',
-                    $userId,
-                    «application.adhUid(onAccountDeletion)»,
-                    $this->logger,
-                    $currentUser
-                );
-            «ELSE»
-                // delete all «entity.nameMultiple.formatForDisplay» affected by this user
-                $repo->deleteByUserField(
-                    '«name.formatForCode»',
-                    $userId,
-                    $this->logger,
-                    $currentUser
-                );
-            «ENDIF»
+            // set «name.formatForDisplay» to «adhAsConstant» («adhUid») for all «entity.nameMultiple.formatForDisplay» affected by this user
+            $repo->updateUserField('«name.formatForCode»', $userId, «adhUid», $this->logger, $currentUser);
+            // you can also delete all «entity.nameMultiple.formatForDisplay» affected by this user
+            // $repo->deleteByUserField('«name.formatForCode»', $userId, $this->logger, $currentUser);
         «ELSEIF null !== varContainer»
             if ($userId === $this->«name.formatForCode») {
                 $logArgs = [
@@ -263,4 +209,24 @@ class UserSubscriber {
             }
         «ENDIF»
     '''
+
+    /**
+     * Prints an output string corresponding to the given account deletion handler type.
+     */
+    def adhAsConstant(UserField it) {
+        if (#['createdBy', 'updatedBy'].contains(name)) {
+            return 'admin'
+        }
+        'guest'
+    }
+
+    /**
+     * Returns the user identifier fitting to a certain account deletion handler type.
+     */
+    def adhUid(UserField it) {
+        if (#['createdBy', 'updatedBy'].contains(name)) {
+            return 'UsersConstant::USER_ID_ADMIN'
+        }
+        'UsersConstant::USER_ID_ANONYMOUS'
+    }
 }

@@ -52,6 +52,12 @@ class EditEntityType {
         if (tree) {
             imports.add(app.appNamespace + '\\Form\\Type\\Field\\EntityTreeType')
         }
+        if (standardFields) {
+            imports.add(app.appNamespace + '\\Form\\Type\\Field\\ModerationFormFieldsTrait')
+        }
+        if (approval) {
+            imports.add(app.appNamespace + '\\Form\\Type\\Field\\WorkflowFormFieldsTrait')
+        }
         if (!incoming.empty || !outgoing.empty) {
             imports.add(app.appNamespace + '\\Helper\\CollectionFilterHelper')
             imports.add(app.appNamespace + '\\Helper\\EntityDisplayHelper')
@@ -67,12 +73,6 @@ class EditEntityType {
         }
         if (hasUploadFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\UploadHelper')
-        }
-        if (standardFields) {
-            imports.add(app.appNamespace + '\\Traits\\ModerationFormFieldsTrait')
-        }
-        if (approval) {
-            imports.add(app.appNamespace + '\\Traits\\WorkflowFormFieldsTrait')
         }
         imports
     }

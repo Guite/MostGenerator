@@ -46,6 +46,9 @@ class Repository {
         this.fsa = fsa
         app = it
         fh = new FileHelper(it)
+
+        new UserDeletion().generateTrait(it, fsa)
+
         entities.forEach(e|e.generate)
 
         val linkTable = new LinkTable
@@ -129,7 +132,6 @@ class Repository {
 
                 public function setTranslationsEnabled(bool $translationsEnabled): self;
             «ENDIF»
-            «new UserDeletion().generateInterface(it)»
 
             public function selectById(
                 $id = 0,
@@ -209,6 +211,8 @@ class Repository {
              * Retrieves Doctrine query from query builder.
              */
             public function getQueryFromBuilder(QueryBuilder $qb): Query;
+
+            «new UserDeletion().generateInterface(it)»
         }
     '''
 
@@ -226,6 +230,10 @@ class Repository {
          */
         abstract class Abstract«name.formatForCodeCapital»Repository extends «IF tree»NestedTreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»ServiceEntityRepository«ENDIF» implements Abstract«name.formatForCodeCapital»RepositoryInterface«IF tree || hasSortableFields», ServiceEntityRepositoryInterface«ENDIF»
         {
+            «IF hasUserFieldsEntity»
+                use UserDeletionTrait;
+
+            «ENDIF»
             «IF tree || hasSortableFields»
                 public function __construct(EntityManagerInterface $manager)
                 {
@@ -260,7 +268,6 @@ class Repository {
             «IF hasTranslatableFields»
                 «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, '', '')»
             «ENDIF»
-            «new UserDeletion().generate(it)»
 
             «selectById»
             «IF hasSluggableFields && slugUnique»
@@ -292,6 +299,10 @@ class Repository {
             «getQueryFromBuilder»
 
             «new Joins().generate(it, app)»
+            «IF hasUserFieldsEntity»
+
+                «getUserFieldNames»
+            «ENDIF»
         }
     '''
 
@@ -303,8 +314,6 @@ class Repository {
         val imports = new ImportList
         imports.addAll(#[
             'InvalidArgumentException',
-            'Psr\\Log\\LoggerInterface',
-            'Symfony\\Component\\Security\\Core\\User\\UserInterface',
             'Zikula\\CoreBundle\\Doctrine\\Paginator',
             'Zikula\\CoreBundle\\Doctrine\\PaginatorInterface',
             entityClassName('', false),
@@ -316,6 +325,12 @@ class Repository {
                 'Doctrine\\ORM\\QueryBuilder',
                 'Doctrine\\Persistence\\ObjectRepository'
             ])
+            if (hasUserFieldsEntity) {
+                imports.addAll(#[
+                    'Psr\\Log\\LoggerInterface',
+                    'Symfony\\Component\\Security\\Core\\User\\UserInterface'
+                ])
+            }
         } else {
             imports.addAll(#[
                 'Doctrine\\ORM\\Query',
@@ -343,6 +358,9 @@ class Repository {
             }
             if (hasTranslatableFields) {
                 imports.add('Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker')
+            }
+            if (hasUserFieldsEntity) {
+                imports.add(app.appNamespace + '\\Repository\\UserDeletionTrait')
             }
         }
         imports
@@ -587,7 +605,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from($this->_entityName, 'tbl');
+               ->from($this->entityName, 'tbl');
 
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
@@ -696,7 +714,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from($this->_entityName, 'tbl');
+               ->from($this->entityName, 'tbl');
 
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
@@ -834,6 +852,13 @@ class Repository {
             «ENDIF»
 
             return $query;
+        }
+    '''
+
+    def private getUserFieldNames(Entity it) '''
+        protected function getUserFieldNames(): array
+        {
+            return [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»];
         }
     '''
 

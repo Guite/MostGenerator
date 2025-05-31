@@ -14,12 +14,12 @@ class ModerationFormFieldsTrait {
         if (!hasStandardFieldEntities) {
             return
         }
-        val filePath = 'src/Traits/ModerationFormFieldsTrait.php'
+        val filePath = 'src/Form/Type/Field/ModerationFormFieldsTrait.php'
         fsa.generateFile(filePath, traitFile)
     }
 
     def private traitFile(Application it) '''
-        namespace «appNamespace»\Traits;
+        namespace «appNamespace»\Form\Type\Field;
 
         use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
         use Symfony\Component\Form\FormBuilderInterface;

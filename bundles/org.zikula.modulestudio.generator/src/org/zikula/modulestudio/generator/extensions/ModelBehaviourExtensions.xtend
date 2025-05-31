@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.AbstractStringField
-import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
@@ -289,30 +288,6 @@ class ModelBehaviourExtensions {
      */
     def getVersionField(Entity it) {
         fields.filter(NumberField).filter[NumberRole.VERSION == role].head
-    }
-
-    /**
-     * Prints an output string corresponding to the given account deletion handler type.
-     */
-    def adhAsConstant(AccountDeletionHandler handler) {
-        switch handler {
-            case ADMIN  : 'admin'
-            case GUEST  : 'guest'
-            case DELETE : 'delete'
-            default: '' 
-        }
-    }
-
-    /**
-     * Returns the user identifier fitting to a certain account deletion handler type.
-     */
-    def adhUid(Application it, AccountDeletionHandler handler) {
-        switch handler {
-            case ADMIN  : 'UsersConstant::USER_ID_ADMIN'
-            case GUEST  : 'UsersConstant::USER_ID_ANONYMOUS'
-            case DELETE : 0
-            default: 0 
-        }
     }
 
     /**

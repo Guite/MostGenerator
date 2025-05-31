@@ -268,10 +268,6 @@ application "SimpleNews" {
                     defaultValue "123"
                     mandatory true
                     visibleOnSort false
-                },
-                user "usr3" {
-                    defaultValue "123"
-                    onAccountDeletion ADMIN
                 }
             }
             actions {

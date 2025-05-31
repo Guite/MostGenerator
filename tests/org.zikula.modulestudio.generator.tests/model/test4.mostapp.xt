@@ -30,8 +30,6 @@ application "SimpleNews" targets SF73 {
             slugUnique false
             slugSeparator "_"
             standardFields false
-            onAccountDeletionCreator GUEST
-            onAccountDeletionLastEditor DELETE
             approval false
             hasArchive false
             ownerPermission false

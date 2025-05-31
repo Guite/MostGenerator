@@ -26,8 +26,6 @@ application "SimpleNews" targets SF73 {
             nameMultiple "articles"
             displayPattern "#title#"
             lockType OPTIMISTIC
-            onAccountDeletionCreator GUEST
-            onAccountDeletionLastEditor GUEST
             approval true
             fields {
                 string "title" {
@@ -53,8 +51,6 @@ application "SimpleNews" targets SF73 {
             nameMultiple "images"
             displayPattern "#title#"
             lockType OPTIMISTIC
-            onAccountDeletionCreator DELETE
-            onAccountDeletionLastEditor DELETE
             fields {
                 string "title" translatable {
                     sluggablePosition 1
@@ -145,15 +141,7 @@ application "SimpleNews" targets SF73 {
                     role DATE
                 },
                 upload "myImage",
-                user "myUser1" {
-                    onAccountDeletion ADMIN
-                },
-                user "myUser2" {
-                    onAccountDeletion GUEST
-                },
-                user "myUser3" {
-                    onAccountDeletion DELETE
-                }
+                user "myUser"
             }
             actions {
                 indexAction "Index",
@@ -210,15 +198,7 @@ application "SimpleNews" targets SF73 {
         varContainer "GeneralSettings" {
             documentation "My variable section"
             fields {
-                user "myUser1" {
-                    onAccountDeletion ADMIN
-                },
-                user "myUser2" {
-                    onAccountDeletion GUEST
-                },
-                user "myUser3" {
-                    onAccountDeletion DELETE
-                },
+                user "myUser1",
                 upload "myImage"
             }
         },
@@ -226,15 +206,7 @@ application "SimpleNews" targets SF73 {
             documentation "My variable section with {{ variable }}"
             sortOrder 3
             fields {
-                user "myUser4" {
-                    onAccountDeletion ADMIN
-                },
-                user "myUser5" {
-                    onAccountDeletion GUEST
-                },
-                user "myUser6" {
-                    onAccountDeletion DELETE
-                },
+                user "myUser2",
                 number "myNumber" {
                     numberType DECIMAL
                 },

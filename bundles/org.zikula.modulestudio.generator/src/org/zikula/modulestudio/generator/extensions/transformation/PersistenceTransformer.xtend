@@ -154,7 +154,6 @@ class PersistenceTransformer {
 
 
         if (standardFields) {
-            val entity = it
             // add standard fields
             fields += ModuleStudioFactory.eINSTANCE.createUserField => [
                 name = 'createdBy'
@@ -164,7 +163,6 @@ class PersistenceTransformer {
                 visibleOnNew = false
                 visibleOnEdit = false
                 visibleOnSort = true
-                onAccountDeletion = entity.onAccountDeletionCreator
             ]
             fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
                 name = 'createdDate'
@@ -184,7 +182,6 @@ class PersistenceTransformer {
                 visibleOnNew = false
                 visibleOnEdit = false
                 visibleOnSort = true
-                onAccountDeletion = entity.onAccountDeletionLastEditor
             ]
             fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
                 name = 'updatedDate'

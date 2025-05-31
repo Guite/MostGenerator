@@ -1,6 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.models.repository
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityLockType
+import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -41,16 +45,51 @@ class UserDeletion {
         «ENDIF»
     '''
 
-    def generate(Entity it) '''
-        «IF hasUserFieldsEntity»
+    def generateTrait(Application it, IMostFileSystemAccess fsa) {
+        if (!hasUserFields) {
+            return
+        }
+        val filePath = 'src/Repository/UserDeletionTrait.php'
+        fsa.generateFile(filePath, traitFile)
+    }
 
-            «updateUserField»
-    
-            «deleteByUserField»
-        «ENDIF»
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        imports.addAll(#[
+            'InvalidArgumentException',
+            'Psr\\Log\\LoggerInterface',
+            'Symfony\\Component\\Security\\Core\\User\\UserInterface'
+        ])
+        if (!entitiesWithPessimisticWriteLock.empty) {
+            imports.add('Doctrine\\DBAL\\LockMode')
+            for (entity : entitiesWithPessimisticWriteLock) {
+                imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+            }
+        }
+        imports
+    }
+
+    def private traitFile(Application it) '''
+        namespace «appNamespace»\Repository;
+
+        «collectBaseImports.print»
+
+        /**
+         * User deletion trait.
+         */
+        trait UserDeletionTrait
+        {
+            «traitImpl»
+        }
     '''
 
-    def private updateUserField(Entity it) '''
+    def private traitImpl(Application it) '''
+        «updateUserField»
+
+        «deleteByUserField»
+    '''
+
+    def private updateUserField(Application it) '''
         public function updateUserField(
             string $userFieldName,
             int $userId,
@@ -58,7 +97,7 @@ class UserDeletion {
             LoggerInterface $logger,
             UserInterface $currentUser
         ): void {
-            if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
+            if (empty($userFieldName) || !in_array($userFieldName, $this->getUserFieldNames(), true)) {
                 throw new InvalidArgumentException('Invalid user field name received.');
             }
             if (0 === $userId || 0 === $newUserId) {
@@ -66,7 +105,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update($this->_entityName, 'tbl')
+            $qb->update($this->entityName, 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
@@ -75,25 +114,25 @@ class UserDeletion {
             $query->execute();
 
             $logArgs = [
-                'app' => '«application.appName»',
+                'app' => '«appName»',
                 'user' => $currentUser,
-                'entities' => '«nameMultiple.formatForDisplay»',
+                'entityName' => $this->entityName,
                 'field' => $userFieldName,
                 'userid' => $userId,
                 'newuserid' => $newUserId,
             ];
-            $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', $logArgs);
+            $logger->debug('{app}: User {user} updated {entityName} entities setting {field} from {userid} to {newuserid}.', $logArgs);
         }
     '''
 
-    def private deleteByUserField(Entity it) '''
+    def private deleteByUserField(Application it) '''
         public function deleteByUserField(
             string $userFieldName,
             int $userId,
             LoggerInterface $logger,
             UserInterface $currentUser
         ): void {
-            if (empty($userFieldName) || !in_array($userFieldName, [«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], true)) {
+            if (empty($userFieldName) || !in_array($userFieldName, $this->getUserFieldNames(), true)) {
                 throw new InvalidArgumentException('Invalid user field name received.');
             }
             if (0 === $userId) {
@@ -101,7 +140,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete($this->_entityName, 'tbl')
+            $qb->delete($this->entityName, 'tbl')
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
             $query = $qb->getQuery();
@@ -109,19 +148,25 @@ class UserDeletion {
             $query->execute();
 
             $logArgs = [
-                'app' => '«application.appName»',
+                'app' => '«appName»',
                 'user' => $currentUser,
-                'entities' => '«nameMultiple.formatForDisplay»',
+                'entityName' => $this->entityName,
                 'field' => $userFieldName,
                 'userid' => $userId,
             ];
-            $logger->debug('{app}: User {user} deleted {entities} with {field} having set to user id {userid}.', $logArgs);
+            $logger->debug('{app}: User {user} deleted {entityName} entities with {field} having set to user id {userid}.', $logArgs);
         }
     '''
 
-    def private initQueryAdditions(Entity it) '''
-         «IF hasPessimisticWriteLock»
-            $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
+    def private initQueryAdditions(Application it) '''
+        «IF !entitiesWithPessimisticWriteLock.empty»
+            if (in_array($this->entityName, ['«entitiesWithPessimisticWriteLock.map[name.formatForCodeCapital + '::class'].join('\', \'')»'], true)) {
+                $query->setLockMode(LockMode::«EntityLockType.PESSIMISTIC_WRITE.lockTypeAsConstant»);
+            }
         «ENDIF»
     '''
+
+    def private getEntitiesWithPessimisticWriteLock(Application it) {
+        entities.filter[hasPessimisticWriteLock]
+    }
 }

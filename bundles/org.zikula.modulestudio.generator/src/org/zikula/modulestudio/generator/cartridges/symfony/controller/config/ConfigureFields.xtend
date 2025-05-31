@@ -325,6 +325,8 @@ class ConfigureFields implements ControllerMethodInterface {
             // showCode()
             // showName(false)
             // showSymbol(false)
+        } else if (role === StringRole.MAIL) {
+            // https://symfony.com/bundles/EasyAdminBundle/current/fields/EmailField.html
         } else if (role === StringRole.LANGUAGE) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/LanguageField.html
             // includeOnly([...])
@@ -342,6 +344,8 @@ class ConfigureFields implements ControllerMethodInterface {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/TelephoneField.html
         } else if (role === StringRole.TIME_ZONE) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/TimezoneField.html
+        } else if (role === StringRole.URL) {
+            // https://symfony.com/bundles/EasyAdminBundle/current/fields/UrlField.html
         } else {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/TextField.html
             // renderAsHtml()

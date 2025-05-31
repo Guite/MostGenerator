@@ -243,10 +243,11 @@ class EventSubscribers {
             'Nucleos\\UserBundle\\NucleosUserEvents',
             'Symfony\\Component\\EventDispatcher\\EventSubscriberInterface'
         ])
-        if (hasStandardFieldEntities || hasUserFields) {
+        if (hasUserFields) {
             imports.addAll(#[
                 'Psr\\Log\\LoggerInterface',
                 'Symfony\\Bundle\\SecurityBundle\\Security',
+                'Zikula\\UsersModule\\UsersConstant',
                 appNamespace + '\\Entity\\Factory\\EntityFactory'
             ])
         }
