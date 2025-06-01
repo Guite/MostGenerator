@@ -70,7 +70,7 @@ class TreeData {
                 $title = strip_tags($node->$getter() ?? '');
             }
 
-            $needsArg = in_array($objectType, ['«entities.filter[tree && hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
+            $needsArg = in_array($objectType, ['«entities.filter[tree && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
             $urlArgs = $needsArg ? $node->createUrlArgs(true) : $node->createUrlArgs();
             $urlDataAttributes = '';
             foreach ($urlArgs as $field => $value) {

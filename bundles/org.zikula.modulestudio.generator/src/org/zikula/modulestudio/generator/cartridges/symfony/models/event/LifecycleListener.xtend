@@ -2,11 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models.event
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class LifecycleListener {
 
@@ -56,7 +56,7 @@ class LifecycleListener {
                 'function Symfony\\Component\\String\\s',
                 'Zikula\\UsersBundle\\UsersConstant',
                 appNamespace + '\\Entity\\Factory\\EntityFactory',
-                appNamespace + '\\EventListener\\LoggableListener'
+                appNamespace + '\\EventSubscriber\\LoggableSubscriber'
             ])
         }
         imports
@@ -79,7 +79,7 @@ class LifecycleListener {
                 protected readonly EventDispatcherInterface $eventDispatcher,
                 «IF hasLoggable»
                     protected readonly EntityFactory $entityFactory,
-                    protected readonly LoggableListener $loggableListener,
+                    protected readonly LoggableSubscriber $loggableListener,
                 «ENDIF»
                 protected readonly Security $security,
                 «IF !getUploadEntities.empty»
@@ -88,8 +88,10 @@ class LifecycleListener {
                     #[Autowire(param: 'kernel.project_dir')]
                     protected readonly string $projectDir,
                 «ENDIF»
-                protected readonly LoggerInterface $logger«IF hasLoggable»
-                protected readonly array $loggableConfig«ENDIF»
+                protected readonly LoggerInterface $logger,
+                «IF hasLoggable»
+                    protected readonly array $loggableConfig,
+                «ENDIF»
             ) {
             }
 
@@ -132,14 +134,7 @@ class LifecycleListener {
              */
             public function preRemove(PreRemoveEventArgs $args): void
             {
-                /** @var EntityInterface $entity */
-                $entity = $args->getObject();
-                if (
-                    !$this->isEntityManagedByThisBundle($entity)
-                    || !method_exists($entity, 'get_objectType')
-                ) {
-                    return;
-                }
+                «returnIfEntityIsNotFromThisApp»
                 «eventAction.preRemove(app)»
             }
 
@@ -155,14 +150,7 @@ class LifecycleListener {
              */
             public function postRemove(PostRemoveEventArgs $args): void
             {
-                /** @var EntityInterface $entity */
-                $entity = $args->getObject();
-                if (
-                    !$this->isEntityManagedByThisBundle($entity)
-                    || !method_exists($entity, 'get_objectType')
-                ) {
-                    return;
-                }
+                «returnIfEntityIsNotFromThisApp»
                 «eventAction.postRemove(app)»
             }
 
@@ -186,6 +174,10 @@ class LifecycleListener {
                 ) {
                     return;
                 }
+                «IF hasSluggable»
+
+                    $this->maybeResetSlug($entity);
+                «ENDIF»
                 «eventAction.prePersist(app)»
             }
 
@@ -198,14 +190,7 @@ class LifecycleListener {
              */
             public function postPersist(PostPersistEventArgs $args): void
             {
-                /** @var EntityInterface $entity */
-                $entity = $args->getObject();
-                if (
-                    !$this->isEntityManagedByThisBundle($entity)
-                    || !method_exists($entity, 'get_objectType')
-                ) {
-                    return;
-                }
+                «returnIfEntityIsNotFromThisApp»
                 «eventAction.postPersist(app)»
             }
 
@@ -217,14 +202,11 @@ class LifecycleListener {
              */
             public function preUpdate(PreUpdateEventArgs $args): void
             {
-                /** @var EntityInterface $entity */
-                $entity = $args->getObject();
-                if (
-                    !$this->isEntityManagedByThisBundle($entity)
-                    || !method_exists($entity, 'get_objectType')
-                ) {
-                    return;
-                }
+                «returnIfEntityIsNotFromThisApp»
+                «IF hasSluggable»
+
+                    $this->maybeResetSlug($entity);
+                «ENDIF»
                 «eventAction.preUpdate(app)»
             }
 
@@ -236,14 +218,7 @@ class LifecycleListener {
              */
             public function postUpdate(PostUpdateEventArgs $args): void
             {
-                /** @var EntityInterface $entity */
-                $entity = $args->getObject();
-                if (
-                    !$this->isEntityManagedByThisBundle($entity)
-                    || !method_exists($entity, 'get_objectType')
-                ) {
-                    return;
-                }
+                «returnIfEntityIsNotFromThisApp»
                 «eventAction.postUpdate(app)»
             }
 
@@ -260,14 +235,7 @@ class LifecycleListener {
              */
             public function postLoad(PostLoadEventArgs $args): void
             {
-                /** @var EntityInterface $entity */
-                $entity = $args->getObject();
-                if (
-                    !$this->isEntityManagedByThisBundle($entity)
-                    || !method_exists($entity, 'get_objectType')
-                ) {
-                    return;
-                }
+                «returnIfEntityIsNotFromThisApp»
                 «eventAction.postLoad(app)»
             }
 
@@ -299,74 +267,25 @@ class LifecycleListener {
                     return $uploadFields;
                 }
             «ENDIF»
+            «IF hasSluggable»
+
+                «new SluggableEventAction().generate(it)»
+            «ENDIF»
             «IF hasLoggable»
 
-                /**
-                 * Purges the version history as configured.
-                 */
-                protected function purgeHistory(string $objectType = ''): void
-                {
-                    if (!in_array($objectType, ['«getLoggableEntities.map[name.formatForCode].join('\', \'')»'])) {
-                        return;
-                    }
-
-                    $entityManager = $this->entityFactory->getEntityManager();
-                    $configSuffix = s($objectType)->snake();
-
-                    $revisionHandling = $this->loggableConfig['revision_handling_for_' . $configSuffix];
-                    $limitParameter = '';
-                    if ('limitedByAmount' === $revisionHandling) {
-                        $limitParameter = $this->loggableConfig['maximum_amount_of_' . $configSuffix . '_revisions'];
-                    } elseif ('limitedByDate' === $revisionHandling) {
-                        $limitParameter = $this->loggableConfig['period_for_' . $configSuffix . '_revisions'];
-                    }
-
-                    $logEntriesRepository = $entityManager->getRepository(
-                        '«appName»:' . $objectTypeCapitalised . 'LogEntryEntity'
-                    );
-                    $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);
-                }
-
-                /**
-                 * Enables the custom loggable listener.
-                 */
-                protected function activateCustomLoggableListener(): void
-                {
-                    $entityManager = $this->entityFactory->getEntityManager();
-                    $eventManager = $entityManager->getEventManager();
-                    $customLoggableListener = $this->loggableListener;
-
-                    «IF hasTranslatable»
-                        $hasLoggableActivated = false;
-                    «ENDIF»
-                    foreach ($eventManager->getListeners() as $event => $listeners) {
-                        foreach ($listeners as $hash => $listener) {
-                            if (is_object($listener) && 'Gedmo\Loggable\LoggableListener' === $listener::class) {
-                                $eventManager->removeEventSubscriber($listener);
-                                «IF hasTranslatable»
-                                    $hasLoggableActivated = true;
-                                «ENDIF»
-                                break 2;
-                            }
-                        }
-                    }
-                    «IF hasTranslatable»
-
-                        if (!$hasLoggableActivated) {
-                            // translations are persisted, so we temporarily disable loggable listener
-                            // to avoid creating unrequired log entries for the main entity
-                            return;
-                        }
-                    «ENDIF»
-
-                    «/* TODO remove me
-                    $userName = $this->security->getUser()?->getUserIdentifier() ?? 'Guest';
-                    $customLoggableListener->setUsername($userName);
-
-                    */»
-                    $eventManager->addEventSubscriber($customLoggableListener);
-                }
+                «new LoggableEventAction().generate(it)»
             «ENDIF»
+        }
+    '''
+
+    def private returnIfEntityIsNotFromThisApp(Application it) '''
+        /** @var EntityInterface $entity */
+        $entity = $args->getObject();
+        if (
+            !$this->isEntityManagedByThisBundle($entity)
+            || !method_exists($entity, 'get_objectType')
+        ) {
+            return;
         }
     '''
 

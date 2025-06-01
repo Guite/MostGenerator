@@ -61,7 +61,8 @@ class ConfigureFilters implements ControllerMethodInterface {
         }
         if (hasLocaleFieldsEntity) {
             imports.add(nsSymfonyFormType + 'LocaleType')
-            imports.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
+            // TODO add filter, like used in ConfigureFields
+            // imports.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
         }
         if (hasTimezoneFieldsEntity) {
             imports.add(nsSymfonyFormType + 'TimezoneType')

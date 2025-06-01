@@ -381,8 +381,8 @@ class NotificationHelper {
                 : ''
             ;
 
-            «IF !entities.filter[hasEditAction && hasSluggableFields && slugUnique].empty»
-                $needsArg = in_array($objectType, ['«entities.filter[hasEditAction && hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
+            «IF !entities.filter[hasEditAction && hasSluggableFields].empty»
+                $needsArg = in_array($objectType, ['«entities.filter[hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
                 $urlArgs = $needsArg ? $this->entity->createUrlArgs(true) : $this->entity->createUrlArgs();
             «ENDIF»
             $editUrl = $hasEditAction

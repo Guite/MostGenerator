@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.Relationship
-import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -33,21 +32,17 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
-        #[ORM\Column(length: «IF slugLength <= 190»«slugLength»«ELSE»190«ENDIF», unique: «slugUnique.displayBool»)]
-        «IF loggable»
-            #[Gedmo\Versioned]
-        «ENDIF»
-        «IF hasTranslatableSlug»
-            #[Gedmo\Translatable]
-        «ENDIF»
-        #[Gedmo\Slug(«slugDetails»)]
-        «slugHandler»
-        #[Assert\Length(min: 1, max: «IF slugLength <= 190»«slugLength»«ELSE»190«ENDIF»)]
-        protected string $slug;
-
     '''
 
-    def private slugDetails(Entity it) '''fields: [«FOR field : getSluggableFields SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»], updatable: «slugUpdatable.displayBool», unique: «slugUnique.displayBool», separator: '«slugSeparator»', style: 'default'«''»'''
+    /**
+     * Generates additional attributes for slug field.
+     */
+    def slugFieldAttributes(Entity it) '''
+        #[Gedmo\Slug(«slugDetails»)]
+        «slugHandler»
+    '''
+
+    def private slugDetails(Entity it) '''fields: [«FOR field : getSluggableFields SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»]«''»'''
 
     def private slugHandler(Entity it) {
         if (tree) {
@@ -124,6 +119,5 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «(new FileHelper(application)).getterAndSetterMethods(it, 'slug', 'string', true, '', '')»
     '''
 }

@@ -37,7 +37,7 @@ class LoggableHistory {
                     $loggableHelper,«IF hasTranslatableFields»
                     $translatableHelper,«ENDIF»
                     $workflowHelper,
-                    «IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»
+                    «IF hasSluggableFields»$slug«ELSE»$id«ENDIF»
                 );
             «ENDIF»
         }
@@ -52,9 +52,9 @@ class LoggableHistory {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
         «ELSE»
-            #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/history/{«IF hasSluggableFields && slugUnique»slug«ELSE»id«ENDIF»}',
+            #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/history/{«IF hasSluggableFields»slug«ELSE»id«ENDIF»}',
                 name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_loggablehistory',
-                «IF hasSluggableFields && slugUnique»
+                «IF hasSluggableFields»
                 requirements: ['slug' => '«IF tree»[^.]+«ELSE»[^/.]+«ENDIF»'],
                 «ELSE»
                 requirements: ['id' => '\d+'],
@@ -75,11 +75,11 @@ class LoggableHistory {
             TranslatableHelper $translatableHelper,
         «ENDIF»
         WorkflowHelper $workflowHelper,
-        «IF hasSluggableFields && slugUnique»string $slug = ''«ELSE»int $id = 0«ENDIF»
+        «IF hasSluggableFields»string $slug = ''«ELSE»int $id = 0«ENDIF»
     '''
 
     def private loggableHistoryBaseImpl(Entity it) '''
-        if (empty(«IF hasSluggableFields && slugUnique»$slug«ELSE»$id«ENDIF»)) {
+        if (empty(«IF hasSluggableFields»$slug«ELSE»$id«ENDIF»)) {
             throw new NotFoundHttpException(
                 $this->trans(
                     'No such «name.formatForDisplay» found.',
@@ -89,7 +89,7 @@ class LoggableHistory {
             );
         }
 
-        $«name.formatForCode» = $repository->selectBy«IF hasSluggableFields && slugUnique»Slug($slug)«ELSE»Id($id)«ENDIF»;
+        $«name.formatForCode» = $repository->selectBy«IF hasSluggableFields»Slug($slug)«ELSE»Id($id)«ENDIF»;
         if (null === $«name.formatForCode») {
             throw new NotFoundHttpException(
                 $this->trans(
@@ -111,7 +111,7 @@ class LoggableHistory {
         $revertToVersion = $request->query->getInt('revert');
         if (0 < $revertToVersion && 1 < count($logEntries)) {
             // revert to requested version
-            «IF hasSluggableFields && slugUnique»
+            «IF hasSluggableFields»
                 $«name.formatForCode»Id = $«name.formatForCode»->getId();
             «ENDIF»
             $«name.formatForCode» = $loggableHelper->revert($«name.formatForCode», $revertToVersion);
@@ -152,7 +152,7 @@ class LoggableHistory {
                     ) . '  ' . $exception->getMessage()
                 );
             }
-            «IF hasSluggableFields && slugUnique»
+            «IF hasSluggableFields»
 
                 $«name.formatForCode» = $repository->selectById($«name.formatForCode»Id);
             «ENDIF»

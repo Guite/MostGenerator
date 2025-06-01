@@ -132,7 +132,7 @@ class ControllerAction {
             LoggableHelper $loggableHelper,
         «ENDIF»
         ?«name.formatForCodeCapital» $«name.formatForCode» = null,
-        «IF hasUniqueSlug»string $slug = ''«ELSE»int $id = 0«ENDIF»
+        «IF hasSluggableFields»string $slug = ''«ELSE»int $id = 0«ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, DetailAction action) {
         '''
@@ -142,7 +142,7 @@ class ControllerAction {
             $repository,«IF loggable»
             $loggableHelper,«ENDIF»
             $«name.formatForCode»,
-            $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»
+            $«IF hasSluggableFields»slug«ELSE»id«ENDIF»
         '''
     }
 
@@ -169,7 +169,7 @@ class ControllerAction {
         «name.formatForCodeCapital»RepositoryInterface $repository,
         WorkflowHelper $workflowHelper,
         #[CurrentUser] ?UserInterface $currentUser,
-        «IF hasUniqueSlug»string $slug«ELSE»int $id«ENDIF»
+        «IF hasSluggableFields»string $slug«ELSE»int $id«ENDIF»
     '''
     def private dispatch methodArgsCall(Entity it, DeleteAction action) {
         '''
@@ -180,11 +180,7 @@ class ControllerAction {
             $repository,
             $workflowHelper,
             $currentUser,
-            $«IF hasUniqueSlug»slug«ELSE»id«ENDIF»
+            $«IF hasSluggableFields»slug«ELSE»id«ENDIF»
         '''
-    }
-
-    def private hasUniqueSlug(Entity it) {
-        hasSluggableFields && slugUnique
     }
 }

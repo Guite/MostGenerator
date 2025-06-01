@@ -135,6 +135,7 @@ class ControllerLayer {
         imports.add(entityClassName('', false))
         if (loggable) {
             imports.add(app.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'LogEntry')
+            imports.add(app.appNamespace + '\\Entity\\Factory\\EntityFactory')
         }
         if (hasEditAction) {
             imports.add(app.appNamespace + '\\Form\\Handler\\' + name.formatForCodeCapital + '\\EditHandler')

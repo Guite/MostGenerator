@@ -30,10 +30,10 @@ class Actions {
         «IF action instanceof DetailAction || action instanceof DeleteAction»
             «IF action instanceof DetailAction»
                 if (null === $«name.formatForCode») {
-                    $«name.formatForCode» = $repository->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+                    $«name.formatForCode» = $repository->«IF hasSluggableFields»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
                 }
             «ELSEIF action instanceof DeleteAction»
-                $«name.formatForCode» = $repository->«IF hasSluggableFields && slugUnique»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
+                $«name.formatForCode» = $repository->«IF hasSluggableFields»selectBySlug($slug)«ELSE»selectById($id)«ENDIF»;
             «ENDIF»
             if (null === $«name.formatForCode») {
                 throw new NotFoundHttpException(

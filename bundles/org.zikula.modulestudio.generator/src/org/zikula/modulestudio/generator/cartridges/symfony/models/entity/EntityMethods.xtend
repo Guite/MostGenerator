@@ -48,9 +48,9 @@ class EntityMethods {
         /**
          * Creates url arguments array for easy creation of display urls.
          */
-        public function createUrlArgs(«IF hasSluggableFields && slugUnique»bool $forEditing = false«ENDIF»): array
+        public function createUrlArgs(«IF hasSluggableFields»bool $forEditing = false«ENDIF»): array
         {
-            «IF hasSluggableFields && slugUnique»
+            «IF hasSluggableFields»
                 if (true === $forEditing) {
                     return [
                         '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»(),

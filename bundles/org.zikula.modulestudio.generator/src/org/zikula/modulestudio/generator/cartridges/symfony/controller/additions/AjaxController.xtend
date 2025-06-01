@@ -287,7 +287,7 @@ class AjaxController {
         switch ($objectType) {
             «FOR entity : entities»
                 «val uniqueFields = entity.getUniqueFields»
-                «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
+                «IF !uniqueFields.empty»
                     case '«entity.name.formatForCode»':
                         $repository = $entityFactory->getRepository($objectType);
                         switch ($fieldName) {
@@ -296,12 +296,6 @@ class AjaxController {
                                     $result = !$repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude);
                                     break;
                             «ENDFOR»
-                            «IF entity.hasSluggableFields && entity.slugUnique»
-                                case 'slug':
-                                    $entity = $repository->selectBySlug($value, false, false, $exclude);
-                                    $result = null !== $entity && isset($entity['slug']);
-                                    break;
-                            «ENDIF»
                         }
                         break;
                 «ENDIF»
@@ -331,9 +325,9 @@ class AjaxController {
         switch ($objectType) {
             «FOR entity : entities»
                 «val uniqueFields = entity.getUniqueFields»
-                «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
+                «IF !uniqueFields.empty»
                     case '«entity.name.formatForCode»':
-                        $uniqueFields = [«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.empty», «ENDIF»'slug'«ENDIF»];
+                        $uniqueFields = [«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»];
                         break;
                 «ENDIF»
             «ENDFOR»
@@ -562,8 +556,8 @@ class AjaxController {
                     $returnValue['result'] = 'failure';
                 } elseif (in_array($objectType, ['«entitiesWithEditableTree.map[name.formatForCode].join('\', \'')»'], true)) {
                     $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_edit';
-                    «IF !entities.filter[tree && hasEditAction && hasSluggableFields && slugUnique].empty»
-                        $needsArg = in_array($objectType, ['«entitiesWithEditableTree.filter[hasSluggableFields && slugUnique].map[name.formatForCode].join('\', \'')»'], true);
+                    «IF !entities.filter[tree && hasEditAction && hasSluggableFields].empty»
+                        $needsArg = in_array($objectType, ['«entitiesWithEditableTree.filter[hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
                         $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();
                     «ELSE»
                         $urlArgs = $childEntity->createUrlArgs();
@@ -864,6 +858,5 @@ class AjaxController {
 
     def private needsDuplicateCheck(Application it) {
         entities.exists[!getUniqueFields.empty]
-        || (hasSluggable && !entities.filter[hasSluggableFields && slugUnique].empty)
     }
 }

@@ -307,12 +307,9 @@ class ValidationConstraints {
 
     def classAnnotations(Entity it) '''
         «IF !getUniqueFields.empty»
-            «FOR udf : getUniqueFields»
-                #[UniqueEntity(fields: '«udf.name.formatForCode»', ignoreNull: «udf.nullable.displayBool»)]
+            «FOR uf : getUniqueFields»
+                #[UniqueEntity(fields: '«uf.name.formatForCode»', ignoreNull: «uf.nullable.displayBool»)]
             «ENDFOR»
-        «ENDIF»
-        «IF slugUnique && hasSluggableFields»
-            #[UniqueEntity(fields: 'slug', ignoreNull: false)]
         «ENDIF»
         «IF !incoming.filter[unique].empty»
             «FOR rel : incoming.filter[unique]»

@@ -148,7 +148,7 @@ class ItemActions {
                         if (null === $entity->get«relationAliasName»()) {
                             $menu->addChild('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', [
                                 'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . 'edit',
-                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»],
+                                'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields»getSlug()«ELSE»getKey()«ENDIF»],
                             ])
                                 «app.addLinkClass('secondary')»
                                 «app.addIcon('plus')»
@@ -158,7 +158,7 @@ class ItemActions {
                     «ELSE»
                         $menu->addChild('Create «elem.getRelationAliasName(useTarget).formatForDisplay»', [
                             'route' => '«app.appName.formatForDB»_«otherEntity.name.formatForDB»_' . 'edit',
-                            'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields && slugUnique»getSlug()«ELSE»getKey()«ENDIF»],
+                            'routeParameters' => ['«relationAliasNameParam»' => $entity->«IF hasSluggableFields»getSlug()«ELSE»getKey()«ENDIF»],
                         ])
                             «app.addLinkClass('secondary')»
                             «app.addIcon('plus')»
@@ -173,7 +173,7 @@ class ItemActions {
     def private itemActionsForEditAction(Entity it) '''
         $menu->addChild('Edit', [
             'route' => $routePrefix . 'edit',
-            'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields && slugUnique»true«ENDIF»),
+            'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields»true«ENDIF»),
         ])
             ->setLinkAttribute('title', 'Edit this «name.formatForDisplay»')
             «application.addLinkClass('secondary')»

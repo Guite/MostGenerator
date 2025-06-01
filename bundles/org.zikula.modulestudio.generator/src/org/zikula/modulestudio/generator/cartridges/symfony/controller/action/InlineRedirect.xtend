@@ -67,7 +67,7 @@ class InlineRedirect {
         $searchTerm = '';
         «IF hasStringFieldsEntity»
             if (!empty($id)) {
-                «IF hasSluggableFields && slugUnique»
+                «IF hasSluggableFields»
                     $«name.formatForCode» = null;
                     if (!is_numeric($id)) {
                         $«name.formatForCode» = $repository->selectBySlug($id);

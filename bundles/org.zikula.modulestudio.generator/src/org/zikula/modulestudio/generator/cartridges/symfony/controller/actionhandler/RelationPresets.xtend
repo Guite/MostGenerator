@@ -141,7 +141,7 @@ class RelationPresets {
         «val aliasInverse = getRelationAliasName(!useTarget)»
         «val otherEntity = (if (useTarget) target else source)»
         «val otherObjectType = otherEntity.name.formatForCode»
-        «val selectField = if (otherEntity.hasSluggableFields && otherEntity.slugUnique) 'slug' else 'id'»
+        «val selectField = if (otherEntity.hasSluggableFields) 'slug' else 'id'»
         if (!empty($this->relationPresets['«alias»'])) {
             $repository = $this->entityFactory->getRepository('«otherObjectType»');
             $relObj = $repository->selectBy«selectField.toFirstUpper»($this->relationPresets['«alias»']);

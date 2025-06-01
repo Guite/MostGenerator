@@ -336,7 +336,7 @@ class EventSubscribers {
         «IF !isBase»
             use «appNamespace»\EventSubscriber\Base\AbstractLoggableSubscriber;
         «ELSE»
-            use Gedmo\Loggable\LoggableSubscriber as BaseSubscriber;
+            use Gedmo\Loggable\LoggableListener as BaseSubscriber;
             use Gedmo\Loggable\Mapping\Event\LoggableAdapter;
             use «appNamespace»\Entity\EntityInterface;
             use «appNamespace»\Helper\EntityDisplayHelper;

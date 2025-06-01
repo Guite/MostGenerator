@@ -22,6 +22,7 @@ import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelpe
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
+import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Sluggable
 
 class Property {
 
@@ -123,6 +124,12 @@ class Property {
             NumberField:
                 if (it.role == NumberRole.VERSION && entity.hasOptimisticLock) '''
                     #[ORM\Version]
+                '''
+            StringField:
+                '''
+                    «IF name === 'slug'»
+                        «new Sluggable().slugFieldAttributes(entity)»
+                    «ENDIF»
                 '''
             UserField:
                 '''

@@ -115,6 +115,24 @@ class EventAction {
         «ENDIF»
     '''
 
+    def preUpdate(Application it) '''
+    '''
+
+    def postUpdate(Application it) '''
+
+        $logArgs = [
+            'app' => '«appName»',
+            'user' => $this->security->getUser()?->getUserIdentifier(),
+            'entity' => «entityVar»->get_objectType(),
+            'id' => «entityVar»->getKey(),
+        ];
+        $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
+        «IF hasLoggable»
+
+            $this->purgeHistory(«entityVar»->get_objectType());
+        «ENDIF»
+    '''
+
     def preRemove(Application it) '''
     '''
 
@@ -149,23 +167,5 @@ class EventAction {
             'id' => «entityVar»->getKey(),
         ];
         $this->logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
-    '''
-
-    def preUpdate(Application it) '''
-    '''
-
-    def postUpdate(Application it) '''
-
-        $logArgs = [
-            'app' => '«appName»',
-            'user' => $this->security->getUser()?->getUserIdentifier(),
-            'entity' => «entityVar»->get_objectType(),
-            'id' => «entityVar»->getKey(),
-        ];
-        $this->logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
-        «IF hasLoggable»
-
-            $this->purgeHistory(«entityVar»->get_objectType());
-        «ENDIF»
     '''
 }

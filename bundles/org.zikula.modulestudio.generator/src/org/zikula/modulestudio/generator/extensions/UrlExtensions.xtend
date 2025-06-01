@@ -21,7 +21,7 @@ class UrlExtensions {
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected URL parameter string.
      */
-    def routeParams(Entity it, String objName, Boolean template) '''«IF template», {«ENDIF»«IF !hasSluggableFields || !slugUnique»«routePkParams(objName, template)»«ENDIF»«appendSlug(objName, template)»«IF template»}«ENDIF»'''
+    def routeParams(Entity it, String objName, Boolean template) '''«IF template», {«ENDIF»«IF hasSluggableFields»«appendSlug(objName, template)»«ELSE»«routePkParams(objName, template)»«ENDIF»«IF template»}«ENDIF»'''
 
     /**
      * Collects parameters for a route relating a given entity,
@@ -33,7 +33,7 @@ class UrlExtensions {
      * @param customVarName Custom name for using another field name as URL parameter
      * @return String collected URL parameter string.
      */
-    def routeParams(Entity it, String objName, Boolean template, String customVarName) '''«IF template», {«ENDIF»«IF !hasSluggableFields || !slugUnique»«routePkParams(objName, template, customVarName)»«ENDIF»«appendSlug(objName, template)»«IF template»}«ENDIF»'''
+    def routeParams(Entity it, String objName, Boolean template, String customVarName) '''«IF template», {«ENDIF»«IF hasSluggableFields»«appendSlug(objName, template)»«ELSE»«routePkParams(objName, template, customVarName)»«ENDIF»«IF template»}«ENDIF»'''
 
     /**
      * Collects primary key parameters for a route relating a given entity,
@@ -79,9 +79,9 @@ class UrlExtensions {
     def appendSlug(Entity it, String objName, Boolean template) {
         if (hasSluggableFields) {
             if (template) {
-                '''«IF !slugUnique», «ENDIF»'slug': «objName».slug'''
+                ''''slug': «objName».slug'''
             } else {
-                '''«IF !slugUnique», «ENDIF»'slug' => $«objName»['slug']'''
+                ''''slug' => $«objName»['slug']'''
             }
         } else ''
     }

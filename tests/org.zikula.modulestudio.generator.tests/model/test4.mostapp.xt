@@ -25,10 +25,6 @@ application "SimpleNews" targets SF73 {
             displayPattern "#title#"
             identifierStrategy IDENTITY
             lockType OPTIMISTIC
-            slugLength 50
-            slugUpdatable false
-            slugUnique false
-            slugSeparator "_"
             standardFields false
             approval false
             hasArchive false

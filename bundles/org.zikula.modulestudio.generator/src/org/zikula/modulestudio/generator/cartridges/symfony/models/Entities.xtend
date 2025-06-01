@@ -119,7 +119,7 @@ class Entities {
             }
             imports.add('Symfony\\Component\\Validator\\Constraints as Assert')
         }
-        if (!getUniqueFields.empty || (hasSluggableFields && slugUnique) || !incoming.filter[unique].empty || !outgoing.filter[unique].empty) {
+        if (!getUniqueFields.empty || !incoming.filter[unique].empty || !outgoing.filter[unique].empty) {
             imports.add('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')
         }
         if (!isBase) {

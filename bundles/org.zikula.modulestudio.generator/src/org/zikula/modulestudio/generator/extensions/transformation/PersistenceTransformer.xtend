@@ -106,13 +106,21 @@ class PersistenceTransformer {
 
         addWorkflowState
 
-/** TODO
-            if (hasSluggableFields) {
-    def getReservedSluggableFields() {
-        #['slug']
-    }
-            }
-*/
+        if (hasSluggableFields) {
+            val isTranslatable = hasTranslatableSlug
+            fields += ModuleStudioFactory.eINSTANCE.createStringField => [
+                name = 'slug'
+                documentation = 'Permalink for this ' + name.formatForDisplay
+                length = 190
+                mandatory = true
+                minLength = 1
+                unique = true
+                translatable = isTranslatable
+                visibleOnIndex = false
+                visibleOnDetail = false
+                visibleOnSort = false
+            ]
+        }
 
         if (geographical) {
             fields += ModuleStudioFactory.eINSTANCE.createNumberField => [

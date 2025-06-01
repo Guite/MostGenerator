@@ -47,45 +47,24 @@ class ActionRoute {
     '''
 
     def private actionRouteParamsForSingleEntity(Entity it, Action action) {
-        var output = ''
         if (hasSluggableFields && !(action instanceof EditAction)) {
-            output = '{slug}'
-            if (slugUnique) {
-                return output
-            }
-            output = output + '.'
+            return '{slug}'
         }
-        output = output + '{' + getPrimaryKey.name.formatForCode + '}'
-
-        output
+        '{' + getPrimaryKey.name.formatForCode + '}'
     }
 
     def private actionRouteRequirementsForSingleEntity(Entity it, Action action) {
-        var output = ''
         if (hasSluggableFields && !(action instanceof EditAction)) {
-            output = '''«''»'slug' => '«IF tree»[^.]+«ELSE»[^/.]+«ENDIF»'«''»'''
-            if (slugUnique) {
-                return output
-            }
-            output = output + ', '
+            return '''«''»'slug' => '«IF tree»[^.]+«ELSE»[^/.]+«ENDIF»'«''»'''
         }
-        output = output + '''«''»'«getPrimaryKey.name.formatForCode»' => '\d+'«''»'''
-
-        output
+        '''«''»'«getPrimaryKey.name.formatForCode»' => '\d+'«''»'''
     }
 
     def private actionRouteDefaultsForSingleEntity(Entity it, Action action) {
-        var output = ''
         if (hasSluggableFields && action instanceof DetailAction) {
-            output = '''«''»'slug' => ''«''»'''
-            if (slugUnique) {
-                return output
-            }
-            output = output + ', '
+            return '''«''»'slug' => ''«''»'''
         }
-        output = output + '''«''»'«getPrimaryKey.name.formatForCode»' => 0'''
-
-        output
+        '''«''»'«getPrimaryKey.name.formatForCode»' => 0'''
     }
 
     def private dispatch actionRoute(DetailAction it, Boolean isAdmin) '''

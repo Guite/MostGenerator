@@ -60,12 +60,14 @@ class ConfigureFields implements ControllerMethodInterface {
         imports.add('function Symfony\\Component\\Translation\\t')
         val nsEabField = 'EasyCorp\\Bundle\\EasyAdminBundle\\Field\\'
         for (field : formFields) {
-            imports.add(nsEabField + field.fieldType + 'Field')
+            if (!imports.contains(nsEabField + field.fieldType + 'Field')) {
+                imports.add(nsEabField + field.fieldType + 'Field')
+            }
         }
-        /* TODO do we want to use this instead of Sluggable? can only have one reference field...
         if (hasSluggableFields) {
             imports.add(nsEabField + 'SlugField')
-        }*/
+            imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Crud')
+        }
 
         val nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
         if (!formFields.filter(NumberField).filter[NumberRole.RANGE == role].empty) {
@@ -137,7 +139,11 @@ class ConfigureFields implements ControllerMethodInterface {
                 «fetchListEntries(field)»
 
             «ENDIF»
-            «field.definition»;
+            «IF field.name == 'slug'»
+                «field.slugDefinition»;
+            «ELSE»
+                «field.definition»;
+            «ENDIF»
         «ENDFOR»
         «FOR relation : incomingRelations»
             «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_TARGET_SIDE»
@@ -147,10 +153,6 @@ class ConfigureFields implements ControllerMethodInterface {
             «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_SOURCE_SIDE»
             «relation.relationDefinition(true, autoComplete)»;
         «ENDFOR»
-        «/* TODO do we want to use this instead of Sluggable? can only have one reference field...
-        «IF hasSluggableFields»
-            yield 'slug' => «slugFieldDefinition»
-        «ENDIF*/»
     '''
 
     // TODO remove this (same in ConfigureFilters)
@@ -182,8 +184,22 @@ class ConfigureFields implements ControllerMethodInterface {
             «ENDIF»
     '''
 
-    /*def private slugFieldDefinition(Entity it) '''SlugField::new('slug', t('Slug'))«IF hasIndexAction»->hideOnIndex()«ENDIF»«IF '' !== slugOptions»
-    «''»    «slugOptions»«ENDIF»'''*/
+    def private dispatch slugDefinition(Field it) '''
+    '''
+
+    // https://symfony.com/bundles/EasyAdminBundle/current/fields/SlugField.html
+    def private dispatch slugDefinition(StringField it) '''
+        if (Crud::PAGE_NEW === $pageName) {
+            yield SlugField::new('«name.formatForCode»', t('«name.formatForDisplayCapital»'))
+                ->setTargetFieldName(['«entity.getSluggableFields.map[name.formatForCode].join('\', \'')»'])
+            «/* setUnlockConfirmationMessage(...) */»
+            ;
+        } else {
+            yield TextField::new('«name.formatForCode»', t('«name.formatForDisplayCapital»'))
+                ->setFormTypeOption('required', false)
+            ;
+        }
+    '''
 
     def private visibility(Field it, Entity entity) {
         var calls = ''
@@ -452,15 +468,6 @@ class ConfigureFields implements ControllerMethodInterface {
         // setTimezone(...)
         calls
     }
-
-    // https://symfony.com/bundles/EasyAdminBundle/current/fields/SlugField.html
-    /*def private slugOptions(Entity it) {
-        var calls = '' // no commonOptions needed here
-        // setTargetFieldName(...)
-        // setUnlockConfirmationMessage(...)
-        calls
-    }*/
-
 
     ValidationCssHelper validationCssHelper = new ValidationCssHelper
 

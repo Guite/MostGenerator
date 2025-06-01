@@ -200,8 +200,8 @@ class TranslatableHelper {
                 foreach ($fields as $fieldName) {
                     $translationData[$fieldName] = $entityTranslations[$language][$fieldName] ?? '';
                 }
-                «IF !entities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].empty»
-                    if (isset($translationData['slug']) && in_array($objectType, ['«entities.filter[slugUnique && hasTranslatableSlug && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
+                «IF !entities.filter[hasTranslatableSlug && needsSlugHandler].empty»
+                    if (isset($translationData['slug']) && in_array($objectType, ['«entities.filter[hasTranslatableSlug && needsSlugHandler].map[name.formatForCode].join('\', \'')»'])) {
                         $slugParts = explode('/', $translationData['slug']);
                         $translationData['slug'] = end($slugParts);
                     }

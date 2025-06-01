@@ -65,7 +65,14 @@ class ModelBehaviourExtensions {
      * Checks whether the application contains at least one entity with the sluggable extension enabled.
      */
     def hasSluggable(Application it) {
-        entities.exists[hasSluggableFields]
+        !getSluggableEntities.empty
+    }
+
+    /**
+     * Returns a list of all entities with the sluggable extension enabled.
+     */
+    def getSluggableEntities(Application it) {
+        entities.filter[hasSluggableFields]
     }
 
     /**

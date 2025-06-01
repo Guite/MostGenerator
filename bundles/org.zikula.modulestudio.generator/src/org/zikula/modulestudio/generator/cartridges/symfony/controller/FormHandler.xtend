@@ -398,9 +398,9 @@ class FormHandler {
                 return new RedirectResponse($this->router->generate('home'), 302);
             }
 
-            «IF !entities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].empty»
+            «IF !entities.filter[hasEditAction && hasSluggableFields && needsSlugHandler].empty»
                 if (
-                    in_array($this->objectType, ['«entities.filter[hasEditAction && hasSluggableFields && slugUnique && needsSlugHandler].map[name.formatForCode].join('\', \'')»'], true)
+                    in_array($this->objectType, ['«entities.filter[hasEditAction && hasSluggableFields && needsSlugHandler].map[name.formatForCode].join('\', \'')»'], true)
                     && method_exists($entity, 'getSlug')
                     && null !== $entity->getSlug()
                 ) {

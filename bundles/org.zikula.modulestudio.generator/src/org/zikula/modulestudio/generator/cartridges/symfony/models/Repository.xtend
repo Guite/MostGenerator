@@ -144,7 +144,7 @@ class Repository {
                 bool $useJoins = true,
                 bool $slimMode = false
             ): ?array;
-            «IF hasSluggableFields && slugUnique»
+            «IF hasSluggableFields»
 
                 public function selectBySlug(
                     string $slugTitle = '',
@@ -270,7 +270,7 @@ class Repository {
             «ENDIF»
 
             «selectById»
-            «IF hasSluggableFields && slugUnique»
+            «IF hasSluggableFields»
 
                 «selectBySlug»
             «ENDIF»
