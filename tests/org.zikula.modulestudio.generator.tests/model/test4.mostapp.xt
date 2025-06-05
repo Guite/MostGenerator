@@ -36,8 +36,9 @@ application "SimpleNews" targets SF73 {
                 number "myVersion" {
                     role VERSION
                 },
-                number "parentIdentifier" nullable {
+                string "parentIdentifier" nullable {
                     mandatory false
+                    role UUID
                 }
             }
             actions {
