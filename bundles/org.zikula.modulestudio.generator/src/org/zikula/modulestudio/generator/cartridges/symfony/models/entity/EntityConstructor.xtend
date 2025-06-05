@@ -2,16 +2,18 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models.entity
 
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class EntityConstructor {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
 
-    def constructor(Entity it, Boolean isInheriting) '''
+    def constructor(Entity it) '''
         /**
          * «name.formatForCodeCapital» constructor.
          *
@@ -23,18 +25,18 @@ class EntityConstructor {
          * @param «getIndexByRelation.source.name.formatForCodeCapital» $«getRelationAliasName(getIndexByRelation, false).formatForCode» Indexing relationship
          «ENDIF*/»
          */
-        public function __construct(«constructorArguments(true)»)
+        public function __construct(«constructorArguments»)
         {
-            «constructorImpl(isInheriting)»
+            «constructorImpl»
         }
     '''
 
-    def private constructorArguments(Entity it, Boolean withTypeHints) '''
+    def private constructorArguments(Entity it) '''
         «IF isIndexByTarget»
             «val indexRelation = getIndexByRelation»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
-            string $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.name.formatForCodeCapital»Entity«ENDIF» $«sourceAlias.formatForCode»
+            string $«indexBy.formatForCode», «indexRelation.source.name.formatForCodeCapital» $«sourceAlias.formatForCode»
         «ENDIF»
     '''
 
@@ -42,10 +44,8 @@ class EntityConstructor {
         incoming.filter[isIndexed].head
     }
 
-    def private constructorImpl(Entity it, Boolean isInheriting) '''
-        «IF isInheriting»
-            parent::__construct(«constructorArguments(false)»);
-        «ENDIF»
+    def private constructorImpl(Entity it) '''
+        $this->set«getPrimaryKey.name.formatForCodeCapital»(Uuid::v4());
         «IF isIndexByTarget»
 
             «val indexRelation = incoming.filter[isIndexed].head»

@@ -21,7 +21,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 /**
- * This class adds primary key fields to all entities of an application.
+ * This class adds derived entity fields and variables to a given application model.
  */
 class PersistenceTransformer {
 
@@ -224,15 +224,17 @@ class PersistenceTransformer {
      * @param entity The given {@link Entity} instance.
      */
     def private addPrimaryKey(Entity entity) {
-        val idField = ModuleStudioFactory.eINSTANCE.createNumberField => [
+        val idField = ModuleStudioFactory.eINSTANCE.createStringField => [
             name = 'id'
             primaryKey = true
             unique = true
+            length = 36
+            role = StringRole.UUID
             visibleOnIndex = true
             visibleOnDetail = true
             visibleOnNew = false
             visibleOnEdit = false
-            visibleOnSort = true
+            visibleOnSort = false
         ]
         entity.fields.add(0, idField)
     }

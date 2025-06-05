@@ -113,7 +113,7 @@ class Factory {
             if (empty($objectType)) {
                 throw new InvalidArgumentException('Invalid object type received.');
             }
-            $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
+            $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Bundle:' . ucfirst($objectType);
 
             $meta = $this->getEntityManager()->getClassMetadata($entityClass);
 

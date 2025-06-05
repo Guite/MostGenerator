@@ -271,15 +271,12 @@ class ConfigureFields implements ControllerMethodInterface {
         if (primaryKey) 'Id'
         else if (NumberRole.MONEY == role) 'Money'
         else if (NumberRole.PERCENTAGE == role) 'Percent'
-        else if (NumberFieldType.DECIMAL == numberType) 'Integer'
+        else if (NumberFieldType.INTEGER == numberType) 'Integer'
         else 'Number'
     }
     def private dispatch options(NumberField it) {
         var calls = commonOptions
-        if (primaryKey) {
-            // https://symfony.com/bundles/EasyAdminBundle/current/fields/IdField.html
-            calls += '''->setMaxLength(«length»)'''
-        } else if (NumberRole.MONEY == role) {
+        if (NumberRole.MONEY == role) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/MoneyField.html
             if (entity.hasCurrencyFieldsEntity) {
                 calls += '''->setCurrencyPropertyPath('«entity.getCurrencyFieldsEntity.head.name.formatForCode»')'''
@@ -292,13 +289,13 @@ class ConfigureFields implements ControllerMethodInterface {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/PercentField.html
             calls += '''->setNumDecimals(«scale»)'''
             // setRoundingMode(...)
-            if (NumberFieldType.INTEGER == fieldType) {
+            if (NumberFieldType.INTEGER == numberType) {
                 calls += '''->setStoredAsFractional(false)'''
             }
             if (null !== unit && !unit.empty) {
                 calls += '''->setSymbol('«unit»')'''
             }
-        } else if (NumberFieldType.INTEGER == fieldType) {
+        } else if (NumberFieldType.INTEGER == numberType) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/IntegerField.html
             // setNumberFormat(...)
         } else {
@@ -325,7 +322,10 @@ class ConfigureFields implements ControllerMethodInterface {
     }
     def private dispatch options(StringField it) {
         var calls = commonOptions
-        if (role === StringRole.COLOUR) {
+        if (primaryKey) {
+            // https://symfony.com/bundles/EasyAdminBundle/current/fields/IdField.html
+            // calls += '''->setMaxLength(«length»)'''
+        } else if (role === StringRole.COLOUR) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/ColorField.html
             // showSample(false)
             // showValue()

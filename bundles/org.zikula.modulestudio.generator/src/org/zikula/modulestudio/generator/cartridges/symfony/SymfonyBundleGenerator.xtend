@@ -19,6 +19,7 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Se
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Entities
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Factory
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Repository
+import org.zikula.modulestudio.generator.cartridges.symfony.models.UuidStringGenerator
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ListEntryValidator
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.BundleFile
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.ComposerFile
@@ -91,6 +92,10 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('Model: Factory class')
         'Generating factory class'.printIfNotTesting(fsa)
         new Factory().generate(it, fsa)
+
+        pm?.subTask('Model: IdGenerator class')
+        'Generating id generator class'.printIfNotTesting(fsa)
+        new UuidStringGenerator().generate(it, fsa)
 
         if (hasListFields) {
             new ListEntryValidator().generate(it, fsa)

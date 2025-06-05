@@ -23,7 +23,6 @@ application "SimpleNews" targets SF73 {
             documentation "My article"
             nameMultiple "articles"
             displayPattern "#title#"
-            identifierStrategy IDENTITY
             lockType PESSIMISTIC_WRITE
             standardFields true
             approval true

@@ -30,6 +30,21 @@ class FileHelper {
         «setterMethod(name, type, nullable, init, customImpl)»
     '''
 
+    def getterAndSetterMethodsForUuidString(Field it) '''
+
+        public function get«name.formatForCodeCapital»(): Uuid
+        {
+            return Uuid::fromString($this->«name.formatForCode»);
+        }
+
+        public function set«name.formatForCodeCapital»(Uuid $«name.formatForCode»): self
+        {
+            $this->«name.formatForCode» = $«name.formatForCode»->toRfc4122();
+
+            return $this;
+        }
+    '''
+
     def getterMethod(Object it, String name, String type, Boolean nullable) '''
 
         «IF type.definesGeneric»
@@ -82,7 +97,9 @@ class FileHelper {
 
     def private dispatch setterMethodImpl(Field it, String name, String type, Boolean nullable) '''
         «IF it instanceof NumberField»
-            $«name» = «IF it.numberType == NumberFieldType::DECIMAL»(string) «ENDIF»round((float) $«name», «scale»);
+            «IF numberType != NumberFieldType::INTEGER»
+                $«name» = «IF it.numberType == NumberFieldType::DECIMAL»(string) «ENDIF»round((float) $«name», «scale»);
+            «ENDIF»
         «ENDIF»
         if ($this->«name.formatForCode» !== $«name») {
             «setterAssignment(name)»

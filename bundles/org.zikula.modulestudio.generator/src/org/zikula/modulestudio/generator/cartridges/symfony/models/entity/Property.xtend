@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.ListFieldItem
@@ -18,11 +17,11 @@ import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ValidationConstraints
+import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Sluggable
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extensions.Sluggable
 
 class Property {
 
@@ -81,25 +80,21 @@ class Property {
         «IF null !== entity»
             «IF primaryKey»
                 #[ORM\Id]
-                «IF entity.identifierStrategy != EntityIdentifierStrategy.NONE»
-                    «IF #[EntityIdentifierStrategy.UUID, EntityIdentifierStrategy.ULID].contains(entity.identifierStrategy)»
-                        #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-                        #[ORM\CustomIdGenerator(class: 'doctrine.«entity.identifierStrategy.literal.toLowerCase»_generator')]
-                    «ELSE»
-                        #[ORM\GeneratedValue(strategy: '«entity.identifierStrategy.literal»')]
-                    «ENDIF»
-                «ENDIF»
+                #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+                #[ORM\CustomIdGenerator(class: UuidStringGenerator::class)]
             «ENDIF»
             «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
             «IF !(it instanceof UserField)»«/* user fields are implemented as join to user entity, see persistentPropertyAdditions */»
-                #[ORM\Column(«IF null !== dbName && !dbName.empty»name: '«dbName.formatForCode»', «ELSEIF it instanceof UploadField»name: '«it.name.formatForCode»', «ENDIF»«persistentPropertyImpl(typeDoctrine.toLowerCase)»«IF unique», unique: true«ENDIF»«IF nullable», nullable: true«ENDIF»)]
+                #[ORM\Column(«IF null !== dbName && !dbName.empty»name: '«dbName.formatForCode»', «ELSEIF it instanceof UploadField»name: '«it.name.formatForCode»', «ENDIF»«persistentPropertyImpl(typeDoctrine.toLowerCase)»«IF unique», unique: true«ENDIF»«IF nullable», nullable: true«ENDIF»«IF primaryKey», options: ['fixed' => true]«ENDIF»)]
             «ENDIF»
             «persistentPropertyAdditions»
         «ENDIF»
         «thVal.fieldAnnotations(it)»
-        «modifier» ?«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«IF !init.empty»«init»«ELSE»«IF it instanceof UserField || it instanceof DatetimeField» = null«ELSE» = «defaultFieldData»«ENDIF»«ENDIF»;
+        «modifier» ?«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSEIF typePhp == 'Uuid'»string«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«fieldAssignment(init)»;
         «/* this last line is on purpose */»
     '''
+
+    def private fieldAssignment(Field it, String init) '''«IF !init.empty»«init»«ELSEIF it instanceof UserField || it instanceof DatetimeField» = null«ELSEIF !(it instanceof StringField) || !(it as StringField).treatAsUuidType» = «defaultFieldData»«ENDIF»'''
 
     def private persistentPropertyImpl(Field it, String type) {
         switch it {
@@ -167,6 +162,7 @@ class Property {
                 } else if (nullable) 'null' else '\'\''
             StringField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\''
+                else if (it.nullable) 'null'
                 else if (role === StringRole.CURRENCY) '\'EUR\''
                 else '\'\''
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
@@ -176,20 +172,10 @@ class Property {
 
     def static private listItemValue(ListFieldItem it) '''«IF null !== value»«value.replace("'", "")»«ELSE»«name/*.formatForCode.replace("'", "")*/»«ENDIF»'''
 
-    def private fieldAccessorDefault(Field it) '''
-        «IF isIndexByField»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), true)»
-        «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), true, '', '')»
-        «ENDIF»
-    '''
-
     def dispatch fieldAccessor(Field it) '''
-        «fieldAccessorDefault»
-    '''
-
-    def dispatch fieldAccessor(NumberField it) '''
-        «IF isIndexByField»
+        «IF it instanceof StringField && (it as StringField).treatAsUuidType»
+            «fh.getterAndSetterMethodsForUuidString(it)»
+        «ELSEIF isIndexByField»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), true)»
         «ELSE»
             «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), true, '', '')»

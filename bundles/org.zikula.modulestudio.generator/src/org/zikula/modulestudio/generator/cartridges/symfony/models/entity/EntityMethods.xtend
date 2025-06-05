@@ -74,11 +74,11 @@ class EntityMethods {
 
     def private getKey(Entity it) '''
         /**
-         * Returns the primary key.
+         * Returns the primary key as string.
          */
-        public function getKey(): ?int
+        public function getKey(): string
         {
-            return $this->get«getPrimaryKey.name.formatForCodeCapital»();
+            return $this->get«getPrimaryKey.name.formatForCodeCapital»()->toRfc4122();
         }
     '''
 

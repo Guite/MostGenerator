@@ -122,21 +122,24 @@ class Entities {
         if (!getUniqueFields.empty || !incoming.filter[unique].empty || !outgoing.filter[unique].empty) {
             imports.add('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')
         }
+        val nsApp = application.appNamespace
         if (!isBase) {
             if (loggable) {
-                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'LogEntry')
+                imports.add(nsApp + '\\Entity\\' + name.formatForCodeCapital + 'LogEntry')
             }
             if (hasTranslatableFields) {
-                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'Translation')
+                imports.add(nsApp + '\\Entity\\' + name.formatForCodeCapital + 'Translation')
             }
-            imports.add(application.appNamespace + '\\Repository\\' + name.formatForCodeCapital + 'Repository')
+            imports.add(nsApp + '\\Repository\\' + name.formatForCodeCapital + 'Repository')
         } else {
+            imports.add('Symfony\\Component\\Uid\\Uuid')
+            imports.add(nsApp + '\\Helper\\Doctrine\\UuidStringGenerator')
             if (hasUserFieldsEntity) {
                 imports.add('Zikula\\UsersBundle\\Entity\\User')
             }
-            imports.add(application.appNamespace + '\\Entity\\EntityInterface')
+            imports.add(nsApp + '\\Entity\\EntityInterface')
             if (tree) {
-                imports.add(application.appNamespace + '\\Entity\\' + name.formatForCodeCapital)
+                imports.add(nsApp + '\\Entity\\' + name.formatForCodeCapital)
             }
             for (relation : getBidirectionalIncomingRelations) {
                 imports.addAll(thAssoc.importRelatedEntity(relation, false))
@@ -144,13 +147,13 @@ class Entities {
             for (relation : outgoing) {
                 imports.addAll(thAssoc.importRelatedEntity(relation, true))
             }
-            imports.add(application.appNamespace + '\\Repository\\' + name.formatForCodeCapital + 'Repository')
+            imports.add(nsApp + '\\Repository\\' + name.formatForCodeCapital + 'Repository')
             if (hasListFieldsEntity) {
-                imports.add(application.appNamespace + '\\Validator\\Constraints as ' + application.name.formatForCodeCapital + 'Assert')
+                imports.add(nsApp + '\\Validator\\Constraints as ' + application.name.formatForCodeCapital + 'Assert')
             }
         }
         if (!isBase) {
-            imports.add(application.appNamespace + '\\Entity\\Base\\Abstract' + name.formatForCodeCapital + ' as BaseEntity')
+            imports.add(nsApp + '\\Entity\\Base\\Abstract' + name.formatForCodeCapital + ' as BaseEntity')
         }
         imports
     }
@@ -181,7 +184,7 @@ class Entities {
     def private modelEntityBaseImplBody(Entity it, Application app) '''
         «memberVars»
 
-        «new EntityConstructor().constructor(it, false)»
+        «new EntityConstructor().constructor(it)»
         «accessors»
         «new EntityMethods().generate(it, app, thProp)»
     '''

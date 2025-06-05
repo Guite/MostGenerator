@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DateTimeRole
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityLockType
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ListField
@@ -32,7 +31,6 @@ class ModelExtensions {
 
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     /**
      * Returns a list of all entity fields in this application.
@@ -196,6 +194,7 @@ class ModelExtensions {
         if (!fields.filter[primaryKey].empty) {
             return fields.findFirst[primaryKey]
         }
+        // TODO check these cases more thoroughly
         if (!outgoing.filter(OneToOneRelationship).filter[primaryKey].empty) {
             return outgoing.filter(OneToOneRelationship).findFirst[primaryKey].source.getPrimaryKey
         }
@@ -209,35 +208,21 @@ class ModelExtensions {
      * Returns a list of all fields which should be displayed on the index page.
      */
     def getFieldsForIndexPage(Entity it) {
-        getDisplayFields.filter[f|f.visibleOnIndex].toList
+        fields.filter[f|f.visibleOnIndex].toList
     }
 
     /**
      * Returns a list of all fields which should be displayed on the detail page.
      */
     def getFieldsForDetailPage(Entity it) {
-        getDisplayFields.filter[f|f.visibleOnDetail]
-    }
-
-    /**
-     * Returns a list of all fields which should be displayed.
-     */
-    def getDisplayFields(Entity it) {
-        var fields = fields.filter[true]
-        if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
-            fields = fields.filter[!primaryKey]
-        }
-        if (!hasVisibleWorkflow) {
-            fields = fields.filter[name != 'workflowState']
-        }
-        fields
+        fields.filter[f|f.visibleOnDetail]
     }
 
     /**
      * Returns a list of all fields which may be used for sorting.
      */
     def getSortingFields(Entity it) {
-        getDisplayFields.filter[f|f.visibleOnSort].reject(UserField).reject(ArrayField).toList
+        fields.filter[f|f.visibleOnSort].reject(UserField).reject(ArrayField).toList
     }
 
     /**
@@ -247,9 +232,6 @@ class ModelExtensions {
      */
     def getEditableFields(Entity it) {
         var fields = fields.filter[name != 'workflowState' && name != 'translationData']
-        if (identifierStrategy != EntityIdentifierStrategy.NONE) {
-            fields = fields.filter[!primaryKey]
-        }
         var filteredFields = fields.filter[!isVersionField]
         val joinFieldNames = newArrayList
         for (relation : incoming.filter[targetField != 'id']) {
@@ -634,10 +616,10 @@ class ModelExtensions {
                     }
                 } else {
                     if (forPhp) 'float' else {
-                        if (numberType == NumberFieldType.DECIMAL) 'decimal' else 'float'
+                        if (NumberFieldType.DECIMAL === numberType) 'decimal' else 'float'
                     }
                 }
-            StringField: 'string'
+            StringField: if (treatAsUuidType) 'Uuid' else 'string'
             TextField: if (forPhp) 'string' else 'text'
             UploadField: 'string'
             ListField: if (multiple) 'array' else 'string'
@@ -656,6 +638,13 @@ class ModelExtensions {
         if (role == DateTimeRole.DATE) 'date' else
         if (role == DateTimeRole.TIME) 'time' else
         ''
+    }
+
+    /**
+     * Whether a field should be treated as UUID or not.
+     */
+    def treatAsUuidType(StringField it) {
+        StringRole.UUID === role && primaryKey
     }
 
     /**

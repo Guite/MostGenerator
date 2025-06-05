@@ -2,8 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models.entity.exten
 
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.NumberField
-import de.guite.modulestudio.metamodel.NumberFieldType
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -84,14 +82,6 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class implementation.
      */
     override extensionClassBaseImplementation(Entity it) '''
-        «IF primaryKey instanceof NumberField && (primaryKey as NumberField).numberType == NumberFieldType.INTEGER»
-            /**
-             * Use integer instead of string for increased performance.
-             */
-            #[ORM\Column(name: 'object_id', type: Types::INTEGER, nullable: true)]
-            protected «/* no type allowed because we override a parent field */»$objectId;
-
-        «ENDIF»
         /**
          * Extended description of the executed action which produced this log entry.
          */
@@ -128,7 +118,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
 
             // avoid selecting logs for those entries which already had been undeleted
             $qbExisting = $this->getEntityManager()->createQueryBuilder();
-            $qbExisting->select('tbl.id')
+            $qbExisting->select('tbl.«getPrimaryKey.name.formatForCode»')
                 ->from($objectClass, 'tbl');
 
             $qb = $this->getEntityManager()->createQueryBuilder();
