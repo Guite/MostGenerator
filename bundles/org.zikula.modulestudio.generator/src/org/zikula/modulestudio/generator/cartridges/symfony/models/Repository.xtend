@@ -62,23 +62,13 @@ class Repository {
      */
     def private generate(Entity it) {
         ('Generating repository classes for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
-        val repositoryPath = 'src/Repository/'
-        var fileSuffix = 'Repository'
+        val repositoryPath = 'Repository/' + name.formatForCodeCapital + 'Repository'
 
         sortRelationsIn = incoming.filter(OneToManyRelationship).filter[bidirectional]
         sortRelationsOut = outgoing.filter(OneToOneRelationship)
 
-        var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + 'Interface.php'
-        fsa.generateFile(repositoryPath + fileName, modelRepositoryInterfaceBaseImpl)
-
-        fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
-        fsa.generateFile(repositoryPath + fileName, modelRepositoryBaseImpl)
-
-        fileName = name.formatForCodeCapital + fileSuffix + 'Interface.php'
-        fsa.generateFile(repositoryPath + fileName, modelRepositoryInterfaceImpl)
-
-        fileName = name.formatForCodeCapital + fileSuffix + '.php'
-        fsa.generateFile(repositoryPath + fileName, modelRepositoryImpl)
+        fsa.generateClassPair(repositoryPath + 'Interface.php', repositoryInterfaceBaseImpl, repositoryInterfaceImpl)
+        fsa.generateClassPair(repositoryPath + '.php', repositoryBaseImpl, repositoryImpl)
     }
 
     def private getDefaultSortingField(Entity it) {
@@ -100,7 +90,7 @@ class Repository {
         }
     }
 
-    def private modelRepositoryInterfaceBaseImpl(Entity it) '''
+    def private repositoryInterfaceBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Repository\Base;
 
         «collectBaseImports(true).print»
@@ -216,7 +206,7 @@ class Repository {
         }
     '''
 
-    def private modelRepositoryBaseImpl(Entity it) '''
+    def private repositoryBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Repository\Base;
 
         «collectBaseImports(false).print»
@@ -307,7 +297,7 @@ class Repository {
     '''
 
     def private canDirectlyExtendServiceRepo(Entity it) {
-        tree && !hasSortableFields
+        !tree && !hasSortableFields
     }
 
     def private collectBaseImports(Entity it, Boolean isInterface) {
@@ -888,7 +878,7 @@ class Repository {
         '«getRelationAliasName(useTarget).formatForCode»',
     '''
 
-    def private modelRepositoryInterfaceImpl(Entity it) '''
+    def private repositoryInterfaceImpl(Entity it) '''
         namespace «app.appNamespace»\Repository;
 
         use «app.appNamespace»\Repository\Base\Abstract«name.formatForCodeCapital»RepositoryInterface;
@@ -902,7 +892,7 @@ class Repository {
         }
     '''
 
-    def private modelRepositoryImpl(Entity it) '''
+    def private repositoryImpl(Entity it) '''
         namespace «app.appNamespace»\Repository;
 
         use «app.appNamespace»\Repository\Base\Abstract«name.formatForCodeCapital»Repository;

@@ -36,28 +36,14 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         this.app = application
         this.classType = classType
 
-        val entityPath = 'src/Entity/'
-        val entitySuffix = 'Entity'
+        val entityPath = 'Entity/'
         val repositorySuffix = 'Repository'
         var classPrefix = name.formatForCodeCapital + classType.formatForCodeCapital
-        val repositoryPath = 'src/Repository/'
-        var fileName = ''
+        val repositoryPath = 'Repository/'
 
-        fileName = 'Base/Abstract' + classPrefix + entitySuffix + '.php'
-        fsa.generateFile(entityPath + fileName, extensionClassBaseImpl)
-
-        fileName = 'Base/Abstract' + classPrefix + repositorySuffix + 'Interface.php'
-        fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryInterfaceBaseImpl)
-        fileName = 'Base/Abstract' + classPrefix + repositorySuffix + '.php'
-        fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseImpl)
-
-        fileName = classPrefix + entitySuffix + '.php'
-        fsa.generateFile(entityPath + fileName, extensionClassImpl)
-
-        fileName = classPrefix + repositorySuffix + 'Interface.php'
-        fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryInterfaceImpl)
-        fileName = classPrefix + repositorySuffix + '.php'
-        fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryImpl)
+        fsa.generateClassPair(entityPath + classPrefix + '.php', extensionClassBaseImpl, extensionClassImpl)
+        fsa.generateClassPair(repositoryPath + classPrefix + repositorySuffix + 'Interface.php', extensionClassRepositoryInterfaceBaseImpl, extensionClassRepositoryInterfaceImpl)
+        fsa.generateClassPair(repositoryPath + classPrefix + repositorySuffix + '.php', extensionClassRepositoryBaseImpl, extensionClassRepositoryImpl)
     }
 
     def protected extensionClassBaseImpl(Entity it) '''
@@ -70,7 +56,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          *
          * This is the base «classType.formatForDisplay» class for «it.name.formatForDisplay» entities.
          */
-        abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends «extensionBaseClass» implements AbstractEntityInterface
+        abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital» extends «extensionBaseClass» implements AbstractEntityInterface
         {
             «extensionClassBaseImplementation»
         }
@@ -119,7 +105,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         namespace «app.appNamespace»\Entity;
 
         use Doctrine\ORM\Mapping as ORM;
-        use «app.appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity as BaseEntity;
+        use «app.appNamespace»\Entity\Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital» as BaseEntity;
         use «app.appNamespace»\Repository\«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository;
 
         /**
@@ -128,7 +114,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          * This is the concrete «classType.formatForDisplay» class for «it.name.formatForDisplay» entities.
          */
         «extensionClassImplAnnotations»
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends BaseEntity implements EntityInterface
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends BaseEntity implements EntityInterface
         {
             // feel free to add your own methods here
         }

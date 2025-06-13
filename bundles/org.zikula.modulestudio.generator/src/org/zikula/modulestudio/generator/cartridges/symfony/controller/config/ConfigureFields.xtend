@@ -86,7 +86,7 @@ class ConfigureFields implements ControllerMethodInterface {
             imports.add(nsSymfonyFormType + 'WeekType')
         }
         if (!formFields.filter(StringField).filter[role == StringRole.ICON].empty) {
-            imports.add('Zikula\\FormExtensionBundle\\Form\\Type\\IconType')
+            imports.add('Zikula\\ThemeBundle\\Form\\Type\\IconType')
         }
         if (!getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty) {
             imports.add(application.appNamespace + '\\Form\\Type\\Field\\UploadType')
@@ -155,15 +155,8 @@ class ConfigureFields implements ControllerMethodInterface {
         «ENDFOR»
     '''
 
-    // TODO remove this (same in ConfigureFilters)
     def private fetchListEntries(ListField it) '''
-        $listEntries = $this->listEntriesHelper->getEntries('«entity.name.formatForCode»', '«name.formatForCode»');
-        $choices = [];
-        $choiceAttributes = [];
-        foreach ($listEntries as $entry) {
-            $choices[$entry['text']] = $entry['value'];
-            $choiceAttributes[$entry['text']] = ['title' => $entry['title']];
-        }
+        [$«name.formatForCode»Choices, $«name.formatForCode»ChoiceAttributes] = $this->listEntriesHelper->getFormChoices('«entity.name.formatForCode»', '«name.formatForCode»', true);
     '''
 
     def private definition(Field it) '''
@@ -443,7 +436,7 @@ class ConfigureFields implements ControllerMethodInterface {
         if (expanded) {
             calls += '''->renderExpanded()'''
         }
-        calls += '''->setChoices($choices)'''
+        calls += '''->setChoices($«name.formatForCode»Choices)'''
         // setTranslatableChoices([...]) // TODO choices
         calls
     }
@@ -557,9 +550,6 @@ class ConfigureFields implements ControllerMethodInterface {
         'maxlength' => «length»,
     '''
     def private dispatch additionalOptions(StringField it) '''
-        «IF !mandatory && #[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»
-            'placeholder' => t('All'),
-        «ENDIF»
         «IF unit != ''»
             'input_group' => ['right' => t('«unit»')],
         «ENDIF»
@@ -593,22 +583,7 @@ class ConfigureFields implements ControllerMethodInterface {
             'with_seconds' => true,
         «ENDIF»
         «IF role == StringRole.COLOUR»
-            'html5' => true,«/* Country EAB field uses Symfony ChoiceType instead of CountryType
-        ELSEIF role == StringRole.COUNTRY»
-            'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),*/»
-        «ELSEIF role == StringRole.CURRENCY»
-            'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
-        «ELSEIF role == StringRole.LANGUAGE»
-            'choice_self_translation' => true,«/* not both allowed
-            'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),*/»
-        «/*ELSEIF role == StringRole.LOCALE»
-            'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
-        */»«ELSEIF role == StringRole.TIME_ZONE»
-            'choice_translation_locale' => $this->requestStack->getCurrentRequest()->getLocale(),
-            'intl' => true,
-        «ELSEIF role == StringRole.URL»«/*'default_protocol' => 'http'*/»
-        «ELSEIF role == StringRole.WEEK»
-            'input' => 'string',
+            'html5' => true,
         «ENDIF»
     '''
 
@@ -640,7 +615,7 @@ class ConfigureFields implements ControllerMethodInterface {
         «IF !expanded && !mandatory»
             'placeholder' => 'Choose an option',
         «ENDIF»
-        'choice_attr' => $choiceAttributes,
+        'choice_attr' => $«name.formatForCode»ChoiceAttributes,
     '''
 
     def private dispatch additionalAttributes(DatetimeField it) {

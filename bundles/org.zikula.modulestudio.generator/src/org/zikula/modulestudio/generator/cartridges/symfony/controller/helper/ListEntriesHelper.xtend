@@ -52,6 +52,8 @@ class ListEntriesHelper {
         «hasMultipleSelection»
 
         «getEntries»
+
+        «getFormChoices»
         «additions»
     '''
 
@@ -175,6 +177,27 @@ class ListEntriesHelper {
             }
 
             return $entries;
+        }
+    '''
+
+    def private getFormChoices(Application it) '''
+        /**
+         * Get form choices for a certain dropdown field.
+         */
+        public function getFormChoices(string $objectType, string $fieldName, bool $withAttributes = false): array
+        {
+            $entries = $this->getEntries($objectType, $fieldName);
+
+            $choices = [];
+            $choiceAttributes = [];
+            foreach ($entries as $entry) {
+                $choices[$entry['text']] = $entry['value'];
+                if ($withAttributes) {
+                    $choiceAttributes[$entry['text']] = ['title' => $entry['title']];
+                }
+            }
+
+            return $withAttributes ? [$choices, $choiceAttributes] : $choices;
         }
     '''
 
