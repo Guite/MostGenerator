@@ -86,7 +86,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      */
     override extensionClassBaseImplementation(Entity it) '''
         /**
-         * Use a length of 140 instead of 255 to avoid too long keys for the indexes.
+         * Use a length of 140 instead of 191 to avoid too long keys for the indexes.
          */
         #[ORM\Column(name: 'object_class', type: Types::STRING, length: 140)]
         protected «/* no type allowed because we override a parent field */»$objectClass;
@@ -119,7 +119,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
         #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)]
         #[ORM\Table(name: '«fullEntityTableName»_translation', options: ['row_format' => 'DYNAMIC'])]
         #[ORM\Index(fields: ['locale', 'objectClass', 'foreignKey'], name: 'translations_lookup_idx')]
-        #[ORM\UniqueConstraint(columns: ['locale', 'object_class', 'field', 'foreignKey'], name: 'lookup_unique_idx')]
+        #[ORM\UniqueConstraint(columns: ['locale', 'object_class', 'field', 'foreign_key'], name: 'lookup_unique_idx')]
     '''
 
     /**

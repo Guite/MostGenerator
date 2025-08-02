@@ -38,14 +38,14 @@ class FeatureActivationHelper {
             /**
              * Translation feature.
              */
-            public const TRANSLATIONS = 'translations';
+            public const string TRANSLATIONS = 'translations';
 
         «ENDIF»
         «IF hasTrees»
             /**
              * Tree relatives feature.
              */
-            public const TREE_RELATIVES = 'treeRelatives';
+            public const string TREE_RELATIVES = 'treeRelatives';
 
         «ENDIF»
     '''

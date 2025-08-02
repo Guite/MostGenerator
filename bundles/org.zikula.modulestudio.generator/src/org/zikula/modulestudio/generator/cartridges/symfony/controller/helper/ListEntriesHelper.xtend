@@ -191,9 +191,9 @@ class ListEntriesHelper {
             $choices = [];
             $choiceAttributes = [];
             foreach ($entries as $entry) {
-                $choices[$entry['text']] = $entry['value'];
+                $choices[$entry['value']] = $entry['text'];
                 if ($withAttributes) {
-                    $choiceAttributes[$entry['text']] = ['title' => $entry['title']];
+                    $choiceAttributes[$entry['value']] = ['title' => $entry['title']];
                 }
             }
 
@@ -230,8 +230,8 @@ class ListEntriesHelper {
     def private entryInfo(ListFieldItem it, Application app, String domain) '''
         $states[] = [
             'value' => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text' => $this->trans('«name.toFirstUpper.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
-            'title' => «IF null !== documentation && !documentation.empty»$this->trans('«documentation.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
+            'text' => t('«name.toFirstUpper.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
+            'title' => «IF null !== documentation && !documentation.empty»t('«documentation.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»)«ELSE»''«ENDIF»,
             'default' => «^default.displayBool»,
         ];
     '''
@@ -239,8 +239,8 @@ class ListEntriesHelper {
     def private entryInfoNegative(ListFieldItem it, Application app, String domain) '''
         $states[] = [
             'value' => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
-            'text' => $this->trans('All except «name.toFirstLower.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
-            'title' => $this->trans('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
+            'text' => t('All except «name.toFirstLower.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
+            'title' => t('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'«IF !domain.empty», [], '«domain»'«ENDIF»),
             'default' => false,
         ];
     '''

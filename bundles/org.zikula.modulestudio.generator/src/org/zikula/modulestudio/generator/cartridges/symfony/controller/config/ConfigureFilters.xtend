@@ -16,6 +16,8 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.NumberField
+import de.guite.modulestudio.metamodel.UserField
+import de.guite.modulestudio.metamodel.TextField
 
 class ConfigureFilters implements ControllerMethodInterface {
 
@@ -41,9 +43,9 @@ class ConfigureFilters implements ControllerMethodInterface {
         if (!formFields.filter(BooleanField).empty) {
             imports.add(nsEabFilter + 'BooleanFilter')
         }      
-        if (!formFields.filter(ArrayField).empty) {
+        /*if (!formFields.filter(ArrayField).empty) {
             imports.add(nsEabFilter + 'ArrayFilter')
-        }      
+        }*/     
         if (
             !formFields.filter(StringField).filter[f|f.role === StringRole.LOCALE].empty
             || !hasVisibleWorkflow && hasListFieldsEntity
@@ -53,6 +55,9 @@ class ConfigureFilters implements ControllerMethodInterface {
         }
         if (!allEntityFields.filter(DatetimeField).empty) {
             imports.add(nsEabFilter + 'DateTimeFilter')
+        }
+        if (!allEntityFields.filter(UserField).empty || !incomingRelations.empty || !outgoingRelations.empty) {
+            imports.add(nsEabFilter + 'EntityFilter')
         }
         if (!formFields.filter(NumberField).empty) {
             imports.add(nsEabFilter + 'NumericFilter')
@@ -131,21 +136,21 @@ class ConfigureFilters implements ControllerMethodInterface {
     '''
 
     def private dispatch filter(Field it) '''
-        ->add('«name.formatForCode»')«options»
+        ->add('«name.formatForCode»')
     '''
     def private dispatch options(Field it) ''''''
 
     def private dispatch filter(BooleanField it) '''
-        ->add(BooleanFilter::new('«name.formatForCode»')«options»)
+        ->add(BooleanFilter::new('«name.formatForCode»', «label»)«options»)
     '''
 
     def private dispatch filter(StringField it) '''
         «IF role === StringRole.LOCALE»
-            ->add(ChoiceFilter::new('«name.formatForCode»')«options»)
+            ->add(ChoiceFilter::new('«name.formatForCode»', «label»)«options»)
         «ELSEIF hasSelectorRole»
-            ->add(TextFilter::new('«name.formatForCode»')«options»)
+            ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
         «ELSE»
-            ->add(TextFilter::new('«name.formatForCode»')«options»)
+            ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
         «ENDIF»
     '''
     def private dispatch options(StringField it) {
@@ -165,33 +170,42 @@ class ConfigureFilters implements ControllerMethodInterface {
     def private hasSelectorRole(StringField it) {
         #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)
     }
-    def private dispatch filter(NumberField it) '''
-        ->add(NumericFilter::new('«name.formatForCode»'))
+
+    def private dispatch filter(TextField it) '''
+        ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
     '''
+
+    def private dispatch filter(NumberField it) '''
+        ->add(NumericFilter::new('«name.formatForCode»', «label»)«options»)
+    '''
+    /*def private dispatch filter(ArrayField it) '''
+        ->add(ArrayFilter::new('«name.formatForCode»', «label»)->canSelectMultiple(true)->setTranslatableChoices(...))
+    '''*/
     def private dispatch filter(ArrayField it) '''
-        ->add(ArrayFilter::new('«name.formatForCode»')->canSelectMultiple(true))
+        ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
     '''
     def private dispatch filter(ListField it) '''
-        ->add(ChoiceFilter::new('«name.formatForCode»')->setChoices($«name.formatForCode»Choices)«IF expanded»->renderExpanded(true)«ENDIF»«IF multiple»->canSelectMultiple(true)«ENDIF»)
+        ->add(ChoiceFilter::new('«name.formatForCode»', «label»)«options»)
     '''
+    def private dispatch options(ListField it) '''->setTranslatableChoices($«name.formatForCode»Choices)«IF expanded»->renderExpanded(true)«ENDIF»«IF multiple»->canSelectMultiple(true)«ENDIF»'''
     def private dispatch filter(DatetimeField it) '''
-        ->add(DateTimeFilter::new('«name.formatForCode»'))
+        ->add(DateTimeFilter::new('«name.formatForCode»', «label»)«options»)
     '''
+
+    def private label(Field it) '''t('«name.formatForDisplayCapital»')'''
 
     // relations
 
     /*
-     * User fields are automatically recognized as associations and passed to EntityFilter during runtime.
-     * Explicit handling should follow "relationFilter" below.
-     *
-     * def private dispatch filter(UserField it) '''
-        ->add(TextFilter::new('«name.formatForCode»')«options»)
+     * User fields handling should follow "relationFilter" below.
+     */
+    def private dispatch filter(UserField it) '''
+        ->add(EntityFilter::new('«name.formatForCode»', «label»)«options»)
     '''
-    //def private dispatch options(UserField it) '''«placeholderOption»'''
-    */
+
     def private relationFilter(Relationship it, Boolean outgoing) '''
         «val aliasName = getRelationAliasName(outgoing)»
-        ->add('«aliasName.formatForCode»')
+        ->add(EntityFilter::new('«aliasName.formatForCode»', t('«aliasName.formatForDisplayCapital»')))
     '''
 
     /* TODO review relation-related leftovers of old code

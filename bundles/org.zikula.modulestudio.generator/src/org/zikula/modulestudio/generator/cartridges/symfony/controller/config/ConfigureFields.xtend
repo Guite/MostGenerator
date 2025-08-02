@@ -431,13 +431,12 @@ class ConfigureFields implements ControllerMethodInterface {
             calls += '''->autocomplete()'''
         }
         // escapeHtml(false)
-        // renderAsBadges([...]) // TODO migrate image of list item?
-            // 'success', 'warning', 'danger', 'info', 'primary', 'secondary', 'light', 'dark'
+        // renderAsBadges([...]) // TODO interesting for list items (particularly workflows)?
+            // see https://symfony.com/bundles/EasyAdminBundle/current/fields/ChoiceField.html#renderasbadges
         if (expanded) {
             calls += '''->renderExpanded()'''
         }
-        calls += '''->setChoices($«name.formatForCode»Choices)'''
-        // setTranslatableChoices([...]) // TODO choices
+        calls += '''->setTranslatableChoices($«name.formatForCode»Choices)'''
         calls
     }
 
@@ -548,6 +547,9 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch titleAttribute(StringField it) '''«IF #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.DATE_INTERVAL, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF» of the «entity.name.formatForDisplay».'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
+        «IF role == StringRole.WEEK»
+            'input' => 'string',
+        «ENDIF»
     '''
     def private dispatch additionalOptions(StringField it) '''
         «IF unit != ''»

@@ -114,10 +114,10 @@ class Utils {
      */
     def Boolean targets(Application it, String version) {
         switch symfonyVersion {
+            case SF74:
+                #['7.4', '7.3'].contains(version)
             case SF73:
-                #['7.3', '7.2'].contains(version)
-            case SF72:
-                #['7.2'].contains(version)
+                #['7.3'].contains(version)
             default:
                 true
         }
@@ -132,10 +132,10 @@ class Utils {
      */
     def targetSymfonyVersion(Application it) {
         switch symfonyVersion {
+            case SF74:
+                '7.4'
             case SF73:
                 '7.3'
-            case SF72:
-                '7.2'
         }
     }
 
@@ -148,9 +148,9 @@ class Utils {
      */
     def targetZikulaVersion(Application it) {
         switch symfonyVersion {
-            case SF73:
+            case SF74:
                 '4.0'
-            case SF72:
+            case SF73:
                 '4.0'
         }
     }
