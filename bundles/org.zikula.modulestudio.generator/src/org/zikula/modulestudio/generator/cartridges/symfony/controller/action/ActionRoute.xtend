@@ -30,7 +30,7 @@ class ActionRoute {
     def private dispatch actionRoute(IndexAction it, Boolean isAdmin) '''
         #[Route('«IF isAdmin»/admin«ENDIF»/«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{page}/{num}.{_format}',
             name: '«entity.application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«entity.name.formatForDB»_index',
-            requirements: ['sortdir' => 'asc|desc|ASC|DESC', 'page' => '\d+', 'num' => '\d+', '_format' => 'html'],
+            requirements: ['sortdir' => 'asc|desc|ASC|DESC', 'page' => Requirement::POSITIVE_INT, 'num' => Requirement::POSITIVE_INT, '_format' => 'html'],
             defaults: ['sort' => '', 'sortdir' => 'asc', 'page' => 1, 'num' => 10, '_format' => 'html'],
             methods: ['GET']
         )]
@@ -57,7 +57,7 @@ class ActionRoute {
         if (hasSluggableFields && !(action instanceof EditAction)) {
             return '''«''»'slug' => '«IF tree»[^.]+«ELSE»[^/.]+«ENDIF»'«''»'''
         }
-        '''«''»'«getPrimaryKey.name.formatForCode»' => '\d+'«''»'''
+        '''«''»'«getPrimaryKey.name.formatForCode»' => Requirement::DIGITS«''»'''
     }
 
     def private actionRouteDefaultsForSingleEntity(Entity it, Action action) {

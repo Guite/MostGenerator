@@ -233,6 +233,7 @@ class ControllerLayer {
             'Symfony\\Component\\HttpFoundation\\Request',
             'Symfony\\Component\\HttpFoundation\\Response',
             'Symfony\\Component\\Routing\\Annotation\\Route',
+            'Symfony\\Component\\Routing\\Requirement\\Requirement',
             app.appNamespace + '\\Controller\\Base\\Abstract' + name.formatForCodeCapital + 'Controller'
         ])
         if (hasIndexAction || hasDeleteAction) {
