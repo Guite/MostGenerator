@@ -98,7 +98,7 @@ class UploadHelper {
             $this->setTranslator($translator);
 
             $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
-            $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'];
+            $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'«/*, 'svg' */»];
             $this->forbiddenFileTypes = [
                 'cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5',
                 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml',

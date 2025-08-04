@@ -401,14 +401,18 @@ class ModelExtensions {
      * Checks whether an upload field is an image field.
      */
     def isImageField(UploadField it) {
-        '*' == allowedExtensions || !allowedExtensions.split(', ').filter[it == 'gif' || it == 'jpeg' || it == 'jpg' || it == 'png'].empty
+        '*' == allowedExtensions || !allowedExtensions.split(', ').filter[imageExtensions.contains(it)].empty
     }
 
     /**
      * Checks whether an upload field is an image field without supporting other file types.
      */
     def isOnlyImageField(UploadField it) {
-        allowedExtensions.split(', ').filter[it != 'gif' && it != 'jpeg' && it != 'jpg' && it != 'png'].empty
+        allowedExtensions.split(', ').filter[!imageExtensions.contains(it)].empty
+    }
+
+    def private getImageExtensions() {
+        #['gif', 'jpeg', 'jpg', 'png', 'svg']
     }
 
     /**

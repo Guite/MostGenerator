@@ -20,6 +20,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import de.guite.modulestudio.metamodel.TextRole
 
 class ValidationConstraints {
 
@@ -187,6 +188,9 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(TextField it) '''
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
+        «IF role === TextRole.CODE_TWIG»
+            #[Assert\Twig]
+        «ENDIF»
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
