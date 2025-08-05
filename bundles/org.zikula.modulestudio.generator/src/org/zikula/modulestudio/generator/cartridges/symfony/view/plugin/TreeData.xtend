@@ -13,15 +13,12 @@ class TreeData {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
-    def generate(Application it) {
-        treeDataImpl
-    }
-
-    def private treeDataImpl(Application it) '''
+    def generate(Application it) '''
         /**
          * The «appName.formatForDB»_treeData function delivers the html output for a JS tree
          * based on given tree entities.
          */
+        #[AsTwigFunction('«appName.toLowerCase»_treeData', isSafe: ['html'])]
         public function getTreeData(string $objectType, array $tree = [], string $routeArea = '', int $rootId = 1): array
         {
             // check whether an edit action is available

@@ -4,21 +4,21 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class FormatGeoData {
+class GetFormattedEntityTitle {
 
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
         /**
-         * The «appName.formatForDB»_geoData filter formats geo data.
+         * The «appName.formatForDB»_formattedTitle filter outputs a formatted title for a given entity.
          * Example:
-         *     {{ latitude|«appName.formatForDB»_geoData }}.
+         *     {{ myPost|«appName.formatForDB»_formattedTitle }}.
          */
-        #[AsTwigFilter('«appName.formatForDB»_geoData')]
-        public function formatGeoData(float $value): string
+        #[AsTwigFilter('«appName.formatForDB»_formattedTitle')]
+        public function getFormattedEntityTitle(EntityInterface $entity): string
         {
-            return number_format($value, 7, '.', '');
+            return $this->entityDisplayHelper->getFormattedTitle($entity);
         }
     '''
 }

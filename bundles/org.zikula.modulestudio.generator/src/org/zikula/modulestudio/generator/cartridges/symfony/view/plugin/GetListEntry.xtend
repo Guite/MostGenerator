@@ -9,17 +9,14 @@ class GetListEntry {
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
-    def generate(Application it) {
-        getListEntryImpl
-    }
-
-    def private getListEntryImpl(Application it) '''
+    def generate(Application it) '''
         /**
          * The «appName.formatForDB»_listEntry filter displays the name
          * or names for a given list item.
          * Example:
          *     {{ entity.listField|«appName.formatForDB»_listEntry('entityName', 'fieldName') }}.
          */
+        #[AsTwigFilter('«appName.formatForDB»_listEntry')]
         public function getListEntry(
             string $value,
             string $objectType = '',

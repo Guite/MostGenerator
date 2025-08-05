@@ -9,14 +9,11 @@ class TreeSelection {
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
-    def generate(Application it) {
-        treeSelectionImpl
-    }
-
-    def private treeSelectionImpl(Application it) '''
+    def generate(Application it) '''
         /**
          * The «appName.formatForDB»_treeSelection function retrieves tree entities based on a given one.
          */
+        #[AsTwigFunction('«appName.toLowerCase»_treeSelection)]
         public function getTreeSelection(
             string $objectType,
             EntityInterface $node,

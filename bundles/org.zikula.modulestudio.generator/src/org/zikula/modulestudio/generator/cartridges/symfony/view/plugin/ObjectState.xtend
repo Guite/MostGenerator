@@ -9,17 +9,14 @@ class ObjectState {
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
-    def generate(Application it) {
-        objectStateImpl
-    }
-
-    def private objectStateImpl(Application it) '''
+    def generate(Application it) '''
         /**
          * The «appName.formatForDB»_objectState filter displays the name of a given object's workflow state.
          * Examples:
          *    {{ item.workflowState|«appName.formatForDB»_objectState }}        {# with visual feedback #}
          *    {{ item.workflowState|«appName.formatForDB»_objectState(false) }} {# no ui feedback #}.
          */
+        #[AsTwigFilter('«appName.formatForDB»_objectState', isSafe: ['html'])]
         public function getObjectState(string $state = 'initial', bool $uiFeedback = true): string
         {
             $stateInfo = $this->workflowHelper->getStateInfo($state);

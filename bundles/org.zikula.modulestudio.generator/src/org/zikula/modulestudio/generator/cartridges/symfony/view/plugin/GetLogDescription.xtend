@@ -4,21 +4,22 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class FormatGeoData {
+class GetLogDescription {
 
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
         /**
-         * The «appName.formatForDB»_geoData filter formats geo data.
+         * The «appName.formatForDB»_logDescription filter returns the translated clear text
+         * description for a given log entry.
          * Example:
-         *     {{ latitude|«appName.formatForDB»_geoData }}.
+         *     {{ logEntry|«appName.formatForDB»_logDescription }}.
          */
-        #[AsTwigFilter('«appName.formatForDB»_geoData')]
-        public function formatGeoData(float $value): string
+        #[AsTwigFilter('«appName.formatForDB»_logDescription')]
+        public function getLogDescription(AbstractLogEntry $logEntry): string
         {
-            return number_format($value, 7, '.', '');
+            return $this->loggableHelper->translateActionDescription($logEntry);
         }
     '''
 }

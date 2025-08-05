@@ -21,6 +21,7 @@ class GetFileSize {
          * Example:
          *     {{ 12345|«appName.formatForDB»_fileSize }}.
          */
+        #[AsTwigFilter('«appName.formatForDB»_fileSize', isSafe: ['html'])]
         public function getFileSize(int $size = 0, string $filePath = '', bool $nodesc = false, bool $onlydesc = false): string
         {
             if (!$size) {
