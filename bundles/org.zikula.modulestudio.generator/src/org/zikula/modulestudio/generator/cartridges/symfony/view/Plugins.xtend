@@ -104,24 +104,15 @@ class Plugins {
         ) {
         }
 
-        «val appNameLower = appName.toLowerCase»
-        public function getFilters()
-        {
-            return [
-
-                
-            ];
-        }
+        «extensionMethods»
         «IF hasLoggable»
 
-            #[AsTwigTest('«appNameLower»_instanceOf')]
+            #[AsTwigTest('«appName.toLowerCase»_instanceOf')]
             public function testInstanceOf($var, $instance)
             {
                 return $var instanceof $instance;
             }
         «ENDIF»
-
-        «extensionMethods»
     '''
 
     def private twigExtensionImpl(Application it) '''
