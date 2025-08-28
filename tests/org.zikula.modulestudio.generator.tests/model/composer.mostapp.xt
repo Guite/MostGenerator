@@ -29,7 +29,7 @@ XPECT generated file composer.json ---
         "psr-4": { "Acme\\SimpleTestBundle\\Tests\\": "tests" }
     },
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.3",
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "zikula/core-bundle": "^4.0",
         "zikula/theme-bundle": "^4.0",
