@@ -178,7 +178,8 @@ class ConfigureFilters implements ControllerMethodInterface {
     def private dispatch filter(NumberField it) '''
         ->add(NumericFilter::new('«name.formatForCode»', «label»)«options»)
     '''
-    /*def private dispatch filter(ArrayField it) '''
+    /* use TextFilter for array fields instead because its not easy to detect the choices
+    def private dispatch filter(ArrayField it) '''
         ->add(ArrayFilter::new('«name.formatForCode»', «label»)->canSelectMultiple(true)->setTranslatableChoices(...))
     '''*/
     def private dispatch filter(ArrayField it) '''
@@ -205,21 +206,23 @@ class ConfigureFilters implements ControllerMethodInterface {
 
     def private relationFilter(Relationship it, Boolean outgoing) '''
         «val aliasName = getRelationAliasName(outgoing)»
-        ->add(EntityFilter::new('«aliasName.formatForCode»', t('«aliasName.formatForDisplayCapital»')))
+        ->add(EntityFilter::new('«aliasName.formatForCode»', t('«aliasName.formatForDisplayCapital»'))«options(outgoing)»)
     '''
+
+    def private options(Relationship it, Boolean outgoing) {
+        // ->canSelectMultiple(true) enabled automatically by default for *ToMany relationships
+        // see 
+    }
 
     /* TODO review relation-related leftovers of old code
 
-    def private addRelationshipFields(Entity it, String mode) '''
-        public function add«mode.toFirstUpper»RelationshipFields(FormBuilderInterface $builder, array $options = []): void
-        {
-            $entityDisplayHelper = $this->entityDisplayHelper;
-            «FOR relation : (if (mode == 'incoming') incomingRelations else outgoingRelations)»
-                «relation.relationImpl(mode == 'outgoing')»
-
-            «ENDFOR»
-        }
-    '''
+    if (!incomingRelations.empty || !outgoingRelations.empty) {
+        imports.add(app.appNamespace + '\\Entity\\Factory\\EntityFactory')
+        imports.add(app.appNamespace + '\\Helper\\EntityDisplayHelper')
+        // ...
+        protected readonly EntityFactory $entityFactory,
+        protected readonly EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
+    }
 
     def private relationImpl(Relationship it, Boolean useTarget) '''
         «val sourceAliasName = getRelationAliasName(useTarget)»
@@ -246,68 +249,6 @@ class ConfigureFilters implements ControllerMethodInterface {
                 'class' => 'form-control-sm',
             ],
         ]);
-    '''
-
-    def private collectBaseImports(Entity it) {
-        val imports = new ImportList
-        if (!fields.filter(UserField).empty) {
-            imports.add('Zikula\\UsersBundle\\Entity\\User')
-        }
-        if (!incomingRelations.empty || !outgoingRelations.empty) {
-            imports.add(app.appNamespace + '\\Entity\\Factory\\EntityFactory')
-        }
-        if (!incomingRelations.empty || !outgoingRelations.empty) {
-            imports.add(app.appNamespace + '\\Helper\\EntityDisplayHelper')
-        }
-        if (needsFeatureActivationHelperEntity) {
-            imports.add(app.appNamespace + '\\Helper\\FeatureActivationHelper')
-        }
-        if (hasListFieldsEntity) {
-            imports.add(app.appNamespace + '\\Helper\\ListEntriesHelper')
-        }
-        if (!incomingRelations.empty || !outgoingRelations.empty) {
-            imports.add(app.appNamespace + '\\Helper\\PermissionHelper')
-        }
-        imports
-    }
-
-    def private quickNavTypeBaseImpl(Entity it) '''
-        public function __construct(
-            «IF !incomingRelations.empty || !outgoingRelations.empty»
-                protected readonly EntityFactory $entityFactory,
-                protected readonly PermissionHelper $permissionHelper,
-                protected readonly EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                protected readonly ListEntriesHelper $listHelper«IF hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
-            «ENDIF»
-            «IF hasLocaleFieldsEntity»
-                protected readonly LocaleApiInterface $localeApi«IF needsFeatureActivationHelperEntity»,«ENDIF»
-            «ENDIF»
-            «IF needsFeatureActivationHelperEntity»
-                protected readonly FeatureActivationHelper $featureActivationHelper
-            «ENDIF»
-        ) {
-        }
-
-        public function buildForm(FormBuilderInterface $builder, array $options): void
-        {
-            «IF !incomingRelations.empty»
-                $this->addIncomingRelationshipFields($builder, $options);
-            «ENDIF»
-            «IF !outgoingRelations.empty»
-                $this->addOutgoingRelationshipFields($builder, $options);
-            «ENDIF»
-        }
-
-        «IF !incomingRelations.empty»
-            «addRelationshipFields('incoming')»
-
-        «ENDIF»
-        «IF !outgoingRelations.empty»
-            «addRelationshipFields('outgoing')»
-
-        «ENDIF»
     '''
     */
 }

@@ -34,7 +34,6 @@ class ControllerHelper {
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
             appNamespace + '\\Entity\\Factory\\EntityFactory',
-            appNamespace + '\\Helper\\CollectionFilterHelper',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
         if (hasIndexActions) {
@@ -97,7 +96,6 @@ class ControllerHelper {
                 protected readonly LoggerInterface $logger,
             «ENDIF»
             protected readonly EntityFactory $entityFactory,
-            protected readonly CollectionFilterHelper $collectionFilterHelper,
             protected readonly PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
             protected readonly ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
             protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasAutomaticExpiryHandling || hasLoggable»,
@@ -266,11 +264,6 @@ class ControllerHelper {
                 unset($urlParameters[$parameterName]);
             }
 
-            $quickNavFormType = '«appNamespace»\Form\Type\QuickNavigation\\'
-                . ucfirst($objectType) . 'QuickNavType'
-            ;
-
-            $quickNavForm = $this->formFactory->create($quickNavFormType, $templateParameters);
             $routeName = $request->get('_route', '');
             $routeParams = $request->attributes->get('_route_params');
             if (1 !== $templateParameters['all']) {
@@ -279,41 +272,6 @@ class ControllerHelper {
             }
             $targetRoute = $this->router->generate($routeName, $routeParams);
 
-            $quickNavForm = $this->formFactory->create($quickNavFormType, $templateParameters, [
-                'action' => $targetRoute
-            ]);
-            $quickNavForm->handleRequest($request);
-            if ($quickNavForm->isSubmitted()) {
-                $quickNavData = $quickNavForm->getData();
-                foreach ($quickNavData as $fieldName => $fieldValue) {
-                    if ('routeArea' === $fieldName) {
-                        continue;
-                    }
-                    if (in_array($fieldName, ['all', 'own', 'num'], true)) {
-                        $templateParameters[$fieldName] = (int) $fieldValue;
-                    } elseif ('sort' === $fieldName && !empty($fieldValue)) {
-                        $sort = $fieldValue;
-                    } elseif ('sortdir' === $fieldName && !empty($fieldValue)) {
-                        $sortdir = $fieldValue;
-                    } elseif (
-                        false === mb_stripos($fieldName, 'thumbRuntimeOptions')
-                        && false === mb_stripos($fieldName, 'featureActivationHelper')
-                        && false === mb_stripos($fieldName, 'permissionHelper')
-                    ) {
-                        // set filter as query argument, fetched inside CollectionFilterHelper
-                        «IF hasUserFields»
-                            if ($fieldValue instanceof User) {
-                                $fieldValue = $fieldValue->getId();
-                            }
-                        «ENDIF»
-                        $request->query->set($fieldName, $fieldValue);
-                        if ($fieldValue instanceof EntityInterface) {
-                            $fieldValue = $fieldValue->getKey();
-                        }
-                    }
-                    $urlParameters[$fieldName] = $fieldValue;
-                }
-            }
             $resultsPerPage = $templateParameters['num'];
             $request->query->set('own', $templateParameters['own']);
 
@@ -344,7 +302,6 @@ class ControllerHelper {
             $templateParameters['sort'] = $sort;
             $templateParameters['sortdir'] = $sortdir;
             $templateParameters['items'] = $entities;
-            $templateParameters['quickNavForm'] = $quickNavForm;
 
             $request->query->set('sort', $sort);
             $request->query->set('sortdir', $sortdir);
@@ -450,12 +407,6 @@ class ControllerHelper {
                     $routeName = $this->requestStack->getCurrentRequest()->get('_route');
                     $routeNameParts = explode('_', $routeName);
                     $args['action'] = end($routeNameParts);
-                }
-                if ('index' === $args['action']) {
-                    $parameters = array_merge(
-                        $parameters,
-                        $this->collectionFilterHelper->getViewQuickNavParameters($objectType, $context, $args)
-                    );
                 }
                 «IF !getUploadEntities.empty»
 

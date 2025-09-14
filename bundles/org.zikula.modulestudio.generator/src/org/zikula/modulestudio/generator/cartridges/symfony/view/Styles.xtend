@@ -173,7 +173,6 @@ class Styles {
             div.«cssPrefix»-index .table-responsive {
                 min-height: 300px;
             }
-            «viewFilterForm»
 
             div.«cssPrefix»-index .avatar img {
                 width: auto;
@@ -192,26 +191,5 @@ class Styles {
                 max-width: 20px;
             }
         «ENDIF»
-    '''
-
-    def private viewFilterForm(Application it) '''
-        div.«cssPrefix»-index form.«cssPrefix»-quicknav {
-            margin: 10px 0;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-        }
-
-        div.«cssPrefix»-index form.«cssPrefix»-quicknav h3 {
-            display: none;
-        }
-
-        div.«cssPrefix»-index form.«cssPrefix»-quicknav .form-group {
-            display: inline-block;
-        }
-
-        div.«cssPrefix»-index form.«cssPrefix»-quicknav label {
-           margin: 0 5px;
-           display: inline;
-        }
     '''
 }

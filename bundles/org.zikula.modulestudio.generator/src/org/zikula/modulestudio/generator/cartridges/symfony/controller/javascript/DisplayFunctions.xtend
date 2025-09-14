@@ -31,10 +31,6 @@ class DisplayFunctions {
         function «vendorAndName»CapitaliseFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.substring(1);
         }
-        «IF hasIndexActions»
-
-            «initQuickNavigation»
-        «ENDIF»
 
         «simpleAlert»
         «IF hasIndexActions»
@@ -53,37 +49,6 @@ class DisplayFunctions {
         «ENDIF»
 
         «onLoad»
-    '''
-
-    def private initQuickNavigation(Application it) '''
-        /**
-         * Initialise the quick navigation form in list views.
-         */
-        function «vendorAndName»InitQuickNavigation() {
-            var quickNavForm;
-            var objectType;
-
-            if (jQuery('.«appName.toLowerCase»-quicknav').length < 1) {
-                return;
-            }
-
-            quickNavForm = jQuery('.«appName.toLowerCase»-quicknav').first();
-            objectType = quickNavForm.attr('id').replace('«appName.toFirstLower»', '').replace('QuickNavForm', '');
-
-            var quickNavFilterTimer;
-            quickNavForm.find('select').change(function (event) {
-                clearTimeout(quickNavFilterTimer);
-                quickNavFilterTimer = setTimeout(function() {
-                    quickNavForm.submit();
-                }, 5000);
-            });
-
-            var fieldPrefix = '«appName.formatForDB»_' + objectType.toLowerCase() + 'quicknav_';
-            // we can hide the submit button if we have no visible quick search field
-            if (jQuery('#' + fieldPrefix + 'q').length < 1 || jQuery('#' + fieldPrefix + 'q').parent().parent().hasClass('d-none')) {
-                jQuery('#' + fieldPrefix + 'updateview').addClass('d-none');
-            }
-        }
     '''
 
     def private simpleAlert(Application it) '''
@@ -238,7 +203,6 @@ class DisplayFunctions {
             isDetailPage = 0 < jQuery('.«appName.toLowerCase»-detail').length;
 
             if (isIndexPage) {
-                «vendorAndName»InitQuickNavigation();
                 «vendorAndName»InitMassToggle();
                 «vendorAndName»InitItemActions('index');
                 «IF hasSortable»

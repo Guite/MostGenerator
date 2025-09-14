@@ -81,24 +81,6 @@ class CollectionFilterHelper {
         }
 
         /**
-         * Returns an array of additional template variables for view quick navigation forms.
-         */
-        public function getViewQuickNavParameters(string $objectType = '', string $context = '', array $args = []): array
-        {
-            if (!in_array($context, ['controllerAction', 'api', 'actionHandler'], true)) {
-                $context = 'controllerAction';
-            }
-
-            «FOR entity : entities»
-                if ('«entity.name.formatForCode»' === $objectType) {
-                    return $this->getViewQuickNavParametersFor«entity.name.formatForCodeCapital»($context, $args);
-                }
-            «ENDFOR»
-
-            return [];
-        }
-
-        /**
          * Adds quick navigation related filter options as where clauses.
          */
         public function addCommonViewFilters(string $objectType, QueryBuilder $qb): QueryBuilder
@@ -127,10 +109,6 @@ class CollectionFilterHelper {
         }
         «FOR entity : entities»
 
-            «entity.getViewQuickNavParameters»
-        «ENDFOR»
-        «FOR entity : entities»
-
             «entity.addCommonViewFilters»
         «ENDFOR»
         «FOR entity : entities»
@@ -145,87 +123,6 @@ class CollectionFilterHelper {
 
             «addCreatorFilter»
         «ENDIF»
-    '''
-
-    def private getViewQuickNavParameters(Entity it) '''
-        /**
-         * Returns an array of additional template variables for view quick navigation forms.
-         */
-        protected function getViewQuickNavParametersFor«name.formatForCodeCapital»(string $context = '', array $args = []): array
-        {
-            $parameters = [];
-            $request = $this->requestStack->getCurrentRequest();
-            if (null === $request) {
-                return $parameters;
-            }
-            «IF hasUserFieldsEntity»
-
-                «FOR field : getUserFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $«fieldName» = $request->query->getInt('«fieldName»', 0);
-                «ENDFOR»
-            «ENDIF»
-
-            «IF !getBidirectionalIncomingRelations.empty»
-                «FOR relation: getBidirectionalIncomingRelations»
-                    «val sourceAliasName = relation.getRelationAliasName(false)»
-                    $parameters['«sourceAliasName»'] = $request->query->get('«sourceAliasName»', 0);
-                    if (is_object($parameters['«sourceAliasName»'])) {
-                        $parameters['«sourceAliasName»'] = $parameters['«sourceAliasName»']->getId();
-                    }
-                «ENDFOR»
-            «ENDIF»
-            «IF !outgoing.empty»
-                «FOR relation: outgoing»
-                    «val targetAliasName = relation.getRelationAliasName(true)»
-                    $parameters['«targetAliasName»'] = $request->query->get('«targetAliasName»', 0);
-                    if (is_object($parameters['«targetAliasName»'])) {
-                        $parameters['«targetAliasName»'] = $parameters['«targetAliasName»']->getId();
-                    }
-                «ENDFOR»
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                «FOR field : getListFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-            «IF hasUserFieldsEntity»
-                «FOR field : getUserFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = 0 < $«fieldName» ? $this->userManager->findUserBy(['id' => $«fieldName»]) : null;
-                «ENDFOR»
-            «ENDIF»
-            «IF hasCountryFieldsEntity»
-                «FOR field : getCountryFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-            «IF hasLanguageFieldsEntity»
-                «FOR field : getLanguageFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-            «IF hasLocaleFieldsEntity»
-                «FOR field : getLocaleFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-            «IF hasAbstractStringFieldsEntity»
-                $parameters['q'] = $request->query->get('q', '');
-            «ENDIF»
-            «IF hasBooleanFieldsEntity»
-                «FOR field : getBooleanFieldsEntity»
-                    «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = $request->query->get('«fieldName»', '');
-                «ENDFOR»
-            «ENDIF»
-
-            return $parameters;
-        }
     '''
 
     def private addCommonViewFilters(Entity it) '''
@@ -243,7 +140,7 @@ class CollectionFilterHelper {
                 return $qb;
             }
 
-            $parameters = $this->getViewQuickNavParametersFor«name.formatForCodeCapital»();
+            $parameters = []; // TODO obsolete $this->getViewQuickNavParametersFor«name.formatForCodeCapital»();
             foreach ($parameters as $k => $v) {
                 if (null === $v) {
                     continue;

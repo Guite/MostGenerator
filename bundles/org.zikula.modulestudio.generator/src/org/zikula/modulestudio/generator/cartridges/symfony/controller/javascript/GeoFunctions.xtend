@@ -272,13 +272,6 @@ class GeoFunctions {
 
             if ('index' == infoElem.data('context')) {
                 «vendorAndName»InitGeographicalView(parameters);
-«/* TODO
-                jQuery('.«appName.formatForDB»-quicknav').removeClass('form-inline');
-                jQuery('.«appName.formatForDB»-quicknav input, .«appName.formatForDB»-quicknav select')
-                    .css('width', '100%')
-                ;
-*/»
-                */
             }
         });
     '''

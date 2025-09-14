@@ -54,15 +54,6 @@ class NamingExtensions {
     def editTemplateFile(Entity it, String actionName) {
         templateFile(actionName)
     }
-    
-
-    /**
-     * Returns the full file path for a legacy Smarty view plugin file.
-     */
-    def legacyViewPluginFilePath(Application it, String pluginType, String pluginName) {
-        getViewPath + 'plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
-    }
-
 
     /**
      * Returns the alias name for one side of a given relationship.
@@ -85,13 +76,6 @@ class NamingExtensions {
      */
     def entityClassName(Entity it, String suffix, Boolean isBase) {
         application.appNamespace + '\\Entity\\' + (if (isBase) 'Base\\Abstract' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
-    }
-
-    /**
-     * Returns the doctrine entity manager service name.
-     */
-    def entityManagerService(Application it) {
-        'doctrine.orm.default_entity_manager'
     }
 
     /**
