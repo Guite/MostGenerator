@@ -13,7 +13,7 @@ class TreeSelection {
         /**
          * The «appName.formatForDB»_treeSelection function retrieves tree entities based on a given one.
          */
-        #[AsTwigFunction('«appName.toLowerCase»_treeSelection)]
+        #[AsTwigFunction('«appName.toLowerCase»_treeSelection')]
         public function getTreeSelection(
             string $objectType,
             EntityInterface $node,

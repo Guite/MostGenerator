@@ -74,7 +74,7 @@ class EntityInitializer {
                 /**
                  * Initialises a given «entity.name.formatForCode» instance.
                  */
-                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital» $entity): «entity.name.formatForCodeCapital»Entity
+                public function init«entity.name.formatForCodeCapital»(«entity.name.formatForCodeCapital» $entity): «entity.name.formatForCodeCapital»
                 {
                     «FOR field : entity.getLanguageFieldsEntity + entity.getLocaleFieldsEntity»
                         $entity->set«field.name.formatForCodeCapital»($this->requestStack->getCurrentRequest()->getLocale());
@@ -102,7 +102,7 @@ class EntityInitializer {
                                         $items[] = $listEntry['value'];
                                     }
                                 }
-                                $entity->set«listField.name.formatForCodeCapital»(implode('###', $items));
+                                $entity->set«listField.name.formatForCodeCapital»($items);
                             «ENDIF»
 
                         «ENDFOR»

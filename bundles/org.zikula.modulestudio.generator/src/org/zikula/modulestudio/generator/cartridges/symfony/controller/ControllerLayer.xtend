@@ -86,6 +86,7 @@ class ControllerLayer {
         
             public function __construct(
                 TranslatorInterface $translator,
+                protected readonly EntityFactory $entityFactory,
                 «IF !getAllEntityFields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                     protected readonly RequestStack $requestStack,
                 «ENDIF»
@@ -113,6 +114,10 @@ class ControllerLayer {
                 «method.generateMethod(it)»
             «ENDFOR»
 
+            public function createEntity(string $entityFqcn): «name.formatForCodeCapital»
+            {
+                return $this->entityFactory->create«name.formatForCodeCapital»();
+            }
             «FOR action : actions»
                 «actionImpl(action, true)»
 
@@ -178,7 +183,8 @@ class ControllerLayer {
             'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
             'function Symfony\\Component\\Translation\\t',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\CoreBundle\\Translation\\TranslatorTrait'
+            'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
+            app.appNamespace + '\\Entity\\Factory\\EntityFactory'
         ])
         if (hasIndexAction || hasEditAction) {
             imports.add('Exception')

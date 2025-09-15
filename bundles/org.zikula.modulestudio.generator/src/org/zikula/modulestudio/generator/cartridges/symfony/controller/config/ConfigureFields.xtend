@@ -547,13 +547,13 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch titleAttribute(StringField it) '''«IF #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.DATE_INTERVAL, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)»Choose the «name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay»«ENDIF» of the «entity.name.formatForDisplay».'''
     def private dispatch additionalAttributes(StringField it) '''
         'maxlength' => «length»,
-        «IF role == StringRole.WEEK»
-            'input' => 'string',
-        «ENDIF»
     '''
     def private dispatch additionalOptions(StringField it) '''
         «IF unit != ''»
             'input_group' => ['right' => t('«unit»')],
+        «ENDIF»
+        «IF role == StringRole.COLOUR»
+            'html5' => true,
         «ENDIF»
         «IF role == StringRole.DATE_INTERVAL»
             'labels' => [
@@ -584,8 +584,8 @@ class ConfigureFields implements ControllerMethodInterface {
             'with_minutes' => true,
             'with_seconds' => true,
         «ENDIF»
-        «IF role == StringRole.COLOUR»
-            'html5' => true,
+        «IF role == StringRole.WEEK»
+            'input' => 'string',
         «ENDIF»
     '''
 

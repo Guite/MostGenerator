@@ -8,7 +8,6 @@ import org.eclipse.xtext.generator.IGenerator
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerLayer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.EventSubscribers
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.Events
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.FormHandler
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.HelperServices
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.Workflow
@@ -129,9 +128,6 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('Controller: Event listeners')
         'Generating Event listeners'.printIfNotTesting(fsa)
         new EventSubscribers().generate(it, fsa)
-        pm?.subTask('Controller: Custom event definitions')
-        'Generating custom event definitions'.printIfNotTesting(fsa)
-        new Events().generate(it, fsa)
         pm?.subTask('Controller: Workflows')
         'Generating workflows'.printIfNotTesting(fsa)
         new Workflow().generate(it, fsa)

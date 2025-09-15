@@ -88,9 +88,9 @@ class Factory {
                 /**
                  * Creates a new «entity.name.formatForCode» instance.
                  */
-                public function create«entity.name.formatForCodeCapital»(): «entity.name.formatForCodeCapital»Entity
+                public function create«entity.name.formatForCodeCapital»(): «entity.name.formatForCodeCapital»
                 {
-                    $entity = new «entity.name.formatForCodeCapital»Entity(«/* TODO provide entity constructor arguments if required */»);
+                    $entity = new «entity.name.formatForCodeCapital»(«/* TODO provide entity constructor arguments if required */»);
 
                     $this->entityInitializer->init«entity.name.formatForCodeCapital»($entity);
 

@@ -24,10 +24,7 @@ class MenuBuilder {
         val imports = new ImportList
         imports.addAll(#[
             'Symfony\\Bundle\\SecurityBundle\\Security',
-            'Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
-            appNamespace + '\\Event\\ItemActionsMenuPostConfigurationEvent',
-            appNamespace + '\\Event\\ItemActionsMenuPreConfigurationEvent',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
         if ((!entities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty) {
@@ -35,10 +32,6 @@ class MenuBuilder {
         }
         for (entity : entities) {
             imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
-        }
-        if (hasIndexActions) {
-            imports.add(appNamespace + '\\Event\\IndexActionsMenuPostConfigurationEvent')
-            imports.add(appNamespace + '\\Event\\IndexActionsMenuPreConfigurationEvent')
         }
         if (hasDetailActions) {
             imports.add(appNamespace + '\\Helper\\EntityDisplayHelper')
@@ -68,7 +61,6 @@ class MenuBuilder {
 
     def private menuBuilderClassBaseImpl(Application it) '''
         public function __construct(
-            protected readonly EventDispatcherInterface $eventDispatcher,
             protected readonly RequestStack $requestStack,
             protected readonly PermissionHelper $permissionHelper,
             «IF hasDetailActions»
@@ -125,19 +117,11 @@ class MenuBuilder {
             «ENDIF»
             $menu->setChildrenAttribute('class', 'nav «actionType»-actions');
 
-            $this->eventDispatcher->dispatch(
-                new «actionType.toFirstUpper»ActionsMenuPreConfigurationEvent($this->factory, $menu, $options)
-            );
-
             «IF 'item' == actionType»
                 «new ItemActions().actionsImpl(it)»
             «ELSEIF 'index' == actionType»
                 «new IndexActions().actionsImpl(it)»
             «ENDIF»
-
-            $this->eventDispatcher->dispatch(
-                new «actionType.toFirstUpper»ActionsMenuPostConfigurationEvent($this->factory, $menu, $options)
-            );
 
             return $menu;
         }
