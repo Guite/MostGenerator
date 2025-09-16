@@ -91,7 +91,7 @@ class ConfigureCrud implements ControllerMethodInterface {
             ->setTimezone('Europe/Berlin')
         «ENDIF»
         // ->setSearchFields(['«FOR field : allEntityFields.filter[f|f.isContainedInSearch] SEPARATOR '\', \''»«field.name.formatForCode»«ENDFOR»'])
-        ->addFormTheme('@ZikulaTheme/Form/bootstrap_4_zikula_admin_layout.html.twig')
+        ->addFormTheme('@ZikulaTheme/Form/bootstrap_5_horizontal_layout.html.twig')
         ->addFormTheme('@ZikulaTheme/Form/form_div_layout.html.twig')
     '''
 
