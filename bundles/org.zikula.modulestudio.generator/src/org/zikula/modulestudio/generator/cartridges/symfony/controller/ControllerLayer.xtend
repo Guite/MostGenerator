@@ -118,6 +118,7 @@ class ControllerLayer {
             {
                 return $this->entityFactory->create«name.formatForCodeCapital»();
             }
+
             «FOR action : actions»
                 «actionImpl(action, true)»
 

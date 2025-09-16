@@ -140,7 +140,7 @@ class ConfigureFields implements ControllerMethodInterface {
 
             «ENDIF»
             «IF field.name == 'slug'»
-                «field.slugDefinition»;
+                «field.slugDefinition»
             «ELSE»
                 «field.definition»;
             «ENDIF»
@@ -185,8 +185,7 @@ class ConfigureFields implements ControllerMethodInterface {
         if (Crud::PAGE_NEW === $pageName) {
             yield SlugField::new('«name.formatForCode»', t('«name.formatForDisplayCapital»'))
                 ->setTargetFieldName(['«entity.getSluggableFields.map[name.formatForCode].join('\', \'')»'])
-            «/* setUnlockConfirmationMessage(...) */»
-            ;
+            «/* setUnlockConfirmationMessage(...) */»;
         } else {
             yield TextField::new('«name.formatForCode»', t('«name.formatForDisplayCapital»'))
                 ->setFormTypeOption('required', false)
