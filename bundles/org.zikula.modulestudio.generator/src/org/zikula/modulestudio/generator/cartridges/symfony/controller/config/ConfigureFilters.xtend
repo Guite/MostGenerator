@@ -157,7 +157,7 @@ class ConfigureFilters implements ControllerMethodInterface {
         if (role === StringRole.COLOUR) '''->setFormTypeOptions(['value_type' => ColorType::class])''' else
         if (role === StringRole.COUNTRY) '''->setFormTypeOptions(['value_type' => CountryType::class])''' else
         if (role === StringRole.CURRENCY) '''->setFormTypeOptions(['value_type' => CurrencyType::class])''' else
-        if (role === StringRole.ICON) '''->setFormTypeOptions(['value_type' => IconType::class])''' else
+        //if (role === StringRole.ICON) '''->setFormTypeOptions(['value_type' => IconType::class])''' else
         if (role === StringRole.LANGUAGE) '''->setFormTypeOptions(['value_type' => LanguageType::class])''' else
         if (role === StringRole.LOCALE) '''->setChoices($this->localeApi->getSupportedLocaleNames())''' else
         if (role === StringRole.PASSWORD) '''->setFormTypeOptions(['value_type' => PasswordType::class])''' else
