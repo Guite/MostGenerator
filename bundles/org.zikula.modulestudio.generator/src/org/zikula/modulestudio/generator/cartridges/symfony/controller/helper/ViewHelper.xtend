@@ -4,11 +4,13 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewHelper {
 
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     /**
@@ -35,6 +37,9 @@ class ViewHelper {
             imports.add('Symfony\\Component\\Filesystem\\Filesystem')
             imports.add('Symfony\\Component\\HttpKernel\\KernelInterface')
         }
+        if (!entities.filter[hasDateIntervalFieldsEntity].empty) {
+            imports.add('Symfony\\Contracts\\Translation\\TranslatorInterface')
+        }
         imports
     }
 
@@ -58,6 +63,9 @@ class ViewHelper {
                 protected readonly KernelInterface $kernel,
                 protected readonly Filesystem $filesystem,
             «ENDIF»
+            «IF !entities.filter[hasDateIntervalFieldsEntity].empty»
+                protected readonly TranslatorInterface $translator,
+            «ENDIF»
             protected readonly Environment $twig,
             #[Autowire(service: 'twig.loader')]
             protected readonly LoaderInterface $twigLoader,
@@ -76,6 +84,10 @@ class ViewHelper {
         «IF hasGeographical»
 
             «copyLeafletAssets»
+        «ENDIF»
+        «IF !entities.filter[hasDateIntervalFieldsEntity].empty»
+
+            «getFormattedDateInterval»
         «ENDIF»
     '''
 
@@ -187,6 +199,55 @@ class ViewHelper {
                     $this->filesystem->copy($leafletSrcPath . $relativeFilePath, $leafletPublicPath . $relativeFilePath);
                 }
             }
+        }
+    '''
+
+    def private getFormattedDateInterval(Application it) '''
+        /**
+         * Returns a formatted description for a given date interval (duration string).
+         *
+         * @see https://www.php.net/manual/en/dateinterval.format.php
+         */
+        public function getFormattedDateInterval(\DateInterval|string $duration): string
+        {
+            $interval = is_string($duration) ? new DateInterval($duration) : $duration;
+
+            $description = 1 === $interval->invert ? '- ' : '';
+
+            $parts = [];
+            $amount = $interval->y;
+            if (0 < $amount) {
+                $parts[] = $this->translator->trans('%count% year|%count% years', ['%count%' => $amount]);
+            }
+
+            $amount = $interval->m;
+            if (0 < $amount) {
+                $parts[] = $this->translator->trans('%count% month|%count% months', ['%count%' => $amount]);
+            }
+
+            $amount = $interval->d;
+            if (0 < $amount) {
+                $parts[] = $this->translator->trans('%count% day|%count% days', ['%count%' => $amount]);
+            }
+
+            $amount = $interval->h;
+            if (0 < $amount) {
+                $parts[] = $this->translator->trans('%count% hour|%count% hours', ['%count%' => $amount]);
+            }
+
+            $amount = $interval->i;
+            if (0 < $amount) {
+                $parts[] = $this->translator->trans('%count% minute|%count% minutes', ['%count%' => $amount]);
+            }
+
+            $amount = $interval->s;
+            if (0 < $amount) {
+                $parts[] = $this->translator->trans('%count% second|%count% seconds', ['%count%' => $amount]);
+            }
+
+            $description .= implode(', ', $parts);
+
+            return $description;
         }
     '''
 

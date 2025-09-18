@@ -1,13 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.StringRole
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.FormatGeoData
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetFileSize
-import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetFormattedDateInterval
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetFormattedEntityTitle
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetListEntry
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetLogDescription
@@ -46,9 +43,6 @@ class Plugins {
             appNamespace + '\\Helper\\EntityDisplayHelper',
             appNamespace + '\\Helper\\WorkflowHelper'
         ])
-        if (!entities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty) {
-            imports.add('DateInterval')
-        }
         if (hasLoggable) {
             imports.addAll(#[
                 'Gedmo\\Loggable\\Entity\\MappedSuperclass\\AbstractLogEntry',
@@ -146,9 +140,9 @@ class Plugins {
             result += new TreeData().generate(it)
             result += new TreeSelection().generate(it)
         }
-        if (!entities.filter[!fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL].empty].empty) {
+        /*if (!getAllEntityFields.filter(StringField).filter[StringRole.DATE_INTERVAL === role].empty) {
             result += new GetFormattedDateInterval().generate(it)
-        }
+        }*/
         result += new GetFormattedEntityTitle().generate(it)
         if (hasLoggable) {
             result += new GetLogDescription().generate(it)

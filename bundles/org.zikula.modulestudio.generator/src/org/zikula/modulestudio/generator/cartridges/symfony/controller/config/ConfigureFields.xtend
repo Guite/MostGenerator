@@ -70,7 +70,7 @@ class ConfigureFields implements ControllerMethodInterface {
         }
 
         val nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
-        if (!formFields.filter(NumberField).filter[NumberRole.RANGE == role].empty) {
+        if (!formFields.filter(NumberField).filter[NumberRole.RANGE == role && hasMinValue && hasMaxValue].empty) {
             imports.add(nsSymfonyFormType + 'RangeType')
         }
         if (geographical) {
@@ -166,6 +166,9 @@ class ConfigureFields implements ControllerMethodInterface {
             «ENDIF»
             «IF !options.empty»
                 «options»
+            «ENDIF»
+            «IF !formatValue.toString.empty»
+                ->formatValue(«formatValue»)
             «ENDIF»
             «IF !customFormType.toString.empty»
                 ->setFormType(«customFormType»Type::class)
@@ -304,6 +307,7 @@ class ConfigureFields implements ControllerMethodInterface {
         if (role === StringRole.COLOUR) 'Color' else
         if (role === StringRole.COUNTRY) 'Country' else
         if (role === StringRole.CURRENCY) 'Currency' else
+        if (role === StringRole.DATE_INTERVAL) 'Integer' /* just to avoid TextConfigurator */ else
         if (role === StringRole.LANGUAGE) 'Language' else
         if (role === StringRole.LOCALE) 'Locale' else
         if (role === StringRole.MAIL) 'Email' else
@@ -333,6 +337,8 @@ class ConfigureFields implements ControllerMethodInterface {
             // showCode()
             // showName(false)
             // showSymbol(false)
+        } else if (role === StringRole.DATE_INTERVAL) {
+            // internally used with IntegerType; hence, no maxLength and stripTags
         } else if (role === StringRole.MAIL) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/EmailField.html
         } else if (role === StringRole.LANGUAGE) {
@@ -476,7 +482,7 @@ class ConfigureFields implements ControllerMethodInterface {
                     'readonly' => 'readonly',
                 «ENDIF»
                 «IF it instanceof NumberField»
-                    «IF NumberRole.RANGE == role»
+                    «IF NumberRole.RANGE == role && hasMinValue && hasMaxValue»
                         'min' => «formattedMinValue»,
                         'max' => «formattedMaxValue»,
                     «ELSE»
@@ -513,15 +519,16 @@ class ConfigureFields implements ControllerMethodInterface {
         messages
     }
 
-    def private dispatch customFormType(Field it) ''''''
     def private dispatch titleAttribute(Field it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay».'''
     def private dispatch additionalAttributes(Field it) ''''''
     def private dispatch additionalOptions(Field it) ''''''
+    def private dispatch customFormType(Field it) ''''''
+    def private dispatch formatValue(Field it) ''''''
 
     def private dispatch titleAttribute(BooleanField it) '''«name.formatForDisplay» ?'''
     def private dispatch additionalAttributes(BooleanField it) ''''''
 
-    def private dispatch customFormType(NumberField it) '''«IF NumberRole.RANGE == role»Range«ELSEIF #['latitude', 'longitude'].contains(name)»Geo«ENDIF»'''
+    def private dispatch customFormType(NumberField it) '''«IF NumberRole.RANGE == role && hasMinValue && hasMaxValue»Range«ELSEIF #['latitude', 'longitude'].contains(name)»Geo«ENDIF»'''
 
     def private dispatch additionalAttributes(NumberField it) '''
         «IF NumberFieldType.INTEGER == numberType»
@@ -573,20 +580,26 @@ class ConfigureFields implements ControllerMethodInterface {
                     'seconds' => t('Seconds'),
                 ],
             «ENDIF»
-            'input' => 'string',
+            'input' => 'dateinterval',
             'widget' => 'choice',
-            'with_years' => true,
-            'with_months' => true,
+            'with_years' => false,
+            'with_months' => false,
             'with_weeks' => false,
-            'with_days' => true,
+            'with_days' => false,
             'with_hours' => true,
             'with_minutes' => true,
-            'with_seconds' => true,
+            'with_seconds' => false,
         «ENDIF»
         «IF role == StringRole.WEEK»
             'input' => 'string',
         «ENDIF»
     '''
+    def private dispatch formatValue(StringField it) '''
+        «IF role == StringRole.DATE_INTERVAL»
+            fn (\DateInterval $value) => $this->viewHelper->getFormattedDateInterval($value)
+        «ELSEIF role == StringRole.PASSWORD»
+            static fn (string $value) => '*********'
+        «ENDIF»'''
 
     def private dispatch additionalAttributes(TextField it) '''
         'maxlength' => «length»,

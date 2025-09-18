@@ -94,7 +94,7 @@ class Property {
         «/* this last line is on purpose */»
     '''
 
-    def private fieldAssignment(Field it, String init) '''«IF !init.empty»«init»«ELSEIF it instanceof UserField || it instanceof DatetimeField» = null«ELSEIF !(it instanceof StringField) || !(it as StringField).treatAsUuidType» = «defaultFieldData»«ENDIF»'''
+    def private fieldAssignment(Field it, String init) '''«IF !init.empty»«init»«ELSEIF it instanceof UserField || it instanceof DatetimeField || (it instanceof StringField && (StringRole.DATE_INTERVAL == (it as StringField).role))» = null«ELSEIF !(it instanceof StringField) || !(it as StringField).treatAsUuidType» = «defaultFieldData»«ENDIF»'''
 
     def private persistentPropertyImpl(Field it, String type) {
         switch it {

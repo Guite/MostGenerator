@@ -41,7 +41,7 @@ class Layout {
         fileName = 'adminBase' + templateExtension
         fsa.generateFile(templatePath + fileName, adminBaseTemplate)
 
-        fileName = 'Form/bootstrap_4' + templateExtension
+        fileName = 'Form/form_layout_addons' + templateExtension
         fsa.generateFile(templatePath + fileName, formBaseTemplate)
 
         fileName = 'raw.html.twig'
@@ -96,7 +96,7 @@ class Layout {
 
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
-        {% extends '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
+        {% extends '@ZikulaTheme/Form/form_layout_addons.html.twig' %}
         {% trans_default_domain 'messages' %}
         «IF !entities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
 

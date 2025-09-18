@@ -76,7 +76,7 @@ class ValidationConstraints {
              )»
                 «fieldAnnotationsInteger»
                 «IF hasMinValue && hasMaxValue»
-                    #[Assert\Range(min: «formattedMinValue», max: «formattedMinValue»)]
+                    #[Assert\Range(min: «formattedMinValue», max: «formattedMaxValue»)]
                 «ELSEIF hasMinValue»
                     #[Assert\GreaterThanOrEqual(value: «formattedMinValue»)]
                     #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
@@ -89,7 +89,7 @@ class ValidationConstraints {
         «ELSE»
             «fieldAnnotationsNumeric»
             «IF hasMinValue && hasMaxValue»
-                #[Assert\Range(min: «formattedMinValue», max: «formattedMinValue»)]
+                #[Assert\Range(min: «formattedMinValue», max: «formattedMaxValue»)]
             «ELSEIF hasMinValue»
                 #[Assert\GreaterThanOrEqual(value: «formattedMinValue»)]
                 #[Assert\LessThan(value: «BigInteger.valueOf((10 ** length) as long)»)]
@@ -118,7 +118,7 @@ class ValidationConstraints {
         «fieldAnnotationsString»
         «IF mandatory»
             #[Assert\Length(min: «minLength», max: «length»)]
-        «ELSE»
+        «ELSEIF role != StringRole.DATE_INTERVAL»
             #[Assert\AtLeastOneOf(
                 constraints: [
                     new Assert\Blank(),

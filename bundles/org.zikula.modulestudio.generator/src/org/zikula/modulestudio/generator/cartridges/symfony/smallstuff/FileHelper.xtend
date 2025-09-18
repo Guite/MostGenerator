@@ -98,7 +98,7 @@ class FileHelper {
     def private dispatch setterMethodImpl(Field it, String name, String type, Boolean nullable) '''
         «IF it instanceof NumberField»
             «IF numberType != NumberFieldType::INTEGER»
-                $«name» = «IF it.numberType == NumberFieldType::DECIMAL»(string) «ENDIF»round((float) $«name», «scale»);
+                $«name» = round((float) $«name», «scale»);
             «ENDIF»
         «ENDIF»
         if ($this->«name.formatForCode» !== $«name») {

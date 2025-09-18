@@ -258,7 +258,7 @@ class ModelExtensions {
     }
 
     def hasMinValue(NumberField it) {
-        if (NumberFieldType.INTEGER == role) {
+        if (NumberFieldType.INTEGER == numberType) {
             return minValueInteger.compareTo(BigInteger.ZERO) > 0
         }
 		null !== minValueFloat && 0 < minValueFloat
@@ -268,14 +268,14 @@ class ModelExtensions {
         if (!hasMinValue) {
             return 0
         }
-        if (NumberFieldType.INTEGER == role) {
+        if (NumberFieldType.INTEGER == numberType) {
             return minValueInteger
         }
         minValueFloat
     }
 
     def hasMaxValue(NumberField it) {
-        if (NumberFieldType.INTEGER == role) {
+        if (NumberFieldType.INTEGER == numberType) {
             return maxValueInteger.compareTo(BigInteger.ZERO) > 0
         }
         null !== maxValueFloat && 0 < maxValueFloat
@@ -285,7 +285,7 @@ class ModelExtensions {
         if (!hasMaxValue) {
             return 0
         }
-        if (NumberFieldType.INTEGER == role) {
+        if (NumberFieldType.INTEGER == numberType) {
             return maxValueInteger
         }
         maxValueFloat
@@ -426,7 +426,7 @@ class ModelExtensions {
      * Returns a list of all string fields of this entity which are not passwords.
      */
     def getDisplayStringFieldsEntity(Entity it) {
-        fields.filter(StringField).filter[role != StringRole.PASSWORD]
+        fields.filter(StringField).filter[!#[StringRole.PASSWORD, StringRole.ULID, StringRole.UUID].contains(role)]
     }
 
     /**
@@ -441,6 +441,20 @@ class ModelExtensions {
      */
     def getCountryFieldsEntity(Entity it) {
         fields.filter(StringField).filter[role == StringRole.COUNTRY]
+    }
+
+    /**
+     * Checks whether this entity has at least one dateInterval field.
+     */
+    def hasDateIntervalFieldsEntity(Entity it) {
+        !getDateIntervalFieldsEntity.empty
+    }
+
+    /**
+     * Returns a list of all dateInterval fields of this entity.
+     */
+    def getDateIntervalFieldsEntity(Entity it) {
+        fields.filter(StringField).filter[role == StringRole.DATE_INTERVAL]
     }
 
     /**
@@ -623,7 +637,10 @@ class ModelExtensions {
                         if (NumberFieldType.DECIMAL === numberType) 'decimal' else 'float'
                     }
                 }
-            StringField: if (treatAsUuidType) 'Uuid' else 'string'
+            StringField:
+                if (StringRole.DATE_INTERVAL == role) '\\DateInterval'
+                else if (treatAsUuidType) 'Uuid'
+                else 'string'
             TextField: if (forPhp) 'string' else 'text'
             UploadField: 'string'
             ListField: if (multiple) 'array' else 'string'

@@ -5,8 +5,6 @@ import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.StringField
-import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerMethodInterface
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -83,9 +81,6 @@ class ConfigureCrud implements ControllerMethodInterface {
             «IF hasDirectDateTimeFields»
                 ->setDateTimeFormat(DateTimeField::FORMAT_MEDIUM, DateTimeField::FORMAT_SHORT)
             «ENDIF»
-        «ENDIF»
-        «IF !allEntityFields.filter(StringField).filter[f|f.role === StringRole.DATE_INTERVAL].empty»
-            ->setDateIntervalFormat('%%y Year(s) %%m Month(s) %%d Day(s)')
         «ENDIF»
         «IF !dateTimeFields.empty»
             ->setTimezone('Europe/Berlin')

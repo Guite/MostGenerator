@@ -60,6 +60,10 @@ class PersistenceTransformer {
                 field.defaultValue = field.defaultValue.toUpperCase
             }
         }
+        // ensure date interval fields are nullable
+        for (field : (entities.map[fields] + variables.map[fields]).flatten.filter(StringField).filter[StringRole.DATE_INTERVAL== role]) {
+            field.nullable = true
+        }
 
         addViewSettings
         addImageSettings

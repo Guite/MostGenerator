@@ -99,6 +99,9 @@ class ControllerLayer {
                 «IF hasUploadFieldsEntity»
                     protected readonly UploadHelper $uploadHelper,
                 «ENDIF»
+                «IF hasDateIntervalFieldsEntity»
+                    protected readonly ViewHelper $viewHelper,
+                «ENDIF»
                 protected readonly PermissionHelper $permissionHelper«IF hasDetailAction || hasEditAction»,
                 protected readonly EntityDisplayHelper $entityDisplayHelper«ENDIF»
             ) {

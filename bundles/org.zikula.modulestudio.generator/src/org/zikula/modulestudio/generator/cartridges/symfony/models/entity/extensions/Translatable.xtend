@@ -97,7 +97,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          *
          * See also:
          * (1) http://docs.doctrine-project.org/en/latest/cookbook/implementing-wakeup-or-clone.html
-         * (2) http://www.php.net/manual/en/language.oop5.cloning.php
+         * (2) https://www.php.net/manual/en/language.oop5.cloning.php
          * (3) http://stackoverflow.com/questions/185934/how-do-i-create-a-copy-of-an-object-in-php
          */
         public function __clone()
