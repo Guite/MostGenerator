@@ -134,7 +134,7 @@ class EntityMethods {
          * (2) https://www.php.net/manual/en/language.oop5.cloning.php
          * (3) http://stackoverflow.com/questions/185934/how-do-i-create-a-copy-of-an-object-in-php
          */
-        public function __clone()
+        public function __clone(): void
         {
             // if the entity has no identity do nothing, do NOT throw an exception
             if (!$this->«getPrimaryKey.name.formatForCode») {

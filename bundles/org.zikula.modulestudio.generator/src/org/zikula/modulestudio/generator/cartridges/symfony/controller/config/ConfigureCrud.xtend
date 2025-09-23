@@ -54,6 +54,7 @@ class ConfigureCrud implements ControllerMethodInterface {
             fn (?«name.formatForCodeCapital» $«name.formatForCode», ?string $pageName) => $«name.formatForCode» ?? '«name.formatForDisplayCapital»'
         )
         ->setEntityLabelInPlural('«nameMultiple.formatForDisplayCapital»')
+        ->hideNullValues()
         «IF hasIndexAction»
             ->setPageTitle(Crud::PAGE_INDEX, t('%entity_label_plural% list'))
         «ENDIF»

@@ -233,6 +233,9 @@ class ConfigureFields implements ControllerMethodInterface {
         }
         if ('' !== requiredOption) {
             calls += '''->setRequired(«requiredOption»)'''
+            if ('false' === requiredOption && nullable) {
+                calls += '''->setEmptyData(«emptyData»)'''
+            }
         }
         calls
     }
@@ -252,11 +255,21 @@ class ConfigureFields implements ControllerMethodInterface {
         else 'false'
     }
 
+    def private emptyData(Object it) {
+        switch it {
+            BooleanField: 'false'
+            NumberField: '\'0\'' // string because of https://github.com/EasyCorp/EasyAdminBundle/issues/5723
+            UserField: '\'0\''
+            ArrayField: '[]'
+            default: '\'\''
+        }
+    }
+
     def private dispatch fieldType(BooleanField it) { 'Boolean' }
     // https://symfony.com/bundles/EasyAdminBundle/current/fields/BooleanField.html
     def private dispatch options(BooleanField it) {
         var calls = commonOptions
-        if (!renderAsSwitch) {
+        if (!renderAsSwitch || mandatory) {
             calls += '->renderAsSwitch(false)'
         }
         calls
@@ -280,10 +293,11 @@ class ConfigureFields implements ControllerMethodInterface {
             }
             calls += '''->setNumDecimals(«scale»)'''
             // setStoredAsCents()
+            // setDecimalSeparator()
         } else if (NumberRole.PERCENTAGE == role) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/PercentField.html
-            calls += '''->setNumDecimals(«scale»)'''
-            // setRoundingMode(...)
+            calls += '''->setNumDecimals(«scale»)''' // https://github.com/EasyCorp/EasyAdminBundle/issues/6304
+            // setRoundingMode()
             if (NumberFieldType.INTEGER == numberType) {
                 calls += '''->setStoredAsFractional(false)'''
             }
@@ -292,12 +306,15 @@ class ConfigureFields implements ControllerMethodInterface {
             }
         } else if (NumberFieldType.INTEGER == numberType) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/IntegerField.html
-            // setNumberFormat(...)
+            // setNumberFormat()
+            // setThousandsSeparator()
         } else {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/NumberField.html
-            // setNumberFormat(...)
+            // setDecimalSeparator()
+            // setNumberFormat()
             calls += '''->setNumDecimals(«scale»)'''
-            // setRoundingMode(...)
+            // setRoundingMode()
+            // setThousandsSeparator()
         }
         calls
     }
@@ -363,7 +380,7 @@ class ConfigureFields implements ControllerMethodInterface {
         } else {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/TextField.html
             // renderAsHtml()
-            calls += '''->setMaxLength(«length»)'''
+            // setMaxLength()
             // setMaxLength($pageName === Crud::PAGE_DETAIL ? 1024 : 32)
             calls += '''->stripTags()'''
         }
@@ -597,6 +614,8 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch formatValue(StringField it) '''
         «IF role == StringRole.DATE_INTERVAL»
             fn (\DateInterval $value) => $this->viewHelper->getFormattedDateInterval($value)
+        «ELSEIF role == StringRole.ICON»
+            static fn (string $value) => '<i class="' . $value . '"></i>'
         «ELSEIF role == StringRole.PASSWORD»
             static fn (string $value) => '*********'
         «ENDIF»'''

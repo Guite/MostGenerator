@@ -14,7 +14,7 @@ class PhpUnitXml {
 
     def private phpUnitConfig(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
-        <!-- https://docs.phpunit.de/en/12.1/configuration.html -->
+        <!-- https://docs.phpunit.de/en/12.3/configuration.html -->
         <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="../../../vendor/phpunit/phpunit/phpunit.xsd"
                  bootstrap="../../../../tests/bootstrap.php"
