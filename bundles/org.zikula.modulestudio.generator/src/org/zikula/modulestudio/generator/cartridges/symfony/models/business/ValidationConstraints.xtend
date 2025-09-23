@@ -274,8 +274,9 @@ class ValidationConstraints {
                 «ELSE»
                     #[Assert\Expression('«IF !mandatory»!value or «ENDIF»value > this.get«entity.getStartDateField.name.formatForCodeCapital»()', message: 'The start must be before the end.')]
                 «ENDIF»
-            «ENDIF»«/*ELSEIF isTimeField» causes issues with EABs TimeField during editing
-            #[Assert\Time] */»
+            «ELSEIF isTimeField»
+                #[Assert\Time]
+            «ENDIF»
         «ENDIF»
     '''
 

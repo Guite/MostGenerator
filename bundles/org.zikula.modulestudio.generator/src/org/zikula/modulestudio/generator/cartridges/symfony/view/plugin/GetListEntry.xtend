@@ -2,11 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class GetListEntry {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
@@ -18,7 +20,7 @@ class GetListEntry {
          */
         #[AsTwigFilter('«appName.formatForDB»_listEntry')]
         public function getListEntry(
-            string $value,
+            «IF getAllListFields.filter[nullable].empty»?«ENDIF»string $value,
             string $objectType = '',
             string $fieldName = '',
             string $delimiter = ', '
