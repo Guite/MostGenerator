@@ -171,6 +171,8 @@ class ValidationConstraints {
             #[Assert\NoSuspiciousCharacters]
         «ELSEIF role == StringRole.UUID»
             #[Assert\Uuid(strict: true)]
+        «ELSEIF role == StringRole.WEEK»
+            #[Assert\Week]
         «ENDIF»
     '''
     private def lengthAnnotationString(AbstractStringField it, int length) '''
@@ -190,6 +192,8 @@ class ValidationConstraints {
         «lengthAnnotationString(length)»
         «IF role === TextRole.CODE_TWIG»
             #[Assert\Twig]
+        «ELSEIF role === TextRole.CODE_YAML || role === TextRole.CODE_YAML_FM»
+            #[Assert\Yaml]
         «ENDIF»
     '''
     def dispatch fieldAnnotations(UploadField it) '''
