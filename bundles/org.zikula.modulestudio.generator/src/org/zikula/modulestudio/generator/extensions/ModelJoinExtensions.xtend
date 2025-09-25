@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CascadeType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
@@ -8,7 +7,6 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
-import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.Relationship
 
 /**
@@ -42,20 +40,6 @@ class ModelJoinExtensions {
             }
             default: joinedEntityForeign.name.formatForDB
         }
-    }
-
-    /**
-     * Whether the application requires auto completion components.
-     */
-    def needsAutoCompletion(Application it) {
-        hasAutoCompletionRelation
-    }
-
-    /**
-     * Whether the application contains any relationships using auto completion.
-     */
-    def hasAutoCompletionRelation(Application it) {
-        !relations.filter(Relationship).filter[useAutoCompletion != RelationAutoCompletionUsage.NONE].empty
     }
 
     /**

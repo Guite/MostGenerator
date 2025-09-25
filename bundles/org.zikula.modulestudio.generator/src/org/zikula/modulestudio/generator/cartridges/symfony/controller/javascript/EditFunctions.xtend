@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -15,7 +14,6 @@ class EditFunctions {
     extension ControllerExtensions = new ControllerExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -42,7 +40,7 @@ class EditFunctions {
 
         «ENDIF»
         «initEditForm»
-        «IF needsInlineEditing || needsAutoCompletion»
+        «IF needsInlineEditing»
 
             «initRelationHandling»
         «ENDIF»
@@ -175,14 +173,9 @@ class EditFunctions {
 
     def private initRelationHandling(Application it) '''
         /**
-         * Initialises a relation field section with «IF needsAutoCompletion»autocompletion «ENDIF»«IF needsInlineEditing»«IF needsAutoCompletion»and «ENDIF»optional edit capabilities«ENDIF».
+         * Initialises a relation field section with «IF needsInlineEditing»optional edit capabilities«ENDIF».
          */
         function «vendorAndName»InitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType, createUrl) {
-            «IF needsAutoCompletion»
-                if (inputType == 'autocomplete') {
-                    «vendorAndName»InitAutoCompletion(objectType, alias, idPrefix, includeEditing);
-                }
-            «ENDIF»
             «IF needsInlineEditing»
                 if (includeEditing) {
                     «vendorAndName»InitInlineEditingButtons(objectType, alias, idPrefix, inputType, createUrl);
@@ -193,7 +186,7 @@ class EditFunctions {
 
     def private onLoad(Application it) '''
         jQuery(document).ready(function () {
-            «IF needsInlineEditing || needsAutoCompletion»
+            «IF needsInlineEditing»
                 if (jQuery('.relation-editing-definition').length > 0) {
                     jQuery('.relation-editing-definition').each(function (index) {
                         «IF needsInlineEditing»

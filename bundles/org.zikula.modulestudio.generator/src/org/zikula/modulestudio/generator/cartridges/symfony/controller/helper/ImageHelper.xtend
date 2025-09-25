@@ -3,15 +3,13 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.application.ImportList
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ImageHelper {
 
     extension ModelExtensions = new ModelExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
     /**
@@ -107,15 +105,7 @@ class ImageHelper {
                     $args['action'] = 'index';
                 }
 
-                «IF needsAutoCompletion»
-                    if ('ajax' === $args['controller'] && 'getItemListAutoCompletion' === $args['action']) {
-                        $contextName = $this->applicationName . '_ajax_autocomplete';
-                    } else {
-                        $contextName = $this->applicationName . '_' . $args['controller'] . '_' . $args['action'];
-                    }
-                «ELSE»
-                    $contextName = $this->applicationName . '_' . $args['controller'] . '_' . $args['action'];
-                «ENDIF»
+                $contextName = $this->applicationName . '_' . $args['controller'] . '_' . $args['action'];
             }
             if (empty($contextName)) {
                 $contextName = $this->applicationName . '_default';
@@ -146,13 +136,6 @@ class ImageHelper {
                 ],
             ];
 
-            «IF needsAutoCompletion»
-                if ($this->applicationName . '_ajax_autocomplete' === $contextName) {
-                    $options['thumbnail']['size'] = [100, 75];
-
-                    return $options;
-                }
-            «ENDIF»
             if ($this->applicationName . '_relateditem' === $contextName) {
                 $options['thumbnail']['size'] = [100, 75];
             } elseif ('controllerAction' === $context) {

@@ -8,11 +8,9 @@ import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.actionhandler.Locking
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.actionhandler.RelationPresets
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.form.AutoCompletionRelationTransformer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.form.TranslationListener
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.form.UploadFileTransformer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.EditEntityType
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.field.AutoCompletionRelationType
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.field.TranslationType
@@ -24,7 +22,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -35,7 +32,6 @@ class FormHandler {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
@@ -79,10 +75,6 @@ class FormHandler {
             }
             if (hasTrees) {
                 new EntityTreeType().generate(it, fsa)
-            }
-            if (hasAutoCompletionRelation) {
-                new AutoCompletionRelationType().generate(it, fsa)
-                new AutoCompletionRelationTransformer().generate(it, fsa)
             }
             if (hasTranslatable) {
                 new TranslationType().generate(it, fsa)
@@ -208,7 +200,7 @@ class FormHandler {
             «IF !relations.empty»
                 «relationPresetsHelper.memberFields(it)»
             «ENDIF»
-            «IF !relations.empty || needsAutoCompletion»
+            «IF !relations.empty»
 
                 /**
                  * Full prefix for related items.
@@ -293,7 +285,7 @@ class FormHandler {
             «IF !relations.empty»
                 $this->templateParameters['inlineUsage'] = $request->query->getBoolean('raw');
             «ENDIF»
-            «IF !relations.empty || app.needsAutoCompletion»
+            «IF !relations.empty»
                 $this->idPrefix = $request->query->get('idp', '');
             «ENDIF»
             $session = $request->hasSession() ? $request->getSession() : null;

@@ -173,7 +173,8 @@ application "SimpleNews" targets SF74 {
             nullable false
             expandedSource true
             expandedTarget true
-            useAutoCompletion BOTH_SIDES
+            autocompleteSource true
+            autocompleteTarget true
             fetchType EAGER
             sourceEditing INLINE
         },

@@ -3,12 +3,10 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.addition
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AjaxController {
@@ -17,7 +15,6 @@ class AjaxController {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -27,9 +24,6 @@ class AjaxController {
 
     def private commonSystemImports(Application it, Boolean isBase) {
         val imports = newArrayList
-        if (needsAutoCompletion) {
-            imports.add('Liip\\ImagineBundle\\Imagine\\Cache\\CacheManager')
-        }
         if (hasTrees) {
             imports.addAll(#[
                 'Psr\\Log\\LoggerInterface',
@@ -49,16 +43,16 @@ class AjaxController {
 
     def private commonAppImports(Application it) {
         val imports = newArrayList
-        if (needsAutoCompletion || needsDuplicateCheck || hasTrees || hasSortable) {
+        if (needsDuplicateCheck || hasTrees || hasSortable) {
             imports.add(appNamespace + '\\Entity\\Factory\\EntityFactory')
         }
-        if (needsAutoCompletion || needsDuplicateCheck) {
+        if (needsDuplicateCheck) {
             imports.add(appNamespace + '\\Helper\\ControllerHelper')
         }
-        if (needsAutoCompletion || hasTrees) {
+        if (hasTrees) {
             imports.add(appNamespace + '\\Helper\\EntityDisplayHelper')
         }
-        if (needsAutoCompletion && hasImageFields) {
+        if (hasImageFields) {
             imports.add(appNamespace + '\\Helper\\ImageHelper')
         }
         if (hasTrees) {
@@ -81,7 +75,7 @@ class AjaxController {
         if (hasTrees && hasEditActions) {
             imports.add('Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface')
         }
-        if (needsAutoCompletion || needsDuplicateCheck || hasTrees || hasSortable) {
+        if (needsDuplicateCheck || hasTrees || hasSortable) {
             imports.add('Symfony\\Component\\Security\\Http\\Attribute\\IsGranted')
         }
         imports.addAll(commonSystemImports(true))
@@ -109,10 +103,6 @@ class AjaxController {
     '''
 
     def additionalAjaxFunctionsBase(Application it) '''
-        «IF needsAutoCompletion»
-
-            «getItemListAutoCompletionBase»
-        «ENDIF»
         «IF needsDuplicateCheck»
 
             «checkForDuplicateBase»
@@ -124,126 +114,6 @@ class AjaxController {
         «IF hasSortable»
 
             «updateSortPositionsBase»
-        «ENDIF»
-    '''
-
-    def private getItemListAutoCompletionBase(Application it) '''
-        «getItemListAutoCompletionDocBlock(true)»
-        «getItemListAutoCompletionSignature» {
-            «getItemListAutoCompletionBaseImpl»
-        }
-    '''
-
-    def private getItemListAutoCompletionDocBlock(Application it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * Searches for entities for auto completion usage.
-             */
-            #[IsGranted('ROLE_EDITOR')]
-        «ELSE»
-            #[Route('/getItemListAutoCompletion',
-                name: '«appName.formatForDB»_ajax_getitemlistautocompletion',
-                methods: ['GET'],
-                options: ['expose' => true]
-            )]
-        «ENDIF»
-    '''
-
-    def private getItemListAutoCompletionSignature(Application it) '''
-        public function getItemListAutoCompletion(
-            Request $request,
-            CacheManager $imagineCacheManager,
-            ControllerHelper $controllerHelper,
-            EntityFactory $entityFactory,
-            EntityDisplayHelper $entityDisplayHelper«IF hasImageFields»,
-            ImageHelper $imageHelper«ENDIF»
-        ): JsonResponse'''
-
-    def private getItemListAutoCompletionBaseImpl(Application it) '''
-        if (!$request->isXmlHttpRequest()) {
-            return $this->json($this->trans('Only ajax access is allowed!'), Response::HTTP_BAD_REQUEST);
-        }
-
-        $objectType = $request->query->getAlnum('ot', '«getLeadingEntity.name.formatForCode»');
-        $contextArgs = ['controller' => 'ajax', 'action' => 'getItemListAutoCompletion'];
-        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $contextArgs), true)) {
-            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
-        }
-
-        $repository = $entityFactory->getRepository($objectType);
-        $searchTerm = $request->query->get('q');
-        $exclude = $request->query->get('exclude');
-        $exclude = !empty($exclude) ? explode(',', str_replace(', ', ',', $exclude)) : [];
-
-        // parameter for used sorting field
-        «new ControllerHelperFunctions().defaultSorting(it)»
-        $sortParam = $sort;
-        if (false === mb_strpos(strtolower($sort), ' asc') && false === mb_strpos(strtolower($sort), ' desc')) {
-            $sortParam .= ' asc';
-        }
-
-        $currentPage = 1;
-        $resultsPerPage = 20;
-
-        // get objects from database
-        $entities = $repository->selectSearch($searchTerm, $exclude, $sortParam, $currentPage, $resultsPerPage, false);
-
-        $resultItems = [];
-
-        if ((is_array($entities) || is_object($entities)) && 0 < count($entities)) {
-            «prepareForAutoCompletionProcessing»
-            foreach ($entities as $item) {
-                $itemTitle = $entityDisplayHelper->getFormattedTitle($item);
-                «IF hasImageFields»
-                    $itemTitleStripped = str_replace('"', '', $itemTitle);
-                «ENDIF»
-                $itemDescription = $entityDisplayHelper->getDescription($item);
-                if ($itemDescription === $itemTitle) {
-                    $itemDescription = '';
-                }
-                if (!empty($itemDescription)) {
-                    $itemDescription = strip_tags($itemDescription);
-                    $descriptionLength = 50;
-                    if (mb_strlen($itemDescription) > $descriptionLength) {
-                        if (false !== ($breakpoint = mb_strpos($itemDescription, ' ', $descriptionLength))) {
-                            $descriptionLength = $breakpoint;
-                            $itemDescription = rtrim(mb_substr($itemDescription, 0, $descriptionLength)) . '&hellip;';
-                        }
-                    }
-                }
-
-                $resultItem = [
-                    'id' => $item->getKey(),
-                    'title' => $itemTitle,
-                    'description' => $itemDescription,
-                    'image' => '',
-                ];
-                «IF hasImageFields»
-
-                    // check for preview image
-                    if (!empty($previewFieldName)) {
-                        $getter = 'get' . ucfirst($previewFieldName);
-                        if (!empty($item->$getter())) {
-                            $imagePath = $item->$getter()->getPathname();
-                            $imagePath = str_replace($item->get_uploadBasePathAbsolute(), $item->get_uploadBasePathRelative(), $imagePath);
-                            $thumbImagePath = $imagineCacheManager->getBrowserPath($imagePath, 'zkroot', $thumbRuntimeOptions);
-                            $resultItem['image'] = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" class="mr-1" />';
-                        }
-                    }
-                «ENDIF»
-
-                $resultItems[] = $resultItem;
-            }
-        }
-
-        return $this->json($resultItems);
-    '''
-
-    def private prepareForAutoCompletionProcessing(Application it) '''
-        $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
-        «IF hasImageFields»
-            $previewFieldName = $entityDisplayHelper->getPreviewFieldName($objectType);
-            $thumbRuntimeOptions = $imageHelper->getRuntimeOptions($objectType, $previewFieldName, 'controllerAction', $contextArgs);
         «ENDIF»
     '''
 
@@ -758,10 +628,6 @@ class AjaxController {
     '''
 
     def additionalAjaxFunctions(Application it) '''
-        «IF needsAutoCompletion»
-
-            «getItemListAutoCompletionImpl»
-        «ENDIF»
         «IF needsDuplicateCheck»
 
             «checkForDuplicateImpl»
@@ -774,20 +640,6 @@ class AjaxController {
 
             «updateSortPositionsImpl»
         «ENDIF»
-    '''
-
-    def private getItemListAutoCompletionImpl(Application it) '''
-        «getItemListAutoCompletionDocBlock(false)»
-        «getItemListAutoCompletionSignature» {
-            return parent::getItemListAutoCompletion(
-                $request,
-                $imagineCacheManager,
-                $controllerHelper,
-                $entityFactory,
-                $entityDisplayHelper«IF hasImageFields»,
-                $imageHelper«ENDIF»
-            );
-        }
     '''
 
     def private checkForDuplicateImpl(Application it) '''

@@ -221,13 +221,7 @@ class ControllerExtensions {
      * Checks for whether a certain relationship side uses auto completion or not.
      */
     def usesAutoCompletion(Relationship it, boolean useTarget) {
-        switch it.useAutoCompletion {
-            case NONE: false
-            case ONLY_SOURCE_SIDE: !useTarget
-            case ONLY_TARGET_SIDE: useTarget
-            case BOTH_SIDES: true
-            default: false
-        }
+        if (useTarget) autocompleteTarget else autocompleteSource
     }
 
     /**

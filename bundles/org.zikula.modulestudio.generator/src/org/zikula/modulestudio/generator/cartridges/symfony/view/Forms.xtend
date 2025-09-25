@@ -72,9 +72,6 @@ class Forms {
             «IF app.needsInlineEditing»
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».InlineEditing.js'), 99) }}
             «ENDIF»
-            «IF app.needsAutoCompletion»
-                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».AutoCompletion.js'), 99) }}
-            «ENDIF»
             «jsDefinitions»
         {% endblock %}
     '''

@@ -11,7 +11,6 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.NumberRole
-import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.RelationEditMode
 import de.guite.modulestudio.metamodel.Relationship
 import de.guite.modulestudio.metamodel.StringField
@@ -146,11 +145,11 @@ class ConfigureFields implements ControllerMethodInterface {
             «ENDIF»
         «ENDFOR»
         «FOR relation : incomingRelations»
-            «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_TARGET_SIDE»
+            «val autoComplete = relation.usesAutoCompletion(false)»
             «relation.relationDefinition(false, autoComplete)»;
         «ENDFOR»
         «FOR relation : outgoingRelations»
-            «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_SOURCE_SIDE»
+            «val autoComplete = relation.usesAutoCompletion(true)»
             «relation.relationDefinition(true, autoComplete)»;
         «ENDFOR»
     '''
@@ -449,8 +448,10 @@ class ConfigureFields implements ControllerMethodInterface {
         if (multiple) {
             calls += '''->allowMultipleChoices()'''
         }
-        if (useAutoCompletion) {
+        if (autocomplete) {
             calls += '''->autocomplete()'''
+        } else if (!expanded) {
+            calls += '''->renderAsNativeWidget()'''
         }
         // escapeHtml(false)
         // renderAsBadges([...]) // TODO interesting for list items (particularly workflows)?
@@ -678,10 +679,10 @@ class ConfigureFields implements ControllerMethodInterface {
         yield '«aliasName.formatForCode»' => «relationFieldType(outgoing)»Field::new('«aliasName.formatForCode»', t('«aliasName.formatForDisplayCapital»'))«IF RelationEditMode.NONE === editMode»->hideOnForm()«ENDIF»«/*
             «IF !visibility(entity as Entity).empty»
                 «visibility(entity as Entity)»
-            «ENDIF»
-            «IF !options.empty»
-                «options»
-            «ENDIF»
+            «ENDIF*/»
+            «IF !options(outgoing, relationFieldType(outgoing), autoComplete).empty»
+                «options(outgoing, relationFieldType(outgoing), autoComplete)»
+            «ENDIF»«/*
             «IF !customFormType.toString.empty»
                 ->setFormType(«customFormType»Type::class)
             «ENDIF*/»
@@ -692,10 +693,30 @@ class ConfigureFields implements ControllerMethodInterface {
             «ENDIF»
     '''
 
+    // https://symfony.com/bundles/EasyAdminBundle/current/fields/AssociationField.html
+    // https://symfony.com/bundles/EasyAdminBundle/current/fields/CollectionField.html
     def private relationFieldType(Relationship it, Boolean outgoing) {
         val editMode = if (outgoing) getSourceEditMode else getTargetEditMode
         if (editMode == RelationEditMode.EMBEDDED) 'Collection' // TODO maybe only for multi-valued sides...
         else 'Association'
+    }
+
+    def private options(Relationship it, Boolean outgoing, String relationFieldType, Boolean autoComplete) {
+        val expanded = (!outgoing && expandedSource) || (outgoing && expandedTarget)
+        var calls = ''
+        if ('Association' == relationFieldType) {
+            if (autoComplete) {
+                calls += '''->autocomplete()'''
+            } else if (!expanded) {
+                calls += '''->renderAsNativeWidget()'''
+            }
+        } else if ('Collection' == relationFieldType) {
+            calls += '''->setEntryIsComplex()'''
+        }
+        if (expanded) {
+            calls += '''->renderExpanded()'''
+        }
+        calls
     }
 
 /*
@@ -749,47 +770,7 @@ class ConfigureFields implements ControllerMethodInterface {
                     return $entityDisplayHelper->getFormattedTitle($entity);
                 };
             «ENDIF»
-            «val isExpanded = if (outgoing) expandedTarget else expandedSource»
-            $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
-                «IF autoComplete»
-                    «val uniqueNameForJs = getUniqueRelationNameForJs((if (outgoing) source else target), aliasName.formatForCodeCapital)»
-                    'object_type' => '«relatedEntity.name.formatForCode»',
-                    «IF isManySide(outgoing)»
-                        'by_reference' => false,
-                    «ENDIF»
-                    'multiple' => «isManySide(outgoing).displayBool»,
-                    'unique_name_for_js' => '«uniqueNameForJs»',
-                    'allow_editing' => «(getEditStageCode(!outgoing) > 1).displayBool»,
-                    «IF outgoing && nullable»
-                        'required' => false,
-                    «ENDIF»
-                «ELSE»
-                    'class' => '«app.appName»:«relatedEntity.name.formatForCodeCapital»Entity',
-                    'choice_label' => $choiceLabelClosure,
-                    «IF isManySide(outgoing)»
-                        'by_reference' => false,
-                    «ENDIF»
-                    'multiple' => «isManySide(outgoing).displayBool»,
-                    'expanded' => «isExpanded.displayBool»,
-                    'query_builder' => $queryBuilder,
-                    «IF /*outgoing && * /nullable»
-                        «IF !isManySide(outgoing) && !isExpanded/* expanded uses default: "None" * /»
-                            'placeholder' => 'Please choose an option.',
-                        «ENDIF»
-                        'required' => false,
-                    «ENDIF»
-                «ENDIF»
-                'label' => '«aliasName.formatForDisplayCapital»',
-                «IF !autoComplete && isExpanded»
-                    'label_attr' => [
-                        'class' => '«IF isManySide(outgoing)»checkbox«ELSE»radio«ENDIF»-inline'
-                    ],
-                «ENDIF»
-                «relationHelp(outgoing)»
-                'attr' => [
-                    'title' => 'Choose the «aliasName.formatForDisplay».',
-                ],
-            ]);
+            ... already removed code ...
         «ENDIF»
     '''
 */

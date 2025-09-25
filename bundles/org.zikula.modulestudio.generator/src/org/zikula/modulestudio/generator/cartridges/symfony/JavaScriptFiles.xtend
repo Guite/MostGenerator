@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.javascript.AutoCompletion
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.javascript.BacklinkIntegrator
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.javascript.EditFunctions
@@ -14,14 +13,12 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.javascrip
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.javascript.Validation
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class JavaScriptFiles {
 
     extension ControllerExtensions = new ControllerExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
     /**
@@ -34,9 +31,6 @@ class JavaScriptFiles {
         }
         if (needsInlineEditing) {
             new InlineEditing().generate(it, fsa)
-        }
-        if (needsAutoCompletion) {
-            new AutoCompletion().generate(it, fsa)
         }
         if (hasGeographical) {
             new GeoFunctions().generate(it, fsa)

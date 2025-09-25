@@ -61,7 +61,8 @@ application "SimpleNews" targets SF74 {
             nullable false
             expandedSource false
             expandedTarget false
-            useAutoCompletion NONE
+            autocompleteSource false
+            autocompleteTarget false
             fetchType LAZY
             //cascade NONE
             //cascadeReverse PERSIST
@@ -88,7 +89,8 @@ application "SimpleNews" targets SF74 {
             nullable false
             expandedSource false
             expandedTarget false
-            useAutoCompletion ONLY_SOURCE_SIDE
+            autocompleteSource true
+            autocompleteTarget false
             fetchType EAGER
             sourceEditing NONE
             targetEditing CHOOSE
@@ -105,7 +107,8 @@ application "SimpleNews" targets SF74 {
             nullable true
             expandedSource true
             expandedTarget true
-            useAutoCompletion ONLY_TARGET_SIDE
+            autocompleteSource false
+            autocompleteTarget true
             fetchType EXTRA_LAZY
             sourceEditing EMBEDDED
             targetEditing INLINE
@@ -120,7 +123,8 @@ application "SimpleNews" targets SF74 {
             sourceAlias "article23"
             target "image"
             targetAlias "images23"
-            useAutoCompletion BOTH_SIDES
+            autocompleteSource true
+            autocompleteTarget true
             //cascade REMOVE_MERGE
             //cascadeReverse REMOVE_DETACH
             minTarget 5
@@ -134,7 +138,8 @@ application "SimpleNews" targets SF74 {
             nullable false
             expandedSource false
             expandedTarget false
-            useAutoCompletion ONLY_SOURCE_SIDE
+            autocompleteSource true
+            autocompleteTarget false
             fetchType EAGER
             sourceEditing NONE
             //cascade MERGE_DETACH
@@ -150,7 +155,8 @@ application "SimpleNews" targets SF74 {
             nullable true
             expandedSource true
             expandedTarget true
-            useAutoCompletion ONLY_TARGET_SIDE
+            autocompleteSource false
+            autocompleteTarget true
             fetchType EXTRA_LAZY
             sourceEditing CHOOSE
             //cascade PERSIST_REMOVE_DETACH
@@ -162,7 +168,8 @@ application "SimpleNews" targets SF74 {
             sourceAlias "articles33"
             target "image"
             targetAlias "image33"
-            useAutoCompletion BOTH_SIDES
+            autocompleteSource true
+            autocompleteTarget true
             //cascade REMOVE_MERGE_DETACH
             //cascadeReverse ALL
         },
@@ -174,7 +181,8 @@ application "SimpleNews" targets SF74 {
             nullable false
             expandedSource false
             expandedTarget false
-            useAutoCompletion ONLY_SOURCE_SIDE
+            autocompleteSource true
+            autocompleteTarget false
             fetchType EAGER
             sourceEditing NONE
             targetEditing INLINE
@@ -192,7 +200,8 @@ application "SimpleNews" targets SF74 {
             nullable true
             expandedSource true
             expandedTarget true
-            useAutoCompletion ONLY_TARGET_SIDE
+            autocompleteSource false
+            autocompleteTarget true
             fetchType EXTRA_LAZY
             sourceEditing CHOOSE
             targetEditing CHOOSE
@@ -206,7 +215,8 @@ application "SimpleNews" targets SF74 {
             sourceAlias "articles43"
             target "image"
             targetAlias "images43"
-            useAutoCompletion BOTH_SIDES
+            autocompleteSource true
+            autocompleteTarget true
             //cascade REMOVE_MERGE_DETACH
             //cascadeReverse ALL
             refClass "articleImage3"
