@@ -562,7 +562,7 @@ class ConfigureFields implements ControllerMethodInterface {
         «IF NumberFieldType.INTEGER != numberType»
             'scale' => «scale»,
         «ENDIF»
-        «IF unit != ''»
+        «IF unit != '' && !#[NumberRole.MONEY, NumberRole.PERCENTAGE].contains(role)»
             'input_group' => ['right' => t('«unit»')],
         «ENDIF»
     '''
@@ -677,7 +677,7 @@ class ConfigureFields implements ControllerMethodInterface {
         «val aliasName = getRelationAliasName(outgoing)»
         «val editMode = if (outgoing) getSourceEditMode else getTargetEditMode»
         yield '«aliasName.formatForCode»' => «relationFieldType(outgoing)»Field::new('«aliasName.formatForCode»', t('«aliasName.formatForDisplayCapital»'))«IF RelationEditMode.NONE === editMode»->hideOnForm()«ENDIF»«/*
-            «IF !visibility(entity as Entity).empty»
+            «TODO IF !visibility(entity as Entity).empty»
                 «visibility(entity as Entity)»
             «ENDIF*/»
             «IF !options(outgoing, relationFieldType(outgoing), autoComplete).empty»

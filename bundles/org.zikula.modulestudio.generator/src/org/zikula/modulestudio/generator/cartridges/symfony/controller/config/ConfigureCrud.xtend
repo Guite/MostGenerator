@@ -1,16 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.config
 
-import de.guite.modulestudio.metamodel.ArrayField
-import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.Field
-import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerMethodInterface
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class ConfigureCrud implements ControllerMethodInterface {
@@ -18,7 +13,6 @@ class ConfigureCrud implements ControllerMethodInterface {
     extension ControllerExtensions = new ControllerExtensions
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
 
     Iterable<DatetimeField> dateTimeFields
@@ -86,16 +80,6 @@ class ConfigureCrud implements ControllerMethodInterface {
         «IF !dateTimeFields.empty»
             ->setTimezone('Europe/Berlin')
         «ENDIF»
-        // ->setSearchFields(['«FOR field : allEntityFields.filter[f|f.isContainedInSearch] SEPARATOR '\', \''»«field.name.formatForCode»«ENDFOR»'])
         ->addFormTheme('@ZikulaTheme/Form/form_layout_addons.html.twig')
     '''
-
-    def private isContainedInSearch(Field it) {
-        switch it {
-            BooleanField: false
-            UserField: false
-            ArrayField: false
-            default: true
-        }
-    }
 }
