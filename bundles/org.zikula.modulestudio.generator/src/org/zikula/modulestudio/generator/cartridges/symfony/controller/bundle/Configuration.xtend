@@ -78,7 +78,7 @@ class Configuration {
                 ->info('«additionalInfo»')
             «ENDIF»
             ->defaultValue(«initialValue»)
-            «validation»
+            «validation»«normalizer»
         ->end()
     '''
 
@@ -139,4 +139,23 @@ class Configuration {
     '''
 
     def private listEntry(ListFieldItem it) '''«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»'''
+
+
+    def private normalizer(Field it) {
+        if (null !== normalizerTypeCast) '''
+            ->beforeNormalization()
+                ->ifString()->then(fn ($v) => («normalizerTypeCast») $v)
+            ->end()
+        '''
+        else ''
+    }
+
+    def private normalizerTypeCast(Field it) {
+        switch (it) {
+            BooleanField: 'bool'
+            NumberField case NumberFieldType.INTEGER === numberType: 'int'
+            NumberField: 'float'
+            default: null
+        }
+    }
 }

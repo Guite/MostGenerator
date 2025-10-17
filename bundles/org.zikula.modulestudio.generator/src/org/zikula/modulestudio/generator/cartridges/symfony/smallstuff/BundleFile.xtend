@@ -135,8 +135,8 @@ class BundleFile {
 
                     «IF hasGeographical»
                         $services->get(EntityInitializer::class)
-                            ->arg('$defaultLatitude', $config['geo']['default_latitude'])
-                            ->arg('$defaultLongitude', $config['geo']['default_longitude']);
+                            ->arg('$defaultLatitude', (float) $config['geo']['default_latitude'])
+                            ->arg('$defaultLongitude', (float) $config['geo']['default_longitude']);
                     «ENDIF»
                     «IF hasLoggable»
                         $services->get(EntityLifecycleListener::class)

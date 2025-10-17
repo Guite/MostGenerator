@@ -474,6 +474,7 @@ class PersistenceTransformer {
         ]
         varContainer.fields += factory.createNumberField => [
             name = 'defaultLongitude'
+            numberType = NumberFieldType.DECIMAL
             defaultValue = '12.36'
             documentation = 'The default longitude.'
         ]

@@ -65,8 +65,8 @@ class EntityInitializer {
                 «IF supportLocaleFilter»protected readonly RequestStack $requestStack,«ENDIF»
                 protected readonly PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
                 protected readonly ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
-                protected readonly string $defaultLatitude,
-                protected readonly string $defaultLongitude«ENDIF»
+                protected readonly float $defaultLatitude,
+                protected readonly float $defaultLongitude«ENDIF»
             ) {
             }
             «FOR entity : entities»
