@@ -94,7 +94,7 @@ class ConfigureFields implements ControllerMethodInterface {
         // TODO refactor following imports
         val importsUNUSED = newArrayList
         if (!formFields.filter[!mandatory && !nullable].empty) {
-            importsUNUSED.add('Zikula\\FormExtensionBundle\\Form\\DataTransformer\\NullToEmptyTransformer')
+            importsUNUSED.add('Zikula\\ThemeBundle\\Form\\DataTransformer\\NullToEmptyTransformer')
         }
         if (hasTranslatableFields) {
             importsUNUSED.add(application.appNamespace + '\\Form\\Type\\Field\\TranslationType')

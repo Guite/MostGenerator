@@ -209,9 +209,6 @@ class ControllerLayer {
         if (hasDetailAction || hasDeleteAction) {
             imports.add('Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException')
         }
-        if (hasDeleteAction) {
-            imports.add('Zikula\\FormExtensionBundle\\Form\\Type\\DeletionType')
-        }
         if (hasEditAction && app.needsInlineEditing) {
             imports.add('Zikula\\CoreBundle\\Response\\PlainResponse')
         }

@@ -38,6 +38,7 @@ class ExtensionMenu {
         }
         if (needsApproval) {
             imports.add(appNamespace + '\\Helper\\WorkflowHelper')
+            imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Form\\Type\\ComparisonType')
         }
         imports
     }
@@ -86,7 +87,7 @@ class ExtensionMenu {
                                         $routeParameters = [];
                                     }
                                 «ENDIF»
-                                yield '«entity.name.formatForCode»' => MenuItem::linktoRoute(t('My «entity.nameMultiple.formatForDisplay»'), 'fas fa-list-alt', '«appName.formatForDB»_' . mb_strtolower($objectType) . '_index', $routeParameters);
+                                yield 'My «entity.nameMultiple.formatForDisplay»' => MenuItem::linktoRoute(t('My «entity.nameMultiple.formatForDisplay»'), 'fas fa-list-alt', '«appName.formatForDB»_' . mb_strtolower($objectType) . '_index', $routeParameters);
                             }
                         }
 
@@ -118,8 +119,21 @@ class ExtensionMenu {
             if ($isAdmin) {
                 $moderationEntries = $this->workflowHelper->collectAmountOfModerationItems();
                 foreach ($moderationEntries as $entry) {
-                    yield $entry['objectType'] . $entry['state'] => MenuItem::linktoRoute($entry['title'], null, '«appName.formatForDB»_' . mb_strtolower($entry['objectType']) . '_index', ['workflowState' => $entry['state']])
-                        ->setBadge($entry['amount'], 'primary');
+                    $objectType = $entry['objectType'];
+                    if ($this->permissionHelper->hasComponentPermission($objectType/*, $permLevel*/)) {
+                        $entityClass = match ($objectType) {
+                            «FOR entity : getEntitiesForWorkflow(true)»
+                                '«entity.name.formatForCode»' => «entity.name.formatForCodeCapital»::class,
+                            «ENDFOR»
+                            default => throw new \RuntimeException('Invalid object type.')
+                        };
+                        yield $objectType . ucfirst($entry['state']) => 
+                            MenuItem::linkToCrud($entry['title'], 'fa fa-user-magnifying-class', $entityClass)
+                                ->setQueryParameter('filters[workflowState][comparison]', ComparisonType::EQ)
+                                ->setQueryParameter('filters[workflowState][value]', $entry['state'])
+                                ->setBadge($entry['amount'], 'primary')
+                        ;
+                    }
                 }
             }
         «ENDIF»

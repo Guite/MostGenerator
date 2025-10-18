@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.FormTypeChoicesSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.KernelSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.LoggableSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.MailerSubscriber
@@ -53,7 +52,6 @@ class EventSubscribers {
     }
 
     def private generateSubscriberClasses(Application it) {
-        subscriberFile('FormTypeChoices', formTypeChoicesFile)
         subscriberFile('Kernel', subscribersKernelFile)
         subscriberFile('Mailer', subscribersMailerFile)
         subscriberFile('Theme', subscribersThemeFile)
@@ -73,29 +71,6 @@ class EventSubscribers {
         var filePath = subscriberPath + (if (isBase) 'Abstract' else '') + name + subscriberSuffix
         fsa.generateFile(filePath, content)
     }
-
-    def private formTypeChoicesFile(Application it) '''
-        namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
-
-        «IF !isBase»
-            use «appNamespace»\EventSubscriber\Base\AbstractFormTypeChoicesSubscriber;
-        «ELSE»
-            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Zikula\FormExtensionBundle\Event\FormTypeChoiceEvent;
-        «ENDIF»
-
-        /**
-         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for injecting custom dynamic form types.
-         */
-        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»FormTypeChoicesSubscriber«IF !isBase» extends AbstractFormTypeChoicesSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
-        {
-            «IF isBase»
-                «new FormTypeChoicesSubscriber().generate(it)»
-            «ELSE»
-                // feel free to enhance the parent methods
-            «ENDIF»
-        }
-    '''
 
     def private subscribersKernelFile(Application it) '''
         namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
