@@ -377,7 +377,7 @@ class WorkflowHelper {
     def private readAmountForObjectTypeAndState(Entity it, String requiredAction) '''
         $objectType = '«name.formatForCode»';
         «val permissionLevel = if (requiredAction == 'approval') 'ADD' else 'MODERATE'»
-        if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«permissionLevel»)) {
+        if ($this->permissionHelper->hasComponentPermission($objectType/*, ACCESS_«permissionLevel»*/)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if (0 < $amount) {
                 $amounts[] = [

@@ -25,6 +25,7 @@ class MassHandling {
                 «handleSelectedObjectsBaseImpl»
             «ELSE»
                 return $this->handleSelectedEntries(
+                    $batchActionDto,
                     $request,
                     $repository,
                     $workflowHelper,
@@ -38,10 +39,10 @@ class MassHandling {
     def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase) '''
         «IF isBase»
             /**
-             * Process status changes for multiple items.
+             * Process status changes for multiple entities.
              *
-             * This function processes the items selected in the admin view page.
-             * Multiple items may have their state changed or be deleted.
+             * This function processes the entities selected in the admin view page.
+             * Multiple entities may have their state changed or be deleted.
              *
              * @throws RuntimeException Thrown if executing the workflow action fails
              */
@@ -54,6 +55,7 @@ class MassHandling {
     '''
 
     def private handleSelectedObjectsArguments(Entity it) '''
+        BatchActionDto $batchActionDto,
         Request $request,
         «name.formatForCodeCapital»RepositoryInterface $repository,
         WorkflowHelper $workflowHelper,
@@ -63,9 +65,10 @@ class MassHandling {
 
     def private handleSelectedObjectsBaseImpl(Entity it) '''
         // get parameters
+        «/* TODO for later $className = $batchActionDto->getEntityFqcn(); */»
         $action = $request->request->get('action');
-        $items = $request->request->get('items');
-        if (!is_array($items) || !count($items)) {
+        $entityIds = $batchActionDto->getEntityIds();
+        if (!count($entityIds)) {
             return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«getPrimaryAction»');
         }
 
@@ -73,10 +76,10 @@ class MassHandling {
 
         $userName = $currentUser?->getUserIdentifier();
 
-        // process each item
-        foreach ($items as $itemId) {
-            // check if item exists, and get record instance
-            $entity = $repository->selectById($itemId, false);
+        // process each entity
+        foreach ($entityIds as $entityId) {
+            // check if entity exists
+            $entity = $repository->selectById($entityId, false);
             if (null === $entity) {
                 continue;
             }
@@ -109,7 +112,7 @@ class MassHandling {
                         'user' => $userName,
                         'action' => $action,
                         'entity' => '«name.formatForDisplay»',
-                        'id' => $itemId,
+                        'id' => $entityId,
                         'errorMessage' => $exception->getMessage(),
                     ]
                 );
@@ -120,43 +123,27 @@ class MassHandling {
             }
 
             if ('delete' === $action) {
-                $this->addFlash(
-                    'status',
-                    $this->trans(
-                        'Done! «name.formatForDisplayCapital» deleted.',
-                        [],
-                        '«name.formatForCode»'
-                    )
-                );
-                $logger->notice(
-                    '{app}: User {user} deleted the {entity} with id {id}.',
-                    [
-                        'app' => '«application.appName»',
-                        'user' => $userName,
-                        'entity' => '«name.formatForDisplay»',
-                        'id' => $itemId,
-                    ]
-                );
+                $status = t('Done! «name.formatForDisplayCapital» deleted.');
+                $logMsg = '{app}: User {user} deleted the {entity} with id {id}.';
             } else {
-                $this->addFlash(
-                    'status',
-                    $this->trans(
-                        'Done! «name.formatForDisplayCapital» updated.',
-                        [],
-                        '«name.formatForCode»'
-                    )
-                );
-                $logger->notice(
-                    '{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.',
-                    [
-                        'app' => '«application.appName»',
-                        'user' => $userName,
-                        'action' => $action,
-                        'entity' => '«name.formatForDisplay»',
-                        'id' => $itemId,
-                    ]
-                );
+                $status = t('Done! «name.formatForDisplayCapital» updated.');
+                $logMsg = '{app}: User {user} applied the {action} action for the {entity} with id {id}.';
             }
+
+            $this->addFlash(
+                'status',
+                $this->trans($status, [], '«name.formatForCode»')
+            );
+            $logger->notice(
+                $logMsg,
+                [
+                    'app' => '«application.appName»',
+                    'user' => $userName,
+                    'action' => $action,
+                    'entity' => '«name.formatForDisplay»',
+                    'id' => $entityId,
+                ]
+            );
         }
 
         return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«getPrimaryAction»');

@@ -116,25 +116,6 @@ class WorkflowExtensions {
     }
 
     /**
-     * Returns the description for a given workflow action.
-     */
-    def getWorkflowActionDescription(Entity it, String actionTitle) {
-        switch actionTitle {
-            case 'Defer':               return 'Defer content for later submission.'
-            case 'Submit':              return if (!approval) 'Submit content.' else 'Submit content for acceptance by a moderator.'
-            case 'Update':              return 'Update content.'
-            case 'Reject':              return 'Reject content and require improvements.'
-            case 'Approve':             return 'Update content and approve for immediate publishing.'
-            case 'Submit and Approve':  return 'Submit content and approve immediately.'
-            case 'Demote':              return 'Disapprove content.'
-            case 'Archive':             return 'Move content into the archive.'
-            case 'Unarchive':           return 'Move content out of the archive.'
-            case 'Delete':              return 'Delete content permanently.'
-        }
-        return ''
-    }
-
-    /**
      * Determines whether workflow state field should be visible for the given entity or not.
      */
     def hasVisibleWorkflow(Entity it) {

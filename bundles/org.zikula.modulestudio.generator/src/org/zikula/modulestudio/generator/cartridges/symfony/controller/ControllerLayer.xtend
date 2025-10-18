@@ -27,6 +27,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.DeleteAction
 
 class ControllerLayer {
 
@@ -249,6 +250,7 @@ class ControllerLayer {
         if (hasIndexAction || hasDeleteAction) {
             imports.add('Psr\\Log\\LoggerInterface')
             if (hasIndexAction) {
+                imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\BatchActionDto')
                 imports.add('Symfony\\Component\\HttpFoundation\\RedirectResponse')
                 imports.add('Symfony\\Component\\Routing\\RouterInterface')
             }
@@ -257,6 +259,10 @@ class ControllerLayer {
         }
         imports.addAll(commonAppImports)
         imports
+    }
+
+    def private actionsWithOldMethod(Entity it) {
+        actions.reject(DeleteAction)
     }
 
     def private entityControllerImpl(Entity it) '''
@@ -271,7 +277,7 @@ class ControllerLayer {
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
             «/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
-            «FOR action : actions.reject(DetailAction)»
+            «FOR action : actionsWithOldMethod.reject(DetailAction)»
                 «actionImpl(action, false)»
 
             «ENDFOR»
@@ -279,7 +285,7 @@ class ControllerLayer {
                 «new LoggableUndelete().generate(it, false)»
                 «new LoggableHistory().generate(it, false)»
             «ENDIF»
-            «FOR action : actions.filter(DetailAction)»
+            «FOR action : actionsWithOldMethod.filter(DetailAction)»
                 «actionImpl(action, false)»
 
             «ENDFOR»

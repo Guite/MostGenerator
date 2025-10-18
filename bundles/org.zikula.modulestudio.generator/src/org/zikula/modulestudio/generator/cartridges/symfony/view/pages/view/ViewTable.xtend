@@ -21,7 +21,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ViewTable {
 
@@ -32,20 +31,12 @@ class ViewTable {
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
-    extension WorkflowExtensions = new WorkflowExtensions
 
     SimpleFields fieldHelper = new SimpleFields
-    Integer listType
     String appName
 
-    static val LIST_TYPE_UL = 0
-    static val LIST_TYPE_OL = 1
-    static val LIST_TYPE_DL = 2
-    static val LIST_TYPE_TABLE = 3
-
-    def generate(Entity it, String appName, Integer listType, IMostFileSystemAccess fsa) {
+    def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating table view templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
-        this.listType = listType
         this.appName = appName
 
         var templateFilePath = templateFile('index')
@@ -66,27 +57,10 @@ class ViewTable {
             <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-index">
                 «(new IndexPagesHelper).commonHeader(it)»
 
-                «viewForm»
+                «viewItemList»
+                «(new IndexPagesHelper).pagerCall(it)»
             </div>
         {% endblock %}
-    '''
-
-    def private viewForm(Entity it) '''
-        «IF listType == LIST_TYPE_TABLE»
-            {% if routeArea == 'admin' %}
-            <form action="{{ path('«appName.formatForDB»_admin_«name.formatForDB»_handleselectedentries') }}" method="post" id="«nameMultiple.formatForCode»ViewForm">
-                <div>
-            {% endif %}
-        «ENDIF»
-            «viewItemList»
-            «(new IndexPagesHelper).pagerCall(it)»
-        «IF listType == LIST_TYPE_TABLE»
-            {% if routeArea == 'admin' %}
-                    «massActionFields»
-                </div>
-            </form>
-            {% endif %}
-        «ENDIF»
     '''
 
     def private viewItemList(Entity it) '''
@@ -101,64 +75,54 @@ class ViewTable {
     '''
 
     def private viewItemListHeader(Entity it, List<Field> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
-        «IF listType != LIST_TYPE_TABLE»
-            <«listType.asListTag»>
-        «ELSE»
-            «IF hasSortableFields»
-                {% set activateSortable = routeArea == 'admin'«/* TODO and sort.«getSortableFields.head.name.formatForCode».class == 'sorted-asc'*/» %}
-            «ENDIF»
-            <div class="table-responsive">
-            <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-sm«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
-                <colgroup>
-                    {% if routeArea == 'admin' %}
-                        <col id="cSelect" />
-                    {% endif %}
-                    <col id="cItemActions" />
-                    «IF hasSortableFields»
-                        {% if activateSortable %}
-                            <col id="cSortable" />
-                        {% endif %}
-                    «ENDIF»
-                    «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
-                    «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
-                    «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
-                </colgroup>
-                <thead>
-                <tr>
-                    {% if routeArea == 'admin' %}
-                        <th id="hSelect" scope="col" class="text-center">
-                            <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
-                        </th>
-                    {% endif %}
-                    <th id="hItemActions" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
-                    «IF hasSortableFields»
-                        {% if activateSortable %}
-                            <th id="hSortable" scope="col">{% trans from 'messages' %}Sorting{% endtrans %}</th>
-                        {% endif %}
-                    «ENDIF»
-                    «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
-                    «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
-                    «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
-                </tr>
-                </thead>
-                <tbody>
+        «IF hasSortableFields»
+            {% set activateSortable = routeArea == 'admin'«/* TODO and sort.«getSortableFields.head.name.formatForCode».class == 'sorted-asc'*/» %}
         «ENDIF»
+        <div class="table-responsive">
+        <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-sm«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
+            <colgroup>
+                {% if routeArea == 'admin' %}
+                    <col id="cSelect" />
+                {% endif %}
+                <col id="cItemActions" />
+                «IF hasSortableFields»
+                    {% if activateSortable %}
+                        <col id="cSortable" />
+                    {% endif %}
+                «ENDIF»
+                «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
+                «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
+                «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
+            </colgroup>
+            <thead>
+            <tr>
+                {% if routeArea == 'admin' %}
+                    <th id="hSelect" scope="col" class="text-center">
+                        <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
+                    </th>
+                {% endif %}
+                <th id="hItemActions" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
+                «IF hasSortableFields»
+                    {% if activateSortable %}
+                        <th id="hSortable" scope="col">{% trans from 'messages' %}Sorting{% endtrans %}</th>
+                    {% endif %}
+                «ENDIF»
+                «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
+                «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
+                «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
+            </tr>
+            </thead>
+            <tbody>
     '''
 
     def private viewItemListBody(Entity it, List<Field> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
         {% for «name.formatForCode» in items %}
-            «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
-                <li><ul>
-            «ELSEIF listType == LIST_TYPE_DL»
-                <dt>
-            «ELSEIF listType == LIST_TYPE_TABLE»
-                <tr«IF hasSortableFields»{% if activateSortable %} data-item-id="{{ «name.formatForCode».getKey() }}" class="sort-item"{% endif %}«ENDIF»>
-                    {% if routeArea == 'admin' %}
-                        <td headers="hSelect" class="text-center">
-                            <input type="checkbox" name="items[]" value="{{ «name.formatForCode».getKey() }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
-                        </td>
-                    {% endif %}
-            «ENDIF»
+            <tr«IF hasSortableFields»{% if activateSortable %} data-item-id="{{ «name.formatForCode».getKey() }}" class="sort-item"{% endif %}«ENDIF»>
+                {% if routeArea == 'admin' %}
+                    <td headers="hSelect" class="text-center">
+                        <input type="checkbox" name="items[]" value="{{ «name.formatForCode».getKey() }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
+                    </td>
+                {% endif %}
                 «itemActions»
                 «IF hasSortableFields»
                     {% if activateSortable %}
@@ -170,73 +134,19 @@ class ViewTable {
                 «FOR field : listItemsFields»«IF field.name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»«field.displayEntry(false)»«IF field.name == 'workflowState'»{% endif %}«ENDIF»«ENDFOR»
                 «FOR relation : listItemsIn»«relation.displayEntry(false)»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true)»«ENDFOR»
-            «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
-                </ul></li>
-            «ELSEIF listType == LIST_TYPE_DL»
-                </dt>
-            «ELSEIF listType == LIST_TYPE_TABLE»
-                </tr>
-            «ENDIF»
+            </tr>
         {% else %}
-            «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
-                <li>
-            «ELSEIF listType == LIST_TYPE_DL»
-                <dt>
-            «ELSEIF listType == LIST_TYPE_TABLE»
-                <tr class="table-info">
-                «'    '»<td colspan="{% if routeArea == 'admin' %}«IF hasSortableFields»{% if activateSortable %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1 + 1)»{% else %}«ENDIF»«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»«IF hasSortableFields»{% endif %}«ENDIF»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}" class="text-center">
-            «ENDIF»
+            <tr class="table-info">
+            «'    '»<td colspan="{% if routeArea == 'admin' %}«IF hasSortableFields»{% if activateSortable %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1 + 1)»{% else %}«ENDIF»«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»«IF hasSortableFields»{% endif %}«ENDIF»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}" class="text-center">
             {% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}
-            «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
-                </li>
-            «ELSEIF listType == LIST_TYPE_DL»
-                </dt>
-            «ELSEIF listType == LIST_TYPE_TABLE»
-                  </td>
-                </tr>
-            «ENDIF»
+              </td>
+            </tr>
         {% endfor %}
     '''
 
     def private viewItemListFooter(Entity it) '''
-        «IF listType != LIST_TYPE_TABLE»
-            <«listType.asListTag»>
-        «ELSE»
-                </tbody>
-            </table>
-            </div>
-        «ENDIF»
-    '''
-
-    def private massActionFields(Entity it) '''
-        <fieldset class="my-3 pt-3">
-            <div class="row">
-                «massActionFieldsInner»
-            </div>
-        </fieldset>
-    '''
-
-    def private massActionFieldsInner(Entity it) '''
-        <label for="«appName.toFirstLower»Action" class="col-md-3 col-form-label">{% trans %}With selected «nameMultiple.formatForDisplay»{% endtrans %}</label>
-        <div class="col-md-6">
-            <select id="«appName.toFirstLower»Action" name="action" class="form-control form-control-sm">
-                <option value="">{% trans from 'messages' %}Choose action{% endtrans %}</option>
-                «IF approval»
-                    <option value="approve" title="{{ '«getWorkflowActionDescription('Approve')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Approve{% endtrans %}</option>
-                    <option value="demote" title="{{ '«getWorkflowActionDescription('Demote')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Demote{% endtrans %}</option>
-                    «IF ownerPermission»
-                        <option value="reject" title="{{ '«getWorkflowActionDescription('Reject')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Reject{% endtrans %}</option>
-                    «ENDIF»
-                «ENDIF»
-                «IF hasArchive»
-                    <option value="archive" title="{{ '«getWorkflowActionDescription('Archive')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Archive{% endtrans %}</option>
-                    <option value="unarchive" title="{{ '«getWorkflowActionDescription('Unarchive')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Unarchive{% endtrans %}</option>
-                «ENDIF»
-                <option value="delete" title="{{ '«getWorkflowActionDescription('Delete')»'|trans({}, 'messages')|e('html_attr') }}">{% trans from 'messages' %}Delete{% endtrans %}</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <input type="submit" value="{{ 'Submit'|trans({}, 'messages')|e('html_attr') }}" class="btn btn-secondary btn-sm" />
+            </tbody>
+        </table>
         </div>
     '''
 
@@ -272,13 +182,9 @@ class ViewTable {
 
     def private displayEntry(Object it, Boolean useTarget) '''
         «val cssClass = entryContainerCssClass»
-        «IF listType != LIST_TYPE_TABLE»
-            <«listType.asItemTag»«IF !cssClass.empty» class="«cssClass»"«ENDIF»>
-        «ELSE»
-            <td headers="h«markupIdCode(useTarget)»" class="text-«alignment»«IF !cssClass.empty» «cssClass»«ENDIF»">
-        «ENDIF»
+        <td headers="h«markupIdCode(useTarget)»" class="text-«alignment»«IF !cssClass.empty» «cssClass»«ENDIF»">
             «displayEntryInner(useTarget)»
-        </«listType.asItemTag»>
+        </td>
     '''
 
     def private dispatch entryContainerCssClass(Object it) {
@@ -351,32 +257,8 @@ class ViewTable {
     }
 
     def private itemActions(Entity it) '''
-        «IF listType != LIST_TYPE_TABLE»
-            <«listType.asItemTag»>
-        «ELSE»
-            <td id="«new MenuViews().itemActionContainerViewId(it)»" headers="hItemActions" class="actions">
-        «ENDIF»
+        <td id="«new MenuViews().itemActionContainerViewId(it)»" headers="hItemActions" class="actions">
             «new MenuViews().itemActions(it, 'index')»
-        </«listType.asItemTag»>
+        </td>
     '''
-
-    def private asListTag (Integer listType) {
-        switch listType {
-            case LIST_TYPE_UL: 'ul'
-            case LIST_TYPE_OL: 'ol'
-            case LIST_TYPE_DL: 'dl'
-            case LIST_TYPE_TABLE: 'table'
-            default: 'table'
-        }
-    }
-
-    def private asItemTag (Integer listType) {
-        switch listType {
-            case LIST_TYPE_UL: 'li' // ul
-            case LIST_TYPE_OL: 'li' // ol
-            case LIST_TYPE_DL: 'dd' // dl
-            case LIST_TYPE_TABLE: 'td' // table
-            default: 'td'
-        }
-    }
 }

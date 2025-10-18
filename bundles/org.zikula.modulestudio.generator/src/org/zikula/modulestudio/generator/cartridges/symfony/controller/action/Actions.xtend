@@ -26,6 +26,9 @@ class Actions {
         this.app = app
     }
 
+    // TODO DeleteAction is not generated anymore
+    // but kept here because of workflow usage that needs to be added to EAB
+
     def actionImpl(Entity it, Action action) '''
         «IF action instanceof DetailAction || action instanceof DeleteAction»
             «IF action instanceof DetailAction»

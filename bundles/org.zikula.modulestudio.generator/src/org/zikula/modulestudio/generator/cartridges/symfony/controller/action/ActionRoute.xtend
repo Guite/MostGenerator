@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.action
 
 import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.CustomAction
-import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
@@ -41,7 +40,7 @@ class ActionRoute {
             name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_detail',
             requirements: [«actionRouteRequirementsForSingleEntity(action)», '_format' => 'html'],
             defaults: [«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»'_format' => 'html'],
-            methods: ['GET'«IF action instanceof EditAction || action instanceof DeleteAction», 'POST'«ENDIF»]«IF tree»,
+            methods: ['GET'«IF action instanceof EditAction», 'POST'«ENDIF»]«IF tree»,
             options: ['expose' => true]«ENDIF»
         )]
     '''
@@ -72,10 +71,6 @@ class ActionRoute {
     '''
 
     def private dispatch actionRoute(EditAction it, Boolean isAdmin) '''
-        «actionRouteForSingleEntity(entity, it, isAdmin)»
-    '''
-
-    def private dispatch actionRoute(DeleteAction it, Boolean isAdmin) '''
         «actionRouteForSingleEntity(entity, it, isAdmin)»
     '''
 

@@ -105,7 +105,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update($this->entityName, 'tbl')
+            $qb->update($this->getEntityName(), 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
@@ -116,7 +116,7 @@ class UserDeletion {
             $logArgs = [
                 'app' => '«appName»',
                 'user' => $currentUser,
-                'entityName' => $this->entityName,
+                'entityName' => $this->getEntityName(),
                 'field' => $userFieldName,
                 'userid' => $userId,
                 'newuserid' => $newUserId,
@@ -140,7 +140,7 @@ class UserDeletion {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete($this->entityName, 'tbl')
+            $qb->delete($this->getEntityName(), 'tbl')
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', $userId);
             $query = $qb->getQuery();
@@ -150,7 +150,7 @@ class UserDeletion {
             $logArgs = [
                 'app' => '«appName»',
                 'user' => $currentUser,
-                'entityName' => $this->entityName,
+                'entityName' => $this->getEntityName(),
                 'field' => $userFieldName,
                 'userid' => $userId,
             ];
@@ -160,7 +160,7 @@ class UserDeletion {
 
     def private initQueryAdditions(Application it) '''
         «IF !entitiesWithPessimisticWriteLock.empty»
-            if (in_array($this->entityName, ['«entitiesWithPessimisticWriteLock.map[name.formatForCodeCapital + '::class'].join('\', \'')»'], true)) {
+            if (in_array($this->getEntityName(), ['«entitiesWithPessimisticWriteLock.map[name.formatForCodeCapital + '::class'].join('\', \'')»'], true)) {
                 $query->setLockMode(LockMode::«EntityLockType.PESSIMISTIC_WRITE.lockTypeAsConstant»);
             }
         «ENDIF»

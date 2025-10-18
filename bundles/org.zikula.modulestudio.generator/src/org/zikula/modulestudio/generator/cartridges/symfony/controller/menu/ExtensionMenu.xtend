@@ -117,7 +117,7 @@ class ExtensionMenu {
 
             if ($isAdmin) {
                 $moderationEntries = $this->workflowHelper->collectAmountOfModerationItems();
-                foreach ($entry as $moderationEntries) {
+                foreach ($moderationEntries as $entry) {
                     yield $entry['objectType'] . $entry['state'] => MenuItem::linktoRoute($entry['title'], null, '«appName.formatForDB»_' . mb_strtolower($entry['objectType']) . '_index', ['workflowState' => $entry['state']])
                         ->setBadge($entry['amount'], 'primary');
                 }

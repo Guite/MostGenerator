@@ -595,7 +595,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from($this->entityName, 'tbl');
+               ->from($this->getEntityName(), 'tbl');
 
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
@@ -704,7 +704,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from($this->entityName, 'tbl');
+               ->from($this->getEntityName(), 'tbl');
 
             if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);

@@ -9,7 +9,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.Email
 import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.StandardFields
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Custom
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Delete
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Detail
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.History
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Index
@@ -58,7 +57,7 @@ class Views {
             new Index().generate(entity, fsa)
         }
         if (entity.hasIndexAction) {
-            new ViewTable().generate(entity, appName, 3, fsa)
+            new ViewTable().generate(entity, appName, fsa)
             if (entity.geographical) {
                 new ViewMap().generate(entity, appName, fsa)
             }
@@ -68,9 +67,6 @@ class Views {
         }
         if (entity.hasDetailAction) {
             new Detail().generate(entity, appName, fsa)
-        }
-        if (entity.hasDeleteAction) {
-            new Delete().generate(entity, appName, fsa)
         }
         if (entity.loggable) {
             new History().generate(entity, appName, fsa)

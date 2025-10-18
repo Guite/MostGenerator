@@ -93,16 +93,9 @@ class ConfigureFields implements ControllerMethodInterface {
 
         // TODO refactor following imports
         val importsUNUSED = newArrayList
-        importsUNUSED.add('Symfony\\Component\\Form\\AbstractType')
-        importsUNUSED.add(nsSymfonyFormType + 'ResetType')
-        importsUNUSED.add(nsSymfonyFormType + 'SubmitType')
-        if (hasLocaleFieldsEntity || hasTranslatableFields) {
-            importsUNUSED.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
-        }
         if (!formFields.filter[!mandatory && !nullable].empty) {
             importsUNUSED.add('Zikula\\FormExtensionBundle\\Form\\DataTransformer\\NullToEmptyTransformer')
         }
-        importsUNUSED.add(application.appNamespace + '\\Entity\\Factory\\EntityFactory')
         if (hasTranslatableFields) {
             importsUNUSED.add(application.appNamespace + '\\Form\\Type\\Field\\TranslationType')
         }
@@ -212,10 +205,18 @@ class ConfigureFields implements ControllerMethodInterface {
                 calls += '->hideWhenUpdating()'
             }
         }
-        if (entity.hasIndexAction && !visibleOnSort) {
+        if (entity.hasIndexAction && !(mightBeSortable && visibleOnSort)) {
             calls += '->setSortable(false)'
         }
         calls
+    }
+
+    def private mightBeSortable(Field it) {
+        switch (it) {
+            UploadField: false
+            ArrayField: false
+            default: true
+        }
     }
 
     def private dispatch fieldType(Field it) { 'Text' }
@@ -433,6 +434,7 @@ class ConfigureFields implements ControllerMethodInterface {
         else 'Text' // TODO
     }
     // TODO UploadField
+    // https://symfony.com/bundles/EasyAdminBundle/current/fields/ImageField.html
     def private dispatch options(UploadField it) {
         var calls = commonOptions
         if (isOnlyImageField) {
