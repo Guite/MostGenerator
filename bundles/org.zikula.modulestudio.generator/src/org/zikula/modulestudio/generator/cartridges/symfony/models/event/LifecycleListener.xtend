@@ -3,16 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models.event
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LifecycleListener {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     Application app
@@ -43,13 +39,6 @@ class LifecycleListener {
             'Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface',
             appNamespace + '\\Entity\\EntityInterface'
         ])
-        if (!getUploadEntities.empty) {
-            imports.addAll(#[
-                'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
-                'Symfony\\Component\\HttpFoundation\\RequestStack',
-                appNamespace + '\\Helper\\UploadHelper'
-            ])
-        }
         if (hasLoggable) {
             imports.addAll(#[
                 'Gedmo\\Loggable\\Entity\\MappedSuperclass\\AbstractLogEntry',
@@ -82,12 +71,6 @@ class LifecycleListener {
                     protected readonly LoggableSubscriber $loggableListener,
                 «ENDIF»
                 protected readonly Security $security,
-                «IF !getUploadEntities.empty»
-                    protected readonly RequestStack $requestStack,
-                    protected readonly UploadHelper $uploadHelper,
-                    #[Autowire(param: 'kernel.project_dir')]
-                    protected readonly string $projectDir,
-                «ENDIF»
                 protected readonly LoggerInterface $logger,
                 «IF hasLoggable»
                     protected readonly array $loggableConfig,
@@ -246,27 +229,6 @@ class LifecycleListener {
             {
                 return $entity instanceof EntityInterface;
             }
-            «IF !getUploadEntities.empty»
-
-                /**
-                 * Returns list of upload fields for the given object type.
-                 *
-                 * @return string[] List of upload field names
-                 */
-                protected function getUploadFields(string $objectType = ''): array
-                {
-                    $uploadFields = [];
-                    switch ($objectType) {
-                        «FOR entity : getUploadEntities»
-                            case '«entity.name.formatForCode»':
-                                $uploadFields = ['«entity.getUploadFieldsEntity.map[name.formatForCode].join('\', \'')»'];
-                                break;
-                        «ENDFOR»
-                    }
-
-                    return $uploadFields;
-                }
-            «ENDIF»
             «IF hasSluggable»
 
                 «new SluggableEventAction().generate(it)»

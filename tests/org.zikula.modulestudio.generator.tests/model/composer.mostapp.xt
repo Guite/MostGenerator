@@ -30,7 +30,7 @@ XPECT generated file composer.json ---
     },
     "require": {
         "php": ">=8.3",
-        "doctrine/doctrine-migrations-bundle": "^3.4",
+        "doctrine/doctrine-migrations-bundle": "^3.5",
         "zikula/core-bundle": "^4.0",
         "zikula/theme-bundle": "^4.0",
         "zikula/users-bundle": "^4.0"

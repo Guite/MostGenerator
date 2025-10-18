@@ -18,6 +18,7 @@ import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.UserField
 import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.UploadField
 
 class ConfigureFilters implements ControllerMethodInterface {
 
@@ -36,7 +37,7 @@ class ConfigureFilters implements ControllerMethodInterface {
     }
 
     override imports(Entity it) {
-        val formFields = getAllEntityFields
+        val formFields = getAllEntityFields.filter[f|!(f instanceof UploadField)]
         val imports = newArrayList
         imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Filters')
         val nsEabFilter = 'EasyCorp\\Bundle\\EasyAdminBundle\\Filter\\'
@@ -124,7 +125,7 @@ class ConfigureFilters implements ControllerMethodInterface {
     '''
 
     def private methodBody(Entity it) '''
-        «FOR field : getAllEntityFields.filter[f|!f.name.equals('workflowState') || hasVisibleWorkflow]»«/* hide workflow filter if not needed */»
+        «FOR field : getAllEntityFields.filter[f|!(f instanceof UploadField)].filter[f|!f.name.equals('workflowState') || hasVisibleWorkflow]»«/* hide workflow filter if not needed */»
             «field.filter»
         «ENDFOR»
         «FOR relation : incomingRelations»

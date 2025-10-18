@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -34,7 +33,6 @@ class UploadHelper {
             'Imagine\\Gd\\Imagine',
             'Imagine\\Image\\Box',
             'Imagine\\Image\\ImageInterface',
-            'Imagine\\Image\\Metadata\\ExifMetadataReader',
             'Psr\\Log\\LoggerInterface',
             'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
@@ -109,8 +107,6 @@ class UploadHelper {
 
         «validateFileUpload»
 
-        «readMetaDataForFile»
-
         «getAllowedFileExtensions»
 
         «isAllowedFileExtension»
@@ -132,7 +128,7 @@ class UploadHelper {
         /**
          * Process a file upload.
          */
-        public function performFileUpload(string $objectType, UploadedFile $file, string $fieldName«IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)», string $customName«ENDIF»): array
+        public function performFileUpload(string $objectType, UploadedFile $file, string $fieldName): array
         {
             $result = [
                 'fileName' => '',
@@ -154,11 +150,7 @@ class UploadHelper {
             $fileNameParts = explode('.', $fileName);
             $extension = $this->determineFileExtension($file);
             $fileNameParts[count($fileNameParts) - 1] = $extension;
-            «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-                $fileName = !empty($customName) ? $customName . '.' . $extension : implode('.', $fileNameParts);
-            «ELSE»
-                $fileName = implode('.', $fileNameParts);
-            «ENDIF»
+            $fileName = implode('.', $fileNameParts);
 
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->hasSession() ? $request->getSession() : null;
@@ -194,7 +186,6 @@ class UploadHelper {
 
             // collect data to return
             $result['fileName'] = $fileName;
-            $result['metaData'] = $this->readMetaDataForFile($fileName, $destinationFilePath);
 
             if ($isImage && 'gif' !== $extension) {
                 // fix wrong orientation and shrink too large image if needed
@@ -223,10 +214,6 @@ class UploadHelper {
                         $thumb->save($destinationFilePath);
                     }
                 }
-
-                // update meta data excluding EXIF
-                $newMetaData = $this->readMetaDataForFile($fileName, $destinationFilePath, false);
-                $result['metaData'] = array_merge($result['metaData'], $newMetaData);
             }
 
             return $result;
@@ -302,91 +289,6 @@ class UploadHelper {
 
                 return $result;
             }
-        }
-    '''
-
-    def private readMetaDataForFile(Application it) '''
-        /**
-         * Read meta data from a certain file.
-         */
-        public function readMetaDataForFile(string $fileName, string $filePath, bool $includeExif = true): array
-        {
-            $meta = [];
-            if (empty($fileName)) {
-                return $meta;
-            }
-
-            $extensionarr = explode('.', $fileName);
-            $meta['extension'] = mb_strtolower($extensionarr[count($extensionarr) - 1]);
-            $meta['size'] = filesize($filePath);
-            $meta['isImage'] = in_array($meta['extension'], $this->imageFileTypes, true);
-
-            if (!$meta['isImage']) {
-                return $meta;
-            }
-
-            if ('swf' === $meta['extension']) {
-                $meta['isImage'] = false;
-            }
-
-            $imgInfo = getimagesize($filePath);
-            if (!is_array($imgInfo)) {
-                return $meta;
-            }
-
-            $meta['width'] = $imgInfo[0];
-            $meta['height'] = $imgInfo[1];
-
-            if ($imgInfo[1] < $imgInfo[0]) {
-                $meta['format'] = 'landscape';
-            } elseif ($imgInfo[1] > $imgInfo[0]) {
-                $meta['format'] = 'portrait';
-            } else {
-                $meta['format'] = 'square';
-            }
-
-            if (!$includeExif || 'jpg' !== $meta['extension']) {
-                return $meta;
-            }
-
-            // add EXIF data
-            $exifData = $this->readExifData($filePath);
-            $meta = array_merge($meta, $exifData);
-
-            return $meta;
-        }
-
-        /**
-         * Read EXIF data from a certain file.
-         */
-        protected function readExifData(string $filePath): array
-        {
-            $imagine = new Imagine();
-            $image = $imagine
-                ->setMetadataReader(new ExifMetadataReader())
-                ->open($filePath)
-            ;
-
-            $exifData = $image->metadata()->toArray();
-
-            // strip non-utf8 chars to bypass firmware bugs (e.g. Samsung)
-            foreach ($exifData as $k => $v) {
-                if (is_array($v)) {
-                    foreach ($v as $kk => $vv) {
-                        $exifData[$k][$kk] = mb_convert_encoding($vv, 'UTF-8', 'UTF-8');
-                        if (false !== mb_strpos($exifData[$k][$kk], '????')) {
-                            unset($exifData[$k][$kk]);
-                        }
-                    }
-                } else {
-                    $exifData[$k] = mb_convert_encoding((string) $v, 'UTF-8', 'UTF-8');
-                    if (false !== mb_strpos($exifData[$k], '????')) {
-                        unset($exifData[$k]);
-                    }
-                }
-            }
-
-            return $exifData;
         }
     '''
 
@@ -474,42 +376,27 @@ class UploadHelper {
          */
         protected function determineFileName(string $objectType, string $fieldName, string $basePath, string $fileName, string $extension): string
         {
-            $namingScheme = 0;
-            switch ($objectType) {
-                «FOR entity : getUploadEntities.filter(Entity)»«entity.determineFileNameEntityCase»«ENDFOR»
-            }
-
-            if (0 === $namingScheme || 3 === $namingScheme) {
-                // clean the given file name
-                $fileNameCharCount = mb_strlen($fileName);
-                for ($y = 0; $y < $fileNameCharCount; ++$y) {
-                    if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
-                        $fileName[$y] = '_';
-                    }
+            // clean the given file name
+            $fileNameCharCount = mb_strlen($fileName);
+            for ($y = 0; $y < $fileNameCharCount; ++$y) {
+                if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
+                    $fileName[$y] = '_';
                 }
             }
             $backupFileName = $fileName;
 
             $iterIndex = -1;
             do {
-                if (0 === $namingScheme || 3 === $namingScheme) {
-                    // original (0) or user defined (3) file name with counter
-                    if (0 < $iterIndex) {
-                        // strip off extension
-                        $fileName = str_replace('.' . $extension, '', $backupFileName);
-                        // append incremented number
-                        $fileName .= (string) ++$iterIndex;
-                        // readd extension
-                        $fileName .= '.' . $extension;
-                    } else {
-                        ++$iterIndex;
-                    }
-                } elseif (1 === $namingScheme) {
-                    // md5 name
-                    $fileName = md5(uniqid((string) mt_rand(), true)) . '.' . $extension;
-                } elseif (2 === $namingScheme) {
-                    // prefix with random number
-                    $fileName = $fieldName . random_int(1, 999999) . '.' . $extension;
+                // original file name with counter
+                if (0 < $iterIndex) {
+                    // strip off extension
+                    $fileName = str_replace('.' . $extension, '', $backupFileName);
+                    // append incremented number
+                    $fileName .= (string) ++$iterIndex;
+                    // readd extension
+                    $fileName .= '.' . $extension;
+                } else {
+                    ++$iterIndex;
                 }
             } while (file_exists($basePath . $fileName)); // repeat until we have a new name
 
@@ -517,26 +404,6 @@ class UploadHelper {
             return $fileName;
         }
     '''
-
-    def private determineFileNameEntityCase(Entity it) '''
-        «val uploadFields = getUploadFieldsEntity»
-        case '«name.formatForCode»':
-            «IF uploadFields.size > 1»
-                switch ($fieldName) {
-                    «FOR uploadField : uploadFields»«uploadField.determineFileNameFieldCase»«ENDFOR»
-                }
-            «ELSE»
-                $namingScheme = «uploadFields.head.namingScheme.value»;
-            «ENDIF»
-            break;
-    '''
-
-    def private determineFileNameFieldCase(UploadField it) '''
-        case '«name.formatForCode»':
-            $namingScheme = «it.namingScheme.value»;
-            break;
-    '''
-
     def private deleteUploadFile(Application it) '''
         /**
          * Deletes an existing upload file.

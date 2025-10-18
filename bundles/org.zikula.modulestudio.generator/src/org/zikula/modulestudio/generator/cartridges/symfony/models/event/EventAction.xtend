@@ -3,14 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.symfony.models.event
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EventAction {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     String entityVar
@@ -20,48 +18,6 @@ class EventAction {
     }
 
     def postLoad(Application it) '''
-        «IF !getUploadEntities.empty»
-
-            // prepare helper fields for uploaded files
-            $uploadFields = $this->getUploadFields(«entityVar»->get_objectType());
-            if (0 < count($uploadFields)) {
-                $request = $this->requestStack->getCurrentRequest();
-                $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
-
-                $uploadBaseDirectory = $this->uploadHelper->getFileBaseFolder(«entityVar»->get_objectType());
-                if ('/public' !== mb_substr($uploadBaseDirectory, -7)) {
-                    «entityVar»->set_uploadBasePathRelative(mb_substr($uploadBaseDirectory, 7));
-                } else {
-                    «entityVar»->set_uploadBasePathRelative($uploadBaseDirectory);
-                }
-                «entityVar»->set_uploadBasePathAbsolute($this->projectDir . '/' . $uploadBaseDirectory);
-                «entityVar»->set_uploadBaseUrl($baseUrl);
-
-                // determine meta data if it does not exist
-                foreach ($uploadFields as $fieldName) {
-                    $getter = 'get' . ucfirst($fieldName);
-                    $fileName = «entityVar»->$getter();
-                    if (empty($fileName)) {
-                        continue;
-                    }
-
-                    $getter = 'get' . ucfirst($fieldName) . 'Meta';
-                    $metaData = «entityVar»->$getter();
-                    if (is_array($metaData) && count($metaData)) {
-                        continue;
-                    }
-
-                    $basePath = $this->uploadHelper->getFileBaseFolder(«entityVar»->get_objectType(), $fieldName);
-                    $filePath = $this->projectDir . '/' . $basePath . $fileName;
-                    if (!file_exists($filePath)) {
-                        continue;
-                    }
-
-                    $setter = 'set' . ucfirst($fieldName) . 'Meta';
-                    «entityVar»->$setter($this->uploadHelper->readMetaDataForFile($fileName, $filePath));
-                }
-            }
-        «ENDIF»
     '''
 
     def prePersist(Application it) '''
@@ -139,22 +95,6 @@ class EventAction {
     def postRemove(Application it) '''
 
         $objectType = «entityVar»->get_objectType();
-        «IF !getUploadEntities.empty»
-
-            $uploadFields = $this->getUploadFields($objectType);
-            if (0 < count($uploadFields)) {
-                foreach ($uploadFields as $fieldName) {
-                    $getter = 'get' . ucfirst($fieldName);
-                    $uploadFile = «entityVar»->$getter();
-                    if (empty($uploadFile)) {
-                        continue;
-                    }
-
-                    // remove upload file
-                    $this->uploadHelper->deleteUploadFile(«entityVar», $fieldName);
-                }
-            }
-        «ENDIF»
         «IF hasLoggable»
 
             $this->purgeHistory($objectType);

@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+import de.guite.modulestudio.metamodel.UploadField
 
 class BundleFile {
 
@@ -106,6 +107,11 @@ class BundleFile {
          */
         abstract class Abstract«appName» extends AbstractBundle implements «IF needsInitializer»InitializableBundleInterface, «ENDIF»MetaDataAwareBundleInterface
         {
+            «/* not needed atm
+            «IF hasUploads»
+                private ?ContainerBuilder $mainBuilder = null;
+
+            «ENDIF*/»
             public function getMetaData(): BundleMetaDataInterface
             {
                 return $this->container->get(«appName»MetaData::class);
@@ -119,81 +125,155 @@ class BundleFile {
             «ENDIF»
             «IF needsConfig»
 
-                public function configure(DefinitionConfigurator $definition): void
-                {
-                    $definition->import('../config/definition.php');
-                }
+                «configure»
             «ENDIF»
 
-            public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
-            {
-                $container->import('../config/services.yaml');
-                «IF needsConfig»
+            «loadExtension»
+            «IF hasUploads»
 
-                    // configure services
-                    $services = $container->services();
-
-                    «IF hasGeographical»
-                        $services->get(EntityInitializer::class)
-                            ->arg('$defaultLatitude', (float) $config['geo']['default_latitude'])
-                            ->arg('$defaultLongitude', (float) $config['geo']['default_longitude']);
-                    «ENDIF»
-                    «IF hasLoggable»
-                        $services->get(EntityLifecycleListener::class)
-                            ->arg('$loggableConfig', $config['versioning']);
-                    «ENDIF»
-                    «IF hasUserVariables»
-                        $services->get(UserListener::class)
-                            «FOR userVar : getAllVariables.filter(UserField)»
-                                ->arg('$«userVar.name.formatForCode»', $config['«userVar.varContainer.name.formatForSnakeCase»']['«userVar.name.formatForSnakeCase»'])
-                            «ENDFOR»
-                        ;
-                    «ENDIF»
-                    «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
-                        «FOR entity : entities.filter[hasEditAction]»
-                            $services->get(Edit«entity.name.formatForCodeCapital»Handler::class)
-                                ->arg('$moderationConfig', $config['moderation']);
-                        «ENDFOR»
-                    «ENDIF»
-                    $services->get(CollectionFilterHelper::class)
-                        ->arg('$listViewConfig', $config['list_views']);
-                    «IF hasIndexActions»
-                        $services->get(ControllerHelper::class)
-                            ->arg('$listViewConfig', $config['list_views']);
-                    «ENDIF»
-                    «IF hasAutomaticExpiryHandling || hasLoggable»
-                        $services->get(ExpiryHelper::class)
-                            ->arg('$loggableConfig', $config['versioning']);
-                    «ENDIF»
-                    «IF hasUploads»
-                        $services->get(ImageHelper::class)
-                            ->arg('$imageConfig', $config['images']);
-                    «ENDIF»
-                    «IF hasLoggable»
-                        $services->get(PermissionHelper::class)
-                            ->arg('$loggableConfig', $config['versioning']);
-                    «ENDIF»
-                    «IF needsApproval»
-                        $services->get(NotificationHelper::class)
-                            ->arg('$moderationConfig', $config['moderation']);
-                    «ENDIF»
-                    «IF hasUploads»
-                        $services->get(UploadHelper::class)
-                            ->arg('$imageConfig', $config['images']);
-                    «ENDIF»
-                    «IF hasGeographical»
-                        $services->get(ViewHelper::class)
-                            ->arg('$geoConfig', $config['geo']);
-                    «ENDIF»
-                    $services->get(ExtensionMenu::class)
-                        ->arg('$listViewConfig', $config['list_views']);
-                    «IF hasIndexActions»
-                        $services->get(MenuBuilder::class)
-                            ->arg('$listViewConfig', $config['list_views']);
-                    «ENDIF»
-                «ENDIF»
-            }
+                «prependExtension»
+            «ENDIF»
         }
+    '''
+
+    def private configure(Application it) '''
+        public function configure(DefinitionConfigurator $definition): void
+        {
+            $definition->import('../config/definition.php');
+        }
+    '''
+
+    def private loadExtension(Application it) '''
+        public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+        {
+            $container->import('../config/services.yaml');
+            «IF needsConfig»
+
+                «configureServices»
+            «ENDIF»
+            «/* not needed atm
+            «IF hasUploads»
+
+                «configureUploadMappingsWithOwnConfig»
+            «ENDIF*/»
+        }
+    '''
+
+    def private configureServices(Application it) '''
+        // configure services
+        $services = $container->services();
+
+        «IF hasGeographical»
+            $services->get(EntityInitializer::class)
+                ->arg('$defaultLatitude', (float) $config['geo']['default_latitude'])
+                ->arg('$defaultLongitude', (float) $config['geo']['default_longitude']);
+        «ENDIF»
+        «IF hasLoggable»
+            $services->get(EntityLifecycleListener::class)
+                ->arg('$loggableConfig', $config['versioning']);
+        «ENDIF»
+        «IF hasUserVariables»
+            $services->get(UserListener::class)
+                «FOR userVar : getAllVariables.filter(UserField)»
+                    ->arg('$«userVar.name.formatForCode»', $config['«userVar.varContainer.name.formatForSnakeCase»']['«userVar.name.formatForSnakeCase»'])
+                «ENDFOR»
+            ;
+        «ENDIF»
+        «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
+            «FOR entity : entities.filter[hasEditAction]»
+                $services->get(Edit«entity.name.formatForCodeCapital»Handler::class)
+                    ->arg('$moderationConfig', $config['moderation']);
+            «ENDFOR»
+        «ENDIF»
+        $services->get(CollectionFilterHelper::class)
+            ->arg('$listViewConfig', $config['list_views']);
+        «IF hasIndexActions»
+            $services->get(ControllerHelper::class)
+                ->arg('$listViewConfig', $config['list_views']);
+        «ENDIF»
+        «IF hasAutomaticExpiryHandling || hasLoggable»
+            $services->get(ExpiryHelper::class)
+                ->arg('$loggableConfig', $config['versioning']);
+        «ENDIF»
+        «IF hasUploads»
+            $services->get(ImageHelper::class)
+                ->arg('$imageConfig', $config['images']);
+        «ENDIF»
+        «IF hasLoggable»
+            $services->get(PermissionHelper::class)
+                ->arg('$loggableConfig', $config['versioning']);
+        «ENDIF»
+        «IF needsApproval»
+            $services->get(NotificationHelper::class)
+                ->arg('$moderationConfig', $config['moderation']);
+        «ENDIF»
+        «IF hasUploads»
+            $services->get(UploadHelper::class)
+                ->arg('$imageConfig', $config['images']);
+        «ENDIF»
+        «IF hasGeographical»
+            $services->get(ViewHelper::class)
+                ->arg('$geoConfig', $config['geo']);
+        «ENDIF»
+        $services->get(ExtensionMenu::class)
+            ->arg('$listViewConfig', $config['list_views']);
+        «IF hasIndexActions»
+            $services->get(MenuBuilder::class)
+                ->arg('$listViewConfig', $config['list_views']);
+        «ENDIF»
+    '''
+
+    def private prependExtension(Application it) '''
+        public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+        {
+            «IF hasUploads»
+                «configureDefaultUploadMappings»
+            «ENDIF»
+        }
+    '''
+
+    def private configureDefaultUploadMappings(Application it) '''
+        «/* not needed atm
+        // inject defaults before own app config
+        // save *main* builder to reuse it in loadExtension()
+        // @see https://github.com/symfony/symfony/discussions/57951
+        $this->mainBuilder = $builder;
+        */»
+        // hard defaults (app can override later)
+        $uploadBase = '%kernel.project_dir%/public';
+        $builder->prependExtensionConfig('vich_uploader', [
+            'mappings' => [
+                «FOR field : getAllUploadFields»
+                    «vichUploaderMapping(field, '$uploadBase')»
+                «ENDFOR»
+            ],
+        ]);
+    '''
+
+    /*def private configureUploadMappingsWithOwnConfig(Application it) '''
+        // ⚠️ IMPORTANT to modify VichUploader config this late,
+        // we need to use $this->mainBuilder from prependExtension()
+        if ($this->mainBuilder instanceof ContainerBuilder) {
+            // for example: add something depending on own bundle config
+            $uploadBase = $config['upload_base'] ?? '%kernel.project_dir%/public';
+
+            $this->mainBuilder->prependExtensionConfig('vich_uploader', [
+                'mappings' => [
+                    «FOR field : getAllUploadFields»
+                        «vichUploaderMapping(field, '$uploadBase')»
+                    «ENDFOR»
+                ],
+            ]);
+        }
+    '''*/
+
+    // https://github.com/dustin10/VichUploaderBundle/blob/master/docs/index.md
+    def private vichUploaderMapping(Application app, UploadField it, String uploadBase) '''
+        '«mappingName»' => [
+            'uri_prefix' => '«mappingPath»',
+            'upload_destination' => «uploadBase» . '«mappingPath»',
+            'namer' => 'Vich\\UploaderBundle\\Naming\\SmartUniqueNamer',
+        ],
     '''
 
     def private bundleImpl(Application it) '''

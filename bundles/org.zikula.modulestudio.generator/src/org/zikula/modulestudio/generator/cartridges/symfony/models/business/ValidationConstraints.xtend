@@ -191,12 +191,14 @@ class ValidationConstraints {
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
         «IF role === TextRole.CODE_TWIG»
-            #[Assert\Twig]
+            #[Twig]
         «ELSEIF role === TextRole.CODE_YAML || role === TextRole.CODE_YAML_FM»
             #[Assert\Yaml]
         «ENDIF»
     '''
     def dispatch fieldAnnotations(UploadField it) '''
+    '''
+    def fieldAnnotationsForUpload(UploadField it) '''
         «fieldAnnotationsString»
         «lengthAnnotationString(length)»
         «uploadFileAnnotations»
@@ -222,8 +224,10 @@ class ValidationConstraints {
             constraints += '''maxSize: '«maxSize»'«''»'''
         }
 
-        val extensionsString = '\'' + allowedExtensions.split(', ').join('\', \'') + '\''
-        constraints += '''extensions: [«extensionsString»]'''
+        if (!allowedExtensions.empty && '*' != allowedExtensions) {
+            val extensionsString = '\'' + allowedExtensions.split(', ').join('\', \'') + '\''
+            constraints += '''extensions: [«extensionsString»]'''
+        }
 
         if (!mimeTypes.empty && '*' != mimeTypes) {
             val mimeTypesList = mimeTypes.replaceAll(', ', ',').split(',')

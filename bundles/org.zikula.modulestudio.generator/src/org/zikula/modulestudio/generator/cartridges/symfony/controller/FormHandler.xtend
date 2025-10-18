@@ -9,12 +9,10 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.actionhan
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.actionhandler.RelationPresets
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.form.TranslationListener
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.form.UploadFileTransformer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.EditEntityType
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.field.TranslationType
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.field.UploadType
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.trait.ModerationFormFieldsTrait
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.formtype.trait.WorkflowFormFieldsTrait
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
@@ -59,10 +57,6 @@ class FormHandler {
             // form types
             for (entity : entities.filter[hasEditAction]) {
                 new EditEntityType().generate(entity, fsa)
-            }
-            if (hasUploads) {
-                new UploadType().generate(it, fsa)
-                new UploadFileTransformer().generate(it, fsa)
             }
             if (hasStandardFieldEntities) {
                 new ModerationFormFieldsTrait().generate(it, fsa)

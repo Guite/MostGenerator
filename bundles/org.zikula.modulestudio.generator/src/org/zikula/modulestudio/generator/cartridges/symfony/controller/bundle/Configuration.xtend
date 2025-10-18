@@ -59,7 +59,7 @@ class Configuration {
     def private configSection(Variables it) '''
         ->arrayNode('«name.formatForSnakeCase»')
             «IF null !== documentation && !documentation.empty»
-                ->info('«documentation.formatForDisplayCapital»')
+                ->info('«documentation»')
             «ENDIF»
             ->addDefaultsIfNotSet()
             ->children()

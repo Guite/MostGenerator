@@ -45,7 +45,7 @@ class ComposerFile {
         },
         "require": {
             "php": ">=8.3",
-            "doctrine/doctrine-migrations-bundle": "^3.4",
+            "doctrine/doctrine-migrations-bundle": "^3.5",
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
             «ENDIF»

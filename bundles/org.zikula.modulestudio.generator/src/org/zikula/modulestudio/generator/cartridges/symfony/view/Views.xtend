@@ -55,8 +55,6 @@ class Views {
     def private generateViews(Application it, Entity entity) {
         if (entity.hasIndexAction) {
             new Index().generate(entity, fsa)
-        }
-        if (entity.hasIndexAction) {
             new ViewTable().generate(entity, appName, fsa)
             if (entity.geographical) {
                 new ViewMap().generate(entity, appName, fsa)

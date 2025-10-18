@@ -99,6 +99,9 @@ class ControllerLayer {
                 «ENDIF»
                 «IF hasUploadFieldsEntity»
                     protected readonly UploadHelper $uploadHelper,
+                    «IF !getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty»
+                        protected readonly UploaderHelper $uploaderHelper,
+                    «ENDIF»
                 «ENDIF»
                 «IF hasDateIntervalFieldsEntity»
                     protected readonly ViewHelper $viewHelper,

@@ -18,6 +18,8 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.TextRole
 
 class Entities {
 
@@ -116,8 +118,17 @@ class Entities {
                 }
                 imports.add('RuntimeException')
                 imports.add('Symfony\\Component\\HttpFoundation\\File\\File')
+                imports.add('Vich\\UploaderBundle\\Entity\\File as EmbeddedFile')
+                imports.add('Vich\\UploaderBundle\\Mapping\\Annotation as Vich')
+                /* wait for next release of VichUploaderBundle
+                if (!getUploadFieldsEntity.filter[mandatory].empty) {
+                    imports.add('Vich\\UploaderBundle\\Validator\\Constraints as VichAssert')
+                }*/
             }
             imports.add('Symfony\\Component\\Validator\\Constraints as Assert')
+            if (!fields.filter(TextField).filter[role == TextRole.CODE_TWIG].empty) {
+                imports.add('Symfony\\Bridge\\Twig\\Validator\\Constraints\\Twig')
+            }
         }
         if (!getUniqueFields.empty || !incoming.filter[unique].empty || !outgoing.filter[unique].empty) {
             imports.add('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')
@@ -175,6 +186,9 @@ class Entities {
          * inherit orm properties.
          */
         #[ORM\MappedSuperclass]
+        «IF hasUploadFieldsEntity»
+            #[Vich\Uploadable]
+        «ENDIF»
         abstract class Abstract«name.formatForCodeCapital» implements AbstractEntityInterface«IF it.hasTranslatableFields», Translatable«ENDIF»
         {
             «modelEntityBaseImplBody(app)»
@@ -194,23 +208,6 @@ class Entities {
          * The tablename this object maps to
          */
         protected string $_objectType = '«name.formatForCode»';
-        «IF hasUploadFieldsEntity»
-
-            /**
-             * Relative path to upload base folder
-             */
-            protected string $_uploadBasePathRelative = '';
-
-            /**
-             * Absolute path to upload base folder
-             */
-            protected string $_uploadBasePathAbsolute = '';
-
-            /**
-             * Base URL to upload files
-             */
-            protected string $_uploadBaseUrl = '';
-        «ENDIF»
 
         «FOR field : fields»«thProp.persistentProperty(field)»«ENDFOR»
         «extMan.additionalProperties»
@@ -227,11 +224,6 @@ class Entities {
 
     def private accessors(Entity it) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, '', '')»
-        «IF hasUploadFieldsEntity»
-            «fh.getterAndSetterMethods(it, '_uploadBasePathRelative', 'string', false, '', '')»
-            «fh.getterAndSetterMethods(it, '_uploadBasePathAbsolute', 'string', false, '', '')»
-            «fh.getterAndSetterMethods(it, '_uploadBaseUrl', 'string', false, '', '')»
-        «ENDIF»
         «FOR field : fields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»
         «FOR relation : getBidirectionalIncomingRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»

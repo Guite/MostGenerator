@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.UploadField
 
 class FileHelper {
 
@@ -37,9 +38,9 @@ class FileHelper {
             return Uuid::fromString($this->«name.formatForCode»);
         }
 
-        public function set«name.formatForCodeCapital»(Uuid $«name.formatForCode»): self
+        public function set«name.formatForCodeCapital»(?Uuid $«name.formatForCode»): self
         {
-            $this->«name.formatForCode» = $«name.formatForCode»->toRfc4122();
+            $this->«name.formatForCode» = ($«name.formatForCode» ?? Uuid::v4())->toRfc4122();
 
             return $this;
         }
@@ -128,6 +129,10 @@ class FileHelper {
     }
 
     def private dispatch setterAssignment(BooleanField it, String name) '''
+        $this->«name» = $«name»;
+    '''
+
+    def private dispatch setterAssignment(UploadField it, String name) '''
         $this->«name» = $«name»;
     '''
 

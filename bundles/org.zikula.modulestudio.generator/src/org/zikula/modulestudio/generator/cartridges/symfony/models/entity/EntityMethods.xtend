@@ -144,7 +144,7 @@ class EntityMethods {
             // otherwise proceed
 
             // unset identifier
-            $this->set«getPrimaryKey.name.formatForCodeCapital»(«/* thProp.defaultFieldData(getPrimaryKey) */Property.defaultFieldData(getPrimaryKey)»);
+            $this->set«getPrimaryKey.name.formatForCodeCapital»(null);
 
             // reset workflow
             $this->setWorkflowState('initial');
@@ -179,7 +179,7 @@ class EntityMethods {
                 «ENDFOR»
             «ENDIF»
         }
-        «IF loggable && hasUploadFieldsEntity»
+        «IF loggable && hasUploadFieldsEntity»«/* TODO check if this is still needed */»
 
             /**
              * Custom serialise method to process File objects during serialisation.

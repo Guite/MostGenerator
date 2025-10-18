@@ -18,7 +18,6 @@ import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TextRole
 import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UserField
 import java.util.ArrayList
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerMethodInterface
@@ -87,8 +86,15 @@ class ConfigureFields implements ControllerMethodInterface {
         if (!formFields.filter(StringField).filter[role == StringRole.ICON].empty) {
             imports.add('Zikula\\ThemeBundle\\Form\\Type\\IconType')
         }
-        if (!getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty) {
-            imports.add(application.appNamespace + '\\Form\\Type\\Field\\UploadType')
+        if (hasUploadFieldsEntity) {
+            imports.add(nsEabField + 'Field')
+            if (!getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty) {
+                imports.add('Vich\\UploaderBundle\\Form\\Type\\VichFileType')
+                imports.add('Vich\\UploaderBundle\\Templating\\Helper\\UploaderHelper')
+            }
+            if (!getUploadFieldsEntity.filter[f|f.isOnlyImageField].empty) {
+                imports.add('Vich\\UploaderBundle\\Form\\Type\\VichImageType')
+            }
         }
 
         // TODO refactor following imports
@@ -124,9 +130,12 @@ class ConfigureFields implements ControllerMethodInterface {
     '''
 
     def private methodBody(Entity it) '''
+        «IF !getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty»
+            $uploaderHelper = $this->uploaderHelper;
+        «ENDIF»
         «FOR field : getAllEntityFields»
             «IF field instanceof UploadField»
-                $basePath = $this->uploadHelper->getFileBaseFolder('«name.formatForCode»', '«field.name.formatForCode»');
+                $basePath = str_replace('public/', '', $this->uploadHelper->getFileBaseFolder('«name.formatForCode»', '«field.name.formatForCode»'));
             «ELSEIF field instanceof ListField»
                 «fetchListEntries(field)»
 
@@ -134,6 +143,9 @@ class ConfigureFields implements ControllerMethodInterface {
             «IF field.name == 'slug'»
                 «field.slugDefinition»
             «ELSE»
+                «IF field instanceof UploadField»
+                    «field.uploadDefinition»
+                «ENDIF»
                 «field.definition»;
             «ENDIF»
         «ENDFOR»
@@ -152,7 +164,7 @@ class ConfigureFields implements ControllerMethodInterface {
     '''
 
     def private definition(Field it) '''
-        yield '«name.formatForCode»' => «fieldType»Field::new('«name.formatForCode»', t('«name.formatForDisplayCapital»'))
+        yield '«name.formatForCode»' => «fieldType»Field::new('«name.formatForCode»«IF it instanceof UploadField».name«ENDIF»', t('«name.formatForDisplayCapital»'))
             «IF !visibility(entity).empty»
                 «visibility(entity)»
             «ENDIF»
@@ -197,7 +209,9 @@ class ConfigureFields implements ControllerMethodInterface {
             calls += '->hideOnDetail()'
         }
         if (entity.hasEditAction) {
-            if (!visibleOnNew && !visibleOnEdit) {
+            if (it instanceof UploadField) {
+                calls += '->hideOnForm()'
+            } else if (!visibleOnNew && !visibleOnEdit) {
                 calls += '->hideOnForm()'
             } else if (!visibleOnNew) {
                 calls += '->hideWhenCreating()'
@@ -431,17 +445,58 @@ class ConfigureFields implements ControllerMethodInterface {
 
     def private dispatch fieldType(UploadField it) {
         if (isOnlyImageField) 'Image'
-        else 'Text' // TODO
+        else 'Text'
     }
-    // TODO UploadField
+
     // https://symfony.com/bundles/EasyAdminBundle/current/fields/ImageField.html
     def private dispatch options(UploadField it) {
         var calls = commonOptions
         if (isOnlyImageField) {
-            calls += '''->setBasePath(str_replace('public/', '', $basePath))->setUploadDir($basePath)'''
+            calls += '''->setBasePath($basePath)'''
         }
         calls
     }
+
+    def private dispatch formatValue(UploadField it) '''
+        «IF !isOnlyImageField»
+            static fn (string $value, «entity.name.formatForCodeCapital» $entity)
+                => '<a href="'
+                 . $uploaderHelper->asset($entity, '«name.formatForCode»File')
+                 . '" title="' . t('Download «name.formatForDisplay»') . '" target="_blank">'
+                 . t('Download') . '</a>'
+        «ENDIF»
+    '''
+
+    def private uploadDefinition(UploadField it) '''
+        yield '«name.formatForCode»File' => Field::new('«name.formatForCode»File', t('Upload «name.formatForDisplay»'))
+            ->setRequired(«requiredOption»)
+            ->setFormType(«uploadFieldType»Type::class)
+            ->onlyOnForms()
+            ->setFormTypeOptions([
+                «uploadOptions»
+            ])
+        ;
+    '''
+
+    def private uploadFieldType(UploadField it) {
+        if (isOnlyImageField) 'VichImage'
+        else 'VichFile'
+    }
+
+    // https://github.com/dustin10/VichUploaderBundle/blob/master/docs/form/vich_file_type.md
+    // https://github.com/dustin10/VichUploaderBundle/blob/master/docs/form/vich_image_type.md
+    def private uploadOptions(UploadField it) '''
+        'allow_delete' => true,
+        'delete_label' => t('Delete «name.formatForDisplay»')->getMessage(),
+        'download_label' => t('Download «name.formatForDisplay»')->getMessage(),
+        «IF isOnlyImageField»
+            // 'imagine_pattern' => 'product_photo_320x240',«/* TODO ImageHelper */»
+        «ELSE»
+            'attr' => [
+                'accept' => '.' . implode(',.', $this->uploadHelper->getAllowedFileExtensions('«entity.name.formatForCode»', '«name.formatForCode»')),
+            ],
+        «ENDIF»
+    '''
 
     def private dispatch fieldType(ListField it) { 'Choice' }
     // https://symfony.com/bundles/EasyAdminBundle/current/fields/ChoiceField.html
@@ -625,25 +680,6 @@ class ConfigureFields implements ControllerMethodInterface {
 
     def private dispatch additionalAttributes(TextField it) '''
         'maxlength' => «length»,
-    '''
-
-    // TODO UploadField
-    def private dispatch customFormType(UploadField it) '''«IF !isOnlyImageField»Upload«ENDIF»'''
-    def private dispatch additionalAttributes(UploadField it) '''
-        «IF !isOnlyImageField»
-            'accept' => '.' . implode(',.', $this->uploadHelper->getAllowedFileExtensions('«entity.name.formatForCode»', '«name.formatForCode»')),
-        «ENDIF»
-    '''
-    def private dispatch additionalOptions(UploadField it) '''
-        «IF !isOnlyImageField»
-            'entity' => $this->getContext()->getEntity()->getInstance(),
-            'allow_deletion' => «(!mandatory).displayBool»,
-            'allowed_extensions' => implode(', ', $this->uploadHelper->getAllowedFileExtensions('«entity.name.formatForCode»', '«name.formatForCode»')),
-            'allowed_size' => '«maxSize»',
-            «IF namingScheme == UploadNamingScheme.USERDEFINEDWITHCOUNTER»
-                'custom_filename' => true,
-            «ENDIF»
-        «ENDIF»
     '''
 
     def private dispatch titleAttribute(ListField it) '''Choose the «name.formatForDisplay».'''

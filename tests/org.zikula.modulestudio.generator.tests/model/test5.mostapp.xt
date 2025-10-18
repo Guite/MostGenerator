@@ -350,31 +350,26 @@ application "SimpleNews" {
                     visibleOnDetail false
                     visibleOnNew false
                     visibleOnEdit false
-                    namingScheme RANDOMCHECKSUM
                     allowSquare false
                 },
                 upload "file2" unique translatable {
                     mandatory true
                     visibleOnIndex false
                     minLength 3
-                    namingScheme FIELDNAMEWITHCOUNTER
                     allowSquare true
                     allowLandscape true
                     allowPortrait true
                 },
-                upload "file3" multiple {
+                upload "file3" {
                     sluggablePosition 3
                     length 50
                     allowedExtensions "foo, bar"
-                    namingScheme USERDEFINEDWITHCOUNTER
                     maxSize "20M"
                     mimeTypes "images and other stuff"
                     allowLandscape false
                     allowPortrait false
                 },
-                upload "file4" {
-                    namingScheme ORIGINALWITHCOUNTER
-                }
+                upload "file4"
             }
             actions {
                 indexAction "Index"

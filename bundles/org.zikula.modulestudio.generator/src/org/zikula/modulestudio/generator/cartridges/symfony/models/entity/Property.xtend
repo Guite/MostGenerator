@@ -42,24 +42,27 @@ class Property {
         persistentProperty(name.formatForCode, fieldTypeAsString(true), fieldTypeAsString(false), '')
     }
 
-    def dispatch persistentProperty(UploadField it) '''
-        /**
-         * «name.formatForDisplayCapital» meta data.
-         */
-        «IF null !== entity»
-            #[ORM\Column«IF nullable»(nullable: true)«ENDIF»]
-            «IF translatable»
-                #[Gedmo\Translatable]
-            «ENDIF»
-        «ENDIF»
-        protected array $«name.formatForCode»Meta = [];
-
-        «persistentProperty(name.formatForCode, fieldTypeAsString(true), fieldTypeAsString(false), '')»
-    '''
-
     def dispatch persistentProperty(ArrayField it) {
         persistentProperty(name.formatForCode, fieldTypeAsString(true), fieldTypeAsString(false), ' = []')
     }
+
+    def dispatch persistentProperty(UploadField it) '''
+        /**
+         * «name.formatForDisplayCapital» file reference.
+         */
+         #[Vich\UploadableField('«mappingName»', '«upProp».name', '«upProp».size', '«upProp».mimeType', '«upProp».originalName', '«upProp».dimensions')]
+        «/* wait for next release of VichUploaderBundle
+        IF mandatory»
+            #[VichAssert\FileRequired(target: '«name.formatForCode»')]
+        «ENDIF*/»
+        «thVal.fieldAnnotationsForUpload(it)»
+        protected ?File $«name.formatForCode»File = null;
+
+        #[ORM\Embedded(class: EmbeddedFile::class)]
+        «persistentProperty(name.formatForCode, 'EmbeddedFile', '', ' = null')»
+    '''
+
+    def private upProp(UploadField it) '''«name.formatForCode»'''
 
     /**
      * Note we use protected and not private to let the developer change things in
@@ -84,7 +87,7 @@ class Property {
                 #[ORM\CustomIdGenerator(class: UuidStringGenerator::class)]
             «ENDIF»
             «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
-            «IF !(it instanceof UserField)»«/* user fields are implemented as join to user entity, see persistentPropertyAdditions */»
+            «IF !(it instanceof UploadField || it instanceof UserField)»«/* upload fields are embeddables; user fields are implemented as join to user entity, see persistentPropertyAdditions */»
                 #[ORM\Column(«IF null !== dbName && !dbName.empty»name: '«dbName.formatForCode»', «ELSEIF it instanceof UploadField»name: '«it.name.formatForCode»', «ENDIF»«persistentPropertyImpl(typeDoctrine.toLowerCase)»«IF unique», unique: true«ENDIF»«IF nullable», nullable: true«ENDIF»«IF primaryKey», options: ['fixed' => true]«ENDIF»)]
             «ENDIF»
             «persistentPropertyAdditions»
@@ -104,8 +107,6 @@ class Property {
                 '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type: Types::DATEINTERVAL«ELSE»«/*type: Types::«type.toUpperCase», */»length: «it.length»«ENDIF»'''
             ArrayField:
                 '''type: Types::«arrayType.literal.toUpperCase»«/*», length: «it.length*/»'''
-            UploadField:
-                '''length: «it.length»'''
             ListField:
                 '''length: «it.length»'''
             DatetimeField:
@@ -183,7 +184,17 @@ class Property {
     '''
 
     def dispatch fieldAccessor(UploadField it) '''
-        «fh.getterAndSetterMethods(it, name.formatForCode, 'string', true, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', false, '[]', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'File', 'File', true, '', fieldSetter)»
+        «fh.getterAndSetterMethods(it, name.formatForCode, 'EmbeddedFile', true, '', '')»
+    '''
+
+    def private fieldSetter(UploadField it) '''
+        $this->«name.formatForCode»File = $«name.formatForCode»File;
+        «IF null !== entity && entity.standardFields»
+            if (null !== $«name.formatForCode»File) {
+                // make entity dirty to call Doctrine event listeners
+                $this->updatedDate = new \DateTimeImmutable();
+            }
+        «ENDIF»
     '''
 }

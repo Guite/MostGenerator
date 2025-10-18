@@ -2,13 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DatetimeField
-import de.guite.modulestudio.metamodel.UploadNamingScheme
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
@@ -18,7 +16,6 @@ class Layout {
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
@@ -123,50 +120,6 @@ class Layout {
             {%- block «appName.formatForDB»_field_translation_row -%}
                 {{ block('form_widget_compound') }}
             {%- endblock -%}
-        «ENDIF»
-        «IF hasUploads»
-
-            {% block «appName.formatForDB»_field_upload_label %}{% endblock %}
-            {% block «appName.formatForDB»_field_upload_row %}
-                {% apply spaceless %}
-                {{ form_row(attribute(form, field_name)) }}
-                <div class="col-md-9 offset-md-3">
-                    {% if not required %}
-                        <small class="form-text text-muted">
-                            <a id="{{ id }}_{{ field_name }}ResetVal" href="javascript:void(0);" class="d-none">{% trans %}Reset to empty value{% endtrans %}</a>
-                        </small>
-                    {% endif %}
-                    <small class="form-text text-muted">
-                        {% trans %}Allowed file extensions{% endtrans %}: <span id="{{ id }}_{{ field_name }}FileExtensions">{{ allowed_extensions|default('') }}</span>
-                    </small>
-                    {% if allowed_size|default %}
-                        <small class="form-text text-muted">
-                            {% trans %}Allowed file size{% endtrans %}: {{ allowed_size }}
-                        </small>
-                    {% endif %}
-                    «IF hasUploadNamingScheme(UploadNamingScheme.USERDEFINEDWITHCOUNTER)»
-                        {% if has_custom_filename %}
-                            {{ form_row(attribute(form, field_name ~ 'CustomFileName')) }}
-                        {% endif %}
-                    «ENDIF»
-                    {% if file_path|default %}
-                        <small class="form-text text-muted">
-                            {% trans %}Current file{% endtrans %}:
-                            <a href="{{ file_url }}" title="{{ 'Open file'|trans|e('html_attr') }}"{% if file_meta.isImage %} class="image-link"{% endif %}>
-                            {% if file_meta.isImage %}
-                                <img src="{{ file_path|«appName.formatForDB»_relativePath|imagine_filter('zkroot', thumb_runtime_options) }}" alt="{{ edited_entity|«appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumb_runtime_options.thumbnail.size[0] }}" height="{{ thumb_runtime_options.thumbnail.size[1] }}" class="img-thumbnail" />
-                            {% else %}
-                                {% trans %}Download{% endtrans %} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
-                            {% endif %}
-                            </a>
-                        </small>
-                        {% if allow_deletion and not required and form[field_name ~ 'DeleteFile'] is defined %}
-                            {{ form_row(attribute(form, field_name ~ 'DeleteFile')) }}
-                        {% endif %}
-                    {% endif %}
-                </div>
-                {% endapply %}
-            {% endblock %}
         «ENDIF»
     '''
 

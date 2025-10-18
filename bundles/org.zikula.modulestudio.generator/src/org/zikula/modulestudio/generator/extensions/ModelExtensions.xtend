@@ -20,7 +20,6 @@ import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TextRole
 import de.guite.modulestudio.metamodel.UploadField
-import de.guite.modulestudio.metamodel.UploadNamingScheme
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
 
@@ -68,6 +67,13 @@ class ModelExtensions {
     }
 
     /**
+     * Returns a list of all upload fields.
+     */
+    def getAllUploadFields(Application it) {
+        getUploadEntities.map[fields].flatten.filter(UploadField) + getUploadVariables
+    }
+
+    /**
      * Returns a list of all upload variables.
      */
     def getUploadVariables(Application it) {
@@ -82,19 +88,20 @@ class ModelExtensions {
     }
 
     /**
-     * Checks whether an upload field with a certain upload naming scheme exists or not.
-     */
-    def hasUploadNamingScheme(Application it, UploadNamingScheme scheme) {
-        !entities.map[fields].flatten.filter(UploadField).filter[namingScheme == scheme].empty
-        ||
-        !variables.map[fields].flatten.filter(UploadField).filter[namingScheme == scheme].empty
-    }
-
-    /**
      * Returns a list of all entities with at least one upload field.
      */
     def getUploadEntities(Application it) {
         entities.filter[hasUploadFieldsEntity]
+    }
+
+    def mappingName(UploadField it) {
+        val containerSegment = if (null !== entity) entity.name.formatForDB else 'settings'
+        application.vendor.formatForDB + '_' + application.name.formatForDB + '_' + containerSegment + '_' + name.formatForDB
+    }
+
+    def mappingPath(UploadField it) {
+        val containerSegment = if (null !== entity) entity.nameMultiple.formatForDB else 'settings'
+        '/uploads/' + application.appName + '/' + containerSegment + '/' + name.formatForCode
     }
 
     /**

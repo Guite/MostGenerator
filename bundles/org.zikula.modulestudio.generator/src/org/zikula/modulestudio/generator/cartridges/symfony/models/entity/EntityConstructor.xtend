@@ -46,6 +46,9 @@ class EntityConstructor {
 
     def private constructorImpl(Entity it) '''
         $this->set«getPrimaryKey.name.formatForCodeCapital»(Uuid::v4());
+        «FOR field : getUploadFieldsEntity»
+            $this->«field.name.formatForCode» = new EmbeddedFile();
+        «ENDFOR»
         «IF isIndexByTarget»
 
             «val indexRelation = incoming.filter[isIndexed].head»
