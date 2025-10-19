@@ -7,7 +7,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.Co
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.EntityDisplayHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.ExpiryHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.FeatureActivationHelper
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.ImageHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.ListEntriesHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.LoggableHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.ModelHelper
@@ -43,7 +42,6 @@ class HelperServices {
             new FeatureActivationHelper().generate(it, fsa)
         }
         if (hasUploads) {
-            new ImageHelper().generate(it, fsa)
             new UploadHelper().generate(it, fsa)
         }
         if (hasListFields) {

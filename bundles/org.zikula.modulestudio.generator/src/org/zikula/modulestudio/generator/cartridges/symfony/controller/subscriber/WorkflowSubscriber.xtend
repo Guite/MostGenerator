@@ -23,13 +23,13 @@ class WorkflowSubscriber {
         public static function getSubscribedEvents(): array
         {
             return [
-                'workflow.guard' => 'onGuard',
-                'workflow.leave' => 'onLeave',
-                'workflow.transition' => 'onTransition',
-                'workflow.enter' => 'onEnter',
-                'workflow.entered' => 'onEntered',
-                'workflow.completed' => 'onCompleted',
-                'workflow.announce' => 'onAnnounce',
+                WorkflowEvents::GUARD => 'onGuard',
+                WorkflowEvents::LEAVE => 'onLeave',
+                WorkflowEvents::TRANSITION => 'onTransition',
+                WorkflowEvents::ENTER => 'onEnter',
+                WorkflowEvents::ENTERED => 'onEntered',
+                WorkflowEvents::COMPLETED => 'onCompleted',
+                WorkflowEvents::ANNOUNCE => 'onAnnounce',
             ];
         }
 
@@ -61,7 +61,7 @@ class WorkflowSubscriber {
          * Carries the marking with the initial places.
          «commonDocs('leave')»
          */
-        public function onLeave(Event $event): void
+        public function onLeave(LeaveEvent $event): void
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
@@ -77,7 +77,7 @@ class WorkflowSubscriber {
          * Carries the marking with the current places.
          «commonDocs('transition')»
          */
-        public function onTransition(Event $event): void
+        public function onTransition(TransitionEvent $event): void
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
@@ -93,7 +93,7 @@ class WorkflowSubscriber {
          * This means the marking of the subject is not yet updated with the new places.
          «commonDocs('enter')»
          */
-        public function onEnter(Event $event): void
+        public function onEnter(EnterEvent $event): void
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
@@ -110,7 +110,7 @@ class WorkflowSubscriber {
          * This is a good place to flush data in Doctrine based on the entity not being updated yet.
          «commonDocs('entered')»
          */
-        public function onEntered(Event $event): void
+        public function onEntered(EnteredEvent $event): void
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
@@ -125,7 +125,7 @@ class WorkflowSubscriber {
          * Occurs after the subject has completed a transition.
          «commonDocs('completed')»
          */
-        public function onCompleted(Event $event): void
+        public function onCompleted(CompletedEvent $event): void
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
@@ -141,7 +141,7 @@ class WorkflowSubscriber {
          * Triggered for each place that now is available for the subject.
          «commonDocs('announce')»
          */
-        public function onAnnounce(Event $event): void
+        public function onAnnounce(AnnounceEvent $event): void
         {
             /** @var EntityInterface $entity */
             $entity = $event->getSubject();
@@ -276,7 +276,7 @@ class WorkflowSubscriber {
 
     def private isEntityManagedByThisBundle(Application it) '''
         /**
-         * Checks whether this listener is responsible for the given entity or not.
+         * Checks whether this subscriber is responsible for the given entity or not.
          */
         protected function isEntityManagedByThisBundle(object $entity): bool
         {

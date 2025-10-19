@@ -77,9 +77,6 @@ class BundleFile {
         if (hasAutomaticExpiryHandling || hasLoggable) {
             imports.add(appNamespace + '\\Helper\\ExpiryHelper')
         }
-        if (hasUploads) {
-            imports.add(appNamespace + '\\Helper\\ImageHelper')
-        }
         if (needsApproval) {
             imports.add(appNamespace + '\\Helper\\NotificationHelper')
         }
@@ -195,10 +192,6 @@ class BundleFile {
             $services->get(ExpiryHelper::class)
                 ->arg('$loggableConfig', $config['versioning']);
         «ENDIF»
-        «IF hasUploads»
-            $services->get(ImageHelper::class)
-                ->arg('$imageConfig', $config['images']);
-        «ENDIF»
         «IF hasLoggable»
             $services->get(PermissionHelper::class)
                 ->arg('$loggableConfig', $config['versioning']);
@@ -241,10 +234,12 @@ class BundleFile {
         */»
         // hard defaults (app can override later)
         $uploadBase = '%kernel.project_dir%/public';
+        $uploadPath = '/uploads/«appName»/';
+        $namer = 'Vich\\UploaderBundle\\Naming\\SmartUniqueNamer';
         $builder->prependExtensionConfig('vich_uploader', [
             'mappings' => [
                 «FOR field : getAllUploadFields»
-                    «vichUploaderMapping(field, '$uploadBase')»
+                    «vichUploaderMapping(field)»
                 «ENDFOR»
             ],
         ]);
@@ -256,11 +251,12 @@ class BundleFile {
         if ($this->mainBuilder instanceof ContainerBuilder) {
             // for example: add something depending on own bundle config
             $uploadBase = $config['upload_base'] ?? '%kernel.project_dir%/public';
-
+            $uploadPath = '/uploads/«appName»/';
+            $namer = 'Vich\\UploaderBundle\\Naming\\SmartUniqueNamer';
             $this->mainBuilder->prependExtensionConfig('vich_uploader', [
                 'mappings' => [
                     «FOR field : getAllUploadFields»
-                        «vichUploaderMapping(field, '$uploadBase')»
+                        «vichUploaderMapping(field)»
                     «ENDFOR»
                 ],
             ]);
@@ -268,11 +264,11 @@ class BundleFile {
     '''*/
 
     // https://github.com/dustin10/VichUploaderBundle/blob/master/docs/index.md
-    def private vichUploaderMapping(Application app, UploadField it, String uploadBase) '''
+    def private vichUploaderMapping(Application app, UploadField it) '''
         '«mappingName»' => [
-            'uri_prefix' => '«mappingPath»',
-            'upload_destination' => «uploadBase» . '«mappingPath»',
-            'namer' => 'Vich\\UploaderBundle\\Naming\\SmartUniqueNamer',
+            'uri_prefix' => $uploadPath . '«mappingPath»',
+            'upload_destination' => $uploadBase . $uploadPath . '«mappingPath»',
+            'namer' => $namer,
         ],
     '''
 

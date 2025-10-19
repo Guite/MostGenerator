@@ -101,7 +101,7 @@ class ModelExtensions {
 
     def mappingPath(UploadField it) {
         val containerSegment = if (null !== entity) entity.nameMultiple.formatForDB else 'settings'
-        '/uploads/' + application.appName + '/' + containerSegment + '/' + name.formatForCode
+        containerSegment + '/' + name.formatForCode
     }
 
     /**

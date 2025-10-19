@@ -387,36 +387,6 @@ class PersistenceTransformer {
                     documentation = 'The maximum image height in pixels.'
                     unit = 'pixels'
                 ]
-                val thumbModeField = factory.createListField => [
-                    name = 'thumbnailMode' + fieldSuffix
-                    documentation = 'Thumbnail mode (inset or outbound).'
-                ]
-                thumbModeField.items += factory.createListFieldItem => [
-                    name = 'Inset'
-                    value = 'inset'
-                    ^default = true
-                ]
-                thumbModeField.items += factory.createListFieldItem => [
-                    name = 'Outbound'
-                    value = 'outbound'
-                ]
-                varContainer.fields += thumbModeField
-                for (action : #['index', 'detail', 'edit']) {
-                    if ((action == 'index' && entity.hasIndexAction) || (action == 'detail' && entity.hasDetailAction) || (action == 'edit' && entity.hasEditAction)) {
-                        varContainer.fields += factory.createNumberField => [
-                            name = 'thumbnailWidth' + fieldSuffix + action.toFirstUpper
-                            defaultValue = if (action == 'index') '32' else '240'
-                            documentation = 'Thumbnail width on ' + action + ' pages in pixels.'
-                            unit = 'pixels'
-                        ]
-                        varContainer.fields += factory.createNumberField => [
-                            name = 'thumbnailHeight' + fieldSuffix + action.toFirstUpper
-                            defaultValue = if (action == 'index') '24' else '180'
-                            documentation = 'Thumbnail height on ' + action + ' pages in pixels.'
-                            unit = 'pixels'
-                        ]
-                    }
-                }
             }
         }
 

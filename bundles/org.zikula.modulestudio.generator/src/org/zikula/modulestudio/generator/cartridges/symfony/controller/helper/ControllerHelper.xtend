@@ -59,9 +59,6 @@ class ControllerHelper {
         if (needsFeatureActivationHelper) {
             imports.add(appNamespace + '\\Helper\\FeatureActivationHelper')
         }
-        if (!getUploadEntities.empty) {
-            imports.add(appNamespace + '\\Helper\\ImageHelper')
-        }
         imports
     }
 
@@ -96,8 +93,7 @@ class ControllerHelper {
                 protected readonly LoggerInterface $logger,
             «ENDIF»
             protected readonly EntityFactory $entityFactory,
-            protected readonly PermissionHelper $permissionHelper«IF !getUploadEntities.empty»,
-            protected readonly ImageHelper $imageHelper«ENDIF»«IF needsFeatureActivationHelper»,
+            protected readonly PermissionHelper $permissionHelper«IF needsFeatureActivationHelper»,
             protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasAutomaticExpiryHandling || hasLoggable»,
             ExpiryHelper $expiryHelper«ENDIF»«IF hasIndexActions»,
             protected readonly array $listViewConfig«ENDIF»
@@ -408,34 +404,6 @@ class ControllerHelper {
                     $routeNameParts = explode('_', $routeName);
                     $args['action'] = end($routeNameParts);
                 }
-                «IF !getUploadEntities.empty»
-
-                    // initialise Imagine runtime options
-                    «FOR entity : getUploadEntities»
-                        if ('«entity.name.formatForCode»' === $objectType) {
-                            $thumbRuntimeOptions = [];
-                            «FOR uploadField : entity.getUploadFieldsEntity»
-                                $thumbRuntimeOptions[$objectType . '«uploadField.name.formatForCodeCapital»'] = $this->imageHelper->getRuntimeOptions(
-                                    $objectType,
-                                    '«uploadField.name.formatForCode»',
-                                    $context,
-                                    $args
-                                );
-                            «ENDFOR»
-                            $parameters['thumbRuntimeOptions'] = $thumbRuntimeOptions;
-                        }
-                    «ENDFOR»
-                    if (in_array($args['action'], ['index', 'detail', 'edit'], true)) {
-                        // use separate preset for images in related items
-                        $parameters['relationThumbRuntimeOptions'] = $this->imageHelper->getCustomRuntimeOptions(
-                            '',
-                            '',
-                            '«appName»_relateditem',
-                            $context,
-                            $args
-                        );
-                    }
-                «ENDIF»
             }
             $parameters['permissionHelper'] = $this->permissionHelper;
             «IF needsFeatureActivationHelper»

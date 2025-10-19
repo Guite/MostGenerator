@@ -95,181 +95,72 @@ class UploadHelper {
         ) {
             $this->setTranslator($translator);
 
-            $this->allowedObjectTypes = [«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
             $this->imageFileTypes = ['gif', 'jpeg', 'jpg', 'png'«/*, 'svg' */»];
-            $this->forbiddenFileTypes = [
-                'cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5',
-                'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml',
-            ];
         }
 
-        «performFileUpload»
-
-        «validateFileUpload»
-
-        «getAllowedFileExtensions»
-
-        «isAllowedFileExtension»
+        «polishUploadedFile»
 
         «determineFileExtension»
 
-        «determineFileName»
-
-        «deleteUploadFile»
+        «getAllowedFileExtensions»
 
         «getFileBaseFolder»
 
         «checkAndCreateAllUploadFolders»
 
         «checkAndCreateUploadFolder»
+        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
+
+            «checkIfImagineCacheDirectoryExists»
+        «ENDIF»
     '''
 
-    def private performFileUpload(Application it) '''
+    def private polishUploadedFile(Application it) '''
         /**
-         * Process a file upload.
+         * Custom processing for a newly created file upload.
          */
-        public function performFileUpload(string $objectType, UploadedFile $file, string $fieldName): array
+        public function polishUploadedFile(UploadedFile $file, string $objectType, string $fieldName): array
         {
-            $result = [
-                'fileName' => '',
-                'metaData' => [],
-            ];
-
-            // check whether uploads are allowed for the given object type
-            if (!in_array($objectType, $this->allowedObjectTypes, true)) {
-                return $result;
-            }
-
-            // perform validation
-            if (!$this->validateFileUpload($objectType, $file, $fieldName)) {
-                return $result;
-            }
-
-            // build the file name
-            $fileName = $file->getClientOriginalName();
-            $fileNameParts = explode('.', $fileName);
             $extension = $this->determineFileExtension($file);
-            $fileNameParts[count($fileNameParts) - 1] = $extension;
-            $fileName = implode('.', $fileNameParts);
+            $filePath = $file->getPathname();
 
-            $request = $this->requestStack->getCurrentRequest();
-            $session = $request->hasSession() ? $request->getSession() : null;
-            $flashBag = null !== $session ? $session->getFlashBag() : null;
+            «doImageFileValidation('$filePath')»
 
-            // retrieve the final file name
-            try {
-                $basePath = $this->projectDir . '/' . $this->getFileBaseFolder($objectType, $fieldName);
-            } catch (Exception $exception) {
-                if (null !== $flashBag) {
-                    $flashBag->add('error', $exception->getMessage());
-                }
-                $logArgs = [
-                    'app' => '«appName»',
-                    'user' => $this->security->getUser()?->getUserIdentifier(),
-                    'entity' => $objectType,
-                    'field' => $fieldName,
-                ];
-                $this->logger->error(
-                    '{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.'
-                        . ' ' . $exception->getMessage(),
-                    $logArgs
-                );
-
-                return $result;
+            if (!$isImage || 'gif' === $extension) {
+                return $filePath;
             }
-            $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
-            $destinationFilePath = $basePath . $fileName;
-            $targetFile = $file->move($basePath, $fileName);
+            // write result into a new, unique temp file and return its path
+            $tempFilePath = tempnam(sys_get_temp_dir(), 'img_') . '.' . $extension;
 
-            «doImageFileValidation('$destinationFilePath')»
+            // fix wrong orientation and shrink too large image if needed
+            @ini_set('memory_limit', '1G');
+            $imagine = new Imagine();
+            $image = $imagine->open($tempFilePath);
+            $autorotateFilter = new Autorotate();
+            $image = $autorotateFilter->apply($image);
+            $image->save($tempFilePath);
 
-            // collect data to return
-            $result['fileName'] = $fileName;
+            // check if shrinking functionality is enabled
+            $configSuffix = s($objectType . '_' . $fieldName)->snake();
 
-            if ($isImage && 'gif' !== $extension) {
-                // fix wrong orientation and shrink too large image if needed
-                @ini_set('memory_limit', '1G');
-                $imagine = new Imagine();
-                $image = $imagine->open($destinationFilePath);
-                $autorotateFilter = new Autorotate();
-                $image = $autorotateFilter->apply($image);
-                $image->save($destinationFilePath);
+            if ($this->imageConfig['enable_shrinking_for_' . $configSuffix]) {
+                // check for maximum size
+                $maxWidth = $this->imageConfig['shrink_width_' . $configSuffix];
+                $maxHeight = $this->imageConfig['shrink_height_' . $configSuffix];
+                $thumbMode = 'inset';
 
-                // check if shrinking functionality is enabled
-                $configSuffix = s($objectType . '_' . $fieldName)->snake();
-
-                if ($this->imageConfig['enable_shrinking_for_' . $configSuffix]) {
-                    // check for maximum size
-                    $maxWidth = $this->imageConfig['shrink_width_' . $configSuffix];
-                    $maxHeight = $this->imageConfig['shrink_height_' . $configSuffix];
-                    $thumbMode = $this->imageConfig['thumbnail_mode_' . $configSuffix];
-
-                    $imgInfo = getimagesize($destinationFilePath);
-                    if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
-                        // resize to allowed maximum size
-                        $imagine = new Imagine();
-                        $image = $imagine->open($destinationFilePath);
-                        $thumb = $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode);
-                        $thumb->save($destinationFilePath);
-                    }
+                $imgInfo = getimagesize($tempFilePath);
+                if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
+                    // resize to allowed maximum size
+                    $imagine = new Imagine();
+                    $image = $imagine->open($tempFilePath);
+                    $thumb = $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode);
+                    $thumb->save($tempFilePath);
                 }
             }
 
-            return $result;
-        }
-    '''
-
-    def private validateFileUpload(Application it) '''
-        /**
-         * Check if an upload file meets all validation criteria.
-         */
-        protected function validateFileUpload(string $objectType, UploadedFile $file, string $fieldName): bool
-        {
-            $request = $this->requestStack->getCurrentRequest();
-            $session = $request->hasSession() ? $request->getSession() : null;
-            $flashBag = null !== $session ? $session->getFlashBag() : null;
-
-            // check if a file has been uploaded properly without errors
-            if (UPLOAD_ERR_OK !== $file->getError()) {
-                if (null !== $flashBag) {
-                    $flashBag->add('error', $file->getErrorMessage());
-                }
-                $this->logger->error(
-                    '{app}: User {user} tried to upload a file with errors: ' . $file->getErrorMessage(),
-                    ['app' => '«appName»', 'user' => $this->security->getUser()?->getUserIdentifier()]
-                );
-
-                return false;
-            }
-
-            // extract file extension
-            $fileName = $file->getClientOriginalName();
-            $extension = $this->determineFileExtension($file);
-
-            // validate extension
-            $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
-            if (false === $isValidExtension) {
-                if (null !== $flashBag) {
-                    $flashBag->add(
-                        'error',
-                        $this->trans('Error! This file type is not allowed. Please choose another file format.')
-                    );
-                }
-                $logArgs = [
-                    'app' => '«appName»',
-                    'user' => $this->security->getUser()?->getUserIdentifier(),
-                    'extension' => $extension,
-                ];
-                $this->logger->error(
-                    '{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").',
-                    $logArgs
-                );
-
-                return false;
-            }
-
-            return true;
+            return $tempFilePath;
         }
     '''
 
@@ -287,65 +178,9 @@ class UploadHelper {
                     ['app' => '«appName»', 'user' => $this->security->getUser()?->getUserIdentifier()]
                 );
 
-                return $result;
+                return «fileVar»;
             }
         }
-    '''
-
-    def private getAllowedFileExtensions(Application it) '''
-        /**
-         * Determines the allowed file extensions for a given object type and field.
-         *
-         * @return string[] List of allowed file extensions
-         */
-        public function getAllowedFileExtensions(string $objectType, string $fieldName): array
-        {
-            // determine the allowed extensions
-            $allowedExtensions = [];
-            switch ($objectType) {
-                «FOR entity : getUploadEntities.filter(Entity)»«entity.getAllowedFileExtensionsEntityCase»«ENDFOR»
-            }
-
-            return $allowedExtensions;
-        }
-    '''
-
-    def private isAllowedFileExtension(Application it) '''
-        /**
-         * Determines whether a certain file extension is allowed for a given object type and field.
-         */
-        protected function isAllowedFileExtension(string $objectType, string $fieldName, string $extension): bool
-        {
-            // determine the allowed extensions
-            $allowedExtensions = $this->getAllowedFileExtensions($objectType, $fieldName);
-
-            if (count($allowedExtensions) > 0 && '*' !== $allowedExtensions[0]) {
-                if (!in_array($extension, $allowedExtensions, true)) {
-                    return false;
-                }
-            }
-
-            return !in_array($extension, $this->forbiddenFileTypes, true);
-        }
-    '''
-
-    def private getAllowedFileExtensionsEntityCase(Entity it) '''
-        «val uploadFields = getUploadFieldsEntity»
-        case '«name.formatForCode»':
-            «IF uploadFields.size > 1»
-                switch ($fieldName) {
-                    «FOR uploadField : uploadFields»«uploadField.getAllowedFileExtensionsFieldCase»«ENDFOR»
-                }
-            «ELSE»
-                $allowedExtensions = ['«uploadFields.head.allowedExtensions.replace(', ', "', '")»'];
-            «ENDIF»
-            break;
-    '''
-
-    def private getAllowedFileExtensionsFieldCase(UploadField it) '''
-        case '«name.formatForCode»':
-            $allowedExtensions = ['«allowedExtensions.replace(', ', "', '")»'];
-            break;
     '''
 
     def private determineFileExtension(Application it) '''
@@ -369,76 +204,41 @@ class UploadHelper {
         }
     '''
 
-    def private determineFileName(Application it) '''
+    def private getAllowedFileExtensions(Application it) '''
         /**
-         * Determines the final filename for a given input filename.
-         * It considers different strategies for computing the result.
+         * Determines the allowed file extensions for a given object type and field.
+         *
+         * @return string[] List of allowed file extensions
          */
-        protected function determineFileName(string $objectType, string $fieldName, string $basePath, string $fileName, string $extension): string
+        public function getAllowedFileExtensions(string $objectType, string $fieldName): array
         {
-            // clean the given file name
-            $fileNameCharCount = mb_strlen($fileName);
-            for ($y = 0; $y < $fileNameCharCount; ++$y) {
-                if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
-                    $fileName[$y] = '_';
-                }
+            // determine the allowed extensions
+            $allowedExtensions = [];
+            switch ($objectType) {
+                «FOR entity : getUploadEntities.filter(Entity)»«entity.getAllowedFileExtensionsEntityCase»«ENDFOR»
             }
-            $backupFileName = $fileName;
 
-            $iterIndex = -1;
-            do {
-                // original file name with counter
-                if (0 < $iterIndex) {
-                    // strip off extension
-                    $fileName = str_replace('.' . $extension, '', $backupFileName);
-                    // append incremented number
-                    $fileName .= (string) ++$iterIndex;
-                    // readd extension
-                    $fileName .= '.' . $extension;
-                } else {
-                    ++$iterIndex;
-                }
-            } while (file_exists($basePath . $fileName)); // repeat until we have a new name
-
-            // return the final file name
-            return $fileName;
+            return $allowedExtensions;
         }
     '''
-    def private deleteUploadFile(Application it) '''
-        /**
-         * Deletes an existing upload file.
-         */
-        public function deleteUploadFile(EntityInterface $entity, string $fieldName): EntityInterface
-        {
-            $objectType = $entity->get_objectType();
-            if (!in_array($objectType, $this->allowedObjectTypes, true)) {
-                return false;
-            }
 
-            if (empty($entity[$fieldName])) {
-                return $entity;
-            }
-
-            «val loggableEntitiesWithUploads = getUploadEntities.filter[loggable]»
-            // remove the file«IF !loggableEntitiesWithUploads.empty» (but not for loggable entities)«ENDIF»
-            «IF !loggableEntitiesWithUploads.empty»
-                if (!in_array($objectType, ['«loggableEntitiesWithUploads.map[name.formatForCode].join('\', \'')»'])) {
+    def private getAllowedFileExtensionsEntityCase(Entity it) '''
+        «val uploadFields = getUploadFieldsEntity»
+        case '«name.formatForCode»':
+            «IF uploadFields.size > 1»
+                switch ($fieldName) {
+                    «FOR uploadField : uploadFields»«uploadField.getAllowedFileExtensionsFieldCase»«ENDFOR»
+                }
+            «ELSE»
+                $allowedExtensions = ['«uploadFields.head.allowedExtensions.replace(', ', "', '")»'];
             «ENDIF»
-            if (is_array($entity[$fieldName]) && isset($entity[$fieldName][$fieldName])) {
-                $entity[$fieldName] = $entity[$fieldName][$fieldName];
-            }
-            $filePath = $entity[$fieldName] instanceof File ? $entity[$fieldName]->getPathname() : $entity[$fieldName];
-            if (file_exists($filePath) && !unlink($filePath)) {
-                return false;
-            }
-            «IF !loggableEntitiesWithUploads.empty»
-            }
-            «ENDIF»
+            break;
+    '''
 
-            $entity[$fieldName] = null;
-
-            return $entity;
-        }
+    def private getAllowedFileExtensionsFieldCase(UploadField it) '''
+        case '«name.formatForCode»':
+            $allowedExtensions = ['«allowedExtensions.replace(', ', "', '")»'];
+            break;
     '''
 
     def private getFileBaseFolder(Application it) '''
@@ -605,6 +405,43 @@ class UploadHelper {
             }
 
             return true;
+        }
+    '''
+
+    def private checkIfImagineCacheDirectoryExists(Application it) '''
+        /**
+         * Check if cache directory exists and create it if needed.
+         */
+        protected function checkIfImagineCacheDirectoryExists(): void
+        {
+            $cacheDirectory = $this->projectDir . '/public/media/cache';
+            $fs = new Filesystem();
+            if ($fs->exists($cacheDirectory)) {
+                return;
+            }
+            try {
+                $parentDirectory = mb_substr($cacheDirectory, 0, -6);
+                if (!$fs->exists($parentDirectory)) {
+                    $fs->mkdir($parentDirectory);
+                }
+                $fs->mkdir($cacheDirectory);
+            } catch (IOExceptionInterface) {
+                «warningAboutCacheDirectory»
+            }
+        }
+    '''
+
+    def private warningAboutCacheDirectory(Application it) '''
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request->hasSession() && $session = $request->getSession()) {
+            $session->getFlashBag()->add(
+                'warning',
+                $this->trans(
+                    'The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.',
+                    ['%directory%' => $cacheDirectory],
+                    'config'
+                )
+            );
         }
     '''
 

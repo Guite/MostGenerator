@@ -133,33 +133,12 @@ class SimpleFields {
     def dispatch displayField(UploadField it, String objName, String page) {
         val appNameSmall = application.appName.formatForDB
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv') '''{{ «realName» }}'''
-        else if (page == 'viewxml') '''
-            {% if «realName» is not empty and «realName»Meta|default %} extension="{{ «realName»Meta.extension }}" size="{{ «realName»Meta.size }}" isImage="{% if «realName»Meta.isImage %}true{% else %}false{% endif %}"{% if «realName»Meta.isImage %} width="{{ «realName»Meta.width }}" height="{{ «realName»Meta.height }}" format="{{ «realName»Meta.format }}"{% endif %}{% endif %}>{{ «realName» }}'''
-        else if (page == 'viewjson') '''
-            "path": "{{ «realName»«IF page == 'viewjson'»|e('html_attr')«ENDIF» }}"
-            {% if «realName» is not empty and «realName»Meta|default %},
-                "extension": "{{ «realName»Meta.extension }}",
-                "size": "{{ «realName»Meta.size }}",
-                "isImage": {% if «realName»Meta.isImage %}true{% else %}false{% endif %}{% if «realName»Meta.isImage %},
-                    "width": "{{ «realName»Meta.width }}",
-                    "height": "{{ «realName»Meta.height }}",
-                    "format": "{{ «realName»Meta.format }}"
-                {% endif %}
-            {% endif %}
         '''
-        else '''
             «IF !mandatory»
-                {% if «realName» is not empty and «realName»Meta|default %}
-            «ELSE»{% if «realName»Meta|default %}
+                {% if «realName» is not empty %}
             «ENDIF»
-            <a href="{{ «realName»Url }}" title="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"{% if «realName»Meta.isImage %} class="image-link"{% endif %}>
-            {% if «realName»Meta.isImage %}
-                {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
-                <img src="{{ «realName».getPathname()|«application.appName.formatForDB»_relativePath|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
-            {% else %}
+            <a href="{{ «realName»Url }}" title="{{ «objName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">
                 {% trans from 'messages' %}Download{% endtrans %} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getPathname(), false, false) }})
-            {% endif %}
             </a>
             «IF !mandatory»
                 {% else %}&nbsp;{% endif %}

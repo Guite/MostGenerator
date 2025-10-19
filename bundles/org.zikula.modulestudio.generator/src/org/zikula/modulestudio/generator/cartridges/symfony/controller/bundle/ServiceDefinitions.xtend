@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -53,11 +52,6 @@ class ServiceDefinitions {
                 lazy: true
 
             «specificServices»
-            «IF hasImageFields || !getAllVariables.filter(UploadField).filter[isImageField].empty»
-
-                liip_imagine.cache.signer:
-                    class: «appNamespace»\Imagine\Cache\DummySigner
-            «ENDIF»
 
             «repositoryBindings»
     '''

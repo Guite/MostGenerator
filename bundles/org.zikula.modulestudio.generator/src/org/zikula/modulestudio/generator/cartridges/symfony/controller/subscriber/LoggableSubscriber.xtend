@@ -78,7 +78,7 @@ class LoggableSubscriber {
         }
 
         /**
-         * Checks whether this listener is responsible for the given entity or not.
+         * Checks whether this subscriber is responsible for the given entity or not.
          */
         protected function isEntityManagedByThisBundle(object $entity): bool
         {

@@ -88,6 +88,7 @@ class ConfigureFields implements ControllerMethodInterface {
         }
         if (hasUploadFieldsEntity) {
             imports.add(nsEabField + 'Field')
+            imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Asset')
             if (!getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty) {
                 imports.add('Vich\\UploaderBundle\\Form\\Type\\VichFileType')
                 imports.add('Vich\\UploaderBundle\\Templating\\Helper\\UploaderHelper')
@@ -130,8 +131,19 @@ class ConfigureFields implements ControllerMethodInterface {
     '''
 
     def private methodBody(Entity it) '''
-        «IF !getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty»
-            $uploaderHelper = $this->uploaderHelper;
+        «IF hasUploadFieldsEntity»
+            «IF !getUploadFieldsEntity.filter[f|f.isOnlyImageField].empty»
+                $imaginePattern = match($pageName) {
+                    Crud::PAGE_DETAIL => 'thumb_detail',
+                    Crud::PAGE_EDIT => 'thumb_edit',
+                    Crud::PAGE_INDEX => 'thumb_list',
+                    Crud::PAGE_NEW => 'thumb_edit',
+                    default => 'zkroot',
+                };«/* TODO later: utilize thumb_related (for related items) */»
+            «ENDIF»
+            «IF !getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty»
+                $uploaderHelper = $this->uploaderHelper;
+            «ENDIF»
         «ENDIF»
         «FOR field : getAllEntityFields»
             «IF field instanceof UploadField»
@@ -195,7 +207,7 @@ class ConfigureFields implements ControllerMethodInterface {
             «/* setUnlockConfirmationMessage(...) */»;
         } else {
             yield TextField::new('«name.formatForCode»', t('«name.formatForDisplayCapital»'))
-                ->setFormTypeOption('required', false)
+                ->setRequired(false)
             ;
         }
     '''
@@ -452,7 +464,7 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch options(UploadField it) {
         var calls = commonOptions
         if (isOnlyImageField) {
-            calls += '''->setBasePath($basePath)'''
+            calls += '''->setBasePath($basePath)->setTemplatePath('crud/field/image_imagine.html.twig')->setCustomOption('imaginePattern', $imaginePattern)'''
         }
         calls
     }
@@ -460,10 +472,10 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch formatValue(UploadField it) '''
         «IF !isOnlyImageField»
             static fn (string $value, «entity.name.formatForCodeCapital» $entity)
-                => '<a href="'
+                => '<a class="ea-vich-file-name" href="'
                  . $uploaderHelper->asset($entity, '«name.formatForCode»File')
-                 . '" title="' . t('Download «name.formatForDisplay»') . '" target="_blank">'
-                 . t('Download') . '</a>'
+                 . '" title="' . t('Download «name.formatForDisplay»') . '">'
+                 . '<i class="fa fa-download"></i>&nbsp;' . t('Download') . '</a>'
         «ENDIF»
     '''
 
@@ -475,6 +487,7 @@ class ConfigureFields implements ControllerMethodInterface {
             ->setFormTypeOptions([
                 «uploadOptions»
             ])
+            ->addJsFiles(Asset::fromEasyAdminAssetPackage('field-image.js'))
         ;
     '''
 
@@ -486,11 +499,11 @@ class ConfigureFields implements ControllerMethodInterface {
     // https://github.com/dustin10/VichUploaderBundle/blob/master/docs/form/vich_file_type.md
     // https://github.com/dustin10/VichUploaderBundle/blob/master/docs/form/vich_image_type.md
     def private uploadOptions(UploadField it) '''
-        'allow_delete' => true,
+        'allow_delete' => «(!mandatory).displayBool»,
         'delete_label' => t('Delete «name.formatForDisplay»')->getMessage(),
         'download_label' => t('Download «name.formatForDisplay»')->getMessage(),
         «IF isOnlyImageField»
-            // 'imagine_pattern' => 'product_photo_320x240',«/* TODO ImageHelper */»
+            'imagine_pattern' => $imaginePattern,
         «ELSE»
             'attr' => [
                 'accept' => '.' . implode(',.', $this->uploadHelper->getAllowedFileExtensions('«entity.name.formatForCode»', '«name.formatForCode»')),
@@ -756,13 +769,6 @@ class ConfigureFields implements ControllerMethodInterface {
         }
         calls
     }
-
-/*
-    def private formType(Relationship it, Boolean autoComplete) {
-        if (autoComplete) '''«application.appNamespace»\Form\Type\Field\AutoCompletionRelation'''
-        else '''Symfony\Bridge\Doctrine\Form\Type\Entity'''
-    }
-*/
 
     def private relationFormOptions(Relationship it, Boolean outgoing) '''
         «relationHelp(outgoing)»

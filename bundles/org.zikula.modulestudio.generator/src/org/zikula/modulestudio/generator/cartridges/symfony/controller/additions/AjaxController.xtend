@@ -52,9 +52,6 @@ class AjaxController {
         if (hasTrees) {
             imports.add(appNamespace + '\\Helper\\EntityDisplayHelper')
         }
-        if (hasImageFields) {
-            imports.add(appNamespace + '\\Helper\\ImageHelper')
-        }
         if (hasTrees) {
             imports.add(appNamespace + '\\Helper\\WorkflowHelper')
         }

@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.FileUploadSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.KernelSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.LoggableSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.MailerSubscriber
@@ -52,7 +53,11 @@ class EventSubscribers {
     }
 
     def private generateSubscriberClasses(Application it) {
+        subscriberFile('FileUpload', subscribersFileUpload)
         subscriberFile('Kernel', subscribersKernelFile)
+        if (hasLoggable) {
+            subscriberFile('Loggable', subscribersLoggableFile)
+        }
         subscriberFile('Mailer', subscribersMailerFile)
         subscriberFile('Theme', subscribersThemeFile)
         subscriberFile('UserAuthentication', subscribersUserAuthenticationFile)
@@ -60,10 +65,6 @@ class EventSubscribers {
         subscriberFile('User', subscribersUserFile)
         subscriberFile('UserProfile', subscribersUserProfileFile)
         subscriberFile('UserRegistration', subscribersUserRegistrationFile)
-
-        if (hasLoggable) {
-            subscriberFile('Loggable', subscribersLoggableFile)
-        }
         subscriberFile('WorkflowEvents', subscribersWorkflowEventsFile)
     }
 
@@ -71,6 +72,37 @@ class EventSubscribers {
         var filePath = subscriberPath + (if (isBase) 'Abstract' else '') + name + subscriberSuffix
         fsa.generateFile(filePath, content)
     }
+
+    def private subscribersFileUpload(Application it) '''
+        namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
+
+        «IF !isBase»
+            use «appNamespace»\EventSubscriber\Base\AbstractKernelSubscriber;
+        «ELSE»
+            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+            «IF hasUploads»
+                use Symfony\Component\HttpFoundation\File\File;
+                use Symfony\Component\HttpFoundation\File\UploadedFile;
+            «ENDIF»
+            use Vich\UploaderBundle\Event\ErrorEvent as UploadErrorEvent;
+            use Vich\UploaderBundle\Event\Event as UploadEvent;
+            use Vich\UploaderBundle\Event\Events as UploadEvents;
+            use «appNamespace»\Entity\EntityInterface;
+            use «appNamespace»\Helper\UploadHelper;
+        «ENDIF»
+
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for VichUploaderBundle events.
+         */
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»FileUploadSubscriber«IF !isBase» extends AbstractFileUploadSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
+        {
+            «IF isBase»
+                «new FileUploadSubscriber().generate(it)»
+            «ELSE»
+                // feel free to enhance the parent methods
+            «ENDIF»
+        }
+    '''
 
     def private subscribersKernelFile(Application it) '''
         namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
@@ -338,11 +370,17 @@ class EventSubscribers {
             use «appNamespace»\EventSubscriber\Base\AbstractWorkflowEventsSubscriber;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            use Symfony\Component\Workflow\Event\Event;
+            use Symfony\Component\Workflow\Event\AnnounceEvent;
+            use Symfony\Component\Workflow\Event\CompletedEvent;
+            use Symfony\Component\Workflow\Event\EnteredEvent;
+            use Symfony\Component\Workflow\Event\EnterEvent;
             use Symfony\Component\Workflow\Event\GuardEvent;
+            use Symfony\Component\Workflow\Event\LeaveEvent;
+            use Symfony\Component\Workflow\Event\TransitionEvent;
             «IF !relations.empty && !entities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty»
                 use Symfony\Component\Workflow\TransitionBlocker;
             «ENDIF»
+            use Symfony\Component\Workflow\WorkflowEvents;
             use Symfony\Contracts\Translation\TranslatorInterface;
             use «appNamespace»\Entity\EntityInterface;
             use «appNamespace»\Entity\Factory\EntityFactory;
