@@ -135,29 +135,13 @@ class UploadHelper {
 
             // fix wrong orientation and shrink too large image if needed
             @ini_set('memory_limit', '1G');
-            $imagine = new Imagine();
-            $image = $imagine->open($tempFilePath);
-            $autorotateFilter = new Autorotate();
-            $image = $autorotateFilter->apply($image);
-            $image->save($tempFilePath);
+            «autorotate»
 
             // check if shrinking functionality is enabled
             $configSuffix = s($objectType . '_' . $fieldName)->snake();
 
             if ($this->imageConfig['enable_shrinking_for_' . $configSuffix]) {
-                // check for maximum size
-                $maxWidth = $this->imageConfig['shrink_width_' . $configSuffix];
-                $maxHeight = $this->imageConfig['shrink_height_' . $configSuffix];
-                $thumbMode = 'inset';
-
-                $imgInfo = getimagesize($tempFilePath);
-                if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
-                    // resize to allowed maximum size
-                    $imagine = new Imagine();
-                    $image = $imagine->open($tempFilePath);
-                    $thumb = $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode);
-                    $thumb->save($tempFilePath);
-                }
+                «shrinkToMaximumSize»
             }
 
             return $tempFilePath;
@@ -180,6 +164,30 @@ class UploadHelper {
 
                 return «fileVar»;
             }
+        }
+    '''
+
+    def private autorotate(Application it) '''
+        $imagine = new Imagine();
+        $image = $imagine->open($tempFilePath);
+        $autorotateFilter = new Autorotate();
+        $image = $autorotateFilter->apply($image);
+        $image->save($tempFilePath);
+    '''
+
+    def private shrinkToMaximumSize(Application it) '''
+        // check for maximum size
+        $maxWidth = $this->imageConfig['shrink_width_' . $configSuffix];
+        $maxHeight = $this->imageConfig['shrink_height_' . $configSuffix];
+        $thumbMode = 'inset';
+
+        $imgInfo = getimagesize($tempFilePath);
+        if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
+            // resize to allowed maximum size
+            $imagine = new Imagine();
+            $image = $imagine->open($tempFilePath);
+            $thumb = $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode);
+            $thumb->save($tempFilePath);
         }
     '''
 

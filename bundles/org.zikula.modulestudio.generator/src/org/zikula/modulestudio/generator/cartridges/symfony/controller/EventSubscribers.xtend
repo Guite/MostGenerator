@@ -77,7 +77,7 @@ class EventSubscribers {
         namespace «appNamespace»\EventSubscriber«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\EventSubscriber\Base\AbstractKernelSubscriber;
+            use «appNamespace»\EventSubscriber\Base\AbstractFileUploadSubscriber;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «IF hasUploads»
