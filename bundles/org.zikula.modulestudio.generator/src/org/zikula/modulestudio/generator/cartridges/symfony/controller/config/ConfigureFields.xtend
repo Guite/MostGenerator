@@ -464,7 +464,7 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch options(UploadField it) {
         var calls = commonOptions
         if (isOnlyImageField) {
-            calls += '''->setBasePath($basePath)->setTemplatePath('crud/field/image_imagine.html.twig')->setCustomOption('imaginePattern', $imaginePattern)'''
+            calls += '''->setBasePath($basePath)->setTemplatePath('@EasyAdmin/crud/field/image_imagine.html.twig')->setCustomOption('imaginePattern', $imaginePattern)'''
         }
         calls
     }
