@@ -179,11 +179,11 @@ class UploadHelper {
         // check for maximum size
         $maxWidth = $this->imageConfig['shrink_width_' . $configSuffix];
         $maxHeight = $this->imageConfig['shrink_height_' . $configSuffix];
-        $thumbMode = 'inset';
 
         $imgInfo = getimagesize($tempFilePath);
         if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
             // resize to allowed maximum size
+            $thumbMode = 'inset';
             $imagine = new Imagine();
             $image = $imagine->open($tempFilePath);
             $thumb = $image->thumbnail(new Box($maxWidth, $maxHeight), $thumbMode);

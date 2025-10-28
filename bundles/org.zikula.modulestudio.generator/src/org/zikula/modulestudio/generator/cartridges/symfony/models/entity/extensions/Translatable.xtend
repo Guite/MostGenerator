@@ -86,12 +86,6 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      */
     override extensionClassBaseImplementation(Entity it) '''
         /**
-         * Use a length of 140 instead of 191 to avoid too long keys for the indexes.
-         */
-        #[ORM\Column(name: 'object_class', type: Types::STRING, length: 140)]
-        protected «/* no type allowed because we override a parent field */»$objectClass;
-
-        /**
          * Clone interceptor implementation.
          * Performs a quite simple shallow copy.
          *
