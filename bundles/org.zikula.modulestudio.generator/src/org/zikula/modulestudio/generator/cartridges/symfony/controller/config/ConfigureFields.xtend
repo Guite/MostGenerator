@@ -155,8 +155,8 @@ class ConfigureFields implements ControllerMethodInterface {
             «IF field.name == 'slug'»
                 «field.slugDefinition»
             «ELSE»
-                «IF field instanceof UploadField»
-                    «field.uploadDefinition»
+                «IF hasEditAction && field instanceof UploadField»
+                    «(field as UploadField).uploadDefinition»
                 «ENDIF»
                 «field.definition»;
             «ENDIF»
@@ -483,7 +483,16 @@ class ConfigureFields implements ControllerMethodInterface {
         yield '«name.formatForCode»File' => Field::new('«name.formatForCode»File', t('Upload «name.formatForDisplay»'))
             ->setRequired(«requiredOption»)
             ->setFormType(«uploadFieldType»Type::class)
-            ->onlyOnForms()
+            «IF visibleOnNew && visibleOnEdit»
+                ->onlyOnForms()
+            «ELSE»
+                «IF !visibleOnNew»
+                    ->hideWhenCreating()
+                «ENDIF»
+                «IF visibleOnEdit»
+                    ->hideWhenUpdating()
+                «ENDIF»
+            «ENDIF»
             ->setFormTypeOptions([
                 «uploadOptions»
             ])
