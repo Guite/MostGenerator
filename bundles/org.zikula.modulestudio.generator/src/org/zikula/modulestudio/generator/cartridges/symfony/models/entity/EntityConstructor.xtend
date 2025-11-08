@@ -15,7 +15,9 @@ class EntityConstructor {
          *
          * Will not be called by Doctrine and can therefore be used
          * for own implementation purposes. It is also possible to add
-         * arbitrary arguments as with every other class method.
+         * arbitrary arguments as with every other class method. They
+         * should be nullable though because of the limitation reported
+         * at https://github.com/EasyCorp/EasyAdminBundle/issues/6957 issue.
          */
         public function __construct()
         {
