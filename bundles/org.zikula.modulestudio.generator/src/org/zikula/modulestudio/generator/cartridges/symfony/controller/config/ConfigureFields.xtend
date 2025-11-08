@@ -485,12 +485,19 @@ class ConfigureFields implements ControllerMethodInterface {
             ->setFormType(«uploadFieldType»Type::class)
             «IF visibleOnNew && visibleOnEdit»
                 ->onlyOnForms()
+            «ELSEIF !visibleOnNew && !visibleOnEdit»
+                «IF null !== entity && entity.hasIndexAction»
+                    ->hideOnIndex()
+                «ENDIF»
+                «IF null !== entity && entity.hasDetailAction»
+                    ->hideOnDetail()
+                «ENDIF»
+                ->hideOnForms()
             «ELSE»
                 «IF !visibleOnNew»
-                    ->hideWhenCreating()
-                «ENDIF»
-                «IF visibleOnEdit»
-                    ->hideWhenUpdating()
+                    ->onlyWhenUpdating()
+                «ELSEIF !visibleOnEdit»
+                    ->onlyWhenCreating()
                 «ENDIF»
             «ENDIF»
             ->setFormTypeOptions([
