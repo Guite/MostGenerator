@@ -217,8 +217,8 @@ class Association {
 
     def private dispatch outgoingMappingAdditions(Relationship it) ''''''
     def private dispatch outgoingMappingAdditions(OneToOneRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»'''
-    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy: '«indexBy»'«ENDIF»)'''
-    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»«IF null !== indexBy && !indexBy.empty», indexBy: '«indexBy»'«ENDIF»'''
+    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»'''
+    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval: true«ENDIF»'''
 
     def private dispatch outgoing(OneToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
@@ -381,7 +381,6 @@ class Association {
         «val isMany = isManySide(useTarget)»
         «IF isMany»
             «fh.getterAndSetterMethods(it, aliasName, 'Collection<int, ' + entityClass + '>', true, '', relationSetterCustomImpl(useTarget, aliasName))»
-            «relationAccessorAdditions(useTarget, aliasName, nameSingle)»
         «ELSE»
             «fh.getterAndSetterMethods(it, aliasName, entityClass, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
         «ENDIF»
@@ -415,28 +414,6 @@ class Association {
                     $«aliasName»->set«ownAliasName»($this);
                 }
             «ENDIF»
-        «ENDIF»
-    '''
-
-    def private dispatch relationAccessorAdditions(Relationship it, Boolean useTarget, String aliasName, String singleName) '''
-    '''
-
-    def private dispatch relationAccessorAdditions(OneToManyRelationship it, Boolean useTarget, String aliasName, String singleName) '''
-        «IF !useTarget && null !== indexBy && !indexBy.empty»
-
-            /**
-             * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
-             *
-             * @throws InvalidArgumentException If desired index does not exist
-             */
-            public function get«singleName.formatForCodeCapital»(«source.fields.findFirst[e|e.name.equals(indexBy)].fieldTypeAsString(true)» $«indexBy.formatForCode»): «source.entityClassName('', false)»
-            {
-                if (!isset($this->«aliasName.formatForCode»[$«indexBy.formatForCode»])) {
-                    throw new InvalidArgumentException("«indexBy.formatForDisplayCapital» is not available on this list of «aliasName.formatForDisplay».");
-                }
-
-                return $this->«aliasName.formatForCode»[$«indexBy.formatForCode»];
-            }
         «ENDIF»
     '''
 
@@ -476,30 +453,10 @@ class Association {
         «addMethodImplDefault(useTarget, name, nameSingle, type)»
     '''
     def private dispatch addMethodImpl(OneToManyRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
-        «IF !useTarget && null !== indexBy && !indexBy.empty»
-            «addMethodSignature(useTarget, name, nameSingle, type)»
-            {
-                $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
-                «addInverseCalls(useTarget, nameSingle)»
-
-                return $this;
-            }
-        «ELSE»
-            «addMethodImplDefault(useTarget, name, nameSingle, type)»
-        «ENDIF»
+        «addMethodImplDefault(useTarget, name, nameSingle, type)»
     '''
     def private dispatch addMethodImpl(ManyToManyRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
-        «IF !useTarget && null !== indexBy && !indexBy.empty»
-            «addMethodSignature(useTarget, name, nameSingle, type)»
-            {
-                $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
-                «addInverseCalls(useTarget, nameSingle)»
-
-                return $this;
-            }
-        «ELSE»
-            «addMethodImplDefault(useTarget, name, nameSingle, type)»
-        «ENDIF»
+        «addMethodImplDefault(useTarget, name, nameSingle, type)»
     '''
 
     def private addInverseCalls(Relationship it, Boolean useTarget, String nameSingle) '''

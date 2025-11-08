@@ -21,13 +21,11 @@ import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.extens
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 
 class Property {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
-    extension ModelJoinExtensions = new ModelJoinExtensions
 
     FileHelper fh
     ExtensionManager extMan
@@ -172,8 +170,6 @@ class Property {
     def dispatch fieldAccessor(Field it) '''
         «IF it instanceof StringField && (it as StringField).treatAsUuidType»
             «fh.getterAndSetterMethodsForUuidString(it)»
-        «ELSEIF isIndexByField»
-            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString(true), true)»
         «ELSE»
             «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString(true), true, '', '')»
         «ENDIF»

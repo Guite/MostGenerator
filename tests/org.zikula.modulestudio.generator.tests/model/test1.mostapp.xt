@@ -116,7 +116,6 @@ application "SimpleNews" targets SF74 {
             //cascadeReverse PERSIST_DETACH
             //onDelete "foo"
             orderBy "title"
-            indexBy "title"
         },
         one2many {
             source "article"
@@ -222,7 +221,6 @@ application "SimpleNews" targets SF74 {
             refClass "articleImage3"
             orderBy "title"
             orderByReverse "title"
-            indexBy "title"
             minSource 2
             maxSource 5
             minTarget 3

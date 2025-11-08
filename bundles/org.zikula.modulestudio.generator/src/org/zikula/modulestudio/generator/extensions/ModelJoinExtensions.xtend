@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.CascadeType
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
@@ -233,44 +232,6 @@ class ModelJoinExtensions {
             OneToManyRelationship: if (!useTarget) 'One' else 'Many'
             ManyToOneRelationship: if (!useTarget) 'Many' else 'One'
             default: 'Many' // ManyToMany
-        }
-    }
-
-    /**
-     * Checks whether the entity is target of an indexed relationship.
-     * That is true if at least one incoming relation has an indexBy field set. 
-     */
-    def isIndexByTarget(Entity it) {
-        !incoming.filter[null !== getIndexByField && !getIndexByField.empty].empty
-    }
-
-    /**
-     * Checks whether this field is used by an indexed relationship.
-     * That is true if at least one incoming relation of it's entity has an indexBy field set to it's name. 
-     */
-    def isIndexByField(Field it) {
-        null !== entity && !entity.incoming.filter[r|r.getIndexByField == name].empty
-    }
-
-    /**
-     * Returns if the relationship is an indexed relation or not.
-     */
-    def isIndexed(Relationship it) {
-        switch it {
-            OneToManyRelationship: null !== it.indexBy && !it.indexBy.empty
-            ManyToManyRelationship: null !== it.indexBy && !it.indexBy.empty
-            default: false
-        }
-    }
-
-    /**
-     * Returns the name of the index field.
-     */
-    def getIndexByField(Relationship it) {
-        switch it {
-            OneToManyRelationship: it.indexBy
-            ManyToManyRelationship: it.indexBy
-            default: ''
         }
     }
 }
