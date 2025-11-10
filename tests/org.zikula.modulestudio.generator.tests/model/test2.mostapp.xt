@@ -161,7 +161,6 @@ application "SimpleNews" targets SF74 {
             targetEditing NONE
             cascade ALL
             orderBy "currentVersion"
-            indexBy "currentVersion"
             minTarget 1
             maxTarget 3
         },
@@ -188,7 +187,6 @@ application "SimpleNews" targets SF74 {
             refClass "imageLocation"
             orderBy "title"
             orderByReverse "currentVersion"
-            indexBy "zipCode"
             minSource 1
             maxSource 3
             minTarget 1
