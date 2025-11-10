@@ -53,7 +53,7 @@ class ConfigureCrud implements ControllerMethodInterface {
             ->setPageTitle(Crud::PAGE_INDEX, t('%entity_label_plural% list'))
         «ENDIF»
         «IF hasEditAction»
-            ->setPageTitle(Crud::PAGE_NEW, t('New %entity_label_singular%'))
+            ->setPageTitle(Crud::PAGE_NEW, t('Add %entity_label_singular%'))
         «ENDIF»
         «IF hasDetailAction»
             ->setPageTitle(Crud::PAGE_DETAIL, fn («name.formatForCodeCapital» $«name.formatForCode») => «/*(string) $«name.formatForCode»*/»$this->entityDisplayHelper->getFormattedTitle($«name.formatForCode»))
@@ -66,7 +66,7 @@ class ConfigureCrud implements ControllerMethodInterface {
                 ->setHelp(Crud::PAGE_INDEX, t('«documentation.replaceAll('\'', '"')»'))
             «ENDIF»
         «ENDIF»
-        «IF hasAnyDateTimeFieldsEntity»
+        «IF !dateTimeFields.empty»
             «IF hasDirectDateFields»
                 ->setDateFormat(DateTimeField::FORMAT_MEDIUM)
             «ENDIF»
@@ -76,10 +76,11 @@ class ConfigureCrud implements ControllerMethodInterface {
             «IF hasDirectDateTimeFields»
                 ->setDateTimeFormat(DateTimeField::FORMAT_MEDIUM, DateTimeField::FORMAT_SHORT)
             «ENDIF»
-        «ENDIF»
-        «IF !dateTimeFields.empty»
             ->setTimezone('Europe/Berlin')
-        «ENDIF»
+        «ENDIF»«/* currently not needed, because we use $this->viewHelper->getFormattedDateInterval()
+        IF hasDateIntervalFieldsEntity»
+            ->setDateIntervalFormat(t('%%y year(s) %%m month(s) %%d day(s)'))
+        «ENDIF*/»
         ->addFormTheme('@ZikulaTheme/Form/form_layout_addons.html.twig')
     '''
 }
