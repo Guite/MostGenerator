@@ -92,6 +92,7 @@ class Configuration {
         null
     }
 
+    // see https://symfony.com/doc/current/components/config/definition.html#node-type
     def private nodeType(Field it) {
         switch (it) {
             BooleanField: 'boolean'

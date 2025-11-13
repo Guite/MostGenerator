@@ -63,7 +63,6 @@ XPECT generated file AcmeSimpleTestBundle.php ---
   namespace Acme\SimpleTestBundle\Base;
   
   use Acme\SimpleTestBundle\Bundle\MetaData\AcmeSimpleTestBundleMetaData;
-  use Acme\SimpleTestBundle\EventListener\UserListener;
   use Acme\SimpleTestBundle\Helper\CollectionFilterHelper;
   use Acme\SimpleTestBundle\Helper\ControllerHelper;
   use Acme\SimpleTestBundle\Menu\ExtensionMenu;
