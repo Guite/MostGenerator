@@ -109,7 +109,7 @@ class UploadHelper {
         «checkAndCreateAllUploadFolders»
 
         «checkAndCreateUploadFolder»
-        «IF hasImageFields || !getUploadVariables.filter[isImageField].empty»
+        «IF hasImageFields»
 
             «checkIfImagineCacheDirectoryExists»
         «ENDIF»

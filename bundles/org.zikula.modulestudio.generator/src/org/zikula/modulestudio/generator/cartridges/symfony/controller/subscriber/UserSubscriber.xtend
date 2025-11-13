@@ -14,18 +14,11 @@ class UserSubscriber {
     extension Utils = new Utils
 
     def generate(Application it) '''
-        «IF hasUserFields || hasUserVariables»
+        «IF hasUserFields»
             public function __construct(
-                «IF hasUserFields»
-                    protected readonly Security $security,
-                    protected readonly EntityFactory $entityFactory,
-                    protected readonly LoggerInterface $logger«IF hasUserVariables»,«ENDIF»
-                «ENDIF»
-                «IF hasUserVariables»
-                    «FOR userVar : getAllVariables.filter(UserField)»
-                        protected readonly int $«userVar.name.formatForCode»,
-                    «ENDFOR»
-                «ENDIF»
+                protected readonly Security $security,
+                protected readonly EntityFactory $entityFactory,
+                protected readonly LoggerInterface $logger
             ) {
             }
 
@@ -143,18 +136,10 @@ class UserSubscriber {
          */
         public function onAccountDeletion(AccountDeletionEvent $event): void
         {
-            «IF hasUserFields || hasUserVariables»
+            «IF hasUserFields»
                 $currentUser = $this->security->getUser();
                 $userId = $event->getUser()->getId();
-                «IF hasUserFields»
-                    «FOR entity : entities»«entity.userDelete»«ENDFOR»
-                «ENDIF»
-                «IF hasUserVariables»
-
-                    «FOR userField : getAllVariables.filter(UserField)»
-                        «userField.onAccountDeletionHandler»
-                    «ENDFOR»
-                «ENDIF»
+                «FOR entity : entities»«entity.userDelete»«ENDFOR»
             «ENDIF»
         }
 
@@ -191,23 +176,10 @@ class UserSubscriber {
     '''
 
     def private onAccountDeletionHandler(UserField it) '''
-        «IF null !== entity»
-            // set «name.formatForDisplay» to «adhAsConstant» («adhUid») for all «entity.nameMultiple.formatForDisplay» affected by this user
-            $repo->updateUserField('«name.formatForCode»', $userId, «adhUid», $this->logger, $currentUser);
-            // you can also delete all «entity.nameMultiple.formatForDisplay» affected by this user
-            // $repo->deleteByUserField('«name.formatForCode»', $userId, $this->logger, $currentUser);
-        «ELSEIF null !== varContainer»
-            if ($userId === $this->«name.formatForCode») {
-                $logArgs = [
-                    'app' => '«application.appName»',
-                    'user' => $currentUser,
-                ];
-                $this->logger->warning(
-                    '{app}: User {user} has been deleted, hence the "«name.formatForCode»" configuration definition should be changed to another user ID.',
-                    $logArgs
-                );
-            }
-        «ENDIF»
+        // set «name.formatForDisplay» to «adhAsConstant» («adhUid») for all «entity.nameMultiple.formatForDisplay» affected by this user
+        $repo->updateUserField('«name.formatForCode»', $userId, «adhUid», $this->logger, $currentUser);
+        // you can also delete all «entity.nameMultiple.formatForDisplay» affected by this user
+        // $repo->deleteByUserField('«name.formatForCode»', $userId, $this->logger, $currentUser);
     '''
 
     /**

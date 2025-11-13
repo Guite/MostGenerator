@@ -70,17 +70,4 @@ application "SimpleNews" targets SF74 {
             targetAlias "subArticles"
         }
     }
-    variables {
-        varContainer "Settings" {
-            fields {
-                string "mySetting"
-            }
-        },
-        varContainer "OtherSettings" {
-            sortOrder 3
-            fields {
-                string "otherSetting"
-            }
-        }
-    }
 }

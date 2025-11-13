@@ -37,6 +37,8 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.Styles
 import org.zikula.modulestudio.generator.cartridges.symfony.view.Views
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.transformation.ConfigurationDeriver
+import org.zikula.modulestudio.generator.application.config.AppConfig
 
 class SymfonyBundleGenerator implements IGenerator {
 
@@ -45,6 +47,7 @@ class SymfonyBundleGenerator implements IGenerator {
 
     IMostFileSystemAccess fsa
     IProgressMonitor pm
+    AppConfig config
 
     override doGenerate(Resource resource, IFileSystemAccess fsa) {
         this.fsa = fsa as IMostFileSystemAccess
@@ -59,6 +62,8 @@ class SymfonyBundleGenerator implements IGenerator {
     }
 
     def private generateApp(Application it) {
+        this.config = new ConfigurationDeriver().derive(it, fsa)
+
         generateBasicFiles
 
         generateModel
@@ -71,7 +76,7 @@ class SymfonyBundleGenerator implements IGenerator {
     def private generateBasicFiles(Application it) {
         pm?.subTask('Basic information')
         'Generating basic information'.printIfNotTesting(fsa)
-        new BundleFile().generate(it, fsa)
+        new BundleFile().generate(it, fsa, config)
         new ComposerFile().generate(it, fsa)
         new GitIgnore().generate(it, fsa)
         new PhpCsFixer().generate(it, fsa)
@@ -108,10 +113,10 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('Controller: Bundle meta data')
         'Generating bundle meta data'.printIfNotTesting(fsa)
         new MetaData().generate(it, fsa)
-        if (needsConfig) {
+        if (config.relevant) {
             pm?.subTask('Controller: Bundle configuration definition')
             'Generating bundle configuration definition'.printIfNotTesting(fsa)
-            new Configuration().generate(it, fsa)
+            new Configuration().generate(it, fsa, config)
         }
         pm?.subTask('Controller: Bundle service definitions')
         'Generating bundle service definitions'.printIfNotTesting(fsa)
@@ -143,7 +148,7 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('View: Form templates')
         'Generating form templates'.printIfNotTesting(fsa)
         new Forms().generate(it, fsa)
-        pm?.subTask('View: Module-specific plugins')
+        pm?.subTask('View: Bundle-specific plugins')
         'Generating application-specific plugins'.printIfNotTesting(fsa)
         new Plugins().generate(it, fsa)
         pm?.subTask('View: CSS definitions')

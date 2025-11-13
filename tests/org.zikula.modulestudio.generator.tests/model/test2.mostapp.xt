@@ -193,28 +193,4 @@ application "SimpleNews" targets SF74 {
             maxTarget 3
         }
     }
-    variables {
-        varContainer "GeneralSettings" {
-            documentation "My variable section"
-            fields {
-                user "myUser1",
-                upload "myImage"
-            }
-        },
-        varContainer "OtherSettings" {
-            documentation "My variable section with {{ variable }}"
-            sortOrder 3
-            fields {
-                user "myUser2",
-                number "myNumber" {
-                    numberType DECIMAL
-                },
-                datetime "myDate" {
-                    role DATE
-                },
-                datetime "myStart" startDate,
-                datetime "myEnd" endDate
-            }
-        }
-    }
 }

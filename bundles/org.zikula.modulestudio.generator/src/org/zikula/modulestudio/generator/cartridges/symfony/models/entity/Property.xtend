@@ -98,13 +98,13 @@ class Property {
             NumberField: '''type: Types::«type.toUpperCase»«IF numberType == NumberFieldType.DECIMAL», precision: «it.length», scale: «it.scale»«ENDIF»'''
             TextField: '''type: Types::«type.toUpperCase», length: «it.length»'''
             StringField:
-                '''«IF (null !== entity || null !== varContainer) && role == StringRole.DATE_INTERVAL»type: Types::DATEINTERVAL«ELSE»«/*type: Types::«type.toUpperCase», */»length: «it.length»«ENDIF»'''
+                '''«IF role == StringRole.DATE_INTERVAL»type: Types::DATEINTERVAL«ELSE»«/*type: Types::«type.toUpperCase», */»length: «it.length»«ENDIF»'''
             ArrayField:
                 '''type: Types::«arrayType.literal.toUpperCase»«/*», length: «it.length*/»'''
             ListField:
                 '''length: «it.length»'''
             DatetimeField:
-                '''type: Types::«/*UTC*/»«type.toUpperCase»_«IF (null !== entity || null !== varContainer) && immutable»IM«ENDIF»MUTABLE'''
+                '''type: Types::«/*UTC*/»«type.toUpperCase»_«IF immutable»IM«ENDIF»MUTABLE'''
             default: '''type: Types::«type.toUpperCase»'''
         }
     }

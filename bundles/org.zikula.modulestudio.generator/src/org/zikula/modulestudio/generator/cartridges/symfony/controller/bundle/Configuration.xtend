@@ -9,9 +9,9 @@ import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.NumberFieldType
 import de.guite.modulestudio.metamodel.NumberRole
-import de.guite.modulestudio.metamodel.UserField
-import de.guite.modulestudio.metamodel.Variables
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.config.AppConfig
+import org.zikula.modulestudio.generator.application.config.ConfigSection
 import org.zikula.modulestudio.generator.cartridges.symfony.models.entity.Property
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -25,13 +25,16 @@ class Configuration {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
+    AppConfig config
+
     /**
      * Entry point for application settings class.
      */
-    def generate(Application it, IMostFileSystemAccess fsa) {
-        if (getAllVariables.empty) {
+    def generate(Application it, IMostFileSystemAccess fsa, AppConfig config) {
+        if (!config.relevant) {
             return
         }
+        this.config = config
         val definitionFilePath = 'config/definition.php'
         fsa.generateFile(definitionFilePath, configurationImpl)
     }
@@ -50,16 +53,16 @@ class Configuration {
 
     def private configurationBuilder(Application it) '''
         ->children()
-            «FOR varContainer : sortedVariableContainers»
-                «varContainer.configSection»
+            «FOR section : config.sections»
+                «section.section»
             «ENDFOR»
         ->end()
     '''
 
-    def private configSection(Variables it) '''
+    def private section(ConfigSection it) '''
         ->arrayNode('«name.formatForSnakeCase»')
-            «IF null !== documentation && !documentation.empty»
-                ->info('«documentation»')
+            «IF null !== description && !description.empty»
+                ->info('«description»')
             «ENDIF»
             ->addDefaultsIfNotSet()
             ->children()
@@ -83,9 +86,7 @@ class Configuration {
     '''
 
     def private additionalInfo(Field it) {
-        if (it instanceof UserField) {
-            return 'Needs to be a user ID.'
-        } else if (it instanceof NumberField && (it as NumberField).isUserGroupSelector) {
+        if (it instanceof NumberField && (it as NumberField).isUserGroupSelector) {
             return 'Needs to be a group ID.';
         }
         null

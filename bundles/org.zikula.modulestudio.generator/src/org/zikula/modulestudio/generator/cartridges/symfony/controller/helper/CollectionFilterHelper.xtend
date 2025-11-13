@@ -248,6 +248,8 @@ class CollectionFilterHelper {
                 «IF standardFields»
                     $showOnlyOwnDefault = $isAdminArea ? false : $this->listViewConfig['show_only_own_entries'];
                     $showOnlyOwnEntries = (bool) $request->query->getInt('own', (int) $showOnlyOwnDefault);
+                «ELSE»
+                    $showOnlyOwnEntries = false;
                 «ENDIF»
                 «IF ownerPermission»
                     if (!$isAdminArea) {

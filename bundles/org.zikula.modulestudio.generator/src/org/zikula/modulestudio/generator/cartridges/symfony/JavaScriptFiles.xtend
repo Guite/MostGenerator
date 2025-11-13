@@ -13,20 +13,18 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.javascrip
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.javascript.Validation
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class JavaScriptFiles {
 
     extension ControllerExtensions = new ControllerExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension Utils = new Utils
 
     /**
      * Entry point for generating JavaScript files.
      */
     def generate(Application it, IMostFileSystemAccess fsa) {
         new DisplayFunctions().generate(it, fsa)
-        if (hasEditActions || needsConfig) {
+        if (hasEditActions) {
             new EditFunctions().generate(it, fsa)
         }
         if (needsInlineEditing) {

@@ -35,14 +35,6 @@ class Uploads {
                 uploadField.uploadFolder(uploadPath, subFolderName + uploadField.subFolderPathSegment)
             }
         }
-        if (hasUploadVariables) {
-            val subFolderName = 'settings/'
-            fsa.createPlaceholder(uploadPath + subFolderName)
-            val uploadFields = getUploadVariables
-            for (uploadField : uploadFields) {
-                uploadField.uploadFolder(uploadPath, subFolderName + uploadField.subFolderPathSegment)
-            }
-        }
         fsa.generateFile(getAppDocPath + 'htaccessTemplate', htAccessTemplate)
     }
 

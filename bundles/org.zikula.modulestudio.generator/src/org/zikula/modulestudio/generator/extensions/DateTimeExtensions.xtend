@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DateTimeRole
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.Variables
 
 /**
  * This class contains date and time related extension methods.
@@ -98,7 +97,7 @@ class DateTimeExtensions {
     /**
      * Determines the start date field of an entity if there is one.
      */
-    def dispatch getStartDateField(Entity it) {
+    def getStartDateField(Entity it) {
         val datetimeFields = fields.filter(DatetimeField).filter[startDate && role != DateTimeRole.TIME]
         if (!datetimeFields.empty) {
             return datetimeFields.head
@@ -108,56 +107,23 @@ class DateTimeExtensions {
     /**
      * Determines the end date field of an entity if there is one.
      */
-    def dispatch getEndDateField(Entity it) {
+    def getEndDateField(Entity it) {
         val datetimeFields = fields.filter(DatetimeField).filter[endDate && role != DateTimeRole.TIME]
         if (!datetimeFields.empty) {
             return datetimeFields.head
         }
     }
 
-    /**
-     * Determines the start date field of a variable container if there is one.
-     */
-    def dispatch getStartDateField(Variables it) {
-        val datetimeFields = fields.filter(DatetimeField).filter[startDate]
-        if (!datetimeFields.empty) {
-            return datetimeFields.head
-        }
-    }
-
-    /**
-     * Determines the end date field of a variable container if there is one.
-     */
-    def dispatch getEndDateField(Variables it) {
-        val datetimeFields = fields.filter(DatetimeField).filter[endDate]
-        if (!datetimeFields.empty) {
-            return datetimeFields.head
-        }
-    }
-
-    def dispatch hasStartOrEndDateField(Entity it) {
+    def hasStartOrEndDateField(Entity it) {
         hasStartDateField || hasEndDateField
     }
-    def dispatch hasStartAndEndDateField(Entity it) {
+    def hasStartAndEndDateField(Entity it) {
         hasStartDateField && hasEndDateField
     }
-    def dispatch hasStartDateField(Entity it) {
+    def hasStartDateField(Entity it) {
         null !== getStartDateField
     }
-    def dispatch hasEndDateField(Entity it) {
-        null !== getEndDateField
-    }
-
-    def dispatch hasStartOrEndDateField(Variables it) {
-        hasStartDateField || hasEndDateField
-    }
-    def dispatch hasStartAndEndDateField(Variables it) {
-        hasStartDateField && hasEndDateField
-    }
-    def dispatch hasStartDateField(Variables it) {
-        null !== getStartDateField
-    }
-    def dispatch hasEndDateField(Variables it) {
+    def hasEndDateField(Entity it) {
         null !== getEndDateField
     }
 

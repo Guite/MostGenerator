@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.view
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DatetimeField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
@@ -93,7 +92,7 @@ class Layout {
         {# purpose of this template: apply some general form extensions #}
         {% extends '@ZikulaTheme/Form/form_layout_addons.html.twig' %}
         {% trans_default_domain 'messages' %}
-        «IF !entities.filter[e|e.hasDirectDateTimeFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateTimeField].empty»
+        «IF !entities.filter[e|e.hasDirectDateTimeFields].empty»
 
             {%- block datetime_widget -%}
                 {{- parent() -}}
@@ -104,7 +103,7 @@ class Layout {
                 {%- endif -%}
             {%- endblock -%}
         «ENDIF»
-        «IF !entities.filter[e|e.hasDirectDateFields].empty || !getAllVariables.filter(DatetimeField).filter[isDateField].empty»
+        «IF !entities.filter[e|e.hasDirectDateFields].empty»
 
             {%- block date_widget -%}
                 {{- parent() -}}

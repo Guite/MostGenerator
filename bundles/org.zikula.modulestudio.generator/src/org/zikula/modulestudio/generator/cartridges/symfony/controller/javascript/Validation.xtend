@@ -28,7 +28,7 @@ class Validation {
 
     def private generate(Application it) '''
         'use strict';
-        «IF hasAnyDateTimeFields || !getAllVariables.filter(DatetimeField).empty»
+        «IF hasAnyDateTimeFields»
 
             «dateFunctions»
         «ENDIF»
@@ -60,7 +60,7 @@ class Validation {
                 return allowedExtensions.test(val);
             }
         «ENDIF»
-        «val datetimeFields = getAllEntityFields.filter(DatetimeField).filter[isDateTimeField] + getAllVariables.filter(DatetimeField).filter[isDateTimeField]»
+        «val datetimeFields = getAllEntityFields.filter(DatetimeField).filter[isDateTimeField]»
         «IF !datetimeFields.empty»
             «IF datetimeFields.exists[past]»
 
@@ -85,7 +85,7 @@ class Validation {
                 }
             «ENDIF»
         «ENDIF»
-        «val dateFields = getAllEntityFields.filter(DatetimeField).filter[isDateField] + getAllVariables.filter(DatetimeField).filter[isDateField]»
+        «val dateFields = getAllEntityFields.filter(DatetimeField).filter[isDateField]»
         «IF !dateFields.empty»
             «IF dateFields.exists[past]»
 
@@ -110,7 +110,7 @@ class Validation {
                 }
             «ENDIF»
         «ENDIF»
-        «val timeFields = getAllEntityFields.filter(DatetimeField).filter[isTimeField] + getAllVariables.filter(DatetimeField).filter[isTimeField]»
+        «val timeFields = getAllEntityFields.filter(DatetimeField).filter[isTimeField]»
         «IF !timeFields.empty»
             «IF timeFields.exists[past]»
 
@@ -138,37 +138,6 @@ class Validation {
             «val endDateField = entity.getEndDateField»
 
             function «vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(val) {
-                var cmpVal, cmpVal2, result;
-
-                «val startFieldName = startDateField.name.formatForCode»
-                «val endFieldName = endDateField.name.formatForCode»
-                «IF startDateField.isDateTimeField»
-                    cmpVal = jQuery("[id$='«startFieldName»_date']").val() + ' ' + jQuery("[id$='«startFieldName»_time']").val();
-                «ELSE»
-                    cmpVal = jQuery("[id$='«startFieldName»']").val();
-                «ENDIF»
-                «IF endDateField.isDateTimeField»
-                    cmpVal2 = jQuery("[id$='«endFieldName»_date']").val() + ' ' + jQuery("[id$='«endFieldName»_time']").val();
-                «ELSE»
-                    cmpVal2 = jQuery("[id$='«endFieldName»']").val();
-                «ENDIF»
-
-                if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
-                    result = true;
-                } else if ('' == jQuery.trim(cmpVal) || '' == jQuery.trim(cmpVal2)) {
-                    result = true;
-                } else {
-                    result = (cmpVal <= cmpVal2);
-                }
-
-                return result;
-            }
-        «ENDFOR»
-        «FOR varContainer : variables.filter[hasStartAndEndDateField]»
-            «val startDateField = varContainer.getStartDateField»
-            «val endDateField = varContainer.getEndDateField»
-
-            function «vendorAndName»ValidateDateRange«varContainer.name.formatForCodeCapital»(val) {
                 var cmpVal, cmpVal2, result;
 
                 «val startFieldName = startDateField.name.formatForCode»
@@ -286,27 +255,6 @@ class Validation {
                             }
                         } else {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»()) {
-                                jQuery(this).get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
-                            } else {
-                                jQuery(this).get(0).setCustomValidity('');
-                            }
-                        }
-                    }
-                });
-            «ENDFOR»
-            «FOR varContainer : variables.filter[hasStartAndEndDateField]»
-                jQuery('.validate-daterange-vars-«varContainer.name.formatForDB»').each(function () {
-                    if ('undefined' != typeof jQuery(this).attr('id')) {
-                        if ('DIV' == jQuery(this).prop('tagName')) {
-                            if (!«vendorAndName»ValidateDateRange«varContainer.name.formatForCodeCapital»()) {
-                                jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
-                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
-                            } else {
-                                jQuery('#' + jQuery(this).attr('id') + '_date').get(0).setCustomValidity('');
-                                jQuery('#' + jQuery(this).attr('id') + '_time').get(0).setCustomValidity('');
-                            }
-                        } else {
-                            if (!«vendorAndName»ValidateDateRange«varContainer.name.formatForCodeCapital»()) {
                                 jQuery(this).get(0).setCustomValidity(Translator.trans('The start must be before the end.', {}, 'validators'));
                             } else {
                                 jQuery(this).get(0).setCustomValidity('');

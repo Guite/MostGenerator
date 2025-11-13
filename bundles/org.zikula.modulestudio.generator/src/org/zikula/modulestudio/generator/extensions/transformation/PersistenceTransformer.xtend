@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayType
 import de.guite.modulestudio.metamodel.Entity
-import de.guite.modulestudio.metamodel.ListFieldItem
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.NumberFieldType
@@ -11,12 +10,9 @@ import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
 import de.guite.modulestudio.metamodel.UploadField
-import org.eclipse.emf.ecore.util.EcoreUtil
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -25,10 +21,8 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
  */
 class PersistenceTransformer {
 
-    extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension WorkflowExtensions = new WorkflowExtensions
     extension Utils = new Utils
 
@@ -51,25 +45,19 @@ class PersistenceTransformer {
         }
 
         // make optional upload fields nullable
-        for (field : (entities.map[fields] + variables.map[fields]).flatten.filter(UploadField).filter[!mandatory]) {
+        for (field : entities.map[fields].flatten.filter(UploadField).filter[!mandatory]) {
             field.nullable = true
         }
         // correct default values for country fields
-        for (field : (entities.map[fields] + variables.map[fields]).flatten.filter(StringField).filter[StringRole.COUNTRY == role]) {
+        for (field : entities.map[fields].flatten.filter(StringField).filter[StringRole.COUNTRY == role]) {
             if (null !== field.defaultValue) {
                 field.defaultValue = field.defaultValue.toUpperCase
             }
         }
         // ensure date interval fields are nullable
-        for (field : (entities.map[fields] + variables.map[fields]).flatten.filter(StringField).filter[StringRole.DATE_INTERVAL== role]) {
+        for (field : entities.map[fields].flatten.filter(StringField).filter[StringRole.DATE_INTERVAL== role]) {
             field.nullable = true
         }
-
-        addViewSettings
-        addImageSettings
-        addModerationSettings
-        addGeoSettings
-        addVersionControlSettings
     }
 
     /**
@@ -305,299 +293,5 @@ class PersistenceTransformer {
         ]
 
         entity.fields.add(1, listField)
-    }
-
-    def private addViewSettings(Application it) {
-        val entitiesWithIndex = entities.filter[hasIndexAction]
-        if (entitiesWithIndex.empty) {
-            return
-        }
-
-        val varContainer = createVarContainerForViewSettings
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        for (entity : entitiesWithIndex) {
-            varContainer.fields += factory.createNumberField => [
-                name = entity.name.formatForCode + 'EntriesPerPage'
-                defaultValue = '10'
-                documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page.'
-            ]
-            if (entity.standardFields) {
-                varContainer.fields += factory.createBooleanField => [
-                    name = 'linkOwn' + entity.nameMultiple.formatForCodeCapital + 'OnAccountPage'
-                    defaultValue = 'true'
-                    documentation = 'Whether to add a link to ' + entity.nameMultiple.formatForDisplay + ' of the current user on his account page.'
-                    mandatory = false
-                ]
-            }
-        }
-        for (entity : entities.filter[ownerPermission]) {
-            varContainer.fields += factory.createBooleanField => [
-                name = entity.name.formatForCode + 'PrivateMode'
-                defaultValue = 'false'
-                documentation = 'Whether users may only see own ' + entity.nameMultiple.formatForDisplay + '.'
-                mandatory = false
-            ]
-        }
-        varContainer.fields += factory.createBooleanField => [
-            name = 'showOnlyOwnEntries'
-            defaultValue = 'false'
-            documentation = 'Whether only own entries should be shown on index pages by default or not.'
-            mandatory = false
-        ]
-        if (supportLocaleFilter) {
-            varContainer.fields += factory.createBooleanField => [
-                name = 'filterDataByLocale'
-                defaultValue = 'false'
-                documentation = 'Whether automatically filter data in the frontend based on the current locale or not.'
-                mandatory = false
-            ]
-        }
-
-        variables += varContainer
-    }
-
-    def private addImageSettings(Application it) {
-        if (!hasImageFields) {
-            return
-        }
-
-        val varContainer = createVarContainerForImageSettings
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        val entitiesWithImageUploads = entities.filter[hasImageFieldsEntity]
-        for (entity : entitiesWithImageUploads) {
-            for (imageUploadField : entity.imageFieldsEntity) {
-                val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital
-                varContainer.fields += factory.createBooleanField => [
-                    name = 'enableShrinkingFor' + fieldSuffix
-                    defaultValue = 'false'
-                    documentation = 'Whether to enable shrinking huge images to maximum dimensions. Stores downscaled version of the original image.'
-                    mandatory = false
-                ]
-                varContainer.fields += factory.createNumberField => [
-                    name = 'shrinkWidth' + fieldSuffix
-                    defaultValue = '800'
-                    documentation = 'The maximum image width in pixels.'
-                    unit = 'pixels'
-                ]
-                varContainer.fields += factory.createNumberField => [
-                    name = 'shrinkHeight' + fieldSuffix
-                    defaultValue = '600'
-                    documentation = 'The maximum image height in pixels.'
-                    unit = 'pixels'
-                ]
-            }
-        }
-
-        variables += varContainer
-    }
-
-    def private addModerationSettings(Application it) {
-        val entitiesWithApproval = entities.filter[approval]
-        val entitiesWithEditActionsAndStandardFields = entities.filter[hasEditAction && standardFields]
-        if (entitiesWithApproval.empty && entitiesWithEditActionsAndStandardFields.empty) {
-            return
-        }
-
-        val varContainer = createVarContainerForModerationSettings
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        for (entity : entitiesWithApproval) {
-            varContainer.fields += factory.createNumberField => [
-                name = 'moderationGroupFor' + entity.nameMultiple.formatForCodeCapital
-                defaultValue = '2' // use admin group (gid=2) as fallback
-                documentation = 'Used to determine moderator user accounts for sending email notifications.'
-            ]
-        }
-        for (entity : entitiesWithEditActionsAndStandardFields) {
-            varContainer.fields += factory.createBooleanField => [
-                name = 'allowModerationSpecificCreatorFor' + entity.name.formatForCodeCapital
-                defaultValue = 'false'
-                documentation = 'Whether to allow moderators choosing a user which will be set as creator.'
-                mandatory = false
-            ]
-            varContainer.fields += factory.createBooleanField => [
-                name = 'allowModerationSpecificCreationDateFor' + entity.name.formatForCodeCapital
-                defaultValue = 'false'
-                documentation = 'Whether to allow moderators choosing a custom creation date.'
-                mandatory = false
-            ]
-        }
-
-        variables += varContainer
-    }
-
-    def private addGeoSettings(Application it) {
-        if (!hasGeographical) {
-            return
-        }
-
-        val varContainer = createVarContainerForGeoSettings
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        varContainer.fields += factory.createNumberField => [
-            name = 'defaultLatitude'
-            numberType = NumberFieldType.DECIMAL
-            defaultValue = '55.88'
-            documentation = 'The default latitude.'
-        ]
-        varContainer.fields += factory.createNumberField => [
-            name = 'defaultLongitude'
-            numberType = NumberFieldType.DECIMAL
-            defaultValue = '12.36'
-            documentation = 'The default longitude.'
-        ]
-        varContainer.fields += factory.createNumberField => [
-            name = 'defaultZoomLevel'
-            defaultValue = '5'
-            documentation = 'The default zoom level.'
-        ]
-        varContainer.fields += factory.createStringField => [
-            name = 'tileLayerUrl'
-            defaultValue = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            documentation = 'URL of tile layer to use. See https://leaflet-extras.github.io/leaflet-providers/preview/ for examples.'
-        ]
-        varContainer.fields += factory.createStringField => [
-            name = 'tileLayerAttribution'
-            defaultValue = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            documentation = 'Attribution for tile layer to use.'
-        ]
-
-        for (entity : getGeographicalEntities) {
-            varContainer.fields += factory.createBooleanField => [
-                name = 'enable' + entity.name.formatForCodeCapital + 'GeoLocation'
-                defaultValue = 'false'
-                documentation = 'Whether to enable geo location functionality for ' + entity.nameMultiple.formatForDisplay + ' or not.'
-                mandatory = false
-            ]
-        }
-
-        variables += varContainer
-    }
-
-    def private addVersionControlSettings(Application it) {
-        if (!hasLoggable) {
-            return
-        }
-
-        val varContainer = createVarContainerForVersionControl
-        val factory = ModuleStudioFactory.eINSTANCE
-
-        val revisionHandlingItems = <ListFieldItem>newArrayList
-        revisionHandlingItems += factory.createListFieldItem => [
-            name = 'Unlimited revisions'
-            value = 'unlimited'
-            ^default = true
-        ]
-        revisionHandlingItems += factory.createListFieldItem => [
-            name = 'Limited revisions by amount of revisions'
-            value = 'limitedByAmount'
-        ]
-        revisionHandlingItems += factory.createListFieldItem => [
-            name = 'Limited revisions by date interval'
-            value = 'limitedByDate'
-        ]
-
-        val revisionAmountItems = <ListFieldItem>newArrayList
-        for (amount : #[1, 5, 10, 25, 50, 100, 250, 500]) {
-            revisionAmountItems += factory.createListFieldItem => [
-                name = amount.toString
-                value = amount.toString
-                ^default = if (amount == 25) true else false
-            ]
-        }
-
-        for (entity : getLoggableEntities) {
-            var listField = factory.createListField => [
-                name = 'revisionHandlingFor' + entity.name.formatForCodeCapital
-                documentation = 'Adding a limitation to the revisioning will still keep the possibility to revert ' + entity.nameMultiple.formatForDisplay + ' to an older version. You will loose the possibility to inspect changes done earlier than the oldest stored revision though.'
-                length = 20
-                multiple = false
-            ]
-            listField.items.addAll(EcoreUtil.copyAll(revisionHandlingItems))
-            varContainer.fields += listField
-
-            listField = factory.createListField => [
-                name = 'maximumAmountOf' + entity.name.formatForCodeCapital + 'Revisions'
-                length = 5
-                mandatory = false
-                multiple = false
-            ]
-            listField.items.addAll(EcoreUtil.copyAll(revisionAmountItems))
-            varContainer.fields += listField
-
-            varContainer.fields += factory.createStringField => [
-                name = 'periodFor' + entity.name.formatForCodeCapital + 'Revisions'
-                defaultValue = 'P1Y0M0DT0H0M0S'
-                mandatory = false
-                role = StringRole.DATE_INTERVAL
-            ]
-
-            varContainer.fields += factory.createBooleanField => [
-                name = 'show' + entity.name.formatForCodeCapital + 'History'
-                defaultValue = 'true'
-                documentation = 'Whether to show the version history to editors or not.'
-                mandatory = false
-            ]
-        }
-
-        variables += varContainer
-    }
-
-    def private createVarContainerForModerationSettings(Application it) {
-        val newSortNumber = getNextVarContainerSortNumber
-        ModuleStudioFactory.eINSTANCE.createVariables => [
-            name = 'Moderation'
-            documentation = 'Moderation related settings.'
-            sortOrder = newSortNumber
-        ]
-    }
-
-    def private createVarContainerForViewSettings(Application it) {
-        val newSortNumber = getNextVarContainerSortNumber
-        ModuleStudioFactory.eINSTANCE.createVariables => [
-            name = 'ListViews'
-            documentation = 'List views settings.'
-            sortOrder = newSortNumber
-        ]
-    }
-
-    def private createVarContainerForImageSettings(Application it) {
-        val newSortNumber = getNextVarContainerSortNumber
-        ModuleStudioFactory.eINSTANCE.createVariables => [
-            name = 'Images'
-            documentation = 'Image handling settings.'
-            sortOrder = newSortNumber
-        ]
-    }
-
-    def private createVarContainerForGeoSettings(Application it) {
-        val newSortNumber = getNextVarContainerSortNumber
-        ModuleStudioFactory.eINSTANCE.createVariables => [
-            name = 'Geo'
-            documentation = 'Settings related to geographical features.'
-            sortOrder = newSortNumber
-        ]
-    }
-
-    def private createVarContainerForVersionControl(Application it) {
-        val newSortNumber = getNextVarContainerSortNumber
-        ModuleStudioFactory.eINSTANCE.createVariables => [
-            name = 'Versioning'
-            documentation = 'Settings related to version control.'
-            sortOrder = newSortNumber
-        ]
-    }
-
-    def private getNextVarContainerSortNumber(Application it) {
-        var lastVarContainerSortNumber = 0
-        if (!variables.empty) {
-            lastVarContainerSortNumber = variables.sortBy[sortOrder].reverseView.head.sortOrder
-        }
-
-        val newSortNumber = lastVarContainerSortNumber + 1
-
-        newSortNumber
     }
 }

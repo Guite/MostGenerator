@@ -54,8 +54,6 @@ class WorkflowPostProcess {
         val copier = new ModelFileCopier => [
             sourceModelFile = srcPath
             targetModelFile = settings.modelDestinationPath + modelFileName
-            sourceModelFileEnriched = srcPath.replace('.mostapp', '_enriched.mostapp') //$NON-NLS-1$ //$NON-NLS-2$
-            targetModelFileEnriched = settings.modelDestinationPath + modelFileName.replace('.mostapp', '_enriched.mostapp') //$NON-NLS-1$ //$NON-NLS-2$
         ]
         copier.invoke
     }

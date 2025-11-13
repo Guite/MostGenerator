@@ -221,7 +221,7 @@ class ListEntriesHelper {
                 «FOR item : visibleStates»«item.entryInfo(application, '')»«ENDFOR»
                 «FOR item : visibleStates»«item.entryInfoNegative(application, '')»«ENDFOR»
             «ELSE»
-                «FOR item : items»«item.entryInfo(application, if (null !== varContainer) 'config' else entity.name.formatForCode)»«ENDFOR»
+                «FOR item : items»«item.entryInfo(application, entity.name.formatForCode)»«ENDFOR»
             «ENDIF»
 
             return $states;

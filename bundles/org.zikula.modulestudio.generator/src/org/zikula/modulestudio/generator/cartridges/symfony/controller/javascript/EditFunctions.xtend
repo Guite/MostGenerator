@@ -35,7 +35,7 @@ class EditFunctions {
             «initUploadField»
 
         «ENDIF»
-        «IF !entities.filter[!fields.filter(DatetimeField).empty].empty || !getAllVariables.filter(DatetimeField).empty»
+        «IF !entities.filter[!fields.filter(DatetimeField).empty].empty»
             «initDateField»
 
         «ENDIF»

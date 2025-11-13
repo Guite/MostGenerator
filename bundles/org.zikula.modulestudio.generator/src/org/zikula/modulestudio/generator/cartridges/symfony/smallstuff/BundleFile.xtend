@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.UserField
+import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -10,7 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import de.guite.modulestudio.metamodel.UploadField
+import org.zikula.modulestudio.generator.application.config.AppConfig
 
 class BundleFile {
 
@@ -21,9 +21,11 @@ class BundleFile {
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
+    AppConfig config
     Boolean needsInitializer = false
 
-    def generate(Application it, IMostFileSystemAccess fsa) {
+    def generate(Application it, IMostFileSystemAccess fsa, AppConfig config) {
+        this.config = config
         needsInitializer = if (hasUploads) true else false
         fsa.generateClassPair(appName + '.php', bundleBaseClass, bundleImpl)
     }
@@ -55,10 +57,9 @@ class BundleFile {
             'Symfony\\Component\\DependencyInjection\\ContainerBuilder',
             'Symfony\\Component\\DependencyInjection\\Loader\\Configurator\\ContainerConfigurator'
         ])
-        if (!needsConfig) {
+        if (!config.relevant) {
             return imports
         }
-        imports.add(appNamespace + '\\EventListener\\UserListener')
         imports.add(appNamespace + '\\Helper\\CollectionFilterHelper')
         if (hasGeographical) {
             imports.add(appNamespace + '\\Entity\\Factory\\EntityInitializer')
@@ -120,7 +121,7 @@ class BundleFile {
                     return $this->container->get(«appName»Initializer::class);
                 }
             «ENDIF»
-            «IF needsConfig»
+            «IF config.relevant»
 
                 «configure»
             «ENDIF»
@@ -144,7 +145,7 @@ class BundleFile {
         public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
         {
             $container->import('../config/services.yaml');
-            «IF needsConfig»
+            «IF config.relevant»
 
                 «configureServices»
             «ENDIF»
@@ -168,13 +169,6 @@ class BundleFile {
         «IF hasLoggable»
             $services->get(EntityLifecycleListener::class)
                 ->arg('$loggableConfig', $config['versioning']);
-        «ENDIF»
-        «IF hasUserVariables»
-            $services->get(UserListener::class)
-                «FOR userVar : getAllVariables.filter(UserField)»
-                    ->arg('$«userVar.name.formatForCode»', $config['«userVar.varContainer.name.formatForSnakeCase»']['«userVar.name.formatForSnakeCase»'])
-                «ENDFOR»
-            ;
         «ENDIF»
         «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
             «FOR entity : entities.filter[hasEditAction]»

@@ -63,28 +63,14 @@ class ModelExtensions {
      * Checks whether the application contains at least one entity with at least one upload field.
      */
     def hasUploads(Application it) {
-        !getUploadEntities.empty || hasUploadVariables
+        !getUploadEntities.empty
     }
 
     /**
      * Returns a list of all upload fields.
      */
     def getAllUploadFields(Application it) {
-        getUploadEntities.map[fields].flatten.filter(UploadField) + getUploadVariables
-    }
-
-    /**
-     * Returns a list of all upload variables.
-     */
-    def getUploadVariables(Application it) {
-        getAllVariables.filter(UploadField)
-    }
-
-    /**
-     * Checks whether the application contains at least one upload variable.
-     */
-    def hasUploadVariables(Application it) {
-        !getUploadVariables.empty
+        getUploadEntities.map[fields].flatten.filter(UploadField)
     }
 
     /**
@@ -119,13 +105,6 @@ class ModelExtensions {
     }
 
     /**
-     * Checks whether the application contains at least one user variable.
-     */
-    def hasUserVariables(Application it) {
-        !getAllVariables.filter(UserField).empty
-    }
-
-    /**
      * Returns a list of all list fields in this application.
      */
     def getAllListFields(Application it) {
@@ -136,7 +115,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one list field.
      */
     def hasListFields(Application it) {
-        !getAllListFields.empty || !getAllVariables.filter(ListField).empty
+        !getAllListFields.empty
     }
 
     /**
@@ -159,9 +138,6 @@ class ModelExtensions {
     def getApplication(Field it) {
         if (null !== entity) {
             return entity.application
-        }
-        if (null !== varContainer) {
-            return varContainer.application
         }
         null
     }

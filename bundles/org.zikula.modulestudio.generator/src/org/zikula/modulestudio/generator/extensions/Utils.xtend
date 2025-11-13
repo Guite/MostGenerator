@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.application.MostInMemoryFileSystemAcces
  * Miscellaneous utility methods.
  */
 class Utils {
+
     extension FormattingExtensions = new FormattingExtensions
 
     /**
@@ -153,50 +154,6 @@ class Utils {
             case SF73:
                 '4.0'
         }
-    }
-
-    /**
-     * Checks whether any variables are part of the model or not.
-     *
-     * @param it The {@link Application} instance
-     *
-     * @return Boolean The result
-     */
-    def needsConfig(Application it) {
-        !getAllVariables.empty
-    }
-
-    /**
-     * Checks whether there exist multiple variables containers.
-     *
-     * @param it The {@link Application} instance
-     *
-     * @return Boolean The result
-     */
-    def hasMultipleConfigSections(Application it) {
-        variables.size > 1
-    }
-
-    /**
-     * Returns the variables containers sorted by their sort order.
-     *
-     * @param it The {@link Application} instance
-     *
-     * @return List<Variables> The selected list
-     */
-    def getSortedVariableContainers(Application it) {
-        variables.sortBy[sortOrder]
-    }
-
-    /**
-     * Returns all variables for a given application.
-     *
-     * @param it The {@link Application} instance
-     *
-     * @return List<Variable> The selected list
-     */
-    def getAllVariables(Application it) {
-        variables.map[fields].flatten.toList
     }
 
     /**
