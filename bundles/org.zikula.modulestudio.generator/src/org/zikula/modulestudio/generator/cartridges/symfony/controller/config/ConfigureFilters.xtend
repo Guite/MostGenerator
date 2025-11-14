@@ -204,6 +204,7 @@ class ConfigureFilters implements ControllerMethodInterface {
     def private dispatch filter(UserField it) '''
         ->add(EntityFilter::new('«name.formatForCode»', «label»)«options»)
     '''
+    def private dispatch options(UserField it) '''->autocomplete()'''
 
     def private relationFilter(Relationship it, Boolean outgoing) '''
         «val aliasName = getRelationAliasName(outgoing)»
@@ -212,7 +213,7 @@ class ConfigureFilters implements ControllerMethodInterface {
 
     def private options(Relationship it, Boolean outgoing) {
         // ->canSelectMultiple(true) enabled automatically by default for *ToMany relationships
-        // see 
+        '''->autocomplete()'''
     }
 
     /* TODO review relation-related leftovers of old code
