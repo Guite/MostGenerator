@@ -189,7 +189,7 @@ class Entities {
         «IF hasUploadFieldsEntity»
             #[Vich\Uploadable]
         «ENDIF»
-        abstract class Abstract«name.formatForCodeCapital» implements AbstractEntityInterface«IF it.hasTranslatableFields», Translatable«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital» implements AbstractEntityInterface«IF it.hasTranslatableFields», Translatable«ENDIF», \Stringable
         {
             «modelEntityBaseImplBody(app)»
         }
