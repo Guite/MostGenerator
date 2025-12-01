@@ -46,6 +46,7 @@ class EditEntityType {
     def private collectBaseImports(Entity it) {
         val imports = new ImportList
         imports.add(entityClassName('', false))
+        imports.add('Symfony\\Component\\Form\\AbstractType')
         imports.add('Symfony\\Component\\Form\\FormBuilderInterface')
         imports.add('Symfony\\Component\\Form\\FormInterface')
         imports.add('Symfony\\Component\\OptionsResolver\\OptionsResolver')
@@ -68,12 +69,19 @@ class EditEntityType {
         if (hasListFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\ListEntriesHelper')
         }
-        if (isTranslatable) {
-            imports.add(app.appNamespace + '\\Helper\\TranslatableHelper')
+        if (isTranslatable || hasLocaleFieldsEntity) {
+            imports.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
+            if (isTranslatable) {
+                imports.add(app.appNamespace + '\\Helper\\TranslatableHelper')
+            }
         }
         if (hasUploadFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\UploadHelper')
         }
+        if (!fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty) {
+            imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
+        }
+        imports.add(app.appNamespace + '\\Entity\\Factory\\EntityFactory')
         imports
     }
 
@@ -102,12 +110,11 @@ class EditEntityType {
                 «ENDIF»
                 protected readonly EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
                 protected readonly CollectionFilterHelper $collectionFilterHelper,
-                protected readonly EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable»,
-                protected readonly LocaleApiInterface $localeApi,
+                protected readonly EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable || hasLocaleFieldsEntity»,
+                protected readonly LocaleApiInterface $localeApi«ENDIF»«IF isTranslatable»,
                 protected readonly TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
                 protected readonly ListEntriesHelper $listHelper«ENDIF»«IF hasUploadFieldsEntity»,
-                protected readonly UploadHelper $uploadHelper«ENDIF»«IF hasLocaleFieldsEntity»,
-                protected readonly LocaleApiInterface $localeApi«ENDIF»«IF app.needsFeatureActivationHelper»,
+                protected readonly UploadHelper $uploadHelper«ENDIF»«IF app.needsFeatureActivationHelper»,
                 protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
             }

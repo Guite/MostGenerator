@@ -75,7 +75,7 @@ class Plugins {
         /**
          * Twig extension base class.
          */
-        abstract class AbstractTwigExtension extends AbstractExtension
+        abstract class AbstractTwigExtension
         {
             «twigExtensionBody»
         }
