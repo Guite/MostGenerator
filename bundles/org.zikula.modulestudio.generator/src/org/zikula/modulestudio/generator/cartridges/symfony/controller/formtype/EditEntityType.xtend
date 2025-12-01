@@ -81,7 +81,6 @@ class EditEntityType {
         if (!fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty) {
             imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')
         }
-        imports.add(app.appNamespace + '\\Entity\\Factory\\EntityFactory')
         imports
     }
 
@@ -106,9 +105,8 @@ class EditEntityType {
             «ENDIF»
             public function __construct(
                 «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                    protected readonly RequestStack $requestStack,
-                «ENDIF»
-                protected readonly EntityFactory $entityFactory«IF !incoming.empty || !outgoing.empty»,
+                    protected readonly RequestStack $requestStack«IF !incoming.empty || !outgoing.empty»,«ENDIF»
+                «ENDIF»«IF !incoming.empty || !outgoing.empty»
                 protected readonly CollectionFilterHelper $collectionFilterHelper,
                 protected readonly EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable || hasLocaleFieldsEntity»,
                 protected readonly LocaleApiInterface $localeApi«ENDIF»«IF isTranslatable»,
@@ -161,9 +159,6 @@ class EditEntityType {
                         // define class for underlying data (required for embedding forms)
                         'data_class' => «name.formatForCodeCapital»::class,
                         'translation_domain' => '«name.formatForCode»',
-                        'empty_data' => function (FormInterface $form) {
-                            return $this->entityFactory->create«name.formatForCodeCapital»();
-                        },
                         'error_mapping' => [
                             «FOR field : fields.filter(ListField).filter[multiple]»
                                 'is«field.name.formatForCodeCapital»ValueAllowed' => '«field.name.formatForCode»',

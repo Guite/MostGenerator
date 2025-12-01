@@ -62,7 +62,7 @@ class BundleFile {
         }
         imports.add(appNamespace + '\\Helper\\CollectionFilterHelper')
         if (hasGeographical) {
-            imports.add(appNamespace + '\\Entity\\Factory\\EntityInitializer')
+            imports.add(appNamespace + '\\Entity\\Initializer\\EntityInitializer')
         }
         if (hasLoggable) {
             imports.add(appNamespace + '\\EventListener\\EntityLifecycleListener')

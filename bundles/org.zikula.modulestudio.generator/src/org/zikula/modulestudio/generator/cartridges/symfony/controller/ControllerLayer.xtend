@@ -88,6 +88,7 @@ class ControllerLayer {
             public function __construct(
                 TranslatorInterface $translator,
                 protected readonly EntityFactory $entityFactory,
+                protected readonly EntityInitializer $entityInitializer,
                 «IF !getAllEntityFields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                     protected readonly RequestStack $requestStack,
                 «ENDIF»
@@ -123,7 +124,9 @@ class ControllerLayer {
 
             public function createEntity(string $entityFqcn): «name.formatForCodeCapital»
             {
-                return $this->entityFactory->create«name.formatForCodeCapital»();
+                $entity = parent::createEntity($entityFqcn);
+
+                return $this->entityInitializer->init«name.formatForCodeCapital»($entity);
             }
 
             «FOR action : actions»
@@ -192,7 +195,8 @@ class ControllerLayer {
             'function Symfony\\Component\\Translation\\t',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-            app.appNamespace + '\\Entity\\Factory\\EntityFactory'
+            app.appNamespace + '\\Entity\\Factory\\EntityFactory',
+            app.appNamespace + '\\Entity\\Initializer\\EntityInitializer'
         ])
         if (hasIndexAction || hasEditAction) {
             imports.add('Exception')

@@ -27,7 +27,7 @@ class EntityInitializer {
     def generate(Application it, IMostFileSystemAccess fsa) {
         fh = new FileHelper(it)
         'Generating entity initializer class'.printIfNotTesting(fsa)
-        fsa.generateClassPair('Entity/Factory/EntityInitializer.php', initializerBaseImpl, initializerImpl)
+        fsa.generateClassPair('Entity/Initializer/EntityInitializer.php', initializerBaseImpl, initializerImpl)
     }
 
     def private collectBaseImports(Application it) {
@@ -52,7 +52,7 @@ class EntityInitializer {
     }
 
     def private initializerBaseImpl(Application it) '''
-        namespace «appNamespace»\Entity\Factory\Base;
+        namespace «appNamespace»\Entity\Initializer\Base;
 
         «collectBaseImports.print»
 
@@ -137,9 +137,9 @@ class EntityInitializer {
     }
 
     def private initializerImpl(Application it) '''
-        namespace «appNamespace»\Entity\Factory;
+        namespace «appNamespace»\Entity\Initializer;
 
-        use «appNamespace»\Entity\Factory\Base\AbstractEntityInitializer;
+        use «appNamespace»\Entity\Initializer\Base\AbstractEntityInitializer;
 
         /**
          * Entity initializer class used to dynamically apply default values to newly created entities.

@@ -23,7 +23,6 @@ class Factory {
         fh = new FileHelper(it)
         'Generating entity factory class'.printIfNotTesting(fsa)
         fsa.generateClassPair('Entity/Factory/EntityFactory.php', modelFactoryBaseImpl, modelFactoryImpl)
-        new EntityInitializer().generate(it, fsa)
     }
 
     def private collectBaseImports(Application it) {
@@ -32,7 +31,6 @@ class Factory {
             'Doctrine\\ORM\\EntityManagerInterface',
             'Doctrine\\ORM\\EntityRepository',
             'InvalidArgumentException',
-            appNamespace + '\\Entity\\Factory\\EntityInitializer',
             appNamespace + '\\Helper\\CollectionFilterHelper'
         ])
         for (entity : entities) {
@@ -56,7 +54,6 @@ class Factory {
         {
             public function __construct(
                 protected readonly EntityManagerInterface $entityManager,
-                protected readonly EntityInitializer $entityInitializer,
                 protected readonly CollectionFilterHelper $collectionFilterHelper«IF hasTranslatable»,
                 protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
@@ -83,24 +80,9 @@ class Factory {
 
                 return $repository;
             }
-            «FOR entity : entities»
-
-                /**
-                 * Creates a new «entity.name.formatForCode» instance.
-                 */
-                public function create«entity.name.formatForCodeCapital»(): «entity.name.formatForCodeCapital»
-                {
-                    $entity = new «entity.name.formatForCodeCapital»(«/* TODO provide entity constructor arguments if required */»);
-
-                    $this->entityInitializer->init«entity.name.formatForCodeCapital»($entity);
-
-                    return $entity;
-                }
-            «ENDFOR»
 
             «getIdField»
             «fh.getterMethod(it, 'entityManager', 'EntityManagerInterface', false)»
-            «fh.getterMethod(it, 'entityInitializer', 'EntityInitializer', false)»
         }
     '''
 

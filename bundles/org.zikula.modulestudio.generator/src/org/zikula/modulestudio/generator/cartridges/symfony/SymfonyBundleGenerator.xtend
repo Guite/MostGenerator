@@ -6,6 +6,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.config.AppConfig
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerLayer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.EventSubscribers
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.FormHandler
@@ -16,6 +17,7 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.In
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.MetaData
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Entities
+import org.zikula.modulestudio.generator.cartridges.symfony.models.EntityInitializer
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Factory
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Repository
 import org.zikula.modulestudio.generator.cartridges.symfony.models.UuidStringGenerator
@@ -38,7 +40,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.Views
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.transformation.ConfigurationDeriver
-import org.zikula.modulestudio.generator.application.config.AppConfig
 
 class SymfonyBundleGenerator implements IGenerator {
 
@@ -93,9 +94,13 @@ class SymfonyBundleGenerator implements IGenerator {
         'Generating repository classes'.printIfNotTesting(fsa)
         new Repository().generate(it, fsa)
 
-        pm?.subTask('Model: Factory class')
-        'Generating factory class'.printIfNotTesting(fsa)
+        pm?.subTask('Model: Entity factory class')
+        'Generating entity factory class'.printIfNotTesting(fsa)
         new Factory().generate(it, fsa)
+
+        pm?.subTask('Model: Entity initializer class')
+        'Generating entity initializer class'.printIfNotTesting(fsa)
+        new EntityInitializer().generate(it, fsa)
 
         pm?.subTask('Model: IdGenerator class')
         'Generating id generator class'.printIfNotTesting(fsa)
