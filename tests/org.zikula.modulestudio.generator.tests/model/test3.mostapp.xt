@@ -26,8 +26,8 @@ application "SimpleNews" targets SF74 {
             lockType PESSIMISTIC_WRITE
             standardFields true
             approval true
-            hasArchive true
             ownerPermission true
+            hasArchive true
             fields {
                 string "title" {
                     sluggablePosition 1

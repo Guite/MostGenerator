@@ -81,6 +81,12 @@ class ConfigureCrud implements ControllerMethodInterface {
         IF hasDateIntervalFieldsEntity»
             ->setDateIntervalFormat(t('%%y year(s) %%m month(s) %%d day(s)'))
         «ENDIF*/»
+        «IF null !== orderBy && !orderBy.empty»«/*
+         * null values are not ignored,
+         * see https://github.com/EasyCorp/EasyAdminBundle/issues/6879
+         */»
+            ->setDefaultSort([«orderByDetails(orderBy, 'crud')»])
+        «ENDIF»
         ->addFormTheme('@ZikulaTheme/Form/form_layout_addons.html.twig')
     '''
 }

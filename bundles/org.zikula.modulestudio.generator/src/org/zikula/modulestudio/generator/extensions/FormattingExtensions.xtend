@@ -134,4 +134,28 @@ class FormattingExtensions {
 
         output
     }
+
+    def orderByDetails(String orderBy, String context) {
+        val criteria = newArrayList
+        val orderByFields = orderBy.replace(', ', ',').split(',')
+
+        for (orderByField : orderByFields) {
+            var fieldName = orderByField
+            var sorting = 'ASC'
+            if (orderByField.contains(':')) {
+                val criteriaParts = orderByField.split(':')
+                fieldName = criteriaParts.head
+                sorting = criteriaParts.lastOrNull
+                if (null === sorting || !#['ASC', 'DESC'].contains(sorting.toUpperCase)) {
+                    sorting = 'ASC'
+                }
+            }
+            if ('orm' === context) {
+                criteria.add('"' + fieldName + '" = "' + sorting.toUpperCase + '"')
+            } else if ('crud' === context) {
+                criteria.add('\'' + fieldName + '\' => \'' + sorting.toUpperCase + '\'')
+            }
+        }
+        criteria.join(', ')
+    }
 }

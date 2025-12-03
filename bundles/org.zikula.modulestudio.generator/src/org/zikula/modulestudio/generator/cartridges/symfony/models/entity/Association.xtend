@@ -158,7 +158,7 @@ class Association {
              */
             #[ORM\ManyToMany(targetEntity: «entityClass»::class, mappedBy: '«targetName»'«additionalOptions(true)»)]
             «IF null !== orderByReverse && !orderByReverse.empty»
-                #[ORM\OrderBy([«orderByDetails(orderByReverse)»])]
+                #[ORM\OrderBy([«orderByDetails(orderByReverse, 'orm')»])]
             «ENDIF»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(false).toFirstLower»
@@ -232,7 +232,7 @@ class Association {
         «ENDIF»
         «joinDetails(true)»
         «IF null !== orderBy && !orderBy.empty»
-            #[ORM\OrderBy([«orderByDetails(orderBy)»])]
+            #[ORM\OrderBy([«orderByDetails(orderBy, 'orm')»])]
         «ENDIF»
         «IF !nullable»
             «val aliasName = getRelationAliasName(true).toFirstLower»
@@ -255,7 +255,7 @@ class Association {
         #[ORM\ManyToMany(targetEntity: «entityClass»::class«IF bidirectional», inversedBy: '«sourceName»'«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)]
         «joinDetails(true)»
         «IF null !== orderBy && !orderBy.empty»
-            #[ORM\OrderBy([«orderByDetails(orderBy)»])]
+            #[ORM\OrderBy([«orderByDetails(orderBy, 'orm')»])]
         «ENDIF»
         «IF !nullable»
             «val aliasName = getRelationAliasName(true).toFirstLower»
@@ -340,23 +340,6 @@ class Association {
         else if (cascadeProperty == CascadeType.PERSIST_MERGE_DETACH) '\'persist\', \'merge\', \'detach\''
         else if (cascadeProperty == CascadeType.REMOVE_MERGE_DETACH) '\'remove\', \'merge\', \'detach\''
         else if (cascadeProperty == CascadeType.ALL) '\'all\''
-    }
-
-    def private orderByDetails(String orderBy) {
-        val criteria = newArrayList
-        val orderByFields = orderBy.replace(', ', ',').split(',')
-
-        for (orderByField : orderByFields) {
-            var fieldName = orderByField
-            var sorting = 'ASC'
-            if (orderByField.contains(':')) {
-                val criteriaParts = orderByField.split(':')
-                fieldName = criteriaParts.head
-                sorting = criteriaParts.lastOrNull
-            }
-            criteria.add('"' + fieldName + '" = "' + sorting.toUpperCase + '"')
-        }
-        criteria.join(', ')
     }
 
     def initCollections(Entity it) '''
