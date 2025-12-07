@@ -5,13 +5,11 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Factory {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     FileHelper fh
@@ -30,14 +28,10 @@ class Factory {
         imports.addAll(#[
             'Doctrine\\ORM\\EntityManagerInterface',
             'Doctrine\\ORM\\EntityRepository',
-            'InvalidArgumentException',
-            appNamespace + '\\Helper\\CollectionFilterHelper'
+            'InvalidArgumentException'
         ])
         for (entity : entities) {
             imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
-        }
-        if (hasTranslatable) {
-            imports.add(appNamespace + '\\Helper\\FeatureActivationHelper')
         }
         imports
     }
@@ -54,31 +48,7 @@ class Factory {
         {
             public function __construct(
                 protected readonly EntityManagerInterface $entityManager,
-                protected readonly CollectionFilterHelper $collectionFilterHelper«IF hasTranslatable»,
-                protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»
             ) {
-            }
-
-            /**
-             * Returns a repository for a given object type.
-             */
-            public function getRepository(string $objectType): EntityRepository
-            {
-                $entityClass = '\\«appNamespace»\\Entity\\' . ucfirst($objectType);
-
-                /** @var EntityRepository $repository */
-                $repository = $this->getEntityManager()->getRepository($entityClass);
-                $repository->setCollectionFilterHelper($this->collectionFilterHelper);
-                «IF hasTranslatable»
-
-                    if (in_array($objectType, ['«getTranslatableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
-                        $repository->setTranslationsEnabled(
-                            $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $objectType)
-                        );
-                    }
-                «ENDIF»
-
-                return $repository;
             }
 
             «getIdField»

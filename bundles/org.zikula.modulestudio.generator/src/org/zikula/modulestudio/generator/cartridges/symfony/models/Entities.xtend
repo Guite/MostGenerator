@@ -120,10 +120,9 @@ class Entities {
                 imports.add('Symfony\\Component\\HttpFoundation\\File\\File')
                 imports.add('Vich\\UploaderBundle\\Entity\\File as EmbeddedFile')
                 imports.add('Vich\\UploaderBundle\\Mapping\\Annotation as Vich')
-                /* wait for next release of VichUploaderBundle
                 if (!getUploadFieldsEntity.filter[mandatory].empty) {
                     imports.add('Vich\\UploaderBundle\\Validator\\Constraints as VichAssert')
-                }*/
+                }
             }
             imports.add('Symfony\\Component\\Validator\\Constraints as Assert')
             if (!fields.filter(TextField).filter[role == TextRole.CODE_TWIG].empty) {

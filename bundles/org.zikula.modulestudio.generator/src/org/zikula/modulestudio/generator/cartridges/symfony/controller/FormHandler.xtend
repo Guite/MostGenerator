@@ -102,6 +102,7 @@ class FormHandler {
     def private collectCommonBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Doctrine\\ORM\\EntityRepository',
             'Psr\\Log\\LoggerInterface',
             'RuntimeException',
             'Symfony\\Bundle\\SecurityBundle\\Security',
@@ -121,6 +122,9 @@ class FormHandler {
             appNamespace + '\\Helper\\PermissionHelper',
             appNamespace + '\\Helper\\WorkflowHelper'
         ])
+        for (entity : entities) {
+            imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+        }
         if (!entities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty) {
             imports.add('Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface')
         }
@@ -233,6 +237,9 @@ class FormHandler {
                     protected readonly UserManager $userManager,
                 «ENDIF»
                 protected readonly EntityFactory $entityFactory,
+                «FOR entity : entities.sortBy[name]»
+                    protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+                «ENDFOR»
                 protected readonly ControllerHelper $controllerHelper,
                 protected readonly ModelHelper $modelHelper,
                 protected readonly PermissionHelper $permissionHelper,
@@ -258,6 +265,13 @@ class FormHandler {
 
                 «prepareWorkflowAdditions»
             «ENDIF»
+
+            protected function getRepository(string $objectType): EntityRepository
+            {
+                «repositoryMatchBlock(entities)»
+
+                return $repository;
+            }
         }
     '''
 
@@ -495,7 +509,7 @@ class FormHandler {
          */
         protected function initEntityForEditing(): ?EntityInterface
         {
-            return $this->entityFactory->getRepository($this->objectType)->selectById($this->idValue);
+            return $this->getRepository($this->objectType)->selectById($this->idValue);
         }
     '''
 
@@ -511,7 +525,7 @@ class FormHandler {
 
             if (0 < $templateId) {
                 // reuse existing entity
-                $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateId);
+                $entityT = $this->getRepository($this->objectType)->selectById($templateId);
                 if (null === $entityT) {
                     return null;
                 }
@@ -525,7 +539,7 @@ class FormHandler {
                     if (in_array($this->objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»'], true)) {
                         $parentId = $request->query->getInt('parent');
                         if (0 < $parentId) {
-                            $parentEntity = $this->entityFactory->getRepository($this->objectType)->selectById($parentId);
+                            $parentEntity = $this->getRepository($this->objectType)->selectById($parentId);
                             if (null !== $parentEntity) {
                                 $entity->setParent($parentEntity);
                             }
@@ -1127,7 +1141,7 @@ class FormHandler {
                 } else {
                     $templateId = $this->requestStack->getCurrentRequest()->query->getInt('astemplate');
                     if ($templateId > 0) {
-                        $entityT = $this->entityFactory->getRepository($this->objectType)->selectById($templateId, false, true);
+                        $entityT = $this->getRepository($this->objectType)->selectById($templateId, false, true);
                         if (null !== $entityT) {
                             $entity->set_actionDescriptionForLogEntry('_HISTORY_«name.formatForCode.toUpperCase»_CLONED|%«name.formatForCode»%=' . $entityT->getKey());
                         }

@@ -5,8 +5,10 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.RelationEditMode
 import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -14,6 +16,7 @@ class ModelHelper {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
@@ -25,10 +28,18 @@ class ModelHelper {
         fsa.generateClassPair('Helper/ModelHelper.php', modelFunctionsBaseImpl, modelFunctionsImpl)
     }
 
+    def private collectBaseImports(Application it) {
+        val imports = new ImportList
+        for (entity : entities) {
+            imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+        }
+        imports
+    }
+
     def private modelFunctionsBaseImpl(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use «appNamespace»\Entity\Factory\EntityFactory;
+        «collectBaseImports.print»
 
         /**
          * Helper base class for model layer methods.
@@ -40,15 +51,16 @@ class ModelHelper {
     '''
 
     def private helperBaseImpl(Application it) '''
-        public function __construct(protected readonly EntityFactory $entityFactory)
-        {
+        public function __construct(
+            «FOR entity : entities.sortBy[name]»
+                protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+            «ENDFOR»
+        ) {
         }
 
         «canBeCreated»
 
         «hasExistingInstances»
-
-        «resolveSortParameter»
     '''
 
     def private canBeCreated(Application it) '''
@@ -109,47 +121,13 @@ class ModelHelper {
         sourceTypes
     }
 
-    def private resolveSortParameter(Application it) '''
-        /**
-         * Returns a desired sorting criteria for passing it to a repository method.
-         */
-        public function resolveSortParameter(string $objectType = '', string $sorting = 'default'): string
-        {
-            if ('random' === $sorting) {
-                return 'RAND()';
-            }
-
-            $hasStandardFields = in_array($objectType, ['«entities.filter[standardFields].map[name.formatForCode].join('\', \'')»']);
-
-            $sortParam = '';
-            if ('newest' === $sorting) {
-                if (true === $hasStandardFields) {
-                    $sortParam = 'createdDate DESC';
-                } else {
-                    $sortParam = $this->entityFactory->getIdField($objectType) . ' DESC';
-                }
-            } elseif ('updated' === $sorting) {
-                if (true === $hasStandardFields) {
-                    $sortParam = 'updatedDate DESC';
-                } else {
-                    $sortParam = $this->entityFactory->getIdField($objectType) . ' DESC';
-                }
-            } elseif ('default' === $sorting) {
-                $repository = $this->entityFactory->getRepository($objectType);
-                $sortParam = $repository->getDefaultSortingField();
-            }
-
-            return $sortParam;
-        }
-    '''
-
     def private hasExistingInstances(Application it) '''
         /**
          * Determines whether there exists at least one instance of a certain object type in the database.
          */
         protected function hasExistingInstances(string $objectType = ''): bool
         {
-            $repository = $this->entityFactory->getRepository($objectType);
+            «repositoryMatchBlock(entities)»
             if (null === $repository) {
                 return false;
             }

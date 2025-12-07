@@ -12,12 +12,14 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetRelat
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.ObjectState
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.TreeData
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.TreeSelection
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Plugins {
 
+    extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
@@ -54,9 +56,11 @@ class Plugins {
                 'Knp\\Menu\\Matcher\\Matcher',
                 'Knp\\Menu\\Renderer\\ListRenderer',
                 'Symfony\\Component\\Routing\\RouterInterface',
-                appNamespace + '\\Entity\\Factory\\EntityFactory',
                 appNamespace + '\\Menu\\MenuBuilder'
             ])
+            for (entity : getTreeEntities) {
+                imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+            }
         }
         if (hasListFields) {
             imports.add(appNamespace + '\\Helper\\ListEntriesHelper')
@@ -86,7 +90,9 @@ class Plugins {
             protected readonly TranslatorInterface $translator«IF hasTrees»,
             protected readonly RouterInterface $router«ENDIF»,
             «IF hasTrees»
-                protected readonly EntityFactory $entityFactory,
+                «FOR entity : getTreeEntities.sortBy[name]»
+                    protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+                «ENDFOR»
             «ENDIF»
             protected readonly EntityDisplayHelper $entityDisplayHelper,
             protected readonly WorkflowHelper $workflowHelper«IF hasListFields»,

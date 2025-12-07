@@ -33,9 +33,11 @@ class ControllerHelper {
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-            appNamespace + '\\Entity\\Factory\\EntityFactory',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
+        for (entity : entities) {
+            imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+        }
         if (hasIndexActions) {
             imports.addAll(#[
                 'Symfony\\Component\\Form\\FormFactoryInterface',
@@ -50,7 +52,7 @@ class ControllerHelper {
                 'Symfony\\Bundle\\SecurityBundle\\Security'
             ])
         }
-        if (hasIndexActions && hasUserFields) {
+        if (hasIndexActions && hasEntitiesWithUserFields) {
             imports.add('Zikula\\UsersBundle\\Entity\\User')
         }
         if (hasAutomaticExpiryHandling || hasLoggable) {
@@ -92,11 +94,19 @@ class ControllerHelper {
                 protected readonly Security $security,
                 protected readonly LoggerInterface $logger,
             «ENDIF»
-            protected readonly EntityFactory $entityFactory,
-            protected readonly PermissionHelper $permissionHelper«IF needsFeatureActivationHelper»,
-            protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasAutomaticExpiryHandling || hasLoggable»,
-            ExpiryHelper $expiryHelper«ENDIF»«IF hasIndexActions»,
-            protected readonly array $listViewConfig«ENDIF»
+            «FOR entity : entities.sortBy[name]»
+                protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+            «ENDFOR»
+            protected readonly PermissionHelper $permissionHelper,
+            «IF needsFeatureActivationHelper»
+                protected readonly FeatureActivationHelper $featureActivationHelper,
+            «ENDIF»
+            «IF hasAutomaticExpiryHandling || hasLoggable»
+                ExpiryHelper $expiryHelper,
+            «ENDIF»
+            «IF hasIndexActions»
+                protected readonly array $listViewConfig,
+            «ENDIF»
         ) {
             $this->setTranslator($translator);
             «IF hasAutomaticExpiryHandling»
@@ -191,7 +201,7 @@ class ControllerHelper {
             if (null === $request) {
                 throw new Exception($this->trans('Error! Controller helper needs a request.'));
             }
-            $repository = $this->entityFactory->getRepository($objectType);
+            «repositoryMatchBlock(entities)»
 
             // parameter for used sorting field
             [$sort, $sortdir] = $this->determineDefaultIndexSorting($objectType);
@@ -319,7 +329,7 @@ class ControllerHelper {
             if (null === $request) {
                 return ['', 'ASC'];
             }
-            $repository = $this->entityFactory->getRepository($objectType);
+            «repositoryMatchBlock(entities)»
 
             «new ControllerHelperFunctions().defaultSorting(it)»
             $sortdir = $request->query->get('sortdir', 'ASC');

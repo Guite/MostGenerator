@@ -46,7 +46,7 @@ class UserDeletion {
     '''
 
     def generateTrait(Application it, IMostFileSystemAccess fsa) {
-        if (!hasUserFields) {
+        if (!hasEntitiesWithUserFields) {
             return
         }
         val filePath = 'src/Repository/UserDeletionTrait.php'

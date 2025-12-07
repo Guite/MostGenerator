@@ -31,6 +31,15 @@ class ModelExtensions {
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
+    def repositoryMatchBlock(Application it, Iterable<Entity> entityList) '''
+        $repository = match ($objectType) {
+            «FOR entity : entityList.sortBy[name]»
+            '«entity.name.formatForCode»' => $this->«entity.name.formatForCode»Repository,
+            «ENDFOR»
+            default => null,
+        };
+    '''
+
     /**
      * Returns a list of all entity fields in this application.
      */
@@ -93,8 +102,12 @@ class ModelExtensions {
     /**
      * Checks whether the application contains at least one user field.
      */
-    def hasUserFields(Application it) {
-        !getAllEntityFields.filter(UserField).empty
+    def hasEntitiesWithUserFields(Application it) {
+        !getEntitiesWithUserFields.empty
+    }
+
+    def getEntitiesWithUserFields(Application it) {
+        entities.filter[hasUserFieldsEntity]
     }
 
     /**

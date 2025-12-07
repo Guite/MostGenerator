@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
 import java.util.regex.Pattern
+import de.guite.modulestudio.metamodel.Entity
 
 /**
  * Various helper functions for formatting names and qualifiers.
@@ -157,5 +158,21 @@ class FormattingExtensions {
             }
         }
         criteria.join(', ')
+    }
+
+    def getFirstOrderByField(Entity it)
+    {
+        val orderByFields = orderBy.replace(', ', ',').split(',')
+
+        for (orderByField : orderByFields) {
+            var fieldName = orderByField
+            if (orderByField.contains(':')) {
+                val criteriaParts = orderByField.split(':')
+                fieldName = criteriaParts.head
+            }
+            return fieldName
+        }
+
+        null
     }
 }

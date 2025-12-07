@@ -2,11 +2,15 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TreeSelection {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
@@ -20,7 +24,7 @@ class TreeSelection {
             string $target,
             bool $skipRootNode = true
         ): array {
-            $repository = $this->entityFactory->getRepository($objectType);
+            «repositoryMatchBlock(getTreeEntities)»
             $titleFieldName = $this->entityDisplayHelper->getTitleFieldName($objectType);
 
             $result = [];

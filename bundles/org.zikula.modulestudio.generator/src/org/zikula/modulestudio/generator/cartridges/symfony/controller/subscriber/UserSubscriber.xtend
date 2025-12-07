@@ -14,11 +14,13 @@ class UserSubscriber {
     extension Utils = new Utils
 
     def generate(Application it) '''
-        «IF hasUserFields»
+        «IF hasEntitiesWithUserFields»
             public function __construct(
                 protected readonly Security $security,
-                protected readonly EntityFactory $entityFactory,
-                protected readonly LoggerInterface $logger
+                «FOR entity : getEntitiesWithUserFields.sortBy[name]»
+                    protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+                «ENDFOR»
+                protected readonly LoggerInterface $logger,
             ) {
             }
 
@@ -136,10 +138,12 @@ class UserSubscriber {
          */
         public function onAccountDeletion(AccountDeletionEvent $event): void
         {
-            «IF hasUserFields»
+            «IF hasEntitiesWithUserFields»
                 $currentUser = $this->security->getUser();
                 $userId = $event->getUser()->getId();
-                «FOR entity : entities»«entity.userDelete»«ENDFOR»
+                «FOR entity : getEntitiesWithUserFields»
+                    «entity.userDelete»
+                «ENDFOR»
             «ENDIF»
         }
 
@@ -156,30 +160,26 @@ class UserSubscriber {
     '''
 
     def private userDelete(Entity it) '''
-        «IF hasUserFieldsEntity»
+        «FOR userField : getUserFieldsEntity»
+            «userField.onAccountDeletionHandler»
+        «ENDFOR»
 
-            $repo = $this->entityFactory->getRepository('«name.formatForCode»');
-            «FOR userField : getUserFieldsEntity»
-                «userField.onAccountDeletionHandler»
-            «ENDFOR»
-
-            $logArgs = [
-                'app' => '«application.appName»',
-                'user' => $currentUser,
-                'entities' => '«nameMultiple.formatForDisplay»',
-            ];
-            $this->logger->notice(
-                '{app}: User {user} has been deleted, so we deleted/updated corresponding {entities}, too.',
-                $logArgs
-            );
-        «ENDIF»
+        $logArgs = [
+            'app' => '«application.appName»',
+            'user' => $currentUser,
+            'entities' => '«nameMultiple.formatForDisplay»',
+        ];
+        $this->logger->notice(
+            '{app}: User {user} has been deleted, so we deleted/updated corresponding {entities}, too.',
+            $logArgs
+        );
     '''
 
     def private onAccountDeletionHandler(UserField it) '''
         // set «name.formatForDisplay» to «adhAsConstant» («adhUid») for all «entity.nameMultiple.formatForDisplay» affected by this user
-        $repo->updateUserField('«name.formatForCode»', $userId, «adhUid», $this->logger, $currentUser);
+        $this->«entity.name.formatForCode»Repository->updateUserField('«name.formatForCode»', $userId, «adhUid», $this->logger, $currentUser);
         // you can also delete all «entity.nameMultiple.formatForDisplay» affected by this user
-        // $repo->deleteByUserField('«name.formatForCode»', $userId, $this->logger, $currentUser);
+        // $this->«entity.name.formatForCode»Repository->deleteByUserField('«name.formatForCode»', $userId, $this->logger, $currentUser);
     '''
 
     /**

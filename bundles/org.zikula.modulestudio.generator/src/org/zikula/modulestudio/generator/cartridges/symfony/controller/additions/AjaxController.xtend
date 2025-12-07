@@ -45,6 +45,9 @@ class AjaxController {
         val imports = newArrayList
         if (needsDuplicateCheck || hasTrees || hasSortable) {
             imports.add(appNamespace + '\\Entity\\Factory\\EntityFactory')
+            for (entity : entities) {
+                imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+            }
         }
         if (needsDuplicateCheck) {
             imports.add(appNamespace + '\\Helper\\ControllerHelper')
@@ -90,8 +93,12 @@ class AjaxController {
          */
         abstract class AbstractAjaxController extends AbstractController
         {
-            public function __construct(TranslatorInterface $translator)
-            {
+            public function __construct(
+                TranslatorInterface $translator,
+                «FOR entity : entities.sortBy[name]»
+                    protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+                «ENDFOR»
+            ) {
                 $this->setTranslator($translator);
             }
 
@@ -139,8 +146,7 @@ class AjaxController {
     def private checkForDuplicateSignature(Application it) '''
         public function checkForDuplicate(
             Request $request,
-            ControllerHelper $controllerHelper,
-            EntityFactory $entityFactory
+            ControllerHelper $controllerHelper
         ): JsonResponse'''
 
     def private checkForDuplicateBaseImpl(Application it) '''
@@ -150,23 +156,18 @@ class AjaxController {
 
         «prepareDuplicateCheckParameters»
 
-        $result = false;
-        switch ($objectType) {
-            «FOR entity : entities»
-                «val uniqueFields = entity.getUniqueFields»
-                «IF !uniqueFields.empty»
-                    case '«entity.name.formatForCode»':
-                        $repository = $entityFactory->getRepository($objectType);
-                        switch ($fieldName) {
-                            «FOR uniqueField : uniqueFields»
-                                case '«uniqueField.name.formatForCode»':
-                                    $result = !$repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude);
-                                    break;
-                            «ENDFOR»
-                        }
-                        break;
-                «ENDIF»
+        «repositoryMatchBlock(entities.filter[!getUniqueFields.empty])»
+
+        $uniqueFields = match ($objectType) {
+            «FOR entity : entities.filter[!getUniqueFields.empty]»
+                '«entity.name.formatForCode»' => ['«entity.getUniqueFields.map[name.formatForCode].join('\', \'')»'],
             «ENDFOR»
+            default => [],
+        };
+
+        $result = false;
+        if (null !== $repository && in_array($fieldName, $uniqueFields, true)) {
+            $result = !$repository->detectUniqueState($fieldName, $value, $exclude);
         }
 
         // return response
@@ -261,7 +262,7 @@ class AjaxController {
         «prepareTreeOperationParameters»
 
         $createMethod = 'create' . ucfirst($objectType);
-        $repository = $entityFactory->getRepository($objectType);
+        «repositoryMatchBlock(treeEntities)»
 
         $rootId = 1;
         if (!in_array($op, ['addRootNode'], true)) {
@@ -595,7 +596,7 @@ class AjaxController {
             return $this->json($this->trans('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        $repository = $entityFactory->getRepository($objectType);
+        «repositoryMatchBlock(entities.filter[hasSortableFields])»
         $sortableFieldMap = [
             «FOR entity : entities.filter[hasSortableFields]»
                 '«entity.name.formatForCode»' => '«entity.getSortableFields.head.name.formatForCode»',
@@ -644,8 +645,7 @@ class AjaxController {
         «checkForDuplicateSignature» {
             return parent::checkForDuplicate(
                 $request,
-                $controllerHelper,
-                $entityFactory
+                $controllerHelper
             );
         }
     '''

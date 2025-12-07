@@ -45,11 +45,11 @@ class Property {
     }
 
     def dispatch persistentProperty(UploadField it) '''
-         #[Vich\UploadableField('«mappingName»', '«upProp».name', '«upProp».size', '«upProp».mimeType', '«upProp».originalName', '«upProp».dimensions')]
-        «/* TODO wait for next release of VichUploaderBundle
-        IF mandatory»
+        #[Vich\UploadableField('«mappingName»', '«upProp».name', '«upProp».size', '«upProp».mimeType', '«upProp».originalName', '«upProp».dimensions')]
+        «IF mandatory»
             #[VichAssert\FileRequired(target: '«name.formatForCode»')]
-        «ENDIF*/»«thVal.fieldAnnotationsForUpload(it)»
+        «ENDIF»
+        «thVal.fieldAnnotationsForUpload(it)»
         protected ?File $«name.formatForCode»File = null;
 
         #[ORM\Embedded(class: EmbeddedFile::class)]

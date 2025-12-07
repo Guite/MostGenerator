@@ -43,7 +43,7 @@ class CollectionFilterHelper {
                 appNamespace + '\\Helper\\CategoryHelper'
             ])
         }
-        if (hasUserFields) {
+        if (hasEntitiesWithUserFields) {
             imports.addAll(#[
                 'Nucleos\\UserBundle\\Model\\UserManager',
                 'Zikula\\UsersBundle\\Entity\\User'
@@ -73,7 +73,7 @@ class CollectionFilterHelper {
             «IF hasStandardFieldEntities»
                 protected readonly Security $security,
             «ENDIF»
-            «IF hasUserFields»
+            «IF hasEntitiesWithUserFields»
                 protected readonly UserManager $userManager,
             «ENDIF»
             protected readonly array $listViewConfig

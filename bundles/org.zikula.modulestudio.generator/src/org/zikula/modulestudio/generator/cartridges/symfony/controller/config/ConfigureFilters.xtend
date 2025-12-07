@@ -230,7 +230,7 @@ class ConfigureFilters implements ControllerMethodInterface {
         «val sourceAliasName = getRelationAliasName(useTarget)»
         $objectType = '«(if (useTarget) target else source).name.formatForCode»';
         // select without joins
-        $entities = $this->entityFactory->getRepository($objectType)->selectWhere('', '', false);
+        $entities = $this->«(if (useTarget) target else source).name.formatForCode»Repository->selectWhere('', '', false);
         $permLevel = «(if (useTarget) target else source).getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createIndexAction)»;
 
         $entities = $this->permissionHelper->filterCollection($objectType, $entities, $permLevel);

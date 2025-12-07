@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -14,6 +15,7 @@ class WorkflowHelper {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -28,6 +30,7 @@ class WorkflowHelper {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Doctrine\\ORM\\EntityManagerInterface',
             'Exception',
             'Psr\\Log\\LoggerInterface',
             'RuntimeException',
@@ -35,10 +38,12 @@ class WorkflowHelper {
             'Symfony\\Component\\Workflow\\Registry',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             appNamespace + '\\Entity\\EntityInterface',
-            appNamespace + '\\Entity\\Factory\\EntityFactory',
             appNamespace + '\\Helper\\ListEntriesHelper',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
+        for (entity : getEntitiesForWorkflow(true)) {
+            imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+        }
         imports
     }
 
@@ -58,10 +63,13 @@ class WorkflowHelper {
 
     def private helperBaseImpl(Application it) '''
         public function __construct(
+            protected readonly EntityManagerInterface $entityManager,
             protected readonly TranslatorInterface $translator,
             protected readonly Registry $workflowRegistry,
             protected readonly Security $security,
-            protected readonly EntityFactory $entityFactory,
+            «FOR entity : getEntitiesForWorkflow(true)»
+                protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+            «ENDFOR»
             protected readonly ListEntriesHelper $listEntriesHelper,
             protected readonly PermissionHelper $permissionHelper,
             protected readonly LoggerInterface $logger,
@@ -292,21 +300,19 @@ class WorkflowHelper {
                 return false;
             }
 
-            // get entity manager
-            $entityManager = $this->entityFactory->getEntityManager();
+            $entityManager = $this->entityManager;
             $logArgs = ['app' => '«appName»', 'user' => $this->security->getUser()?->getUserIdentifier()];
 
             «IF hasLoggable»
                 $objectType = $entity->get_objectType();
                 $isLoggable = in_array($objectType, ['«getLoggableEntities.map[name.formatForCode].join('\', \'')»']);
                 if ($isLoggable && !$entity->get_actionDescriptionForLogEntry()) {
-                    if ('delete' === $actionId) {
-                        $entity->set_actionDescriptionForLogEntry('_HISTORY_' . mb_strtoupper($objectType) . '_DELETED');
-                    } elseif ('submit' === $actionId) {
-                        $entity->set_actionDescriptionForLogEntry('_HISTORY_' . mb_strtoupper($objectType) . '_CREATED');
-                    } else {
-                        $entity->set_actionDescriptionForLogEntry('_HISTORY_' . mb_strtoupper($objectType) . '_UPDATED');
-                    }
+                    $actionSuffix = match ($actionId) {
+                        'delete' => 'DELETED',
+                        'submit' => 'CREATED',
+                        default => 'UPDATED',
+                    };
+                    $entity->set_actionDescriptionForLogEntry('_HISTORY_' . mb_strtoupper($objectType) . '_' . $actionSuffix);
                 }
 
             «ENDIF»
@@ -317,12 +323,12 @@ class WorkflowHelper {
                 } else {
                     $entityManager->persist($entity);
                 }
-                // we flush two times on purpose to avoid a hen-egg problem with workflow post-processing
-                // first we flush to ensure that the entity gets an identifier
+                // flush two times on purpose to avoid a hen-egg problem with workflow post-processing
+                // first flush to ensure that the entity gets an identifier
                 $entityManager->flush();
-                // then we apply the workflow which causes additional actions, like notifications
+                // then apply the workflow which causes additional actions, like notifications
                 $workflow->apply($entity, $actionId);
-                // then we flush again to save the new workflow state of the entity
+                // then flush again to save the new workflow state of the entity
                 $entityManager->flush();
 
                 $result = true;
@@ -397,7 +403,7 @@ class WorkflowHelper {
          */
         public function getAmountOfModerationItems(string $objectType = '', string $state = ''): int
         {
-            $repository = $this->entityFactory->getRepository($objectType);
+            «repositoryMatchBlock(getEntitiesForWorkflow(true))»
             $collectionFilterHelper = $repository->getCollectionFilterHelper();
             $repository->setCollectionFilterHelper(null);
 

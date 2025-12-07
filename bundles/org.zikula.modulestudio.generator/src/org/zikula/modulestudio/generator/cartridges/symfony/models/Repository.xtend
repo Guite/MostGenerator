@@ -71,21 +71,23 @@ class Repository {
         fsa.generateClassPair(repositoryPath + '.php', repositoryBaseImpl, repositoryImpl)
     }
 
-    def private getDefaultSortingField(Entity it) {
-        if (hasSortableFields) {
-            getSortableFields.head
+    def private getDefaultSortingFieldName(Entity it) {
+        if (null !== orderBy && !orderBy.empty) {
+            getFirstOrderByField
+        } else if (hasSortableFields) {
+            getSortableFields.head.name
         } else if (!getSortingFields.empty) {
             if (getSortingFields.size > 1 && getSortingFields.head.name.formatForCode == 'workflowState') {
-                getSortingFields.get(1)
+                getSortingFields.get(1).name
             } else {
-                getSortingFields.head
+                getSortingFields.head.name
             }
         } else {
             val stringFields = fields.filter(StringField).filter[role != StringRole.PASSWORD]
             if (!stringFields.empty) {
-                stringFields.head
+                stringFields.head.name
             } else {
-                fields.head
+                fields.head.name
             }
         }
     }
@@ -224,76 +226,102 @@ class Repository {
                 use UserDeletionTrait;
 
             «ENDIF»
-            «IF tree || hasSortableFields»
-                public function __construct(EntityManagerInterface $manager)
-                {
-                    parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»::class));
-                }
-            «ELSE»
-                public function __construct(ManagerRegistry $registry)
-                {
-                    parent::__construct($registry, «name.formatForCodeCapital»::class);
-                }
-            «ENDIF»
+            «constructor»
 
-            /**
-             * The default sorting field/expression
-             */
-            protected string $defaultSortingField = '«getDefaultSortingField.name.formatForCode»';
-
-            protected ?CollectionFilterHelper $collectionFilterHelper = null;
-            «IF hasTranslatableFields»
-
-                protected bool $translationsEnabled = true;
-            «ENDIF»
-
-            public function getAllowedSortingFields(): array
-            {
-                return [
-                    «sortingCriteria»
-                ];
-            }
-            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, '', '')»
-            «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', true, '', '')»
-            «IF hasTranslatableFields»
-                «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, '', '')»
-            «ENDIF»
-
-            «selectById»
-            «IF hasSluggableFields»
-
-                «selectBySlug»
-            «ENDIF»
-
-            «addExclusion»
-
-            «selectWhere»
-
-            «selectWherePaginated»
-
-            «selectSearch»
-
-            «retrieveCollectionResult»
-
-            «getCountQuery»
-
-            «selectCount»
-            «new Tree().generate(it, app)»
-
-            «detectUniqueState»
-
-            «genericBaseQuery»
-
-            «genericBaseQueryOrderBy»
-
-            «getQueryFromBuilder»
-
-            «new Joins().generate(it, app)»
-            «IF hasUserFieldsEntity»
-
-                «getUserFieldNames»
-            «ENDIF»
+            «methods»
         }
+    '''
+
+    def private constructor(Entity it) '''
+        «IF tree || hasSortableFields»
+            public function __construct(
+                EntityManagerInterface $manager,
+                protected readonly ?CollectionFilterHelper $collectionFilterHelper,
+                «IF hasTranslatableFields»
+                    FeatureActivationHelper $featureActivationHelper,
+                «ENDIF»
+            ) {
+                parent::__construct($manager, $manager->getClassMetadata(«name.formatForCodeCapital»::class));
+                «constructorInit»
+            }
+        «ELSE»
+            public function __construct(
+                ManagerRegistry $registry,
+                protected readonly ?CollectionFilterHelper $collectionFilterHelper,
+                «IF hasTranslatableFields»
+                    FeatureActivationHelper $featureActivationHelper,
+                «ENDIF»
+            ) {
+                parent::__construct($registry, «name.formatForCodeCapital»::class);
+                «constructorInit»
+            }
+        «ENDIF»
+    '''
+
+    def private constructorInit(Entity it) '''
+        «IF hasTranslatableFields»
+            $this->setTranslationsEnabled(
+                $featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $objectType)
+            );
+        «ENDIF»
+    '''
+
+    def private methods(Entity it) '''
+        /**
+         * The default sorting field/expression
+         */
+        protected string $defaultSortingField = '«getDefaultSortingFieldName.formatForCode»';
+        «IF hasTranslatableFields»
+
+            protected bool $translationsEnabled = true;
+        «ENDIF»
+
+        public function getAllowedSortingFields(): array
+        {
+            return [
+                «sortingCriteria»
+            ];
+        }
+        «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, '', '')»
+        «fh.getterAndSetterMethods(it, 'collectionFilterHelper', 'CollectionFilterHelper', true, '', '')»
+        «IF hasTranslatableFields»
+            «fh.getterAndSetterMethods(it, 'translationsEnabled', 'bool', false, '', '')»
+        «ENDIF»
+
+        «selectById»
+        «IF hasSluggableFields»
+
+            «selectBySlug»
+        «ENDIF»
+
+        «addExclusion»
+
+        «selectWhere»
+
+        «selectWherePaginated»
+
+        «selectSearch»
+
+        «retrieveCollectionResult»
+
+        «getCountQuery»
+
+        «selectCount»
+        «new Tree().generate(it, app)»
+
+        «detectUniqueState»
+
+        «genericBaseQuery»
+
+        «genericBaseQueryOrderBy»
+
+        «getQueryFromBuilder»
+
+        «new Joins().generate(it, app)»
+        «IF hasUserFieldsEntity»
+
+            «getUserFieldNames»
+        «ENDIF»
     '''
 
     def private canDirectlyExtendServiceRepo(Entity it) {
@@ -348,6 +376,7 @@ class Repository {
             }
             if (hasTranslatableFields) {
                 imports.add('Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker')
+                imports.add(app.appNamespace + '\\Helper\\FeatureActivationHelper')
             }
             if (hasUserFieldsEntity) {
                 imports.add(app.appNamespace + '\\Repository\\UserDeletionTrait')

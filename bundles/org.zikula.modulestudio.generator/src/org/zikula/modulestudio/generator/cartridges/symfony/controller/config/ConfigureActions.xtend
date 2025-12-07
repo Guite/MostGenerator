@@ -28,9 +28,21 @@ class ConfigureActions implements ControllerMethodInterface {
     override generateMethod(Entity it) '''
         public function configureActions(Actions $actions): Actions
         {
+            «IF hasEditAction»
+                $actions
+                    «methodBody»
+                ;
+                $canBeCreated = $this->modelHelper->canBeCreated('«name.formatForCode»');
+                if (!$canBeCreated) {
+                    $actions->disable(Action::NEW);
+                }
+
+                return $actions;
+            «ELSE»
             return $actions
                 «methodBody»
             ;
+            «ENDIF»
         }
     '''
 

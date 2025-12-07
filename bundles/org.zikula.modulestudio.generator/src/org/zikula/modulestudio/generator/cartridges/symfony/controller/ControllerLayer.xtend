@@ -104,6 +104,9 @@ class ControllerLayer {
                         protected readonly UploaderHelper $uploaderHelper,
                     «ENDIF»
                 «ENDIF»
+                «IF hasEditAction»
+                    protected readonly ModelHelper $modelHelper,
+                «ENDIF»
                 «IF hasDateIntervalFieldsEntity»
                     protected readonly ViewHelper $viewHelper,
                 «ENDIF»
@@ -164,6 +167,9 @@ class ControllerLayer {
         }
         if (loggable) {
             imports.add(app.appNamespace + '\\Helper\\LoggableHelper')
+        }
+        if (hasEditAction) {
+            imports.add(app.appNamespace + '\\Helper\\ModelHelper')
         }
         imports.add(app.appNamespace + '\\Helper\\PermissionHelper')
         if (loggable && hasTranslatableFields) {

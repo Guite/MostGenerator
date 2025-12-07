@@ -811,13 +811,13 @@ class ConfigureFields implements ControllerMethodInterface {
             ]);
         «ELSE»
             $queryBuilder = function (EntityRepository $er) {«/* get repo from entity factory to ensure CollectionFilterHelper is set return $er->getListQueryBuilder('', '', false);* /»
-                return $this->entityFactory->getRepository('«relatedEntity.name.formatForCode»')->getListQueryBuilder('', '', false);
+                return $this->«relatedEntity.name.formatForCode»Repository->getListQueryBuilder('', '', false);
             };
             «IF (relatedEntity as Entity).ownerPermission»
                 if (true === $options['filter_by_ownership']) {
                     $collectionFilterHelper = $this->collectionFilterHelper;
                     $queryBuilder = function (EntityRepository $er) use ($collectionFilterHelper) {
-                        $qb = $this->entityFactory->getRepository('«relatedEntity.name.formatForCode»')->getListQueryBuilder('', '', false);
+                        $qb = $this->«relatedEntity.name.formatForCode»Repository->getListQueryBuilder('', '', false);
                         $collectionFilterHelper->addCreatorFilter($qb);
 
                         return $qb;

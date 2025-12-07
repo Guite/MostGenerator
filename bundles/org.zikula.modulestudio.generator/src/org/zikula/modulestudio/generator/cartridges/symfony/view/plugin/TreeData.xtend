@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TreeData {
@@ -11,6 +12,7 @@ class TreeData {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
@@ -24,7 +26,7 @@ class TreeData {
             // check whether an edit action is available
             $hasEditAction = in_array($objectType, ['«entities.filter[tree && hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
 
-            $repository = $this->entityFactory->getRepository($objectType);
+            «repositoryMatchBlock(getTreeEntities)»
             $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
 
             $result = [

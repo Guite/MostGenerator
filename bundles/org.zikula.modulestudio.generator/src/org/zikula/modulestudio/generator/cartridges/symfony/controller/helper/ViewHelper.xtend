@@ -71,8 +71,10 @@ class ViewHelper {
             protected readonly LoaderInterface $twigLoader,
             protected readonly RequestStack $requestStack,
             protected readonly ControllerHelper $controllerHelper,
-            protected readonly PermissionHelper $permissionHelper«IF hasGeographical»,
-            protected readonly array $geoConfig«ENDIF»
+            protected readonly PermissionHelper $permissionHelper,
+            «IF hasGeographical»
+                protected readonly array $geoConfig,
+            «ENDIF»
         ) {
         }
 

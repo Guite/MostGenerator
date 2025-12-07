@@ -57,6 +57,9 @@ class BundleFile {
             'Symfony\\Component\\DependencyInjection\\ContainerBuilder',
             'Symfony\\Component\\DependencyInjection\\Loader\\Configurator\\ContainerConfigurator'
         ])
+        if (hasUploads) {
+            imports.add('Vich\\UploaderBundle\\Naming\\SmartUniqueNamer')
+        }
         if (!config.relevant) {
             return imports
         }
@@ -225,11 +228,10 @@ class BundleFile {
         // save *main* builder to reuse it in loadExtension()
         // @see https://github.com/symfony/symfony/discussions/57951
         $this->mainBuilder = $builder;
-        */»
-        // hard defaults (app can override later)
+        */»// hard defaults (app can override later)
         $uploadBase = '%kernel.project_dir%/public';
         $uploadPath = '/uploads/«appName»/';
-        $namer = 'Vich\\UploaderBundle\\Naming\\SmartUniqueNamer';
+
         $builder->prependExtensionConfig('vich_uploader', [
             'mappings' => [
                 «FOR field : getAllUploadFields»
@@ -262,7 +264,7 @@ class BundleFile {
         '«mappingName»' => [
             'uri_prefix' => $uploadPath . '«mappingPath»',
             'upload_destination' => $uploadBase . $uploadPath . '«mappingPath»',
-            'namer' => $namer,
+            'namer' => SmartUniqueNamer::class,
         ],
     '''
 

@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscribe
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.UserRegistrationSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.UserSubscriber
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.subscriber.WorkflowSubscriber
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -22,6 +23,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class EventSubscribers {
 
+    extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -250,13 +252,15 @@ class EventSubscribers {
             'Nucleos\\UserBundle\\NucleosUserEvents',
             'Symfony\\Component\\EventDispatcher\\EventSubscriberInterface'
         ])
-        if (hasUserFields) {
+        if (hasEntitiesWithUserFields) {
             imports.addAll(#[
                 'Psr\\Log\\LoggerInterface',
                 'Symfony\\Bundle\\SecurityBundle\\Security',
-                'Zikula\\UsersModule\\UsersConstant',
-                appNamespace + '\\Entity\\Factory\\EntityFactory'
+                'Zikula\\UsersModule\\UsersConstant'
             ])
+            for (entity : getEntitiesWithUserFields) {
+                imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+            }
         }
         imports
     }

@@ -143,7 +143,7 @@ class RelationPresets {
         «val otherObjectType = otherEntity.name.formatForCode»
         «val selectField = if (otherEntity.hasSluggableFields) 'slug' else 'id'»
         if (!empty($this->relationPresets['«alias»'])) {
-            $repository = $this->entityFactory->getRepository('«otherObjectType»');
+            $repository = $this->getRepository('«otherObjectType»');
             $relObj = $repository->selectBy«selectField.toFirstUpper»($this->relationPresets['«alias»']);
             if (null !== $relObj) {
                 «IF !useTarget && it instanceof ManyToManyRelationship»

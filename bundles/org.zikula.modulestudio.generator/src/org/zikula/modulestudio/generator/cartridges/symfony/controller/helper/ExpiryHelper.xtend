@@ -3,17 +3,19 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class ExpiryHelper {
 
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -24,8 +26,8 @@ class ExpiryHelper {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
-            appNamespace + '\\Entity\\EntityInterface',
-            appNamespace + '\\Entity\\Factory\\EntityFactory'
+            'Doctrine\\ORM\\EntityManagerInterface',
+            appNamespace + '\\Entity\\EntityInterface'
         ])
         if (hasAutomaticExpiryHandling) {
             imports.addAll(#[
@@ -37,6 +39,9 @@ class ExpiryHelper {
                 appNamespace + '\\Helper\\PermissionHelper',
                 appNamespace + '\\Helper\\WorkflowHelper'
             ])
+            for (entity : getEntitiesWithArchiveOrExpiry) {
+                imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+            }
         }
         imports
     }
@@ -69,13 +74,22 @@ class ExpiryHelper {
 
     def private constructor(Application it) '''
         public function __construct(
-            protected readonly EntityFactory $entityFactory«IF hasAutomaticExpiryHandling»,
-            protected readonly TranslatorInterface $translator,
-            protected readonly RequestStack $requestStack,
-            protected readonly LoggerInterface $logger,
-            protected readonly PermissionHelper $permissionHelper,
-            protected readonly WorkflowHelper $workflowHelper«ENDIF»«IF hasLoggable»,
-            protected readonly array $loggableConfig«ENDIF»
+            «IF hasLoggable»
+                protected readonly EntityManagerInterface $entityManager,
+            «ENDIF»
+            «IF hasAutomaticExpiryHandling»
+                «FOR entity : getEntitiesWithArchiveOrExpiry»
+                    protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+                «ENDFOR»
+                protected readonly TranslatorInterface $translator,
+                protected readonly RequestStack $requestStack,
+                protected readonly LoggerInterface $logger,
+                protected readonly PermissionHelper $permissionHelper,
+                protected readonly WorkflowHelper $workflowHelper,
+            «ENDIF»
+            «IF hasLoggable»
+                protected readonly array $loggableConfig,
+            «ENDIF»
         ) {
         }
     '''
@@ -137,7 +151,6 @@ class ExpiryHelper {
                 return;
             }
 
-            $entityManager = $this->entityFactory->getEntityManager();
             «FOR entity : getLoggableEntities»
                 $revisionHandling = $this->loggableConfig['revision_handling_for_«entity.name.formatForSnakeCase»'];
                 $limitParameter = '';
@@ -147,7 +160,7 @@ class ExpiryHelper {
                     $limitParameter = $this->loggableConfig['period_for_«entity.name.formatForSnakeCase»_revisions'];
                 }
 
-                $logEntriesRepository = $entityManager->getRepository('«entity.application.appName»:«entity.name.formatForCodeCapital»LogEntryEntity');
+                $logEntriesRepository = $this->entityManager->getRepository('«entity.application.appName»:«entity.name.formatForCodeCapital»LogEntryEntity');
                 $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);
             «ENDFOR»
         }
@@ -203,7 +216,7 @@ class ExpiryHelper {
          */
         protected function getExpiredObjects(string $objectType = '', string $endField = '', $endDate = ''): array
         {
-            $repository = $this->entityFactory->getRepository($objectType);
+            «repositoryMatchBlock(getEntitiesWithArchiveOrExpiry)»
             $qb = $repository->genericBaseQuery('', '', false);
             «/*$qb->andWhere('tbl.workflowState != :archivedState')
                ->setParameter('archivedState', 'archived');*/»
@@ -287,4 +300,8 @@ class ExpiryHelper {
             // feel free to extend the expiry helper here
         }
     '''
+
+    def private getEntitiesWithArchiveOrExpiry(Application it) {
+        entities.filter[(hasArchive || deleteExpired) && hasEndDateField]
+    }
 }

@@ -3,15 +3,17 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.helper
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.application.ImportList
 
 class LoggableHelper {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     /**
@@ -42,6 +44,9 @@ class LoggableHelper {
             appNamespace + '\\Helper\\EntityDisplayHelper',
             appNamespace + '\\EventListener\\EntityLifecycleListener'
         ])
+        for (entity : getLoggableEntities) {
+            imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
+        }
         if (hasTrees && !getTreeEntities.filter[loggable].empty) {
             imports.add('Doctrine\\Common\\Proxy\\Proxy')
         }
@@ -71,9 +76,14 @@ class LoggableHelper {
         public function __construct(
             TranslatorInterface $translator,
             protected readonly EntityFactory $entityFactory,
+            «FOR entity : getLoggableEntities.sortBy[name]»
+                protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
+            «ENDFOR»
             protected readonly EntityDisplayHelper $entityDisplayHelper,
-            protected readonly EntityLifecycleListener $entityLifecycleListener«IF hasLoggableTranslatable»,
-            protected readonly TranslatableHelper $translatableHelper«ENDIF»
+            protected readonly EntityLifecycleListener $entityLifecycleListener,
+            «IF hasLoggableTranslatable»
+                protected readonly TranslatableHelper $translatableHelper,
+            «ENDIF»
         ) {
             $this->setTranslator($translator);
         }
@@ -287,10 +297,10 @@ class LoggableHelper {
         {
             $objectType = $entity->get_objectType();
 
-            «IF hasTrees && !getTreeEntities.filter[loggable].empty»
+            «IF hasTrees && !getLoggableEntities.filter[tree].empty»
                 if (in_array($objectType, ['«getTreeEntities.filter[loggable].map[name.formatForCode].join('\', \'')»'], true)) {
                     // check if parent is still valid
-                    $repository = $this->entityFactory->getRepository($objectType);
+                    «repositoryMatchBlock(getLoggableEntities.filter[tree])»
                     $parentId = $entity->getParent()->getId();
                     $parent = $parentId ? $repository->find($parentId) : null;
                     if (in_array(Proxy::class, class_implements($parent), true)) {
@@ -389,7 +399,7 @@ class LoggableHelper {
             break;
         case '«constantPrefix»CLONED':
             if (isset($parameters['%«name.formatForCode»%']) && is_numeric($parameters['%«name.formatForCode»%'])) {
-                $originalEntity = $this->entityFactory->getRepository('«name.formatForCode»')->selectById($parameters['%«name.formatForCode»%']);
+                $originalEntity = $this->«name.formatForCode»Repository->selectById($parameters['%«name.formatForCode»%']);
                 if (null !== $originalEntity) {
                     $parameters['%«name.formatForCode»%'] = $this->entityDisplayHelper->getFormattedTitle($originalEntity);
                 }
