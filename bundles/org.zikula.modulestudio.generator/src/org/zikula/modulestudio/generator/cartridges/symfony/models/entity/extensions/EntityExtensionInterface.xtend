@@ -8,14 +8,14 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 interface EntityExtensionInterface {
 
     /**
-     * Generates additional annotations on class level.
+     * Generates additional attributes on class level.
      */
-    def CharSequence classAnnotations(Entity it)
+    def CharSequence classAttributes(Entity it)
 
     /**
-     * Additional field annotations.
+     * Additional field attributes.
      */
-    def CharSequence columnAnnotations(Field it)
+    def CharSequence columnAttributes(Field it)
 
     /**
      * Generates additional entity properties.
@@ -58,9 +58,9 @@ interface EntityExtensionInterface {
     def String extensionClassBaseImplementation(Entity it)
 
     /**
-     * Returns the extension implementation class ORM annotations.
+     * Returns the extension implementation class ORM attributes.
      */
-    def String extensionClassImplAnnotations(Entity it)
+    def String extensionClassImplAttributes(Entity it)
 
     /**
      * Returns the extension repository interface base implementation.

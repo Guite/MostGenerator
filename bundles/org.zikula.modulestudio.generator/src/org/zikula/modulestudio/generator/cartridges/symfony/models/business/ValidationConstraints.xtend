@@ -30,10 +30,10 @@ class ValidationConstraints {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
 
-    def dispatch fieldAnnotations(Field it) {
+    def dispatch fieldAttributes(Field it) {
     }
 
-    def private fieldAnnotationsMandatory(Field it) '''
+    def private fieldAttributesMandatory(Field it) '''
         «IF mandatory»
             #[Assert\NotBlank]
         «/*ELSEIF !nullable»
@@ -41,7 +41,7 @@ class ValidationConstraints {
         */»«ENDIF»
     '''
 
-    def dispatch fieldAnnotations(BooleanField it) '''
+    def dispatch fieldAttributes(BooleanField it) '''
         «IF mandatory»
             #[Assert\IsTrue(message: 'This option is mandatory.')]
         «/*ELSEIF !nullable»
@@ -49,7 +49,7 @@ class ValidationConstraints {
         */»«ENDIF»
     '''
 
-    def private fieldAnnotationsNumeric(Field it) '''
+    def private fieldAttributesNumeric(Field it) '''
         #[Assert\Type(type: 'numeric')]
         «IF mandatory»
             #[Assert\NotBlank]
@@ -59,7 +59,7 @@ class ValidationConstraints {
         */»«ENDIF»
     '''
 
-    def private fieldAnnotationsInteger(NumberField it) '''
+    def private fieldAttributesInteger(NumberField it) '''
         «IF mandatory && (!primaryKey || (null !== entity && entity.getVersionField == this))»
             #[Assert\NotBlank]
             #[Assert\NotEqualTo(value: 0)]
@@ -67,14 +67,14 @@ class ValidationConstraints {
             #[Assert\NotNull]
         */»«ENDIF»
     '''
-    def dispatch fieldAnnotations(NumberField it) '''
+    def dispatch fieldAttributes(NumberField it) '''
         «IF NumberFieldType.INTEGER == numberType»
             «IF null === entity
              || (
                 entity.incoming.filter[r|r.targetField == name].empty
                  && entity.outgoing.filter[r|r.sourceField == name].empty
              )»
-                «fieldAnnotationsInteger»
+                «fieldAttributesInteger»
                 «IF hasMinValue && hasMaxValue»
                     #[Assert\Range(min: «formattedMinValue», max: «formattedMaxValue»)]
                 «ELSEIF hasMinValue»
@@ -87,7 +87,7 @@ class ValidationConstraints {
                 «ENDIF»
             «ENDIF»
         «ELSE»
-            «fieldAnnotationsNumeric»
+            «fieldAttributesNumeric»
             «IF hasMinValue && hasMaxValue»
                 #[Assert\Range(min: «formattedMinValue», max: «formattedMaxValue»)]
             «ELSEIF hasMinValue»
@@ -100,7 +100,7 @@ class ValidationConstraints {
             «ENDIF»
         «ENDIF»
     '''
-    def dispatch fieldAnnotations(UserField it) '''
+    def dispatch fieldAttributes(UserField it) '''
         «IF mandatory && !primaryKey»
             #[Assert\NotBlank]
         «/*ELSEIF !nullable»
@@ -108,14 +108,14 @@ class ValidationConstraints {
         */»«ENDIF»
     '''
 
-    def private fieldAnnotationsString(AbstractStringField it) '''
-        «fieldAnnotationsMandatory»
+    def private fieldAttributesString(AbstractStringField it) '''
+        «fieldAttributesMandatory»
     '''
 
-    def dispatch fieldAnnotations(AbstractStringField it) {
+    def dispatch fieldAttributes(AbstractStringField it) {
     }
-    def dispatch fieldAnnotations(StringField it) '''
-        «fieldAnnotationsString»
+    def dispatch fieldAttributes(StringField it) '''
+        «fieldAttributesString»
         «IF mandatory»
             #[Assert\Length(min: «minLength», max: «length»)]
         «ELSEIF role != StringRole.DATE_INTERVAL»
@@ -175,7 +175,7 @@ class ValidationConstraints {
             #[Assert\Week]
         «ENDIF»
     '''
-    private def lengthAnnotationString(AbstractStringField it, int length) '''
+    private def lengthAttributeString(AbstractStringField it, int length) '''
         «IF mandatory»
             #[Assert\Length(min: «minLength», max: «length»)]
         «ELSE»
@@ -187,23 +187,23 @@ class ValidationConstraints {
             )]
         «ENDIF»
     '''
-    def dispatch fieldAnnotations(TextField it) '''
-        «fieldAnnotationsString»
-        «lengthAnnotationString(length)»
+    def dispatch fieldAttributes(TextField it) '''
+        «fieldAttributesString»
+        «lengthAttributeString(length)»
         «IF role === TextRole.CODE_TWIG»
             #[Twig]
         «ELSEIF role === TextRole.CODE_YAML || role === TextRole.CODE_YAML_FM»
             #[Assert\Yaml]
         «ENDIF»
     '''
-    def dispatch fieldAnnotations(UploadField it) '''
+    def dispatch fieldAttributes(UploadField it) '''
     '''
-    def fieldAnnotationsForUpload(UploadField it) '''
-        «fieldAnnotationsString»
-        «lengthAnnotationString(length)»
-        «uploadFileAnnotations»
+    def fieldAttributesForUpload(UploadField it) '''
+        «fieldAttributesString»
+        «lengthAttributeString(length)»
+        «uploadFileAttributes»
     '''
-    def private uploadFileAnnotations(UploadField it) '''
+    def private uploadFileAttributes(UploadField it) '''
         #[Assert\File(
             «FOR constraint : getUploadConstraints»
         «' '»    «constraint»,
@@ -252,18 +252,18 @@ class ValidationConstraints {
 
         constraints
     }
-    def dispatch fieldAnnotations(ListField it) '''
-        «fieldAnnotationsMandatory»
+    def dispatch fieldAttributes(ListField it) '''
+        «fieldAttributesMandatory»
         #[«application.name.formatForCodeCapital»Assert\ListEntry(entityName: '«entity.name.formatForCode»', propertyName: '«name.formatForCode»', multiple: «multiple.displayBool»«IF multiple»«IF min > 0», min: «min»«ENDIF»«IF max > 0», max: «max»«ENDIF»«ENDIF»)]
     '''
-    def dispatch fieldAnnotations(ArrayField it) '''
-        «fieldAnnotationsMandatory»
+    def dispatch fieldAttributes(ArrayField it) '''
+        «fieldAttributesMandatory»
         «IF max > 0»
             #[Assert\Count(min: «min», max: «max»)]
         «ENDIF»
     '''
-    def dispatch fieldAnnotations(DatetimeField it) '''
-        «fieldAnnotationsMandatory»
+    def dispatch fieldAttributes(DatetimeField it) '''
+        «fieldAttributesMandatory»
         «IF isDateTimeField || isDateField»
             «/*IF false»«/* no constraint as the underlying model is type hinted already * /»
                 «IF isDateTimeField»
@@ -318,7 +318,7 @@ class ValidationConstraints {
         «ENDIF»
     '''
 
-    def classAnnotations(Entity it) '''
+    def classAttributes(Entity it) '''
         «IF !getUniqueFields.empty»
             «FOR uf : getUniqueFields»
                 #[UniqueEntity(fields: '«uf.name.formatForCode»', ignoreNull: «uf.nullable.displayBool»)]

@@ -17,15 +17,15 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
     extension NamingExtensions = new NamingExtensions
 
     /**
-     * Generates additional annotations on class level.
+     * Generates additional attributes on class level.
      */
-    override classAnnotations(Entity it) '''
+    override classAttributes(Entity it) '''
     '''
 
     /**
-     * Additional field annotations.
+     * Additional field attributes.
      */
-    override columnAnnotations(Field it) '''
+    override columnAttributes(Field it) '''
     '''
 
     /**

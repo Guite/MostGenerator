@@ -49,7 +49,7 @@ class Property {
         «IF mandatory»
             #[VichAssert\FileRequired(target: '«name.formatForCode»')]
         «ENDIF»
-        «thVal.fieldAnnotationsForUpload(it)»
+        «thVal.fieldAttributesForUpload(it)»
         protected ?File $«name.formatForCode»File = null;
 
         #[ORM\Embedded(class: EmbeddedFile::class)]
@@ -80,13 +80,13 @@ class Property {
                 #[ORM\GeneratedValue(strategy: 'CUSTOM')]
                 #[ORM\CustomIdGenerator(class: UuidStringGenerator::class)]
             «ENDIF»
-            «IF null !== extMan»«extMan.columnAnnotations(it)»«ENDIF»
+            «IF null !== extMan»«extMan.columnAttributes(it)»«ENDIF»
             «IF !(it instanceof UploadField || it instanceof UserField)»«/* upload fields are embeddables; user fields are implemented as join to user entity, see persistentPropertyAdditions */»
                 #[ORM\Column(«IF null !== dbName && !dbName.empty»name: '«dbName.formatForCode»', «ELSEIF it instanceof UploadField»name: '«it.name.formatForCode»', «ENDIF»«persistentPropertyImpl(typeDoctrine.toLowerCase)»«IF unique», unique: true«ENDIF»«IF nullable», nullable: true«ENDIF»«IF primaryKey», options: ['fixed' => true]«ENDIF»)]
             «ENDIF»
             «persistentPropertyAdditions»
         «ENDIF»
-        «thVal.fieldAnnotations(it)»
+        «thVal.fieldAttributes(it)»
         «modifier» ?«IF typePhp == 'DateTime'»\DateTime«IF (it as DatetimeField).immutable»Immutable«ENDIF»«ELSEIF typePhp == 'Uuid'»string«ELSE»«typePhp»«ENDIF» $«name.formatForCode»«fieldAssignment(init)»;
         «/* this last line is on purpose */»
     '''

@@ -113,7 +113,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          *
          * This is the concrete «classType.formatForDisplay» class for «it.name.formatForDisplay» entities.
          */
-        «extensionClassImplAnnotations»
+        «extensionClassImplAttributes»
         class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends BaseEntity implements EntityInterface
         {
             // feel free to add your own methods here
@@ -121,9 +121,9 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     '''
 
     /**
-     * Returns the extension implementation class ORM annotations.
+     * Returns the extension implementation class ORM attributes.
      */
-    override extensionClassImplAnnotations(Entity it) {
+    override extensionClassImplAttributes(Entity it) {
         ''
     }
 

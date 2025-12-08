@@ -50,20 +50,20 @@ class ExtensionManager {
     '''
 
     /**
-     * Additional class annotations.
+     * Additional class attributes.
      */
-    def classAnnotations() '''
+    def classAttributes() '''
         «FOR ext : this.extensions»
-            «ext.classAnnotations(entity)»
+            «ext.classAttributes(entity)»
         «ENDFOR»
     '''
 
     /**
-     * Additional field annotations.
+     * Additional field attributes.
      */
-    def columnAnnotations(Field it) '''
+    def columnAttributes(Field it) '''
         «FOR ext : this.extensions»
-            «ext.columnAnnotations(it)»
+            «ext.columnAttributes(it)»
         «ENDFOR»
     '''
 

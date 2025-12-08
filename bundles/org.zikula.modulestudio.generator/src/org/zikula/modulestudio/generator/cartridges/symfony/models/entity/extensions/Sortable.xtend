@@ -8,15 +8,15 @@ import de.guite.modulestudio.metamodel.NumberRole
 class Sortable extends AbstractExtension implements EntityExtensionInterface {
 
     /**
-     * Generates additional annotations on class level.
+     * Generates additional attributes on class level.
      */
-    override classAnnotations(Entity it) '''
+    override classAttributes(Entity it) '''
     '''
 
     /**
-     * Additional field annotations.
+     * Additional field attributes.
      */
-    override columnAnnotations(Field it) '''
+    override columnAttributes(Field it) '''
         «IF sortableGroup»
             #[Gedmo\SortableGroup]
         «ENDIF»

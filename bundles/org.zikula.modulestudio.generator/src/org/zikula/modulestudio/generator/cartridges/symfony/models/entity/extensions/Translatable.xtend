@@ -12,16 +12,16 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
     extension ModelExtensions = new ModelExtensions
 
     /**
-     * Generates additional annotations on class level.
+     * Generates additional attributes on class level.
      */
-    override classAnnotations(Entity it) '''
+    override classAttributes(Entity it) '''
          #[Gedmo\TranslationEntity(class: «name.formatForCodeCapital»Translation::class)]
     '''
 
     /**
-     * Additional field annotations.
+     * Additional field attributes.
      */
-    override columnAnnotations(Field it) '''
+    override columnAttributes(Field it) '''
         «IF translatable»
             #[Gedmo\Translatable]
         «ENDIF»
@@ -107,9 +107,9 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
     '''
 
     /**
-     * Returns the extension implementation class ORM annotations.
+     * Returns the extension implementation class ORM attributes.
      */
-    override extensionClassImplAnnotations(Entity it) '''
+    override extensionClassImplAttributes(Entity it) '''
         #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»«extensionClassType.formatForCodeCapital»Repository::class)]
         #[ORM\Table(name: '«fullEntityTableName»_translation', options: ['row_format' => 'DYNAMIC'])]
         #[ORM\Index(fields: ['locale', 'objectClass', 'foreignKey'], name: 'translations_lookup_idx')]

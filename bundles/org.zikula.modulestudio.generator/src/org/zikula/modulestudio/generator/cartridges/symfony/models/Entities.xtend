@@ -119,7 +119,7 @@ class Entities {
                 imports.add('RuntimeException')
                 imports.add('Symfony\\Component\\HttpFoundation\\File\\File')
                 imports.add('Vich\\UploaderBundle\\Entity\\File as EmbeddedFile')
-                imports.add('Vich\\UploaderBundle\\Mapping\\Annotation as Vich')
+                imports.add('Vich\\UploaderBundle\\Mapping\\Attribute as Vich')
                 if (!getUploadFieldsEntity.filter[mandatory].empty) {
                     imports.add('Vich\\UploaderBundle\\Validator\\Constraints as VichAssert')
                 }
@@ -181,7 +181,7 @@ class Entities {
          * Entity class that defines the entity structure and behaviours.
          *
          * This is the base entity class for «name.formatForDisplay» entities.
-         * The following annotation marks it as a mapped superclass so subclasses
+         * The following attribute marks it as a mapped superclass so subclasses
          * inherit orm properties.
          */
         #[ORM\MappedSuperclass]
@@ -250,10 +250,10 @@ class Entities {
          *
          * This is the concrete entity class for «name.formatForDisplay» entities.
          */
-        «extMan.classAnnotations»
+        «extMan.classAttributes»
         #[ORM\Entity(repositoryClass: «name.formatForCodeCapital»Repository::class)]
         «entityImplClassAdditionalAttributes(app)»
-        «new ValidationConstraints().classAnnotations(it)»
+        «new ValidationConstraints().classAttributes(it)»
     '''
 
     def private entityImplClassAdditionalAttributes(Entity it, Application app) '''

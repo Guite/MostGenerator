@@ -12,16 +12,16 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
     extension ModelExtensions = new ModelExtensions
 
     /**
-     * Generates additional annotations on class level.
+     * Generates additional attributes on class level.
      */
-    override classAnnotations(Entity it) '''
+    override classAttributes(Entity it) '''
         #[Gedmo\Tree(type: 'nested')]
     '''
 
     /**
-     * Additional field annotations.
+     * Additional field attributes.
      */
-    override columnAnnotations(Field it) '''
+    override columnAttributes(Field it) '''
     '''
 
     /**
