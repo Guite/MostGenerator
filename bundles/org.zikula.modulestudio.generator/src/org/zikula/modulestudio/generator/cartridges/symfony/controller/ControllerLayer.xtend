@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller
 
 import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.StringField
@@ -27,7 +28,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.DeleteAction
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ControllerLayer {
 
@@ -37,6 +38,7 @@ class ControllerLayer {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     Application app
     ControllerAction actionHelper
@@ -95,23 +97,28 @@ class ControllerLayer {
                 «IF hasLocaleFieldsEntity»
                     protected readonly LocaleApiInterface $localeApi,
                 «ENDIF»
+                «IF hasDetailAction || hasEditAction»
+                    protected readonly EntityDisplayHelper $entityDisplayHelper,
+                «ENDIF»
                 «IF hasListFieldsEntity»
                     protected readonly ListEntriesHelper $listEntriesHelper,
                 «ENDIF»
+                «IF hasEditAction»
+                    protected readonly ModelHelper $modelHelper,
+                «ENDIF»
+                protected readonly PermissionHelper $permissionHelper,
                 «IF hasUploadFieldsEntity»
                     protected readonly UploadHelper $uploadHelper,
                     «IF !getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty»
                         protected readonly UploaderHelper $uploaderHelper,
                     «ENDIF»
                 «ENDIF»
-                «IF hasEditAction»
-                    protected readonly ModelHelper $modelHelper,
-                «ENDIF»
                 «IF hasDateIntervalFieldsEntity»
                     protected readonly ViewHelper $viewHelper,
                 «ENDIF»
-                protected readonly PermissionHelper $permissionHelper«IF hasDetailAction || hasEditAction»,
-                protected readonly EntityDisplayHelper $entityDisplayHelper«ENDIF»
+                «IF hasVisibleWorkflow»
+                    protected readonly WorkflowHelper $workflowHelper,
+                «ENDIF»
             ) {
                 $this->setTranslator($translator);
             }
@@ -241,6 +248,9 @@ class ControllerLayer {
         }
         if (hasUploadFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\UploadHelper')
+        }
+        if (hasVisibleWorkflow) {
+            imports.add(app.appNamespace + '\\Helper\\WorkflowHelper')
         }
         if (!getAllEntityFields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty) {
             imports.add('Symfony\\Component\\HttpFoundation\\RequestStack')

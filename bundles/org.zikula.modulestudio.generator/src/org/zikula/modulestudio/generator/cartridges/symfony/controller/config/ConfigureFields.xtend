@@ -31,6 +31,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ConfigureFields implements ControllerMethodInterface {
 
@@ -42,6 +43,7 @@ class ConfigureFields implements ControllerMethodInterface {
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     ValidationHelpProvider validationHelpProvider = new ValidationHelpProvider
     Iterable<Relationship> incomingRelations
@@ -540,8 +542,9 @@ class ConfigureFields implements ControllerMethodInterface {
             calls += '''->renderAsNativeWidget()'''
         }
         // escapeHtml(false)
-        // renderAsBadges([...]) // TODO interesting for list items (particularly workflows)?
-            // see https://symfony.com/bundles/EasyAdminBundle/current/fields/ChoiceField.html#renderasbadges
+        if ('workflowState' === name && entity.hasVisibleWorkflow) {
+            calls += '''->renderAsBadges($this->workflowHelper->getBadgeTypes())'''
+        }
         if (expanded) {
             calls += '''->renderExpanded()'''
         }
@@ -698,6 +701,14 @@ class ConfigureFields implements ControllerMethodInterface {
             'input' => 'string',
         «ENDIF»
     '''
+
+
+    def private dispatch formatValue(NumberField it) '''
+        «IF null !== unit && !unit.empty»
+            static fn (string $value) => $value ? $value . t('«unit»') : ''
+        «ENDIF»
+    '''
+
     def private dispatch formatValue(StringField it) '''
         «IF role == StringRole.DATE_INTERVAL»
             fn (\DateInterval $value) => $this->viewHelper->getFormattedDateInterval($value)
@@ -705,7 +716,10 @@ class ConfigureFields implements ControllerMethodInterface {
             static fn (string $value) => '<i class="' . $value . '"></i>'
         «ELSEIF role == StringRole.PASSWORD»
             static fn (string $value) => '*********'
-        «ENDIF»'''
+        «ELSEIF null !== unit && !unit.empty»
+            static fn (string $value) => $value ? $value . t('«unit»') : ''
+        «ENDIF»
+    '''
 
     def private dispatch additionalAttributes(TextField it) '''
         'maxlength' => «length»,

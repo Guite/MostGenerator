@@ -4,12 +4,9 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.FormatGeoData
-import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetFileSize
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetFormattedEntityTitle
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetListEntry
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetLogDescription
-import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetRelativePath
-import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.ObjectState
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.TreeData
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.TreeSelection
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -42,8 +39,7 @@ class Plugins {
         imports.addAll(#[
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             appNamespace + '\\Entity\\EntityInterface',
-            appNamespace + '\\Helper\\EntityDisplayHelper',
-            appNamespace + '\\Helper\\WorkflowHelper'
+            appNamespace + '\\Helper\\EntityDisplayHelper'
         ])
         if (hasLoggable) {
             imports.addAll(#[
@@ -65,9 +61,6 @@ class Plugins {
         if (hasListFields) {
             imports.add(appNamespace + '\\Helper\\ListEntriesHelper')
         }
-        if (hasUploads) {
-            imports.add('Symfony\\Component\\DependencyInjection\\Attribute\\Autowire')
-        }
         imports
     }
 
@@ -87,20 +80,21 @@ class Plugins {
 
     def private twigExtensionBody(Application it) '''
         public function __construct(
-            protected readonly TranslatorInterface $translator«IF hasTrees»,
-            protected readonly RouterInterface $router«ENDIF»,
+            protected readonly TranslatorInterface $translator,
             «IF hasTrees»
+                protected readonly MenuBuilder $menuBuilder,
+                protected readonly RouterInterface $router,
                 «FOR entity : getTreeEntities.sortBy[name]»
                     protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
                 «ENDFOR»
             «ENDIF»
             protected readonly EntityDisplayHelper $entityDisplayHelper,
-            protected readonly WorkflowHelper $workflowHelper«IF hasListFields»,
-            protected readonly ListEntriesHelper $listHelper«ENDIF»«IF hasLoggable»,
-            protected readonly LoggableHelper $loggableHelper«ENDIF»«IF hasTrees»,
-            protected readonly MenuBuilder $menuBuilder«ENDIF»«IF hasUploads»,
-            #[Autowire(param: 'kernel.project_dir')]
-            protected readonly string $projectDir«ENDIF»
+            «IF hasListFields»
+                protected readonly ListEntriesHelper $listHelper,
+            «ENDIF»
+            «IF hasLoggable»
+                protected readonly LoggableHelper $loggableHelper,
+            «ENDIF»
         ) {
         }
 
@@ -131,11 +125,6 @@ class Plugins {
 
     def private extensionMethods(Application it) {
         val result = newArrayList
-        result += new ObjectState().generate(it)
-        if (hasUploads) {
-            result += new GetFileSize().generate(it)
-            result += new GetRelativePath().generate(it)
-        }
         if (hasListFields) {
             result += new GetListEntry().generate(it)
         }
@@ -146,9 +135,6 @@ class Plugins {
             result += new TreeData().generate(it)
             result += new TreeSelection().generate(it)
         }
-        /*if (!getAllEntityFields.filter(StringField).filter[StringRole.DATE_INTERVAL === role].empty) {
-            result += new GetFormattedDateInterval().generate(it)
-        }*/
         result += new GetFormattedEntityTitle().generate(it)
         if (hasLoggable) {
             result += new GetLogDescription().generate(it)

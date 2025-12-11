@@ -236,7 +236,7 @@ class Repository {
         «IF tree || hasSortableFields»
             public function __construct(
                 EntityManagerInterface $manager,
-                protected readonly ?CollectionFilterHelper $collectionFilterHelper,
+                protected «/*readonly */»?CollectionFilterHelper $collectionFilterHelper,
                 «IF hasTranslatableFields»
                     FeatureActivationHelper $featureActivationHelper,
                 «ENDIF»

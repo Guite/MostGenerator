@@ -6,13 +6,13 @@ Bundle-Version: 2.0.0.qualifier
 Require-Bundle: de.guite.modulestudio.mostdsl;bundle-version="2.0.0",
  org.apache.commons.logging;bundle-version="1.2.0",
  org.apache.log4j;bundle-version="1.2.26",
- org.eclipse.core.runtime;bundle-version="3.34.0",
- org.eclipse.emf.mwe2.launch;bundle-version="2.23.0",
- org.eclipse.emf.mwe.utils;bundle-version="1.17.0",
- org.eclipse.xtend.core;bundle-version="2.40.0",
- org.eclipse.xtend.standalone;bundle-version="2.40.0";resolution:=optional,
- org.eclipse.xtext;bundle-version="2.40.0",
- org.objectweb.asm;bundle-version="9.8.0"
+ org.eclipse.core.runtime;bundle-version="3.34.100",
+ org.eclipse.emf.mwe2.launch;bundle-version="2.24.0",
+ org.eclipse.emf.mwe.utils;bundle-version="1.18.0",
+ org.eclipse.xtend.core;bundle-version="2.41.0",
+ org.eclipse.xtend.standalone;bundle-version="2.41.0";resolution:=optional,
+ org.eclipse.xtext;bundle-version="2.41.0",
+ org.objectweb.asm;bundle-version="9.9.0"
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
 Export-Package: org.zikula.modulestudio.generator.application,

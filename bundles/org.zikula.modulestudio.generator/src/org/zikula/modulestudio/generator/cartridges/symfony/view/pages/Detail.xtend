@@ -18,7 +18,6 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
-import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Detail {
 
@@ -30,7 +29,6 @@ class Detail {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
-    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
         ('Generating display templates for entity "' + name.formatForDisplay + '"').printIfNotTesting(fsa)
@@ -179,7 +177,7 @@ class Detail {
         </dl>
     '''
 
-    def private templateHeading(Entity it, String appName) '''{{ templateTitle }}«IF hasVisibleWorkflow»{% if routeArea == 'admin' %} <small>({{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }})</small>{% endif %}«ENDIF»'''
+    def private templateHeading(Entity it, String appName) '''{{ templateTitle }}'''
 
     def private dispatch displayEntry(Field it) '''
         {% if «entity.name.formatForCode».«name.formatForCode» is not empty«IF name == 'workflowState'» and routeArea == 'admin'«ENDIF» %}

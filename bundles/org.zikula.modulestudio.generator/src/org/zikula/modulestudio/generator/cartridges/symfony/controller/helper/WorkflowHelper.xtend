@@ -38,7 +38,6 @@ class WorkflowHelper {
             'Symfony\\Component\\Workflow\\Registry',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             appNamespace + '\\Entity\\EntityInterface',
-            appNamespace + '\\Helper\\ListEntriesHelper',
             appNamespace + '\\Helper\\PermissionHelper'
         ])
         for (entity : getEntitiesForWorkflow(true)) {
@@ -70,7 +69,6 @@ class WorkflowHelper {
             «FOR entity : getEntitiesForWorkflow(true)»
                 protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
             «ENDFOR»
-            protected readonly ListEntriesHelper $listEntriesHelper,
             protected readonly PermissionHelper $permissionHelper,
             protected readonly LoggerInterface $logger,
         ) {
@@ -88,6 +86,8 @@ class WorkflowHelper {
             «collectAmountOfModerationItems»
 
             «getAmountOfModerationItems»
+
+            «getBadgeTypes»
         «ENDIF»
     '''
 
@@ -412,6 +412,22 @@ class WorkflowHelper {
 
             $result = $repository->selectCount($where, false, $parameters);
             $repository->setCollectionFilterHelper($collectionFilterHelper);
+
+            return $result;
+        }
+    '''
+
+    def private getBadgeTypes(Application it) '''
+        /**
+         * Returns badge type mapping for workflow states.
+         */
+        public function getBadgeTypes(): array
+        {
+            $result = [];
+            $stateList = $this->getObjectStates();
+            foreach ($stateList as $state) {
+                $result[$state['value']] = $state['ui'];
+            }
 
             return $result;
         }

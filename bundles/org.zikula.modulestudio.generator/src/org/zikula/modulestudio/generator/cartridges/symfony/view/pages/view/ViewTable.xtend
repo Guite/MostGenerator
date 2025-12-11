@@ -206,8 +206,6 @@ class ViewTable {
             «ELSE»
                 «displayLeadingEntry»
             «ENDIF»
-        «ELSEIF name == 'workflowState'»
-            {{ «entity.name.formatForCode».workflowState|«application.appName.formatForDB»_objectState }}
         «ELSE»
             «fieldHelper.displayField(it, entity.name.formatForCode, 'index')»
         «ENDIF»
