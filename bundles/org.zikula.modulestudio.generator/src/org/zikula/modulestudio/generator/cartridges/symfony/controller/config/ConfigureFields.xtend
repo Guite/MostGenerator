@@ -438,8 +438,7 @@ class ConfigureFields implements ControllerMethodInterface {
             if (role === TextRole.HTML) {
                 calls += '''->renderAsHtml()'''
             }
-            calls += '''->setMaxLength(«length»)'''
-            // setMaxLength($pageName === Crud::PAGE_DETAIL ? 1024 : 32)
+            calls += '''->setMaxLength(Crud::PAGE_DETAIL === $pageName ? «length» : 50)'''
             // setNumOfRows(30)
             if (role === TextRole.PLAIN) {
                 calls += '''->stripTags()'''

@@ -247,7 +247,7 @@ class Repository {
         «ELSE»
             public function __construct(
                 ManagerRegistry $registry,
-                protected readonly ?CollectionFilterHelper $collectionFilterHelper,
+                protected «/*readonly */»?CollectionFilterHelper $collectionFilterHelper,
                 «IF hasTranslatableFields»
                     FeatureActivationHelper $featureActivationHelper,
                 «ENDIF»
