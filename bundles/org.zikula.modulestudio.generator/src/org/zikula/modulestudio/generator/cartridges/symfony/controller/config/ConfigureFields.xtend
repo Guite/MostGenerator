@@ -344,6 +344,9 @@ class ConfigureFields implements ControllerMethodInterface {
             // setRoundingMode()
             // setThousandsSeparator()
         }
+        if (entity.geographical && #['latitude', 'longitude'].contains(name)) {
+            calls += '''->setTemplatePath('@EasyAdmin/crud/field/geo.html.twig')'''
+        }
         calls
     }
 
@@ -452,6 +455,7 @@ class ConfigureFields implements ControllerMethodInterface {
     def private dispatch options(UserField it) {
         var calls = commonOptions
         calls += '''->autocomplete()'''
+        calls += '''->setTemplatePath('@EasyAdmin/crud/field/user.html.twig')'''
         // TODO association options
         calls
     }

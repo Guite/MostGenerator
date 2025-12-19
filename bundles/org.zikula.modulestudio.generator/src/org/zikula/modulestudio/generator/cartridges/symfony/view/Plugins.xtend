@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
-import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.FormatGeoData
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetFormattedEntityTitle
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetListEntry
 import org.zikula.modulestudio.generator.cartridges.symfony.view.plugin.GetLogDescription
@@ -127,9 +126,6 @@ class Plugins {
         val result = newArrayList
         if (hasListFields) {
             result += new GetListEntry().generate(it)
-        }
-        if (hasGeographical) {
-            result += new FormatGeoData().generate(it)
         }
         if (hasTrees) {
             result += new TreeData().generate(it)

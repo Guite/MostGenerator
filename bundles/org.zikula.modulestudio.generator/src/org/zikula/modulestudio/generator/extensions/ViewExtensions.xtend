@@ -79,7 +79,7 @@ class ViewExtensions {
         «IF 'index' == actionName»
             <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-object-type="«objName»" data-tile-layer-url="{{ geoConfig.tile_layer_url|e('html_attr') }}" data-tile-layer-attribution="{{ geoConfig.tile_layer_attribution|e('html_attr') }}"></div>
         «ELSE»
-            <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-latitude="{{ «objName».latitude|«application.appName.formatForDB»_geoData }}" data-longitude="{{ «objName».longitude|«application.appName.formatForDB»_geoData }}" data-zoom-level="{{ geoConfig.default_zoom_level|e('html_attr') }}" data-tile-layer-url="{{ geoConfig.tile_layer_url|e('html_attr') }}" data-tile-layer-attribution="{{ geoConfig.tile_layer_attribution|e('html_attr') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and geoConfig.enable_«name.formatForSnakeCase»_geo_location %}true{% else %}false{% endif %}"«ENDIF»></div>
+            <div id="geographicalInfo" class="d-none" data-context="«actionName»" data-latitude="{{ «objName».latitude|formatCoordinate }}" data-longitude="{{ «objName».longitude|formatCoordinate }}" data-zoom-level="{{ geoConfig.default_zoom_level|e('html_attr') }}" data-tile-layer-url="{{ geoConfig.tile_layer_url|e('html_attr') }}" data-tile-layer-attribution="{{ geoConfig.tile_layer_attribution|e('html_attr') }}"«IF actionName == 'edit'» data-use-geolocation="{% if mode == 'create' and geoConfig.enable_«name.formatForSnakeCase»_geo_location %}true{% else %}false{% endif %}"«ENDIF»></div>
         «ENDIF»
 
     '''

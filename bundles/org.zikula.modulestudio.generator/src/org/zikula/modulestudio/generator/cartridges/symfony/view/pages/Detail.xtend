@@ -9,7 +9,6 @@ import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.MenuViews
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -194,9 +193,8 @@ class Detail {
         <dd>«displayEntryImpl»</dd>
     '''
 
-    def private displayEntryImpl(Field it) {
-        new SimpleFields().displayField(it, entity.name.formatForCode, 'detail')
-    }
+    def private displayEntryImpl(Field it) '''
+        {{ «entity.name.formatForCode».«name.formatForCode» }}'''
 
     def private displayEntry(Relationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode»

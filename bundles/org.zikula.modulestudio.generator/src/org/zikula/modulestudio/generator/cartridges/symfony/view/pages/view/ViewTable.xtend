@@ -13,7 +13,6 @@ import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.IndexPagesHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.MenuViews
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -32,7 +31,6 @@ class ViewTable {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    SimpleFields fieldHelper = new SimpleFields
     String appName
 
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
@@ -200,18 +198,14 @@ class ViewTable {
     }
 
     def private dispatch displayEntryInner(Field it, Boolean useTarget) '''
-        «IF #['name', 'title'].contains(name)»
-            «IF entity.hasDetailAction»
-                <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_detail'«entity.routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayLeadingEntry»</a>
-            «ELSE»
-                «displayLeadingEntry»
-            «ENDIF»
+        «IF entity.hasDetailAction && #['name', 'title'].contains(name)»
+            <a href="{{ path('«application.appName.formatForDB»_«entity.name.formatForDB»_detail'«entity.routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayField»</a>
         «ELSE»
-            «fieldHelper.displayField(it, entity.name.formatForCode, 'index')»
+            «displayField»
         «ENDIF»
     '''
 
-    def private displayLeadingEntry(Field it) {
+    def private displayField(Field it) {
         '''{{ «entity.name.formatForCode».«name.formatForCode» }}'''
     }
 
