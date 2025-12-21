@@ -56,10 +56,10 @@ class ConfigureCrud implements ControllerMethodInterface {
             ->setPageTitle(Crud::PAGE_NEW, t('Add %entity_label_singular%'))
         «ENDIF»
         «IF hasDetailAction»
-            ->setPageTitle(Crud::PAGE_DETAIL, fn («name.formatForCodeCapital» $«name.formatForCode») => «/*(string) $«name.formatForCode»*/»$this->entityDisplayHelper->getFormattedTitle($«name.formatForCode»))
+            ->setPageTitle(Crud::PAGE_DETAIL, fn («name.formatForCodeCapital» $«name.formatForCode») => $this->entityDisplayHelper->getFormattedTitle($«name.formatForCode»))
         «ENDIF»
         «IF hasEditAction»
-            ->setPageTitle(Crud::PAGE_EDIT, fn («name.formatForCodeCapital» $«name.formatForCode») => t('Edit %entity%', ['%entity%' => «/*(string) $«name.formatForCode»*/»$this->entityDisplayHelper->getFormattedTitle($«name.formatForCode»)]))
+            ->setPageTitle(Crud::PAGE_EDIT, fn («name.formatForCodeCapital» $«name.formatForCode») => t('Edit %entity%', ['%entity%' => $this->entityDisplayHelper->getFormattedTitle($«name.formatForCode»)]))
         «ENDIF»
         «IF hasIndexAction»
             «IF null !== documentation && !documentation.replaceAll('\\s+', '').empty»

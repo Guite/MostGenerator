@@ -93,8 +93,8 @@ class History {
                                 <td headers="hMinVersion h{{ fieldName|e('html_attr') }}"{% if values.changed %} class="diff-old"{% endif %}>
                                     {% if values.old is iterable %}
                                         {% if values.old|length > 0 %}
-                                            {% if fieldName in ['createdBy', 'updatedBy'] and values.old.uid is defined %}
-                                                {{ userAvatar(values.old.uid, {rating: 'g'}) }} {{ values.old.uid|profileLinkByUserId() }}
+                                            {% if fieldName in ['createdBy', 'updatedBy'] and values.old.id is defined %}
+                                                {{ userAvatar(values.old.id, {rating: 'g'}) }} {{ values.old.id|profileLinkByUserId() }}
                                             {% else %}
                                                 {{ _self.outputArray(values.old«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
@@ -108,8 +108,8 @@ class History {
                                 <td headers="hMaxVersion h{{ fieldName|e('html_attr') }}"{% if values.changed %} class="diff-new"{% endif %}>
                                     {% if values.new is iterable %}
                                         {% if values.new|length > 0 %}
-                                            {% if fieldName in ['createdBy', 'updatedBy'] and values.new.uid is defined %}
-                                                {{ userAvatar(values.new.uid, {rating: 'g'}) }} {{ values.new.uid|profileLinkByUserId() }}
+                                            {% if fieldName in ['createdBy', 'updatedBy'] and values.new.id is defined %}
+                                                {{ userAvatar(values.new.id, {rating: 'g'}) }} {{ values.new.id|profileLinkByUserId() }}
                                             {% else %}
                                                 {{ _self.outputArray(values.new«IF hasTranslatableFields», (fieldName == 'translationData')«ENDIF») }}
                                             {% endif %}
@@ -189,8 +189,8 @@ class History {
                                             {% if value is iterable %}
                                                 {% if value|length > 0 %}
                                                     <li>
-                                                    {% if field in ['createdBy', 'updatedBy'] and value.uid is defined %}
-                                                        {{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': userAvatar(value.uid, {rating: 'g'}) ~ ' ' ~ value.uid|profileLinkByUserId()}, 'messages')|raw }}
+                                                    {% if field in ['createdBy', 'updatedBy'] and value.id is defined %}
+                                                        {{ '%field% set to <em>%value%</em>'|trans({'%field%': field|humanize, '%value%': userAvatar(value.id, {rating: 'g'}) ~ ' ' ~ value.id|profileLinkByUserId()}, 'messages')|raw }}
                                                     {% else %}
                                                         {{ '%field% set to:'|trans({'%field%': field|humanize}, 'messages') }}
                                                         {{ _self.outputArray(value«IF hasTranslatableFields», (field == 'translationData')«ENDIF») }}

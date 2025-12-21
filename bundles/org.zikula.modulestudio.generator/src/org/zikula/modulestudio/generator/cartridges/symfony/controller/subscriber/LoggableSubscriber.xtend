@@ -7,7 +7,7 @@ class LoggableSubscriber {
     def generate(Application it) '''
         public function __construct(
             protected readonly EntityDisplayHelper $entityDisplayHelper,
-            protected readonly LoggableHelper $loggableHelper
+            protected readonly LoggableHelper $loggableHelper,
         ) {
             parent::__construct();
         }

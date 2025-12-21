@@ -261,7 +261,7 @@ class Repository {
     def private constructorInit(Entity it) '''
         «IF hasTranslatableFields»
             $this->setTranslationsEnabled(
-                $featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $objectType)
+                $featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')
             );
         «ENDIF»
     '''

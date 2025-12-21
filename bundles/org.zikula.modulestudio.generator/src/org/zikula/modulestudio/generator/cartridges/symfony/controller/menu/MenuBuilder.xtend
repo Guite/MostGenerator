@@ -69,10 +69,13 @@ class MenuBuilder {
             «IF hasLoggable»
                 protected readonly LoggableHelper $loggableHelper,
             «ENDIF»
-            protected readonly Security $security«IF hasIndexActions && hasEditActions»,
-            protected readonly ModelHelper $modelHelper«ENDIF»«IF hasIndexActions»,
-            protected readonly array $listViewConfig«ENDIF»
-            
+            protected readonly Security $security,
+            «IF hasIndexActions && hasEditActions»
+                protected readonly ModelHelper $modelHelper,
+            «ENDIF»
+            «IF hasIndexActions»
+                protected readonly array $listViewConfig,
+            «ENDIF»
         ) {
         }
 

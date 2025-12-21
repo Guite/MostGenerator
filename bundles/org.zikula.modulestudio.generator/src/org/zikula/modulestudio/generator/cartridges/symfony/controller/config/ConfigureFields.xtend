@@ -100,6 +100,11 @@ class ConfigureFields implements ControllerMethodInterface {
             }
         }
 
+        // related entities (TODO filter)
+        for (entity : application.entities) {
+            imports.add(application.appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+        }
+
         // TODO refactor following imports
         val importsUNUSED = newArrayList
         if (!formFields.filter[!mandatory && !nullable].empty) {
@@ -787,6 +792,8 @@ class ConfigureFields implements ControllerMethodInterface {
 
     def private options(Relationship it, Boolean outgoing, String relationFieldType, Boolean autoComplete) {
         val expanded = (!outgoing && expandedSource) || (outgoing && expandedTarget)
+        val thisEntity = if (outgoing) source else target
+        val relatedEntity = if (outgoing) target else source
         var calls = ''
         if ('Association' == relationFieldType) {
             if (autoComplete) {
@@ -794,11 +801,23 @@ class ConfigureFields implements ControllerMethodInterface {
             } else if (!expanded) {
                 calls += '''->renderAsNativeWidget()'''
             }
+            // renderAsEmbeddedForm
+            if (thisEntity.hasEditAction) {
+                calls += '''->setFormTypeOption('choice_label', fn («relatedEntity.name.formatForCodeCapital» $entity): string => $this->entityDisplayHelper->format«relatedEntity.name.formatForCodeCapital»($entity))'''
+            }
         } else if ('Collection' == relationFieldType) {
             calls += '''->setEntryIsComplex()'''
+            // setEntryType
+            // useEntryCrudForm
+            if (thisEntity.hasEditAction) {
+                calls += '''->setEntryToStringMethod(fn («relatedEntity.name.formatForCodeCapital» $entity, TranslatorInterface $translator): string => $this->entityDisplayHelper->format«relatedEntity.name.formatForCodeCapital»($entity))'''
+            }
         }
         if (expanded) {
             calls += '''->renderExpanded()'''
+        }
+        if (thisEntity.hasIndexAction || thisEntity.hasDetailAction) {
+            calls += '''->setTemplatePath('@«application.vendor.formatForCodeCapital + application.name.formatForCodeCapital»/admin/crud/field/association.html.twig')'''
         }
         calls
     }
@@ -827,7 +846,7 @@ class ConfigureFields implements ControllerMethodInterface {
                 ],
             ]);
         «ELSE»
-            $queryBuilder = function (EntityRepository $er) {«/* get repo from entity factory to ensure CollectionFilterHelper is set return $er->getListQueryBuilder('', '', false);* /»
+            $queryBuilder = function (EntityRepository $er) {«/* return $er->getListQueryBuilder('', '', false);* /»
                 return $this->«relatedEntity.name.formatForCode»Repository->getListQueryBuilder('', '', false);
             };
             «IF (relatedEntity as Entity).ownerPermission»
@@ -842,10 +861,7 @@ class ConfigureFields implements ControllerMethodInterface {
                 }
             «ENDIF»
             «IF !autoComplete»
-                $entityDisplayHelper = $this->entityDisplayHelper;
-                $choiceLabelClosure = function ($entity) use ($entityDisplayHelper) {
-                    return $entityDisplayHelper->getFormattedTitle($entity);
-                };
+                $choiceLabelClosure = fn ($entity) => $this->entityDisplayHelper->getFormattedTitle($entity);
             «ENDIF»
             ... already removed code ...
         «ENDIF»

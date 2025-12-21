@@ -105,15 +105,27 @@ class EditEntityType {
             «ENDIF»
             public function __construct(
                 «IF !fields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
-                    protected readonly RequestStack $requestStack«IF !incoming.empty || !outgoing.empty»,«ENDIF»
-                «ENDIF»«IF !incoming.empty || !outgoing.empty»
-                protected readonly CollectionFilterHelper $collectionFilterHelper,
-                protected readonly EntityDisplayHelper $entityDisplayHelper«ENDIF»«IF isTranslatable || hasLocaleFieldsEntity»,
-                protected readonly LocaleApiInterface $localeApi«ENDIF»«IF isTranslatable»,
-                protected readonly TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity»,
-                protected readonly ListEntriesHelper $listHelper«ENDIF»«IF hasUploadFieldsEntity»,
-                protected readonly UploadHelper $uploadHelper«ENDIF»«IF app.needsFeatureActivationHelper»,
-                protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»
+                    protected readonly RequestStack $requestStack,
+                «ENDIF»
+                «IF !incoming.empty || !outgoing.empty»
+                    protected readonly CollectionFilterHelper $collectionFilterHelper,
+                    protected readonly EntityDisplayHelper $entityDisplayHelper,
+                «ENDIF»
+                «IF isTranslatable || hasLocaleFieldsEntity»
+                    protected readonly LocaleApiInterface $localeApi,
+                «ENDIF»
+                «IF isTranslatable»
+                    protected readonly TranslatableHelper $translatableHelper,
+                «ENDIF»
+                «IF hasListFieldsEntity»
+                    protected readonly ListEntriesHelper $listHelper,
+                «ENDIF»
+                «IF hasUploadFieldsEntity»
+                    protected readonly UploadHelper $uploadHelper,
+                «ENDIF»
+                «IF app.needsFeatureActivationHelper»
+                    protected readonly FeatureActivationHelper $featureActivationHelper,
+                «ENDIF»
             ) {
             }
 

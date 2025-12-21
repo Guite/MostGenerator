@@ -83,9 +83,13 @@ class EntityDisplayHelper {
         «ENDIF»
 
         public function __construct(
-            protected readonly TranslatorInterface $translator«IF hasListFields»,
-            protected readonly ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasAnyDateTimeFields || hasNumberFields»,
-            RequestStack $requestStack«ENDIF»
+            protected readonly TranslatorInterface $translator,
+            «IF hasListFields»
+                protected readonly ListEntriesHelper $listEntriesHelper,
+            «ENDIF»
+            «IF hasAnyDateTimeFields || hasNumberFields»
+                RequestStack $requestStack,
+            «ENDIF»
         ) {
             «IF hasAnyDateTimeFields || hasNumberFields»
                 $locale = null !== $requestStack->getCurrentRequest() ? $requestStack->getCurrentRequest()->getLocale() : 'en';
@@ -140,7 +144,7 @@ class EntityDisplayHelper {
         /**
          * Returns the formatted title for a given «name.formatForDisplay».
          */
-        protected function format«name.formatForCodeCapital»(«name.formatForCodeCapital» $entity): string
+        public function format«name.formatForCodeCapital»(«name.formatForCodeCapital» $entity): string
         {
             «IF displayPatternParts.length < 2»«/* no field references, just pass to translator */»
                 return $this->translator->trans('«getUsedDisplayPattern.formatForCodeCapital»', [], '«name.formatForCode»');
@@ -160,7 +164,7 @@ class EntityDisplayHelper {
         /**
          * Returns an additional description for a given «name.formatForDisplay».
          */
-        protected function get«name.formatForCodeCapital»Description(«name.formatForCodeCapital» $entity): string
+        public function get«name.formatForCodeCapital»Description(«name.formatForCodeCapital» $entity): string
         {
             $descriptionFieldName = $this->getDescriptionFieldName($entity->get_objectType());
             $getter = 'get' . ucfirst($descriptionFieldName);
@@ -177,8 +181,6 @@ class EntityDisplayHelper {
 
             «getPreviewFieldName»
         «ENDIF»
-
-        «getStartDateFieldName»
     '''
 
     def private getTitleFieldName(Application it) '''
@@ -235,23 +237,6 @@ class EntityDisplayHelper {
             «FOR entity : entities.filter[hasImageFieldsEntity]»
                 if ('«entity.name.formatForCode»' === $objectType) {
                     return '«entity.getImageFieldsEntity.head.name.formatForCode»';
-                }
-            «ENDFOR»
-
-            return '';
-        }
-    '''
-
-    def private getStartDateFieldName(Application it) '''
-        /**
-         * Returns name of the date(time) field to be used for representing the start
-         * of this object. Used for providing meta data to the tag module.
-         */
-        public function getStartDateFieldName(string $objectType = ''): string
-        {
-            «FOR entity : entities»
-                if ('«entity.name.formatForCode»' === $objectType) {
-                    return '«IF null !== entity.getStartDateField»«entity.getStartDateField.name.formatForCode»«ELSEIF entity.standardFields»createdDate«ENDIF»';
                 }
             «ENDFOR»
 

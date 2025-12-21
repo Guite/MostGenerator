@@ -4,11 +4,13 @@ import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerMethodInterface
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 
 class ConfigureActions implements ControllerMethodInterface {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
 
     override void init(Entity it) {}
 
@@ -21,6 +23,12 @@ class ConfigureActions implements ControllerMethodInterface {
         ])
         if (hasIndexAction) {
             imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\BatchActionDto')
+        }
+        if (!getIncomingRelationsWithAutocomplete.empty || !getOutcomingRelationsWithAutocomplete.empty) {
+            imports.addAll(#[
+                'EasyCorp\\Bundle\\EasyAdminBundle\\Context\\AdminContext',
+                'Symfony\\Component\\HttpFoundation\\JsonResponse'
+            ])    
         }
         imports
     }
@@ -44,6 +52,7 @@ class ConfigureActions implements ControllerMethodInterface {
             ;
             «ENDIF»
         }
+        «autocomplete»
     '''
 
     def private methodBody(Entity it) '''
@@ -109,4 +118,63 @@ class ConfigureActions implements ControllerMethodInterface {
             )
         «ENDIF»
     '''
+
+    def private autocomplete(Entity it) {
+        if (!getIncomingRelationsWithAutocomplete.empty || !getOutcomingRelationsWithAutocomplete.empty) '''
+            public function autocomplete(AdminContext $context): JsonResponse
+            {
+                $response = parent::autocomplete($context);
+
+                $payload = json_decode($response->getContent() ?? '[]', true, flags: \JSON_THROW_ON_ERROR);
+
+                if (!isset($payload['results']) || !is_array($payload['results'])) {
+                    return $response;
+                }
+
+                $ids = [];
+                foreach ($payload['results'] as $row) {
+                    if (isset($row['id']) && '' !== $row['id']) {
+                        $ids[] = $row['id'];
+                    }
+                }
+
+                if ([] === $ids) {
+                    return $response;
+                }
+
+                $entities = $this->em->getRepository(«name.formatForCodeCapital»::class)->createQueryBuilder('p')
+                    ->andWhere('p.id IN (:ids)')
+                    ->setParameter('ids', $ids)
+                    ->getQuery()
+                    ->getResult();
+
+                $byId = [];
+                foreach ($entities as $entity) {
+                    $byId[(string) $entity->getId()] = $entity;
+                }
+
+                foreach ($payload['results'] as &$row) {
+                    $id = isset($row['id']) ? (string) $row['id'] : null;
+                    if ($id && isset($byId[$id])) {
+                        $row['text'] = $this->entityDisplayHelper->format«name.formatForCodeCapital»($byId[$id]);
+                    }
+                }
+                unset($row);
+
+                return new JsonResponse(
+                    $payload,
+                    $response->getStatusCode(),
+                    $response->headers->all()
+                );
+            }
+        '''
+    }
+
+    def private getIncomingRelationsWithAutocomplete(Entity it) {
+        getCommonRelations(true).filter[usesAutoCompletion(false)]
+    }
+
+    def private getOutcomingRelationsWithAutocomplete(Entity it) {
+        getCommonRelations(false).filter[usesAutoCompletion(true)]
+    }
 }

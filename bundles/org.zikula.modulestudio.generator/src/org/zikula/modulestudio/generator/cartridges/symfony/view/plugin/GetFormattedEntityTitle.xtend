@@ -2,18 +2,20 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view.plugin
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class GetFormattedEntityTitle {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
         /**
          * The «appName.formatForDB»_formattedTitle filter outputs a formatted title for a given entity.
          * Example:
-         *     {{ myPost|«appName.formatForDB»_formattedTitle }}.
+         *     {{ my«leadingEntity.name.formatForCodeCapital»|«appName.formatForDB»_formattedTitle }}.
          */
         #[AsTwigFilter('«appName.formatForDB»_formattedTitle')]
         public function getFormattedEntityTitle(EntityInterface $entity): string

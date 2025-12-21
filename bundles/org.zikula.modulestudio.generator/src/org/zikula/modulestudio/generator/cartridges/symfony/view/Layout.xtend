@@ -40,6 +40,11 @@ class Layout {
 
         fileName = 'raw.html.twig'
         fsa.generateFile(templatePath + fileName, rawPageImpl)
+
+        if (!relations.empty) {
+            fileName = 'admin/crud/field/association.html.twig'
+            fsa.generateFile(templatePath + fileName, associationFieldTemplateImpl)
+        }
     }
 
     def baseTemplate(Application it) '''
@@ -143,5 +148,21 @@ class Layout {
 
     def private rawJsInit(Application it) '''
         {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».RawPage.js')) }}
+    '''
+
+    def private associationFieldTemplateImpl(Application it) '''
+        {# based on association.html.twig #}
+        {# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+        {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+        {# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+        {% if 'toMany' == field.customOptions.get('associationType') %}
+            <span class="badge badge-secondary">{{ field.formattedValue }}</span>
+        {% else %}
+            {% if field.customOptions.get('relatedUrl') is not null %}
+                <a href="{{ field.customOptions.get('relatedUrl') }}">{{ field.value ? field.value|«appName.formatForDB»_formattedTitle : '' }}</a>
+            {% else %}
+                {{ field.value ? field.value|«appName.formatForDB»_formattedTitle : '' }}
+            {% endif %}
+        {% endif %}
     '''
 }
