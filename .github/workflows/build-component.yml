@@ -29,9 +29,9 @@ jobs:
     # Tycho 4 requires Maven 3.8 at least
     - name: Update Maven
       run: |
-        wget -q https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz
-        tar xzf apache-maven-3.9.11-bin.tar.gz && rm apache-maven-3.9.11-bin.tar.gz
-        mv apache-maven-3.9.11 maven
+        wget -q https://dlcdn.apache.org/maven/maven-3/3.9.12/binaries/apache-maven-3.9.12-bin.tar.gz
+        tar xzf apache-maven-3.9.12-bin.tar.gz && rm apache-maven-3.9.12-bin.tar.gz
+        mv apache-maven-3.9.12 maven
 
     # https://stackoverflow.com/questions/71069/can-maven-be-made-less-verbose
     - name: Maven Build
