@@ -60,7 +60,7 @@ class History {
             «pageNavLinks(app.appName)»
         {% endblock %}
         {% block history_table %}
-            <form action="{{ path('«app.appName.formatForDB»_«name.formatForDB»_loggablehistory', {«IF hasSluggableFields»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields»Slug«ELSE»Key«ENDIF»()}) }}" method="get">
+            <form action="{{ path('«route('loggablehistory')»', {«IF hasSluggableFields»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields»Slug«ELSE»Key«ENDIF»()}) }}" method="get">
                 <div class="table-responsive">
                     «historyTable»
                 </div>
@@ -212,11 +212,11 @@ class History {
                         <td headers="hActions hVersion{{ logEntry.version|e('html_attr') }}" class="actions">
                             «IF hasDetailAction»
                                 {% set linkTitle = 'Preview version %version%'|trans({'%version%': logEntry.version}, 'messages') %}
-                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_detail', {«IF hasSluggableFields»«appendSlug(name.formatForCode, true)»«ELSE»«routePkParams(name.formatForCode, true)»«ENDIF», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ 'version'|trans({}, 'messages') ~ ' ' ~ logEntry.version }}"><i class="fas fa-id-card"></i></a>
+                                <a id="«name.formatForCode»Item{{ «name.formatForCode».getKey() }}Display{{ logEntry.version }}" href="{{ path('«route('detail')»', {«IF hasSluggableFields»«appendSlug(name.formatForCode, true)»«ELSE»«routePkParams(name.formatForCode, true)»«ENDIF», version: logEntry.version, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «name.formatForCode»|«app.appName.formatForDB»_formattedTitle|e('html_attr') ~ ' ' ~ 'version'|trans({}, 'messages') ~ ' ' ~ logEntry.version }}"><i class="fas fa-id-card"></i></a>
                             «ENDIF»
                             {% if not loop.first %}
                                 {% set linkTitle = 'Revert to version %version%'|trans({'%version%': logEntry.version}, 'messages') %}
-                                <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_loggablehistory', {«IF hasSluggableFields»«appendSlug(name.formatForCode, true)»«ELSE»«routePkParams(name.formatForCode, true)»«ENDIF», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i></a>
+                                <a href="{{ path('«route('loggablehistory')»', {«IF hasSluggableFields»«appendSlug(name.formatForCode, true)»«ELSE»«routePkParams(name.formatForCode, true)»«ENDIF», revert: logEntry.version}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i></a>
                             {% endif %}
                         </td>
                     </tr>
@@ -230,16 +230,16 @@ class History {
             <p>
                 {% if isDiffView == true %}
                     {% set linkTitle = 'Back to history'|trans({}, 'messages') %}
-                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_loggablehistory', {«IF hasSluggableFields»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i> {{ linkTitle }}</a>
+                    <a href="{{ path('«route('loggablehistory')»', {«IF hasSluggableFields»slug«ELSE»id«ENDIF»: «name.formatForCode».get«IF hasSluggableFields»Slug«ELSE»Key«ENDIF»()}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i> {{ linkTitle }}</a>
                 {% else %}
                     «IF hasIndexAction»
                         {% set linkTitle = '«nameMultiple.formatForDisplayCapital» list'|trans %}
-                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_index') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-reply"></i> {{ linkTitle }}</a>
+                        <a href="{{ path('«route('index')»') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-reply"></i> {{ linkTitle }}</a>
                     «ENDIF»
                 {% endif %}
                 «IF hasDetailAction»
                     {% set linkTitle = 'Back to detail view'|trans({}, 'messages') %}
-                    <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_detail'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-eye"></i> {{ linkTitle }}</a>
+                    <a href="{{ path('«route('detail')»'«routeParams(name.formatForCode, true)») }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-eye"></i> {{ linkTitle }}</a>
                 «ENDIF»
             </p>
         «ENDIF»

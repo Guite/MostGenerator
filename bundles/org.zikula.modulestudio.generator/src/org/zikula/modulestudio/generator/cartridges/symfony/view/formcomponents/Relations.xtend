@@ -199,7 +199,7 @@ class Relations {
         <li id="{{ idPrefixItem }}">
             {{ item|«app.appName.formatForDB»_formattedTitle }}
             «IF includeEditing»
-                <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_edit'«targetEntity.routeParams('item', true)») }}"><i class="fas fa-edit"></i></a>
+                <a id="{{ idPrefixItem }}Edit" href="{{ path('«targetEntity.route('edit')»'«targetEntity.routeParams('item', true)») }}"><i class="fas fa-edit"></i></a>
             «ENDIF»
              <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');"><i class="fas fa-trash-alt"></i></a>
             «IF targetEntity.hasImageFieldsEntity»
@@ -237,7 +237,7 @@ class Relations {
         val uniqueNameForJs = getUniqueRelationNameForJs(targetEntity, relationAliasName)
         val linkEntity = if (targetEntity == target) source else target
         '''
-            <div class="relation-editing-definition" data-object-type="«linkEntity.name.formatForCode»" data-alias="«relationAliasName.toFirstLower»" data-prefix="«uniqueNameForJs»" data-inline-prefix="«uniqueNameForJs»SelectorDoNew" data-module-name="«linkEntity.application.appName»" data-include-editing="«IF stageCode > 1»1«ELSE»0«ENDIF»" data-input-type="«getFieldTypeForInlineEditing(incoming)»" data-create-url="{{ path('«app.appName.formatForDB»_«linkEntity.name.formatForDB»_edit')|e('html_attr') }}"></div>
+            <div class="relation-editing-definition" data-object-type="«linkEntity.name.formatForCode»" data-alias="«relationAliasName.toFirstLower»" data-prefix="«uniqueNameForJs»" data-inline-prefix="«uniqueNameForJs»SelectorDoNew" data-module-name="«linkEntity.application.appName»" data-include-editing="«IF stageCode > 1»1«ELSE»0«ENDIF»" data-input-type="«getFieldTypeForInlineEditing(incoming)»" data-create-url="{{ path('«linkEntity.route('edit')»')|e('html_attr') }}"></div>
         '''
     }
 

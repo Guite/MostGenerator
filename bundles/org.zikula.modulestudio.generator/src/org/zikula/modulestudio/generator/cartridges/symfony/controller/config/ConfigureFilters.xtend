@@ -1,24 +1,24 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.config
 
 import de.guite.modulestudio.metamodel.ArrayField
+import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.NumberField
 import de.guite.modulestudio.metamodel.Relationship
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.StringRole
+import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.UploadField
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerMethodInterface
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.NumberField
-import de.guite.modulestudio.metamodel.UserField
-import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.UploadField
 
 class ConfigureFilters implements ControllerMethodInterface {
 
@@ -48,8 +48,7 @@ class ConfigureFilters implements ControllerMethodInterface {
             imports.add(nsEabFilter + 'ArrayFilter')
         }*/     
         if (
-            !formFields.filter(StringField).filter[f|f.role === StringRole.LOCALE].empty
-            || !hasVisibleWorkflow && hasListFieldsEntity
+            !hasVisibleWorkflow && hasListFieldsEntity
             || hasVisibleWorkflow && 1 < getListFieldsEntity.length
         ) {
             imports.add(nsEabFilter + 'ChoiceFilter')
@@ -146,13 +145,7 @@ class ConfigureFilters implements ControllerMethodInterface {
     '''
 
     def private dispatch filter(StringField it) '''
-        «IF role === StringRole.LOCALE»
-            ->add(ChoiceFilter::new('«name.formatForCode»', «label»)«options»)
-        «ELSEIF hasSelectorRole»
-            ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
-        «ELSE»
-            ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
-        «ENDIF»
+        ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
     '''
     def private dispatch options(StringField it) {
         if (role === StringRole.COLOUR) '''->setFormTypeOptions(['value_type' => ColorType::class])''' else
@@ -167,9 +160,6 @@ class ConfigureFilters implements ControllerMethodInterface {
         if (role === StringRole.URL) '''->setFormTypeOptions(['value_type' => UrlType::class])''' else
         if (role === StringRole.WEEK) '''->setFormTypeOptions(['value_type' => WeekType::class])''' else
         ''
-    }
-    def private hasSelectorRole(StringField it) {
-        #[StringRole.COLOUR, StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)
     }
 
     def private dispatch filter(TextField it) '''

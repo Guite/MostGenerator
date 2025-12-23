@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AjaxController {
@@ -15,6 +16,7 @@ class AjaxController {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -430,7 +432,7 @@ class AjaxController {
                 if (!$success) {
                     $returnValue['result'] = 'failure';
                 } elseif (in_array($objectType, ['«entitiesWithEditableTree.map[name.formatForCode].join('\', \'')»'], true)) {
-                    $routeName = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_edit';
+                    $routeName = '«routePrefix»_' . mb_strtolower($objectType) . '_edit';
                     «IF !entities.filter[tree && hasEditAction && hasSluggableFields].empty»
                         $needsArg = in_array($objectType, ['«entitiesWithEditableTree.filter[hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
                         $urlArgs = $needsArg ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();

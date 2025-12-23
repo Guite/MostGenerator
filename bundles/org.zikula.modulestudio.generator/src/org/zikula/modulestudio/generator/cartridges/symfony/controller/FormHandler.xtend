@@ -21,6 +21,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -31,6 +32,7 @@ class FormHandler {
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -343,7 +345,7 @@ class FormHandler {
                     «IF !entities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty»
                         if (null !== $session && in_array($this->objectType, ['«entities.filter[hasDetailAction && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true)) {
                             // map display return urls to redirect codes because slugs may change
-                            $routePrefix = '«app.appName.formatForDB»_' . mb_strtolower($this->objectType) . '_';
+                            $routePrefix = '«app.routePrefix»_' . mb_strtolower($this->objectType) . '_';
                             $userDetailUrl = $this->router->generate(
                                 $routePrefix . 'detail',
                                 $entity->createUrlArgs(),

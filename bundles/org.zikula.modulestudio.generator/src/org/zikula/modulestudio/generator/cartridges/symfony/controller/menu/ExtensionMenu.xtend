@@ -3,18 +3,20 @@ package org.zikula.modulestudio.generator.cartridges.symfony.controller.menu
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
+import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import org.zikula.modulestudio.generator.application.ImportList
 
 class ExtensionMenu {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -56,9 +58,11 @@ class ExtensionMenu {
             public function __construct(
                 protected readonly Security $security,
                 protected readonly ControllerHelper $controllerHelper,
-                protected readonly PermissionHelper $permissionHelper«IF needsApproval»,
-                protected readonly WorkflowHelper $workflowHelper«ENDIF»,
-                protected readonly array $listViewConfig
+                protected readonly PermissionHelper $permissionHelper,
+                «IF needsApproval»
+                    protected readonly WorkflowHelper $workflowHelper,
+                «ENDIF»
+                protected readonly array $listViewConfig,
             ) {
             }
 
@@ -93,7 +97,7 @@ class ExtensionMenu {
 
                     «ENDFOR»
                     if ($this->permissionHelper->hasPermission(/*ACCESS_ADMIN*/)) {
-                        yield 'backend' => MenuItem::linktoRoute(t('«name.formatForDisplayCapital» Backend'), 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
+                        yield 'backend' => MenuItem::linktoRoute(t('«name.formatForDisplayCapital» Backend'), 'fas fa-wrench', 'admin_«getLeadingEntity.route(getLeadingEntity.getPrimaryAction)»');
                     }
                 }
 
@@ -148,11 +152,11 @@ class ExtensionMenu {
     def private menuEntriesBetweenControllers(Application it) '''
         if ($isAdmin) {
             if ($this->permissionHelper->hasPermission(/*ACCESS_READ*/)) {
-                yield 'frontend' => MenuItem::linktoRoute(t('Frontend'), 'fas fa-home', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»');
+                yield 'frontend' => MenuItem::linktoRoute(t('Frontend'), 'fas fa-home', 'user_«getLeadingEntity.route(getLeadingEntity.getPrimaryAction)»');
             }
         } else {
             if ($this->permissionHelper->hasPermission(/*ACCESS_ADMIN*/)) {
-                yield 'backend' => MenuItem::linktoRoute(t('Backend'), 'fas fa-wrench', '«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»');
+                yield 'backend' => MenuItem::linktoRoute(t('Backend'), 'fas fa-wrench', 'admin_«getLeadingEntity.route(getLeadingEntity.getPrimaryAction)»');
             }
         }
     '''

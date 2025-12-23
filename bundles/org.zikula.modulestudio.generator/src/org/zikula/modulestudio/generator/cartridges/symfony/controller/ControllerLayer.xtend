@@ -27,6 +27,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
@@ -37,6 +38,7 @@ class ControllerLayer {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
@@ -259,9 +261,9 @@ class ControllerLayer {
     def private collectImplImports(Entity it) {
         val imports = new ImportList
         imports.addAll(#[
+            'EasyCorp\\Bundle\\EasyAdminBundle\\Attribute\\AdminRoute',
             'Symfony\\Component\\HttpFoundation\\Request',
             'Symfony\\Component\\HttpFoundation\\Response',
-            'Symfony\\Component\\Routing\\Annotation\\Route',
             'Symfony\\Component\\Routing\\Requirement\\Requirement',
             app.appNamespace + '\\Controller\\Base\\Abstract' + name.formatForCodeCapital + 'Controller'
         ])
@@ -291,7 +293,7 @@ class ControllerLayer {
         /**
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.
          */
-        #[Route('/«application.name.formatForDB»')]
+        #[AdminRoute(path: '/«application.name.formatForDB»/«nameMultiple.formatForDB»', name: '«application.routePrefix»_«nameMultiple.formatForDB»')]
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
             «/* put display method at the end to avoid conflict between delete/edit and display for slugs */»

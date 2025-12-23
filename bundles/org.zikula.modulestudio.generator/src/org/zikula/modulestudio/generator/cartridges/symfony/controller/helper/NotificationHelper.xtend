@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.application.ImportList
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class NotificationHelper {
@@ -13,6 +14,7 @@ class NotificationHelper {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def generate(Application it, IMostFileSystemAccess fsa) {
@@ -373,7 +375,7 @@ class NotificationHelper {
 
             $hasDetailAction = in_array($objectType, ['«entities.filter[hasDetailAction].map[name.formatForCode].join('\', \'')»'], true);
             $hasEditAction = in_array($objectType, ['«entities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
-            $routePrefix = '«appName.formatForDB»_' . mb_strtolower($objectType) . '_';
+            $routePrefix = '«routePrefix»_' . mb_strtolower($objectType) . '_';
 
             $urlArgs = $this->entity->createUrlArgs();
             $detailUrl = $hasDetailAction

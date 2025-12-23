@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
@@ -19,6 +20,7 @@ class Redirect {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def getRedirectCodes(Application it) '''
@@ -106,7 +108,7 @@ class Redirect {
             }
 
             «IF hasIndexAction || hasDetailAction && tree»
-                $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
+                $routePrefix = '«app.routePrefix»_' . $this->objectTypeLower . '_';
 
             «ENDIF»
             «IF hasIndexAction»
@@ -143,7 +145,7 @@ class Redirect {
                     ];
 
                     // inline usage, return to special function for closing the modal window instance
-                    return $this->router->generate('«app.appName.formatForDB»_' . $this->objectTypeLower . '_handleinlineredirect', $urlArgs);
+                    return $this->router->generate('«app.routePrefix»_' . $this->objectTypeLower . '_handleinlineredirect', $urlArgs);
                 }
 
             «ENDIF»
@@ -153,9 +155,10 @@ class Redirect {
 
             $request = $this->requestStack->getCurrentRequest();
             if ($request->hasSession() && ($session = $request->getSession())) {
-                if ($session->has('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer')) {
-                    $this->returnTo = $session->get('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
-                    $session->remove('«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer');
+                $refererKey = '«app.appName.formatForDB»' . $this->objectTypeCapital . 'Referer';
+                if ($session->has($refererKey)) {
+                    $this->returnTo = $session->get($refererKey);
+                    $session->remove($refererKey);
                 }
             }
 
@@ -172,7 +175,7 @@ class Redirect {
                 return $this->getDefaultReturnUrl($args);
             }
 
-            $routePrefix = '«app.appName.formatForDB»_' . $this->objectTypeLower . '_';
+            $routePrefix = '«app.routePrefix»_' . $this->objectTypeLower . '_';
 
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {
@@ -204,18 +207,18 @@ class Redirect {
                         «IF sourceEntity.hasIndexAction»
                             case 'userIndex«sourceEntity.nameMultiple.formatForCodeCapital»':
                             case 'adminIndex«sourceEntity.nameMultiple.formatForCodeCapital»':
-                                return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_index');
+                                return $this->router->generate('«sourceEntity.route('index')»');
                             «IF sourceEntity.standardFields»
                                 case 'userOwnIndex«sourceEntity.nameMultiple.formatForCodeCapital»':
                                 case 'adminOwnIndex«sourceEntity.nameMultiple.formatForCodeCapital»':
-                                    return $this->router->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_index', ['own' => 1]);
+                                    return $this->router->generate('«sourceEntity.route('index')»', ['own' => 1]);
                             «ENDIF»
                         «ENDIF»
                         «IF sourceEntity.hasDetailAction»
                             case 'userDetail«sourceEntity.name.formatForCodeCapital»':
                             case 'adminDetail«sourceEntity.name.formatForCodeCapital»':
                                 if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»']) || (method_exists($this->entityRef, 'get«incomingRelation.getRelationAliasName(false).toFirstUpper»') && null !== $this->entityRef->get«incomingRelation.getRelationAliasName(false).toFirstUpper»())) {
-                                    $routeName = '«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_detail';
+                                    $routeName = '«sourceEntity.route('detail')»';
                                     $«incomingRelation.getRelationAliasName(false)»Id = !empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»']) ? $this->relationPresets['«incomingRelation.getRelationAliasName(false)»'] : $this->entityRef->get«incomingRelation.getRelationAliasName(false).toFirstUpper»();
 
                                     return $this->router->generate($routeName, ['id' => $«incomingRelation.getRelationAliasName(false)»Id]);

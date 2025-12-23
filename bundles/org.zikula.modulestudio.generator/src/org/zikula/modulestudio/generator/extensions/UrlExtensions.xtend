@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.extensions
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.Field
 
@@ -11,6 +12,30 @@ class UrlExtensions {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+
+    /**
+     * Returns the route prefix for the given application.
+     *
+     * @param it The {@link Application} instance
+     * @param action Name of action to link to
+     *
+     * @return String Route prefix
+     */
+    def routePrefix(Application it) {
+        vendor.formatForDB + '_' + name.formatForDB
+    }
+
+    /**
+     * Returns the route prefix for a given entity.
+     *
+     * @param it The {@link Entity} instance
+     * @param action Name of action to link to
+     *
+     * @return String Route prefix
+     */
+    def route(Entity it, String action) {
+        application.routePrefix + '_' + nameMultiple.formatForDisplay + '_' + action
+    }
 
     /**
      * Collects parameters for a route relating a given entity,

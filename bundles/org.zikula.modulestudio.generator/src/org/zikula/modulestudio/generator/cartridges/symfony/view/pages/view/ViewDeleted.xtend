@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewDeleted {
@@ -14,6 +15,7 @@ class ViewDeleted {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
@@ -42,7 +44,7 @@ class ViewDeleted {
         {% block page_nav_links %}
             <p>
                 {% set linkTitle = 'Back to overview'|trans({}, 'messages') %}
-                <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_index') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-reply"></i> {{ linkTitle }}</a>
+                <a href="{{ path('«route('index')»') }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-reply"></i> {{ linkTitle }}</a>
             </p>
         {% endblock %}
     '''
@@ -77,10 +79,10 @@ class ViewDeleted {
                             <td headers="hActions hId{{ logEntry.objectId|e('html_attr') }}" class="actions">
                                 «IF hasDetailAction»
                                     {% set linkTitle = 'Preview «name.formatForDisplay» %id%'|trans({'%id%': logEntry.objectId}) %}
-                                    <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId, preview: 1, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ '«name.formatForDisplayCapital» %id%'|trans({'%id%': logEntry.objectId})|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                                    <a id="«name.formatForCode»ItemDisplay{{ logEntry.objectId }}" href="{{ path('«route('undelete')»', {«getPrimaryKey.name.formatForCode»: logEntry.objectId, preview: 1, raw: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ '«name.formatForDisplayCapital» %id%'|trans({'%id%': logEntry.objectId})|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
                                 «ENDIF»
                                 {% set linkTitle = 'Undelete «name.formatForDisplay» %id%'|trans({'%id%': logEntry.objectId}) %}
-                                <a href="{{ path('«application.appName.formatForDB»_«name.formatForDB»_undelete', {«getPrimaryKey.name.formatForCode»: logEntry.objectId}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i></a>
+                                <a href="{{ path('«route('undelete')»', {«getPrimaryKey.name.formatForCode»: logEntry.objectId}) }}" title="{{ linkTitle|e('html_attr') }}"><i class="fas fa-history"></i></a>
                             </td>
                         </tr>
                     {% endfor %}

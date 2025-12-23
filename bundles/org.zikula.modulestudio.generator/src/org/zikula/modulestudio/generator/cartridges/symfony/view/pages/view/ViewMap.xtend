@@ -42,7 +42,7 @@ class ViewMap {
                 </div>
                 «(new IndexPagesHelper).pagerCall(it)»
                 {% for «name.formatForCode» in items|filter(i => i.latitude|default != 0 and i.longitude|default != 0) %}
-                    <div class="map-marker-definition" data-latitude="{{ «name.formatForCode».latitude|e('html_attr') }}" data-longitude="{{ «name.formatForCode».longitude|e('html_attr') }}" data-title="{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('html_attr') }}" data-image="«itemImageUrl»" data-detail-url="«IF hasDetailAction»{{ path('«appName.formatForDB»_«name.formatForCode»_detail'«routeParams(name.formatForCode, true)»)|e('html_attr') }}«ENDIF»"></div>
+                    <div class="map-marker-definition" data-latitude="{{ «name.formatForCode».latitude|e('html_attr') }}" data-longitude="{{ «name.formatForCode».longitude|e('html_attr') }}" data-title="{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('html_attr') }}" data-image="«itemImageUrl»" data-detail-url="«IF hasDetailAction»{{ path('«route('detail')»'«routeParams(name.formatForCode, true)»)|e('html_attr') }}«ENDIF»"></div>
                 {% endfor %}
             </div>
         {% endblock %}
