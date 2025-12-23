@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.symfony.view
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -12,7 +11,6 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Layout {
 
-    extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -97,28 +95,6 @@ class Layout {
         {# purpose of this template: apply some general form extensions #}
         {% extends '@ZikulaTheme/Form/form_layout_addons.html.twig' %}
         {% trans_default_domain 'messages' %}
-        «IF !entities.filter[e|e.hasDirectDateTimeFields].empty»
-
-            {%- block datetime_widget -%}
-                {{- parent() -}}
-                {%- if not required -%}
-                    <small class="form-text text-muted">
-                        <a id="{{ id }}ResetVal" href="javascript:void(0);" class="d-none">{% trans %}Reset to empty value{% endtrans %}</a>
-                    </small>
-                {%- endif -%}
-            {%- endblock -%}
-        «ENDIF»
-        «IF !entities.filter[e|e.hasDirectDateFields].empty»
-
-            {%- block date_widget -%}
-                {{- parent() -}}
-                {%- if not required -%}
-                    <small class="form-text text-muted">
-                        <a id="{{ id }}ResetVal" href="javascript:void(0);" class="d-none">{% trans %}Reset to empty value{% endtrans %}</a>
-                    </small>
-                {%- endif -%}
-            {%- endblock -%}
-        «ENDIF»
         «IF hasTranslatable»
 
             {%- block «appName.formatForDB»_field_translation_row -%}

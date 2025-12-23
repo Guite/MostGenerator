@@ -62,11 +62,17 @@ class EntityInitializer {
         abstract class AbstractEntityInitializer
         {
             public function __construct(
-                «IF supportLocaleFilter»protected readonly RequestStack $requestStack,«ENDIF»
-                protected readonly PermissionHelper $permissionHelper«IF hasListFieldsExceptWorkflowState»,
-                protected readonly ListEntriesHelper $listEntriesHelper«ENDIF»«IF hasGeographical»,
-                protected readonly float $defaultLatitude,
-                protected readonly float $defaultLongitude«ENDIF»
+                «IF supportLocaleFilter»
+                    protected readonly RequestStack $requestStack,
+                «ENDIF»
+                protected readonly PermissionHelper $permissionHelper,
+                «IF hasListFieldsExceptWorkflowState»
+                    protected readonly ListEntriesHelper $listEntriesHelper,
+                «ENDIF»
+                «IF hasGeographical»
+                    protected readonly float $defaultLatitude,
+                    protected readonly float $defaultLongitude,
+                «ENDIF»
             ) {
             }
             «FOR entity : entities»

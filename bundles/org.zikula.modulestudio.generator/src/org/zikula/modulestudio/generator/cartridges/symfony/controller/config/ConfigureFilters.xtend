@@ -160,7 +160,7 @@ class ConfigureFilters implements ControllerMethodInterface {
         if (role === StringRole.CURRENCY) '''->setFormTypeOptions(['value_type' => CurrencyType::class])''' else
         //if (role === StringRole.ICON) '''->setFormTypeOptions(['value_type' => IconType::class])''' else
         if (role === StringRole.LANGUAGE) '''->setFormTypeOptions(['value_type' => LanguageType::class])''' else
-        if (role === StringRole.LOCALE) '''->setChoices($this->localeApi->getSupportedLocaleNames())''' else
+        if (role === StringRole.LOCALE) '''->setFormTypeOptions(['value_type' => LocaleType::class])''' else
         if (role === StringRole.PASSWORD) '''->setFormTypeOptions(['value_type' => PasswordType::class])''' else
         if (role === StringRole.PHONE_NUMBER) '''->setFormTypeOptions(['value_type' => TelType::class])''' else
         if (role === StringRole.TIME_ZONE) '''->setFormTypeOptions(['value_type' => TimezoneType::class])''' else
@@ -219,10 +219,8 @@ class ConfigureFilters implements ControllerMethodInterface {
     /* TODO review relation-related leftovers of old code
 
     if (!incomingRelations.empty || !outgoingRelations.empty) {
-        imports.add(app.appNamespace + '\\Entity\\Factory\\EntityFactory')
         imports.add(app.appNamespace + '\\Helper\\EntityDisplayHelper')
         // ...
-        protected readonly EntityFactory $entityFactory,
         protected readonly EntityDisplayHelper $entityDisplayHelper«IF hasListFieldsEntity || hasLocaleFieldsEntity || needsFeatureActivationHelperEntity»,«ENDIF»
     }
 

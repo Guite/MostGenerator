@@ -39,14 +39,14 @@ class InlineRedirect {
             /**
              * This method cares for a redirect within an inline frame.
              */
-        «ELSE»
+        «/*ELSE»
             #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}',
                 name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_handleinlineredirect',
                 requirements: ['id' => '\d+'],
                 defaults: ['commandName' => '', 'id' => 0],
                 methods: ['GET']
             )]
-        «ENDIF»
+        */»«ENDIF»
     '''
 
     def private handleInlineRedirectSignature(Entity it) '''

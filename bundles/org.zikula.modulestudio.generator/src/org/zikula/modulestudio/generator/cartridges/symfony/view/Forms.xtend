@@ -220,12 +220,6 @@ class Forms {
             «includeLeaflet('edit', name.formatForCode)»
         «ENDIF»
         <div id="formEditingDefinition" data-mode="{{ mode|e('html_attr') }}" data-entityid="{% if mode != 'create' %}{{ «name.formatForCode».«primaryKey.name.formatForCode»|e('html_attr') }}{% endif %}"></div>
-        «FOR field : fields»«field.jsDefinition»«ENDFOR»
-        «IF standardFields»
-            {% if form.moderationSpecificCreator is defined %}
-                <div class="field-editing-definition" data-field-type="user" data-field-name="«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_moderationSpecificCreator"></div>
-            {% endif %}
-        «ENDIF»
         «new Relations(fsa, app).jsInitDefinitions(it)»
     '''
 

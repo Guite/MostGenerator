@@ -102,6 +102,7 @@ class FormHandler {
     def private collectCommonBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Doctrine\\OEM\\EntityManagerInterface',
             'Doctrine\\ORM\\EntityRepository',
             'Psr\\Log\\LoggerInterface',
             'RuntimeException',
@@ -116,7 +117,7 @@ class FormHandler {
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
             appNamespace + '\\Entity\\EntityInterface',
-            appNamespace + '\\Entity\\Factory\\EntityFactory',
+            appNamespace + '\\Entity\\Initializer\\EntityInitializer',
             appNamespace + '\\Helper\\ControllerHelper',
             appNamespace + '\\Helper\\ModelHelper',
             appNamespace + '\\Helper\\PermissionHelper',
@@ -132,7 +133,6 @@ class FormHandler {
             imports.add('function Symfony\\Component\\String\\s')
         }
         if (hasTranslatable) {
-            imports.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
             imports.add(appNamespace + '\\Helper\\TranslatableHelper')
         }
         if (needsApproval) {
@@ -230,13 +230,11 @@ class FormHandler {
                 protected readonly RouterInterface $router,
                 protected readonly LoggerInterface $logger,
                 protected readonly Security $security,
-                «IF hasTranslatable»
-                    protected readonly LocaleApiInterface $localeApi,
-                «ENDIF»
                 «IF hasNonNullableUserFields»
                     protected readonly UserManager $userManager,
                 «ENDIF»
-                protected readonly EntityFactory $entityFactory,
+                protected readonly EntityManagerInterface $entityManager,
+                protected readonly EntityInitializer $entityInitializer,
                 «FOR entity : entities.sortBy[name]»
                     protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
                 «ENDFOR»
@@ -317,7 +315,9 @@ class FormHandler {
             // store current uri for repeated creations
             $this->repeatReturnUrl = $request->getUri();
 
-            $this->idField = $this->entityFactory->getIdField($this->objectType);
+            $objectType = $this->objectType;
+            «entityMatchBlock(entities.filter[hasEditAction])»
+            $this->idField = $this->entityManager->getClassMetadata($entityFqcn)->getSingleIdentifierFieldName();
 
             // retrieve identifier of the object we wish to edit
             $routeParams = $request->get('_route_params', []);
@@ -533,8 +533,11 @@ class FormHandler {
             }
 
             if (null === $entity) {
-                $createMethod = 'create' . ucfirst($this->objectType);
-                $entity = $this->entityFactory->$createMethod();
+                $objectType = $this->objectType;
+                «entityMatchBlock(entities.filter[hasEditAction])»
+                $entity = new $entityFqcn();
+                $initMethod = 'init' . ucfirst($objectType);
+                $this->entityInitializer->$initMethod($entity);
                 «IF hasTrees»
                     if (in_array($this->objectType, ['«getTreeEntities.map[name.formatForCode].join('\', \'')»'], true)) {
                         $parentId = $request->query->getInt('parent');
@@ -574,7 +577,7 @@ class FormHandler {
                     return;
                 }
 
-                if (!$this->localeApi->multilingual() || 2 > count($supportedLanguages)) {
+                if (2 > count($supportedLanguages)) {
                     $this->templateParameters['translationsEnabled'] = false;
 
                     return;

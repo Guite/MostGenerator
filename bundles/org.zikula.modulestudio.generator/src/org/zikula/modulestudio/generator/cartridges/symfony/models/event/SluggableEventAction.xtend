@@ -34,9 +34,8 @@ class SluggableEventAction {
             }
 
             // slug exists but maybe is not unique?
-            $entityManager = $this->entityFactory->getEntityManager();
-            $repository = $entityManager->getRepository($entity::class);
-            $idField = $this->entityFactory->getIdField($objectType);
+            $idField = $this->entityManager->getClassMetadata($entity::class)->getSingleIdentifierFieldName();
+            $repository = $this->entityManager->getRepository($entity::class);
 
             $qb = $repository->createQueryBuilder('e');
             $count = $qb->select('count(e.' . $idField . ')')

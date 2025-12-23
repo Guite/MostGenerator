@@ -19,8 +19,8 @@ class ActionRoute {
     extension Utils = new Utils
 
     def generate(Action it) '''
-        «actionRoute(false)»
-        «actionRoute(true)»
+        «/*actionRoute(false)»
+        «actionRoute(true)*/»
     '''
 
     def private dispatch actionRoute(Action it, Boolean isAdmin) '''

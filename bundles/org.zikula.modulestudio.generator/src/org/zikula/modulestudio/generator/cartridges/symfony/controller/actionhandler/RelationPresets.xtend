@@ -131,7 +131,7 @@ class RelationPresets {
                     «relation.saveSinglePreset(true)»
                 «ENDFOR»
                 «ENDIF»
-                $this->entityFactory->getEntityManager()->flush();
+                $this->entityManager->flush();
             }
         «ENDIF»
     '''

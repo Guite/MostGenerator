@@ -69,11 +69,8 @@ class EditEntityType {
         if (hasListFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\ListEntriesHelper')
         }
-        if (isTranslatable || hasLocaleFieldsEntity) {
-            imports.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
-            if (isTranslatable) {
-                imports.add(app.appNamespace + '\\Helper\\TranslatableHelper')
-            }
+        if (isTranslatable) {
+            imports.add(app.appNamespace + '\\Helper\\TranslatableHelper')
         }
         if (hasUploadFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\UploadHelper')
@@ -111,9 +108,6 @@ class EditEntityType {
                     protected readonly CollectionFilterHelper $collectionFilterHelper,
                     protected readonly EntityDisplayHelper $entityDisplayHelper,
                 «ENDIF»
-                «IF isTranslatable || hasLocaleFieldsEntity»
-                    protected readonly LocaleApiInterface $localeApi,
-                «ENDIF»
                 «IF isTranslatable»
                     protected readonly TranslatableHelper $translatableHelper,
                 «ENDIF»
@@ -137,7 +131,6 @@ class EditEntityType {
                             'class' => «name.formatForCodeCapital»::class,
                             'multiple' => false,
                             'expanded' => false,
-                            'use_joins' => false,
                             'label' => 'Parent «name.formatForDisplay»',
                             'attr' => [
                                 'title' => 'Choose the parent «name.formatForDisplay».',
@@ -256,7 +249,7 @@ class EditEntityType {
     def private processTranslatableFields(Entity it) '''
         «translatableFieldSet»
 
-        if ($this->localeApi->multilingual() && $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
+        if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
             $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
             if (is_array($supportedLanguages) && 1 < count($supportedLanguages)) {
                 $currentLanguage = $this->translatableHelper->getCurrentLanguage();

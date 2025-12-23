@@ -387,7 +387,6 @@ class EventSubscribers {
             use Symfony\Component\Workflow\WorkflowEvents;
             use Symfony\Contracts\Translation\TranslatorInterface;
             use «appNamespace»\Entity\EntityInterface;
-            use «appNamespace»\Entity\Factory\EntityFactory;
             use «appNamespace»\Helper\PermissionHelper;
             «IF needsApproval»
                 use «appNamespace»\Helper\NotificationHelper;

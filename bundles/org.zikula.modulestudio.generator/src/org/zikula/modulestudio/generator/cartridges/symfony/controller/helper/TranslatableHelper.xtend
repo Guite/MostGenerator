@@ -28,12 +28,12 @@ class TranslatableHelper {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Doctrine\\ORM\\EntityManagerInterface',
+            'Symfony\\Component\\DependencyInjection\\Attribute\\Autowire',
             'Symfony\\Component\\Form\\FormInterface',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface',
-            appNamespace + '\\Entity\\EntityInterface',
-            appNamespace + '\\Entity\\Factory\\EntityFactory'
+            appNamespace + '\\Entity\\EntityInterface'
         ])
         if (needsDynamicLoggableEnablement) {
             imports.add('Gedmo\\Loggable\\LoggableListener')
@@ -63,8 +63,11 @@ class TranslatableHelper {
         public function __construct(
             protected readonly TranslatorInterface $translator,
             protected readonly RequestStack $requestStack,
-            protected readonly LocaleApiInterface $localeApi,
-            protected readonly EntityFactory $entityFactory
+            protected readonly EntityManagerInterface $entityManager,
+            #[Autowire(param: 'kernel.enabled_locales')]
+            protected readonly array $enabledLocales,
+            #[Autowire(param: 'kernel.default_locale')]
+            protected readonly string $defaultLocale,
         ) {
         }
 
@@ -120,7 +123,7 @@ class TranslatableHelper {
         {
             $request = $this->requestStack->getCurrentRequest();
 
-            return null !== $request ? $request->getLocale() : 'en';
+            return null !== $request ? $request->getLocale() : $this->defaultLocale;
         }
     '''
 
@@ -130,12 +133,7 @@ class TranslatableHelper {
          */
         public function getSupportedLanguages(string $objectType): array
         {
-            if ($this->localeApi->multilingual()) {
-                return $this->localeApi->getSupportedLocales();
-            }
-
-            // if multi language is disabled use only the current language
-            return [$this->getCurrentLanguage()];
+            return $this->enabledLocales;
         }
     '''
 
@@ -165,7 +163,7 @@ class TranslatableHelper {
             $translations = [];
             $objectType = $entity->get_objectType();
 
-            if (!$this->localeApi->multilingual()) {
+            if (2 > $this->getSupportedLanguages($objectType)) {
                 return $translations;
             }
 
@@ -176,8 +174,7 @@ class TranslatableHelper {
             }
 
             // get translations
-            $entityManager = $this->entityFactory->getEntityManager();
-            $repository = $entityManager->getRepository(
+            $repository = $this->entityManager->getRepository(
                 '«appName»:' . ucfirst($objectType) . 'TranslationEntity'
             );
             $entityTranslations = $repository->findTranslations($entity);
@@ -225,7 +222,6 @@ class TranslatableHelper {
 
             «ENDIF»
             $objectType = $entity->get_objectType();
-            $entityManager = $this->entityFactory->getEntityManager();
             $supportedLanguages = $this->getSupportedLanguages($objectType);
             foreach ($supportedLanguages as $language) {
                 $translationInput = $this->readTranslationInput($form, $language);
@@ -239,7 +235,7 @@ class TranslatableHelper {
                 }
 
                 $entity->setLocale($language);
-                $entityManager->flush();
+                $this->entityManager->flush();
             }
             «IF needsDynamicLoggableEnablement»
 
@@ -276,7 +272,7 @@ class TranslatableHelper {
              */
             public function toggleLoggable(bool $enable = true): void
             {
-                $eventManager = $this->entityFactory->getEntityManager()->getEventManager();
+                $eventManager = $this->entityManager->getEventManager();
                 if (null === $this->loggableListener) {
                     foreach ($eventManager->getListeners() as $event => $listeners) {
                         foreach ($listeners as $hash => $listener) {
@@ -345,11 +341,10 @@ class TranslatableHelper {
             $objectType = $entity->get_objectType();
 
             // remove all existing translations
-            $entityManager = $this->entityFactory->getEntityManager();
             $translationClass = '«appNamespace»\Entity\\' . ucfirst($objectType) . 'TranslationEntity';
-            $repository = $entityManager->getRepository($translationClass);
-            $translationMeta = $entityManager->getClassMetadata($translationClass);
-            $qb = $entityManager->createQueryBuilder();
+            $repository = $this->entityManager->getRepository($translationClass);
+            $translationMeta = $this->entityManager->getClassMetadata($translationClass);
+            $qb = $this->entityManager->createQueryBuilder();
             $qb->delete($translationMeta->rootEntityName, 'trans')
                ->where('trans.objectClass = :objectClass')
                ->andWhere('trans.foreignKey = :objectId')
@@ -377,7 +372,7 @@ class TranslatableHelper {
                 }
 
                 $entity->setLocale($language);
-                $entityManager->flush();
+                $this->entityManager->flush();
             }
             «IF needsDynamicLoggableEnablement»
 

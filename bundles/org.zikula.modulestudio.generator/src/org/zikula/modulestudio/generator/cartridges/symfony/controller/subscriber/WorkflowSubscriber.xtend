@@ -14,9 +14,10 @@ class WorkflowSubscriber {
     def generate(Application it) '''
         public function __construct(
             protected readonly TranslatorInterface $translator,
-            protected readonly EntityFactory $entityFactory,
-            protected readonly PermissionHelper $permissionHelper«IF needsApproval»,
-            protected readonly NotificationHelper $notificationHelper«ENDIF»
+            protected readonly PermissionHelper $permissionHelper,
+            «IF needsApproval»
+                protected readonly NotificationHelper $notificationHelper,
+            «ENDIF»
         ) {
         }
 

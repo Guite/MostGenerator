@@ -10,11 +10,11 @@ import de.guite.modulestudio.metamodel.StringRole
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.AjaxController
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.InlineRedirect
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.LoggableHistory
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.LoggableUndelete
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.MassHandling
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.additions.AjaxController
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.config.ConfigureActions
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.config.ConfigureCrud
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.config.ConfigureFields
@@ -89,13 +89,9 @@ class ControllerLayer {
         
             public function __construct(
                 TranslatorInterface $translator,
-                protected readonly EntityFactory $entityFactory,
                 protected readonly EntityInitializer $entityInitializer,
                 «IF !getAllEntityFields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                     protected readonly RequestStack $requestStack,
-                «ENDIF»
-                «IF hasLocaleFieldsEntity»
-                    protected readonly LocaleApiInterface $localeApi,
                 «ENDIF»
                 «IF hasDetailAction || hasEditAction»
                     protected readonly EntityDisplayHelper $entityDisplayHelper,
@@ -118,6 +114,10 @@ class ControllerLayer {
                 «ENDIF»
                 «IF hasVisibleWorkflow»
                     protected readonly WorkflowHelper $workflowHelper,
+                «ENDIF»
+                «IF hasLocaleFieldsEntity»
+                    #[Autowire(param: 'kernel.enabled_locales')]
+                    protected readonly array $enabledLocales,
                 «ENDIF»
             ) {
                 $this->setTranslator($translator);
@@ -161,7 +161,6 @@ class ControllerLayer {
         imports.add(entityClassName('', false))
         if (loggable) {
             imports.add(app.appNamespace + '\\Entity\\' + name.formatForCodeCapital + 'LogEntry')
-            imports.add(app.appNamespace + '\\Entity\\Factory\\EntityFactory')
         }
         if (hasEditAction) {
             imports.add(app.appNamespace + '\\Form\\Handler\\' + name.formatForCodeCapital + '\\EditHandler')
@@ -208,7 +207,6 @@ class ControllerLayer {
             'function Symfony\\Component\\Translation\\t',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-            app.appNamespace + '\\Entity\\Factory\\EntityFactory',
             app.appNamespace + '\\Entity\\Initializer\\EntityInitializer'
         ])
         if (hasIndexAction || hasEditAction) {
@@ -241,7 +239,7 @@ class ControllerLayer {
         }
         imports.addAll(commonAppImports)
         if (hasLocaleFieldsEntity) {
-            imports.add('Zikula\\CoreBundle\\Api\\ApiInterface\\LocaleApiInterface')
+            imports.add('Symfony\\Component\\DependencyInjection\\Attribute\\Autowire')
         }
         if (hasListFieldsEntity) {
             imports.add(app.appNamespace + '\\Helper\\ListEntriesHelper')

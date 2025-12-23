@@ -30,6 +30,7 @@ class LoggableHelper {
     def private collectBaseImports(Application it) {
         val imports = new ImportList
         imports.addAll(#[
+            'Doctrine\\ORM\\EntityManagerInterface',
             'Doctrine\\ORM\\EntityRepository',
             'Doctrine\\ORM\\Id\\AssignedGenerator',
             'Doctrine\\ORM\\Mapping\\ClassMetadata',
@@ -40,11 +41,11 @@ class LoggableHelper {
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
             appNamespace + '\\Entity\\EntityInterface',
-            appNamespace + '\\Entity\\Factory\\EntityFactory',
             appNamespace + '\\Helper\\EntityDisplayHelper',
             appNamespace + '\\EventListener\\EntityLifecycleListener'
         ])
         for (entity : getLoggableEntities) {
+            imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
             imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
         }
         if (hasTrees && !getTreeEntities.filter[loggable].empty) {
@@ -75,7 +76,7 @@ class LoggableHelper {
 
         public function __construct(
             TranslatorInterface $translator,
-            protected readonly EntityFactory $entityFactory,
+            protected readonly EntityManagerInterface $entityManager,
             «FOR entity : getLoggableEntities.sortBy[name]»
                 protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
             «ENDFOR»
@@ -234,8 +235,7 @@ class LoggableHelper {
             $logEntriesRepository->revert($entity, $requestedVersion);
             if (true === $detach) {
                 // detach the entity to avoid persisting it
-                $entityManager = $this->entityFactory->getEntityManager();
-                $entityManager->detach($entity);
+                $this->entityManager->detach($entity);
             }
 
             return $this->revertPostProcess($entity);
@@ -252,9 +252,9 @@ class LoggableHelper {
                 return null;
             }
 
-            $methodName = 'create' . ucfirst($objectType);
-            $entity = $this->entityFactory->$methodName();
-            $idField = $this->entityFactory->getIdField($objectType);
+            «entityMatchBlock(entities.filter[loggable])»
+            $entity = new $entityFqcn();
+            $idField = $this->entityManager->getClassMetadata($entityFqcn)->getSingleIdentifierFieldName();
             $setter = 'set' . ucfirst($idField);
             $entity->$setter($id);
 
@@ -317,7 +317,7 @@ class LoggableHelper {
                 }
             «ENDIF»
 
-            $eventArgs = new LifecycleEventArgs($entity, $this->entityFactory->getEntityManager());
+            $eventArgs = new LifecycleEventArgs($entity, $this->entityManager);
             $this->entityLifecycleListener->postLoad($eventArgs);
 
             return $entity;
@@ -332,9 +332,7 @@ class LoggableHelper {
          */
         public function undelete(EntityInterface $entity): void
         {
-            $entityManager = $this->entityFactory->getEntityManager();
-
-            $metadata = $entityManager->getClassMetaData($entity::class);
+            $metadata = $this->entityManager->getClassMetaData($entity::class);
             $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
             $metadata->setIdGenerator(new AssignedGenerator());
 
@@ -342,8 +340,8 @@ class LoggableHelper {
             $metadata->setVersioned(false);
             $metadata->setVersionField(null);
 
-            $entityManager->persist($entity);
-            $entityManager->flush();
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
 
             $metadata->setVersioned(true);
             $metadata->setVersionField($versionField);
@@ -428,9 +426,7 @@ class LoggableHelper {
     def private getLogEntryRepository(Application it) '''
         private function getLogEntryRepository(string $objectType = ''): EntityRepository
         {
-            $entityManager = $this->entityFactory->getEntityManager();
-
-            return $entityManager->getRepository(
+            return $this->entityManager->getRepository(
                 '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'
             );
         }

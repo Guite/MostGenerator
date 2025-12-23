@@ -31,6 +31,15 @@ class ModelExtensions {
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
+    def entityMatchBlock(Application it, Iterable<Entity> entityList) '''
+        $entityFqcn = match ($objectType) {
+            «FOR entity : entityList.sortBy[name]»
+            '«entity.name.formatForCode»' => «entity.name.formatForCodeCapital»::class,
+            «ENDFOR»
+            default => null,
+        };
+    '''
+
     def repositoryMatchBlock(Application it, Iterable<Entity> entityList) '''
         $repository = match ($objectType) {
             «FOR entity : entityList.sortBy[name]»

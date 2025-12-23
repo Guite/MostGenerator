@@ -34,8 +34,7 @@ class EventAction {
                     return;
                 }
 
-                $entityManager = $this->entityFactory->getEntityManager();
-                $repository = $entityManager->getRepository(«entityVar»->getObjectClass());
+                $repository = $this->entityManager->getRepository(«entityVar»->getObjectClass());
                 $object = $repository->find(«entityVar»->getObjectId());
                 if (null === $object || !method_exists($object, 'get_objectType')) {
                     return;

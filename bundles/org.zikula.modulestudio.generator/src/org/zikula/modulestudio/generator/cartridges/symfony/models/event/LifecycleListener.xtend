@@ -41,10 +41,10 @@ class LifecycleListener {
         ])
         if (hasLoggable) {
             imports.addAll(#[
+                'Doctrine\\ORM\\EntityManagerInterface',
                 'Gedmo\\Loggable\\Entity\\MappedSuperclass\\AbstractLogEntry',
                 'function Symfony\\Component\\String\\s',
                 'Zikula\\UsersBundle\\UsersConstant',
-                appNamespace + '\\Entity\\Factory\\EntityFactory',
                 appNamespace + '\\EventSubscriber\\LoggableSubscriber'
             ])
         }
@@ -67,7 +67,7 @@ class LifecycleListener {
             public function __construct(
                 protected readonly EventDispatcherInterface $eventDispatcher,
                 «IF hasLoggable»
-                    protected readonly EntityFactory $entityFactory,
+                    protected readonly EntityManagerInterface $entityManager,
                     protected readonly LoggableSubscriber $loggableListener,
                 «ENDIF»
                 protected readonly Security $security,

@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.symfony.controller.additions
+package org.zikula.modulestudio.generator.cartridges.symfony.controller.action
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
@@ -43,8 +43,13 @@ class AjaxController {
 
     def private commonAppImports(Application it) {
         val imports = newArrayList
+        if (hasTrees || hasSortable) {
+            imports.add('Doctrine\\ORM\\EntityManagerInterface')
+        }
+        if (hasTrees) {
+            imports.add(appNamespace + '\\Entity\\Initializer\\EntityInitializer')
+        }
         if (needsDuplicateCheck || hasTrees || hasSortable) {
-            imports.add(appNamespace + '\\Entity\\Factory\\EntityFactory')
             for (entity : entities) {
                 imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
             }
@@ -134,13 +139,13 @@ class AjaxController {
              * Checks whether a field value is a duplicate or not.
              */
             #[IsGranted('ROLE_EDITOR')]
-        «ELSE»
+        «/*ELSE»
             #[Route('/checkForDuplicate',
                 name: '«appName.formatForDB»_ajax_checkforduplicate',
                 methods: ['GET'],
                 options: ['expose' => true]
             )]
-        «ENDIF»
+        */»«ENDIF»
     '''
 
     def private checkForDuplicateSignature(Application it) '''
@@ -220,13 +225,13 @@ class AjaxController {
              * Performs different operations on tree hierarchies.
              */
             #[IsGranted('ROLE_EDITOR')]
-        «ELSE»
+        «/*ELSE»
             #[Route('/handleTreeOperation',
                 name: '«appName.formatForDB»_ajax_handletreeoperation',
                 methods: ['POST'],
                 options: ['expose' => true]
             )]
-        «ENDIF»
+        */»«ENDIF»
     '''
 
     def private handleTreeOperationSignature(Application it) '''
@@ -234,7 +239,7 @@ class AjaxController {
             Request $request,
             RouterInterface $router,
             LoggerInterface $logger,
-            EntityFactory $entityFactory,
+            EntityManagerInterface $entityManager,
             EntityDisplayHelper $entityDisplayHelper,
             #[CurrentUser] ?UserInterface $currentUser,
             WorkflowHelper $workflowHelper
@@ -261,7 +266,8 @@ class AjaxController {
 
         «prepareTreeOperationParameters»
 
-        $createMethod = 'create' . ucfirst($objectType);
+        «entityMatchBlock(entities.filter[tree])»
+        $initMethod = 'init' . ucfirst($objectType);
         «repositoryMatchBlock(treeEntities)»
 
         $rootId = 1;
@@ -275,7 +281,6 @@ class AjaxController {
             }
         }
 
-        $entityManager = $entityFactory->getEntityManager();
         $titleFieldName = $entityDisplayHelper->getTitleFieldName($objectType);
         $descriptionFieldName = $entityDisplayHelper->getDescriptionFieldName($objectType);
 
@@ -346,7 +351,8 @@ class AjaxController {
     '''
 
     def private treeOperationAddRootNode(Application it) '''
-        $entity = $entityFactory->$createMethod();
+        $entity = new $entityFqcn();
+        $entityInitializer->$initMethod($entity);
         if (!empty($titleFieldName)) {
             $setter = 'set' . ucfirst($titleFieldName);
             $entity->$setter($this->trans('New root node'));
@@ -392,7 +398,8 @@ class AjaxController {
             return $this->json($returnValue);
         }
 
-        $childEntity = $entityFactory->$createMethod();
+        $childEntity = new $entityFqcn();
+        $entityInitializer->$initMethod($childEntity);
         $setter = 'set' . ucfirst($titleFieldName);
         $childEntity->$setter($this->trans('New child node'));
         if (!empty($descriptionFieldName)) {
@@ -567,19 +574,19 @@ class AjaxController {
              * Updates the sort positions for a given list of entities.
              */
             #[IsGranted('ROLE_EDITOR')]
-        «ELSE»
+        «/*ELSE»
             #[Route('/updateSortPositions',
                 name: '«appName.formatForDB»_ajax_updatesortpositions',
                 methods: ['POST'],
                 options: ['expose' => true]
             )]
-        «ENDIF»
+        */»«ENDIF»
     '''
 
     def private updateSortPositionsSignature(Application it) '''
         public function updateSortPositions(
             Request $request,
-            EntityFactory $entityFactory
+            EntityManagerInterface $entityManager
         ): JsonResponse'''
 
     def private updateSortPositionsBaseImpl(Application it) '''
@@ -617,7 +624,7 @@ class AjaxController {
         }
 
         // save entities back to database
-        $entityFactory->getEntityManager()->flush();
+        $entityManager->flush();
 
         // return response
         return $this->json([
@@ -657,7 +664,7 @@ class AjaxController {
                 $request,
                 $router,
                 $logger,
-                $entityFactory,
+                $entityManager,
                 $entityDisplayHelper,
                 $currentUser,
                 $workflowHelper
@@ -670,7 +677,7 @@ class AjaxController {
         «updateSortPositionsSignature» {
             return parent::updateSortPositions(
                 $request,
-                $entityFactory
+                $entityManager
             );
         }
     '''

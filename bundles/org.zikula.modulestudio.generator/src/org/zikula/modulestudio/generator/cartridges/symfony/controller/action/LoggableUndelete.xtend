@@ -39,14 +39,14 @@ class LoggableUndelete {
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
              */
-        «ELSE»
+        «/*ELSE»
             #[Route('/«name.formatForCode»/deleted/{id}.{_format}',
                 name: '«application.appName.formatForDB»_«name.formatForDB»_deleted',
                 requirements: ['id' => '\d+', '_format' => 'html'],
                 defaults: ['_format' => 'html'],
                 methods: ['GET']
             )]
-        «ENDIF»
+        */»«ENDIF»
     '''
 
     def private undeleteArguments(Entity it) '''
@@ -54,7 +54,7 @@ class LoggableUndelete {
         PermissionHelper $permissionHelper,
         ControllerHelper $controllerHelper,
         ViewHelper $viewHelper,
-        EntityFactory $entityFactory,
+        «name.formatForCodeCapital»RepositoryInterface $repository,
         LoggableHelper $loggableHelper,
         «IF hasTranslatableFields»
             TranslatableHelper $translatableHelper,
@@ -88,7 +88,7 @@ class LoggableUndelete {
                     $permissionHelper,
                     $controllerHelper,
                     $viewHelper,
-                    $entityFactory,
+                    $repository,
                     $loggableHelper,
                     $«name.formatForCode»,
                     null

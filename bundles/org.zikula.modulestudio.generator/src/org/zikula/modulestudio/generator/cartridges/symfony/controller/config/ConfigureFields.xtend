@@ -403,7 +403,7 @@ class ConfigureFields implements ControllerMethodInterface {
             // useAlpha3Codes()
         } else if (role === StringRole.LOCALE) {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/LocaleField.html
-            calls += '''->includeOnly($this->localeApi->getSupportedLocales())'''
+            calls += '''->includeOnly($this->enabledLocales)'''
             // remove([...])
             // showCode()
             // showName(false)

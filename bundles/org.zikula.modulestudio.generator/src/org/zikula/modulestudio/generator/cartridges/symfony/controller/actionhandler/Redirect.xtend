@@ -162,7 +162,7 @@ class Redirect {
             «IF hasDetailAction && hasSluggableFields»
                 if ('create' !== $this->templateParameters['mode']) {
                     // refresh entity because slugs may have changed (e.g. by translatable)
-                    $this->entityFactory->getEntityManager()->refresh($this->entityRef);
+                    $this->entityManager->refresh($this->entityRef);
                 }
 
             «ENDIF»

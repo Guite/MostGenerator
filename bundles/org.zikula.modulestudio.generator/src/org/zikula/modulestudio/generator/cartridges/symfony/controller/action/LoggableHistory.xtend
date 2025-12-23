@@ -34,8 +34,10 @@ class LoggableHistory {
                     $permissionHelper,
                     $repository,
                     $logEntryRepository,
-                    $loggableHelper,«IF hasTranslatableFields»
-                    $translatableHelper,«ENDIF»
+                    $loggableHelper,
+                    «IF hasTranslatableFields»
+                        $translatableHelper,
+                    «ENDIF»
                     $workflowHelper,
                     «IF hasSluggableFields»$slug«ELSE»$id«ENDIF»
                 );
@@ -51,7 +53,7 @@ class LoggableHistory {
              * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
              * @throws AccessDeniedException Thrown if the user doesn't have required permissions
              */
-        «ELSE»
+        «/*ELSE»
             #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/history/{«IF hasSluggableFields»slug«ELSE»id«ENDIF»}',
                 name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_loggablehistory',
                 «IF hasSluggableFields»
@@ -62,7 +64,7 @@ class LoggableHistory {
                 «ENDIF»
                 methods: ['GET']
             )]
-        «ENDIF»
+        */»«ENDIF»
     '''
 
     def private loggableHistoryArguments(Entity it) '''

@@ -18,7 +18,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Me
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Entities
 import org.zikula.modulestudio.generator.cartridges.symfony.models.EntityInitializer
-import org.zikula.modulestudio.generator.cartridges.symfony.models.Factory
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Repository
 import org.zikula.modulestudio.generator.cartridges.symfony.models.UuidStringGenerator
 import org.zikula.modulestudio.generator.cartridges.symfony.models.business.ListEntryValidator
@@ -93,10 +92,6 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('Model: Repository classes')
         'Generating repository classes'.printIfNotTesting(fsa)
         new Repository().generate(it, fsa)
-
-        pm?.subTask('Model: Entity factory class')
-        'Generating entity factory class'.printIfNotTesting(fsa)
-        new Factory().generate(it, fsa)
 
         pm?.subTask('Model: Entity initializer class')
         'Generating entity initializer class'.printIfNotTesting(fsa)

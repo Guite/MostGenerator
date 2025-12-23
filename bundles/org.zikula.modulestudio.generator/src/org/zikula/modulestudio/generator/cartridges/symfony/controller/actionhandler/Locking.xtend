@@ -59,9 +59,9 @@ class Locking {
             if ($applyLock) {
                 «IF hasOptimisticLock»
                     // assert version
-                    $this->entityFactory->getEntityManager()->lock($entity, LockMode::«lockType.lockTypeAsConstant», $expectedVersion);
+                    $this->entityManager->lock($entity, LockMode::«lockType.lockTypeAsConstant», $expectedVersion);
                 «ELSEIF hasPessimisticWriteLock»
-                    $this->entityFactory->getEntityManager()->lock($entity, LockMode::«lockType.lockTypeAsConstant»);
+                    $this->entityManager->lock($entity, LockMode::«lockType.lockTypeAsConstant»);
                 «ENDIF»
             }
 

@@ -39,13 +39,13 @@ class ItemActions {
         «IF hasDetailAction || hasEditAction || loggable || hasDeleteAction»
 
         «ENDIF»
-        «itemActionsTargetingDisplay(application)»
+        «itemActionsTargetingDetail(application)»
         «itemActionsTargetingEdit(application)»
-        «itemActionsTargetingView(application)»
+        «itemActionsTargetingIndex(application)»
         «itemActionsForAddingRelatedItems(application)»
     '''
 
-    def private itemActionsTargetingDisplay(Entity it, Application app) '''
+    def private itemActionsTargetingDetail(Entity it, Application app) '''
         «IF hasDetailAction»
             if ('admin' === $routeArea) {
                 $previewRouteParameters = $entity->createUrlArgs();
@@ -116,7 +116,7 @@ class ItemActions {
         «ENDIF»
     '''
 
-    def private itemActionsTargetingView(Entity it, Application app) '''
+    def private itemActionsTargetingIndex(Entity it, Application app) '''
         «IF hasDetailAction && hasIndexAction»
             if ('detail' === $context) {
                 $menu->addChild('«nameMultiple.formatForDisplayCapital» list', [

@@ -27,7 +27,6 @@ class LoggableEventAction {
                 return;
             }
 
-            $entityManager = $this->entityFactory->getEntityManager();
             $configSuffix = s($objectType)->snake();
 
             $revisionHandling = $this->loggableConfig['revision_handling_for_' . $configSuffix];
@@ -38,7 +37,7 @@ class LoggableEventAction {
                 $limitParameter = $this->loggableConfig['period_for_' . $configSuffix . '_revisions'];
             }
 
-            $logEntriesRepository = $entityManager->getRepository(
+            $logEntriesRepository = $this->entityManager->getRepository(
                 '«appName»:' . $objectTypeCapitalised . 'LogEntryEntity'
             );
             $logEntriesRepository->purgeHistory($revisionHandling, $limitParameter);
@@ -51,8 +50,7 @@ class LoggableEventAction {
          */
         protected function activateCustomLoggableListener(): void
         {
-            $entityManager = $this->entityFactory->getEntityManager();
-            $eventManager = $entityManager->getEventManager();
+            $eventManager = $this->entityManager->getEventManager();
             $customLoggableListener = $this->loggableListener;
 
             «IF hasTranslatable»

@@ -1,11 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.javascript
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DatetimeField
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -13,7 +11,6 @@ class EditFunctions {
 
     extension ControllerExtensions = new ControllerExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -29,16 +26,6 @@ class EditFunctions {
     def private generate(Application it) '''
         'use strict';
 
-        «IF hasUploads»
-            «resetUploadField»
-
-            «initUploadField»
-
-        «ENDIF»
-        «IF !entities.filter[!fields.filter(DatetimeField).empty].empty»
-            «initDateField»
-
-        «ENDIF»
         «initEditForm»
         «IF needsInlineEditing»
 
@@ -46,44 +33,6 @@ class EditFunctions {
         «ENDIF»
 
         «onLoad»
-    '''
-
-    def private resetUploadField(Application it) '''
-        /**
-         * Resets the value of an upload / file input field.
-         */
-        function «vendorAndName»ResetUploadField(fieldName) {
-            jQuery('#' + fieldName).attr('type', 'input');
-            jQuery('#' + fieldName).attr('type', 'file');
-        }
-    '''
-
-    def private initUploadField(Application it) '''
-        /**
-         * Initialises the reset button for a certain upload input.
-         */
-        function «vendorAndName»InitUploadField(fieldName) {
-            jQuery('#' + fieldName + 'ResetVal').click(function (event) {
-                event.preventDefault();
-                «vendorAndName»ResetUploadField(fieldName);
-            }).removeClass('d-none');
-        }
-    '''
-
-    def private initDateField(Application it) '''
-        /**
-         * Initialises the reset button for a certain date input.
-         */
-        function «vendorAndName»InitDateField(fieldName) {
-            jQuery('#' + fieldName + 'ResetVal').click(function (event) {
-                event.preventDefault();
-                if ('DIV' == jQuery('#' + fieldName).prop('tagName')) {
-                    jQuery('#' + fieldName + '_date, #' + fieldName + '_time').val('');
-                } else {
-                    jQuery('#' + fieldName + ', #' + fieldName + '').val('');
-                }
-            }).removeClass('d-none');
-        }
     '''
 
     def private initEditForm(Application it) '''
@@ -211,15 +160,6 @@ class EditFunctions {
                     });
                 }
             «ENDIF»
-            if (jQuery('.field-editing-definition').length > 0) {
-                jQuery('.field-editing-definition').each(function (index) {
-                    if ('date' === jQuery(this).data('field-type')) {
-                        «vendorAndName»InitDateField(jQuery(this).data('field-name'));
-                    } else if ('upload' === jQuery(this).data('field-type')) {
-                        «vendorAndName»InitUploadField(jQuery(this).data('field-name'));
-                    }
-                });
-            }
             if (jQuery('#formEditingDefinition').length > 0) {
                 «vendorAndName»InitEditForm(jQuery('#formEditingDefinition').data('mode'), jQuery('#formEditingDefinition').data('entityid'));
             }
