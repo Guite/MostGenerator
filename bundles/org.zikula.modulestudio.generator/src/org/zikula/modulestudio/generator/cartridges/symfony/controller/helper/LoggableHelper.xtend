@@ -246,7 +246,7 @@ class LoggableHelper {
         /**
          * Resets a deleted entity back to the last version before it's deletion.
          */
-        public function restoreDeletedEntity(string $objectType = '', int $id = 0): ?EntityInterface
+        public function restoreDeletedEntity(string $objectType = '', string $id = ''): ?EntityInterface
         {
             if (!$id) {
                 return null;
@@ -424,7 +424,7 @@ class LoggableHelper {
     '''
 
     def private getLogEntryRepository(Application it) '''
-        private function getLogEntryRepository(string $objectType = ''): EntityRepository
+        public function getLogEntryRepository(string $objectType = ''): EntityRepository
         {
             return $this->entityManager->getRepository(
                 '«appName»:' . ucfirst($objectType) . 'LogEntryEntity'

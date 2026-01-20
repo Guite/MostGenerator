@@ -433,7 +433,7 @@ class TreeFunctions {
                     direction: position,
                     root: rootId,
                     id: nodeId,
-                    destid: destId
+                    destId: destId
                 }
             }).done(function (data) {
                 if (true === doReload) {

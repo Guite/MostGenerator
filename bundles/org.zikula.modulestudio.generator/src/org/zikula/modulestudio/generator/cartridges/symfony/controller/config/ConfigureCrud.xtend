@@ -87,6 +87,11 @@ class ConfigureCrud implements ControllerMethodInterface {
          */»
             ->setDefaultSort([«orderByDetails(orderBy, 'crud')»])
         «ENDIF»
+        «IF hasIndexAction»
+            ->askConfirmationOnBatchActions(
+                t('Are you sure you want to apply "%action_name%" to %num_items% «nameMultiple.formatForDisplay»?')
+            )
+        «ENDIF»
         ->addFormTheme('@ZikulaTheme/Form/form_layout_addons.html.twig')
     '''
 }

@@ -9,7 +9,6 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.config.AppConfig
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerLayer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.EventSubscribers
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.FormHandler
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.HelperServices
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Configuration
@@ -39,6 +38,7 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.Views
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.transformation.ConfigurationDeriver
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.FormHandlerOLD
 
 class SymfonyBundleGenerator implements IGenerator {
 
@@ -129,7 +129,7 @@ class SymfonyBundleGenerator implements IGenerator {
         new HelperServices().generate(it, fsa)
         pm?.subTask('Controller: Action handler classes')
         'Generating action handler classes'.printIfNotTesting(fsa)
-        new FormHandler().generate(it, fsa)
+        new FormHandlerOLD().generate(it, fsa)
         pm?.subTask('Controller: Event listeners')
         'Generating Event listeners'.printIfNotTesting(fsa)
         new EventSubscribers().generate(it, fsa)

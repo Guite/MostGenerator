@@ -341,7 +341,7 @@ class Validation {
         «ENDFOR»
 
         /**
-         * Performs a duplicate check for unique fields
+         * Performs a duplicate check for unique fields.
          */
         function «vendorAndName»UniqueCheck(elem, excludeId) {
             var objectType, fieldName, fieldValue, result, params;

@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller
 
-import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DetailAction
@@ -10,11 +9,14 @@ import de.guite.modulestudio.metamodel.StringRole
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.ImportList
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.AjaxController
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.ActionInterface
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.ApplyBulkOperation
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.ApplyTreeOperation
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.DetectDuplicate
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.InlineRedirect
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.LoggableHistory
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.LoggableUndelete
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.MassHandling
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.action.UpdateSortPositions
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.config.ConfigureActions
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.config.ConfigureCrud
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.config.ConfigureFields
@@ -43,25 +45,48 @@ class ControllerLayer {
     extension WorkflowExtensions = new WorkflowExtensions
 
     Application app
-    ControllerAction actionHelper
+    ControllerActionOLD legacyActionHelper
     List<ControllerMethodInterface> configureMethods
+    List<ActionInterface> customActions
 
     /**
      * Entry point for the controller creation.
      */
     def void generate(Application it, IMostFileSystemAccess fsa) {
         this.app = it
-        this.actionHelper = new ControllerAction(app)
+        this.legacyActionHelper = new ControllerActionOLD(app)
         this.configureMethods = #[
-            new ConfigureCrud(),
-            new ConfigureFields(),
-            new ConfigureFilters(),
-            new ConfigureActions()
+            new ConfigureCrud,
+            new ConfigureFields,
+            new ConfigureFilters,
+            new ConfigureActions
         ]
+
+        // action classes
+        customActions = <ActionInterface>newArrayList
+        if (hasIndexActions) {
+            customActions.add(new ApplyBulkOperation)
+        }
+        if (hasLoggable) {
+            customActions.add(new LoggableHistory)
+            customActions.add(new LoggableUndelete)
+        }
+        if (entities.exists[!getUniqueFields.empty]) {
+            customActions.add(new DetectDuplicate)
+        }
+        if (hasSortable) {
+            customActions.add(new UpdateSortPositions)
+        }
+        if (hasTrees) {
+            customActions.add(new ApplyTreeOperation)
+        }
+        if (hasEditActions && needsInlineEditing) {
+            customActions.add(new InlineRedirect)
+        }
+        customActions.forEach[a|a.generate(app, fsa)]
 
         // controller classes
         entities.forEach[generateController(fsa)]
-        new AjaxController().generate(it, fsa)
 
         new ExtensionMenu().generate(it, fsa)
         new MenuBuilder().generate(it, fsa)
@@ -74,17 +99,19 @@ class ControllerLayer {
     def private generateController(Entity it, IMostFileSystemAccess fsa) {
         ('Generating "' + name.formatForDisplay + '" controller classes').printIfNotTesting(fsa)
         configureMethods.forEach[m|m.init(it)]
-        fsa.generateClassPair('Controller/' + name.formatForCodeCapital + 'Controller.php', entityControllerBaseImpl, entityControllerImpl)
+        
+        fsa.generateClassPair('Controller/Crud/' + name.formatForCodeCapital + 'Controller.php', entityControllerBaseImpl, entityControllerImpl)
     }
 
     def private entityControllerBaseImpl(Entity it) '''
-        namespace «app.appNamespace»\Controller\Base;
+        namespace «app.appNamespace»\Controller\Crud\Base;
 
         «collectBaseImports.print»
 
         /**
          * «name.formatForDisplayCapital» controller base class.
          */
+        #[AdminRoute(path: '/«application.name.formatForDB»/«nameMultiple.formatForDB»', name: '«application.routePrefix»_«nameMultiple.formatForDB»')]
         abstract class Abstract«name.formatForCodeCapital»Controller extends AbstractCrudController
         {
             use TranslatorTrait;
@@ -121,6 +148,11 @@ class ControllerLayer {
                     #[Autowire(param: 'kernel.enabled_locales')]
                     protected readonly array $enabledLocales,
                 «ENDIF»
+                «FOR action : customActions»
+                    «IF action.requiredFor(it)»
+                        «action.controllerInjection(application)»
+                    «ENDIF»
+                «ENDFOR»
             ) {
                 $this->setTranslator($translator);
             }
@@ -142,19 +174,14 @@ class ControllerLayer {
             }
 
             «FOR action : actions»
-                «actionImpl(action, true)»
+                «legacyActionHelper.generate(it, action, true)»
 
             «ENDFOR»
-            «IF hasIndexAction»
-                «new MassHandling().generate(it, true)»
-            «ENDIF»
-            «IF loggable»
-                «new LoggableUndelete().generate(it, true)»
-                «new LoggableHistory().generate(it, true)»
-            «ENDIF»
-            «IF hasEditAction && app.needsInlineEditing»
-                «new InlineRedirect().generate(it, true)»
-            «ENDIF»
+            «FOR action : customActions»
+                «IF action.requiredFor(it)»
+                    «action.controllerUsage(application, it)»
+                «ENDIF»
+            «ENDFOR»
         }
     '''
 
@@ -201,7 +228,9 @@ class ControllerLayer {
     def private collectBaseImports(Entity it) {
         val imports = new ImportList
         configureMethods.forEach[c|imports.addAll(c.imports(it))]
+        customActions.forEach[c|imports.add(c.controllerImport(application))]
         imports.addAll(#[
+            'EasyCorp\\Bundle\\EasyAdminBundle\\Attribute\\AdminRoute',
             'EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController',
             'Symfony\\Component\\HttpFoundation\\Request',
             'Symfony\\Component\\HttpFoundation\\Response',
@@ -228,9 +257,6 @@ class ControllerLayer {
         }
         if (hasDetailAction || hasDeleteAction) {
             imports.add('Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException')
-        }
-        if (hasEditAction && app.needsInlineEditing) {
-            imports.add('Zikula\\CoreBundle\\Response\\PlainResponse')
         }
         if (hasIndexAction || hasDeleteAction) {
             imports.add('Symfony\\Component\\Security\\Core\\User\\UserInterface')
@@ -261,16 +287,14 @@ class ControllerLayer {
     def private collectImplImports(Entity it) {
         val imports = new ImportList
         imports.addAll(#[
-            'EasyCorp\\Bundle\\EasyAdminBundle\\Attribute\\AdminRoute',
             'Symfony\\Component\\HttpFoundation\\Request',
             'Symfony\\Component\\HttpFoundation\\Response',
             'Symfony\\Component\\Routing\\Requirement\\Requirement',
-            app.appNamespace + '\\Controller\\Base\\Abstract' + name.formatForCodeCapital + 'Controller'
+            app.appNamespace + '\\Controller\\Crud\\Base\\Abstract' + name.formatForCodeCapital + 'Controller'
         ])
         if (hasIndexAction || hasDeleteAction) {
             imports.add('Psr\\Log\\LoggerInterface')
             if (hasIndexAction) {
-                imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\BatchActionDto')
                 imports.add('Symfony\\Component\\HttpFoundation\\RedirectResponse')
                 imports.add('Symfony\\Component\\Routing\\RouterInterface')
             }
@@ -286,41 +310,25 @@ class ControllerLayer {
     }
 
     def private entityControllerImpl(Entity it) '''
-        namespace «app.appNamespace»\Controller;
+        namespace «app.appNamespace»\Controller\Crud;
 
         «collectImplImports.print»
 
         /**
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.
          */
-        #[AdminRoute(path: '/«application.name.formatForDB»/«nameMultiple.formatForDB»', name: '«application.routePrefix»_«nameMultiple.formatForDB»')]
         class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         {
             «/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
             «FOR action : actionsWithOldMethod.reject(DetailAction)»
-                «actionImpl(action, false)»
+                «legacyActionHelper.generate(it, action, false)»
 
             «ENDFOR»
-            «IF loggable»
-                «new LoggableUndelete().generate(it, false)»
-                «new LoggableHistory().generate(it, false)»
-            «ENDIF»
             «FOR action : actionsWithOldMethod.filter(DetailAction)»
-                «actionImpl(action, false)»
+                «legacyActionHelper.generate(it, action, false)»
 
             «ENDFOR»
-            «IF hasIndexAction»
-                «new MassHandling().generate(it, false)»
-            «ENDIF»
-            «IF hasEditAction && app.needsInlineEditing»
-                «new InlineRedirect().generate(it, false)»
-            «ENDIF»
-
             // feel free to add your own controller methods here
         }
-    '''
-
-    def private actionImpl(Entity it, Action action, Boolean isBase) '''
-        «actionHelper.generate(it, action, isBase)»
     '''
 }

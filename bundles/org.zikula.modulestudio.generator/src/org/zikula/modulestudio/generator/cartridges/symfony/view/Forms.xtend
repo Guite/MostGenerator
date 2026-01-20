@@ -277,9 +277,7 @@ class Forms {
             <body>
                 <div id="inlineRedirectParameters" data-idprefix="{{ idPrefix|e('html_attr') }}" {% if commandName in ['submit', 'create', 'approve'] %}data-itemid="{{ itemId }}" data-title="{{ formattedTitle|default('')|e('html_attr') }}" data-searchterm="{{ searchTerm|default('')|e('html_attr') }}"{% else %}data-itemid="0" data-title="" data-searchterm=""{% endif %}></div>
                 <script src="{{ asset('jquery/jquery.min.js') }}"></script>
-                «IF needsInlineEditing»
-                    <script src="{{ zasset('@«appName»:js/«appName».InlineEditing.js') }}"></script>
-                «ENDIF»
+                <script src="{{ zasset('@«appName»:js/«appName».InlineEditing.js') }}"></script>
             </body>
         </html>
     '''

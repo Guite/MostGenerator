@@ -64,9 +64,6 @@ class EntityMethods {
             «ELSE»
                 return [
                     '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»(),
-                    «IF hasSluggableFields»
-                        'slug' => $this->getSlug(),
-                    «ENDIF»
                 ];
             «ENDIF»
         }

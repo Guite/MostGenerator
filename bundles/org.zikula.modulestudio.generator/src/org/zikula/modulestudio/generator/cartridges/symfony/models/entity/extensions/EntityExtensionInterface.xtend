@@ -13,7 +13,7 @@ interface EntityExtensionInterface {
     def CharSequence classAttributes(Entity it)
 
     /**
-     * Additional field attributes.
+     * Generates additional field attributes.
      */
     def CharSequence columnAttributes(Field it)
 

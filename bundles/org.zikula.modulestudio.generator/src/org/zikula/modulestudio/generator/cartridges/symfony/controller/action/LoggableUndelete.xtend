@@ -1,125 +1,174 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.action
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class LoggableUndelete {
+class LoggableUndelete extends AbstractAction {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, Boolean isBase) '''
+    override name(Application it) {
+        'Deleted'
+    }
 
-        «undelete(isBase)»
-    '''
+    override requiredFor(Entity it) {
+        loggable
+    }
 
-    def private undelete(Entity it, Boolean isBase) '''
-        «undeleteDocBlock(isBase)»
-        public function undelete(
-            «undeleteArguments»
-        ): Response {
-            «IF isBase»
-                «loggableUndeleteBaseImpl»
-            «ELSE»
-                return parent::undelete($request, $loggableHelper«IF hasTranslatableFields», $translatableHelper«ENDIF», $id);
-            «ENDIF»
+    override protected imports(Application it) {
+        val result = <String>newArrayList
+        result.addAll(#[
+            'Doctrine\\Persistence\\ManagerRegistry',
+            'Symfony\\Bundle\\FrameworkBundle\\Controller\\ControllerHelper',
+            'Symfony\\Component\\HttpFoundation\\Request',
+            'Symfony\\Component\\HttpFoundation\\Response',
+            'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException',
+            'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            appNamespace + '\\Helper\\LoggableHelper',
+            appNamespace + '\\Helper\\PermissionHelper',
+            appNamespace + '\\Helper\\ViewHelper'
+        ])
+        if (hasLoggableTranslatable) {
+            result.add(appNamespace + '\\Helper\\TranslatableHelper')
         }
+        result
+    }
+
+    override protected constructorArguments(Application it) {
+        val result = <String>newArrayList
+        result.addAll(#[
+            'ControllerHelper $controllerHelper',
+            'ManagerRegistry $managerRegistry',
+            'PermissionHelper $permissionHelper',
+            'LoggableHelper $loggableHelper',
+            'ViewHelper $viewHelper',
+            'TranslatorInterface $translator'
+        ])
+        if (hasLoggableTranslatable) {
+            result.add('TranslatableHelper $translatableHelper')
+        }
+        result
+    }
+
+    override protected invocationArguments(Application it, Boolean call) {
+        val result = <String>newArrayList
+        result.add('Request $request')
+        if (call) {
+            result.add('string $objectType')
+            result.add('string $entityDisplayName')
+            result.add('string $redirectRoute')
+        }
+        result
+    }
+
+
+    override protected docBlock(Application it) '''
+        /**
+         * «IF hasDetailActions»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted loggable entity.
+         *
+         * @throws NotFoundHttpException Thrown if invalid identifier is given or the entity isn't found
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         */
     '''
 
-    def private undeleteDocBlock(Entity it, Boolean isBase) '''
-        «IF isBase»
-            /**
-             * «IF hasDetailAction»Displays or undeletes«ELSE»Undeletes«ENDIF» a deleted «name.formatForDisplay».
-             *
-             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-             * @throws NotFoundHttpException Thrown if «name.formatForDisplay» to be displayed isn't found
-             */
-        «/*ELSE»
-            #[Route('/«name.formatForCode»/deleted/{id}.{_format}',
-                name: '«application.appName.formatForDB»_«name.formatForDB»_deleted',
-                requirements: ['id' => '\d+', '_format' => 'html'],
-                defaults: ['_format' => 'html'],
-                methods: ['GET']
-            )]
-        */»«ENDIF»
-    '''
+    override protected returnType(Application it) { 'Response' }
 
-    def private undeleteArguments(Entity it) '''
-        Request $request,
-        PermissionHelper $permissionHelper,
-        ControllerHelper $controllerHelper,
-        ViewHelper $viewHelper,
-        «name.formatForCodeCapital»RepositoryInterface $repository,
-        LoggableHelper $loggableHelper,
-        «IF hasTranslatableFields»
-            TranslatableHelper $translatableHelper,
+    override protected controllerPreprocessing(Entity it) '''
+        $objectType = '«name.formatForCode»';
+        $entityDisplayName = '«name.formatForDisplay»';
+        «IF hasDetailAction»
+            «/* TODO use EAB action */»
+            $redirectRoute = '«application.routePrefix»_«nameMultiple.formatForDB»_detail';
+        «ELSE»
+            $redirectRoute = '«application.routePrefix»_«nameMultiple.formatForDB»_«primaryAction»';
         «ENDIF»
-        int $id = 0
+
     '''
 
-    def private loggableUndeleteBaseImpl(Entity it) '''
-        $«name.formatForCode» = $loggableHelper->restoreDeletedEntity('«name.formatForCode»', $id);
-        if (null === $«name.formatForCode») {
+    override protected routeMethods(Entity it) '''['GET']'''
+
+    override protected implBody(Application it) '''
+        «new ControllerHelperFunctions().determineEntityId(it, false)»
+
+        $entity = $loggableHelper->restoreDeletedEntity($objectType, $id);
+        if (null === $entity) {
             throw new NotFoundHttpException(
-                $this->trans(
-                    'No such «name.formatForDisplay» found.',
-                    [],
-                    '«name.formatForCode»'
+                $this->translator->trans(
+                    'No such {entity} found.',
+                    ['entity' => $entityDisplayName],
+                    $objectType
                 )
             );
         }
 
-        $isAdminArea = $request->attributes->get('isAdminArea', false);
+        $dashboard = $request->attributes->get('dashboardControllerFqcn');
+        $isAdminArea = 'Zikula\ThemeBundle\Controller\Dashboard\AdminDashboardController' === $dashboard;
         $permLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
-        if (!$permissionHelper->hasEntityPermission($«name.formatForCode»/*, $permLevel*/)) {
+        if (!$this->permissionHelper->hasEntityPermission($entity/*, $permLevel*/)) {
             throw new AccessDeniedException();
         }
 
-        «IF hasDetailAction»
-            $preview = $request->query->getInt('preview');
-            if (1 === $preview) {
-                return $this->detail(
-                    $request,
-                    $permissionHelper,
-                    $controllerHelper,
-                    $viewHelper,
-                    $repository,
-                    $loggableHelper,
-                    $«name.formatForCode»,
-                    null
-                );
+        «IF !loggableEntities.filter[hasDetailAction].empty»
+            if (in_array($objectType, ['«loggableEntities.filter[hasDetailAction].map[name.formatForCode].join('\', \'')»'], true)) {
+                $preview = $request->query->getInt('preview');
+                if (1 === $preview) {
+                    «/* TODO use EAB action */»
+                    return $this->detail(
+                        $request,
+                        $permissionHelper,
+                        $controllerHelper,
+                        $viewHelper,
+                        $repository,
+                        $loggableHelper,
+                        $entity,
+                        null
+                    );
+                }
             }
 
         «ENDIF»
         «undeletion»
-        «IF hasTranslatableFields»
+        «IF hasLoggableTranslatable»
 
-            $translatableHelper->refreshTranslationsFromLogData($«name.formatForCode»);
+            if (in_array($objectType, ['«getLoggableTranslatableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
+                $this->translatableHelper->refreshTranslationsFromLogData($entity);
+            }
         «ENDIF»
 
-        return $this->redirectToRoute('«application.appName.formatForDB»_«name.formatForDB»_«IF hasDetailAction»detail', $«name.formatForCode»->createUrlArgs()«ELSEIF hasIndexAction»index'«ELSE»«primaryAction»'«ENDIF»);
+        $redirectRouteParameters = [];
+        if (str_ends_with($redirectRoute, 'detail')) {
+            $redirectRouteParameters = $entity->createUrlArgs();
+        }
+
+        return $this->redirectToRoute($redirectRoute, $redirectRouteParameters);
     '''
 
-    def private undeletion(Entity it) '''
+    def private undeletion(Application it) '''
         try {
-            $loggableHelper->undelete($«name.formatForCode»);
-            $this->addFlash(
+            $this->loggableHelper->undelete($entity);
+            $this->controllerHelper->addFlash(
                 'status',
                 $this->trans(
-                    'Done! «name.formatForDisplayCapital» undeleted.',
-                    [],
-                    '«name.formatForCode»'
+                    'Done! {entity} undeleted.',
+                    ['entity' => ucfirst($entityDisplayName)],
+                    $objectType
                 )
             );
-        } catch (Exception $exception) {
-            $this->addFlash(
+        } catch (\Exception $exception) {
+            $this->controllerHelper->addFlash(
                 'error',
-                $this->trans(
+                $this->translator->trans(
                     'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                     ['%action%' => 'undelete']
                 ) . '  ' . $exception->getMessage()

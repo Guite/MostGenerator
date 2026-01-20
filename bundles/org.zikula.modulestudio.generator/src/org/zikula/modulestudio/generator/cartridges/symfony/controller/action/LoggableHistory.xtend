@@ -1,167 +1,192 @@
 package org.zikula.modulestudio.generator.cartridges.symfony.controller.action
 
+import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class LoggableHistory {
+class LoggableHistory extends AbstractAction {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, Boolean isBase) '''
+    override name(Application it) {
+        'History'
+    }
 
-        «loggableHistory(isBase)»
-    '''
+    override requiredFor(Entity it) {
+        loggable
+    }
 
-    def private loggableHistory(Entity it, Boolean isBase) '''
-        «loggableHistoryDocBlock(isBase, false)»
-        «IF !isBase»
-            «loggableHistoryDocBlock(isBase, true)»
-        «ENDIF»
-        public function loggableHistory(
-            «loggableHistoryArguments»
-        ): Response {
-            «IF isBase»
-                «loggableHistoryBaseImpl»
-            «ELSE»
-                return parent::loggableHistory(
-                    $request,
-                    $permissionHelper,
-                    $repository,
-                    $logEntryRepository,
-                    $loggableHelper,
-                    «IF hasTranslatableFields»
-                        $translatableHelper,
-                    «ENDIF»
-                    $workflowHelper,
-                    «IF hasSluggableFields»$slug«ELSE»$id«ENDIF»
-                );
-            «ENDIF»
+    override protected imports(Application it) {
+        val result = <String>newArrayList
+        result.addAll(#[
+            'Doctrine\\Persistence\\ManagerRegistry',
+            'Symfony\\Bundle\\FrameworkBundle\\Controller\\ControllerHelper',
+            'Symfony\\Component\\HttpFoundation\\Request',
+            'Symfony\\Component\\HttpFoundation\\Response',
+            'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException',
+            'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
+            'Symfony\\Contracts\\Translation\\TranslatorInterface',
+            appNamespace + '\\Helper\\LoggableHelper',
+            appNamespace + '\\Helper\\PermissionHelper',
+            appNamespace + '\\Helper\\WorkflowHelper'
+        ])
+        if (hasLoggableTranslatable) {
+            result.add(appNamespace + '\\Helper\\TranslatableHelper')
         }
+        result
+    }
+
+    override protected constructorArguments(Application it) {
+        val result = <String>newArrayList
+        result.addAll(#[
+            'ControllerHelper $controllerHelper',
+            'ManagerRegistry $managerRegistry',
+            'PermissionHelper $permissionHelper',
+            'LoggableHelper $loggableHelper',
+            'WorkflowHelper $workflowHelper',
+            'TranslatorInterface $translator'
+        ])
+        if (hasLoggableTranslatable) {
+            result.add('TranslatableHelper $translatableHelper')
+        }
+        result
+    }
+
+    override protected invocationArguments(Application it, Boolean call) {
+        val result = <String>newArrayList
+        result.add('Request $request')
+        if (call) {
+            result.add('string $objectType')
+            result.add('string $entityDisplayName')
+            result.add('string $redirectRoute')
+        }
+        result
+    }
+
+    override protected docBlock(Application it) '''
+        /**
+         * Provides a change history for a given loggable entity.
+         *
+         * @throws NotFoundHttpException Thrown if invalid identifier is given or the entity isn't found
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+         */
     '''
 
-    def private loggableHistoryDocBlock(Entity it, Boolean isBase, Boolean isAdmin) '''
-        «IF isBase»
-            /**
-             * This method provides a change history for a given «name.formatForDisplay».
-             *
-             * @throws NotFoundHttpException Thrown if invalid identifier is given or the «name.formatForDisplay» isn't found
-             * @throws AccessDeniedException Thrown if the user doesn't have required permissions
-             */
-        «/*ELSE»
-            #[Route('«IF isAdmin»/admin«ENDIF»/«name.formatForCode»/history/{«IF hasSluggableFields»slug«ELSE»id«ENDIF»}',
-                name: '«application.appName.formatForDB»«IF isAdmin»_admin«ENDIF»_«name.formatForDB»_loggablehistory',
-                «IF hasSluggableFields»
-                requirements: ['slug' => '«IF tree»[^.]+«ELSE»[^/.]+«ENDIF»'],
-                «ELSE»
-                requirements: ['id' => '\d+'],
-                defaults: ['id' => 0],
-                «ENDIF»
-                methods: ['GET']
-            )]
-        */»«ENDIF»
+    override protected returnType(Application it) { 'Response' }
+
+    override protected controllerPreprocessing(Entity it) '''
+        $objectType = '«name.formatForCode»';
+        $entityDisplayName = '«name.formatForDisplay»';
+        $redirectRoute = '«application.routePrefix»_«nameMultiple.formatForDB»_history';
+
     '''
 
-    def private loggableHistoryArguments(Entity it) '''
-        Request $request,
-        PermissionHelper $permissionHelper,
-        «name.formatForCodeCapital»RepositoryInterface $repository,
-        «name.formatForCodeCapital»LogEntryRepositoryInterface $logEntryRepository,
-        LoggableHelper $loggableHelper,
-        «IF hasTranslatableFields»
-            TranslatableHelper $translatableHelper,
+    override protected routeMethods(Entity it) '''['GET']'''
+
+    override protected implBody(Application it) '''
+        «new ControllerHelperFunctions().determineEntityId(it, true)»
+
+        «entityMatchBlock(entities.filter[loggable])»
+
+        $repository = $this->managerRegistry->getRepository($entityFqcn);
+        «IF hasSluggable»
+            $entity = null;
+            if ($hasSlug) {
+                $entity = $repository->selectBySlug($id);
+            }
+            if (null === $entity) {
+                $entity = $repository->selectById($id);
+            }
+        «ELSE»
+            $entity = $repository->selectById($id);
         «ENDIF»
-        WorkflowHelper $workflowHelper,
-        «IF hasSluggableFields»string $slug = ''«ELSE»int $id = 0«ENDIF»
-    '''
-
-    def private loggableHistoryBaseImpl(Entity it) '''
-        if (empty(«IF hasSluggableFields»$slug«ELSE»$id«ENDIF»)) {
+        if (null === $entity) {
             throw new NotFoundHttpException(
-                $this->trans(
-                    'No such «name.formatForDisplay» found.',
-                    [],
-                    '«name.formatForCode»'
+                $this->translator->trans(
+                    'No such {entity} found.',
+                    ['entity' => $entityDisplayName],
+                    $objectType
                 )
             );
         }
 
-        $«name.formatForCode» = $repository->selectBy«IF hasSluggableFields»Slug($slug)«ELSE»Id($id)«ENDIF»;
-        if (null === $«name.formatForCode») {
-            throw new NotFoundHttpException(
-                $this->trans(
-                    'No such «name.formatForDisplay» found.',
-                    [],
-                    '«name.formatForCode»'
-                )
-            );
-        }
-
-        $isAdminArea = $request->attributes->get('isAdminArea', false);
+        $dashboard = $request->attributes->get('dashboardControllerFqcn');
+        $isAdminArea = 'Zikula\ThemeBundle\Controller\Dashboard\AdminDashboardController' === $dashboard;
         $permLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
-        if (!$permissionHelper->hasEntityPermission($«name.formatForCode»/*, $permLevel*/)) {
+        if (!$this->permissionHelper->hasEntityPermission($entity/*, $permLevel*/)) {
             throw new AccessDeniedException();
         }
 
-        $logEntries = $logEntryRepository->getLogEntries($«name.formatForCode»);
+        $logEntryRepository = $this->loggableHelper->getLogEntryRepository($objectType);
+        $logEntries = $logEntryRepository->getLogEntries($entity);
 
         $revertToVersion = $request->query->getInt('revert');
         if (0 < $revertToVersion && 1 < count($logEntries)) {
             // revert to requested version
-            «IF hasSluggableFields»
-                $«name.formatForCode»Id = $«name.formatForCode»->getId();
+            «IF hasSluggable»
+                if ($hasSlug) {
+                    $entityId = $entity->getId();
+                }
             «ENDIF»
-            $«name.formatForCode» = $loggableHelper->revert($«name.formatForCode», $revertToVersion);
+            $entity = $this->loggableHelper->revert($entity, $revertToVersion);
 
             try {
                 // execute the workflow action
-                $success = $workflowHelper->executeAction($«name.formatForCode», 'update');
-                «IF hasTranslatableFields»
+                $success = $this->workflowHelper->executeAction($entity, 'update');
+                «IF hasLoggableTranslatable»
 
-                    $translatableHelper->refreshTranslationsFromLogData($«name.formatForCode»);
+                    if (in_array($objectType, ['«getLoggableTranslatableEntities.map[name.formatForCode].join('\', \'')»'], true)) {
+                        $this->translatableHelper->refreshTranslationsFromLogData($entity);
+                    }
                 «ENDIF»
 
                 if ($success) {
-                    $this->addFlash(
+                    $this->controllerHelper->addFlash(
                         'status',
-                        $this->trans(
+                        $this->translator->trans(
                             'Done! Reverted «name.formatForDisplay» to version %version%.',
                             ['%version%' => $revertToVersion],
-                            '«name.formatForCode»'
+                            $objectType
                         )
                     );
                 } else {
-                    $this->addFlash(
+                    $this->controllerHelper->addFlash(
                         'error',
-                        $this->trans(
+                        $this->translator->trans(
                             'Error! Reverting «name.formatForDisplay» to version %version% failed.',
                             ['%version%' => $revertToVersion],
-                            '«name.formatForCode»'
+                            $objectType
                         )
                     );
                 }
             } catch (Exception $exception) {
-                $this->addFlash(
+                $this->controllerHelper->addFlash(
                     'error',
-                    $this->trans(
+                    $this->translator->trans(
                         'Sorry, but an error occured during the %action% action. Please apply the changes again!',
                         ['%action%' => 'update']
                     ) . '  ' . $exception->getMessage()
                 );
             }
-            «IF hasSluggableFields»
+            «IF hasSluggable»
 
-                $«name.formatForCode» = $repository->selectById($«name.formatForCode»Id);
+                if ($hasSlug) {
+                    $entity = $repository->selectById($entityId);
+                }
             «ENDIF»
 
-            return $this->redirectToRoute(
-                '«application.appName.formatForDB»_«name.formatForDB»_loggablehistory',
-                [«routeParams(name.formatForCode, false)»]
+            return $this->controllerHelper->redirectToRoute(
+                $redirectRoute,
+                $entity->createUrlArgs()
             );
         }
 
@@ -189,7 +214,7 @@ class LoggableHistory {
         }
 
         $templateParameters = [
-            '«name.formatForCode»' => $«name.formatForCode»,
+            $objectType => $entity,
             'logEntries' => $logEntries,
             'isDiffView' => $isDiffView,
         ];
@@ -199,12 +224,12 @@ class LoggableHistory {
                 $minVersion,
                 $maxVersion,
                 $diffValues
-            ] = $loggableHelper->determineDiffViewParameters($logEntries, $versions);
+            ] = $this->loggableHelper->determineDiffViewParameters($logEntries, $versions);
             $templateParameters['minVersion'] = $minVersion;
             $templateParameters['maxVersion'] = $maxVersion;
             $templateParameters['diffValues'] = $diffValues;
         }
 
-        return $this->render('@«application.vendorAndName»/«name.formatForCode.toFirstUpper»/history.html.twig', $templateParameters);
+        return $this->controllerHelper->render('@«vendorAndName»/' . ucfirst($objectType) . '/history.html.twig', $templateParameters);
     '''
 }

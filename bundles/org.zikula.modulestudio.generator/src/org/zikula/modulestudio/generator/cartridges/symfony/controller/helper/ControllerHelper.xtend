@@ -119,9 +119,6 @@ class ControllerHelper {
             «ENDIF»
         }
 
-        «getObjectTypes»
-
-        «getDefaultObjectType»
         «IF hasIndexActions»
 
             «processIndexActionParameters»
@@ -146,43 +143,6 @@ class ControllerHelper {
         «ENDIF»
     '''
 
-    def private getObjectTypes(Application it) '''
-        /**
-         * Returns an array of all allowed object types in «appName».
-         *
-         * @return string[] List of allowed object types
-         */
-        public function getObjectTypes(string $context = '', array $args = []): array
-        {
-            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler'];
-            if (!in_array($context, $allowedContexts, true)) {
-                $context = 'controllerAction';
-            }
-
-            $allowedObjectTypes = [];
-            «FOR entity : entities»
-                $allowedObjectTypes[] = '«entity.name.formatForCode»';
-            «ENDFOR»
-
-            return $allowedObjectTypes;
-        }
-    '''
-
-    def private getDefaultObjectType(Application it) '''
-        /**
-         * Returns the default object type in «appName».
-         */
-        public function getDefaultObjectType(string $context = '', array $args = []): string
-        {
-            $allowedContexts = ['controllerAction', 'api', 'helper', 'actionHandler'];
-            if (!in_array($context, $allowedContexts, true)) {
-                $context = 'controllerAction';
-            }
-
-            return '«getLeadingEntity.name.formatForCode»';
-        }
-    '''
-
     def private processIndexActionParameters(Application it) '''
         /**
          * Processes the parameters for a view action.
@@ -192,11 +152,6 @@ class ControllerHelper {
             string $objectType,
             array $templateParameters = []
         ): array {
-            $contextArgs = ['controller' => $objectType, 'action' => 'index'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
-                throw new Exception($this->trans('Error! Invalid object type received.'));
-            }
-
             $request = $this->requestStack->getCurrentRequest();
             if (null === $request) {
                 throw new Exception($this->trans('Error! Controller helper needs a request.'));
@@ -350,11 +305,6 @@ class ControllerHelper {
             string $objectType,
             array $templateParameters = []
         ): array {
-            $contextArgs = ['controller' => $objectType, 'action' => 'detail'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
-                throw new Exception($this->trans('Error! Invalid object type received.'));
-            }
-
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
         }
     '''
@@ -367,11 +317,6 @@ class ControllerHelper {
             string $objectType,
             array $templateParameters = []
         ): array {
-            $contextArgs = ['controller' => $objectType, 'action' => 'edit'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
-                throw new Exception($this->trans('Error! Invalid object type received.'));
-            }
-
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
         }
     '''
@@ -384,11 +329,6 @@ class ControllerHelper {
             string $objectType,
             array $templateParameters = []
         ): array {
-            $contextArgs = ['controller' => $objectType, 'action' => 'delete'];
-            if (!in_array($objectType, $this->getObjectTypes('controllerAction', $contextArgs), true)) {
-                throw new Exception($this->trans('Error! Invalid object type received.'));
-            }
-
             return $this->addTemplateParameters($objectType, $templateParameters, 'controllerAction', $contextArgs);
         }
     '''

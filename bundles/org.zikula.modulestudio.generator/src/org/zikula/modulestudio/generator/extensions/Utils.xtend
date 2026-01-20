@@ -68,7 +68,7 @@ class Utils {
      *
      * @return String The formatted name
      */
-    def String vendorAndName(Application it) {
+    def vendorAndName(Application it) {
         vendor.formatForCode + name.formatForCodeCapital
     }
 
@@ -79,7 +79,7 @@ class Utils {
      *
      * @return String The formatted name
      */
-    def String appName(Application it) {
+    def appName(Application it) {
         vendor.formatForCodeCapital + name.formatForCodeCapital + 'Bundle'
     }
 
@@ -113,7 +113,7 @@ class Utils {
      *
      * @return Boolean The result
      */
-    def Boolean targets(Application it, String version) {
+    def targets(Application it, String version) {
         switch symfonyVersion {
             case SF80:
                 #['8.0', '7.4'].contains(version)

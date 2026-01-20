@@ -36,26 +36,35 @@ class ConfigureActions implements ControllerMethodInterface {
     override generateMethod(Entity it) '''
         public function configureActions(Actions $actions): Actions
         {
+            $actions
+                «standardActions»
+            ;
             «IF hasEditAction»
-                $actions
-                    «methodBody»
-                ;
+
                 $canBeCreated = $this->modelHelper->canBeCreated('«name.formatForCode»');
                 if (!$canBeCreated) {
                     $actions->disable(Action::NEW);
                 }
-
-                return $actions;
-            «ELSE»
-            return $actions
-                «methodBody»
-            ;
             «ENDIF»
+            «IF hasIndexAction»
+
+                $actions
+                    «batchActions»
+                ;
+            «ENDIF»
+            «IF loggable»
+
+                $viewHistory = Action::new('viewHistory', t('History'), 'fa fa-history')
+                    ->linkToCrudAction('history');
+                $actions->add(Crud::PAGE_DETAIL, $viewHistory);
+            «ENDIF»
+
+            return $actions;
         }
         «autocomplete»
     '''
 
-    def private methodBody(Entity it) '''
+    def private standardActions(Entity it) '''
         «IF !hasIndexAction»
             ->disable(Action::INDEX«IF !hasDeleteAction», Action::DELETE«/* disables also batch delete */»«ENDIF»)
         «ENDIF»
@@ -83,10 +92,6 @@ class ConfigureActions implements ControllerMethodInterface {
             «ENDIF»
             ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE)
         «ENDIF»
-        «IF hasIndexAction»
-            «batchActions»
-        «ENDIF»
-
     '''
 
     def private batchActions(Entity it) '''
