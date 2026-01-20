@@ -134,7 +134,7 @@ abstract class AbstractAction implements ActionInterface {
     '''
 
     def private invocationArgumentsInCall(Application it) {
-        invocationArguments(true).map[a|a.split(' ').toList.last].join(', ')
+        invocationArguments(true).map[a|a.split(' ').get(1)].join(', ')
     } 
 
     def protected route(Application it, Entity entity) '''
