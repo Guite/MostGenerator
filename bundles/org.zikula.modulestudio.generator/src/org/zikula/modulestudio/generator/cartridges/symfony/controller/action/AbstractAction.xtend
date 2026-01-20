@@ -129,9 +129,13 @@ abstract class AbstractAction implements ActionInterface {
         public function «formattedName»(«invocationArguments(false).join(', ')»): Response
         {
             «entity.controllerPreprocessing»
-            return ($this->«formattedName»Action)(«invocationArguments(true).map[a|a.split(' ').last].join(', ')»);
+            return ($this->«formattedName»Action)(«invocationArgumentsInCall»);
         }
     '''
+
+    def private invocationArgumentsInCall(Application it) {
+        invocationArguments(true).map[a|a.split(' ').toList.last].join(', ')
+    } 
 
     def protected route(Application it, Entity entity) '''
         #[AdminRoute(path: '/«formattedName»', name: '«name().formatForDB»', options: «entity.routeMethodAndOptions»)]
@@ -139,7 +143,7 @@ abstract class AbstractAction implements ActionInterface {
 
     def protected controllerAttributes(Application it, Entity entity) {}
 
-    def protected routeMethodAndOptions(Entity it) '''['methods' => «routeMethods»«IF !routeOptions.empty», «routeOptions»«ENDIF»]'''
+    def protected routeMethodAndOptions(Entity it) '''['methods' => «routeMethods»«IF 0 < routeOptions.length», «routeOptions»«ENDIF»]'''
 
     def protected routeMethods(Entity it) ''''''
 
