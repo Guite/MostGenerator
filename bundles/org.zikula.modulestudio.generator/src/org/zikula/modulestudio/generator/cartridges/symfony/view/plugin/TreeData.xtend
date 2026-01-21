@@ -85,7 +85,7 @@ class TreeData {
                     «FOR entity : treeEntities.sortBy[name]»
                         '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForCode»',
                     «ENDFOR»
-                    default: null,
+                    default => null,
                 };
                 $routeName = '«routePrefix»_' . mb_strtolower($objectTypeMultiple) . '_' . $routeArea . 'edit';
                 $url = $this->router->generate($routeName, $urlArgs);

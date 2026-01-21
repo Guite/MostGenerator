@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.Controlle
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LoggableUndelete extends AbstractAction {
@@ -14,7 +13,6 @@ class LoggableUndelete extends AbstractAction {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     override name(Application it) {

@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.Controlle
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LoggableHistory extends AbstractAction {
@@ -14,7 +13,6 @@ class LoggableHistory extends AbstractAction {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     override name(Application it) {
