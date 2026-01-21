@@ -87,7 +87,7 @@ class TreeData {
                     «ENDFOR»
                     default: null,
                 };
-                $routeName = '«routePrefix»_' . mb_strtolower($objectType) . '_' . $routeArea . 'edit';
+                $routeName = '«routePrefix»_' . mb_strtolower($objectTypeMultiple) . '_' . $routeArea . 'edit';
                 $url = $this->router->generate($routeName, $urlArgs);
                 $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
             }
