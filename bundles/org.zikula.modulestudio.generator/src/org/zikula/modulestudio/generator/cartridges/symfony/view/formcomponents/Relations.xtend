@@ -12,7 +12,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
@@ -23,7 +22,6 @@ class Relations {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension UrlExtensions = new UrlExtensions
     extension ViewExtensions = new ViewExtensions
     extension Utils = new Utils
 
@@ -199,7 +197,7 @@ class Relations {
         <li id="{{ idPrefixItem }}">
             {{ item|«app.appName.formatForDB»_formattedTitle }}
             «IF includeEditing»
-                <a id="{{ idPrefixItem }}Edit" href="{{ path('«targetEntity.route('edit')»'«targetEntity.routeParams('item', true)») }}"><i class="fas fa-edit"></i></a>
+                <a id="{{ idPrefixItem }}Edit" href="{{ path('«targetEntity.route('edit')»', item.getRouteParameters()) }}"><i class="fas fa-edit"></i></a>
             «ENDIF»
              <a id="{{ idPrefixItem }}Remove" href="javascript:«app.vendorAndName»RemoveRelatedItem('{{ idPrefix }}', '{{ item.getKey() }}');"><i class="fas fa-trash-alt"></i></a>
             «IF targetEntity.hasImageFieldsEntity»

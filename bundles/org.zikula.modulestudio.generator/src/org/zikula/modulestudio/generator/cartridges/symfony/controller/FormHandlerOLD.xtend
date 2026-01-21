@@ -348,12 +348,12 @@ class FormHandlerOLD {
                             $routePrefix = '«app.routePrefix»_' . mb_strtolower($this->objectType) . '_';
                             $userDetailUrl = $this->router->generate(
                                 $routePrefix . 'detail',
-                                $entity->createUrlArgs(),
+                                $entity->getRouteParameters(),
                                 UrlGeneratorInterface::ABSOLUTE_URL
                             );
                             $adminDetailUrl = $this->router->generate(
                                 $routePrefix . 'admindetail',
-                                $entity->createUrlArgs(),
+                                $entity->getRouteParameters(),
                                 UrlGeneratorInterface::ABSOLUTE_URL
                             );
                             if ($this->returnTo === $userDetailUrl) {

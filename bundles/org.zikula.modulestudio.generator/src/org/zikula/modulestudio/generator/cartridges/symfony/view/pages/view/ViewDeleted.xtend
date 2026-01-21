@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewDeleted {
@@ -15,7 +14,6 @@ class ViewDeleted {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
@@ -33,7 +31,7 @@ class ViewDeleted {
         {% block admin_page_icon 'trash-alt' %}
         {% block content %}
             <div class="«application.appName.toLowerCase»-«name.formatForDB» «application.appName.toLowerCase»-indexdeleted">
-                {{ block('page_nav_links') }}«/*new ViewPagesHelper().commonHeader(it)*/»
+                {{ block('page_nav_links') }}«/*new IndexPagesHelper().commonHeader(it)*/»
                 «IF !hasDetailAction»
                     <p class="alert alert-info">{% trans %}Because there exists no display action for «nameMultiple.formatForDisplay» it is not possible to preview deleted items.{% endtrans %}</p>
                 «ENDIF»

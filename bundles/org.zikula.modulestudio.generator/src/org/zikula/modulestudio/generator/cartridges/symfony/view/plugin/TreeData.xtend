@@ -5,7 +5,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TreeData {
@@ -14,7 +13,6 @@ class TreeData {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def generate(Application it) '''
@@ -71,8 +69,8 @@ class TreeData {
                 $title = strip_tags($node->$getter() ?? '');
             }
 
-            $needsArg = in_array($objectType, ['«entities.filter[tree && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
-            $urlArgs = $needsArg ? $node->createUrlArgs(true) : $node->createUrlArgs();
+            $includeId = in_array($objectType, ['«entities.filter[tree && hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
+            $urlArgs = $includeId ? $node->getRouteParameters(includeId: $includeId) : $node->getRouteParameters();
             $urlDataAttributes = '';
             foreach ($urlArgs as $field => $value) {
                 $urlDataAttributes .= ' data-' . $field . '="' . $value . '"';
@@ -83,6 +81,12 @@ class TreeData {
             $liTag = '<li id="' . $idPrefix . '"' . $titleAttribute . $classAttribute . $urlDataAttributes . '>';
             $liContent = $this->entityDisplayHelper->getFormattedTitle($node);
             if ($hasEditAction) {
+                $objectTypeMultiple = match ($objectType) {
+                    «FOR entity : treeEntities.sortBy[name]»
+                        '«entity.name.formatForCode»' => '«entity.nameMultiple.formatForCode»',
+                    «ENDFOR»
+                    default: null,
+                };
                 $routeName = '«routePrefix»_' . mb_strtolower($objectType) . '_' . $routeArea . 'edit';
                 $url = $this->router->generate($routeName, $urlArgs);
                 $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';

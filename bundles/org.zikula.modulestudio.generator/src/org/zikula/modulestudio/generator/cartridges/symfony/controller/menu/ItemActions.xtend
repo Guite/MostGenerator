@@ -48,7 +48,7 @@ class ItemActions {
     def private itemActionsTargetingDetail(Entity it, Application app) '''
         «IF hasDetailAction»
             if ('admin' === $routeArea) {
-                $previewRouteParameters = $entity->createUrlArgs();
+                $previewRouteParameters = $entity->getRouteParameters();
                 $previewRouteParameters['preview'] = 1;
                 $menu->addChild('Preview', [
                     'route' => $routePrefix . 'detail',
@@ -64,7 +64,7 @@ class ItemActions {
                 $entityTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
                 $menu->addChild('Details', [
                     'route' => $routePrefix . 'detail',
-                    'routeParameters' => $entity->createUrlArgs(),
+                    'routeParameters' => $entity->getRouteParameters(),
                 ])
                     ->setLinkAttribute('title', str_replace('"', '', $entityTitle))
                     «app.addLinkClass('secondary')»
@@ -92,7 +92,7 @@ class ItemActions {
                 if (in_array($context, ['index', 'detail'], true) && $this->loggableHelper->hasHistoryItems($entity)) {
                     $menu->addChild('History', [
                         'route' => $routePrefix . 'loggablehistory',
-                        'routeParameters' => $entity->createUrlArgs(),
+                        'routeParameters' => $entity->getRouteParameters(),
                     ])
                         ->setLinkAttribute('title', 'Watch version history')
                         «app.addLinkClass('secondary')»
@@ -105,7 +105,7 @@ class ItemActions {
             if ($this->permissionHelper->mayDelete($entity)«IF ownerPermission» || ($isOwner && $this->permissionHelper->mayEdit($entity))«ENDIF») {
                 $menu->addChild('Delete', [
                     'route' => $routePrefix . 'delete',
-                    'routeParameters' => $entity->createUrlArgs(),
+                    'routeParameters' => $entity->getRouteParameters(),
                 ])
                     ->setLinkAttribute('title', 'Delete this «name.formatForDisplay»')
                     «app.addLinkClass('danger')»
@@ -173,7 +173,7 @@ class ItemActions {
     def private itemActionsForEditAction(Entity it) '''
         $menu->addChild('Edit', [
             'route' => $routePrefix . 'edit',
-            'routeParameters' => $entity->createUrlArgs(«IF hasSluggableFields»true«ENDIF»),
+            'routeParameters' => $entity->getRouteParameters(«IF hasSluggableFields»includeId: true«ENDIF»),
         ])
             ->setLinkAttribute('title', 'Edit this «name.formatForDisplay»')
             «application.addLinkClass('secondary')»

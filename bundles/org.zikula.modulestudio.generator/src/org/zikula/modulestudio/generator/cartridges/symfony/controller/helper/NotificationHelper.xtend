@@ -377,7 +377,7 @@ class NotificationHelper {
             $hasEditAction = in_array($objectType, ['«entities.filter[hasEditAction].map[name.formatForCode].join('\', \'')»'], true);
             $routePrefix = '«routePrefix»_' . mb_strtolower($objectType) . '_';
 
-            $urlArgs = $this->entity->createUrlArgs();
+            $urlArgs = $this->entity->getRouteParameters();
             $detailUrl = $hasDetailAction
                 ? $this->router->generate($routePrefix . 'detail', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL)
                 : ''
@@ -385,7 +385,7 @@ class NotificationHelper {
 
             «IF !entities.filter[hasEditAction && hasSluggableFields].empty»
                 $needsArg = in_array($objectType, ['«entities.filter[hasEditAction && hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
-                $urlArgs = $needsArg ? $this->entity->createUrlArgs(true) : $this->entity->createUrlArgs();
+                $urlArgs = $needsArg ? $this->entity->getRouteParameters(true) : $this->entity->getRouteParameters();
             «ENDIF»
             $editUrl = $hasEditAction
                 ? $this->router->generate($routePrefix . 'edit', $urlArgs, UrlGeneratorInterface::ABSOLUTE_URL)

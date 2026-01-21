@@ -18,7 +18,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewTable {
@@ -28,7 +27,6 @@ class ViewTable {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     String appName
@@ -199,7 +197,7 @@ class ViewTable {
 
     def private dispatch displayEntryInner(Field it, Boolean useTarget) '''
         «IF entity.hasDetailAction && #['name', 'title'].contains(name)»
-            <a href="{{ path('«entity.route('detail')»'«entity.routeParams(entity.name.formatForCode, true)») }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayField»</a>
+            <a href="{{ path('«entity.route('detail')»', «entity.name.formatForCode».getRouteParameters()) }}" title="{{ 'View detail page'|trans({}, 'messages')|e('html_attr') }}">«displayField»</a>
         «ELSE»
             «displayField»
         «ENDIF»
@@ -216,12 +214,12 @@ class ViewTable {
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {% if «relObjName»|default %}
             «IF linkEntity.hasDetailAction»
-                <a href="{{ path('«linkEntity.route('detail')»'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
+                <a href="{{ path('«linkEntity.route('detail')»', «relObjName».getRouteParameters()) }}">{% apply spaceless %}
             «ENDIF»
               {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
             «IF linkEntity.hasDetailAction»
                 {% endapply %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.route('detail')»', {«IF linkEntity.hasSluggableFields»«linkEntity.appendSlug(relObjName, true)»«ELSE»«linkEntity.routePkParams(relObjName, true)»«ENDIF», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «mainEntity.name.formatForCode».getKey() }}_rel_{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.route('detail')»', «relObjName».getRouteParameters({raw: 1})) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
             «ENDIF»
         {% else %}
             {% trans from 'messages' %}Not set{% endtrans %}

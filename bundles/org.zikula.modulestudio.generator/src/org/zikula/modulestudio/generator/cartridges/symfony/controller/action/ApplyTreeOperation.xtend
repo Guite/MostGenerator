@@ -283,9 +283,9 @@ class ApplyTreeOperation extends AbstractAction {
                     $data['result'] = 'failure';
                 } elseif (in_array($objectType, ['«entitiesWithEditableTree.map[name.formatForCode].join('\', \'')»'], true)) {
                     «IF !treeEntities.filter[hasEditAction && hasSluggableFields].empty»
-                        $urlArgs = $isSluggable ? $childEntity->createUrlArgs(true) : $childEntity->createUrlArgs();
+                        $urlArgs = $isSluggable ? $childEntity->getRouteParameters(includeId: true) : $childEntity->getRouteParameters();
                     «ELSE»
-                        $urlArgs = $childEntity->createUrlArgs();
+                        $urlArgs = $childEntity->getRouteParameters();
                     «ENDIF»
                     $data['returnUrl'] = $this->router->generate(
                         $redirectRoute,

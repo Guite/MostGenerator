@@ -11,10 +11,8 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
@@ -22,10 +20,8 @@ class Detail {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
     extension ViewExtensions = new ViewExtensions
 
@@ -206,12 +202,12 @@ class Detail {
             <dd>
               {% if not isQuickView %}
                   «IF linkEntity.hasDetailAction»
-                      <a href="{{ path('«linkEntity.route('detail')»'«linkEntity.routeParams(relObjName, true)») }}">{% apply spaceless %}
+                      <a href="{{ path('«linkEntity.route('detail')»', «relObjName».getRouteParameters()) }}">{% apply spaceless %}
                   «ENDIF»
                     {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
                   «IF linkEntity.hasDetailAction»
                     {% endapply %}</a>
-                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.route('detail')»', {«IF linkEntity.hasSluggableFields»«linkEntity.appendSlug(relObjName, true)»«ELSE»«linkEntity.routePkParams(relObjName, true)»«ENDIF», raw: 1}) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «relObjName».getKey() }}Display" href="{{ path('«linkEntity.route('detail')»', «relObjName».getRouteParameters({raw: 1})) }}" title="{{ 'Open quick view window'|trans({}, 'messages')|e('html_attr') }}" class="«application.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ «relObjName»|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
                   «ENDIF»
               {% else %}
                   {{ «relObjName»|«application.appName.formatForDB»_formattedTitle }}
@@ -326,7 +322,7 @@ class Detail {
     def private nodeLoop(Entity it, String appName, String collectionName) '''
         <ul>
         {% for node in «collectionName» %}
-            <li><a href="{{ path('«route('detail')»'«routeParams('node', true)») }}" title="{{ node|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ node|«application.appName.formatForDB»_formattedTitle }}</a></li>
+            <li><a href="{{ path('«route('detail')»', node.getRouteParameters()) }}" title="{{ node|«application.appName.formatForDB»_formattedTitle|e('html_attr') }}">{{ node|«application.appName.formatForDB»_formattedTitle }}</a></li>
         {% endfor %}
         </ul>
     '''

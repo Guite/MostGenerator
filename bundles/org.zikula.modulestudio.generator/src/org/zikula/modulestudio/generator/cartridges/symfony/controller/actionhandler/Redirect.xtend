@@ -121,7 +121,7 @@ class Redirect {
 
                 if ($objectIsPersisted) {
                     // redirect to the detail page of treated «name.formatForCode»
-                    $url = $this->router->generate($routePrefix . 'detail', $this->entityRef->createUrlArgs());
+                    $url = $this->router->generate($routePrefix . 'detail', $this->entityRef->getRouteParameters());
                 }
             «ENDIF»
 
@@ -196,7 +196,7 @@ class Redirect {
                             'delete' !== $args['commandName']
                             && !('create' === $this->templateParameters['mode'] && 'cancel' === $args['commandName'])
                         ) {
-                            return $this->router->generate($routePrefix . 'detail', $this->entityRef->createUrlArgs());
+                            return $this->router->generate($routePrefix . 'detail', $this->entityRef->getRouteParameters());
                         }
 
                         return $this->getDefaultReturnUrl($args);

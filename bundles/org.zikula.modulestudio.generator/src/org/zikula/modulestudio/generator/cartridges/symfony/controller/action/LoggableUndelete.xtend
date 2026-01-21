@@ -148,7 +148,7 @@ class LoggableUndelete extends AbstractAction {
 
         $redirectRouteParameters = [];
         if (str_ends_with($redirectRoute, 'detail')) {
-            $redirectRouteParameters = $entity->createUrlArgs();
+            $redirectRouteParameters = $entity->getRouteParameters();
         }
 
         return $this->redirectToRoute($redirectRoute, $redirectRouteParameters);

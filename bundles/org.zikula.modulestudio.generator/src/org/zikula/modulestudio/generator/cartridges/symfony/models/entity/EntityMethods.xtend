@@ -23,7 +23,7 @@ class EntityMethods {
     def generate(Entity it, Application app, Property thProp) '''
         «validationMethods»
 
-        «createUrlArgs»
+        «getRouteParameters»
 
         «getKey»
 
@@ -44,28 +44,25 @@ class EntityMethods {
         «ENDIF»
     '''
 
-    def private createUrlArgs(Entity it) '''
+    def private getRouteParameters(Entity it) '''
         /**
          * Creates url arguments array for easy creation of display urls.
          */
-        public function createUrlArgs(«IF hasSluggableFields»bool $forEditing = false«ENDIF»): array
+        public function getRouteParameters(array $params = []«IF hasSluggableFields», bool $includeId = false«ENDIF»): array
         {
             «IF hasSluggableFields»
-                if (true === $forEditing) {
-                    return [
-                        '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»(),
-                        'slug' => $this->getSlug(),
-                    ];
-                }
+                $slug = $this->getSlug();
 
-                return [
-                    'slug' => $this->getSlug(),
-                ];
+                if ($includeId || null === $slug || '' === $slug) {
+                    $params['«getPrimaryKey.name.formatForCode»'] = $this->getKey();
+                } else {
+                    $params['slug'] = $slug;
+                }
             «ELSE»
-                return [
-                    '«getPrimaryKey.name.formatForCode»' => $this->get«getPrimaryKey.name.formatForCodeCapital»(),
-                ];
+                $params['«getPrimaryKey.name.formatForCode»'] = $this->getKey();
             «ENDIF»
+
+            return $params;
         }
     '''
 

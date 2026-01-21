@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
 import java.util.Date
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.MostInMemoryFileSystemAccess
@@ -172,5 +173,29 @@ class Utils {
         if (!(fsa instanceof MostInMemoryFileSystemAccess)) {
             println(it)
         }
+    }
+
+    /**
+     * Returns the route prefix for the given application.
+     *
+     * @param it The {@link Application} instance
+     * @param action Name of action to link to
+     *
+     * @return String Route prefix
+     */
+    def routePrefix(Application it) {
+        vendor.formatForDB + '_' + name.formatForDB
+    }
+
+    /**
+     * Returns the route prefix for a given entity.
+     *
+     * @param it The {@link Entity} instance
+     * @param action Name of action to link to
+     *
+     * @return String Route prefix
+     */
+    def route(Entity it, String action) {
+        application.routePrefix + '_' + nameMultiple.formatForDisplay + '_' + action
     }
 }

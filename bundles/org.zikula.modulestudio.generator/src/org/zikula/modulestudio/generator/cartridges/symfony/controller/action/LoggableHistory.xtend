@@ -186,7 +186,7 @@ class LoggableHistory extends AbstractAction {
 
             return $this->controllerHelper->redirectToRoute(
                 $redirectRoute,
-                $entity->createUrlArgs()
+                $entity->getRouteParameters()
             );
         }
 

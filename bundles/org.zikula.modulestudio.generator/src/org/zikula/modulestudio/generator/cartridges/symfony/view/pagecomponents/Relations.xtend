@@ -10,7 +10,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Relations {
@@ -21,7 +20,6 @@ class Relations {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
-    extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
     def displayItemList(Entity it, Application app, Boolean many, IMostFileSystemAccess fsa) {
@@ -52,14 +50,14 @@ class Relations {
         «IF hasDetailAction»
             {% apply spaceless %}
             {% if not noLink %}
-                <a href="{{ path('«route('detail')»'«routeParams('item', true)») }}" title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
+                <a href="{{ path('«route('detail')»', item.getRouteParameters()) }}" title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}">
             {% endif %}
         «ENDIF»
             {{ item|«app.appName.formatForDB»_formattedTitle }}
         «IF hasDetailAction»
             {% if not noLink %}
                 </a>
-                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«route('detail')»', {«IF hasSluggableFields»«appendSlug('item', true)»«ELSE»«routePkParams('item', true)»«ENDIF», raw: 1}) }}" title="{% trans %}Open quick view window{% endtrans %}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
+                <a id="«name.formatForCode»Item{{ item.getKey() }}Display" href="{{ path('«route('detail')»', item.getRouteParameters({raw: 1})) }}" title="{% trans %}Open quick view window{% endtrans %}" class="«app.vendorAndName.toLowerCase»-inline-window d-none" data-modal-title="{{ item|«app.appName.formatForDB»_formattedTitle|e('html_attr') }}"><i class="fas fa-id-card"></i></a>
             {% endif %}
             {% endapply %}
         «ENDIF»

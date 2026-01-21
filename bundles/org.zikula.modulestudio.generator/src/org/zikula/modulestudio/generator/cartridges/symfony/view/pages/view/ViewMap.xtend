@@ -7,7 +7,6 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
@@ -18,7 +17,6 @@ class ViewMap {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-    extension UrlExtensions = new UrlExtensions
     extension ViewExtensions = new ViewExtensions
 
     def generate(Entity it, String appName, IMostFileSystemAccess fsa) {
@@ -42,7 +40,7 @@ class ViewMap {
                 </div>
                 «(new IndexPagesHelper).pagerCall(it)»
                 {% for «name.formatForCode» in items|filter(i => i.latitude|default != 0 and i.longitude|default != 0) %}
-                    <div class="map-marker-definition" data-latitude="{{ «name.formatForCode».latitude|e('html_attr') }}" data-longitude="{{ «name.formatForCode».longitude|e('html_attr') }}" data-title="{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('html_attr') }}" data-image="«itemImageUrl»" data-detail-url="«IF hasDetailAction»{{ path('«route('detail')»'«routeParams(name.formatForCode, true)»)|e('html_attr') }}«ENDIF»"></div>
+                    <div class="map-marker-definition" data-latitude="{{ «name.formatForCode».latitude|e('html_attr') }}" data-longitude="{{ «name.formatForCode».longitude|e('html_attr') }}" data-title="{{ «name.formatForCode»|«appName.formatForDB»_formattedTitle|e('html_attr') }}" data-image="«itemImageUrl»" data-detail-url="«IF hasDetailAction»{{ path('«route('detail')»', «name.formatForCode».getRouteParameters())|e('html_attr') }}«ENDIF»"></div>
                 {% endfor %}
             </div>
         {% endblock %}
