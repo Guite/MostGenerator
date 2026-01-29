@@ -53,44 +53,44 @@ class ConfigureFilters implements ControllerMethodInterface {
         ) {
             imports.add(nsEabFilter + 'ChoiceFilter')
         }
+        if (hasCountryFieldsEntity) {
+            imports.add(nsEabFilter + 'CountryFilter')
+        }
+        if (hasCurrencyFieldsEntity) {
+            imports.add(nsEabFilter + 'CurrencyFilter')
+        }
         if (!allEntityFields.filter(DatetimeField).empty) {
             imports.add(nsEabFilter + 'DateTimeFilter')
         }
         if (!allEntityFields.filter(UserField).empty || !incomingRelations.empty || !outgoingRelations.empty) {
             imports.add(nsEabFilter + 'EntityFilter')
         }
+        if (hasLanguageFieldsEntity) {
+            imports.add(nsEabFilter + 'LanguageFilter')
+        }
+        if (hasLocaleFieldsEntity) {
+            imports.add(nsEabFilter + 'LocaleFilter')
+        }
         if (!formFields.filter(NumberField).empty) {
             imports.add(nsEabFilter + 'NumericFilter')
         }      
         imports.add(nsEabFilter + 'TextFilter')
+        if (hasTimezoneFieldsEntity) {
+            imports.add(nsEabFilter + 'TimezoneFilter')
+        }
 
         val nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
         if (!formFields.filter(StringField).filter[f|f.role === StringRole.COLOUR].empty) {
             imports.add(nsSymfonyFormType + 'ColorType')
         }
-        if (hasCountryFieldsEntity) {
-            imports.add(nsSymfonyFormType + 'CountryType')
-        }
-        if (hasCurrencyFieldsEntity) {
-            imports.add(nsSymfonyFormType + 'CurrencyType')
-        }
         if (!formFields.filter(StringField).filter[role == StringRole.ICON].empty) {
             imports.add('Zikula\\ThemeBundle\\Form\\Type\\IconType')
-        }
-        if (hasLanguageFieldsEntity) {
-            imports.add(nsSymfonyFormType + 'LanguageType')
-        }
-        if (hasLocaleFieldsEntity) {
-            imports.add(nsSymfonyFormType + 'LocaleType')
         }
         if (!formFields.filter(StringField).filter[f|f.role === StringRole.PASSWORD].empty) {
             imports.add(nsSymfonyFormType + 'PasswordType')
         }
         if (!formFields.filter(StringField).filter[f|f.role === StringRole.PHONE_NUMBER].empty) {
             imports.add(nsSymfonyFormType + 'TelType')
-        }
-        if (hasTimezoneFieldsEntity) {
-            imports.add(nsSymfonyFormType + 'TimezoneType')
         }
         if (!formFields.filter(StringField).filter[f|f.role === StringRole.URL].empty) {
             imports.add(nsSymfonyFormType + 'UrlType')
@@ -135,6 +135,7 @@ class ConfigureFilters implements ControllerMethodInterface {
         «ENDFOR»
     '''
 
+    // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#booleanfilter
     def private dispatch filter(Field it) '''
         ->add('«name.formatForCode»')
     '''
@@ -145,41 +146,58 @@ class ConfigureFilters implements ControllerMethodInterface {
     '''
 
     def private dispatch filter(StringField it) '''
-        ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
+        ->add(«filterType»Filter::new('«name.formatForCode»', «label»)«options»)
     '''
+    def private filterType(StringField it) {
+        // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#countryfilter
+        if (role === StringRole.COUNTRY) 'Country'
+        // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#currencyfilter
+        else if (role === StringRole.CURRENCY) 'Currency'
+        // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#languagefilter
+        else if (role === StringRole.LANGUAGE) 'Language'
+        // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#localefilter
+        else if (role === StringRole.LOCALE) 'Locale'
+        // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#timezonefilter
+        else if (role === StringRole.TIME_ZONE) 'Timezone'
+        else 'Text'
+    }
     def private dispatch options(StringField it) {
         if (role === StringRole.COLOUR) '''->setFormTypeOptions(['value_type' => ColorType::class])''' else
-        if (role === StringRole.COUNTRY) '''->setFormTypeOptions(['value_type' => CountryType::class])''' else
-        if (role === StringRole.CURRENCY) '''->setFormTypeOptions(['value_type' => CurrencyType::class])''' else
         //if (role === StringRole.ICON) '''->setFormTypeOptions(['value_type' => IconType::class])''' else
-        if (role === StringRole.LANGUAGE) '''->setFormTypeOptions(['value_type' => LanguageType::class])''' else
-        if (role === StringRole.LOCALE) '''->setFormTypeOptions(['value_type' => LocaleType::class])''' else
         if (role === StringRole.PASSWORD) '''->setFormTypeOptions(['value_type' => PasswordType::class])''' else
         if (role === StringRole.PHONE_NUMBER) '''->setFormTypeOptions(['value_type' => TelType::class])''' else
-        if (role === StringRole.TIME_ZONE) '''->setFormTypeOptions(['value_type' => TimezoneType::class])''' else
         if (role === StringRole.URL) '''->setFormTypeOptions(['value_type' => UrlType::class])''' else
         if (role === StringRole.WEEK) '''->setFormTypeOptions(['value_type' => WeekType::class])''' else
         ''
     }
 
+    // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#textfilter
     def private dispatch filter(TextField it) '''
         ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
     '''
 
+    // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#numericfilter
     def private dispatch filter(NumberField it) '''
         ->add(NumericFilter::new('«name.formatForCode»', «label»)«options»)
     '''
+
     /* use TextFilter for array fields instead because its not easy to detect the choices
+     *
+    // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#arrayfilter
     def private dispatch filter(ArrayField it) '''
         ->add(ArrayFilter::new('«name.formatForCode»', «label»)->canSelectMultiple(true)->setTranslatableChoices(...))
     '''*/
     def private dispatch filter(ArrayField it) '''
         ->add(TextFilter::new('«name.formatForCode»', «label»)«options»)
     '''
+
+    // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#choicefilter
     def private dispatch filter(ListField it) '''
         ->add(ChoiceFilter::new('«name.formatForCode»', «label»)«options»)
     '''
     def private dispatch options(ListField it) '''->setTranslatableChoices($«name.formatForCode»Choices)«IF expanded»->renderExpanded(true)«ENDIF»«IF multiple»->canSelectMultiple(true)«ENDIF»'''
+
+    // https://symfony.com/bundles/EasyAdminBundle/current/filters.html#datetimefilter
     def private dispatch filter(DatetimeField it) '''
         ->add(DateTimeFilter::new('«name.formatForCode»', «label»)«options»)
     '''

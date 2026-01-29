@@ -148,7 +148,7 @@ class ControllerLayer {
                 «ENDIF»
                 «FOR action : customActions»
                     «IF action.requiredFor(it)»
-                        «action.controllerInjection(application)»
+                        «action.controllerInjection(application)»,
                     «ENDIF»
                 «ENDFOR»
             ) {

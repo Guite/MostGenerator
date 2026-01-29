@@ -66,7 +66,7 @@ class UpdateSortPositions extends AbstractAction {
 
     override protected routeMethods(Entity it) '''['POST']'''
 
-    override protected routeOptions(Entity it) '''options: ['expose' => true]'''
+    override protected routeOptions(Entity it) '''«''»'options' => ['expose' => true]'''
 
     override protected implBody(Application it) '''
         if (!$request->isXmlHttpRequest()) {

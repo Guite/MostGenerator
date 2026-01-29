@@ -140,6 +140,7 @@ class WorkflowSubscriber {
          * Subscriber for the `workflow.announce` event.
          *
          * Triggered for each place that now is available for the subject.
+         * This determines available transitions, triggering all guard events which might become expensive.
          «commonDocs('announce')»
          */
         public function onAnnounce(AnnounceEvent $event): void
@@ -181,7 +182,7 @@ class WorkflowSubscriber {
          * This event is also triggered for each workflow individually, so you can react only to the events
          * of a specific workflow by listening to `workflow.<workflow_name>.«eventName»` instead.
          * You can even listen to some specific transitions or states for a specific workflow
-         * using `workflow.<workflow_name>.«eventName».<state_name>`.
+         * using `workflow.<workflow_name>.«eventName».<(place|transition)_name>`.
          *
          «exampleCode»
     '''

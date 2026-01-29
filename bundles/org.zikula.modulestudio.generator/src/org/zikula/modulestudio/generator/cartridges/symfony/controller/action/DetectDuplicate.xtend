@@ -64,7 +64,7 @@ class DetectDuplicate extends AbstractAction {
 
     override protected routeMethods(Entity it) '''['GET']'''
 
-    override protected routeOptions(Entity it) '''options: ['expose' => true]'''
+    override protected routeOptions(Entity it) '''«''»'options' => ['expose' => true]'''
 
     override protected implBody(Application it) '''
         if (!$request->isXmlHttpRequest()) {

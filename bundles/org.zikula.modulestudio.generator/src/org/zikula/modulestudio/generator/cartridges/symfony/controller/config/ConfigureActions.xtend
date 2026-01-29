@@ -61,7 +61,6 @@ class ConfigureActions implements ControllerMethodInterface {
 
             return $actions;
         }
-        «autocomplete»
     '''
 
     def private standardActions(Entity it) '''
@@ -123,57 +122,6 @@ class ConfigureActions implements ControllerMethodInterface {
             )
         «ENDIF»
     '''
-
-    def private autocomplete(Entity it) {
-        if (!getIncomingRelationsWithAutocomplete.empty || !getOutcomingRelationsWithAutocomplete.empty) '''
-            public function autocomplete(AdminContext $context): JsonResponse
-            {
-                $response = parent::autocomplete($context);
-
-                $payload = json_decode($response->getContent() ?? '[]', true, flags: \JSON_THROW_ON_ERROR);
-
-                if (!isset($payload['results']) || !is_array($payload['results'])) {
-                    return $response;
-                }
-
-                $ids = [];
-                foreach ($payload['results'] as $row) {
-                    if (isset($row['id']) && '' !== $row['id']) {
-                        $ids[] = $row['id'];
-                    }
-                }
-
-                if ([] === $ids) {
-                    return $response;
-                }
-
-                $entities = $this->em->getRepository(«name.formatForCodeCapital»::class)->createQueryBuilder('p')
-                    ->andWhere('p.id IN (:ids)')
-                    ->setParameter('ids', $ids)
-                    ->getQuery()
-                    ->getResult();
-
-                $byId = [];
-                foreach ($entities as $entity) {
-                    $byId[(string) $entity->getId()] = $entity;
-                }
-
-                foreach ($payload['results'] as &$row) {
-                    $id = isset($row['id']) ? (string) $row['id'] : null;
-                    if ($id && isset($byId[$id])) {
-                        $row['text'] = $this->entityDisplayHelper->format«name.formatForCodeCapital»($byId[$id]);
-                    }
-                }
-                unset($row);
-
-                return new JsonResponse(
-                    $payload,
-                    $response->getStatusCode(),
-                    $response->headers->all()
-                );
-            }
-        '''
-    }
 
     def private getIncomingRelationsWithAutocomplete(Entity it) {
         getCommonRelations(true).filter[usesAutoCompletion(false)]

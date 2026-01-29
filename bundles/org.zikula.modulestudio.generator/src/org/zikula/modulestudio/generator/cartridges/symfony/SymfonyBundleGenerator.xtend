@@ -9,12 +9,13 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.application.config.AppConfig
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.ControllerLayer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.EventSubscribers
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.FormHandlerOLD
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.HelperServices
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Configuration
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Initializer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.MetaData
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.ServiceDefinitions
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.workflows.Definition
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Entities
 import org.zikula.modulestudio.generator.cartridges.symfony.models.EntityInitializer
 import org.zikula.modulestudio.generator.cartridges.symfony.models.Repository
@@ -38,7 +39,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.view.Views
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.transformation.ConfigurationDeriver
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.FormHandlerOLD
 
 class SymfonyBundleGenerator implements IGenerator {
 
@@ -134,8 +134,8 @@ class SymfonyBundleGenerator implements IGenerator {
         'Generating Event listeners'.printIfNotTesting(fsa)
         new EventSubscribers().generate(it, fsa)
         pm?.subTask('Controller: Workflows')
-        'Generating workflows'.printIfNotTesting(fsa)
-        new Workflow().generate(it, fsa)
+        'Generating workflow definitions'.printIfNotTesting(fsa)
+        new Definition().generate(it, fsa)
         pm?.subTask('Controller: JavaScript files')
         'Generating JavaScript files'.printIfNotTesting(fsa)
         new JavaScriptFiles().generate(it, fsa)

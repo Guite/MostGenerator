@@ -152,6 +152,10 @@ class ConfigureFields implements ControllerMethodInterface {
                 $uploaderHelper = $this->uploaderHelper;
             «ENDIF»
         «ENDIF»
+        «IF !incomingRelations.filter[usesAutoCompletion(false)].empty
+        || !outgoingRelations.filter[usesAutoCompletion(true)].empty»
+            $entityDisplayHelper = $this->entityDisplayHelper;
+        «ENDIF»
         «FOR field : getAllEntityFields»
             «IF field instanceof UploadField»
                 $basePath = str_replace('public/', '', $this->uploadHelper->getFileBaseFolder('«name.formatForCode»', '«field.name.formatForCode»'));
@@ -797,12 +801,12 @@ class ConfigureFields implements ControllerMethodInterface {
         var calls = ''
         if ('Association' == relationFieldType) {
             if (autoComplete) {
-                calls += '''->autocomplete()'''
+                calls += '''->autocomplete(callback: static fn(«relatedEntity.name.formatForCodeCapital» $entity) => $entityDisplayHelper->format«relatedEntity.name.formatForCodeCapital»($entity))'''
             } else if (!expanded) {
                 calls += '''->renderAsNativeWidget()'''
             }
             // renderAsEmbeddedForm
-            if (thisEntity.hasEditAction) {
+            if (thisEntity.hasEditAction && !autoComplete) {
                 calls += '''->setFormTypeOption('choice_label', fn («relatedEntity.name.formatForCodeCapital» $entity): string => $this->entityDisplayHelper->format«relatedEntity.name.formatForCodeCapital»($entity))'''
             }
         } else if ('Collection' == relationFieldType) {
@@ -812,9 +816,9 @@ class ConfigureFields implements ControllerMethodInterface {
             if (thisEntity.hasEditAction) {
                 calls += '''->setEntryToStringMethod(fn («relatedEntity.name.formatForCodeCapital» $entity, TranslatorInterface $translator): string => $this->entityDisplayHelper->format«relatedEntity.name.formatForCodeCapital»($entity))'''
             }
-        }
-        if (expanded) {
-            calls += '''->renderExpanded()'''
+            if (expanded) {
+                calls += '''->renderExpanded()'''
+            }
         }
         if (thisEntity.hasIndexAction || thisEntity.hasDetailAction) {
             calls += '''->setTemplatePath('@«application.vendor.formatForCodeCapital + application.name.formatForCodeCapital»/admin/crud/field/association.html.twig')'''

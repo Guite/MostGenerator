@@ -115,7 +115,7 @@ class UserDeletion {
 
             $logArgs = [
                 'app' => '«appName»',
-                'user' => $currentUser,
+                'user' => $currentUser->getUserIdentifier(),
                 'entityName' => $this->getEntityName(),
                 'field' => $userFieldName,
                 'userid' => $userId,
@@ -149,7 +149,7 @@ class UserDeletion {
 
             $logArgs = [
                 'app' => '«appName»',
-                'user' => $currentUser,
+                'user' => $currentUser->getUserIdentifier(),
                 'entityName' => $this->getEntityName(),
                 'field' => $userFieldName,
                 'userid' => $userId,
