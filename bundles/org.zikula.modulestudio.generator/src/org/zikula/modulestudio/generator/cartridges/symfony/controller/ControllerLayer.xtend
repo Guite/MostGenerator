@@ -170,13 +170,13 @@ class ControllerLayer {
 
                 return $this->entityInitializer->init«name.formatForCodeCapital»($entity);
             }
-
             «FOR action : actions»
-                «legacyActionHelper.generate(it, action, true)»
 
+                «legacyActionHelper.generate(it, action, true)»
             «ENDFOR»
             «FOR action : customActions»
                 «IF action.requiredFor(it)»
+
                     «action.controllerUsage(application, it)»
                 «ENDIF»
             «ENDFOR»

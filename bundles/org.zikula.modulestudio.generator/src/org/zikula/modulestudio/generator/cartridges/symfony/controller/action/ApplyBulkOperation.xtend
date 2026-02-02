@@ -30,6 +30,7 @@ class ApplyBulkOperation extends AbstractAction {
             'Symfony\\Component\\HttpFoundation\\Request',
             'Symfony\\Component\\Security\\Core\\User\\UserInterface',
             'Symfony\\Component\\Security\\Http\\Attribute\\CurrentUser',
+            'Symfony\\Component\\Security\\Http\\Attribute\\IsGranted',
             'function Symfony\\Component\\Translation\\t',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             appNamespace + '\\Helper\\WorkflowHelper'
@@ -79,6 +80,10 @@ class ApplyBulkOperation extends AbstractAction {
         $entityDisplayName = '«name.formatForDisplay»';
         $redirectRoute = '«application.routePrefix»_«nameMultiple.formatForDB»_«getPrimaryAction»';
 
+    '''
+
+    override protected controllerAttributes(Application it, Entity entity) '''
+        #[IsGranted('ROLE_EDITOR')]
     '''
 
     override protected routeMethods(Entity it) '''['POST']'''
