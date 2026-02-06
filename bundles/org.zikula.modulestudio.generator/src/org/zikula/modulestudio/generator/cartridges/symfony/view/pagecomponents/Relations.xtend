@@ -22,9 +22,9 @@ class Relations {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def displayItemList(Entity it, Application app, Boolean many, IMostFileSystemAccess fsa) {
+    def displayItemList(Entity it, Boolean many, IMostFileSystemAccess fsa) {
         var templatePath = templateFile('includeDisplayItemList' + (if (many) 'Many' else 'One'))
-        fsa.generateFile(templatePath, inclusionTemplate(app, many))
+        fsa.generateFile(templatePath, inclusionTemplate(application, many))
     }
 
     def private inclusionTemplate(Entity it, Application app, Boolean many) '''

@@ -64,9 +64,11 @@ class ConfigureFields implements ControllerMethodInterface {
                 imports.add(nsEabField + field.fieldType + 'Field')
             }
         }
+        if (hasCountryFieldsEntity || hasSluggableFields || hasUploadFieldsEntity) {
+            imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Crud')
+        }
         if (hasSluggableFields) {
             imports.add(nsEabField + 'SlugField')
-            imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Crud')
         }
 
         val nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
@@ -386,7 +388,8 @@ class ConfigureFields implements ControllerMethodInterface {
             // https://symfony.com/bundles/EasyAdminBundle/current/fields/CountryField.html
             // includeOnly([...])
             // remove([...])
-            // showFlag(false)
+            // hide flags in form pages which includes many flag images
+            calls += '''->showFlag(Crud::PAGE_NEW !== $pageName && Crud::PAGE_EDIT !== $pageName)'''
             // showName(false)
             // useAlpha3Codes()
         } else if (role === StringRole.CURRENCY) {
@@ -463,9 +466,10 @@ class ConfigureFields implements ControllerMethodInterface {
     // https://symfony.com/bundles/EasyAdminBundle/current/fields/AssociationField.html
     def private dispatch options(UserField it) {
         var calls = commonOptions
-        calls += '''->autocomplete()'''
         calls += '''->setTemplatePath('@EasyAdmin/crud/field/user.html.twig')'''
+        calls += '''->autocomplete(template: '@EasyAdmin/crud/field/user_autocomplete.html.twig', renderAsHtml: true)'''
         // TODO association options
+        calls += '''->setSortProperty('username')'''
         calls
     }
 
@@ -801,7 +805,7 @@ class ConfigureFields implements ControllerMethodInterface {
         var calls = ''
         if ('Association' == relationFieldType) {
             if (autoComplete) {
-                calls += '''->autocomplete(callback: static fn(«relatedEntity.name.formatForCodeCapital» $entity) => $entityDisplayHelper->format«relatedEntity.name.formatForCodeCapital»($entity))'''
+                calls += '''->autocomplete(template: '@«application.vendorAndName.toFirstUpper»/«relatedEntity.name.formatForCodeCapital»/association_autocomplete.html.twig', renderAsHtml: true)'''
             } else if (!expanded) {
                 calls += '''->renderAsNativeWidget()'''
             }
@@ -821,7 +825,7 @@ class ConfigureFields implements ControllerMethodInterface {
             }
         }
         if (thisEntity.hasIndexAction || thisEntity.hasDetailAction) {
-            calls += '''->setTemplatePath('@«application.vendor.formatForCodeCapital + application.name.formatForCodeCapital»/admin/crud/field/association.html.twig')'''
+            calls += '''->setTemplatePath('@«application.vendorAndName.toFirstUpper»/«relatedEntity.name.formatForCodeCapital»/association_display.html.twig')'''
         }
         calls
     }

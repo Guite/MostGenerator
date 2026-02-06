@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.Emails
 import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.StandardFields
+import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.AssociationView
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Custom
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Detail
@@ -29,12 +30,14 @@ class Views {
 
     IMostFileSystemAccess fsa
     Layout layoutHelper
-    Relations relationHelper
+    Relations relationHelperOld
+    AssociationView relationHelper
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         layoutHelper = new Layout(fsa)
-        relationHelper = new Relations()
+        relationHelperOld = new Relations()
+        relationHelper = new AssociationView()
 
         // main action templates
         for (entity : entities) {
@@ -79,8 +82,10 @@ class Views {
         val refedElems = entity.outgoing.filter(ManyToManyRelationship).filter[r|r.target.application == entity.application]
                        + entity.incoming.filter[r|r.source.application == entity.application]
         if (!refedElems.empty) {
-            relationHelper.displayItemList(entity, it, false, fsa)
-            relationHelper.displayItemList(entity, it, true, fsa)
+            relationHelperOld.displayItemList(entity, false, fsa)
+            relationHelperOld.displayItemList(entity, true, fsa)
+
+            relationHelper.generate(entity, fsa)
         }
     }
 }

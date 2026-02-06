@@ -278,7 +278,7 @@ class EntityDisplayHelper {
     def private formatFieldValue(Field it, CharSequence value) {
         switch it {
             NumberField: '''$this->«IF NumberRole.MONEY == role»currencyFormatter->formatCurrency(«value», 'EUR')«ELSE»numberFormatter->format(«value»)«ENDIF»'''
-            UserField: '''«value»?->getUname() ?? ''«''»'''
+            UserField: '''«value»?->getUserIdentifier() ?? ''«''»'''
             ListField: '''«IF null !== entity»$this->listEntriesHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')«ELSE»«value»«ENDIF»'''
             DatetimeField: '''$this->dateFormatter->formatObject(«value», [«IF isDateTimeField»IntlDateFormatter::SHORT, IntlDateFormatter::SHORT«ELSEIF isDateField»IntlDateFormatter::SHORT, IntlDateFormatter::NONE«ELSEIF isTimeField»IntlDateFormatter::NONE, IntlDateFormatter::SHORT«ENDIF»])'''
             default: value
