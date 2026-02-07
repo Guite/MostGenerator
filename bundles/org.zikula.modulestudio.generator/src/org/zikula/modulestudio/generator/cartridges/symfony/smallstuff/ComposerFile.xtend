@@ -44,7 +44,7 @@ class ComposerFile {
             "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Bundle\\Tests\\": "tests" }
         },
         "require": {
-            "php": ">=8.3",
+            "php": ">=8.4",
             "doctrine/doctrine-migrations-bundle": "^3.5",
             «IF hasGeographical»
                 "drmonty/leaflet": "^1",
