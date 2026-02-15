@@ -34,7 +34,7 @@ class ExtensionMenu {
             appNamespace + '\\Helper\\PermissionHelper'
         ])
         for (entity : entities.filter[hasIndexAction]) {
-            imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+            imports.add(appNamespace + '\\Controller\\Crud\\' + entity.name.formatForCodeCapital + 'Controller')
         }
         if (needsApproval) {
             imports.add(appNamespace + '\\Helper\\WorkflowHelper')
@@ -123,14 +123,14 @@ class ExtensionMenu {
                 foreach ($moderationEntries as $entry) {
                     $objectType = $entry['objectType'];
                     if ($this->permissionHelper->hasComponentPermission($objectType/*, $permLevel*/)) {
-                        $entityClass = match ($objectType) {
+                        $controllerClass = match ($objectType) {
                             «FOR entity : getEntitiesForWorkflow(true)»
-                                '«entity.name.formatForCode»' => «entity.name.formatForCodeCapital»::class,
+                                '«entity.name.formatForCode»' => «entity.name.formatForCodeCapital»Controller::class,
                             «ENDFOR»
                             default => throw new \RuntimeException('Invalid object type.')
                         };
                         yield $objectType . ucfirst($entry['state']) => 
-                            MenuItem::linkToCrud($entry['title'], 'fa fa-user-magnifying-class', $entityClass)
+                            MenuItem::linkTo($controllerClass, $entry['title'], 'fa fa-user-magnifying-class')
                                 ->setQueryParameter('filters[workflowState][comparison]', ComparisonType::EQ)
                                 ->setQueryParameter('filters[workflowState][value]', $entry['state'])
                                 ->setBadge($entry['amount'], 'primary')
@@ -143,7 +143,7 @@ class ExtensionMenu {
 
     def private menuEntryForCrud(Entity it) '''
         if ($this->permissionHelper->hasComponentPermission('«name.formatForCode»'/*, $permLevel*/)) {
-            yield '«name.formatForCode»' => MenuItem::linktoCrud(t('«nameMultiple.formatForDisplayCapital»'), 'fa fa-square', «name.formatForCodeCapital»::class);
+            yield '«name.formatForCode»' => MenuItem::linkto(«name.formatForCodeCapital»Controller::class, t('«nameMultiple.formatForDisplayCapital»'), 'fa fa-square');
         }
     '''
 
