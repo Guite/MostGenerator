@@ -25,7 +25,7 @@ class MenuBuilder {
         imports.addAll(#[
             'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
-            appNamespace + '\\Helper\\PermissionHelper'
+            appNamespace + '\\Security\\Permission'
         ])
         if ((!entities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty) {
             imports.add('Zikula\\UsersBundle\\UsersConstant')
@@ -62,7 +62,6 @@ class MenuBuilder {
     def private menuBuilderClassBaseImpl(Application it) '''
         public function __construct(
             protected readonly RequestStack $requestStack,
-            protected readonly PermissionHelper $permissionHelper,
             «IF hasDetailActions»
                 protected readonly EntityDisplayHelper $entityDisplayHelper,
             «ENDIF»

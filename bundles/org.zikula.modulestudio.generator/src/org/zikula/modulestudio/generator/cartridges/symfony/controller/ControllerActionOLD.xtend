@@ -206,36 +206,23 @@ class ControllerActionOLD {
         «ENDIF»
         $objectType = '«name.formatForCode»';
         // permission check
-        $isAdminArea = $request->attributes->get('isAdminArea', false);
-        /*$permLevel = $isAdminArea ? ACCESS_ADMIN : «getPermissionAccessLevel(action)»;
+        $permissionLevel = Permission::«getPermissionAccessLevel(action)»;
         «IF action instanceof IndexAction && tree»
-            if (!$isAdminArea && 'tree' === $request->query->getAlnum('tpl')) {
-                $permLevel = ACCESS_EDIT;
+            if ('tree' === $request->query->getAlnum('tpl')) {
+                $permissionLevel = Permission::EDIT;
             }
         «ELSEIF action instanceof DetailAction && loggable»
             $route = $request->attributes->get('_route', '');
-            if (!$isAdminArea && '«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' === $route) {
-                $permLevel = ACCESS_EDIT;
+            if ('«application.appName.formatForDB»_«name.formatForDB»_displaydeleted' === $route) {
+                $permissionLevel = Permission::EDIT;
             }
         «ENDIF»
-        */
         «IF action instanceof DetailAction || action instanceof DeleteAction»
-            if (!$this->permissionHelper->hasEntityPermission($«name.formatForCode»/*, $permLevel*/)) {
-                «IF ownerPermission && action instanceof DeleteAction»
-                    if ($isAdminArea) {
-                        throw new AccessDeniedException();
-                    }
-                    $currentUserId = $currentUser?->getId() ?? UsersConstant::USER_ID_ANONYMOUS;
-                    $isOwner = 0 < $currentUserId && $currentUserId === $«name.formatForCode»->getCreatedBy()?->getId();
-                    if (!$isOwner || !$this->permissionHelper->mayEdit($«name.formatForCode»)) {
-                        throw new AccessDeniedException();
-                    }
-                «ELSE»
-                    throw new AccessDeniedException();
-                «ENDIF»
+            if (!$this->security->isGranted($permissionLevel->value, $«name.formatForCode»)) {
+                throw new AccessDeniedException();
             }
         «ELSE»
-            if (!$this->permissionHelper->hasComponentPermission($objectType/*, $permLevel*/)) {
+            if (!$this->security->isGranted($permissionLevel->value, «name.formatForCodeCapital»::class)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
@@ -252,7 +239,7 @@ class ControllerActionOLD {
 
             // check if deleted entities should be displayed
             $viewDeleted = $request->query->getInt('deleted');
-            if (1 === $viewDeleted && $this->permissionHelper->hasComponentPermission('«name.formatForCode»'/*, ACCESS_EDIT*/)) {
+            if (1 === $viewDeleted && $this->security->isGranted(Permission::EDIT->value, «name.formatForCodeCapital»::class)) {
                 $templateParameters['deletedEntities'] = $loggableHelper->getDeletedEntities($objectType);
 
                 return $viewHelper->processTemplate($objectType, 'viewDeleted', $templateParameters);
@@ -283,13 +270,6 @@ class ControllerActionOLD {
             $templateParameters
         );
 
-        // filter by permissions
-        $templateParameters['items'] = $this->permissionHelper->filterCollection(
-            $objectType,
-            $templateParameters['items'],
-            $permLevel
-        );
-
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'index', $templateParameters);
     '''
@@ -298,7 +278,7 @@ class ControllerActionOLD {
         «IF approval»
             if (
                 'approved' !== $«name.formatForCode»->getWorkflowState()
-                && !$this->permissionHelper->hasEntityPermission($«name.formatForCode»/*, ACCESS_EDIT*/)
+                && !$this->security->isGranted(Permission::EDIT->value, $«name.formatForCode»)
             ) {
                 throw new AccessDeniedException();
             }
@@ -306,9 +286,7 @@ class ControllerActionOLD {
         «ENDIF»
         «IF loggable»
             $requestedVersion = $request->query->getInt('version');
-            $isAdminArea = $request->attributes->get('isAdminArea', false);
-            $versionPermLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
-            if (0 < $requestedVersion && $this->permissionHelper->hasEntityPermission($«name.formatForCode»/*, $versionPermLevel*/)) {
+            if (0 < $requestedVersion && $this->security->isGranted(Permission::EDIT->value, $«name.formatForCode»)) {
                 // preview of a specific version is desired, but detach entity
                 $«name.formatForCode» = $loggableHelper->revert($«name.formatForCode», $requestedVersion, true);
             }

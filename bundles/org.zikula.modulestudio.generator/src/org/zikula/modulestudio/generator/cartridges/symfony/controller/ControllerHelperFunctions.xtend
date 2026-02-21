@@ -11,14 +11,14 @@ class ControllerHelperFunctions {
 
     def determineEntityId(Application it, Boolean considerSlug) '''
         «IF hasSluggable && considerSlug»
-            $hasSlug = in_array($objectType, ['«entities.filter[hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
-            if ($hasSlug) {
+            $isSluggable = in_array($objectType, ['«entities.filter[hasSluggableFields].map[name.formatForCode].join('\', \'')»'], true);
+            if ($isSluggable && $request->query->has('slug')) {
                 $id = $request->query->get('slug');
             } else {
-                $id = $request->query->get('id');
+                $id = $request->query->get('entityId');
             }
         «ELSE»
-            $id = $request->query->get('id');
+            $id = $request->query->get('entityId');
         «ENDIF»
 
         if (null === $id || '' === $id) {

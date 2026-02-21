@@ -30,8 +30,7 @@ class ViewHelper {
             'Twig\\Environment',
             'Twig\\Loader\\LoaderInterface',
             'Zikula\\CoreBundle\\Response\\PlainResponse',
-            appNamespace + '\\Helper\\ControllerHelper',
-            appNamespace + '\\Helper\\PermissionHelper'
+            appNamespace + '\\Helper\\ControllerHelper'
         ])
         if (hasGeographical) {
             imports.add('Symfony\\Component\\Filesystem\\Filesystem')
@@ -71,7 +70,6 @@ class ViewHelper {
             protected readonly LoaderInterface $twigLoader,
             protected readonly RequestStack $requestStack,
             protected readonly ControllerHelper $controllerHelper,
-            protected readonly PermissionHelper $permissionHelper,
             «IF hasGeographical»
                 protected readonly array $geoConfig,
             «ENDIF»

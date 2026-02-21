@@ -24,14 +24,14 @@ class IndexActions {
     '''
 
     def private actionsImpl(Entity it, Application app) '''
-        $routePrefix = '«app.appName.formatForDB»_«name.formatForDB»_';
+        $routePrefix = '«app.routePrefix»_«nameMultiple.formatForDB»_';
         «IF ownerPermission»
             $showOnlyOwn = 'admin' !== $routeArea && $this->listViewConfig['«name.formatForSnakeCase»_private_mode'];
         «ENDIF»
         «IF tree»
             if ('tree' === $currentTemplate) {
                 «IF hasEditAction»
-                    if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF !approval»EDIT«ELSE»COMMENT«ENDIF»)) {
+                    if ($this->security->isGranted(Permission::«IF !approval»CREATE«ELSE»COMMENT«ENDIF»->value, «name.formatForCodeCapital»::class)) {
                         $menu->addChild('Add root node', [
                             'uri' => 'javascript:void(0)',
                         ])
@@ -77,10 +77,10 @@ class IndexActions {
             «ENDIF»
             «linkToggleOwner»
             «IF loggable»
-                if ($this->permissionHelper->mayUseHistory($objectType)) {
+                if ($this->security->isGranted(Permission::HISTORY->value, «name.formatForCodeCapital»::class)) {
                     // check if there exist any deleted «nameMultiple.formatForDisplay»
                     $hasDeletedEntities = false;
-                    if ($this->permissionHelper->hasPermission(/*ACCESS_EDIT*/)) {
+                    if ($this->security->isGranted(Permission::EDIT->value, «name.formatForCodeCapital»::class)) {
                         $hasDeletedEntities = $this->loggableHelper->hasDeletedEntities($objectType);
                     }
                     if ($hasDeletedEntities) {
@@ -105,7 +105,7 @@ class IndexActions {
     def private linkToEntityCreationImpl(Entity it) '''
         $canBeCreated = $this->modelHelper->canBeCreated($objectType);
         if ($canBeCreated) {
-            if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF !approval»EDIT«ELSE»COMMENT«ENDIF»)) {
+            if ($this->security->isGranted(Permission::«IF !approval»CREATE«ELSE»COMMENT«ENDIF»->value, «name.formatForCodeCapital»::class)) {
                 $menu->addChild('Create «name.formatForDisplay»', [
                     'route' => $routePrefix . 'edit',
                 ])
@@ -144,7 +144,7 @@ class IndexActions {
 
     def private linkToggleOwner(Entity it) '''
         «IF standardFields»
-            if («IF ownerPermission»!$showOnlyOwn && «ENDIF»$this->permissionHelper->hasComponentPermission($objectType, ACCESS_«IF !approval»EDIT«ELSE»COMMENT«ENDIF»)) {
+            if («IF ownerPermission»!$showOnlyOwn && «ENDIF»$this->security->isGranted(Permission::«IF !approval»CREATE«ELSE»COMMENT«ENDIF»->value, «name.formatForCodeCapital»::class)) {
                 «linkToggleOwnerImpl»
             }
         «ENDIF»

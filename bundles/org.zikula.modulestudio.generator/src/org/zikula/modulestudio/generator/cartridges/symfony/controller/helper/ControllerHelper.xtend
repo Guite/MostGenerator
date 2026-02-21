@@ -32,8 +32,7 @@ class ControllerHelper {
             'Exception',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
-            'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-            appNamespace + '\\Helper\\PermissionHelper'
+            'Zikula\\CoreBundle\\Translation\\TranslatorTrait'
         ])
         for (entity : entities) {
             imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
@@ -97,7 +96,6 @@ class ControllerHelper {
             «FOR entity : entities.sortBy[name]»
                 protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
             «ENDFOR»
-            protected readonly PermissionHelper $permissionHelper,
             «IF needsFeatureActivationHelper»
                 protected readonly FeatureActivationHelper $featureActivationHelper,
             «ENDIF»
@@ -218,7 +216,6 @@ class ControllerHelper {
                 if (
                     false === mb_stripos($parameterName, 'thumbRuntimeOptions')
                     && false === mb_stripos($parameterName, 'featureActivationHelper')
-                    && false === mb_stripos($parameterName, 'permissionHelper')
                 ) {
                     continue;
                 }
@@ -355,7 +352,6 @@ class ControllerHelper {
                     $args['action'] = end($routeNameParts);
                 }
             }
-            $parameters['permissionHelper'] = $this->permissionHelper;
             «IF needsFeatureActivationHelper»
 
                 $parameters['featureActivationHelper'] = $this->featureActivationHelper;

@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.DateTimeExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ConfigureCrud implements ControllerMethodInterface {
 
@@ -14,6 +15,7 @@ class ConfigureCrud implements ControllerMethodInterface {
     extension DateTimeExtensions = new DateTimeExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     Iterable<DatetimeField> dateTimeFields
 
@@ -31,6 +33,7 @@ class ConfigureCrud implements ControllerMethodInterface {
         if (!dateTimeFields.empty) {
             imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Field\\DateTimeField')
         }
+        imports.add(application.appNamespace + '\\Security\\Permission')
         imports
     }
 
@@ -48,6 +51,9 @@ class ConfigureCrud implements ControllerMethodInterface {
             fn (?«name.formatForCodeCapital» $«name.formatForCode», ?string $pageName) => $«name.formatForCode» ?? '«name.formatForDisplayCapital»'
         )
         ->setEntityLabelInPlural('«nameMultiple.formatForDisplayCapital»')
+        «IF hasIndexAction || hasDetailAction»
+            ->setEntityPermission(Permission::ACCESS->value)
+        «ENDIF»
         ->hideNullValues()
         «IF hasIndexAction»
             ->setPageTitle(Crud::PAGE_INDEX, t('%entity_label_plural% list'))

@@ -84,12 +84,12 @@ class ControllerExtensions {
 
     def getPermissionAccessLevel(Entity it, Action action) {
         switch action {
-            IndexAction: 'ACCESS_OVERVIEW'
-            DetailAction: 'ACCESS_READ'
-            EditAction: if (approval) 'ACCESS_COMMENT' else 'ACCESS_EDIT'
-            DeleteAction: 'ACCESS_DELETE'
-            CustomAction: 'ACCESS_OVERVIEW'
-            default: 'ACCESS_ADMIN'
+            IndexAction: 'LIST'
+            DetailAction: 'DETAIL'
+            EditAction: if (approval) 'COMMENT' else 'EDIT' // CREATE
+            DeleteAction: 'DELETE'
+            CustomAction: 'ACCESS'
+            default: 'ACCESS'
         }
     }
 

@@ -21,9 +21,6 @@ class ItemActions {
     extension Utils = new Utils
 
     def actionsImpl(Application it) '''
-        «IF (!entities.filter[ownerPermission].empty && (hasEditActions || hasDeleteActions)) || !relations.empty»
-            $currentUserId = $this->security->getUser()?->getId() ?? UsersConstant::USER_ID_ANONYMOUS;
-        «ENDIF»
         «FOR entity : entities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
                 «entity.actionsImpl»
@@ -33,9 +30,6 @@ class ItemActions {
 
     def private actionsImpl(Entity it) '''
         $routePrefix = '«application.appName.formatForDB»_«name.formatForDB»_';
-        «IF (ownerPermission && (hasEditAction || hasDeleteAction)) || (standardFields && !application.relations.empty)»
-            $isOwner = 0 < $currentUserId && $currentUserId === $entity->getCreatedBy()?->getId();
-        «ENDIF»
         «IF hasDetailAction || hasEditAction || loggable || hasDeleteAction»
 
         «ENDIF»
@@ -76,19 +70,12 @@ class ItemActions {
 
     def private itemActionsTargetingEdit(Entity it, Application app) '''
         «IF hasEditAction»
-            if ($this->permissionHelper->mayEdit($entity)) {
-                «IF ownerPermission»
-                    // only allow editing for the owner or people with higher permissions
-                    if ($isOwner || $this->permissionHelper->hasEntityPermission($entity/*, ACCESS_ADD*/)) {
-                        «itemActionsForEditAction»
-                    }
-                «ELSE»
-                    «itemActionsForEditAction»
-                «ENDIF»
+            if ($this->security->isGranted(Permission::EDIT->value, $entity)) {
+                «itemActionsForEditAction»
             }
         «ENDIF»
         «IF loggable»
-            if ($this->permissionHelper->mayAccessHistory($entity)) {
+            if ($this->security->isGranted(Permission::HISTORY->value, $entity)) {
                 if (in_array($context, ['index', 'detail'], true) && $this->loggableHelper->hasHistoryItems($entity)) {
                     $menu->addChild('History', [
                         'route' => $routePrefix . 'loggablehistory',
@@ -102,7 +89,7 @@ class ItemActions {
             }
         «ENDIF»
         «IF hasDeleteAction»
-            if ($this->permissionHelper->mayDelete($entity)«IF ownerPermission» || ($isOwner && $this->permissionHelper->mayEdit($entity))«ENDIF») {
+            if ($this->security->isGranted(Permission::DELETE->value, $entity)) {
                 $menu->addChild('Delete', [
                     'route' => $routePrefix . 'delete',
                     'routeParameters' => $entity->getRouteParameters(),
@@ -142,7 +129,7 @@ class ItemActions {
                 «val relationAliasNameParam = elem.getRelationAliasName(!useTarget)»
                 «val otherEntity = (if (!useTarget) elem.source else elem.target)»
 
-                if («IF standardFields»$isOwner || «ENDIF»$this->permissionHelper->hasComponentPermission('«otherEntity.name.formatForCode»', ACCESS_«IF otherEntity.ownerPermission»ADD«ELSEIF !otherEntity.approval»EDIT«ELSE»COMMENT«ENDIF»)) {
+                if ($this->security->isGranted(Permission::«IF !otherEntity.approval»CREATE«ELSE»COMMENT«ENDIF»->value, «otherEntity.name.formatForCodeCapital»::class)) {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (null === $entity->get«relationAliasName»()) {
@@ -190,7 +177,7 @@ class ItemActions {
             ->setExtra('translation_domain', '«name.formatForCode»')
         ;
         «IF tree»
-            if ($this->permissionHelper->hasEntityPermission($entity/*, ACCESS_ADD*/)) {
+            if ($this->security->isGranted(Permission::CREATE->value, $entity)) {
                 $menu->addChild('Add sub «name.formatForDisplay»', [
                     'route' => $routePrefix . 'edit',
                     'routeParameters' => ['parent' => $entity->getKey()],

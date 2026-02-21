@@ -11,6 +11,8 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.Controlle
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.EventSubscribers
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.FormHandlerOLD
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.HelperServices
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.JavaScriptFiles
+import org.zikula.modulestudio.generator.cartridges.symfony.controller.Security
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Configuration
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.Initializer
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.bundle.MetaData
@@ -139,6 +141,9 @@ class SymfonyBundleGenerator implements IGenerator {
         pm?.subTask('Controller: JavaScript files')
         'Generating JavaScript files'.printIfNotTesting(fsa)
         new JavaScriptFiles().generate(it, fsa)
+        pm?.subTask('Controller: Security layer')
+        'Generating security layer'.printIfNotTesting(fsa)
+        new Security().generate(it, fsa)
     }
 
     def private generateView(Application it) {

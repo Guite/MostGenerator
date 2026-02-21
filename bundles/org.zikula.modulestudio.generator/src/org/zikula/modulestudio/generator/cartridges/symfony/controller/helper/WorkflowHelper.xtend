@@ -31,16 +31,15 @@ class WorkflowHelper {
         val imports = new ImportList
         imports.addAll(#[
             'Doctrine\\ORM\\EntityManagerInterface',
-            'Exception',
             'Psr\\Log\\LoggerInterface',
-            'RuntimeException',
             'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\Workflow\\Registry',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             appNamespace + '\\Entity\\EntityInterface',
-            appNamespace + '\\Helper\\PermissionHelper'
+            appNamespace + '\\Security\\Permission'
         ])
         for (entity : getEntitiesForWorkflow(true)) {
+            imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
             imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
         }
         imports
@@ -62,14 +61,13 @@ class WorkflowHelper {
 
     def private helperBaseImpl(Application it) '''
         public function __construct(
+            protected readonly Security $security,
             protected readonly EntityManagerInterface $entityManager,
             protected readonly TranslatorInterface $translator,
             protected readonly Registry $workflowRegistry,
-            protected readonly Security $security,
             «FOR entity : getEntitiesForWorkflow(true)»
                 protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
             «ENDFOR»
-            protected readonly PermissionHelper $permissionHelper,
             protected readonly LoggerInterface $logger,
         ) {
         }
@@ -337,7 +335,7 @@ class WorkflowHelper {
                 } else {
                     $this->logger->notice('{app}: User {user} updated an entity.', $logArgs);
                 }
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
                 if ('delete' === $actionId) {
                     $this->logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
                 } else {
@@ -345,7 +343,7 @@ class WorkflowHelper {
                 }
                 // uncomment to reveal Doctrine/SQL error
                 // die($exception->getMessage());
-                throw new RuntimeException($exception->getMessage());
+                throw new \RuntimeException($exception->getMessage());
             }
 
             if (false !== $result && !$recursive) {
@@ -373,17 +371,15 @@ class WorkflowHelper {
             // check if objects are waiting for approval
             $state = 'waiting';
             «FOR entity : entitiesStandard»
-                «entity.readAmountForObjectTypeAndState('approval')»
+                «entity.addAmountIfAvailable('approval')»
             «ENDFOR»
 
             return $amounts;
         }
     '''
 
-    def private readAmountForObjectTypeAndState(Entity it, String requiredAction) '''
-        $objectType = '«name.formatForCode»';
-        «val permissionLevel = if (requiredAction == 'approval') 'ADD' else 'MODERATE'»
-        if ($this->permissionHelper->hasComponentPermission($objectType/*, ACCESS_«permissionLevel»*/)) {
+    def private addAmountIfAvailable(Entity it, String requiredAction) '''
+        if ($this->security->isGranted(Permission::«IF 'approval' == requiredAction»MODERATE«ELSE»CREATE«ENDIF»->value, «name.formatForCodeCapital»::class)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if (0 < $amount) {
                 $amounts[] = [

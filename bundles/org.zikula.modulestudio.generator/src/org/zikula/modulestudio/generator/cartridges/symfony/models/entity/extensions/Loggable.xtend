@@ -230,7 +230,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
                 // step 2 - conflate data arrays
                 $objectId = $logEntry->getObjectId();
                 if ($lastObjectId !== $objectId) {
-                    if ($lastObjectId > 0) {
+                    if (0 < $lastObjectId) {
                         if (count($dataForObject)) {
                             // write conflated data into last obsolete version (which will be kept)
                             $lastLogEntry->setData($dataForObject);

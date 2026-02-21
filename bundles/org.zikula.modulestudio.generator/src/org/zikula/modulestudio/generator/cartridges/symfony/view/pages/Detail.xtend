@@ -7,8 +7,6 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.Relationship
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.MenuViews
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -60,9 +58,6 @@ class Detail {
             {% set isQuickView = app.request.query.getBoolean('raw', false) %}
             {% set templateTitle = «objName»|«application.appName.formatForDB»_formattedTitle|default('«name.formatForDisplayCapital»'|trans) %}
             «templateHeading(appName)»
-            {% if not isQuickView %}
-                «new MenuViews().itemActions(it, 'detail')»
-            {% endif %}
         {% endblock %}
         {% block admin_page_icon 'eye' %}
         {% block content %}
@@ -78,10 +73,10 @@ class Detail {
                 «IF useGroupingTabs('detail')»
                     <div role="tabpanel" class="tab-pane fade" id="tabRelations" aria-labelledby="relationsTab">
                         <h3>{% trans from 'messages' %}Related data{% endtrans %}</h3>
-                        «displayRelatedItems(appName)»
+                        «/*displayRelatedItems(appName)*/»
                     </div>
                 «ELSE»
-                    «displayRelatedItems(appName)»
+                    «/*displayRelatedItems(appName)*/»
                 «ENDIF»
             {% endblock %}
         «ENDIF»
@@ -91,16 +86,6 @@ class Detail {
                 «includeLeaflet('detail', objName)»
             {% endblock %}
         «ENDIF»
-    '''
-
-    def private displayRelatedItems(Entity it, String appName) '''
-        «val relationHelper = new Relations»
-        «FOR elem : incomingReferredElements»
-            «relationHelper.displayRelatedItems(elem, appName, it, false)»
-        «ENDFOR»
-        «FOR elem : outgoingReferredElements»
-            «relationHelper.displayRelatedItems(elem, appName, it, true)»
-        «ENDFOR»
     '''
 
     def private content(Entity it, String appName) '''

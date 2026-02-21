@@ -189,7 +189,7 @@ class ConfigureFields implements ControllerMethodInterface {
     '''
 
     def private definition(Field it) '''
-        yield '«name.formatForCode»' => «fieldType»Field::new('«name.formatForCode»«IF it instanceof UploadField».name«ENDIF»', t('«name.formatForDisplayCapital»'))
+        yield '«name.formatForCode»' => «fieldType»Field::new('«name.formatForCode»«IF it instanceof UploadField».name«ENDIF»', t('«label»'))
             «IF !visibility(entity).empty»
                 «visibility(entity)»
             «ENDIF»
@@ -208,6 +208,8 @@ class ConfigureFields implements ControllerMethodInterface {
                 ])
             «ENDIF»
     '''
+
+    def private label(Field it) '''«IF name === 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'''
 
     def private dispatch slugDefinition(Field it) '''
     '''
@@ -869,7 +871,7 @@ class ConfigureFields implements ControllerMethodInterface {
                 }
             «ENDIF»
             «IF !autoComplete»
-                $choiceLabelClosure = fn ($entity) => $this->entityDisplayHelper->getFormattedTitle($entity);
+                $choiceLabelClosure = static fn ($entity) => $this->entityDisplayHelper->getFormattedTitle($entity);
             «ENDIF»
             ... already removed code ...
         «ENDIF»

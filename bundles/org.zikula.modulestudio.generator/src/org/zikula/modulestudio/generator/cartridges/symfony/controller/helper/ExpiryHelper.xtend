@@ -34,12 +34,14 @@ class ExpiryHelper {
                 'Doctrine\\DBAL\\Exception\\TableNotFoundException',
                 'Exception',
                 'Psr\\Log\\LoggerInterface',
+                'Symfony\\Bundle\\SecurityBundle\\Security',
                 'Symfony\\Component\\HttpFoundation\\RequestStack',
                 'Symfony\\Contracts\\Translation\\TranslatorInterface',
-                appNamespace + '\\Helper\\PermissionHelper',
-                appNamespace + '\\Helper\\WorkflowHelper'
+                appNamespace + '\\Helper\\WorkflowHelper',
+                appNamespace + '\\Security\\Permission'
             ])
             for (entity : getEntitiesWithArchiveOrExpiry) {
+                imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
                 imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
             }
         }
@@ -78,14 +80,14 @@ class ExpiryHelper {
                 protected readonly EntityManagerInterface $entityManager,
             «ENDIF»
             «IF hasAutomaticExpiryHandling»
+                protected readonly Security $security,
+                protected readonly TranslatorInterface $translator,
+                protected readonly RequestStack $requestStack,
+                protected readonly WorkflowHelper $workflowHelper,
                 «FOR entity : getEntitiesWithArchiveOrExpiry»
                     protected readonly «entity.name.formatForCodeCapital»RepositoryInterface $«entity.name.formatForCode»Repository,
                 «ENDFOR»
-                protected readonly TranslatorInterface $translator,
-                protected readonly RequestStack $requestStack,
                 protected readonly LoggerInterface $logger,
-                protected readonly PermissionHelper $permissionHelper,
-                protected readonly WorkflowHelper $workflowHelper,
             «ENDIF»
             «IF hasLoggable»
                 protected readonly array $loggableConfig,
@@ -106,26 +108,26 @@ class ExpiryHelper {
             }
 
             «IF hasAutomaticArchiving»
-                if ($this->permissionHelper->hasPermission(/*ACCESS_EDIT*/)) {
-                    «FOR entity : getArchivingEntities»
+                «FOR entity : getArchivingEntities»
+                    if ($this->security->isGranted(Permission::EDIT->value, «entity.name.formatForCodeCapital»::class) {
                         // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
                         $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
                         $this->logger->notice('{app}: Automatic archiving for the {entity} entity started.', $logArgs);
                         $this->archive«entity.nameMultiple.formatForCodeCapital»();
                         $this->logger->notice('{app}: Automatic archiving for the {entity} entity completed.', $logArgs);
-                    «ENDFOR»
-                }
+                    }
+                «ENDFOR»
             «ENDIF»
             «IF hasAutomaticExpiryDeletion»
-                if ($this->permissionHelper->hasPermission(/*ACCESS_DELETE*/)) {
-                    «FOR entity : getArchivingEntities»
+                «FOR entity : getArchivingEntities»
+                    if ($this->security->isGranted(Permission::DELETE->value, «entity.name.formatForCodeCapital»::class) {
                         // perform deletion for expired «entity.nameMultiple.formatForDisplay»
                         $logArgs = ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»'];
                         $this->logger->notice('{app}: Automatic deletion for the {entity} entity started.', $logArgs);
                         $this->delete«entity.nameMultiple.formatForCodeCapital»();
                         $this->logger->notice('{app}: Automatic deletion for the {entity} entity completed.', $logArgs);
-                    «ENDFOR»
-                }
+                    }
+                «ENDFOR»
             «ENDIF»
         }
         «FOR entity : getArchivingEntities»

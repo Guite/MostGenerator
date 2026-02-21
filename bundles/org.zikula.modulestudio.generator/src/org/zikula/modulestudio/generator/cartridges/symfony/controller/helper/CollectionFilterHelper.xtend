@@ -33,8 +33,7 @@ class CollectionFilterHelper {
         val imports = new ImportList
         imports.addAll(#[
             'Doctrine\\ORM\\QueryBuilder',
-            'Symfony\\Component\\HttpFoundation\\RequestStack',
-            appNamespace + '\\Helper\\PermissionHelper'
+            'Symfony\\Component\\HttpFoundation\\RequestStack'
         ])
         if (hasStandardFieldEntities) {
             imports.addAll(#[
@@ -69,7 +68,6 @@ class CollectionFilterHelper {
     def private helperBaseImpl(Application it) '''
         public function __construct(
             protected readonly RequestStack $requestStack,
-            protected readonly PermissionHelper $permissionHelper,
             «IF hasStandardFieldEntities»
                 protected readonly Security $security,
             «ENDIF»

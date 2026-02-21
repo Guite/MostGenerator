@@ -373,6 +373,7 @@ class EventSubscribers {
         «IF !isBase»
             use «appNamespace»\EventSubscriber\Base\AbstractWorkflowEventsSubscriber;
         «ELSE»
+            use Symfony\Bundle\SecurityBundle\Security;
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\Workflow\Event\AnnounceEvent;
             use Symfony\Component\Workflow\Event\CompletedEvent;
@@ -387,16 +388,16 @@ class EventSubscribers {
             use Symfony\Component\Workflow\WorkflowEvents;
             use Symfony\Contracts\Translation\TranslatorInterface;
             use «appNamespace»\Entity\EntityInterface;
-            use «appNamespace»\Helper\PermissionHelper;
             «IF needsApproval»
                 use «appNamespace»\Helper\NotificationHelper;
             «ENDIF»
+            use «appNamespace »\Security\Permission;
         «ENDIF»
 
         /**
          * Event handler implementation class for workflow events.
          *
-         * @see /src/docs/Workflows/WorkflowEvents.md
+         * @see /docs/Development/Misc/Workflows.md
          */
         «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»WorkflowEventsSubscriber«IF !isBase» extends AbstractWorkflowEventsSubscriber«ELSE» implements EventSubscriberInterface«ENDIF»
         {

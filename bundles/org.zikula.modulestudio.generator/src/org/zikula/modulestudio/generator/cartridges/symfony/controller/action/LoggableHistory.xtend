@@ -28,15 +28,19 @@ class LoggableHistory extends AbstractAction {
         result.addAll(#[
             'Doctrine\\Persistence\\ManagerRegistry',
             'Symfony\\Bundle\\FrameworkBundle\\Controller\\ControllerHelper',
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\HttpFoundation\\Request',
             'Symfony\\Component\\HttpFoundation\\Response',
             'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException',
             'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             appNamespace + '\\Helper\\LoggableHelper',
-            appNamespace + '\\Helper\\PermissionHelper',
-            appNamespace + '\\Helper\\WorkflowHelper'
+            appNamespace + '\\Helper\\WorkflowHelper',
+            appNamespace + '\\Security\\Permission'
         ])
+        for (entity : entities.filter[loggable]) {
+            result.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+        }
         if (hasLoggableTranslatable) {
             result.add(appNamespace + '\\Helper\\TranslatableHelper')
         }
@@ -46,9 +50,9 @@ class LoggableHistory extends AbstractAction {
     override protected constructorArguments(Application it) {
         val result = <String>newArrayList
         result.addAll(#[
+            'Security $security',
             'ControllerHelper $controllerHelper',
             'ManagerRegistry $managerRegistry',
-            'PermissionHelper $permissionHelper',
             'LoggableHelper $loggableHelper',
             'WorkflowHelper $workflowHelper',
             'TranslatorInterface $translator'
@@ -98,7 +102,7 @@ class LoggableHistory extends AbstractAction {
         $repository = $this->managerRegistry->getRepository($entityFqcn);
         «IF hasSluggable»
             $entity = null;
-            if ($hasSlug) {
+            if ($isSluggable) {
                 $entity = $repository->selectBySlug($id);
             }
             if (null === $entity) {
@@ -117,10 +121,7 @@ class LoggableHistory extends AbstractAction {
             );
         }
 
-        $dashboard = $request->attributes->get('dashboardControllerFqcn');
-        $isAdminArea = 'Zikula\ThemeBundle\Controller\Dashboard\AdminDashboardController' === $dashboard;
-        $permLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
-        if (!$this->permissionHelper->hasEntityPermission($entity/*, $permLevel*/)) {
+        if (!$this->security->isGranted(Permission::HISTORY->value, $entity)) {
             throw new AccessDeniedException();
         }
 
@@ -131,7 +132,7 @@ class LoggableHistory extends AbstractAction {
         if (0 < $revertToVersion && 1 < count($logEntries)) {
             // revert to requested version
             «IF hasSluggable»
-                if ($hasSlug) {
+                if ($isSluggable) {
                     $entityId = $entity->getId();
                 }
             «ENDIF»
@@ -177,7 +178,7 @@ class LoggableHistory extends AbstractAction {
             }
             «IF hasSluggable»
 
-                if ($hasSlug) {
+                if ($isSluggable) {
                     $entity = $repository->selectById($entityId);
                 }
             «ENDIF»

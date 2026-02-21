@@ -11,7 +11,6 @@ class IndexPagesHelper {
 
     def commonHeader(Entity it) '''
         «docsWithVariables(application)»
-        «new MenuViews().viewActions(it)»
 
     '''
 

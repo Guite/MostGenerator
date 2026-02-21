@@ -78,7 +78,7 @@ abstract class AbstractAction implements ActionInterface {
 
     def private invoke(Application it) '''
         public function __invoke(
-            «FOR arg : invocationArguments(false)»
+            «FOR arg : invocationArguments(true)»
                 «arg»,
             «ENDFOR»
         ): «returnType» {

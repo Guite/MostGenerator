@@ -8,7 +8,6 @@ import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.Emails
 import org.zikula.modulestudio.generator.cartridges.symfony.view.additions.StandardFields
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.AssociationView
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Custom
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.Detail
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pages.History
@@ -30,13 +29,11 @@ class Views {
 
     IMostFileSystemAccess fsa
     Layout layoutHelper
-    Relations relationHelperOld
     AssociationView relationHelper
 
     def generate(Application it, IMostFileSystemAccess fsa) {
         this.fsa = fsa
         layoutHelper = new Layout(fsa)
-        relationHelperOld = new Relations()
         relationHelper = new AssociationView()
 
         // main action templates
@@ -82,9 +79,6 @@ class Views {
         val refedElems = entity.outgoing.filter(ManyToManyRelationship).filter[r|r.target.application == entity.application]
                        + entity.incoming.filter[r|r.source.application == entity.application]
         if (!refedElems.empty) {
-            relationHelperOld.displayItemList(entity, false, fsa)
-            relationHelperOld.displayItemList(entity, true, fsa)
-
             relationHelper.generate(entity, fsa)
         }
     }

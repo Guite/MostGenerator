@@ -18,6 +18,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ConfigureFilters implements ControllerMethodInterface {
@@ -26,6 +27,7 @@ class ConfigureFilters implements ControllerMethodInterface {
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
     Iterable<Relationship> incomingRelations
@@ -39,7 +41,10 @@ class ConfigureFilters implements ControllerMethodInterface {
     override imports(Entity it) {
         val formFields = getAllEntityFields.filter[f|!(f instanceof UploadField)]
         val imports = newArrayList
-        imports.add('EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Filters')
+        imports.addAll(#[
+            'EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Filters',
+            application.appNamespace + '\\Entity\\' + name.formatForCodeCapital
+        ])
         val nsEabFilter = 'EasyCorp\\Bundle\\EasyAdminBundle\\Filter\\'
         if (!formFields.filter(BooleanField).empty) {
             imports.add(nsEabFilter + 'BooleanFilter')
@@ -105,7 +110,7 @@ class ConfigureFilters implements ControllerMethodInterface {
     override generateMethod(Entity it) '''
         public function configureFilters(Filters $filters): Filters
         {
-            if (!$this->permissionHelper->mayUseQuickNav('«name.formatForCode»')) {
+            if (!$this->security->isGranted(Permission::FILTER->value, «name.formatForCodeCapital»::class)) {
                 return $filters;
             }
 
@@ -237,9 +242,9 @@ class ConfigureFilters implements ControllerMethodInterface {
         $objectType = '«(if (useTarget) target else source).name.formatForCode»';
         // select without joins
         $entities = $this->«(if (useTarget) target else source).name.formatForCode»Repository->selectWhere('', '', false);
-        $permLevel = «(if (useTarget) target else source).getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createIndexAction)»;
+        $permissionLevel = «(if (useTarget) target else source).getPermissionAccessLevel(ModuleStudioFactory.eINSTANCE.createIndexAction)»;
 
-        $entities = $this->permissionHelper->filterCollection($objectType, $entities, $permLevel);
+        $entities = $this->permissionHelper->filterCollection($objectType, $entities, $permissionLevel);
         $choices = [];
         foreach ($entities as $entity) {
             $choices[$entity->getId()] = $entity;

@@ -112,6 +112,7 @@ class FormHandlerOLD {
             'Symfony\\Component\\Form\\FormInterface',
             'Symfony\\Component\\HttpFoundation\\RedirectResponse',
             'Symfony\\Component\\HttpFoundation\\RequestStack',
+            'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException',
             'Symfony\\Component\\Routing\\RouterInterface',
             'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
@@ -120,10 +121,13 @@ class FormHandlerOLD {
             appNamespace + '\\Entity\\Initializer\\EntityInitializer',
             appNamespace + '\\Helper\\ControllerHelper',
             appNamespace + '\\Helper\\ModelHelper',
-            appNamespace + '\\Helper\\PermissionHelper',
-            appNamespace + '\\Helper\\WorkflowHelper'
+            appNamespace + '\\Helper\\WorkflowHelper',
+            appNamespace + '\\Security\\Permission'
         ])
         for (entity : entities) {
+            if (entity.hasEditAction) {
+                imports.add(appNamespace + '\\Entity\\' + entity.name.formatForCodeCapital)
+            }
             imports.add(appNamespace + '\\Repository\\' + entity.name.formatForCodeCapital + 'RepositoryInterface')
         }
         if (!entities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty) {
@@ -240,11 +244,15 @@ class FormHandlerOLD {
                 «ENDFOR»
                 protected readonly ControllerHelper $controllerHelper,
                 protected readonly ModelHelper $modelHelper,
-                protected readonly PermissionHelper $permissionHelper,
-                protected readonly WorkflowHelper $workflowHelper«IF hasTranslatable»,
-                protected readonly TranslatableHelper $translatableHelper«ENDIF»«IF needsFeatureActivationHelper»,
-                protected readonly FeatureActivationHelper $featureActivationHelper«ENDIF»«IF hasTranslatable || needsApproval || hasStandardFieldEntities»,
-                protected readonly array $moderationConfig
+                protected readonly WorkflowHelper $workflowHelper,
+                «IF hasTranslatable»
+                    protected readonly TranslatableHelper $translatableHelper,
+                «ENDIF»
+                «IF needsFeatureActivationHelper»
+                    protected readonly FeatureActivationHelper $featureActivationHelper,
+                «ENDIF»
+                «IF hasTranslatable || needsApproval || hasStandardFieldEntities»
+                    protected readonly array $moderationConfig,
                 «ENDIF»
             ) {
                 $this->setTranslator($translator);
@@ -337,7 +345,7 @@ class FormHandlerOLD {
             if ('edit' === $this->templateParameters['mode']) {
                 $entity = $this->initEntityForEditing();
                 if (null !== $entity) {
-                    if (!$this->permissionHelper->mayEdit($entity)) {
+                    if (!$this->security->isGranted(Permission::EDIT->value, $entity)) {
                         throw new AccessDeniedException();
                     }
                     «IF !entities.filter[hasDetailAction && hasEditAction && hasSluggableFields].empty»
@@ -366,11 +374,12 @@ class FormHandlerOLD {
             } else {
                 «IF needsApproval»
                     $objectTypesNeedingApproval = ['«entities.filter[approval].map[name.formatForCode].join('\', \'')»'];
-                    $permissionLevel = in_array($this->objectType, $objectTypesNeedingApproval, true) ? ACCESS_COMMENT : ACCESS_EDIT;
+                    $permissionLevel = in_array($this->objectType, $objectTypesNeedingApproval, true) ? Permission::COMMENT : Permission::EDIT;
                 «ELSE»
-                    $permissionLevel = ACCESS_EDIT;
+                    $permissionLevel = Permission::EDIT;
                 «ENDIF»
-                if (!$this->permissionHelper->hasComponentPermission($this->objectType, $permissionLevel)) {
+
+                if (!$this->security->isGranted($permissionLevel->value, $entityFqcn)) {
                     throw new AccessDeniedException();
                 }
 
@@ -507,9 +516,18 @@ class FormHandlerOLD {
         /**
          * Initialise existing entity for editing.
          */
-        protected function initEntityForEditing(): ?EntityInterface
+        protected function initEntityForEditing(): EntityInterface
         {
-            return $this->getRepository($this->objectType)->selectById($this->idValue);
+            $entity = $this->getRepository($this->objectType)->selectById($this->idValue);
+            if (null === $entity) {
+                throw new NotFoundHttpException();
+            }
+
+            if (!$this->security->isGranted(Permission::EDIT->value, $entity)) {
+                throw new AccessDeniedException();
+            }
+
+            return $entity;
         }
     '''
 
@@ -885,10 +903,6 @@ class FormHandlerOLD {
         abstract class Abstract«actionName.formatForCodeCapital»Handler extends «actionName.formatForCodeCapital»Handler
         {
             «processForm»
-            «IF ownerPermission»
-
-                «formHandlerBaseInitEntityForEditing»
-            «ENDIF»
 
             «redirectHelper.getRedirectCodes(it, app)»
 
@@ -935,27 +949,6 @@ class FormHandlerOLD {
         «IF app.hasTranslatable»
             $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;
         «ENDIF»
-    '''
-
-    def private formHandlerBaseInitEntityForEditing(Entity it) '''
-        protected function initEntityForEditing(): ?EntityInterface
-        {
-            $entity = parent::initEntityForEditing();
-            if (null === $entity) {
-                return $entity;
-            }
-            «IF ownerPermission»
-
-                // only allow editing for the owner or people with higher permissions
-                $currentUserId = $this->security->getUser()?->getId() ?? UsersConstant::USER_ID_ANONYMOUS;
-                $isOwner = null !== $entity && $currentUserId === $entity->getCreatedBy()?->getId();
-                if (!$isOwner && !$this->permissionHelper->hasEntityPermission($entity/*, ACCESS_ADD*/)) {
-                    throw new AccessDeniedException();
-                }
-            «ENDIF»
-
-            return $entity;
-        }
     '''
 
     def private formHandlerImpl(Entity it, String actionName) '''
@@ -1038,12 +1031,12 @@ class FormHandlerOLD {
                 'mode' => $this->templateParameters['mode'],
                 'actions' => $this->templateParameters['actions'],
                 «IF standardFields»
-                    'has_moderate_permission' => $this->permissionHelper->hasEntityPermission($this->entityRef/*, ACCESS_ADMIN*/),
+                    'has_moderate_permission' => $this->security->isGranted(Permission::MODERATE->value, $this->entityRef),
                     'allow_moderation_specific_creator' => $this->moderationConfig['allow_moderation_specific_creator_for_' . $configSuffix],
                     'allow_moderation_specific_creation_date' => $this->moderationConfig['allow_moderation_specific_creation_date_for_' . $configSuffix],
                 «ENDIF»
                 «IF !incoming.empty || !outgoing.empty»
-                    'filter_by_ownership' => !$this->permissionHelper->hasEntityPermission($this->entityRef/*, ACCESS_ADD*/),
+                    'filter_by_ownership' => !$this->security->isGranted(Permission::CREATE->value, $this->entityRef),
                     'inline_usage' => $this->templateParameters['inlineUsage'],
                 «ENDIF»
             ];

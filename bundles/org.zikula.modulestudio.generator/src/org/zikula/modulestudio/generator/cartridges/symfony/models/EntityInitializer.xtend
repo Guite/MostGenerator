@@ -32,7 +32,6 @@ class EntityInitializer {
 
     def private collectBaseImports(Application it) {
         val imports = new ImportList
-        imports.add(appNamespace + '\\Helper\\PermissionHelper')
         if (!entities.filter[!fields.filter(DatetimeField).filter[!immutable].empty].empty) {
             imports.add('DateTime')
         }
@@ -65,7 +64,6 @@ class EntityInitializer {
                 «IF supportLocaleFilter»
                     protected readonly RequestStack $requestStack,
                 «ENDIF»
-                protected readonly PermissionHelper $permissionHelper,
                 «IF hasListFieldsExceptWorkflowState»
                     protected readonly ListEntriesHelper $listEntriesHelper,
                 «ENDIF»

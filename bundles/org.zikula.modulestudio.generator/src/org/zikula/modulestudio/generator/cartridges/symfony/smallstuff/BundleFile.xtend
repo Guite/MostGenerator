@@ -84,9 +84,6 @@ class BundleFile {
         if (needsApproval) {
             imports.add(appNamespace + '\\Helper\\NotificationHelper')
         }
-        if (hasLoggable) {
-            imports.add(appNamespace + '\\Helper\\PermissionHelper')
-        }
         if (hasUploads) {
             imports.add(appNamespace + '\\Helper\\UploadHelper')
         }
@@ -96,6 +93,9 @@ class BundleFile {
         imports.add(appNamespace + '\\Menu\\ExtensionMenu')
         if (hasIndexActions) {
             imports.add(appNamespace + '\\Menu\\MenuBuilder')
+        }
+        for (entity : entities.filter[loggable]) {
+            imports.add(appNamespace + '\\Security\\' + entity.name.formatForCodeCapital + 'Voter')
         }
         imports
     }
@@ -189,10 +189,10 @@ class BundleFile {
             $services->get(ExpiryHelper::class)
                 ->arg('$loggableConfig', $config['versioning']);
         «ENDIF»
-        «IF hasLoggable»
-            $services->get(PermissionHelper::class)
-                ->arg('$loggableConfig', $config['versioning']);
-        «ENDIF»
+        «FOR entity : entities.filter[loggable]»
+            $services->get(«entity.name.formatForCodeCapital»Voter::class)
+                ->arg('$showHistory', $config['versioning']['show_«entity.name.formatForSnakeCase»_history']);
+        «ENDFOR»
         «IF needsApproval»
             $services->get(NotificationHelper::class)
                 ->arg('$moderationConfig', $config['moderation']);

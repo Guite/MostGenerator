@@ -28,14 +28,15 @@ class LoggableUndelete extends AbstractAction {
         result.addAll(#[
             'Doctrine\\Persistence\\ManagerRegistry',
             'Symfony\\Bundle\\FrameworkBundle\\Controller\\ControllerHelper',
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\HttpFoundation\\Request',
             'Symfony\\Component\\HttpFoundation\\Response',
             'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException',
             'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             appNamespace + '\\Helper\\LoggableHelper',
-            appNamespace + '\\Helper\\PermissionHelper',
-            appNamespace + '\\Helper\\ViewHelper'
+            appNamespace + '\\Helper\\ViewHelper',
+            appNamespace + '\\Security\\Permission'
         ])
         if (hasLoggableTranslatable) {
             result.add(appNamespace + '\\Helper\\TranslatableHelper')
@@ -46,9 +47,9 @@ class LoggableUndelete extends AbstractAction {
     override protected constructorArguments(Application it) {
         val result = <String>newArrayList
         result.addAll(#[
+            'Security $security',
             'ControllerHelper $controllerHelper',
             'ManagerRegistry $managerRegistry',
-            'PermissionHelper $permissionHelper',
             'LoggableHelper $loggableHelper',
             'ViewHelper $viewHelper',
             'TranslatorInterface $translator'
@@ -99,7 +100,7 @@ class LoggableUndelete extends AbstractAction {
     override protected implBody(Application it) '''
         «new ControllerHelperFunctions().determineEntityId(it, false)»
 
-        $entity = $loggableHelper->restoreDeletedEntity($objectType, $id);
+        $entity = $this->loggableHelper->restoreDeletedEntity($objectType, $id);
         if (null === $entity) {
             throw new NotFoundHttpException(
                 $this->translator->trans(
@@ -110,10 +111,7 @@ class LoggableUndelete extends AbstractAction {
             );
         }
 
-        $dashboard = $request->attributes->get('dashboardControllerFqcn');
-        $isAdminArea = 'Zikula\ThemeBundle\Controller\Dashboard\AdminDashboardController' === $dashboard;
-        $permLevel = $isAdminArea ? ACCESS_ADMIN : ACCESS_EDIT;
-        if (!$this->permissionHelper->hasEntityPermission($entity/*, $permLevel*/)) {
+        if (!$this->security->isGranted(Permission::HISTORY->value, $entity)) {
             throw new AccessDeniedException();
         }
 
@@ -124,11 +122,11 @@ class LoggableUndelete extends AbstractAction {
                     «/* TODO use EAB action */»
                     return $this->detail(
                         $request,
-                        $permissionHelper,
-                        $controllerHelper,
-                        $viewHelper,
+                        $this->security,
+                        $this->controllerHelper,
+                        $this->viewHelper,
                         $repository,
-                        $loggableHelper,
+                        $this->loggableHelper,
                         $entity,
                         null
                     );

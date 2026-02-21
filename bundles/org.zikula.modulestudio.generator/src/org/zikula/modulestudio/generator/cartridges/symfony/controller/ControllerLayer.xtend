@@ -97,7 +97,7 @@ class ControllerLayer {
     def private generateController(Entity it, IMostFileSystemAccess fsa) {
         ('Generating "' + name.formatForDisplay + '" controller classes').printIfNotTesting(fsa)
         configureMethods.forEach[m|m.init(it)]
-        
+
         fsa.generateClassPair('Controller/Crud/' + name.formatForCodeCapital + 'Controller.php', entityControllerBaseImpl, entityControllerImpl)
     }
 
@@ -116,6 +116,7 @@ class ControllerLayer {
         
             public function __construct(
                 TranslatorInterface $translator,
+                protected readonly Security $security,
                 protected readonly EntityInitializer $entityInitializer,
                 «IF !getAllEntityFields.filter(StringField).filter[#[StringRole.COUNTRY, StringRole.CURRENCY, StringRole.LANGUAGE, StringRole.LOCALE, StringRole.TIME_ZONE].contains(role)].empty»
                     protected readonly RequestStack $requestStack,
@@ -129,7 +130,6 @@ class ControllerLayer {
                 «IF hasEditAction»
                     protected readonly ModelHelper $modelHelper,
                 «ENDIF»
-                protected readonly PermissionHelper $permissionHelper,
                 «IF hasUploadFieldsEntity»
                     protected readonly UploadHelper $uploadHelper,
                     «IF !getUploadFieldsEntity.filter[f|!f.isOnlyImageField].empty»
@@ -204,7 +204,6 @@ class ControllerLayer {
         if (hasEditAction) {
             imports.add(app.appNamespace + '\\Helper\\ModelHelper')
         }
-        imports.add(app.appNamespace + '\\Helper\\PermissionHelper')
         if (loggable && hasTranslatableFields) {
             imports.add(app.appNamespace + '\\Helper\\TranslatableHelper')
         }
@@ -230,13 +229,15 @@ class ControllerLayer {
         imports.addAll(#[
             'EasyCorp\\Bundle\\EasyAdminBundle\\Attribute\\AdminRoute',
             'EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController',
+            'Symfony\\Bundle\\SecurityBundle\\Security',
             'Symfony\\Component\\HttpFoundation\\Request',
             'Symfony\\Component\\HttpFoundation\\Response',
             'Symfony\\Component\\Security\\Core\\Exception\\AccessDeniedException',
             'function Symfony\\Component\\Translation\\t',
             'Symfony\\Contracts\\Translation\\TranslatorInterface',
             'Zikula\\CoreBundle\\Translation\\TranslatorTrait',
-            app.appNamespace + '\\Entity\\Initializer\\EntityInitializer'
+            app.appNamespace + '\\Entity\\Initializer\\EntityInitializer',
+            app.appNamespace + '\\Security\\Permission'
         ])
         if (hasIndexAction || hasEditAction) {
             imports.add('Exception')

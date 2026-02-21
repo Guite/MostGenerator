@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.symfony
+package org.zikula.modulestudio.generator.cartridges.symfony.controller
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess

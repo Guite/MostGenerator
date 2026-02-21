@@ -12,7 +12,6 @@ import de.guite.modulestudio.metamodel.Relationship
 import java.util.List
 import org.zikula.modulestudio.generator.application.IMostFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.IndexPagesHelper
-import org.zikula.modulestudio.generator.cartridges.symfony.view.pagecomponents.MenuViews
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -77,10 +76,6 @@ class ViewTable {
         <div class="table-responsive">
         <table«IF hasSortableFields»{% if activateSortable and items|length > 1 %} id="sortableTable" data-object-type="«name.formatForCode»" data-min="{{ items|first.«getSortableFields.head.name.formatForCode» }}" data-max="{{ items|last.«getSortableFields.head.name.formatForCode» }}"{% endif %}«ENDIF» class="table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-sm«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»">
             <colgroup>
-                {% if routeArea == 'admin' %}
-                    <col id="cSelect" />
-                {% endif %}
-                <col id="cItemActions" />
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <col id="cSortable" />
@@ -92,12 +87,6 @@ class ViewTable {
             </colgroup>
             <thead>
             <tr>
-                {% if routeArea == 'admin' %}
-                    <th id="hSelect" scope="col" class="text-center">
-                        <input type="checkbox" class="«application.vendorAndName.toLowerCase»-mass-toggle" />
-                    </th>
-                {% endif %}
-                <th id="hItemActions" scope="col">{% trans from 'messages' %}Actions{% endtrans %}</th>
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <th id="hSortable" scope="col">{% trans from 'messages' %}Sorting{% endtrans %}</th>
@@ -114,12 +103,6 @@ class ViewTable {
     def private viewItemListBody(Entity it, List<Field> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
         {% for «name.formatForCode» in items %}
             <tr«IF hasSortableFields»{% if activateSortable %} data-item-id="{{ «name.formatForCode».getKey() }}" class="sort-item"{% endif %}«ENDIF»>
-                {% if routeArea == 'admin' %}
-                    <td headers="hSelect" class="text-center">
-                        <input type="checkbox" name="items[]" value="{{ «name.formatForCode».getKey() }}" class="«application.vendorAndName.toLowerCase»-toggle-checkbox" />
-                    </td>
-                {% endif %}
-                «itemActions»
                 «IF hasSortableFields»
                     {% if activateSortable %}
                         <td headers="hSortable" class="text-center">
@@ -127,13 +110,13 @@ class ViewTable {
                         </td>
                     {% endif %}
                 «ENDIF»
-                «FOR field : listItemsFields»«IF field.name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»«field.displayEntry(false)»«IF field.name == 'workflowState'»{% endif %}«ENDIF»«ENDFOR»
+                «FOR field : listItemsFields»«field.displayEntry(false)»«ENDFOR»
                 «FOR relation : listItemsIn»«relation.displayEntry(false)»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true)»«ENDFOR»
             </tr>
         {% else %}
             <tr class="table-info">
-            «'    '»<td colspan="{% if routeArea == 'admin' %}«IF hasSortableFields»{% if activateSortable %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1 + 1)»{% else %}«ENDIF»«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»«IF hasSortableFields»{% endif %}«ENDIF»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}" class="text-center">
+            «'    '»<td colspan="{% if routeArea == 'admin' %}«IF hasSortableFields»{% if activateSortable %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{% else %}«ENDIF»«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1)»«IF hasSortableFields»{% endif %}«ENDIF»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 0)»{% endif %}" class="text-center">
             {% trans %}No «nameMultiple.formatForDisplay» found.{% endtrans %}
               </td>
             </tr>
@@ -147,9 +130,7 @@ class ViewTable {
     '''
 
     def private columnDef(Field it) '''
-        «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
         <col id="c«markupIdCode(false)»" />
-        «IF name == 'workflowState'»{% endif %}«ENDIF»
     '''
 
     def private columnDef(Relationship it, Boolean useTarget) '''
@@ -157,12 +138,9 @@ class ViewTable {
     '''
 
     def private headerLine(Field it) '''
-        «IF name == 'workflowState'»{% if routeArea == 'admin' %}«ENDIF»
         <th id="h«markupIdCode(false)»" scope="col" class="text-«alignment»">
-            «val fieldLabel = if (name == 'workflowState') 'state' else name»
-            «headerTitle(entity, name.formatForCode, fieldLabel)»
+            «headerTitle(entity, name.formatForCode, name)»
         </th>
-        «IF name == 'workflowState'»{% endif %}«ENDIF»
     '''
 
     def private headerLine(Relationship it, Boolean useTarget) '''
@@ -245,10 +223,4 @@ class ViewTable {
             default: 'left'
         }
     }
-
-    def private itemActions(Entity it) '''
-        <td id="«new MenuViews().itemActionContainerViewId(it)»" headers="hItemActions" class="actions">
-            «new MenuViews().itemActions(it, 'index')»
-        </td>
-    '''
 }

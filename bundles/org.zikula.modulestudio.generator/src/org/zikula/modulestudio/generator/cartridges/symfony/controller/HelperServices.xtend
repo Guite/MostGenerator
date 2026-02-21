@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.Li
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.LoggableHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.ModelHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.NotificationHelper
-import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.PermissionHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.SlugTransliterator
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.TranslatableHelper
 import org.zikula.modulestudio.generator.cartridges.symfony.controller.helper.UploadHelper
@@ -31,7 +30,6 @@ class HelperServices {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IMostFileSystemAccess fsa) {
-        new PermissionHelper().generate(it, fsa)
         if (hasAutomaticExpiryHandling || hasLoggable) {
             new ExpiryHelper().generate(it, fsa)
         }

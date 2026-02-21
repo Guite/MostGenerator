@@ -13,8 +13,8 @@ class WorkflowSubscriber {
 
     def generate(Application it) '''
         public function __construct(
+            protected readonly Security $security,
             protected readonly TranslatorInterface $translator,
-            protected readonly PermissionHelper $permissionHelper,
             «IF needsApproval»
                 protected readonly NotificationHelper $notificationHelper,
             «ENDIF»
@@ -168,7 +168,7 @@ class WorkflowSubscriber {
             }
             if ('none' !== $workflowShortName) {
                 $action = $event->getTransition()->getName();
-                $mayApprove = $this->permissionHelper->hasEntityPermission($entity/*, ACCESS_ADD*/);
+                $mayApprove = $this->security->isGranted(Permission::MODERATE->value, $entity);
                 $needsNotification = 'submit' !== $action || !$mayApprove;
                 if ($needsNotification) {
                     $this->sendNotifications($entity, $action, $workflowShortName);
@@ -204,7 +204,7 @@ class WorkflowSubscriber {
         «IF needsApproval || !entities.filter[ownerPermission].empty || (!relations.empty && !entities.filter[!getOutgoingRelationsWithoutDeleteCascade.empty].empty)»
             $objectType = $entity->get_objectType();
         «ENDIF»
-        $permissionLevel = ACCESS_READ;
+        $permissionLevel = Permission::ACCESS;
         $transitionName = $event->getTransition()->getName();
         «/*not used atm $targetState = $event->getTransition()->getTos()[0];*/»
         $hasApproval = «IF needsApproval»in_array($objectType, ['«entities.filter[approval].map[name.formatForCode].join('\', \'')»'], true)«ELSE»false«ENDIF»;
@@ -212,28 +212,28 @@ class WorkflowSubscriber {
         switch ($transitionName) {
             case 'defer':
             case 'submit':
-                $permissionLevel = $hasApproval ? ACCESS_COMMENT : ACCESS_EDIT;
+                $permissionLevel = $hasApproval ? Permission::COMMENT : Permission::CREATE;
                 break;
             case 'update':
             case 'reject':
             case 'accept':
             case 'archive':
-                $permissionLevel = ACCESS_EDIT;
+                $permissionLevel = Permission::EDIT;
                 break;
             case 'approve':
             case 'demote':
-                $permissionLevel = ACCESS_ADD;
+                $permissionLevel = Permission::MODERATE;
                 break;
             case 'delete':
                 «IF !entities.filter[ownerPermission].empty»
-                    $permissionLevel = in_array($objectType, ['«entities.filter[ownerPermission].map[name.formatForCode].join('\', \'')»'], true) ? ACCESS_EDIT : ACCESS_DELETE;
+                    $permissionLevel = in_array($objectType, ['«entities.filter[ownerPermission].map[name.formatForCode].join('\', \'')»'], true) ? Permission::EDIT : Permission::DELETE;
                 «ELSE»
-                    $permissionLevel = ACCESS_DELETE;
+                    $permissionLevel = Permission::DELETE;
                 «ENDIF»
                 break;
         }
 
-        if (!$this->permissionHelper->hasEntityPermission($entity/*, $permissionLevel*/)) {
+        if (!$this->security->isGranted($permissionLevel->value, $entity)) {
             // no permission for this transition, so disallow it
             $event->setBlocked(true, $this->translator->trans('No permission for this action.'));
 
