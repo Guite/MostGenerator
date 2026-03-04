@@ -53,13 +53,13 @@ class StandardFields {
             <dt>{% trans %}Creation{% endtrans %}</dt>
             {% set profileLink = obj.createdBy.uid|profileLinkByUserId %}
             <dd class="avatar">{{ userAvatar(obj.createdBy.uid, {rating: 'g'}) }}</dd>
-            <dd>{{ 'Created by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.createdDate|format_datetime('medium', 'short')})|raw }}</dd>
+            <dd>{{ 'Created by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.createdAt|format_datetime('medium', 'short')})|raw }}</dd>
         {% endif %}
         {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
             <dt>{% trans %}Last update{% endtrans %}</dt>
             {% set profileLink = obj.updatedBy.uid|profileLinkByUserId %}
             <dd class="avatar">{{ userAvatar(obj.updatedBy.uid, {rating: 'g'}) }}</dd>
-            <dd>{{ 'Last update by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedDate|format_datetime('medium', 'short')})|raw }}</dd>
+            <dd>{{ 'Last update by %user% on %date%'|trans({'%user%': profileLink, '%date%': obj.updatedAt|format_datetime('medium', 'short')})|raw }}</dd>
         {% endif %}
         </dl>
     '''
@@ -87,11 +87,11 @@ class StandardFields {
         <ul>
         {% if obj.createdBy|default and obj.createdBy.uid > 0 %}
             <li>{% trans with {'%user%': obj.createdBy.uname} %}Created by %user%{% endtrans %}</li>
-            <li>{% trans with {'%date%': obj.createdDate|format_datetime('medium', 'short')} %}Created on %date%{% endtrans %}</li>
+            <li>{% trans with {'%date%': obj.createdAt|format_datetime('medium', 'short')} %}Created on %date%{% endtrans %}</li>
         {% endif %}
         {% if obj.updatedBy|default and obj.updatedBy.uid > 0 %}
             <li>{% trans with {'%user%': obj.updatedBy.uname} %}Last update by %user%{% endtrans %}</li>
-            <li>{% trans with {'%date%': obj.updatedDate|format_datetime('medium', 'short')} %}Last update on %date%{% endtrans %}</li>
+            <li>{% trans with {'%date%': obj.updatedAt|format_datetime('medium', 'short')} %}Last update on %date%{% endtrans %}</li>
         {% endif %}
         «FOR entity : getLoggableEntities»
             {% if obj._objectType == '«entity.name.formatForCode»' %}

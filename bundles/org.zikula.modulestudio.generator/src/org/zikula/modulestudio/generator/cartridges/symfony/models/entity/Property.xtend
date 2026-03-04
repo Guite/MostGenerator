@@ -131,7 +131,7 @@ class Property {
                 '''
             DatetimeField:
                 '''
-                    «IF #['createdDate', 'updatedDate'].contains(name)»
+                    «IF #['createdAt', 'updatedAt'].contains(name)»
                         #[Gedmo\Timestampable(on: '«name.substring(0, 6)»')]
                     «ENDIF»
                 '''
@@ -185,7 +185,7 @@ class Property {
         «IF null !== entity && entity.standardFields»
             if (null !== $«name.formatForCode»File) {
                 // make entity dirty to call Doctrine event listeners
-                $this->updatedDate = new \DateTimeImmutable();
+                $this->updatedAt= new \DateTimeImmutable();
             }
         «ENDIF»
     '''

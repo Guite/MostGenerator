@@ -165,7 +165,7 @@ class PersistenceTransformer {
                 visibleOnSort = true
             ]
             fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
-                name = 'createdDate'
+                name = 'createdAt'
                 mandatory = false
                 visibleOnIndex = true
                 visibleOnDetail = true
@@ -184,7 +184,7 @@ class PersistenceTransformer {
                 visibleOnSort = true
             ]
             fields += ModuleStudioFactory.eINSTANCE.createDatetimeField => [
-                name = 'updatedDate'
+                name = 'updatedAt'
                 mandatory = false
                 visibleOnIndex = true
                 visibleOnDetail = true

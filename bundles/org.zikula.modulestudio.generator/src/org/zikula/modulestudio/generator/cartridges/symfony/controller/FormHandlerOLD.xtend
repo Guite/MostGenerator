@@ -814,7 +814,7 @@ class FormHandlerOLD {
                         && null !== $this->form['moderationSpecificCreationDate']->getData()
                         && '' !== $this->form['moderationSpecificCreationDate']->getData()
                     ) {
-                        $this->entityRef->setCreatedDate($this->form['moderationSpecificCreationDate']->getData());
+                        $this->entityRef->setCreatedAt($this->form['moderationSpecificCreationDate']->getData());
                     }
                 }
             «ENDIF»
