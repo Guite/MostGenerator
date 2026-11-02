@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-java@master
       with:
         distribution: temurin
-        java-version: 21
+        java-version: 25
         cache: maven
 
     # Tycho 4 requires Maven 3.8 at least
